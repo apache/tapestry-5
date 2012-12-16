@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.corelib.internal;
 
-import java.util.List;
-
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
@@ -24,7 +22,8 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
+
+import java.util.List;
 
 /**
  * Provides support to components enclosed by a form when the form is rendering (allowing the components to registry
@@ -35,8 +34,6 @@ import org.apache.tapestry5.services.ClientBehaviorSupport;
 public class FormSupportImpl implements InternalFormSupport, Locatable
 {
     private final ComponentResources resources;
-
-    private final ClientBehaviorSupport clientBehaviorSupport;
 
     private final boolean clientValidationEnabled;
 
@@ -57,20 +54,19 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
      */
     public FormSupportImpl(ComponentResources resources, String formValidationId)
     {
-        this(resources, null, null, null, false, null, formValidationId);
+        this(resources, null, null, false, null, formValidationId);
     }
 
     /**
      * Full constructor (specifically constructor for render time).
      */
     public FormSupportImpl(ComponentResources resources, String clientId, ComponentActionSink actionSink,
-            ClientBehaviorSupport clientBehaviorSupport, boolean clientValidationEnabled, IdAllocator idAllocator,
-            String formValidationId)
+                           boolean clientValidationEnabled, IdAllocator idAllocator,
+                           String formValidationId)
     {
         this.resources = resources;
         this.clientId = clientId;
         this.actionSink = actionSink;
-        this.clientBehaviorSupport = clientBehaviorSupport;
         this.clientValidationEnabled = clientValidationEnabled;
         this.idAllocator = idAllocator;
         this.formValidationId = formValidationId;
@@ -146,8 +142,6 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
 
     public void addValidation(Field field, String validationName, String message, Object constraint)
     {
-        if (clientValidationEnabled)
-            clientBehaviorSupport.addValidation(field, validationName, message, constraint);
     }
 
     public boolean isClientValidationEnabled()

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -77,12 +79,11 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
 
                         zoneContainer.remove();
 
-                        if (!reply.has("zones"))
-                        {
-                            reply.put("zones", new JSONObject());
-                        }
-
-                        reply.getJSONObject("zones").put(zoneId, zoneUpdateContent);
+                        // This has changed a bit in 5.4;
+                        // In 5.3, it was just "zones", and was key/value pairs for id and content.
+                        // In 5.4, it is "content", and is an array of id/content arrays
+                        reply.in(InternalConstants.PARTIAL_KEY).append("content",
+                                new JSONArray(zoneId, zoneUpdateContent));
                     }
                 });
 

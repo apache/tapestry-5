@@ -50,10 +50,11 @@ public interface Page extends PageLifecycleCallbackHub
     {
         /**
          * Time, in milliseconds, to construct the page. This includes time to construct components inside the page,
-         * as well as hooking everything together. You'll often see that the first page is expensive to construct,
+         * as well as hooking everything together, and includes the execution of {@link org.apache.tapestry5.internal.structure.Page#loaded()}.
+         * You'll often see that the first page is expensive to construct,
          * and later pages that use a similar mix of components are very cheap.
          */
-        public final long assemblyTime;
+        public final double assemblyTime;
 
         /**
          * The total number of components in the page, including the root component. This does not include the number of mixins.
@@ -66,7 +67,7 @@ public interface Page extends PageLifecycleCallbackHub
          */
         public final int weight;
 
-        public Stats(long assemblyTime, int componentCount, int weight)
+        public Stats(double assemblyTime, int componentCount, int weight)
         {
             this.assemblyTime = assemblyTime;
             this.componentCount = componentCount;

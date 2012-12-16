@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,7 @@
 
 package org.apache.tapestry5.func;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The single implementation of {@link ZippedFlow}, that operates by wrapping around an ordinary {@link Flow} of the
@@ -119,9 +114,9 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
         return create(tupleFlow.drop(length));
     }
 
-    public ZippedFlow<A, B> concat(List<? extends Tuple<A, B>> list)
+    public ZippedFlow<A, B> concat(Collection<? extends Tuple<A, B>> collection)
     {
-        return create(tupleFlow.concat(list));
+        return create(tupleFlow.concat(collection));
     }
 
     public Iterator<Tuple<A, B>> iterator()

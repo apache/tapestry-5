@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,27 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
  * Responsible for injecting script and style links into the &lt;head&gt; and &lt;body&gt; element of the rendered HTML
  * document.
+ *
+ * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List
+ * @since 5.4
  */
 public interface DocumentLinker
 {
+
     /**
-     * Adds a link to load a JavaScript library. . The &lt;script&gt; elements will be added inside
-     * the document's &lt;head&gt;.
+     * Adds a link to load a non-core JavaScript library. These libraries are loaded, sequentially, only once
+     * the core libraries have loaded and initialized. Thus difference between core libraries and other libraries
+     * is new in 5.4, and represents a conflict between asynchronous loading of modules (introduced in 5.4) and
+     * sequential loading of libraries (in 5.3 and earlier).
      */
-    void addScriptLink(String scriptURL);
+    void addLibrary(String libraryURL);
 
     /**
      * Adds a link to load a CSS stylesheet.
@@ -40,24 +46,31 @@ public interface DocumentLinker
      * of the page (in a full page render) and collected as the "script" property of the partial page render response.
      * The JavaScript is executed after the page loads (or in an Ajax update, after external JavaScript libraries are
      * loaded and the DOM is updated).
-     * <p>
+     * <p/>
      * This method may be called multiple times for the same priority and the script will be accumulated.
-     * 
+     *
      * @param priority
-     *            when to execute the provided script
+     *         when to execute the provided script
      * @param script
-     *            statement to add to the block (a newline will be appended as well)
+     *         statement to add to the block (a newline will be appended as well)
      */
     void addScript(InitializationPriority priority, String script);
 
     /**
-     * Adds a call to the Tapestry.init() function. This may be called multiple times and the init() calls will occur
-     * in order. In a normal page render, the init() calls will be added to the main JavaScript block, but in a partial
-     * page render Ajax response, the initialization will be property "init" of the partial page render response.
-     * <p>
-     * This method should only be invoked at most once per priority.
-     * 
-     * @since 5.2.0
+     * Adds initialization, based on invoking functions exported by JavaScript modules.
+     *
+     * @param priority
+     *         priority at which to perform initialization
+     * @param moduleName
+     *         name of module; the module exports a single function, or a map of functions
+     * @param functionName
+     *         name of function exported by module, or null (if the module exports a single function)
+     * @param arguments
+     *         arguments to pass to the function, or null if no arguments
+     * @since 5.4
      */
-    void setInitialization(InitializationPriority priority, JSONObject initialization);
+    void addInitialization(InitializationPriority priority,
+                           String moduleName,
+                           String functionName,
+                           JSONArray arguments);
 }

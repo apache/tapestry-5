@@ -1,0 +1,83 @@
+
+DIV.t-tree-container
+{
+  padding: 0;
+  margin: 0;
+}
+
+DIV.t-tree-container UL
+{
+  list-style-type: none;
+  background-image: url(tree-vpipe.png);
+  background-repeat: repeat-y;
+  margin: 0 0 0 12px;
+  padding: 0; 
+}
+
+DIV.t-tree-container UL UL
+{
+  /* Line up the nested list's vertical bar under the element's folder icon. */
+  margin: 0 0 0 24px;
+}
+
+
+DIV.t-tree-container LI {
+  margin: 0;
+  padding: 0 0 0 16px;
+  background-image: url(tree-branch.png);
+  background-repeat: no-repeat;
+  line-height: 1.5;
+}
+
+/* The last one needs a special tweak to keep the vertical bar from extending down too far. */
+DIV.t-tree-container LI.t-last
+{
+    background-color: white;
+    background-image: url(tree-branchend.png);    
+}
+
+/* Assume its a collapsed, but expandable, tree node. Later CSS rules overwrite this. */
+
+SPAN.t-tree-icon {
+  display: inline-block;
+  width: 32px;
+  height: 16px;
+  cursor: pointer;
+  background-image: url(tree-sprites.png);
+  background-position: 0px 0px;
+}
+
+/* Fiddle with it so that leaf nodes do not appear clickable. The label is clickable, the document
+   icon is not. */
+LI.t-leaf-node > SPAN.t-tree-icon {
+  cursor: default;
+  background-position: -32px -16px;
+}
+
+/* When the Tree is configured for selection, then it is the label, only on leaf nodes, that is
+    clickable. */
+DIV[data-tree-node-selection-enabled] LI.t-leaf-node > .t-tree-label {
+    cursor: pointer;
+}
+
+/* Marking selection leaf nodes in bold if selected will hopefully change soon. We may even be smart
+   enough to render a checkbox. */
+SPAN.t-tree-label.t-selected-leaf-node {
+  font-weight: bold;
+}
+
+SPAN.t-tree-icon.t-empty-node {
+  cursor: default;
+  background-position: -32px 0px !important;
+}
+
+SPAN.t-tree-expanded {
+  background-position: 0px -16px;
+}
+
+SPAN.t-ajax-wait {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-image: url(ajax-loader.gif);
+}

@@ -13,16 +13,22 @@
     </p>
 </t:if>
 
-<p>
-    <t:loop source="alphaKeyItems.keySet()" value="key" xml:space="preserve">
-        <a href="#ix_${key}">${key}</a>
-    </t:loop>
-</p>
+<div class="pagination">
+    <ul>
+        <t:loop source="alphaKeyItems.keySet()" value="key">
+            <li>
+                <a href="#ix_${key}">${key}</a>
+            </li>
+        </t:loop>
+    </ul>
+</div>
 
+<p><a href="#special">Special Pages</a></p>
 
 <t:loop source="alphaKeyItems.keySet()" value="key">
-    <h3>${key}</h3>
     <a name="ix_${key}"/>
+
+    <h3>${key}</h3>
 
     <ul>
         <li t:type="loop" source="itemsForKey()" value="item">
@@ -33,7 +39,7 @@
 
 </t:loop>
 
-<h2>Special Pages</h2>
+<h2 id="special">Special Pages</h2>
 
 <p>These are often pages which can't load due to errors.</p>
 

@@ -1,0 +1,12 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+Please refer to the NOTICE.txt in each sub-module to
+identify further dependencies.
+
+The Maven central repository is the prefered method to download Tapestry
+and its dependencies. The binary archive includes just basic
+dependencies for tapestry-core; using other modules (such as
+tapestry-hibernate or any of the others) requires downloading
+additional dependencies. Please refer to the Maven POM for each module
+to identify its dependencies.

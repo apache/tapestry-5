@@ -31,7 +31,8 @@ public interface Request
      * if the session is invalidated and create is false, returns null. Invoking this method with true, when the session exists but has
      * been invalidated, will force the creation of a new session.
      *
-     * @param create true to force the creation of the session
+     * @param create
+     *         true to force the creation of the session
      * @return the session (or null if create is false the session has not been previously created)
      */
     Session getSession(boolean create);
@@ -39,6 +40,8 @@ public interface Request
     /**
      * Returns the context path. This always starts with a "/" character and does not end with one, with the exception
      * of servlets in the root context, which return the empty string.
+     *
+     * @deprecated in 5.4, inject the value for symbol {@link org.apache.tapestry5.SymbolConstants#CONTEXT_PATH} instead
      */
     String getContextPath();
 
@@ -85,10 +88,12 @@ public interface Request
      * If the request did not have a header of the specified name, this method returns -1. If the header can't be
      * converted to a date, the method throws an <code>IllegalArgumentException</code>.
      *
-     * @param name a <code>String</code> specifying the name of the header
+     * @param name
+     *         a <code>String</code> specifying the name of the header
      * @return a <code>long</code> value representing the date specified in the header expressed as the number of
      *         milliseconds since January 1, 1970 GMT, or -1 if the named header was not included with the reqest
-     * @throws IllegalArgumentException If the header value can't be converted to a date
+     * @throws IllegalArgumentException
+     *         If the header value can't be converted to a date
      */
     long getDateHeader(String name);
 
@@ -136,18 +141,29 @@ public interface Request
      * {@link javax.servlet.ServletRequest#getAttribute(String)},
      * it is case <em>sensitive</em> (unlike most of Tapestry).
      *
-     * @param name a <code>String</code> specifying the name of the attribute
+     * @param name
+     *         a <code>String</code> specifying the name of the attribute
      * @return an <code>Object</code> containing the value of the attribute, or <code>null</code> if the attribute does
      *         not exist
      */
     Object getAttribute(String name);
 
     /**
+     * Returns a sorted list of attribute names.
+     *
+     * @since 5.4
+     */
+    List<String> getAttributeNames();
+
+
+    /**
      * Stores an attribute in this request. Attributes are reset between requests (and remember that in Tapestry, there
      * is usually two requests per operation: the action request that redirects to a render request).
      *
-     * @param name  a <code>String</code> specifying the name of the attribute
-     * @param value the <code>Object</code> to be stored, or null to remove the attribute
+     * @param name
+     *         a <code>String</code> specifying the name of the attribute
+     * @param value
+     *         the <code>Object</code> to be stored, or null to remove the attribute
      */
     void setAttribute(String name, Object value);
 

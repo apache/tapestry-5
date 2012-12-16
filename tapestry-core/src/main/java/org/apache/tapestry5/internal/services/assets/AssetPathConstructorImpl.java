@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
@@ -32,6 +33,9 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     public AssetPathConstructorImpl(Request request,
                                     BaseURLSource baseURLSource,
+
+                                    @Symbol(SymbolConstants.CONTEXT_PATH)
+                                    String contextPath,
 
                                     @Symbol(SymbolConstants.APPLICATION_VERSION)
                                     String applicationVersion,
@@ -50,23 +54,40 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         this.fullyQualified = fullyQualified;
 
-        String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
+        StringBuilder prefix = new StringBuilder("/");
 
-        this.prefix = folder + assetPathPrefix + applicationVersion + "/";
+        // Either blank, or ending in a slash:
+        prefix.append(contextPath);
+
+        if (!applicationFolder.equals("")) {
+            prefix.append(applicationFolder).append("/");
+        }
+
+        prefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
+
+        this.prefix = prefix.toString();
     }
 
     public String constructAssetPath(String virtualFolder, String path)
     {
+        assert InternalUtils.isNonBlank(virtualFolder);
+        assert path != null;
+
         StringBuilder builder = new StringBuilder();
 
         if (fullyQualified)
+        {
             builder.append(baseURLSource.getBaseURL(request.isSecure()));
+        }
 
-        builder.append(request.getContextPath());
         builder.append(prefix);
         builder.append(virtualFolder);
-        builder.append('/');
-        builder.append(path);
+
+        if (InternalUtils.isNonBlank(path))
+        {
+            builder.append('/');
+            builder.append(path);
+        }
 
         return builder.toString();
     }

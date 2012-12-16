@@ -1,0 +1,14 @@
+div.t-datefield-popup {
+    position: absolute;
+    z-index: 1000;
+    margin-top: 2px;
+}
+
+/* Applied to an input element to provide feedback that something is waiting on an Ajax request:
+   examples include server-side validation, or autocompletion. An Ajax "throbber" is displayed
+   on the right side of the field. */
+input.ajax-wait {
+    background-image: url(ajax-loader.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+}

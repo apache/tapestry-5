@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@ package org.apache.tapestry5.ioc.internal.util;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.util.AbstractMessages;
 
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Implementation of {@link org.apache.tapestry5.ioc.Messages} based around a {@link java.util.ResourceBundle}.
@@ -69,4 +66,9 @@ public class MessagesImpl extends AbstractMessages
         return properties.get(key);
     }
 
+    @Override
+    public Set<String> getKeys()
+    {
+        return properties.keySet();
+    }
 }

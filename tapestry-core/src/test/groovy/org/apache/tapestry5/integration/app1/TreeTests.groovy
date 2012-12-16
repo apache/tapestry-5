@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.test.SeleniumTestCase
+import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
-class TreeTests extends SeleniumTestCase
+class TreeTests extends TapestryCoreTestCase
 {
     @Test
     void basics()
     {
-
         openBaseURL()
 
         clickAndWait "link=Tree Component Demo"
 
-        clickAndWait "link=clear expansions"
+        clickAndWait "link=Clear Expansions"
+
+        waitForPageInitialized()
 
         //Click on Games
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
@@ -57,23 +58,26 @@ class TreeTests extends SeleniumTestCase
 
         clickAndWait "link=Tree Component Selection Demo"
 
-        clickAndWait "link=clear all"
+        clickAndWait "link=Clear All"
+
+        waitForPageInitialized()
 
         click "//span[@class='t-tree-icon']"
 
-        waitForCSSSelectedElementToAppear "span.t-leaf-node"
+        waitForCSSSelectedElementToAppear "li.t-leaf-node > span"
 
         assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
 
         // Click the first selectable node, probably Oscar
-        click "css=span.t-selectable"
 
-        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node-label"
+        click "css=[data-tree-node-selection-enabled] li.t-leaf-node > span.t-tree-label"
+
+        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node"
 
         clickAndWait "link=Redraw"
 
         // Make sure it is still there after a redraw
 
-        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node-label"
+        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node"
     }
 }

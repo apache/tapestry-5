@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.Parameter;
@@ -28,13 +24,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * Generates a &lt;label&gt; element for a particular field.
+ * Generates a &lt;label&gt; element for a particular field. It writes the CSS class "control-label", unless
+ * an informal parameter writes a class attribute.
  * <p/>
  * A Label will render its body, if it has one. However, in most cases it will not have a body, and will render its
  * {@linkplain org.apache.tapestry5.Field#getLabel() field's label} as it's body. Remember, however, that it is the
  * field label that will be used in any error messages. The Label component allows for client- and server-side
  * validation error decorations.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -71,6 +68,8 @@ public class Label
         labelElement = writer.element("label");
 
         resources.renderInformalParameters(writer);
+
+        writer.attributes("class", "control-label");
 
         // Since we don't know if the field has rendered yet, we need to defer writing the for and id
         // attributes until we know the field has rendered (and set its clientId property). That's

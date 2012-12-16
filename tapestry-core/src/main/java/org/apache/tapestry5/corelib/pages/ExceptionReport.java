@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -34,6 +35,7 @@ import java.util.regex.Pattern;
  * @see org.apache.tapestry5.corelib.components.ExceptionDisplay
  */
 @ContentType("text/html")
+@Import(stack = "core", stylesheet = "ExceptionReport.css")
 public class ExceptionReport implements ExceptionReporter
 {
     private static final String PATH_SEPARATOR_PROPERTY = "path.separator";

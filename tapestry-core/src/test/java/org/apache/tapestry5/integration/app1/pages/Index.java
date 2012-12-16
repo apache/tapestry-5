@@ -57,6 +57,10 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("JavaScriptTests", "JavaScript Tests", "Client-side tests using Mocha and Chai"),
+
+                    new Item("ModuleInitDemo", "Module-based Initialization Demo", "Invoke a module function to perform page initialization"),
+
                     new Item("OperationWorkerDemo", "Operation Worker Demo", "Demonstrate use of @Operation annotation on component methods"),
 
                     new Item("MixinParameterDefault", "Mixin Parameter with Default", "Ensure that a mixin parameter with a default value is not reported as unbound."),
@@ -88,8 +92,6 @@ public class Index
 
                     new Item("DynamicExpansionsDemo", "Expansions in Dynamic Templates",
                             "Expansions inside Dynamic component content and attributes"),
-
-                    new Item("JavaScriptTests", "JavaScript Unit Tests", "Unit tests for client-side JavaScript"),
 
                     new Item("PACAnnotationDemo", "PageActivationContext Demo",
                             "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
@@ -153,9 +155,6 @@ public class Index
 
                     new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
                             "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
-
-                    new Item("SlowAjaxDemo", "Slow Ajax Demo",
-                            "Handling of client-side Ajax before the page is fully loaded"),
 
                     new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
 
@@ -366,7 +365,7 @@ public class Index
                             "Demo the autocomplete mixin for text fields"),
 
                     new Item("componentparameter", "ComponentParameter Demo",
-                            " Demo using a component type as a parameter type and succesfuly passing a component"),
+                            " Demo using a component type as a parameter type and succesfully passing a component"),
 
                     new Item("inheritinformalsdemo", "Inherit Informal Parameters Demo",
                             "Demo a component which inherits informal parameters from its container"),

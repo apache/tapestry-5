@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         // First try creates it:
 
@@ -82,7 +82,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         // First try creates it:
 
@@ -112,7 +112,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(null, configuration, symbolSource);
+        AssetSource source = new AssetSourceImpl(null, configuration, symbolSource, null);
 
         // First try creates it:
 
@@ -142,7 +142,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         assertSame(source.getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties"), asset);
 
@@ -167,7 +167,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         assertSame(source.getAsset(baseResource,
                 "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK), asset);
@@ -189,15 +189,14 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         try
         {
             source.getAsset(baseResource,
                     "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
                     "Unknown prefix for asset path 'classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties'.");
@@ -215,14 +214,13 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
 
         try
         {
             source.getAsset(baseResource, "DoesNotExist.properties", Locale.UK);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),

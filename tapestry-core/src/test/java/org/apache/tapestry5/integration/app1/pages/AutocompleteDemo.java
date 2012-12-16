@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
-import java.util.Collections;
 import java.util.List;
 
 public class AutocompleteDemo
@@ -31,18 +31,30 @@ public class AutocompleteDemo
     @Persist
     private String title;
 
+    @Inject
+    private AlertManager alertManager;
+
     List onProvideCompletionsFromTitle(String partialTitle) throws Exception
     {
+        boolean roundabout = false;
+
         List<Track> matches = library.findByMatchingTitle(partialTitle);
 
         List<String> result = CollectionFactory.newList();
 
         for (Track t : matches)
+        {
             result.add(t.getTitle());
 
-        Collections.sort(result);
+            roundabout |= t.getTitle().equals("Roundabout");
+        }
 
         // Thread.sleep(1000);
+
+        if (roundabout)
+        {
+            alertManager.info("Completions include 'Roundabout'.");
+        }
 
         return result;
     }

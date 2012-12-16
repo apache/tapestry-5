@@ -20,13 +20,12 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Used inside a {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to remove the current row from the loop.
  * This fires a server-side event (from the AjaxFormLoop component); the event context is the object to be removed. On
  * the client-side, the element for the row is hidden, then removed altogether.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -38,22 +37,17 @@ public class RemoveRowLink
     @Environmental
     private AjaxFormLoopContext context;
 
-    @Environmental
-    private JavaScriptSupport jsSupport;
-
     void beginRender(MarkupWriter writer)
     {
-        String clientId = jsSupport.allocateClientId(resources);
-
         writer.element("a",
 
-        "href", "#",
+                "href", "#",
 
-        "id", clientId);
+                "data-afl-behavior", "remove",
+
+                "data-afl-row-value", context.encodedRowValue());
 
         resources.renderInformalParameters(writer);
-
-        context.addRemoveRowTrigger(clientId);
     }
 
     void afterRender(MarkupWriter writer)

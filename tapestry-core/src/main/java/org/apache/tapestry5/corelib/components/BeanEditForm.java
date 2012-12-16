@@ -104,6 +104,13 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
+    /**
+     * Specifies the CSS class attribute for the form; the factory default is "well".
+     */
+    @Property
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "message:core-components.beaneditform.class")
+    private String className;
+
     @Component(parameters = "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
     private Form form;
 

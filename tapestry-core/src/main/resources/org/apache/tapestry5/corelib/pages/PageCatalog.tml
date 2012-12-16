@@ -4,7 +4,7 @@
 
     <p:leftnav>
 
-        <ul class="t-menu">
+        <ul class="nav nav-pills nav-stacked">
             <li>
                 <t:pagelink page="pagecatalog">refresh this page</t:pagelink>
             </li>
@@ -52,11 +52,12 @@
 
     </t:zone>
 
-    <t:form t:id="singlePageLoad" zone="pages">
+    <t:form t:id="singlePageLoad" zone="pages" class="form-inline">
 
-        <t:label for="pageName">Load single page</t:label>
-        <t:select t:id="pageName" model="pageNames"/>
-        <input type="submit" value="Load Page"/>
+            <t:label for="pageName">Load single page:</t:label>
+            <t:select t:id="pageName" model="pageNames"/>
+
+        <input type="submit" value="Load Page" class="btn btn-primary"/>
 
     </t:form>
 

@@ -14,18 +14,19 @@
 
 package org.apache.tapestry5.services.pageload;
 
-import java.util.List;
-
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 import org.apache.tapestry5.model.ComponentModel;
+
+import java.util.List;
 
 /**
  * A central service that encapsulates the rules for locating resources for components. The service can be
  * overridden, or simply decorated, to implement customized rules for locating templates across
  * one or more {@linkplain ComponentResourceSelector#getAxis(Class) axes}; this is the approach used to skin
  * Tapestry applications.
- * 
+ *
+ * @see org.apache.tapestry5.services.templates.ComponentTemplateLocator
  * @since 5.3
  */
 public interface ComponentResourceLocator
@@ -34,11 +35,11 @@ public interface ComponentResourceLocator
      * Locates the template for a component (including pages and base classes). The implementation takes into
      * account the locale and other axes specified by the selector. If the method returns null, then the component
      * will have no template (which is common for components, but rare for pages).
-     * 
+     *
      * @param model
-     *            defines the component, including its {@linkplain ComponentModel#getBaseResource() base resource}.
+     *         defines the component, including its {@linkplain ComponentModel#getBaseResource() base resource}.
      * @param selector
-     *            used to identify locale, etc., for the template
+     *         used to identify locale, etc., for the template
      * @return Resource for component template, or null if not found
      */
     Resource locateTemplate(ComponentModel model, ComponentResourceSelector selector);
@@ -48,11 +49,11 @@ public interface ComponentResourceLocator
      * files are returned in order of specificity: the properties provided by the first resource override
      * properties in later resources. Only resources specific to the class associated with the model
      * should be concerned (message inheritance from base classes is handled by Tapestry).
-     * 
+     *
      * @param baseResource
-     *            the resource for the base component properties file (i.e., with the ".properties" file extension)
+     *         the resource for the base component properties file (i.e., with the ".properties" file extension)
      * @param selector
-     *            defined the locale and other axes used to locate individual properties files
+     *         defined the locale and other axes used to locate individual properties files
      * @return list of properties file Resources
      * @see LocalizedNameGenerator
      */

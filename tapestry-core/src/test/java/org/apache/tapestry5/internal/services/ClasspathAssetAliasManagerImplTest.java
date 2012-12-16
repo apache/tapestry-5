@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,13 +82,11 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         BaseURLSource baseURLSource = newMock(BaseURLSource.class);
 
-        train_getContextPath(request, "/ctx");
-
         replay();
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(
                 new AssetPathConstructorImpl(request,
-                baseURLSource, APP_VERSION, "", false, "/assets/"), configuration());
+                baseURLSource, "ctx/", APP_VERSION, "", false, "assets"), configuration());
 
         String expectedPath = "/ctx/assets/" + APP_VERSION + "/" + expectedClientURL;
         assertEquals(manager.toClientURL(resourcePath), expectedPath);

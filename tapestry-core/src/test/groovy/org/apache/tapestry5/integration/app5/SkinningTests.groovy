@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 package org.apache.tapestry5.integration.app5
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase
+import org.apache.tapestry5.test.TapestryTestConfiguration
 import org.testng.annotations.Test
 
 /**
  * Tests for the "skinning support" added in 5.3.
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/app5")
 class SkinningTests extends TapestryCoreTestCase
 {
     @Test

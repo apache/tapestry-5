@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
@@ -75,9 +74,6 @@ public class Select extends AbstractField
     @Parameter
     private ValueEncoder encoder;
 
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
     // Maybe this should default to property "<componentId>Model"?
     /**
      * The model used to identify the option groups and options to be presented to the user. This can be generated
@@ -103,9 +99,6 @@ public class Select extends AbstractField
 
     @Inject
     private Request request;
-
-    @Inject
-    private ComponentResources resources;
 
     @Environmental
     private ValidationTracker tracker;
@@ -202,11 +195,13 @@ public class Select extends AbstractField
 
         if (this.zone != null)
         {
+            javaScriptSupport.require("core/select");
+
             Link link = resources.createEventLink(CHANGE_EVENT);
 
-            JSONObject spec = new JSONObject("selectId", getClientId(), "zoneId", zone, "url", link.toURI());
-
-            javascriptSupport.addInitializerCall("linkSelectToZone", spec);
+            writer.attributes(
+                    "data-update-zone", zone,
+                    "data-update-url", link);
         }
     }
 

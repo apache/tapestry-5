@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Session;
@@ -36,12 +38,7 @@ public class TestableRequestImpl implements TestableRequest
     private Locale locale = Locale.getDefault();
 
     @Inject
-    public TestableRequestImpl()
-    {
-        this("/foo");
-    }
-
-    public TestableRequestImpl(String contextPath)
+    public TestableRequestImpl(@Symbol(SymbolConstants.CONTEXT_PATH) String contextPath)
     {
         this.contextPath = contextPath;
     }
@@ -209,6 +206,11 @@ public class TestableRequestImpl implements TestableRequest
     public Object getAttribute(String name)
     {
         return attributes.get(name);
+    }
+
+    public List<String> getAttributeNames()
+    {
+        return InternalUtils.sortedKeys(attributes);
     }
 
     public void setAttribute(String name, Object value)

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
+import org.apache.tapestry5.ioc.internal.services.ClasspathScannerImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
@@ -47,11 +48,15 @@ public class HibernateSessionSourceImplTest extends IOCTestCase
         HibernateEntityPackageManager packageManager = newMock(HibernateEntityPackageManager.class);
         TestBase.expect(packageManager.getPackageNames()).andReturn(packageNames);
 
+        ClasspathScannerImpl scanner = new ClasspathScannerImpl(new ClasspathURLConverterImpl());
+        ClassNameLocatorImpl classNameLocator = new ClassNameLocatorImpl(scanner);
+
         List<HibernateConfigurer> filters = Arrays.asList(new DefaultHibernateConfigurer(true),
-                new PackageNameHibernateConfigurer(packageManager, new ClassNameLocatorImpl(
-                        new ClasspathURLConverterImpl())));
+                new PackageNameHibernateConfigurer(packageManager, classNameLocator));
+
 
         replay();
+
         HibernateSessionSource source = new HibernateSessionSourceImpl(log, filters);
 
         Session session = source.create();

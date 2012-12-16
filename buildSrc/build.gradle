@@ -1,0 +1,11 @@
+apply plugin: "groovy"
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile "ro.isdc.wro4j:wro4j-extensions:1.5.0"
+    gradleApi()
+}

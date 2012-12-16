@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-
 /**
  * Interface that allows an enclosing {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to work with enclosed
  * components such as {@link org.apache.tapestry5.corelib.components.AddRowLink} or
@@ -24,18 +22,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 public interface AjaxFormLoopContext
 {
     /**
-     * Adds a clientId to the list of client-side elements that trigger the addition of a new row.
-     * 
-     * @param clientId
-     *            unique id (typically via
-     *            {@link JavaScriptSupport#allocateClientId(org.apache.tapestry5.ComponentResources)})
+     * Returns the {@linkplain org.apache.tapestry5.ValueEncoder encoded} version of the data for the current row.
+     *
+     * @return current row's value, encoded and ready to store in an element attribute
+     * @since 5.4
      */
-    void addAddRowTrigger(String clientId);
-
-    /**
-     * Used by {@link org.apache.tapestry5.corelib.components.RemoveRowLink} to
-     * 
-     * @param clientId
-     */
-    void addRemoveRowTrigger(String clientId);
+    String encodedRowValue();
 }

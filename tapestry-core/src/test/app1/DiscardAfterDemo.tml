@@ -4,7 +4,7 @@
 
     <h1>@DiscardAfter Demo</h1>
 
-    <t:form>
+    <t:form class="form-inline">
 
         <t:textfield t:id="stringValue"/>
 

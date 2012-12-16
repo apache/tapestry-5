@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,41 +19,43 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.regex.Pattern;
 
 /**
  * A validator that checks if a given string is well-formed email address. This validator is not configurable.
+ * <p/>
+ * Starting with release 5.4, this validator also performs client-side validation.
  */
 public class Email extends AbstractValidator<Void, String>
 {
-    private static final String ATOM = "[^\\x00-\\x1F^\\(^\\)^\\<^\\>^\\@^\\,^\\;^\\:^\\\\^\\\"^\\.^\\[^\\]^\\s]";
-
-    private static final String DOMAIN = "(" + ATOM + "+(\\." + ATOM + "+)*";
-
-    private static final String IP_DOMAIN = "\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\]";
-
     private static final Pattern PATTERN = Pattern
-            .compile("^" + ATOM + "+(\\." + ATOM + "+)*@" + DOMAIN + "|" + IP_DOMAIN + ")$", Pattern.CASE_INSENSITIVE);
+            .compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
 
-    public Email()
+    public Email(JavaScriptSupport javaScriptSupport)
     {
-        super(null, String.class, "invalid-email");
+        super(null, String.class, "invalid-email", javaScriptSupport);
     }
 
-    public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter markupWriter,
+    public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-    }
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
 
-    private String buildMessage(MessageFormatter formatter, Field field)
-    {
-        return formatter.format(field.getLabel());
+            writer.attributes(
+                    DataConstants.VALIDATION_ATTRIBUTE, true,
+                    "data-validate-regexp", PATTERN.pattern(),
+                    "data-regexp-message", formatter.toString());
+        }
     }
 
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, String value)
             throws ValidationException
     {
-        if (!PATTERN.matcher(value).matches()) throw new ValidationException(buildMessage(formatter, field));
+        if (!PATTERN.matcher(value).matches()) throw new ValidationException(formatter.toString());
     }
 }

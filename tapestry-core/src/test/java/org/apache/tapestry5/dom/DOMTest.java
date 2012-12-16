@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
 
 package org.apache.tapestry5.dom;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -359,7 +361,7 @@ public class DOMTest extends InternalBaseTestCase
         root.elementAt(2, "two").element("bubbles");
 
         assertEquals(d.toString(),
-                     "<?xml version=\"1.0\"?>\n<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
+                "<?xml version=\"1.0\"?>\n<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
     }
 
     @Test
@@ -382,7 +384,7 @@ public class DOMTest extends InternalBaseTestCase
      * TAP5-708
      */
     @Test
-    public void namespace_element_force_attributes_overrides_existing() 
+    public void namespace_element_force_attributes_overrides_existing()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -396,7 +398,6 @@ public class DOMTest extends InternalBaseTestCase
 
         assertEquals(root.toString(), "<fred hi=\"bit\" xmlns=\"fredns\"/>");
     }
-
 
 
     @Test
@@ -457,7 +458,8 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void apostrophes_are_escaped() {
+    public void apostrophes_are_escaped()
+    {
         Document d = new Document(new XMLMarkupModel(true));
 
         Element root = d.newRootElement("prime");
@@ -480,7 +482,18 @@ public class DOMTest extends InternalBaseTestCase
 
         assertSame(root.addClassName("barney", "wilma"), root);
 
-        assertEquals(root.toString(), "<div class=\"fred barney wilma\"/>");
+        assertEquals(extract(root, "class"), stringSet("fred", "barney", "wilma"));
+    }
+
+    private Set<String> extract(Element e, String attributeName)
+    {
+        String attribute = e.getAttribute(attributeName);
+
+        return stringSet(attribute.split(" "));
+    }
+
+    private Set<String> stringSet(String... value) {
+        return CollectionFactory.newSet(Arrays.asList(value));
     }
 
     /**
@@ -499,7 +512,7 @@ public class DOMTest extends InternalBaseTestCase
 
         element.addClassName("b");
 
-        assertEquals(element.toString(), "<e class=\"a b\" xmlns=\"fredns\"></e>");
+        assertEquals(extract(element, "class"), stringSet("a", "b"));
     }
 
     @Test
@@ -550,13 +563,13 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
 
 
         mobile.moveBefore(target);
 
         assertEquals(d.toString(),
-                     "<doc><placeholder></placeholder><mobile>On the move</mobile><target></target><source></source></doc>");
+                "<doc><placeholder></placeholder><mobile>On the move</mobile><target></target><source></source></doc>");
     }
 
     @Test
@@ -573,13 +586,13 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
 
 
         mobile.moveAfter(target);
 
         assertEquals(d.toString(),
-                     "<doc><placeholder></placeholder><target></target><mobile>On the move</mobile><source></source></doc>");
+                "<doc><placeholder></placeholder><target></target><mobile>On the move</mobile><source></source></doc>");
     }
 
     @Test
@@ -596,12 +609,12 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
 
         mobile.moveToTop(target);
 
         assertEquals(d.toString(),
-                     "<doc><target><mobile>On the move</mobile><placeholder></placeholder></target><source></source></doc>");
+                "<doc><target><mobile>On the move</mobile><placeholder></placeholder></target><source></source></doc>");
     }
 
     @Test
@@ -618,12 +631,12 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
 
         mobile.moveToBottom(target);
 
         assertEquals(d.toString(),
-                     "<doc><target><placeholder></placeholder><mobile>On the move</mobile></target><source></source></doc>");
+                "<doc><target><placeholder></placeholder><mobile>On the move</mobile></target><source></source></doc>");
     }
 
     @Test
@@ -642,12 +655,12 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><before></before><source><mobile>On the move</mobile><grok></grok></source><after></after></doc>");
+                "<doc><before></before><source><mobile>On the move</mobile><grok></grok></source><after></after></doc>");
 
         source.removeChildren();
 
         assertEquals(d.toString(),
-                     "<doc><before></before><source></source><after></after></doc>");
+                "<doc><before></before><source></source><after></after></doc>");
     }
 
     @Test
@@ -662,12 +675,12 @@ public class DOMTest extends InternalBaseTestCase
         source.element("grok");
 
         assertEquals(d.toString(),
-                     "<doc><source><mobile>On the move</mobile><grok></grok></source></doc>");
+                "<doc><source><mobile>On the move</mobile><grok></grok></source></doc>");
 
         source.pop();
 
         assertEquals(d.toString(),
-                     "<doc><mobile>On the move</mobile><grok></grok></doc>");
+                "<doc><mobile>On the move</mobile><grok></grok></doc>");
     }
 
     @Test
@@ -687,8 +700,7 @@ public class DOMTest extends InternalBaseTestCase
         {
             mobile.moveToTop(inside);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Unable to move a node relative to itself.");
         }
@@ -708,12 +720,12 @@ public class DOMTest extends InternalBaseTestCase
         Node text = mobile.text("On the move");
 
         assertEquals(d.toString(),
-                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
 
         text.wrap("em", "class", "bold");
 
         assertEquals(d.toString(),
-                     "<doc><target><placeholder></placeholder></target><source><mobile><em class=\"bold\">On the move</em></mobile></source></doc>");
+                "<doc><target><placeholder></placeholder></target><source><mobile><em class=\"bold\">On the move</em></mobile></source></doc>");
     }
 
     /**
@@ -812,7 +824,7 @@ public class DOMTest extends InternalBaseTestCase
         });
 
         assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
-                          "child2c");
+                "child2c");
     }
 
     /**
@@ -862,14 +874,14 @@ public class DOMTest extends InternalBaseTestCase
         Element root = d.newRootElement("parent");
 
         root.attributes("baggins", "frodo",
-                        "friend", "sam");
+                "friend", "sam");
 
         root.forceAttributes("friend", null);
 
         assertEquals(root.toString(), "<parent baggins=\"frodo\"></parent>");
 
         root.forceAttributes("baggins", null,
-                             "enemy", "gollum");
+                "enemy", "gollum");
 
         assertEquals(root.toString(), "<parent enemy=\"gollum\"></parent>");
     }

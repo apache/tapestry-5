@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc;
+
+import java.util.Set;
 
 /**
  * Provides access to a messages catalog, a set of properties files that provide localized messages for a particular
@@ -45,8 +47,15 @@ public interface Messages
     MessageFormatter getFormatter(String key);
 
     /**
-     * Convienience for accessing a formatter and formatting a localized message with arguments.
+     * Convenience for accessing a formatter and formatting a localized message with arguments.
      */
-
     String format(String key, Object... args);
+
+    /**
+     * Returns a set of all the keys for which this instance may provide a value.
+     *
+     * @return set of keys
+     * @since 5.4
+     */
+    Set<String> getKeys();
 }

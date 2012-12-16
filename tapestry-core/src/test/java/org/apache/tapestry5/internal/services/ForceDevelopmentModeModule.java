@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,5 +29,6 @@ public class ForceDevelopmentModeModule
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, false);
         configuration.add(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "app.root.package");
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "hmac passphrase for testing");
     }
 }

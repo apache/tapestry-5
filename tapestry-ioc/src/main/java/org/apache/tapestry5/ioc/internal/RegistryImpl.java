@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -109,10 +109,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
-     * @param moduleDefs       defines the modules (and builders, decorators, etc., within)
-     * @param proxyFactory     used to create new proxy objects
-     * @param loggerSource     used to obtain Logger instances
-     * @param operationTracker used to track operations related to the registry and its services
+     * @param moduleDefs
+     *         defines the modules (and builders, decorators, etc., within)
+     * @param proxyFactory
+     *         used to create new proxy objects
+     * @param loggerSource
+     *         used to obtain Logger instances
+     * @param operationTracker
+     *         used to track operations related to the registry and its services
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, PlasticProxyFactory proxyFactory,
                         LoggerSource loggerSource, OperationTracker operationTracker)
@@ -129,7 +133,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
-        perthreadManager = new PerthreadManagerImpl(logger);
+        PerthreadManagerImpl ptmImpl = new PerthreadManagerImpl(logger);
+
+        perthreadManager = ptmImpl;
 
         final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl(perthreadManager);
 
@@ -138,6 +144,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
         registryShutdownHub = new RegistryShutdownHubImpl(logger);
+        ptmImpl.registerForShutdown(registryShutdownHub);
 
         lifecycles.put("singleton", new SingletonServiceLifecycle());
 
@@ -256,18 +263,18 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // Match services with the correct interface AND having as markers *all* the marker annotations
 
         Flow<ServiceDef2> filtered = serviceDefs.filter(F.and(new Predicate<ServiceDef2>()
-                {
-                    public boolean accept(ServiceDef2 object)
-                    {
-                        return object.getServiceInterface().equals(cd.getServiceInterface());
-                    }
-                }, new Predicate<ServiceDef2>()
-        {
-            public boolean accept(ServiceDef2 serviceDef)
-            {
-                return serviceDef.getMarkers().containsAll(contributionMarkers);
-            }
-        }
+                                                              {
+                                                                  public boolean accept(ServiceDef2 object)
+                                                                  {
+                                                                      return object.getServiceInterface().equals(cd.getServiceInterface());
+                                                                  }
+                                                              }, new Predicate<ServiceDef2>()
+                                                              {
+                                                                  public boolean accept(ServiceDef2 serviceDef)
+                                                                  {
+                                                                      return serviceDef.getMarkers().containsAll(contributionMarkers);
+                                                                  }
+                                                              }
         ));
 
         // That's a lot of logic; the good news is it will short-circuit as soon as it finds a single match,

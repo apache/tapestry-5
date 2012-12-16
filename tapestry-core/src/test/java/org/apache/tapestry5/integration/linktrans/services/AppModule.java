@@ -28,7 +28,6 @@ public class AppModule
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, "true");
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true");
     }
 
     public static void contributePageRenderLinkTransformer(OrderedConfiguration<PageRenderLinkTransformer> configuration)

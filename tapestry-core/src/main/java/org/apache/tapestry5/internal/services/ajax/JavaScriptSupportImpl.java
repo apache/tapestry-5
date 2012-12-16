@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
@@ -31,11 +27,12 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.services.javascript.StylesheetLink;
+import org.apache.tapestry5.services.javascript.*;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -47,15 +44,13 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final Map<String, Boolean> addedStacks = CollectionFactory.newCaseInsensitiveMap();
 
-    private final List<String> stackLibraries = CollectionFactory.newList();
-
-    private final List<String> otherLibraries = CollectionFactory.newList();
+    private final Set<String> otherLibraries = CollectionFactory.newSet();
 
     private final Set<String> importedStylesheetURLs = CollectionFactory.newSet();
 
     private final List<StylesheetLink> stylesheetLinks = CollectionFactory.newList();
 
-    private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
+    private final List<InitializationImpl> inits = CollectionFactory.newList();
 
     private final JavaScriptStackSource javascriptStackSource;
 
@@ -67,32 +62,76 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private String focusFieldId;
 
+    private Map<String, String> libraryURLToStackName;
+
+    class InitializationImpl implements Initialization
+    {
+        InitializationPriority priority = InitializationPriority.NORMAL;
+
+        final String moduleName;
+
+        String functionName;
+
+        JSONArray arguments;
+
+        InitializationImpl(String moduleName)
+        {
+            this.moduleName = moduleName;
+        }
+
+        @Override
+        public Initialization invoke(String functionName)
+        {
+            assert InternalUtils.isNonBlank(functionName);
+
+            this.functionName = functionName;
+
+            return this;
+        }
+
+        @Override
+        public Initialization priority(InitializationPriority priority)
+        {
+            assert priority != null;
+
+            this.priority = priority;
+
+            return this;
+        }
+
+        @Override
+        public void with(Object... arguments)
+        {
+            this.arguments = new JSONArray(arguments);
+        }
+    }
+
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-            JavaScriptStackPathConstructor stackPathConstructor)
+                                 JavaScriptStackPathConstructor stackPathConstructor)
     {
         this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
     /**
      * @param linker
-     *            responsible for assembling all the information gathered by JavaScriptSupport and
-     *            attaching it to the Document (for a full page render) or to the JSON response (in a partial render)
+     *         responsible for assembling all the information gathered by JavaScriptSupport and
+     *         attaching it to the Document (for a full page render) or to the JSON response (in a partial render)
      * @param javascriptStackSource
-     *            source of information about {@link JavaScriptStack}s, used when handling the import
-     *            of libraries and stacks (often, to handle transitive dependencies)
+     *         source of information about {@link JavaScriptStack}s, used when handling the import
+     *         of libraries and stacks (often, to handle transitive dependencies)
      * @param stackPathConstructor
-     *            encapsulates the knowledge of how to represent a stack (which may be converted
-     *            from a series of JavaScript libraries into a single virtual JavaScript library)
+     *         encapsulates the knowledge of how to represent a stack (which may be converted
+     *         from a series of JavaScript libraries into a single virtual JavaScript library)
      * @param idAllocator
-     *            used when allocating unique ids (it is usually pre-initialized in an Ajax request to ensure
-     *            that newly allocated ids do not conflict with previous renders and partial updates)
+     *         used when allocating unique ids (it is usually pre-initialized in an Ajax request to ensure
+     *         that newly allocated ids do not conflict with previous renders and partial updates)
      * @param partialMode
-     *            if true, then the JSS configures itself for a partial page render (part of an Ajax request)
-     *            which automatically assumes the "core" library has been added (to the original page render)
-     *            and makes other minor changes to behavior.
+     *         if true, then the JSS configures itself for a partial page render (part of an Ajax request)
+     *         which automatically assumes the "core" library has been added (to the original page render)
+     *         and makes other minor changes to behavior.
      */
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-            JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
+                                 JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
@@ -104,13 +143,17 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         // (from the original page render).
 
         if (partialMode)
+        {
             addedStacks.put(InternalConstants.CORE_STACK_NAME, true);
+        }
     }
 
     public void commit()
     {
         if (focusFieldId != null)
-            addInitializerCall("activate", focusFieldId);
+        {
+            require("core/pageinit").invoke("focus").with(focusFieldId);
+        }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
         {
@@ -120,24 +163,21 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             }
         });
 
-        Worker<String> linkLibrary = new Worker<String>()
+        F.flow(inits).sort(new Comparator<InitializationImpl>()
         {
-            public void work(String value)
+            @Override
+            public int compare(InitializationImpl o1, InitializationImpl o2)
             {
-                linker.addScriptLink(value);
+                return o1.priority.compareTo(o2.priority);
             }
-        };
-
-        F.flow(stackLibraries).each(linkLibrary);
-        F.flow(otherLibraries).each(linkLibrary);
-
-        for (InitializationPriority p : InitializationPriority.values())
+        }).each(new Worker<InitializationImpl>()
         {
-            JSONObject init = inits.get(p);
-
-            if (init != null)
-                linker.setInitialization(p, init);
-        }
+            @Override
+            public void work(InitializationImpl element)
+            {
+                linker.addInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
+            }
+        });
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
@@ -160,25 +200,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert priority != null;
         assert parameter != null;
         assert InternalUtils.isNonBlank(functionName);
-        addCoreStackIfNeeded();
 
-        JSONObject init = inits.get(priority);
-
-        if (init == null)
-        {
-            init = new JSONObject();
-            inits.put(priority, init);
-        }
-
-        JSONArray invocations = init.has(functionName) ? init.getJSONArray(functionName) : null;
-
-        if (invocations == null)
-        {
-            invocations = new JSONArray();
-            init.put(functionName, invocations);
-        }
-
-        invocations.put(parameter);
+        require("core/init").priority(priority).with(functionName, parameter);
     }
 
     public void addInitializerCall(String functionName, JSONObject parameter)
@@ -201,15 +224,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert priority != null;
         assert InternalUtils.isNonBlank(format);
 
-        addCoreStackIfNeeded();
-
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
         if (partialMode)
         {
-            addInitializerCall(priority, "evalScript", newScript);
-        }
-        else
+            require("core/pageinit").invoke("evalJavaScript").with(newScript);
+        } else
         {
             linker.addScript(priority, newScript);
         }
@@ -230,32 +250,33 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return idAllocator.allocateId(id);
     }
 
-    public void importJavaScriptLibrary(Asset asset)
+    public JavaScriptSupport importJavaScriptLibrary(Asset asset)
     {
         assert asset != null;
 
-        importJavaScriptLibrary(asset.toClientURL());
+        return importJavaScriptLibrary(asset.toClientURL());
     }
 
-    public void importJavaScriptLibrary(String libraryURL)
+    public JavaScriptSupport importJavaScriptLibrary(String libraryURL)
     {
-        addCoreStackIfNeeded();
 
         String stackName = findStackForLibrary(libraryURL);
 
         if (stackName != null)
         {
-            importStack(stackName);
-            return;
+            return importStack(stackName);
         }
 
-        if (otherLibraries.contains(libraryURL))
-            return;
+        if (!otherLibraries.contains(libraryURL))
+        {
+            linker.addLibrary(libraryURL);
 
-        otherLibraries.add(libraryURL);
+            otherLibraries.add(libraryURL);
+        }
+
+        return this;
     }
 
-    private Map<String, String> libraryURLToStackName;
 
     /**
      * Locates the name of the stack that includes the library URL. Returns the stack,
@@ -284,15 +305,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return libraryURLToStackName;
     }
 
-    private void addCoreStackIfNeeded()
-    {
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
-    }
-
     private void addAssetsFromStack(String stackName)
     {
         if (addedStacks.containsKey(stackName))
+        {
             return;
+        }
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
@@ -301,7 +319,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             addAssetsFromStack(dependentStackname);
         }
 
-        stackLibraries.addAll(stackPathConstructor.constructPathsForJavaScriptStack(stackName));
+        List<String> libraryURLs = stackPathConstructor.constructPathsForJavaScriptStack(stackName);
+
+        for (String libraryURL : libraryURLs)
+        {
+            linker.addLibrary(libraryURL);
+        }
 
         stylesheetLinks.addAll(stack.getStylesheets());
 
@@ -310,37 +333,45 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         String initialization = stack.getInitialization();
 
         if (initialization != null)
+        {
             addScript(InitializationPriority.IMMEDIATE, initialization);
+        }
     }
 
-    public void importStylesheet(Asset stylesheet)
+    public JavaScriptSupport importStylesheet(Asset stylesheet)
     {
         assert stylesheet != null;
-        importStylesheet(new StylesheetLink(stylesheet));
+
+        return importStylesheet(new StylesheetLink(stylesheet));
     }
 
-    public void importStylesheet(StylesheetLink stylesheetLink)
+    public JavaScriptSupport importStylesheet(StylesheetLink stylesheetLink)
     {
         assert stylesheetLink != null;
+
         String stylesheetURL = stylesheetLink.getURL();
 
-        if (importedStylesheetURLs.contains(stylesheetURL))
-            return;
+        if (!importedStylesheetURLs.contains(stylesheetURL))
+        {
 
-        importedStylesheetURLs.add(stylesheetURL);
+            importedStylesheetURLs.add(stylesheetURL);
 
-        stylesheetLinks.add(stylesheetLink);
+            stylesheetLinks.add(stylesheetLink);
+        }
+
+        return this;
     }
 
-    public void importStack(String stackName)
+    public JavaScriptSupport importStack(String stackName)
     {
         assert InternalUtils.isNonBlank(stackName);
-        addCoreStackIfNeeded();
 
         addAssetsFromStack(stackName);
+
+        return this;
     }
 
-    public void autofocus(FieldFocusPriority priority, String fieldId)
+    public JavaScriptSupport autofocus(FieldFocusPriority priority, String fieldId)
     {
         assert priority != null;
         assert InternalUtils.isNonBlank(fieldId);
@@ -350,6 +381,19 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             this.focusPriority = priority;
             focusFieldId = fieldId;
         }
+
+        return this;
     }
 
+    @Override
+    public Initialization require(String moduleName)
+    {
+        assert InternalUtils.isNonBlank(moduleName);
+
+        InitializationImpl init = new InitializationImpl(moduleName);
+
+        inits.add(init);
+
+        return init;
+    }
 }

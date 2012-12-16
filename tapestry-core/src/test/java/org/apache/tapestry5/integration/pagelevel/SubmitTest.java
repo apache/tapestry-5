@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.integration.pagelevel;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -86,14 +85,7 @@ public class SubmitTest extends Assert
         
         assertEquals("image", submitButton.getAttribute("type"));
         
-        SymbolSource service = tester.getService(SymbolSource.class);
-        
-        String symbolValue = service.valueForSymbol("tapestry.spacer-image");
-        
-        String iconName = symbolValue.substring(symbolValue.lastIndexOf("/"));
-        
-        assertTrue(submitButton.getAttribute("src").contains(iconName));
-
+        assertTrue(submitButton.getAttribute("src").endsWith(".gif"));
     }
 
     @BeforeMethod

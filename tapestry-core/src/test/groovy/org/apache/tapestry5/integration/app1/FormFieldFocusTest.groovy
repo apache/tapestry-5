@@ -1,4 +1,4 @@
-// Copyright (c) 2011. The Apache Software Foundation
+// Copyright (c) 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ class FormFieldFocusTest extends TapestryCoreTestCase
     {
         openLinks "FormFieldFocus (DEPRECATED) Demo"
 
+        waitForPageInitialized()
+
         assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
 
     }
@@ -37,6 +39,8 @@ class FormFieldFocusTest extends TapestryCoreTestCase
     void override_field_focus_mixin()
     {
         openLinks "OverrideFieldFocus Demo"
+
+        waitForPageInitialized()
 
         assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
 

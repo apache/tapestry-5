@@ -1,8 +1,10 @@
 package org.apache.tapestry5.integration.appfolder
 
 import org.apache.tapestry5.integration.GroovyTapestryCoreTestCase
+import org.apache.tapestry5.test.TapestryTestConfiguration
 import org.testng.annotations.Test
 
+@TapestryTestConfiguration(webAppFolder = "src/test/appfolder")
 class AppFolderTests extends GroovyTapestryCoreTestCase
 {
 
@@ -31,7 +33,9 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     {
         openLinks "t5app/", "show index page alert"
 
-        assertText "css=div.t-message-container", "index page alert"
+        waitForPageInitialized()
+
+        assertTextPresent "index page alert"
     }
 
     @Test

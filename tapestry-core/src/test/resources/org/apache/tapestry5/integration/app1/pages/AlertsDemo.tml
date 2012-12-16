@@ -21,11 +21,7 @@
     </t:zone>
 </div>
 
-<p>
-    [
-    <t:actionlink t:id="reset">reset</t:actionlink>
-    ]
-</p>
+<t:actionlink class="btn btn-warning" t:id="reset">Reset Alerts Storage</t:actionlink>
 
 <t:alerts class='alert-class' dismissText="Zenbu Kesu"/>
 

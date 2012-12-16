@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,15 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /* A vaidator that enforces that a number is greater than some minimum integer value. */
 public class Min extends AbstractValidator<Long, Number>
 {
-    public Min()
+    public Min(JavaScriptSupport javaScriptSupport)
     {
-        super(Long.class, Number.class, "min-integer");
+        super(Long.class, Number.class, "min-integer", javaScriptSupport);
     }
 
     public void validate(Field field, Long constraintValue, MessageFormatter formatter, Number value)
@@ -43,6 +45,12 @@ public class Min extends AbstractValidator<Long, Number>
     public void render(Field field, Long constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "min", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+            writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
+                    "data-validate-min", constraintValue.toString(),
+                    "data-min-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 }

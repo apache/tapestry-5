@@ -2,9 +2,12 @@ description = "Repackaged, improved (and tested) version of code originally from
 
 dependencies {
 
-    compile project(':tapestry-ioc')
-    testCompile project(':tapestry-test')
+    provided project(':tapestry-ioc')
+    testCompile "org.spockframework:spock-core:${versions.spock}"
+}
 
+test {
+    useJUnit()
 }
 
 jar {

@@ -1,4 +1,4 @@
-// Copyright 2007, 2011 The Apache Software Foundation
+// Copyright 2007, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.pages.ExceptionReport;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -29,6 +30,7 @@ import org.apache.tapestry5.services.ObjectRenderer;
  * 
  * @tapestrydoc
  */
+@Import(stylesheet = "RenderObject.css")
 public class RenderObject
 {
     @Parameter(required = true)

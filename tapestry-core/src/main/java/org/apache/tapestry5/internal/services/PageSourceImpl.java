@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,12 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentMessages;
+import org.apache.tapestry5.services.ComponentTemplates;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
@@ -26,7 +30,7 @@ import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.Set;
 
-public class PageSourceImpl implements PageSource, InvalidationListener
+public class PageSourceImpl implements PageSource
 {
     private final ComponentRequestSelectorAnalyzer selectorAnalyzer;
 
@@ -71,11 +75,6 @@ public class PageSourceImpl implements PageSource, InvalidationListener
         this.selectorAnalyzer = selectorAnalyzer;
     }
 
-    public void objectWasInvalidated()
-    {
-        clearCache();
-    }
-
     public Page getPage(String canonicalPageName)
     {
         ComponentResourceSelector selector = selectorAnalyzer.buildSelectorForRequest();
@@ -107,6 +106,16 @@ public class PageSourceImpl implements PageSource, InvalidationListener
 
             pageCache.put(key, ref);
         }
+    }
+
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub classesHub,
+                                  @ComponentTemplates InvalidationEventHub templatesHub,
+                                  @ComponentMessages InvalidationEventHub messagesHub)
+    {
+        classesHub.clearOnInvalidation(pageCache);
+        templatesHub.clearOnInvalidation(pageCache);
+        messagesHub.clearOnInvalidation(pageCache);
     }
 
     public void clearCache()

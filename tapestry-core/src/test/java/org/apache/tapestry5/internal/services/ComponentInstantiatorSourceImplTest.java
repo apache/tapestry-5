@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.t5internal.pages.BasicComponent;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.transform.pages.BasicComponent;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.runtime.Component;
@@ -41,9 +41,13 @@ import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ARETURN;
  */
 public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 {
+    // BaseComponent and SynthComponent need to be inside controlled packages, as defined
+    // by some contributed LibraryMapping.
+    // org.apache.tapestry5.internal.t5internal is a handy package to use.
+
     private static final String BASIC_COMPONENT_CLASSNAME = BasicComponent.class.getName();
 
-    private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
+    private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.t5internal.pages.SynthComponent";
 
     private ComponentInstantiatorSource source;
 
@@ -98,6 +102,13 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         assertEquals(named.getName(), "Updated");
     }
 
+    @Test
+    public void access_to_library_name_via_component_resources() throws Exception
+    {
+        Instantiator instantiator = source.getInstantiator(BASIC_COMPONENT_CLASSNAME);
+
+        assertEquals(instantiator.getModel().getLibraryName(), "t5internal");
+    }
 
     private void createSynthComponentClass(String name) throws Exception
     {

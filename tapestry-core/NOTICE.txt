@@ -1,10 +1,10 @@
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
-This product includes the script.aculo.us JavaScript library, distributed under the terms of an MIT-style license.
+This product includes the Script.aculo.us JavaScript library, distributed under the terms of an MIT-style license.
 http://script.aculo.us
 
-This product includes the prototype JavaScript library, distributed under the terms of an MIT-style license.
+This product includes the Prototype JavaScript library, distributed under the terms of an MIT-style license.
 http://prototypejs.org/
 
 This product includes modified versions of Java classes from the JSON library, which is freely available.
@@ -19,5 +19,10 @@ http://www.famfamfam.com/lab/icons/silk/
 This product includes Underscore.js.
 http://documentcloud.github.com/underscore/
 
+This product includes RequireJS, distributed under the terms of the "New" BSD license or the MIT license (you get
+to take your pick!).
+http://requirejs.org/
 
+This product includes Bootstrap, distributed under the Apache Software License 2.0
+https://github.com/twitter/bootstrap
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.corelib.base;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
-import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
@@ -25,13 +24,16 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.io.Serializable;
 
 /**
  * Provides initialization of the clientId and elementName properties. In addition, adds the {@link RenderInformals},
- * {@link RenderDisabled} and {@link DiscardBody} mixins.
+ * and {@link DiscardBody} mixins.
+ *
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public abstract class AbstractField implements Field
@@ -42,7 +44,7 @@ public abstract class AbstractField implements Field
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String label;
+    protected String label;
 
     /**
      * If true, then the field will render out with a disabled attribute
@@ -51,17 +53,17 @@ public abstract class AbstractField implements Field
      * ignored (not even validated) and the component's events are not fired.
      */
     @Parameter("false")
-    private boolean disabled;
+    protected boolean disabled;
 
     @SuppressWarnings("unused")
     @Mixin
     private DiscardBody discardBody;
 
     @Environmental
-    private ValidationDecorator decorator;
+    protected ValidationDecorator decorator;
 
     @Inject
-    private Environment environment;
+    protected Environment environment;
 
     static class Setup implements ComponentAction<AbstractField>, Serializable
     {
@@ -113,23 +115,33 @@ public abstract class AbstractField implements Field
      * {@link #getClientId() clientId property}.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
-    private String clientId;
+    protected String clientId;
 
     private String assignedClientId;
 
     private String controlName;
 
     @Environmental(false)
-    private FormSupport formSupport;
+    protected FormSupport formSupport;
 
     @Environmental
-    private JavaScriptSupport jsSupport;
+    protected JavaScriptSupport javaScriptSupport;
+
+    @Environmental
+    protected ValidationTracker validationTracker;
 
     @Inject
-    private ComponentResources resources;
+    protected ComponentResources resources;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
+    protected ComponentDefaultProvider defaultProvider;
+
+    @Inject
+    protected Request request;
+
+    @Inject
+    protected FieldValidationSupport fieldValidationSupport;
+
 
     final String defaultLabel()
     {
@@ -157,7 +169,7 @@ public abstract class AbstractField implements Field
             throw new RuntimeException(String.format("Component %s must be enclosed by a Form component.",
                     resources.getCompleteId()));
 
-        assignedClientId = jsSupport.allocateClientId(id);
+        assignedClientId = javaScriptSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
 
         formSupport.storeAndExecute(this, new Setup(controlName));
@@ -198,7 +210,8 @@ public abstract class AbstractField implements Field
      * controlName property will already have been set. This method is only invoked if the field is <strong>not
      * {@link #isDisabled() disabled}</strong>.
      *
-     * @param controlName the control name of the rendered element (used to find the correct parameter in the request)
+     * @param controlName
+     *         the control name of the rendered element (used to find the correct parameter in the request)
      */
     protected abstract void processSubmission(String controlName);
 
@@ -213,11 +226,20 @@ public abstract class AbstractField implements Field
 
     /**
      * Allows the validation decorator to write markup after the field has written all of its markup.
+     * In addition, may invoke the <code>core/fields:showValidationError</code> function to present
+     * the field's error (if it has one) to the user.
      */
     @AfterRender
     final void afterDecorator()
     {
         decorator.afterField(this);
+
+        String error = validationTracker.getError(this);
+
+        if (error != null)
+        {
+            javaScriptSupport.require("core/fields").invoke("showValidationError").with(assignedClientId, error);
+        }
     }
 
     /**

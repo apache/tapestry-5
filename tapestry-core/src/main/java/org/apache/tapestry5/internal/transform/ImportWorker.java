@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.javascript.Initialization;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -116,6 +117,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
         importLibraries(componentClass, model, method, annotation.library());
 
         importStylesheets(componentClass, model, method, annotation.stylesheet());
+
+        importModules(method, annotation.module());
     }
 
     private void importStacks(PlasticMethod method, String[] stacks)
@@ -142,6 +145,64 @@ public class ImportWorker implements ComponentClassTransformWorker2
         };
     }
 
+    private void importModules(PlasticMethod method, String[] moduleNames)
+    {
+        if (moduleNames.length != 0)
+        {
+            method.addAdvice(createImportModulesAdvice(moduleNames));
+        }
+    }
+
+    class ModuleImport
+    {
+        final String moduleName, functionName;
+
+        ModuleImport(String moduleName, String functionName)
+        {
+            this.moduleName = moduleName;
+            this.functionName = functionName;
+        }
+
+        void apply(JavaScriptSupport javaScriptSupport)
+        {
+            Initialization initialization = javaScriptSupport.require(moduleName);
+
+            if (functionName != null)
+            {
+                initialization.invoke(functionName);
+            }
+        }
+    }
+
+    private MethodAdvice createImportModulesAdvice(final String[] moduleNames)
+    {
+        final List<ModuleImport> moduleImports = new ArrayList<ModuleImport>(moduleNames.length);
+
+        for (String name : moduleNames)
+        {
+            int colonx = name.indexOf(':');
+
+            String moduleName = colonx < 0 ? name : name.substring(0, colonx);
+            String functionName = colonx < 0 ? null : name.substring(colonx + 1);
+
+            moduleImports.add(new ModuleImport(moduleName, functionName));
+        }
+
+        return new MethodAdvice()
+        {
+            @Override
+            public void advise(MethodInvocation invocation)
+            {
+                for (ModuleImport moduleImport : moduleImports)
+                {
+                    moduleImport.apply(javascriptSupport);
+                }
+
+                invocation.proceed();
+            }
+        };
+    }
+
     private void importLibraries(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
                                  String[] paths)
     {
@@ -158,14 +219,16 @@ public class ImportWorker implements ComponentClassTransformWorker2
                                              PlasticMethod method, String[] paths, Worker<Asset> operation)
     {
         if (paths.length == 0)
+        {
             return;
+        }
 
         String[] expandedPaths = expandPaths(paths);
 
         PlasticField assetListField = componentClass.introduceField(Asset[].class,
                 "importedAssets_" + method.getDescription().methodName);
 
-        initializeAssetsFromPaths(model.getBaseResource(), expandedPaths, assetListField);
+        initializeAssetsFromPaths(expandedPaths, assetListField);
 
         addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
     }
@@ -175,8 +238,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         return F.flow(paths).map(expandSymbols).toArray(String.class);
     }
 
-    private void initializeAssetsFromPaths(final Resource baseResource,
-                                           final String[] expandedPaths, final PlasticField assetsField)
+    private void initializeAssetsFromPaths(final String[] expandedPaths, PlasticField assetsField)
     {
         assetsField.injectComputed(new ComputedValue<Asset[]>()
         {
@@ -184,18 +246,18 @@ public class ImportWorker implements ComponentClassTransformWorker2
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
-                return convertPathsToAssetArray(baseResource, resources.getLocale(), expandedPaths);
+                return convertPathsToAssetArray(resources, expandedPaths);
             }
         });
     }
 
-    private Asset[] convertPathsToAssetArray(final Resource baseResource, final Locale locale, String[] assetPaths)
+    private Asset[] convertPathsToAssetArray(final ComponentResources resources, String[] assetPaths)
     {
         return F.flow(assetPaths).map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {
-                return assetSource.getAsset(baseResource, assetPath, locale);
+                return assetSource.getComponentAsset(resources, assetPath);
             }
         }).toArray(Asset.class);
     }

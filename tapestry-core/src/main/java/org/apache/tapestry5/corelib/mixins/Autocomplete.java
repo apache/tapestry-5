@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,34 +14,18 @@
 
 package org.apache.tapestry5.corelib.mixins;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectContainer;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.MarkupWriterFactory;
-import org.apache.tapestry5.services.ResponseRenderer;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.util.TextStreamResponse;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter
@@ -58,24 +42,21 @@ import org.apache.tapestry5.util.TextStreamResponse;
  * partial input string sent from the client. The return value should be an array or list of completions, in
  * presentation order. I.e.
  * <p/>
- * 
+ * <p/>
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
  * {
  *   return . . .;
  * }
  * </pre>
- * 
+ *
  * @tapestrydoc
  */
-@Import(library =
-{ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
 @Events(EventConstants.PROVIDE_COMPLETIONS)
+@MixinAfter
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
-
-    private static final String PARAM_NAME = "t:input";
 
     /**
      * The field component to which this mixin is attached.
@@ -92,25 +73,17 @@ public class Autocomplete
     @Inject
     private TypeCoercer coercer;
 
-    @Inject
-    private MarkupWriterFactory factory;
-
-    @Inject
-    @Path("${tapestry.spacer-image}")
-    private Asset spacerImage;
-
     /**
      * Overwrites the default minimum characters to trigger a server round trip (the default is 1).
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private int minChars;
-
-    @Inject
-    private ResponseRenderer responseRenderer;
+    private int minChars = 1;
 
     /**
      * Overrides the default check frequency for determining whether to send a server request. The default is .4
      * seconds.
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private double frequency;
@@ -118,75 +91,37 @@ public class Autocomplete
     /**
      * If given, then the autocompleter will support multiple input values, seperated by any of the individual
      * characters in the string.
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String tokens;
 
-    /**
-     * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt; element and
-     * the JavaScript.
-     * 
-     * @param writer
-     */
-    void afterRender(MarkupWriter writer)
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
+    void pageLoaded()
     {
-        String id = field.getClientId();
-
-        String menuId = id + ":menu";
-        String loaderId = id + ":loader";
-
-        // The spacer image is used as a placeholder, allowing CSS to determine what image
-        // is actually displayed.
-
-        writer.element("img",
-
-        "src", spacerImage.toClientURL(),
-
-        "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
-
-        "alt", "",
-
-        "id", loaderId);
-        writer.end();
-
-        writer.element("div",
-
-        "id", menuId,
-
-        "class", "t-autocomplete-menu");
-        writer.end();
-
-        Link link = resources.createEventLink(EVENT_NAME);
-
-        JSONObject config = new JSONObject();
-        config.put("paramName", PARAM_NAME);
-        config.put("indicator", loaderId);
-
-        if (resources.isBound("minChars"))
-            config.put("minChars", minChars);
-
-        if (resources.isBound("frequency"))
-            config.put("frequency", frequency);
-
-        if (resources.isBound("tokens"))
-        {
-            for (int i = 0; i < tokens.length(); i++)
-            {
-                config.accumulate("tokens", tokens.substring(i, i + 1));
-            }
-        }
-
-        // Let subclasses do more.
-        configure(config);
-
-        JSONObject spec = new JSONObject("elementId", id, "menuId", menuId, "url", link.toURI()).put("config",
-                config);
-
-        jsSupport.addInitializerCall("autocompleter", spec);
+        deprecationWarning.ignoredComponentParameters(resources, "frequency", "tokens");
     }
 
-    Object onAutocomplete(@RequestParameter(PARAM_NAME)
-    String input)
+    void beginRender(MarkupWriter writer)
+    {
+        writer.attributes("autocomplete", "off");
+    }
+
+    void afterRender()
+    {
+        Link link = resources.createEventLink(EVENT_NAME);
+
+        JSONObject spec = new JSONObject("id", field.getClientId(),
+                "url", link.toString()).put("minChars", minChars);
+
+        jsSupport.require("core/autocomplete").with(spec);
+    }
+
+    Object onAutocomplete(@RequestParameter("t:input")
+                          String input)
     {
         final Holder<List> matchesHolder = Holder.create();
 
@@ -207,53 +142,13 @@ public class Autocomplete
         };
 
         resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[]
-        { input }, callback);
+                {input}, callback);
 
-        ContentType contentType = responseRenderer.findContentType(this);
+        JSONObject reply = new JSONObject();
 
-        MarkupWriter writer = factory.newPartialMarkupWriter(contentType);
+        reply.put("matches", JSONArray.from(matchesHolder.get()));
 
-        generateResponseMarkup(writer, matchesHolder.get());
-
-        return new TextStreamResponse(contentType.toString(), writer.toString());
-    }
-
-    /**
-     * Invoked to allow subclasses to further configure the parameters passed to the JavaScript Ajax.Autocompleter
-     * options. The values minChars, frequency and tokens my be pre-configured. Subclasses may override this method to
-     * configure additional features of the Ajax.Autocompleter.
-     * <p/>
-     * <p/>
-     * This implementation does nothing.
-     * 
-     * @param config
-     *            parameters object
-     */
-    protected void configure(JSONObject config)
-    {
-    }
-
-    /**
-     * Generates the markup response that will be returned to the client; this should be an &lt;ul&gt; element with
-     * nested &lt;li&gt; elements. Subclasses may override this to produce more involved markup (including images and
-     * CSS class attributes).
-     * 
-     * @param writer
-     *            to write the list to
-     * @param matches
-     *            list of matching objects, each should be converted to a string
-     */
-    protected void generateResponseMarkup(MarkupWriter writer, List matches)
-    {
-        writer.element("ul");
-
-        for (Object o : matches)
-        {
-            writer.element("li");
-            writer.write(o.toString());
-            writer.end();
-        }
-
-        writer.end(); // ul
+        // A JSONObject response is always preferred, as that triggers the whole partial page render pipeline.
+        return reply;
     }
 }

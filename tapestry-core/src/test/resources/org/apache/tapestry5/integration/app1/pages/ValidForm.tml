@@ -1,9 +1,9 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
   <h1>Valid Form</h1>
 
   <p> Tapestry 5 form support with server-side validation. </p>
 
-  <t:form clientValidation="false">
+  <t:form clientValidation="none">
     <t:errors/>
     <t:label for="email">This isn't used</t:label>: <input t:type="TextField" t:id="email"
       value="incident.email" size="50" t:validate="required"/>

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,17 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Enforces a maximum integer value.
  */
 public class Max extends AbstractValidator<Long, Number>
 {
-    public Max()
+    public Max(JavaScriptSupport javaScriptSupport)
     {
-        super(Long.class, Number.class, "max-integer");
+        super(Long.class, Number.class, "max-integer", javaScriptSupport);
     }
 
     public void validate(Field field, Long constraintValue, MessageFormatter formatter, Number value)
@@ -45,7 +47,14 @@ public class Max extends AbstractValidator<Long, Number>
     public void render(Field field, Long constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "max", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+
+            writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
+                    "data-validate-max", constraintValue.toString(),
+                    "data-max-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 
 }

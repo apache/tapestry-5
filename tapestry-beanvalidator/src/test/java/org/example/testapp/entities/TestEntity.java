@@ -13,92 +13,88 @@
 // limitations under the License.
 package org.example.testapp.entities;
 
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
-
-public class TestEntity 
+public class TestEntity
 {
-	@NotNull
-	private String notNullValue;
-	
-	@Null
-	private String nullValue;
-	
-	@Max(100)
-	private int maxValue;
-	
-	@Min(6)
-	private int minValue;
-	
-	@Size(min=3, max=6)
-	private String stringSizeValue;
-	
-	@Size(min=2, max=3)
-	private Collection<String> collectionSizeValue = new ArrayList<String>();
+    @NotNull
+    private String notNullValue;
 
-	public String getNotNullValue() 
-	{
-		return notNullValue;
-	}
+    @Null
+    private String nullValue;
 
-	public void setNotNullValue(String notNullValue) 
-	{
-		this.notNullValue = notNullValue;
-	}
+    @Max(100)
+    private int maxValue;
 
-	public String getNullValue() 
-	{
-		return nullValue;
-	}
+    @Min(6)
+    private int minValue;
 
-	public void setNullValue(String nullValue) 
-	{
-		this.nullValue = nullValue;
-	}
+    @Size(min = 3, max = 6)
+    private String stringSizeValue;
 
-	public int getMaxValue() {
-		return maxValue;
-	}
+    @Size(min = 2, max = 3)
+    private Collection<String> collectionSizeValue = new ArrayList<String>();
 
-	public void setMaxValue(int maxValue)
-	{
-		this.maxValue = maxValue;
-	}
+    public String getNotNullValue()
+    {
+        return notNullValue;
+    }
 
-	public int getMinValue() 
-	{
-		return minValue;
-	}
+    public void setNotNullValue(String notNullValue)
+    {
+        this.notNullValue = notNullValue;
+    }
 
-	public void setMinValue(int minValue) 
-	{
-		this.minValue = minValue;
-	}
+    public String getNullValue()
+    {
+        return nullValue;
+    }
 
-	
-	public String getStringSizeValue() 
-	{
-		return stringSizeValue;
-	}
+    public void setNullValue(String nullValue)
+    {
+        this.nullValue = nullValue;
+    }
 
-	public void setStringSizeValue(String stringSizeValue) 
-	{
-		this.stringSizeValue = stringSizeValue;
-	}
-	
-	public Collection<String> getCollectionSizeValue() 
-	{
-		return collectionSizeValue;
-	}
+    public int getMaxValue()
+    {
+        return maxValue;
+    }
 
-	public void setCollectionSizeValue(Collection<String> collectionSizeValue) 
-	{
-		this.collectionSizeValue = collectionSizeValue;
-	}
+    public void setMaxValue(int maxValue)
+    {
+        this.maxValue = maxValue;
+    }
+
+    public int getMinValue()
+    {
+        return minValue;
+    }
+
+    public void setMinValue(int minValue)
+    {
+        this.minValue = minValue;
+    }
+
+
+    public String getStringSizeValue()
+    {
+        return stringSizeValue;
+    }
+
+    public void setStringSizeValue(String stringSizeValue)
+    {
+        this.stringSizeValue = stringSizeValue;
+    }
+
+    public Collection<String> getCollectionSizeValue()
+    {
+        return collectionSizeValue;
+    }
+
+    public void setCollectionSizeValue(Collection<String> collectionSizeValue)
+    {
+        this.collectionSizeValue = collectionSizeValue;
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 {
     private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
 
-    private final Logger logger;
+    protected final Logger logger;
 
-    private final OperationTracker tracker;
+    protected final OperationTracker tracker;
 
     private final String resourceType;
 
@@ -82,14 +82,19 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
                 input.getContentType(), CompressionStatus.COMPRESSABLE,
                 input.getLastModified(), new BytestreamCache(bos));
 
-        long elapsedNanos = System.nanoTime() - startNanos;
-
-        if (logger.isDebugEnabled())
+        if (logger.isInfoEnabled())
         {
-            double elapsedMillis = ((double) elapsedNanos) * NANOS_TO_MILLIS;
+            long elapsedNanos = System.nanoTime() - startNanos;
 
-            logger.debug(String.format("Minimized %s (%,d input bytes of %s to %,d output bytes in %.2f ms)",
-                    input.getDescription(), input.getSize(), resourceType, output.getSize(), elapsedMillis));
+            int inputSize = input.getSize();
+            int outputSize = output.getSize();
+
+            double elapsedMillis = ((double) elapsedNanos) * NANOS_TO_MILLIS;
+            // e.g., reducing 100 bytes to 25 would be a (100-25)/100 reduction, or 75%
+            double reduction = 100d * ((double) (inputSize - outputSize)) / ((double) inputSize);
+
+            logger.info(String.format("Minimized %s (%,d input bytes of %s to %,d output bytes in %.2f ms, %.2f%% reduction)",
+                    input.getDescription(), inputSize, resourceType, outputSize, elapsedMillis, reduction));
         }
 
         return output;
@@ -105,8 +110,10 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
     /**
      * Implemented in subclasses to do the actual work.
      *
-     * @param resource content to minimize
-     * @param output   writer for minimized version of input
+     * @param resource
+     *         content to minimize
+     * @param output
+     *         writer for minimized version of input
      */
     protected abstract void doMinimize(StreamableResource resource, Writer output) throws IOException;
 }

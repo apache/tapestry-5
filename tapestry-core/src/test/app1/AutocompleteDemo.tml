@@ -1,19 +1,21 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <h1>Autocomplete Mixin Demo</h1>
 
-    <t:form>
+    <t:form class="form-horizontal">
+
         <t:errors/>
 
-        <div class="t-beaneditor">
-            <div class="t-beaneditor-row">
-                <t:label for="title"/>
+        <div class="control-group">
+            <t:label  for="title"/>
+            <div class="controls">
                 <t:textfield t:id="title" t:mixins="autocomplete" tokens=",;" size="60"/>
             </div>
-
-            <div class="t-beaneditor-row">
-                <input type="submit" value="Show Track"/>
-            </div>
         </div>
+
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Show Track"/>
+        </div>
+
     </t:form>
 
 

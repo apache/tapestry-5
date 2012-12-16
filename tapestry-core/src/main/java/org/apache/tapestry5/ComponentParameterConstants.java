@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,6 +93,8 @@ public class ComponentParameterConstants
      * The default name of a JS function attached to Tapestry.ElementEffect object to use for the initial
      * visualization of a {@link org.apache.tapestry5.corelib.components.Zone}.
      * Defaults to "show"
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String ZONE_SHOW_METHOD = "tapestry.components.zone_show_method";
 
@@ -100,7 +102,8 @@ public class ComponentParameterConstants
      * The default name of a JS function attached to Tapestry.ElementEffect object to point out an
      * update on a {@link org.apache.tapestry5.corelib.components.Zone}.
      * Defaults to "highlight"
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String ZONE_UPDATE_METHOD = "tapestry.components.zone_update_method";
-
 }

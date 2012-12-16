@@ -1,12 +1,14 @@
 import org.apache.tools.ant.filters.*
+import org.gradle.plugins.ide.idea.model.*
+import t5build.*
 
 description = "Central module for Tapestry, containing all core services and components"
 
-project.ext { 
+project.ext {
   antlrSource = "src/main/antlr"
-  antlrOutput = "$buildDir/generated-sources/antlr"
+  generatedDir = "$buildDir/generated-sources"
+  antlrOutput = "$generatedDir/antlr"
 }
-
 
 configurations {
   antlr3
@@ -39,9 +41,6 @@ task generateGrammarSource(type: JavaExec) {
   inputs.source fileTree(dir: antlrSource, include: "**/*.g")
   outputs.dir file(antlrOutput)
 
-  // See http://forums.gradle.org/gradle/topics/why_does_a_task_execute_even_when_inputs_and_outputs_are_defined_and_nothing_has_changed
-  outputs.upToDateSpec = new AndSpec();
-
   classpath configurations.antlr3
 
   main "org.antlr.Tool"
@@ -53,16 +52,44 @@ task generateGrammarSource(type: JavaExec) {
   }
 }
 
-ideaModule.dependsOn generateGrammarSource
+task compileCoffeeScript(type: CompileCoffeeScript) {
+  outputDir "${generatedDir}/compiled-coffeescript"
+}
 
-def generatedDir = file("$buildDir/generated-sources")
+task compileTestCoffeeScript(type: CompileCoffeeScript) {
+    srcDir "src/test/coffeescript"
+    outputDir "${generatedDir}/compiled-test-coffeescript"
+}
 
-def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
+processResources {
+  from compileCoffeeScript
+}
 
-idea.module.excludeDirs += buildMinusGeneratedDir
+processTestResources {
+  dependsOn processResources
+  from compileTestCoffeeScript
+}
 
-compileJava.options.fork(memoryMaximumSize: '512m')
-compileJava.dependsOn generateGrammarSource
+idea.module {
+  sourceDirs += compileCoffeeScript.srcDir
+  sourceDirs += compileCoffeeScript.outputDir
+
+  testSourceDirs += compileTestCoffeeScript.srcDir
+  testSourceDirs += compileTestCoffeeScript.outputDir
+
+  // Hack the IML so that "build" is not excluded; necessary because several directories under build
+  // are added as source, resources, or test folders.
+  iml.whenMerged { module ->
+    module.excludeFolders.removeAll {
+      it.canonicalUrl.endsWith "/build"
+    }
+  }
+}
+
+compileJava {
+    dependsOn generateGrammarSource
+    options.fork(memoryMaximumSize: '512m')
+}
 
 // Not sure why this is necessary:
 compileTestGroovy.dependsOn compileTestJava

@@ -1,122 +1,120 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
-    <h1>Zone/Ajax Demo</h1>
+<h1>Zone/Ajax Demo</h1>
 
 
-    <h2>Last update: ${currentTime}</h2>
+<h2>Last update: ${currentTime}</h2>
 
 
-    <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
-    <span class="t-zone-update">
-      <t:if test="name" else="No name has been selected.">
-          Selected: ${name}
-      </t:if>
-    </span>
-    </t:zone>
+<t:zone t:id="output" style="float:right; width: 800px;">
+    <t:if test="name" else="No name has been selected.">
+        Selected: ${name}
+    </t:if>
+</t:zone>
 
-    <t:block id="ajaxCSS">
+<t:block id="ajaxCSS">
 
-        <div id="demo-aip">
-            <p>
-                This should be styled GREEN.
-            </p>
-        </div>
+    <div id="demo-aip">
+        <p>
+            This should be styled GREEN.
+        </p>
+    </div>
 
-    </t:block>
+</t:block>
 
-    <t:block id="registrationForm">
+<t:block id="registrationForm">
 
 
-        <t:beaneditform t:id="registrationForm" object="registration" zone="^" add="roles">
+    <t:beaneditform t:id="registrationForm" object="registration" zone="^" add="roles">
 
-            <t:parameter name="roles">
-                <t:palette selected="registration.roles" encoder="encoder" model="literal:guest,user,admin"/>
-            </t:parameter>
+        <t:parameter name="roles">
+            <t:palette selected="registration.roles" encoder="encoder" model="literal:guest,user,admin"/>
+        </t:parameter>
 
-        </t:beaneditform>
+    </t:beaneditform>
 
-        <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
+    <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
 
-    </t:block>
+</t:block>
 
-    <t:block id="registrationOutput">
-        <t:beandisplay object="registration" add="roles">
-            <t:parameter name="roles">
-                ${registration.roles}
-            </t:parameter>
-        </t:beandisplay>
-    </t:block>
+<t:block id="registrationOutput">
+    <t:beandisplay object="registration" add="roles">
+        <t:parameter name="roles">
+            ${registration.roles}
+        </t:parameter>
+    </t:beandisplay>
+</t:block>
 
-    <t:block id="voteForm">
-        <t:form t:id="vote" zone="^">
-            Vote:
-            <input type="submit" name="abstain" value="Abstain"/>
-            <t:submit t:id="voteYes" value="Yes"/>
-            <t:submit t:id="voteNo" value="No"/>
-        </t:form>
-    </t:block>
+<t:block id="voteForm">
+    <t:form t:id="vote" zone="^">
+        Vote:
+        <input type="submit" name="abstain" value="Abstain"/>
+        <t:submit t:id="voteYes" value="Yes"/>
+        <t:submit t:id="voteNo" value="No"/>
+    </t:form>
+</t:block>
 
-    <t:block id="voteOutput">
-        You voted: ${vote}
-    </t:block>
+<t:block id="voteOutput">
+    You voted: ${vote}
+</t:block>
 
 
-    <ul>
-        <li t:type="loop" source="names" value="name">
-            <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="fail" zone="output">Failure on the server side</t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="redirect" zone="output">Perform a redirect to another page
-            </t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="secureRedirect" zone="output">Perform secure redirect to another page
-            </t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
-        </li>
-        <li>
-			<t:actionLink t:id="updateZoneWithEmptyBody" zone="output">Update zone with empty body</t:actionLink>
-        </li>
-        <li>
-            <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
-                failure
-            </t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="badZone" zone="output">
-                MultiZone update with unknown id
-            </t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="nonZoneUpdate" zone="output">
-                MultiZone update with id of non-Zone
-                element
-            </t:actionlink>
-        </li>
-    </ul>
+<ul>
+    <li t:type="loop" source="names" value="name">
+        <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="fail" zone="output">Failure on the server side</t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="redirect" zone="output">Perform a redirect to another page
+        </t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="secureRedirect" zone="output">Perform secure redirect to another page
+        </t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
+    </li>
+    <li>
+        <t:actionLink t:id="updateZoneWithEmptyBody" zone="output">Update zone with empty body</t:actionLink>
+    </li>
+    <li>
+        <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
+            failure
+        </t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="badZone" zone="output">
+            MultiZone update with unknown id
+        </t:actionlink>
+    </li>
+    <li>
+        <t:actionlink t:id="nonZoneUpdate" zone="output">
+            MultiZone update with id of non-Zone
+            element
+        </t:actionlink>
+    </li>
+</ul>
 
-    <div id="notAZone"/>
+<div id="notAZone"/>
 
-    <t:block id="empty"/>
-    
-	<t:zone t:id="zoneWithEmptyBody"/>
+<t:block id="empty"/>
 
-    <t:block id="forUnknownZone">
-        <p>Content for the unknown zone.</p>
-    </t:block>
+<t:zone t:id="zoneWithEmptyBody"/>
 
-    <t:block id="forNotAZone">
-        <p>Content for zone update for a non-Zone element.</p>
-    </t:block>
+<t:block id="forUnknownZone">
+    <p>Content for the unknown zone.</p>
+</t:block>
 
-    <div id="zone-update-message"/>
+<t:block id="forNotAZone">
+    <p>Content for zone update for a non-Zone element.</p>
+</t:block>
+
+<div id="zone-update-message"/>
 
 
 </html>

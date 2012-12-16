@@ -33,7 +33,10 @@ import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +50,7 @@ import java.util.Map;
 
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
 
-public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
+public class PropertyConduitSourceImpl implements PropertyConduitSource
 {
     static class ConduitMethods
     {
@@ -663,7 +666,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
 
         /**
-         * @param node subexpression to invert
+         * @param node
+         *         subexpression to invert
          */
         private void implementNotOpGetter(final Tree node)
         {
@@ -699,9 +703,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Uses the builder to add instructions for a subexpression.
          *
-         * @param builder    used to add instructions
-         * @param activeType type of value on top of the stack when this code will execute, or null if no value on stack
-         * @param node       defines the expression
+         * @param builder
+         *         used to add instructions
+         * @param activeType
+         *         type of value on top of the stack when this code will execute, or null if no value on stack
+         * @param node
+         *         defines the expression
          * @return the expression type
          */
         private Type implementSubexpression(InstructionBuilder builder, Type activeType, Tree node)
@@ -908,11 +915,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * Invokes a method that may take parameters. The children of the invokeNode are subexpressions
          * to be evaluated, and potentially coerced, so that they may be passed to the method.
          *
-         * @param builder     constructs code
-         * @param method      method to invoke
-         * @param node        INVOKE or RANGEOP node
-         * @param childOffset offset within the node to the first child expression (1 in an INVOKE node because the
-         *                    first child is the method name, 0 in a RANGEOP node)
+         * @param builder
+         *         constructs code
+         * @param method
+         *         method to invoke
+         * @param node
+         *         INVOKE or RANGEOP node
+         * @param childOffset
+         *         offset within the node to the first child expression (1 in an INVOKE node because the
+         *         first child is the method name, 0 in a RANGEOP node)
          */
         private void invokeMethod(InstructionBuilder builder, Method method, Tree node, int childOffset)
         {
@@ -1170,9 +1181,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Casts the results of a field read or method invocation based on generic information.
          *
-         * @param builder     used to add instructions
-         * @param rawType     the simple type (often Object) of the field (or method return type)
-         * @param genericType the generic Type, from which parameterizations can be determined
+         * @param builder
+         *         used to add instructions
+         * @param rawType
+         *         the simple type (often Object) of the field (or method return type)
+         * @param genericType
+         *         the generic Type, from which parameterizations can be determined
          */
         private void castToGenericType(InstructionBuilder builder, Class rawType, final Type genericType)
         {
@@ -1302,7 +1316,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     @PostInjection
     public void listenForInvalidations(@ComponentClasses InvalidationEventHub hub)
     {
-        hub.addInvalidationListener(this);
+        hub.clearOnInvalidation(cache);
     }
 
 
@@ -1325,18 +1339,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     /**
-     * Clears its caches when the component class loader is invalidated; this is
-     * because it will be common to generate
-     * conduits rooted in a component class (which will no longer be valid and
-     * must be released to the garbage
-     * collector).
-     */
-    public void objectWasInvalidated()
-    {
-        cache.clear();
-    }
-
-    /**
      * Builds a subclass of {@link PropertyConduitDelegate} that implements the
      * get() and set() methods and overrides the
      * constructor. In a worst-case race condition, we may build two (or more)
@@ -1344,8 +1346,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * rootClass/expression, and it will get sorted out when the conduit is
      * stored into the cache.
      *
-     * @param rootClass  class of root object for expression evaluation
-     * @param expression expression to be evaluated
+     * @param rootClass
+     *         class of root object for expression evaluation
+     * @param expression
+     *         expression to be evaluated
      * @return the conduit
      */
     private PropertyConduit build(final Class rootClass, String expression)

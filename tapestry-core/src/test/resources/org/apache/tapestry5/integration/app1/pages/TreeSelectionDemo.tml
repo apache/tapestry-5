@@ -1,17 +1,13 @@
-<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <h1>Tree Selection Demo</h1>
 
     <t:tree class="test-hook" t:id="tree" model="stuffModel" selectionModel="selectionModel"/>
 
-    <p>
-        [
-        <t:pagelink page="treeSelectionDemo">Redraw</t:pagelink>
-        ]
-        [
-        <t:actionlink t:id="clearAll">clear all</t:actionlink>
-        ]
-    </p>
+    <div class="btn-toolbar btn-group">
+        <t:pagelink page="treeSelectionDemo" class="btn">Redraw</t:pagelink>
+        <t:actionlink t:id="clearAll" class="btn">Clear All</t:actionlink>
+    </div>
 
     <h2>Selections</h2>
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ package org.apache.tapestry5.internal.services;
 import java.util.Map;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.*;
 
 @SuppressWarnings("all")
-public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationListener
+public class ValueEncoderSourceImpl implements ValueEncoderSource, Runnable
 {
     private final StrategyRegistry<ValueEncoderFactory> registry;
 
@@ -33,6 +32,11 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
     public ValueEncoderSourceImpl(Map<Class, ValueEncoderFactory> configuration)
     {
         registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
+    }
+
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub hub) {
+        hub.addInvalidationCallback(this);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -53,7 +57,7 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
         return result;
     }
 
-    public void objectWasInvalidated()
+    public void run()
     {
         registry.clearCache();
         cache.clear();

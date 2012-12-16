@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ public interface ErrorReporter
     /**
      * Writes an error report file into the TestNG output directory, based on the name of the test,
      * containing the current page content.
+     *
+     * @param reportText text to store in an associated .txt file, describing the failure.
      */
-    void writeErrorReport();
+    void writeErrorReport(String reportText);
 }

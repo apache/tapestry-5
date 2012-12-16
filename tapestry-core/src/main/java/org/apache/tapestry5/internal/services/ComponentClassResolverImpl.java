@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -47,12 +48,16 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final String startPageName;
 
-    // Map from folder name to a list of root package names.
-    // The key does not begin or end with a slash.
+    // Map from library name to a list of root package names (usuallly just one).
+    private final Map<String, List<String>> libraryNameToPackageNames = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, List<String>> mappings = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ControlledPackageType> packageNameToType = CollectionFactory.newMap();
 
-    private final Map<String, ControlledPackageType> packageMappings = CollectionFactory.newMap();
+    /**
+     * Maps from a root package name to a component library name, including the empty string as the
+     * library name of the application.
+     */
+    private final Map<String, String> packageNameToLibraryName = CollectionFactory.newMap();
 
     // Flag indicating that the maps have been cleared following an invalidation
     // and need to be rebuilt. The flag and the four maps below are not synchronized
@@ -148,11 +153,14 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         /**
          * Converts a fully qualified class name to a logical name
          *
-         * @param className  fully qualified class name
-         * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the class
-         *                   lives)
-         * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
-         *                   "rootpackage.pages.").
+         * @param className
+         *         fully qualified class name
+         * @param pathPrefix
+         *         prefix to be placed on the logical name (to identify the library from in which the class
+         *         lives)
+         * @param startPos
+         *         start position within the class name to extract the logical name (i.e., after the final '.' in
+         *         "rootpackage.pages.").
          * @param stripTerms
          * @return a short logical name in folder format ('.' replaced with '/')
          */
@@ -246,35 +254,25 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         for (LibraryMapping mapping : mappings)
         {
-            String prefix = mapping.getPathPrefix();
+            String libraryName = mapping.libraryName;
 
-            while (prefix.startsWith("/"))
-            {
-                prefix = prefix.substring(1);
-            }
-
-            while (prefix.endsWith("/"))
-            {
-                prefix = prefix.substring(0, prefix.length() - 1);
-            }
-
-            String rootPackage = mapping.getRootPackage();
-
-            List<String> packages = this.mappings.get(prefix);
+            List<String> packages = this.libraryNameToPackageNames.get(libraryName);
 
             if (packages == null)
             {
                 packages = CollectionFactory.newList();
-                this.mappings.put(prefix, packages);
+                this.libraryNameToPackageNames.put(libraryName, packages);
             }
 
-            packages.add(rootPackage);
+            packages.add(mapping.rootPackage);
 
             // These packages, which will contain classes subject to class transformation,
             // must be registered with the component instantiator (which is responsible
             // for transformation).
 
-            addSubpackagesToPackageMapping(rootPackage);
+            addSubpackagesToPackageMapping(mapping.rootPackage);
+
+            packageNameToLibraryName.put(mapping.rootPackage, libraryName);
         }
     }
 
@@ -282,13 +280,13 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         for (String subpackage : InternalConstants.SUBPACKAGES)
         {
-            packageMappings.put(rootPackage + "." + subpackage, ControlledPackageType.COMPONENT);
+            packageNameToType.put(rootPackage + "." + subpackage, ControlledPackageType.COMPONENT);
         }
     }
 
     public Map<String, ControlledPackageType> getControlledPackageMapping()
     {
-        return Collections.unmodifiableMap(packageMappings);
+        return Collections.unmodifiableMap(packageNameToType);
     }
 
     /**
@@ -312,9 +310,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         Data newData = new Data();
 
-        for (String prefix : mappings.keySet())
+        for (String prefix : libraryNameToPackageNames.keySet())
         {
-            List<String> packages = mappings.get(prefix);
+            List<String> packages = libraryNameToPackageNames.get(prefix);
 
             String folder = prefix + "/";
 
@@ -434,6 +432,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         return locate(pageClassName, getData().pageClassNameToLogicalName) != null;
     }
 
+
     public List<String> getPageNames()
     {
         Data data = getData();
@@ -499,8 +498,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      * Locates a class name within the provided map, given its logical name. If not found naturally, a search inside the
      * "core" library is included.
      *
-     * @param logicalName            name to search for
-     * @param logicalNameToClassName mapping from logical name to class name
+     * @param logicalName
+     *         name to search for
+     * @param logicalNameToClassName
+     *         mapping from logical name to class name
      * @return the located class name or null
      */
     private String locate(String logicalName, Map<String, String> logicalNameToClassName)
@@ -549,9 +550,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
 
-        for (String folder : mappings.keySet())
+        for (String folder : libraryNameToPackageNames.keySet())
         {
-            List<String> packageNames = mappings.get(folder);
+            List<String> packageNames = libraryNameToPackageNames.get(folder);
 
             String packageName = findCommonPackageNameForFolder(folder, packageNames);
 
@@ -625,5 +626,40 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private static String[] explode(String packageName)
     {
         return DOT.split(packageName);
+    }
+
+    @Override
+    public List<String> getLibraryNames()
+    {
+        return F.flow(libraryNameToPackageNames.keySet()).remove(F.IS_BLANK).sort().toList();
+    }
+
+    @Override
+    public String getLibraryNameForClass(String className)
+    {
+        assert className != null;
+
+        String current = className;
+
+        while (true)
+        {
+
+            int dotx = current.lastIndexOf('.');
+
+            if (dotx < 1)
+            {
+                throw new IllegalArgumentException(String.format("Class %s is not inside any package associated with any library.",
+                        className));
+            }
+
+            current = current.substring(0, dotx);
+
+            String libraryName = packageNameToLibraryName.get(current);
+
+            if (libraryName != null)
+            {
+                return libraryName;
+            }
+        }
     }
 }

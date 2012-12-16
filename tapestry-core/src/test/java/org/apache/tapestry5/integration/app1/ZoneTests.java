@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Select Zone Demo");
 
+        waitForPageInitialized();
+
         select("carMaker", "Bmw");
 
         waitForElementToAppear("carModelContainer");
@@ -42,9 +44,9 @@ public class ZoneTests extends TapestryCoreTestCase
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
 
-        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
+        assertTextPresent("You must provide a value for Car Model.");
 
-        String selectLocator = "//div[@id='modelZone']//select";
+        String selectLocator = "css=div#modelZone select";
 
         select(selectLocator, "7 Series");
 
@@ -55,6 +57,8 @@ public class ZoneTests extends TapestryCoreTestCase
         assertTextPresent("Car Model: 7 Series");
 
         select("carMaker", "Mercedes");
+
+        sleep(250);
 
         waitForElementToAppear("carModelContainer");
 
@@ -72,17 +76,15 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
+        waitForPageInitialized();
+
         assertTextPresent("No name has been selected.");
 
-        // Hate doing this, but selecting by the text isn't working, perhaps
-        // because of the
-        // HTML entities.
-        click("select_0");
+        click("link=Select \"Mr. <Roboto>\"");
 
-        // And that's as far as we can go currently, because
-        // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
+        sleep(100);
 
-        // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+        assertTextPresent("Selected: Mr. <Roboto>");
 
         click("link=Direct JSON response");
     }
@@ -108,13 +110,15 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Multiple Zone Update Demo");
 
+        waitForPageInitialized();
+
         String now = getText("now");
 
         assertText("wilma", "Wilma Flintstone");
 
         assertText("message", "");
 
-        click("update");
+        click("link=update");
 
         waitForElementToAppear("fredName");
 
@@ -163,6 +167,8 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
+        waitForPageInitialized();
+
         assertText("zone-update-message", "");
 
         click("link=Direct JSON response");
@@ -182,13 +188,13 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit inside Zone");
 
+        waitForPageInitialized();
+
         String now = getText("now");
 
         waitForElementToAppear("mySubmit");
 
         click("//a[@id='mySubmit']");
-
-        waitForElementToAppear("value_errorpopup");
 
         type("value", "robot chicken");
 
@@ -212,28 +218,6 @@ public class ZoneTests extends TapestryCoreTestCase
         assertTextPresent(Form.class.getName() + "[form--form]");
     }
 
-    /**
-     * TAP5-707
-     */
-    @Test
-    public void zone_fade_back_backgroundcolor()
-    {
-        openLinks("Form Zone Demo");
-
-        type("longValue", "12");
-
-        click(SUBMIT);
-
-        click(SUBMIT);
-
-        // wait some time to let the fade go away
-        sleep(4050);
-
-        // will only work in firefox.
-        String color = getEval("selenium.browserbot.getCurrentWindow().getComputedStyle(this.page().findElement(\"xpath=//div[@id='valueZone']\"),'').getPropertyValue('background-color').toLowerCase()");
-
-        assertEquals(color, "rgb(255, 255, 255)");
-    }
 
     /**
      * TAP5-1084
@@ -242,6 +226,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_zone_inside_form()
     {
         openLinks("Zone/Form Update Demo");
+
+        waitForPageInitialized();
 
         click("link=Update the form");
 
@@ -261,6 +247,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_to_zone_inside_form()
     {
         openLinks("MultiZone Update inside a Form");
+
+        waitForPageInitialized();
 
         select("selectValue1", "3 pre ajax");
 
@@ -282,21 +270,21 @@ public class ZoneTests extends TapestryCoreTestCase
             assertText("row-" + i, numbers[i]);
         }
 
-        click("click_7");
+        click("link=click 7");
         waitForElementToAppear("row-7");
 
-        // 7- are unchanged
-        for (int i = 0; i <= 7; i++)
+        // 0-6 are unchanged
+        for (int i = 0; i < 7; i++)
         {
             assertText("row-" + i, numbers[i]);
         }
-        // 8+ are modified
-        for (int i = 8; i <= 10; i++)
+        // 7+ are modified
+        for (int i = 7; i <= 10; i++)
         {
             assertText("row-" + i, i + " is the integer value");
         }
 
-        click("reset");
+        click("link=Reset Zones");
         waitForElementToAppear("wholeLoopZone");
 
         // all elements reset via AJAX
@@ -322,22 +310,25 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
+        waitForPageInitialized();
+
         click("link=Select \"CSS Injection\"");
 
-        sleep(100);
+        waitForPageInitialized();
 
         // First check that the update arrived
+
+        waitForElementToAppear("demo-aip");
 
         assertText("demo-aip", "This should be styled GREEN.");
 
         // Next see if we can verify that the presentation matches the exceptations; greend and underlined.  Underlined from
         // zonedemo-viaajax.css; green from zonedmeo-overrides.css (not blue as defined in zonedemo-viaajax.css).
 
-
         assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
         assertCSS("demo-aip", "text-decoration", "underline");
     }
-    
+
     /**
      * TAP5-1890
      */
@@ -345,6 +336,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_zone_with_empty_body()
     {
         openLinks("Zone Demo");
+
+        waitForPageInitialized();
 
         assertText("zone-update-message", "");
 

@@ -1,0 +1,38 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head><title>JavaScript Tests</title></head>
+<body>
+
+<h1>
+    <t:pagelink page="index">back to index</t:pagelink>
+</h1>
+
+
+<div id="qunit"/>
+
+<!-- The rest are test elements for the core/dom tests, etc. -->
+
+<div class="container">
+
+<div id="dom-eventelement-native">
+    <a href="#" class="btn btn-primary">primary</a>
+    <a href="#" class="btn" data-use="secondary">secondary</a>
+</div>
+
+<div id="dom-eventelement-selector">
+    <a href="#" class="btn btn-primary">primary</a>
+    <a href="#" class="btn" data-use="secondary">secondary</a>
+</div>
+
+
+<div id="dom-eventelement-matched">
+    <a href="#" class="btn btn-primary">primary</a>
+</div>
+
+<div id="dom-visibility">
+    <span>initially visible</span>
+</div>
+
+</div>
+
+</body>
+</html>

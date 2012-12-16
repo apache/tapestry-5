@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services.assets;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
@@ -30,21 +29,21 @@ import java.util.Map;
 /**
  * An interceptor for the {@link StreamableResourceSource} service that handles caching of content.
  */
-public class SRSCachingInterceptor implements StreamableResourceSource, InvalidationListener
+public class SRSCachingInterceptor extends DelegatingSRS
 {
-    private final StreamableResourceSource delegate;
-
     private final Map<Resource, SoftReference<StreamableResource>> cache = CollectionFactory.newConcurrentMap();
 
-    public SRSCachingInterceptor(StreamableResourceSource delegate)
+    public SRSCachingInterceptor(StreamableResourceSource delegate, ResourceChangeTracker tracker)
     {
-        this.delegate = delegate;
+        super(delegate);
+
+        tracker.clearOnInvalidation(cache);
     }
 
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
-        if (processing == StreamableResourceProcessing.FOR_AGGREGATION)
+        if (!enableCache(processing))
         {
             return delegate.getStreamableResource(baseResource, processing, dependencies);
         }
@@ -77,8 +76,15 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
         return true;
     }
 
-    public void objectWasInvalidated()
+    /**
+     * Returns true unless the processing is {@link StreamableResourceProcessing#FOR_AGGREGATION}.
+     * Subclasses may override. When the cache is not enabled, the request is passed on to the interceptor's
+     * {@link #delegate}, and no attempt is made to read or update this interceptor's cache.
+     *
+     * @since 5.3.5
+     */
+    protected boolean enableCache(StreamableResourceProcessing processing)
     {
-        cache.clear();
+        return processing != StreamableResourceProcessing.FOR_AGGREGATION;
     }
 }

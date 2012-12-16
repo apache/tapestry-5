@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class MinLengthTest extends InternalBaseTestCase
 
         replay();
 
-        MinLength validator = new MinLength();
+        MinLength validator = new MinLength(null);
 
         validator.validate(field, value.length(), formatter, value);
 
@@ -53,7 +53,7 @@ public class MinLengthTest extends InternalBaseTestCase
 
         replay();
 
-        MinLength validator = new MinLength();
+        MinLength validator = new MinLength(null);
 
         try
         {

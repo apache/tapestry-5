@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
         type("path", "/var/www");
         clickAndWait("//input[@value='Set Access']");
 
-        assertTextSeries("//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
                 "Path: [/var/www]", "Role: [GRANT]");
     }
 
@@ -181,7 +181,8 @@ public class BeanEditorTests extends TapestryCoreTestCase
 
         clickAndWait(SUBMIT);
 
-        assertText("//div[@id='content']//h1", "Nested BeanDisplay");
+
+        assertTextPresent("Nested BeanDisplay");
 
         // As usual, Selenium is fighting me in terms of extracting data, so the
         // above check just ensures

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,11 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void form_fragment()
     {
-        openLinks("Form Fragment Demo", "Clear");
+        // setSpeed("250");
+
+        openLinks("Form Fragment Demo", "Clear Errors");
+
+        waitForPageInitialized();
 
         type("name", "Fred");
 
@@ -51,31 +55,33 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("email", "");
 
         clickAndWait("link=Back");
-        clickAndWait("link=Clear");
+        clickAndWait("link=Clear Errors");
+
+        waitForPageInitialized();
 
         click("subscribeToEmail");
         click("on");
 
+        // Type a value into the "always submit" field ...
         type("sub", "subvalue");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
-
+        // And the other fields ...
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
         type("code", "ABC123");
 
+        // Now turn off the fragment for the "code" field
         click("off");
 
+        // And hide the subcode fields (but they still always submit)
         click("subVisible");
-        
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false", PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
 
         assertText("name", "Barney");
         assertText("email", "rubble@bedrock.gov");
         assertText("code", "");
-        
+
         // .. but it still gets submitted, thanks to alwyassubmit=true
         assertText("sub", "subvalue");
     }
@@ -85,25 +91,29 @@ public class AjaxTests extends TapestryCoreTestCase
     public void nested_form_fragment()
     {
         openLinks("Nested Form Fragment Demo");
+
+        waitForPageInitialized();
+
         assertTrue(isVisible("outertext1"));
         assertTrue(isVisible("innertext1"));
         assertTrue(isChecked("innertrigger1"));
         click("innertrigger1");
-        String condition = "selenium.browserbot.getCurrentWindow().$('innertrigger1').isDeepVisible() == false";
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+
         assertTrue(isVisible("outertext1"));
-		
+
         //now make sure that hide_and_remove is properly handled, as well...
         assertTrue(isVisible("outertext2"));
         assertTrue(isVisible("innertext2"));
-        click("innertrigger2");
-        condition="!(selenium.browserbot.getCurrentWindow().$('innertrigger2'))";
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-        assertFalse(isElementPresent("innertext2"));
-        assertTrue(isElementPresent("outertext2"));
+
+        // Looks like at one time there was work to have a trigger that removed the fragment entirely,
+        // not just hide/reveal it, but that seems to have been lost.
     }
 
-    @Test
+    /**
+     * Disabled; the functionality was not well thought out and has been removed; something similar may replace it
+     * in the future.
+     */
+    @Test(enabled = false)
     public void form_fragment_explicit_visible_bounds()
     {
         openLinks("Form Fragment Explicit Visible Bounds Demo");
@@ -142,7 +152,7 @@ public class AjaxTests extends TapestryCoreTestCase
         clickAndWait("link=Clear Saved State");
     }
 
-    @Test
+    @Test(enabled = false)
     public void form_fragment_visible_bound_validation()
     {
         openLinks("Form Fragment Explicit Visible Bounds Demo");
@@ -153,7 +163,7 @@ public class AjaxTests extends TapestryCoreTestCase
         assertFieldValue("value1", "");
         //submitting should result in error in value1...
         click("saveform");
-        assertBubbleMessage("value1", "You must provide a value for Value1.");
+        assertTextPresent("You must provide a value for Value1.");
 
         //still wind up being able to submit here b/c there's no (good) way to highlight the error in the invisible tab.
         //but the form should return with errors.
@@ -185,23 +195,25 @@ public class AjaxTests extends TapestryCoreTestCase
     {
         openLinks("FormInjector Demo");
 
+        waitForPageInitialized();
+
         assertText("sum", "0.0");
 
-        click("link=Add a row");
+        click("link=Add another value");
 
-        sleep(1000);
+        sleep(250);
 
         type("//input[@type='text'][1]", "5.1");
 
-        // I wanted to add two rows, but Selenium didn't want to play.
-
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
 
         assertText("sum", "5.1");
 
         click("link=remove");
 
-        sleep(2000);
+        sleep(100);
 
         clickAndWait(SUBMIT);
 
@@ -218,44 +230,9 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("link=Failure on the server side");
 
-        // Wait for the console to appear
-
-        waitForCSSSelectedElementToAppear("div.t-console div");
-
-        assertTextPresent("Communication with the server failed: Server-side exception.");
-    }
-
-    /**
-     * TAP5-544
-     */
-    @Test
-    public void slow_ajax_load_warning()
-    {
-        openLinks("Slow Ajax Demo");
-
-        // ActionLink
-
-        click("//a[@id='link']");
-
-        waitForElementToAppear("slow");
-
-        click("//a[@id='link']");
-
-        waitForElementToAppear("zoneOutput");
-
-        assertText("zoneOutput", "Updated via an ActionLink");
-
-        clickAndWait("link=refresh");
-
-        click(SUBMIT);
-
-        waitForElementToAppear("slow");
-
-        click(SUBMIT);
-
-        waitForElementToAppear("zoneOutput");
-
-        assertText("zoneOutput", "Updated via form submission.");
+        // Not more more testing can be done; there's no client-side console
+        // because Tapestry now favors the native console (when present),
+        // and the iframe containing the server-side Ajax exception is opaque.
     }
 
     /**
@@ -265,6 +242,8 @@ public class AjaxTests extends TapestryCoreTestCase
     public void progressive_display()
     {
         openLinks("ProgressiveDisplay Demo");
+
+        waitForPageInitialized();
 
         waitForElementToAppear("content1");
         assertText("content1", "Progressive Display content #1.");

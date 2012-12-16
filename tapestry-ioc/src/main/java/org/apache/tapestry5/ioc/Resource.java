@@ -32,13 +32,16 @@ public interface Resource
     /**
      * Returns true if the resource exists; if a stream to the content of the file may be opened. A resource exists
      * if {@link #toURL()} returns a non-null value. Starting in release 5.3.4, the result of this is cached.
+     * <p/>
+     * Starting in 5.4, some "virtual resources", may return true even though {@link #toURL()} returns null.
      *
      * @return true if the resource exists, false if it does not
      */
     boolean exists();
 
     /**
-     * Opens a stream to the content of the resource, or returns null if the resource does not exist.
+     * Opens a stream to the content of the resource, or returns null if the resource does not exist. The native
+     * input stream supplied by the resource is wrapped in a {@link java.io.BufferedInputStream}.
      *
      * @return an open, buffered stream to the content, if available
      */
@@ -46,7 +49,7 @@ public interface Resource
 
     /**
      * Returns the URL for the resource, or null if it does not exist. This value is lazily computed; starting in 5.3.4, subclasses may cache
-     * the result.
+     * the result.  Starting in 5.4, some "virtual resources" may return null.
      */
     URL toURL();
 
@@ -59,6 +62,8 @@ public interface Resource
     /**
      * Returns a Resource based on a relative path, relative to the folder containing the resource. Understands the "."
      * (current folder) and ".." (parent folder) conventions, and treats multiple sequential slashes as a single slash.
+     * <p/>
+     * Virtual resources (resources fabricated at runtime) return themselves.
      */
     Resource forFile(String relativePath);
 
@@ -80,11 +85,15 @@ public interface Resource
 
     /**
      * Returns the file portion of the Resource path, everything that follows the final forward slash.
+     * <p/>
+     * Starting in 5.4, certain kinds of "virtual resources" may return null here.
      */
     String getFile();
 
     /**
      * Return the path (the combination of folder and file).
+     * <p/>
+     * Starting in 5.4, certain "virtual resources", may return an arbitrary value here.
      */
     String getPath();
 }

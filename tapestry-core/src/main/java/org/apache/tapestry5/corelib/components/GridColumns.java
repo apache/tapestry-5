@@ -26,12 +26,13 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 
 /**
  * Renders out the column headers for the grid, including links (where appropriate) to control column sorting.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -65,10 +66,12 @@ public class GridColumns
     @Parameter
     private String zone;
 
+    // TODO: Two EventLinks just to suppress the space between the text and the icon is not very modern.
+    // Use the CSS, Luke!
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass",
-                    "zone=inherit:zone" })
+            parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass",
+                    "zone=inherit:zone"})
     private EventLink sort, sort2;
 
     @Inject
@@ -106,6 +109,9 @@ public class GridColumns
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private Request request;
 
     void setupRender()
     {
@@ -167,24 +173,18 @@ public class GridColumns
      * Normal, non-Ajax event handler.
      */
 
-    void onSort(String columnId)
+    boolean onSort(String columnId)
     {
         gridModel.getSortModel().updateSort(columnId);
-    }
 
-    /**
-     * Ajax event handler, which carries the zone id.
-     */
-    boolean onSort(String columnId, String zone)
-    {
-        onSort(columnId);
-
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
-
-        // Event is handled, don't trigger further event handler methods.
+        if (request.isXHR())
+        {
+            resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, null, null);
+        }
 
         return true;
     }
+
 
     public Asset getIcon()
     {
@@ -199,13 +199,6 @@ public class GridColumns
             default:
                 return sortableAsset;
         }
-    }
-
-    public Object getColumnContext()
-    {
-        if (zone == null) return columnModel.getId();
-
-        return new Object[] { columnModel.getId(), zone };
     }
 
     public String getIconLabel()
@@ -240,5 +233,16 @@ public class GridColumns
         if (override != null) return override;
 
         return standardHeader;
+    }
+
+    /**
+     * Returns null or "true", depending on whether the Grid is rendering for in-place updates or not ("true"
+     * means in-place updates). The affects whether the data-inplace-grid-links attribute will be rendered or not.
+     *
+     * @return
+     */
+    public String getInplaceGridLinks()
+    {
+        return zone == null ? null : "true";
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.util.List;
-
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -27,16 +24,17 @@ import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.apache.tapestry5.services.StackTraceElementAnalyzer;
 import org.apache.tapestry5.services.StackTraceElementClassConstants;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.util.List;
 
 /**
  * Integral part of the default {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page used to break apart and
  * display the properties of the exception.
- * 
- * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
+ *
  * @tapestrydoc
+ * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
-@Import(library = "exceptiondisplay.js")
+@Import(stylesheet = "ExceptionDisplay.css", module = "core/exception-display")
 public class ExceptionDisplay
 {
     /**
@@ -60,12 +58,6 @@ public class ExceptionDisplay
     @Property
     private List<ExceptionInfo> stack;
 
-    @Environmental
-    private JavaScriptSupport jsSupport;
-
-    @Property
-    private String toggleId;
-
     private boolean sawDoFilter;
 
     @Inject
@@ -77,15 +69,6 @@ public class ExceptionDisplay
         ExceptionAnalysis analysis = analyzer.analyze(exception);
 
         stack = analysis.getExceptionInfos();
-
-        toggleId = jsSupport.allocateClientId("toggleStack");
-    }
-
-    public boolean getShowPropertyList()
-    {
-        // True if either is non-empty
-
-        return !(info.getPropertyNames().isEmpty() && info.getStackTrace().isEmpty());
     }
 
     public Object getPropertyValue()
@@ -96,17 +79,14 @@ public class ExceptionDisplay
     public String getFrameClass()
     {
         if (sawDoFilter)
+        {
             return StackTraceElementClassConstants.OMITTED;
+        }
 
         String result = frameAnalyzer.classForFrame(frame);
 
         sawDoFilter |= frame.getMethodName().equals("doFilter");
 
         return result;
-    }
-
-    void afterRender()
-    {
-        jsSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
     }
 }

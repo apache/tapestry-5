@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,8 +66,11 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         this.environment = environment;
     }
 
-    public void renderPartialPageMarkup() throws IOException
+    @Override
+    public void renderPartialPageMarkup(JSONObject reply) throws IOException
     {
+        assert reply != null;
+
         environment.cloak();
 
         try
@@ -82,8 +85,6 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
             MarkupWriter writer = factory.newPartialMarkupWriter(pageContentType);
 
-            JSONObject reply = new JSONObject();
-
             // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
 
             partialMarkupRenderer.renderMarkup(writer, reply);
@@ -97,5 +98,10 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         {
             environment.decloak();
         }
+    }
+
+    public void renderPartialPageMarkup() throws IOException
+    {
+        renderPartialPageMarkup(new JSONObject());
     }
 }

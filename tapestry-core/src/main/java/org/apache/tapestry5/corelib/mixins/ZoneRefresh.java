@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,90 +19,75 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * <p>
  * This mixin periodically refreshs a @{link org.apache.tapestry5.corelib.components.Zone zone}
- * by triggering an event on the server using ajax requests. 
+ * by triggering an event on the server using ajax requests.
  * </p>
- * 
+ * <p/>
  * <b>Note: </b> This mixin is only meant for a @{link org.apache.tapestry5.corelib.components.Zone zone}
+ *
  * @tapestrydoc
  */
-@Import(library = "zone-refresh.js")
 public class ZoneRefresh
 {
-   /**
-    *  Period between two consecutive refreshes (in seconds)  
-    */
-   @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
-   private int period;
-   
-   /**
-    * Context passed to the event
-    */
-   @Parameter
-   private Object[] context;
-   
-   @InjectContainer
-   private Zone zone;
+    /**
+     * Period between two consecutive refreshes (in seconds). If a new refresh occurs before the
+     * previous refresh has completed, it will be skipped.
+     */
+    @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
+    private int period;
 
-   @Inject
-   private JavaScriptSupport javaScriptSupport;
-   
-   @Inject
-   private ComponentResources resources;
-   
-   public ZoneRefresh()
-   {
-   }
-   
-   //For testing purpose
-   ZoneRefresh(Object [] context, ComponentResources resources, JavaScriptSupport javaScriptSupport, Zone zone)
-   {
-      this.context = context;
-      this.resources = resources;
-      this.javaScriptSupport = javaScriptSupport;
-      this.zone = zone;
-   }
+    /**
+     * Context passed to the event
+     */
+    @Parameter
+    private Object[] context;
 
-   @AfterRender
-   void addJavaScript()
-   {
-      JSONObject params = new JSONObject();
-      
-      params.put("period", period);
-      params.put("id", zone.getClientId());
-      params.put("URL", createEventLink());
-      
-      javaScriptSupport.addInitializerCall(InitializationPriority.LATE, "zoneRefresh", params);
-   }
+    @InjectContainer
+    private Zone zone;
 
-   private Object createEventLink()
-   {
-      Link link = resources.createEventLink("zoneRefresh", context);
-      return link.toAbsoluteURI();
-   }
-   
-   Object onZoneRefresh()
-   {
-      CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
-      resources.triggerEvent(EventConstants.REFRESH, context, callback);
-      
-      if(callback.getResult() != null){
-         return callback.getResult();
-      }
-      
-      return zone.getBody();
-   }
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
+
+    @Inject
+    private ComponentResources resources;
+
+    //For testing purpose
+    ZoneRefresh(Object[] context, ComponentResources resources, JavaScriptSupport javaScriptSupport, Zone zone)
+    {
+        this.context = context;
+        this.resources = resources;
+        this.javaScriptSupport = javaScriptSupport;
+        this.zone = zone;
+    }
+
+    @AfterRender
+    void addJavaScript()
+    {
+        Link link = resources.createEventLink("zoneRefresh", context);
+
+        javaScriptSupport.require("core/zone-refresh").with(zone.getClientId(), period, link.toString());
+    }
+
+    Object onZoneRefresh()
+    {
+        CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
+        resources.triggerEvent(EventConstants.REFRESH, context, callback);
+
+        if (callback.getResult() != null)
+        {
+            return callback.getResult();
+        }
+
+        return zone.getBody();
+    }
 
 }

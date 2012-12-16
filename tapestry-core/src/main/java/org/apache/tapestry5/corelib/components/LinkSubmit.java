@@ -15,30 +15,26 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Generates a client-side hyperlink that submits the enclosing form. If the link is clicked in the browser, the
- * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like {@link Submit}
- * .
+ * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like
+ * {@link Submit}.
  *
  * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")
+@Import(module = "core/forms")
 public class LinkSubmit implements ClientElement
 {
     /**
@@ -151,7 +147,11 @@ public class LinkSubmit implements ClientElement
 
             formSupport.store(this, new ProcessSubmission(clientId));
 
-            writer.element("span",
+            writer.element("a",
+
+                    "href", "#",
+
+                    "data-submit-mode", mode.name().toLowerCase(),
 
                     "id", clientId);
 
@@ -164,12 +164,6 @@ public class LinkSubmit implements ClientElement
         if (!disabled)
         {
             writer.end();
-
-            JSONObject spec = new JSONObject("form", formSupport.getClientId(), "clientId", clientId);
-
-            spec.put("mode", mode.name().toLowerCase());
-
-            javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "linkSubmit", spec);
         }
     }
 

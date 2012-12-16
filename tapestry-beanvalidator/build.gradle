@@ -1,3 +1,5 @@
+import t5build.*
+
 description = "Support for JSR-303 Bean Validation via the Hibernate validator implementation"
 
 dependencies {
@@ -9,8 +11,25 @@ dependencies {
   testCompile project(':tapestry-test')
 }
 
-jar {
-    manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.BeanValidatorModule'
+task compileCoffeeScript(type: CompileCoffeeScript) {
+    outputDir "build/compiled-coffeescript"
+}
+
+processResources {
+    from compileCoffeeScript
+}
+
+idea.module {
+    sourceDirs += compileCoffeeScript.srcDir
+    sourceDirs += compileCoffeeScript.outputDir
+
+    // Hack the IML so that "build" is not excluded; necessary because several directories under build
+    // are added as source, resources, or test folders.
+    iml.whenMerged { module ->
+        module.excludeFolders.removeAll {
+            it.canonicalUrl.endsWith "/build"
+        }
     }
 }
+
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.BeanValidatorModule'

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,17 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Validates that a string value has a minimum length.
  */
 public final class MinLength extends AbstractValidator<Integer, String>
 {
-    public MinLength()
+    public MinLength(JavaScriptSupport javaScriptSupport)
     {
-        super(Integer.class, String.class, "minimum-string-length");
+        super(Integer.class, String.class, "minimum-string-length", javaScriptSupport);
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
@@ -45,6 +47,11 @@ public final class MinLength extends AbstractValidator<Integer, String>
     public void render(Field field, Integer constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "minlength", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
+                    "data-validate-min-length", constraintValue.toString(),
+                    "data-min-length-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 }

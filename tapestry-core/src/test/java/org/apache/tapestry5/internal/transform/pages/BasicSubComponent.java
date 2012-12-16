@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.transform.pages;
 
+import org.apache.tapestry5.internal.t5internal.pages.BasicComponent;
+
 /**  */
 public class BasicSubComponent extends BasicComponent
 {

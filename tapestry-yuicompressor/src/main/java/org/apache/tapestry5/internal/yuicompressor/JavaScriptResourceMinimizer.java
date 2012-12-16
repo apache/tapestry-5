@@ -37,8 +37,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JavaScriptResourceMinimizer extends AbstractMinimizer
 {
-    private final Logger logger;
-
     private final static int RANGE = 5;
 
     private enum Where
@@ -46,11 +44,15 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         EXACT, NEAR, FAR
     }
 
+    private static final String[] IGNORED_WARNINGS = {
+            "Try to use a single 'var' statement per scope.",
+            "Using 'eval' is not recommended",
+            "has already been declared in the same scope"
+    };
+
     public JavaScriptResourceMinimizer(final Logger logger, OperationTracker tracker)
     {
         super(logger, tracker, "JavaScript");
-
-        this.logger = logger;
     }
 
     protected void doMinimize(final StreamableResource resource, Writer output) throws IOException
@@ -74,7 +76,9 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
         final AtomicInteger warningCount = new AtomicInteger();
 
-        Runnable identifyWarnings = new Runnable() {
+        Runnable identifyWarnings = new Runnable()
+        {
+            @Override
             public void run()
             {
                 if (warningCount.get() > 0)
@@ -98,6 +102,14 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                for (String ignored : IGNORED_WARNINGS)
+                {
+                    if (message.contains(ignored))
+                    {
+                        return;
+                    }
+                }
+
                 identifySource.run();
 
                 errorLines.add(line);

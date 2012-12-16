@@ -49,4 +49,14 @@ public class MessageFormatterImpl implements MessageFormatter
         return String.format(locale, format, args);
     }
 
+    /**
+     * Returns the underlying format string for this formatter.
+     *
+     * @since 5.4
+     */
+    public String toString()
+    {
+        return format;
+    }
+
 }

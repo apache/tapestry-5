@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-import java.util.Map;
+import java.util.List;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
-    private final JSONArray scripts = new JSONArray();
+    private final JSONArray libraryURLs = new JSONArray();
 
     private final JSONArray stylesheets = new JSONArray();
 
-    private final Map<InitializationPriority, JSONObject> priorityToInits = CollectionFactory.newMap();
+    private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
-    public void addScriptLink(String scriptURL)
+    public void addLibrary(String libraryURL)
     {
-        scripts.put(scriptURL);
+        libraryURLs.put(libraryURL);
     }
 
     public void addStylesheetLink(StylesheetLink stylesheet)
@@ -52,35 +52,35 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
                 "DocumentLinker.addScript() is not implemented for partial page renders.");
     }
 
-    public void setInitialization(InitializationPriority priority, JSONObject initialization)
+    @Override
+    public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
-        priorityToInits.put(priority, initialization);
+        initsManager.addInitialization(priority, moduleName, functionName, arguments);
     }
 
     /**
      * Commits changes, adding one or more keys to the reply.
      *
-     * @param reply JSON Object to be sent to client
+     * @param reply
+     *         JSON Object to be sent to client
      */
     public void commit(JSONObject reply)
     {
-        if (scripts.length() > 0)
-            reply.put("scripts", scripts);
-
-        if (stylesheets.length() > 0)
-            reply.put("stylesheets", stylesheets);
-
-        JSONArray inits = new JSONArray();
-
-        for (InitializationPriority p : InitializationPriority.values())
+        if (libraryURLs.length() > 0)
         {
-            JSONObject init = priorityToInits.get(p);
-
-            if (init != null)
-                inits.put(init);
+            reply.in(InternalConstants.PARTIAL_KEY).put("libraries", libraryURLs);
         }
 
-        if (inits.length() > 0)
-            reply.put("inits", inits);
+        if (stylesheets.length() > 0)
+        {
+            reply.in(InternalConstants.PARTIAL_KEY).put("stylesheets", stylesheets);
+        }
+
+        List<?> inits = initsManager.getSortedInits();
+
+        if (inits.size() > 0)
+        {
+            reply.in(InternalConstants.PARTIAL_KEY).put("inits", JSONArray.from(inits));
+        }
     }
 }

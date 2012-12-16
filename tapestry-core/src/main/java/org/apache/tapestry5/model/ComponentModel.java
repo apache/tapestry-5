@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,18 @@ import java.util.Set;
 public interface ComponentModel
 {
     /**
+     * Returns the name of the library that defines this component; this may be the empty string for
+     * an application page or component, or will be a name of a library (possibly including "core" for built-in
+     * components).
+     * Library names are defined by the {@link org.apache.tapestry5.services.LibraryMapping} contributions
+     * to the {@link org.apache.tapestry5.services.ComponentClassResolver} service.
+     *
+     * @return library name containing the component, or empty string for application components
+     * @since 5.4
+     */
+    String getLibraryName();
+
+    /**
      * Is this a model of a page (rather than a component, mixin, or base-class)?
      *
      * @return true if a page
@@ -60,7 +72,8 @@ public interface ComponentModel
     /**
      * Returns an embedded component defined by this component or by a super-class.
      *
-     * @param componentId the id of the embedded component
+     * @param componentId
+     *         the id of the embedded component
      * @return the embedded component model, or null if no component exists with that id
      */
     EmbeddedComponentModel getEmbeddedComponentModel(String componentId);
@@ -70,7 +83,8 @@ public interface ComponentModel
      *
      * @param fieldName
      * @return the corresponding strategy, or the empty string
-     * @throws IllegalArgumentException if the named field is not marked as persistent
+     * @throws IllegalArgumentException
+     *         if the named field is not marked as persistent
      */
     String getFieldPersistenceStrategy(String fieldName);
 
@@ -90,7 +104,8 @@ public interface ComponentModel
      * Return a single parameter model by parameter name, or null if the parameter is not defined (is not
      * a formal parameter). This may be a parameter defined by this component, or from a base class.
      *
-     * @param parameterName the name of the parameter (case is ignored)
+     * @param parameterName
+     *         the name of the parameter (case is ignored)
      * @return the parameter model if found in this model or a parent model, or null if not found
      */
     ParameterModel getParameterModel(String parameterName);
@@ -98,7 +113,8 @@ public interface ComponentModel
     /**
      * Returns true if the named parameter is formally defined (there's a ParameterModel).
      *
-     * @param parameterName name of the parameter (case is ignored)
+     * @param parameterName
+     *         name of the parameter (case is ignored)
      * @since 5.2.0
      */
     boolean isFormalParameter(String parameterName);
@@ -161,7 +177,8 @@ public interface ComponentModel
      * Gets a meta value identified by the given key. If the current model does not provide a value for the key, then
      * the parent component model (if any) is searched.
      *
-     * @param key identifies the value to be accessed
+     * @param key
+     *         identifies the value to be accessed
      * @return the value for the key (possibly inherited from a parent model), or null
      */
     String getMeta(String key);
@@ -178,16 +195,18 @@ public interface ComponentModel
 
     /**
      * Determines if the component has an event handler for the indicated event name (case insensitive). This includes
-     * handles in the component class itself, or its super-classes, but does not include event handles supplied by
+     * handlers in the component class itself, or its super-classes, but does not include event handlers supplied by
      * implementation or instance mixins.
      *
-     * @param eventType name of event to check (case insensitive)
+     * @param eventType
+     *         name of event to check (case insensitive)
      * @return true if event handler present
      */
     boolean handlesEvent(String eventType);
 
     /**
-     * @param mixinClassName class name of the mixin for which the ordering is desired
+     * @param mixinClassName
+     *         class name of the mixin for which the ordering is desired
      * @return the ordering constraint(s) for the mixin, potentially null.
      * @since 5.2.0
      */

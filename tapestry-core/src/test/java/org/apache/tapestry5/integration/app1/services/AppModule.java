@@ -145,6 +145,8 @@ public class AppModule
         configuration.add(SymbolConstants.SECURE_ENABLED, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
+
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "testing, testing, 1... 2... 3...");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)

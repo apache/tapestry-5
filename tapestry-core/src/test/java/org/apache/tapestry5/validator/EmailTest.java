@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class EmailTest extends InternalBaseTestCase
 
         replay();
 
-        Email validator = new Email();
+        Email validator = new Email(null);
 
         validator.validate(field, null, formatter, "myemail@mail.com");
 
@@ -40,16 +40,12 @@ public class EmailTest extends InternalBaseTestCase
     @Test
     public void input_mismatch() throws Exception
     {
-        String label = "My Field";
-        Field field = mockFieldWithLabel(label);
+        Field field = mockField();
         MessageFormatter formatter = mockMessageFormatter();
-        String message = "{message}";
-
-        train_format(formatter, message, label);
 
         replay();
 
-        Email validator = new Email();
+        Email validator = new Email(null);
 
         try
         {
@@ -58,16 +54,7 @@ public class EmailTest extends InternalBaseTestCase
         }
         catch (ValidationException ex)
         {
-            assertEquals(ex.getMessage(), message);
-
-            verify();
         }
-
-        field = mockFieldWithLabel(label);
-
-        train_format(formatter, message, label);
-
-        replay();
 
         try
         {
@@ -76,10 +63,9 @@ public class EmailTest extends InternalBaseTestCase
         }
         catch (ValidationException ex)
         {
-            assertEquals(ex.getMessage(), message);
-
-            verify();
         }
+
+        verify();
 
     }
 }

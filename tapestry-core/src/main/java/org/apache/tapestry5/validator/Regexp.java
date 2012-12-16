@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,20 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Enforces that the input matches a provided regular expression.
+ */
 public class Regexp extends AbstractValidator<Pattern, String>
 {
-    public Regexp()
+    public Regexp(JavaScriptSupport javaScriptSupport)
     {
-        super(Pattern.class, String.class, "regexp");
+        super(Pattern.class, String.class, "regexp", javaScriptSupport);
     }
 
     private String buildMessage(MessageFormatter formatter, Field field, Pattern constraintValue)
@@ -38,8 +43,14 @@ public class Regexp extends AbstractValidator<Pattern, String>
     public void render(Field field, Pattern constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "regexp", buildMessage(formatter, field, constraintValue),
-                                  constraintValue.pattern());
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+
+            writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
+                    "data-validate-regexp", constraintValue.pattern(),
+                    "data-regexp-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)

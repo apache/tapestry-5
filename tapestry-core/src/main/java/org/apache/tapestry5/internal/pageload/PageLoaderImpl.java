@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -39,10 +40,9 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +64,7 @@ import java.util.Map;
  * <p/>
  * And truly, <em>This is the Tapestry Heart, This is the Tapestry Soul...</em>
  */
-public class PageLoaderImpl implements PageLoader, InvalidationListener, ComponentAssemblerSource
+public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 {
     private static final class Key
     {
@@ -146,11 +146,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private final SymbolSource symbolSource;
 
+    private final Logger logger;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
                           StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-                          SymbolSource symbolSource)
+                          SymbolSource symbolSource, Logger logger)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -163,9 +165,20 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.perThreadManager = perThreadManager;
         this.request = request;
         this.symbolSource = symbolSource;
+        this.logger = logger;
     }
 
-    public void objectWasInvalidated()
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub classesHub,
+                                  @ComponentTemplates InvalidationEventHub templatesHub,
+                                  @ComponentMessages InvalidationEventHub messagesHub)
+    {
+        classesHub.clearOnInvalidation(cache);
+        templatesHub.clearOnInvalidation(cache);
+        messagesHub.clearOnInvalidation(cache);
+    }
+
+    public void clearCache()
     {
         cache.clear();
     }
@@ -173,6 +186,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector)
     {
         final String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
+
+        final long startTime = System.nanoTime();
 
         return tracker.invoke("Constructing instance of page class " + pageClassName, new Invokable<Page>()
         {
@@ -191,6 +206,23 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 // into the page's default state.
 
                 page.loaded();
+
+                long elapsedTime = System.nanoTime() - startTime;
+
+                double elapsedMS = elapsedTime * 10E-7d;
+
+                if (logger.isInfoEnabled())
+                {
+                    logger.info(String.format("Loaded page '%s' (%s) in %.3f ms",
+                            logicalPageName, selector.toShortString(), elapsedMS));
+                }
+
+                // The rough stats are set by the assembler, and don't include the page load time;
+                // so we update them to match.
+
+                Page.Stats roughStats = page.getStats();
+
+                page.setStats(new Page.Stats(elapsedMS, roughStats.componentCount, roughStats.weight));
 
                 return page;
             }

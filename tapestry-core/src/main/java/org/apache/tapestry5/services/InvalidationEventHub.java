@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import java.util.Map;
+
 /**
  * An object which manages a list of {@link org.apache.tapestry5.services.InvalidationListener}s. There are multiple
  * event hub services implementing this interface, each with a specific marker annotation; each can register listeners
@@ -27,9 +29,9 @@ package org.apache.tapestry5.services;
  * <dt>component classes
  * <dd>{@link org.apache.tapestry5.services.ComponentClasses} marker annotation
  * </dl>
- * <p>
+ * <p/>
  * Starting in Tapestry 5.3, these services are disabled in production (it does nothing).
- * 
+ *
  * @since 5.1.0.0
  */
 public interface InvalidationEventHub
@@ -37,6 +39,22 @@ public interface InvalidationEventHub
     /**
      * Adds a listener, who needs to know when an underlying resource of a given category has changed (so that the
      * receiver may discard any cached data that may have been invalidated). Does nothing in production mode.
+     *
+     * @deprecated in 5.4, use {@link #addInvalidationCallback(Runnable)} instead}
      */
     void addInvalidationListener(InvalidationListener listener);
+
+    /**
+     * Adds a callback that is invoked when an underlying tracked resource has changed. Does nothing in production mode.
+     *
+     * @since  5.4
+     */
+    void addInvalidationCallback(Runnable callback);
+
+    /**
+     * Adds a callback that clears the map.
+     *
+     * @since 5.4
+     */
+    void clearOnInvalidation(Map<?,?> map);
 }

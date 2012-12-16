@@ -1,70 +1,58 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-  <h1>Form Fragment Demo</h1>
+<h1>Form Fragment Demo</h1>
 
-  <form t:id="form">
+<form t:id="form">
 
     <t:errors/>
 
-    <div class="t-beaneditor">
+    <t:label for="name"/>
+    <t:textfield t:id="name" value="subscribe.name"/>
 
-      <div class="t-beaneditor-row">
-        <t:label for="name"/>
-        <t:textfield t:id="name" value="subscribe.name"/>
-      </div>
-
-      <t:checkbox t:id="subscribeToEmail" t:mixins="triggerfragment" fragment="showEmail"/>
-      <t:label for="subscribeToEmail">Subscribe to Email?</t:label>
-
-      <t:formfragment t:id="showEmail" visible="subscribeToEmail" hide="fade">
-        <div class="t-beaneditor-row">
-          <t:label for="email"/>
-          <t:textfield t:id="email" value="subscribe.email"/>
-        </div>
-      </t:formfragment>
-
-      <br/>
-
-      <t:radiogroup value="codeVisible">
-        <t:radio t:id="on" label="On" value="true"/>
-        <t:label for="on"/>
-        <t:radio t:id="off" label="Off" t:mixins="triggerfragment" fragment="codeFragment"
-          invert="true" value="false"/>
-        <t:label for="off"/>
-      </t:radiogroup>
+    <label class="checkbox">
+        <t:checkbox t:id="subscribeToEmail" t:mixins="triggerfragment" fragment="showEmail"/>
+        Subscribe to Email?
+    </label>
 
 
-      <t:formfragment t:id="codeFragment" visible="codeVisible">
-        <div class="t-beaneditor-row">
-          <t:label for="code"/>
-          <t:textfield t:id="code" value="subscribe.code"/>
-        </div>
-      </t:formfragment>
+    <t:formfragment t:id="showEmail" visible="subscribeToEmail" hide="fade">
+        <t:label for="email"/>
+        <t:textfield t:id="email" value="subscribe.email"/>
+    </t:formfragment>
+
+    <t:radiogroup value="codeVisible">
+        <label class="radio">
+            <t:radio t:id="on" value="true"/>
+            On
+        </label>
+        <label class="radio">
+            <t:radio t:id="off" t:mixins="triggerfragment" fragment="codeFragment"
+                     invert="true" value="false"/>
+            Off
+        </label>
+    </t:radiogroup>
 
 
-      <br/>
-
-      <t:checkbox t:id="subVisible" t:mixins="triggerfragment" fragment="editSub"/>
-      <t:label for="subVisible">
-        Edit Sub? (whatever that is)</t:label>
-
-      <t:formfragment t:id="editSub" visible="subVisible" alwayssubmit="true" hide="fade">
-        <div class="t-beaneditor-row">
-          <t:label for="sub"/>
-          <t:textfield t:id="sub" value="subscribe.sub"/>
-        </div>
-      </t:formfragment>
+    <t:formfragment t:id="codeFragment" visible="codeVisible">
+        <t:label for="code"/>
+        <t:textfield t:id="code" value="subscribe.code"/>
+    </t:formfragment>
 
 
-      <div class="t-beaneditor-row">
-        <input type="submit" value="Subscribe"/>
-      </div>
+    <label>
+        <t:checkbox t:id="subVisible" t:mixins="triggerfragment" fragment="editSub"/>
+        Edit Sub? (whatever that is)
+    </label>
 
-    </div>
+    <t:formfragment t:id="editSub" visible="subVisible" alwayssubmit="true" hide="fade">
+        <t:label for="sub"/>
+        <t:textfield t:id="sub" value="subscribe.sub"/>
+    </t:formfragment>
 
 
-    <p>
-      <t:actionlink t:id="clear">Clear</t:actionlink>
-    </p>
+    <input type="submit" class="btn btn-primary" value="Subscribe"/>
+</form>
 
-  </form>
+
+<t:actionlink t:id="clear" class="btn">Clear Errors</t:actionlink>
+
 </html>

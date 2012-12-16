@@ -79,7 +79,6 @@
     </test>
 
     <test name="App Skinning Tests" enabled="true">
-        <parameter name="tapestry.web-app-folder" value="src/test/app5"/>
         <packages>
             <package name="org.apache.tapestry5.integration.app5"/>
         </packages>
@@ -93,7 +92,6 @@
     </test>
 
     <test name="AppFolder Tests" enabled="true">
-        <parameter name="tapestry.web-app-folder" value="src/test/appfolder"/>
         <packages>
             <package name="org.apache.tapestry5.integration.appfolder"/>
         </packages>

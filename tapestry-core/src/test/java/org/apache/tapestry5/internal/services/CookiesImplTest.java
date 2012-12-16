@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class CookiesImplTest extends Assert
     {
         // In seconds
         final int ONE_WEEK = 7 * 24 * 60 * 60;
-        CookiesImpl cs = new CookiesImpl(null, newCookieSource(nameValues), null, ONE_WEEK);
+        CookiesImpl cs = new CookiesImpl(null, newCookieSource(nameValues), null, "", ONE_WEEK);
         String actual = cs.readCookieValue(name);
         assertEquals(actual, expected);
     }
@@ -129,7 +129,7 @@ public class CookiesImplTest extends Assert
             {
                 cookies.add(cookie);
             }
-        }, 1000l * 1000l);
+        }, contextPath, 1000l * 1000l);
     }
 
     public void test_Write_Cookie_With_Max_Age()

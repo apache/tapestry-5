@@ -15,7 +15,6 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.dom.Element;
@@ -23,12 +22,11 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
- * 
+ *
  * @tapestrydoc
  */
 @Events(InternalConstants.GRID_INPLACE_UPDATE + " (internal event)")
@@ -76,11 +74,8 @@ public class GridPager
     @Inject
     private Messages messages;
 
-    @Environmental
-    private ClientBehaviorSupport clientBehaviorSupport;
-
-    @Environmental
-    private JavaScriptSupport jsSupport;
+    @Inject
+    private Request request;
 
     void beginRender(MarkupWriter writer)
     {
@@ -90,7 +85,14 @@ public class GridPager
 
         if (maxPages < 2) return;
 
-        writer.element("div", "class", "t-data-grid-pager");
+        writer.element("div", "class", "pagination");
+
+        if (zone != null)
+        {
+            writer.attributes("data-inplace-grid-links", true);
+        }
+
+        writer.element("ul");
 
         lastIndex = 0;
 
@@ -104,8 +106,7 @@ public class GridPager
         {
             low = 1;
             high = 2 * range + 1;
-        }
-        else
+        } else
         {
             if (high > maxPages)
             {
@@ -121,6 +122,7 @@ public class GridPager
             writePageLink(writer, i);
 
         writer.end();
+        writer.end();
     }
 
     private void writePageLink(MarkupWriter writer, int pageIndex)
@@ -129,60 +131,63 @@ public class GridPager
 
         if (pageIndex <= lastIndex) return;
 
-        if (pageIndex != lastIndex + 1) writer.write(" ... ");
+        if (pageIndex != lastIndex + 1)
+        {
+            writer.element("li", "class", "disabled");
+            writer.element("a", "href", "#");
+            writer.write(" ... ");
+            writer.end();
+            writer.end();
+        }
 
         lastIndex = pageIndex;
 
         if (pageIndex == currentPage)
         {
-            writer.element("span", "class", "current");
+            writer.element("li", "class", "active");
+            writer.element("a", "href", "#");
             writer.write(Integer.toString(pageIndex));
+            writer.end();
             writer.end();
             return;
         }
 
-        Object[] context = zone == null
-                           ? new Object[] { pageIndex }
-                           : new Object[] { pageIndex, zone };
+        writer.element("li");
 
-        Link link = resources.createEventLink(EventConstants.ACTION, context);
-
-        Element element = writer.element("a",
-                                         "href", zone == null ? link : "#",
-                                         "title", messages.format("core-goto-page", pageIndex));
-
-        writer.write(Integer.toString(pageIndex));
-        writer.end();
+        Link link = resources.createEventLink(EventConstants.ACTION, pageIndex);
 
         if (zone != null)
         {
-            String id = jsSupport.allocateClientId(resources);
-
-            element.attribute("id", id);
-
-            clientBehaviorSupport.linkZone(id, zone, link);
+            link.addParameter("t:inplace", "true");
         }
+
+        Element element = writer.element("a",
+                "href", link,
+                "data-update-zone", zone,
+                "title", messages.format("core-goto-page", pageIndex));
+
+
+        writer.write(Integer.toString(pageIndex));
+
+        writer.end();
+
+        writer.end();   // li
     }
 
     /**
-     * Normal, non-Ajax event handler.
+     * Repaging event handler.
      */
-    void onAction(int newPage)
+    boolean onAction(int newPage)
     {
         // TODO: Validate newPage in range
 
         currentPage = newPage;
-    }
 
-    /**
-     * Akjax event handler, passing the zone along.
-     */
-    boolean onAction(int newPage, String zone)
-    {
-        onAction(newPage);
+        if (request.isXHR())
+        {
+            resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, null, null);
+        }
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
-
-        return true; // abort event
+        return true;     // abort event
     }
 }

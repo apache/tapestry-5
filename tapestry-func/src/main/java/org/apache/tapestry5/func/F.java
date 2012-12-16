@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,6 +60,18 @@ public class F
             }
         };
     }
+
+    /**
+     * Predicate that returns true if the provided string is blank (null or all whitespace).
+     */
+    public static Predicate<String> IS_BLANK = new Predicate<String>()
+    {
+        @Override
+        public boolean accept(String element)
+        {
+            return element == null || element.trim().length() == 0;
+        }
+    };
 
     /**
      * A Predicate factory for comparison of a Comparable element from a flow against a fixed value.
@@ -192,9 +204,12 @@ public class F
      * A Mapper factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate
      * selects one of the two mappers.
      *
-     * @param predicate  evaluated to selected a coercion
-     * @param ifAccepted used when predicate evaluates to true
-     * @param ifRejected used when predicate evaluates to false
+     * @param predicate
+     *         evaluated to selected a coercion
+     * @param ifAccepted
+     *         used when predicate evaluates to true
+     * @param ifRejected
+     *         used when predicate evaluates to false
      */
     public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
                                              final Mapper<S, T> ifRejected)
@@ -341,9 +356,12 @@ public class F
      * Creates a ZippedFlow from the provided map; the order of the tuples in the ZippedFlow is defined
      * by the iteration order of the map entries.
      *
-     * @param <A> type of key and first tuple value
-     * @param <B> type of value and second tuple value
-     * @param map source of tuples
+     * @param <A>
+     *         type of key and first tuple value
+     * @param <B>
+     *         type of value and second tuple value
+     * @param map
+     *         source of tuples
      * @return zipped flow created from map
      * @since 5.3
      */
@@ -368,8 +386,10 @@ public class F
      * the Flow). If lower equals upper, the Flow is empty. If upper is less than lower,
      * the Flow counts down instead.
      *
-     * @param lower start of range (inclusive)
-     * @param upper end of range (exclusive)
+     * @param lower
+     *         start of range (inclusive)
+     * @param upper
+     *         end of range (exclusive)
      */
     public static Flow<Integer> range(int lower, int upper)
     {
@@ -409,8 +429,10 @@ public class F
      * Creates an infinite lazy flow from an initial value and a function to map from the current value to the
      * next value.
      *
-     * @param initial  initial value in flow
-     * @param function maps from current value in flow to next value in flow
+     * @param initial
+     *         initial value in flow
+     * @param function
+     *         maps from current value in flow to next value in flow
      * @return lazy flow
      */
     public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> function)
@@ -562,7 +584,8 @@ public class F
     /**
      * Inverts a predicate.
      *
-     * @param delegate the predicate to invert
+     * @param delegate
+     *         the predicate to invert
      * @return a new predicate that is inverse to the existing predicate
      * @since 5.3
      */
@@ -582,8 +605,10 @@ public class F
     /**
      * Combines two mappers into a composite mapping from type A to type C via type B.
      *
-     * @param abMapper maps from A to B
-     * @param bcMapper maps from B to C
+     * @param abMapper
+     *         maps from A to B
+     * @param bcMapper
+     *         maps from B to C
      * @return mapper from A to C
      */
     public static <A, B, C> Mapper<A, C> combine(final Mapper<A, B> abMapper, final Mapper<B, C> bcMapper)
@@ -608,7 +633,8 @@ public class F
      * Combines any number of delegates as a logical and operation. Evaluation terminates
      * with the first delegate predicate that returns false.
      *
-     * @param delegates to evaluate
+     * @param delegates
+     *         to evaluate
      * @return combined delegate
      * @since 5.3
      */
@@ -633,7 +659,8 @@ public class F
      * Combines any number of delegates as a logical or operation. Evaluation terminates
      * with the first delegate predicate that returns true.
      *
-     * @param delegates to evaluate
+     * @param delegates
+     *         to evaluate
      * @return combined delegate
      * @since 5.3
      */

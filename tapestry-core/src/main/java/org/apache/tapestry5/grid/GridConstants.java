@@ -47,9 +47,10 @@ public class GridConstants
     public static final int ROWS_PER_PAGE = 25;
 
     /**
-     * CSS class for the &lt;table&gt; element.
+     * CSS class for the &lt;table&gt; element.   Change in 5.4 from "t-data-grid" due to the introduction
+     * of Twitter Bootstrap.
      */
-    public static final String TABLE_CLASS = "t-data-grid";
+    public static final String TABLE_CLASS = "table table-hover table-bordered table-striped";
 
     /**
      * Default pager position

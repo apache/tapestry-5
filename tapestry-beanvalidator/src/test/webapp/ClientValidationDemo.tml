@@ -1,6 +1,6 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
     <body>
-        <t:beaneditform object="testEntity" clientValidation="true" add="collectionSizeValue">
+        <t:beaneditform object="testEntity" clientValidation="submit" add="collectionSizeValue">
         	<p:collectionSizeValue>
         		<t:label for="languages"/>
         		<t:palette t:id="languages" model="literal:Java,C,Ruby,Python,Perl" selected="testEntity.collectionSizeValue" encoder="stringValueEncoder"/>

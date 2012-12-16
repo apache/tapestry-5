@@ -24,13 +24,20 @@ import org.apache.tapestry5.dom.Element;
  * Field may not be set yet (or may reflect a previous looping's rendering). It may be necessary to {@linkplain
  * org.apache.tapestry5.services.Heartbeat#defer(Runnable)} defer any rendering} until after the Label and the Field have
  * both had their change to initialize and render.
+ * <p/>
+ * Modern HTML and CSS, especially under HTML5 and CSS3, really makes this pointless; it is possible to handle all
+ * of these issues directly in the client. ValidationDecorator will be supported in Tapestry 5.4,
+ * but the default implementation will be changed to do nothing.
+ *
+ * @deprecated Deprecated in 5.4 with no replacement.
  */
 public interface ValidationDecorator
 {
     /**
      * Invoked by a {@link org.apache.tapestry5.corelib.components.Label} before rendering itself.
      *
-     * @param field for this label
+     * @param field
+     *         for this label
      */
     void beforeLabel(Field field);
 
@@ -38,8 +45,10 @@ public interface ValidationDecorator
      * Invoked after the label has rendered its tag, but before it has rendered content inside the tag, to allow the
      * decorator to write additional attributes.
      *
-     * @param field        the field corresponding to the label
-     * @param labelElement the element for this label
+     * @param field
+     *         the field corresponding to the label
+     * @param labelElement
+     *         the element for this label
      */
     void insideLabel(Field field, Element labelElement);
 

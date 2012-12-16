@@ -1,31 +1,52 @@
 <div class="t-palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+    <t:remove>Contains the array of option ids for selected elements:</t:remove>
+    <input type="hidden" name="${controlName}" value="${initialJSON}" disabled="${disabledValue}"/>
+
     <div class="t-palette-available">
         <div class="t-palette-title">
             <t:delegate to="availableLabel"/>
         </div>
-        <t:delegate to="availableRenderer"/>
+        <select multiple="multiple" size="${size}" disabled="${disabledValue}">
+            <t:remove>
+                All the options, in their "natural" order, are rendered here, then selected elements
+                are transferred to the other select.
+            </t:remove>
+            <t:delegate to="mainRenderer"/>
+        </select>
     </div>
+
     <div class="t-palette-controls">
-        <button id="${clientId}-select" disabled="disabled">
-            <img src="${select}" alt="${message:core-palette-select-label}"/>
-        </button>
-        <button id="${clientId}-deselect" disabled="disabled">
-            <img src="${deselect}" alt="${message:core-palette-deselect-label}"/>
-        </button>
+        <div>
+            <button data-action="select" class="btn" disabled="${disabledValue}">
+                <img src="${select}" alt="${message:core-palette-select-label}"/>
+            </button>
+        </div>
+        <div>
+            <button data-action="deselect" class="btn" disabled="${disabledValue}">
+                <img src="${deselect}" alt="${message:core-palette-deselect-label}"/>
+            </button>
+        </div>
         <t:if test="reorder">
-            <button id="${clientId}-up" disabled="disabled">
-                <img src="${moveUp}" alt="${message:core-palette-up-label}"/>
-            </button>
-            <button id="${clientId}-down" disabled="disabled">
-                <img src="${moveDown}" alt="${message:core-palette-down-label}"/>
-            </button>
+            <div>
+                <button data-action="move-up" class="btn" disabled="${disabledValue}">
+                    <img src="${moveUp}" alt="${message:core-palette-up-label}"/>
+                </button>
+            </div>
+            <div>
+                <button data-action="move-down" class="btn" disabled="${disabledValue}">
+                    <img src="${moveDown}" alt="${message:core-palette-down-label}"/>
+                </button>
+            </div>
         </t:if>
     </div>
     <div class="t-palette-selected">
         <div class="t-palette-title">
             <t:delegate to="selectedLabel"/>
         </div>
-        <t:delegate to="selectedRenderer"/>
+        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" t:mixins="rendernotification">
+            <t:remove>Starts empty, populated on the client side.</t:remove>
+        </select>
     </div>
     <div class="t-palette-spacer"/>
+    <p class="help-block" data-error-block-for="${clientId}"/>
 </div>

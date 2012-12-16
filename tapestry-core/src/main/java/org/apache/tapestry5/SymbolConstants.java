@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -183,13 +183,6 @@ public class SymbolConstants
      */
     public static final String COMBINE_SCRIPTS = "tapestry.combine-scripts";
 
-    /**
-     * If "true" then Blackbird JavaScript console is enabled.
-     *
-     * @since 5.2.0
-     * @deprecated in 5.3, with no replacement (due to removal of Blackbird console entirely)
-     */
-    public static final String BLACKBIRD_ENABLED = "tapestry.blackbird-enabled";
 
     /**
      * The default time interval that cookies created by Tapestry will be kept in the client web browser. The default is
@@ -210,6 +203,7 @@ public class SymbolConstants
      * The default stylesheet automatically injected into every rendered HTML page.
      *
      * @since 5.2.0
+     * @deprecated Deprecated in 5.4 with no replacement; the stylesheet is now associated with the core {@link JavaScriptStack}.
      */
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
@@ -226,14 +220,6 @@ public class SymbolConstants
      * @since 5.2.0
      */
     public static final String DATEPICKER = "tapestry.datepicker";
-
-    /**
-     * The Asset path to the embedded copy of blackbird packaged with Tapestry.
-     *
-     * @since 5.2.0
-     * @deprecated in 5.3 with no replacement
-     */
-    public static final String BLACKBIRD = "tapestry.blackbird";
 
     /**
      * If "true", then JSON page initialization content is compressed; if "false"
@@ -310,21 +296,6 @@ public class SymbolConstants
     public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
 
     /**
-     * The fix for <a href="https://issues.apache.org/jira/browse/TAP5-1596">TAP5-1596</a> means that component ids referenced
-     * by event handler methods (either the naming convention, or the {@link org.apache.tapestry5.annotations.OnEvent} annotation)
-     * can cause a page load error if there is no matching component in the component's template. Although this is correct behavior,
-     * it can make the upgrade from 5.2 to 5.3 difficult if an existing app had some "left over" event handler methods. Changing
-     * this symbol to {@code false} is a temporary approach to resolving this problem.
-     * <p/>
-     * This symbol will be <em>ignored</em> in release 5.4 and removed in 5.5.
-     *
-     * @since 5.3
-     * @deprecated Deprecated in 5.3, a future release will always enforce that component ids referenced by event handler methods actually exist.
-     */
-    @Deprecated
-    public static final String UNKNOWN_COMPONENT_ID_CHECK_ENABLED = "tapestry.compatibility.unknown-component-id-check-enabled";
-
-    /**
      * The name of a folder in which the Tapestry application executes. Prior to 5.3, a Tapestry application always responded to all
      * URLs in the context under the context root; by setting this to the name of a folder, the T5 URLs will be inside that folder only, and should
      * match a corresponding entry in the {@code web.xml} configuration file.  This is useful when running multiple servlets within the same web application (such as when migrating
@@ -347,12 +318,50 @@ public class SymbolConstants
     /**
      * Boolean value to indicate if every {@link  org.apache.tapestry5.Asset2} should be fully qualified or not.
      * Default to <code>false</code> meaning no Asset URL will be fully qualified.
+     *
      * @since 5.3
      */
     public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
 
     /**
-     * Prefix to be used for all asset paths
+     * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
+     * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
+     * Its default is "assets".  It may contain slashes, but should not begin or end with one.
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
+
+    /**
+     * The Asset path to the copy of Require JS to include in rendered pages. Any page that makes use of any JavaScript will
+     * automatically import this library (as well as the core JavaScript stack).
+     *
+     * @since 5.4
+     */
+    public static final String REQUIRE_JS = "tapestry.requirejs";
+
+    /**
+     * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
+     *
+     * @since 5.4
+     */
+    public static final String CONTEXT_PATH = "tapestry.context-path";
+
+    /**
+     * A passphrase used as the basis of hash-based message authentication (HMAC) for any object stream data stored on
+     * the client.  The default phrase is the empty string, which will result in a logged runtime <em>error</em>.
+     * You should configure this to a reasonable value (longer is better) and ensure that all servers in your cluster
+     * share the same value (configuring this in code, rather than the command line, is preferred).
+     *
+     * @see org.apache.tapestry5.services.ClientDataEncoder
+     * @since 5.3.6
+     */
+    public static final String HMAC_PASSPHRASE = "tapestry.hmac-passphrase";
+
+    /**
+     * The root asset path for Twitter Bootstrap; if your application uses a modified version of Bootstrap,
+     * you can override this symbol to have Tapestry automatically use your version. The value should be a path
+     * to a folder (under "classpath:" or "context:") and should not include a trailing slash.
+     *
+     * @since 5.4
+     */
+    public static final String BOOTSTRAP_ROOT = "tapestry.bootstrap-root";
 }

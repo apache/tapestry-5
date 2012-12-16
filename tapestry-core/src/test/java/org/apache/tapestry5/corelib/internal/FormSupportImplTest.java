@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -131,24 +131,6 @@ public class FormSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void add_validations()
-    {
-        Field barney = mockField();
-        ClientBehaviorSupport clientBehaviorSupport = mockClientBehaviorSupport();
-
-        clientBehaviorSupport.addValidation(barney, "required", "Who can live without Barney?", null);
-
-        replay();
-
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true, null,
-                                                      null);
-
-        support.addValidation(barney, "required", "Who can live without Barney?", null);
-
-        verify();
-    }
-
-    @Test
     public void add_validation_when_client_validation_is_disabled()
     {
         Field barney = mockField();
@@ -156,7 +138,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false, null,
+        FormSupportImpl support = new FormSupportImpl(null, null, null, false, null,
                                                       null);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);

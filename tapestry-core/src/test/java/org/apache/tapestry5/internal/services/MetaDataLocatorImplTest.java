@@ -345,52 +345,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @Test
-    public void test_cache_cleared()
-    {
-        ComponentResources resources = mockComponentResources();
-        ComponentModel model = mockComponentModel();
-        SymbolSource symbolSource = mockSymbolSource();
-        ComponentModelSource modelSource = mockComponentModelSource();
-
-        String key = "foo.bar";
-        String value = "zaphod";
-        String completeId = "foo.Bar:baz";
-
-        train_getCompleteId(resources, completeId);
-        train_getComponentModel(resources, model);
-        train_getMeta(model, key, value);
-
-        train_expandSymbols(symbolSource, value, value);
-
-        replay();
-
-        Map<String, String> configuration = Collections.emptyMap();
-
-        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, typeCoercer,
-                modelSource, configuration);
-
-        assertSame(locator.findMeta(key, resources, String.class), value);
-
-        verify();
-
-        // And check that it's cached:
-
-        train_getCompleteId(resources, completeId);
-        train_getComponentModel(resources, model);
-        train_getMeta(model, key, value);
-
-        train_expandSymbols(symbolSource, value, value);
-
-        replay();
-
-        locator.objectWasInvalidated();
-
-        assertSame(locator.findMeta(key, resources, String.class), value);
-
-        verify();
-    }
-
     /**
      * Makes sense to test together to ensure that the expanded value is what's fed to the type
      * coercer.

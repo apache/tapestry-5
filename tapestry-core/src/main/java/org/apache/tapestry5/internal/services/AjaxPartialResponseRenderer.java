@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
+
+import org.apache.tapestry5.json.JSONObject;
 
 import java.io.IOException;
 
@@ -32,4 +34,16 @@ public interface AjaxPartialResponseRenderer
      * should precede this call.
      */
     void renderPartialPageMarkup() throws IOException;
+
+    /**
+     * Used to render the partial response using a base reply object, to which any Tapestry-related
+     * information (usually related to zone updates and initializations) will be added. In effect, this]
+     * "enhances" the reply, which contains just data, to include UI aspects that are handled by client-side
+     * code on the client.
+     *
+     * @param reply
+     * @throws IOException
+     * @since 5.4
+     */
+    void renderPartialPageMarkup(JSONObject reply) throws IOException;
 }

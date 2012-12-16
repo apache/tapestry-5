@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
+import org.apache.tapestry5.internal.beanvalidator.BaseCCD;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 /**
  * Source for {@link ClientConstraintDescriptor}.
- *
  */
-@UsesConfiguration(ClientConstraintDescriptor.class)
-public interface ClientConstraintDescriptorSource 
+@UsesConfiguration(BaseCCD.class)
+public interface ClientConstraintDescriptorSource
 {
-	/**
-	 * Return a {@link ClientConstraintDescriptor} for a constraint annotation or null.
-	 * 
-	 * @param annotationClass type of the constraint annotation
-	 */
-	ClientConstraintDescriptor getConstraintDescriptor(Class annotationClass);
+    /**
+     * Return a {@link ClientConstraintDescriptor} for a constraint annotation or null if not found.
+     *
+     * @param annotationClass
+     *         type of the constraint annotation
+     */
+    ClientConstraintDescriptor getConstraintDescriptor(Class annotationClass);
 }

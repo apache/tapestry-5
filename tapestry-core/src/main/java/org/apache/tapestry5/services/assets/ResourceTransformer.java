@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,16 +23,27 @@ import java.io.InputStream;
  * A transformer is used to read a {@link Resource} and pass it through a transformation stage, to get a
  * stream that can be used on the client side. Examples of this are languages that "compile" to
  * JavaScript, or any of a few higher-level versions of CSS that are compiled to standard CSS.
+ * ResourceTransformers are contributed to the {@link StreamableResourceSource} service.
  *
  * @since 5.3
+ * @see StreamableResourceSource
  */
 public interface ResourceTransformer
 {
     /**
+     * Returns the MIME type of a transformed stream.
+     *
+     * @since 5.4
+     */
+    String getTransformedContentType();
+
+    /**
      * Read the source input stream and provide a new input stream of the transformed content.
      *
-     * @param source       input content
-     * @param dependencies allows additional dependencies of the source to be tracked
+     * @param source
+     *         input content
+     * @param dependencies
+     *         allows additional dependencies of the source to be tracked
      * @return stream of output content
      * @throws IOException
      */

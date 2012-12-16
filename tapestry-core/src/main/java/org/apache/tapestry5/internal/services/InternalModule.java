@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathCons
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.services.*;
@@ -39,20 +37,6 @@ import java.util.Map;
 @Marker(Core.class)
 public class InternalModule
 {
-
-    private final RequestGlobals requestGlobals;
-
-    private final InvalidationEventHub classesInvalidationEventHub;
-
-    public InternalModule(RequestGlobals requestGlobals,
-
-                          @ComponentClasses
-                          InvalidationEventHub classesInvalidationEventHub)
-    {
-        this.requestGlobals = requestGlobals;
-        this.classesInvalidationEventHub = classesInvalidationEventHub;
-    }
-
     /**
      * Bind all the private/internal services of Tapestry.
      */
@@ -80,62 +64,14 @@ public class InternalModule
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
         binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
-        binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
+        binder.bind(RequestPageCache.class, RequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
         binder.bind(InternalComponentInvalidationEventHub.class);
+        binder.bind(PageSource.class, PageSourceImpl.class);
+        binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();
     }
 
-    public PageLoader buildPageLoader(@Autobuild
-                                      PageLoaderImpl service,
-
-                                      @ComponentTemplates
-                                      InvalidationEventHub templatesHub,
-
-                                      @ComponentMessages
-                                      InvalidationEventHub messagesHub)
-    {
-        // TODO: We could combine these three using chain-of-command.
-
-        classesInvalidationEventHub.addInvalidationListener(service);
-        templatesHub.addInvalidationListener(service);
-        messagesHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    public PageSource buildPageSource(@Autobuild
-                                      PageSourceImpl service,
-
-                                      @ComponentTemplates
-                                      InvalidationEventHub templatesHub,
-
-                                      @ComponentMessages
-                                      InvalidationEventHub messagesHub)
-    {
-        // This covers invalidations due to changes to classes
-
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        // This covers invalidation due to changes to message catalogs (properties files)
-
-        messagesHub.addInvalidationListener(service);
-
-        // ... and this covers invalidations due to changes to templates
-
-        templatesHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    public ComponentClassCache buildComponentClassCache(@Autobuild
-                                                        ComponentClassCacheImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    public CookieSource buildCookieSource()
+    public static CookieSource buildCookieSource(final RequestGlobals requestGlobals)
     {
         return new CookieSource()
         {
@@ -147,7 +83,7 @@ public class InternalModule
         };
     }
 
-    public CookieSink buildCookieSink()
+    public static CookieSink buildCookieSink(final RequestGlobals requestGlobals)
     {
         return new CookieSink()
         {
@@ -157,25 +93,6 @@ public class InternalModule
                 requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
         };
-    }
-
-    public PageActivationContextCollector buildPageActivationContextCollector(@Autobuild
-                                                                              PageActivationContextCollectorImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    public StringInterner buildStringInterner(@Autobuild
-                                              StringInternerImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        return service;
     }
 
     /**

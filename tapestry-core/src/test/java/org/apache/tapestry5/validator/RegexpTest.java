@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class RegexpTest extends InternalBaseTestCase
 
         replay();
 
-        Regexp validator = new Regexp();
+        Regexp validator = new Regexp(null);
 
         validator.validate(field, constraint, formatter, "1234");
 
@@ -57,7 +57,7 @@ public class RegexpTest extends InternalBaseTestCase
 
         replay();
 
-        Regexp validator = new Regexp();
+        Regexp validator = new Regexp(null);
 
         try
         {

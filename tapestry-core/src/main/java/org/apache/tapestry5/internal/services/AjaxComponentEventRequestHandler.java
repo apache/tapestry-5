@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -135,10 +135,9 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         if (wasInvoked) { return; }
 
         // Send an empty JSON reply if no value was returned from the component event handler method.
-        // This is the typical behavior when an Ajax component event handler returns null.
+        // This is the typical behavior when an Ajax component event handler returns null. It still
+        // will go through a pipeline that will add information related to partial page rendering.
 
-        JSONObject reply = new JSONObject();
-
-        resultProcessor.processResultValue(reply);
+        resultProcessor.processResultValue(new JSONObject());
     }
 }

@@ -13,20 +13,22 @@
 // limitations under the License.
 package org.example.testapp.pages;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.example.testapp.entities.TestEntity;
 
-public class ClientValidationDemo 
+@Import(stack = "core")
+public class ClientValidationDemo
 {
-	@Property
-	@Persist
-	private TestEntity testEntity;
-	
-	public StringValueEncoder getStringValueEncoder()
-	{
-		return new StringValueEncoder();
-	}
-	
+    @Property
+    @Persist
+    private TestEntity testEntity;
+
+    public StringValueEncoder getStringValueEncoder()
+    {
+        return new StringValueEncoder();
+    }
+
 }

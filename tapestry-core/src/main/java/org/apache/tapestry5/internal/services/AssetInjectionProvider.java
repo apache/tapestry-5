@@ -18,16 +18,12 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.transform.InjectionProvider2;
-
-import java.util.Locale;
 
 /**
  * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
@@ -36,13 +32,10 @@ import java.util.Locale;
  */
 public class AssetInjectionProvider implements InjectionProvider2
 {
-    private final SymbolSource symbolSource;
-
     private final AssetSource assetSource;
 
-    public AssetInjectionProvider(SymbolSource symbolSource, AssetSource assetSource)
+    public AssetInjectionProvider(AssetSource assetSource)
     {
-        this.symbolSource = symbolSource;
         this.assetSource = assetSource;
     }
 
@@ -55,9 +48,7 @@ public class AssetInjectionProvider implements InjectionProvider2
             return false;
         }
 
-        final String expanded = symbolSource.expandSymbols(path.value());
-
-        final Resource baseResource = componentModel.getBaseResource();
+        final String assetPath = path.value();
 
         ComputedValue<Asset> computedAsset = new ComputedValue<Asset>()
         {
@@ -65,9 +56,7 @@ public class AssetInjectionProvider implements InjectionProvider2
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
-                Locale locale = resources.getLocale();
-
-                return assetSource.getAsset(baseResource, expanded, locale);
+                return assetSource.getComponentAsset(resources, assetPath);
             }
         };
 

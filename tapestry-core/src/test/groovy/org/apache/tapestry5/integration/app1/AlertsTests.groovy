@@ -1,4 +1,4 @@
-// Copyright  2011, 2012 The Apache Software Foundation
+// Copyright  2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.integration.app1;
 
 
-import org.apache.tapestry5.test.SeleniumTestCase
+import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
@@ -23,12 +23,13 @@ import org.testng.annotations.Test
  *
  * @since 5.3
  */
-class AlertsTests extends SeleniumTestCase
-{
+class AlertsTests extends TapestryCoreTestCase {
+
+    def CONTAINER = "[data-container-type=alerts]"
+
     @Test
-    void traditional_update_and_remove()
-    {
-        openLinks "Alerts Demo", "reset"
+    void traditional_update_and_remove() {
+        openLinks "Alerts Demo", "Reset Alerts Storage"
 
         select "id=severity", "Warn"
         select "id=duration", "Until Dismissed"
@@ -36,49 +37,55 @@ class AlertsTests extends SeleniumTestCase
 
         clickAndWait "//input[@value='Traditional Update']"
 
+        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+
         assertTextPresent "trad warn until"
 
-        clickAndWait "link=Back to index"
+        clickAndWait BACK_TO_INDEX
+
+        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
 
         assertTextPresent "trad warn until"
 
         // Click the first and only dismiss icon
 
-        click "css=.t-dismiss"
+        click "css=$CONTAINER button.close"
+
+        sleep 50
 
         // Check that the alert container is now empty
 
-        assertText "css=.t-alert-container", ""
+        assertText "css=$CONTAINER", ""
     }
 
     @Test
-    void ajax_update_and_remove()
-    {
-        openLinks "Alerts Demo", "reset"
+    void ajax_update_and_remove() {
+        openLinks "Alerts Demo", "Reset Alerts Storage"
 
         select "css=#ajax select[name=\"severity\"]", "Error"
         select "css=#ajax select[name=\"duration\"]", "Until Dismissed"
         type "css=#ajax input[name=\"message\"]", "ajax error until"
 
+        waitForPageInitialized()
+
         click "//input[@value='Ajax Update']"
 
-        sleep 200
+        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
 
         assertTextPresent "ajax error until"
 
-        click "link=Dismiss all"
+        click "css=$CONTAINER .btn.btn-mini"
 
         // Check that the alert container is now empty
 
-        assertText "css=.t-alert-container", ""
+        assertText "css=$CONTAINER", ""
     }
 
     /** Disabled by HLS 7-oct-2011; there's a timing issue that makes it very fragile.   */
     @Test(enabled = false)
-    void ajax_update_with_redirect()
-    {
+    void ajax_update_with_redirect() {
 
-        openLinks "Alerts Demo", "reset"
+        openLinks "Alerts Demo", "Reset Alerts Storage"
 
         select "css=#ajax select[name=\"severity\"]", "Error"
         select "css=#ajax select[name=\"duration\"]", "Single"
@@ -96,33 +103,11 @@ class AlertsTests extends SeleniumTestCase
         click "link=Dismiss all"
     }
 
-    /** #1633 - alerts shouldn't hard-code the  'Dismiss all' label...  */
     @Test
-    void dismiss_label_is_parameter()
-    {
-        openLinks "Alerts Demo", "reset"
-        select "id=severity", "Warn"
-        select "id=duration", "Until Dismissed"
-        type "id=message", "I'm sorry, Hal, I can't do that."
-        clickAndWait "//input[@value='Traditional Update']"
-        assertTextPresent "I'm sorry, Hal, I can't do that."
-        assertTrue isElementPresent("link=Zenbu Kesu")
-    }
-
-    @Test
-    void check_informal_parameters()
-    {
+    void check_informal_parameters() {
         openLinks "Alerts Demo"
-        assertTrue isElementPresent("//div[@class='alert-class']")
-    }
 
-    /** TAP5-1949 - alerts initialization should be deferred to include every component's alerts */
-    @Test
-    void make_sure_alerts_are_added_last()
-    {
-        openLinks 'Alerts Demo', 'reset', 'show error component'
-
-        assertTextPresent ('Error from ErrorComponent')
+        assertTrue isElementPresent("css=${CONTAINER}.alert-class")
     }
 
 }

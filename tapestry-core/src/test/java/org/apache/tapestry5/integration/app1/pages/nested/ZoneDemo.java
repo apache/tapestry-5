@@ -35,6 +35,7 @@ import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 import java.util.Date;
 
+@Import(library = "../zonedemo.js")
 public class ZoneDemo
 {
     @Component(id = "registrationForm")
@@ -212,10 +213,6 @@ public class ZoneDemo
     void afterRender()
     {
         jss.importStylesheet(new StylesheetLink(overridesCSS, new StylesheetOptions().asAjaxInsertionPoint()));
-
-        jss.addScript(
-                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
-                output.getClientId());
     }
 
     Object onActionFromBadZone()

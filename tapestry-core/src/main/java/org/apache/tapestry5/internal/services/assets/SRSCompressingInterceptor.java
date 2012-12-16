@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,16 +22,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
-public class SRSCompressingInterceptor implements StreamableResourceSource
+public class SRSCompressingInterceptor extends DelegatingSRS
 {
     private final int compressionCutoff;
 
-    private final StreamableResourceSource delegate;
-
-    public SRSCompressingInterceptor(int compressionCutoff, StreamableResourceSource delegate)
+    public SRSCompressingInterceptor(StreamableResourceSource delegate, int compressionCutoff)
     {
+        super(delegate);
         this.compressionCutoff = compressionCutoff;
-        this.delegate = delegate;
     }
 
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)

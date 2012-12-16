@@ -1,0 +1,11 @@
+#!/bin/sh
+# This is handy when developing as the Gradle build can be very slow.
+# Starts coffee in --watch mode, so it will keep compiling files on change.
+# Expects coffee to be on the path.
+# Should be executed from the tapestry-core folder.
+# Doe NOT compile the test scripts.
+
+inputDir=src/test/coffeescript/org/apache/tapestry5/integration/app1/pages
+outputDir=build/generated-sources/compiled-test-coffeescript/org/apache/tapestry5/integration/app1/pages
+
+coffee --watch --bare --output $outputDir $inputDir/*.coffee

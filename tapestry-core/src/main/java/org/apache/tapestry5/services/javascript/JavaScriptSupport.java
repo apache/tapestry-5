@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
 /**
- * An environmental that acts as a replacement for the {@link RenderSupport} environmental, renaming and streamlining
- * the key methods. JavaScriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
+ * The JavaScriptSupport environmental is very stateful, accumulating JavaScript stacks, libraries and initialization
  * code until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
  * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
  * <p/>
@@ -32,10 +34,9 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * for service-layer objects.
  * <p/>
  * The term "import" is used on many methods to indicate that the indicated resource (stack, library or stylesheet) will
- * only be added to the final Document once.
+ * only be added to the final cocument once, even when there are repeated calls.
  * <p/>
- * The name is slightly a misnomer, since there's a side-line of
- * {@linkplain #importStylesheet(StylesheetLink)} as well.
+ * The name is slightly a misnomer, since there's a side-line of {@linkplain #importStylesheet(StylesheetLink)} as well.
  * <p/>
  * JavaScriptSupport works equally well inside an Ajax request that produces a JSON-formatted partial page update response.
  *
@@ -48,7 +49,8 @@ public interface JavaScriptSupport
      * Allocates a unique id based on the component's id. In some cases, the return value will not precisely match the
      * input value (an underscore and a unique index value may be appended).
      *
-     * @param id the component id from which a unique id will be generated
+     * @param id
+     *         the component id from which a unique id will be generated
      * @return a unique id for this rendering of the page
      * @see org.apache.tapestry5.ioc.util.IdAllocator
      */
@@ -57,7 +59,8 @@ public interface JavaScriptSupport
     /**
      * As with {@link #allocateClientId(String)} but uses the id of the component extracted from the resources.
      *
-     * @param resources of the component which requires an id
+     * @param resources
+     *         of the component which requires an id
      * @return a unique id for this rendering of the page
      */
     String allocateClientId(ComponentResources resources);
@@ -65,17 +68,24 @@ public interface JavaScriptSupport
     /**
      * Adds initialization script at {@link InitializationPriority#NORMAL} priority.
      *
-     * @param format    format string (as per {@link String#format(String, Object...)}
-     * @param arguments arguments referenced by format specifiers
+     * @param format
+     *         format string (as per {@link String#format(String, Object...)}
+     * @param arguments
+     *         arguments referenced by format specifiers
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addScript(String format, Object... arguments);
 
     /**
      * Adds initialization script at the specified priority.
      *
-     * @param priority  priority to use when adding the script
-     * @param format    format string (as per {@link String#format(String, Object...)}
-     * @param arguments arguments referenced by format specifiers
+     * @param priority
+     *         priority to use when adding the script
+     * @param format
+     *         format string (as per {@link String#format(String, Object...)}
+     * @param arguments
+     *         arguments referenced by format specifiers
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addScript(InitializationPriority priority, String format, Object... arguments);
 
@@ -84,8 +94,11 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * {@link InitializationPriority#NORMAL} priority.
      *
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    object to pass to the client-side function
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         object to pass to the client-side function
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, JSONObject parameter);
 
@@ -94,9 +107,12 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * {@link InitializationPriority#NORMAL} priority.
      *
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    array of parameters to pass to the client-side function
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         array of parameters to pass to the client-side function
      * @since 5.3
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, JSONArray parameter);
 
@@ -105,9 +121,12 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * {@link InitializationPriority#NORMAL} priority.
      *
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    array of parameters to pass to the client-side function
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         array of parameters to pass to the client-side function
      * @since 5.3
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter);
 
@@ -116,9 +135,13 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * the specified priority.
      *
-     * @param priority     priority to use when adding the script
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    object to pass to the client-side function
+     * @param priority
+     *         priority to use when adding the script
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         object to pass to the client-side function
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter);
 
@@ -127,8 +150,11 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * {@link InitializationPriority#NORMAL} priority.
      *
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    string to pass to function (typically, a client id)
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         string to pass to function (typically, a client id)
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, String parameter);
 
@@ -137,35 +163,46 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * the specified priority.
      *
-     * @param priority     priority to use when adding the script
-     * @param functionName name of client-side function (within Tapestry.Initializer namespace) to execute
-     * @param parameter    string to pass to function (typically, a client id)
+     * @param priority
+     *         priority to use when adding the script
+     * @param functionName
+     *         name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *         string to pass to function (typically, a client id)
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, String parameter);
 
     /**
      * Imports a JavaScript library as part of the rendered page. Libraries are added in the order
-     * they are first imported; duplicate imports are ignored.
+     * they are first imported; duplicate imports are ignored. Libraries are added to the page serially
+     * (whereas modules may be loaded in parallel), and all libraries are added before any modules are loaded.
+     * Because of this, it is preferrable to organize your JavaScript into modules, rather than libraries.
      *
+     * @return this JavaScriptSupport, for further configuration
      * @see org.apache.tapestry5.annotations.Import
      */
-    void importJavaScriptLibrary(Asset asset);
+    JavaScriptSupport importJavaScriptLibrary(Asset asset);
 
     /**
      * A convenience method that wraps the Asset as a {@link StylesheetLink}.
      *
-     * @param stylesheet asset for the stylesheet
+     * @param stylesheet
+     *         asset for the stylesheet
+     * @return this JavaScriptSupport, for further configuration
      * @see #importStylesheet(StylesheetLink)
      */
-    void importStylesheet(Asset stylesheet);
+    JavaScriptSupport importStylesheet(Asset stylesheet);
 
     /**
      * Imports a Cascading Style Sheet file as part of the rendered page. Stylesheets are added in the
      * order they are first imported; duplicate imports are ignored.
      *
-     * @param stylesheetLink encapsulates the link URL plus any additional options
+     * @param stylesheetLink
+     *         encapsulates the link URL plus any additional options
+     * @return this JavaScriptSupport, for further configuration
      */
-    void importStylesheet(StylesheetLink stylesheetLink);
+    JavaScriptSupport importStylesheet(StylesheetLink stylesheetLink);
 
     /**
      * Imports a {@link JavaScriptStack} by name, a related set of JavaScript libraries and stylesheets.
@@ -173,15 +210,21 @@ public interface JavaScriptSupport
      * {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation} in enabled, the stack will be represented by
      * a single virtual URL; otherwise the individual asset URLs of the stack
      * will be added to the document.
+     * <p/>
+     * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      *
-     * @param stackName the name of the stack (case is ignored); the stack must exist
+     * @param stackName
+     *         the name of the stack (case is ignored); the stack must exist
+     * @return this JavaScriptSupport, for further configuration
      */
-    void importStack(String stackName);
+    JavaScriptSupport importStack(String stackName);
 
     /**
      * Import a Javascript library with an arbitrary URL.
+     * <p/>
+     * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      */
-    void importJavaScriptLibrary(String libraryURL);
+    JavaScriptSupport importJavaScriptLibrary(String libraryURL);
 
     /**
      * Invoked to set focus on a rendered field. Takes into account priority, meaning that a field with errors will take
@@ -189,8 +232,29 @@ public interface JavaScriptSupport
      * {@link org.apache.tapestry5.FieldFocusPriority#OVERRIDE} can be used to force a particular field to receive
      * focus.
      *
-     * @param priority focus is set only if the provided priority is greater than the current priority
-     * @param fieldId  id of client-side element to take focus
+     * @param priority
+     *         focus is set only if the provided priority is greater than the current priority
+     * @param fieldId
+     *         id of client-side element to take focus
      */
-    void autofocus(FieldFocusPriority priority, String fieldId);
+    JavaScriptSupport autofocus(FieldFocusPriority priority, String fieldId);
+
+
+    /**
+     * Requires a JavaScript module by name. On the client, this will <code>require()</code> the module and
+     * (optionally) de-reference a function exported by the module (or, treat the module as exporting a single
+     * implicit function). The function will be invoked. Use the returned {@link Initialization} to specify the function name
+     * to invoke, and the parameters to pass to the function.
+     * <p/>
+     * In some cases, a module exports no functions, but performs some initialization (typically, adding document-level
+     * event handlers), in which case a call to require() is sufficient. In cases where the module, or a function
+     * within the module, are invoked with no parameters, the calls will be collapsed into a single invocation.
+     *
+     * @param moduleName
+     *         the name of the module to require
+     * @return Initialization instance, used to configure function name, arguments, etc.
+     * @since 5.4
+     */
+    Initialization require(String moduleName);
+
 }

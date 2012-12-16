@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,14 +67,17 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private Map<String, Boolean> handledEvents;
 
+    private final String libraryName;
+
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
-                                     ComponentModel parentModel, boolean pageClass)
+                                     ComponentModel parentModel, boolean pageClass, String libraryName)
     {
         this.componentClassName = componentClassName;
         this.logger = logger;
         this.baseResource = baseResource;
         this.parentModel = parentModel;
         this.pageClass = pageClass;
+        this.libraryName = libraryName;
 
         // Pre-allocate names from the parent, to avoid name collisions.
 
@@ -85,6 +88,12 @@ public final class MutableComponentModelImpl implements MutableComponentModel
                 persistentFieldNameAllocator.allocateId(name);
             }
         }
+    }
+
+    @Override
+    public String getLibraryName()
+    {
+        return libraryName;
     }
 
     @Override

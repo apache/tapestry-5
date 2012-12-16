@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
 package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.ObjectRenderer;
 import org.apache.tapestry5.services.Request;
@@ -27,53 +30,85 @@ public class RequestRenderer implements ObjectRenderer<Request>
 {
     private final Context context;
 
+    private final String contextPath;
+
     private final ObjectRenderer masterObjectRenderer;
 
-    public RequestRenderer(@Primary ObjectRenderer masterObjectRenderer, Context context)
+    public RequestRenderer(@Primary ObjectRenderer masterObjectRenderer, Context context, @Symbol(SymbolConstants.CONTEXT_PATH) String contextPath)
     {
         this.masterObjectRenderer = masterObjectRenderer;
         this.context = context;
+        this.contextPath = contextPath;
     }
 
     public void render(Request request, MarkupWriter writer)
     {
-        writer.element("dl");
+        coreProperties(request, writer);
+        parameters(request, writer);
+        headers(request, writer);
+        attributes(request, writer);
+        context(writer);
+    }
+
+    private void coreProperties(Request request, MarkupWriter writer)
+    {
+        writer.element("dl", "class", "dl-horizontal");
 
         dt(writer, "Context Path");
 
         writer.element("dd");
-
-        String contextPath = request.getContextPath();
 
         if (contextPath.equals(""))
         {
             writer.element("em");
             writer.write("none (deployed as root)");
             writer.end();
-        }
-        else
+        } else
         {
             writer.write(contextPath);
         }
+
         writer.end(); // dd
 
-        dt(writer, "Request Path");
-        dd(writer, request.getPath());
+        dt(writer, "Path", request.getPath());
 
-        dt(writer, "Locale");
-        dd(writer, request.getLocale().toString());
+        dt(writer, "Locale", request.getLocale().toString());
 
-        dt(writer, "Secure");
-        dd(writer, Boolean.toString(request.isSecure()));
+        dt(writer, "Server Name", request.getServerName());
 
-        dt(writer, "Server Name");
-        dd(writer, request.getServerName());
+
+        List<String> flags = CollectionFactory.newList();
+        if (request.isSecure())
+        {
+            flags.add("secure");
+        }
+
+        if (request.isXHR())
+        {
+            flags.add("XHR");
+        }
+
+        if (request.isRequestedSessionIdValid())
+        {
+            flags.add("requested session id valid");
+        }
+
+        if (request.isSessionInvalidated())
+        {
+            flags.add("session invalidated");
+        }
+
+        if (!flags.isEmpty())
+        {
+            dt(writer, "Flags", InternalUtils.join(flags));
+        }
+
+        dt(writer, "Ports (local/server)",
+                String.format("%d / %d", request.getLocalPort(), request.getServerPort()));
+
+        dt(writer, "Method", request.getMethod());
 
         writer.end();
-
-        parameters(request, writer);
-        headers(request, writer);
-        context(writer);
     }
 
     private void context(MarkupWriter writer)
@@ -131,8 +166,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
                 }
 
                 writer.end(); // ul
-            }
-            else
+            } else
             {
                 writer.write(values[0]);
             }
@@ -141,6 +175,15 @@ public class RequestRenderer implements ObjectRenderer<Request>
         }
 
         writer.end(); // dl
+    }
+
+    private void dt(MarkupWriter writer, String name, String value)
+    {
+        if (value != null)
+        {
+            dt(writer, name);
+            dd(writer, value);
+        }
     }
 
     private void dt(MarkupWriter writer, String name)
@@ -159,7 +202,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     private void section(MarkupWriter writer, String name)
     {
-        writer.element("div", "class", InternalConstants.OBJECT_RENDER_DIV_SECTION);
+        writer.element("h3");
         writer.write(name);
         writer.end();
     }
@@ -168,16 +211,36 @@ public class RequestRenderer implements ObjectRenderer<Request>
     {
         section(writer, "Headers");
 
-        writer.element("dl");
+        writer.element("dl", "class", "dl-horizontal");
 
         for (String name : request.getHeaderNames())
         {
-            dt(writer, name);
-            dd(writer, request.getHeader(name));
+            dt(writer, name, request.getHeader(name));
         }
 
         writer.end(); // dl
 
+    }
+
+    private void attributes(Request request, MarkupWriter writer)
+    {
+        List<String> attributeNames = request.getAttributeNames();
+
+        if (attributeNames.isEmpty())
+        {
+            return;
+        }
+
+        section(writer, "Attributes");
+
+        writer.element("dl");
+
+        for (String name : attributeNames)
+        {
+            dt(writer, name, String.valueOf(request.getAttribute(name)));
+        }
+
+        writer.end(); // dl
     }
 
 }

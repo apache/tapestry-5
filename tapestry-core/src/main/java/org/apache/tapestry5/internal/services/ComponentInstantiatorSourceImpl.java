@@ -56,7 +56,7 @@ import java.util.Set;
  * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
  */
 public final class ComponentInstantiatorSourceImpl implements ComponentInstantiatorSource, UpdateListener,
-        InvalidationListener, PlasticManagerDelegate, PlasticClassListener
+        Runnable, PlasticManagerDelegate, PlasticClassListener
 {
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
@@ -146,7 +146,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     @PostInjection
     public void listenForUpdates(UpdateListenerHub hub)
     {
-        invalidationHub.addInvalidationListener(this);
+        invalidationHub.addInvalidationCallback(this);
         hub.addUpdateListener(this);
     }
 
@@ -164,7 +164,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         invalidationHub.classInControlledPackageHasChanged();
     }
 
-    public void objectWasInvalidated()
+    public void run()
     {
         changeTracker.clear();
         classToInstantiator.clear();
@@ -306,8 +306,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                         boolean superClassImplementsPageLifecycle = plasticClass.isInterfaceImplemented(PageLifecycleListener.class);
 
+                        String libraryName = resolver.getLibraryNameForClass(className);
+
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
-                                parentModel, isPage);
+                                parentModel, isPage, libraryName);
 
                         transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot, model), model);
 

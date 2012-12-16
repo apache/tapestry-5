@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.kaptcha.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -25,7 +26,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.kaptcha.KaptchaSymbolConstants;
 import org.apache.tapestry5.services.FieldValidatorSource;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Field paired with a {@link KaptchaImage} to ensure that the user has provided
@@ -57,16 +57,7 @@ public class KaptchaField extends AbstractField
     private boolean visible;
 
     @Inject
-    private Request request;
-
-    @Inject
     private Messages messages;
-
-    @Inject
-    private ComponentResources resources;
-
-    @Environmental
-    private ValidationTracker validationTracker;
 
     @Inject
     private FieldValidatorSource fieldValidatorSource;

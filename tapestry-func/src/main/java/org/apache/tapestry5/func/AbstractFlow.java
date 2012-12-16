@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,7 @@
 package org.apache.tapestry5.func;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract base class for implementations of {@link Flow}. Subclasses typically override some
@@ -80,9 +74,9 @@ abstract class AbstractFlow<T> implements Flow<T>
         };
     }
 
-    public Flow<T> concat(List<? extends T> list)
+    public Flow<T> concat(Collection<? extends T> collection)
     {
-        return concat(F.flow(list));
+        return concat(F.flow(collection));
     }
 
     public <V extends T> Flow<T> append(V... values)

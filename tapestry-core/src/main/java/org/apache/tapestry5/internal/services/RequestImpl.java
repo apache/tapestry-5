@@ -177,6 +177,13 @@ public class RequestImpl implements Request
         return request.getAttribute(name);
     }
 
+    public List<String> getAttributeNames()
+    {
+        setupEncoding();
+
+        return InternalUtils.toList(request.getAttributeNames());
+    }
+
     public void setAttribute(String name, Object value)
     {
         request.setAttribute(name, value);

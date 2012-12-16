@@ -1,8 +1,8 @@
-<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
 
   <h1>Multi Zone Update Inside Form Demo</h1>
 
-  <form t:type="Form" t:id="form" t:clientValidation="false" action="#">
+  <form t:type="Form" t:id="form" t:clientValidation="none" action="#">
     <t:label for="selectValue1"/>
     <select t:type="Select" t:id="selectValue1" t:validate="required" t:zone="select1ValueZone"/>
     <t:zone t:id="select1ValueZone" visible="false">Show</t:zone>

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.services.AssetRequestDispatcher;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -40,6 +42,7 @@ import java.util.Map;
  * @see AssetRequestHandler
  */
 @UsesMappedConfiguration(AssetRequestHandler.class)
+@Marker(AssetRequestDispatcher.class)
 public class AssetDispatcher implements Dispatcher
 {
     /**
@@ -63,12 +66,17 @@ public class AssetDispatcher implements Dispatcher
                            String applicationFolder,
 
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                           String assetPathPrefix
-                           )
+                           String assetPathPrefix)
     {
-        String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
+        StringBuilder pathPrefix = new StringBuilder("/");
 
-        this.pathPrefix = folder + assetPathPrefix + applicationVersion + "/";
+        if (! applicationFolder.equals("")) {
+            pathPrefix.append(applicationFolder).append("/");
+        }
+
+        pathPrefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
+
+        this.pathPrefix = pathPrefix.toString();
 
         for (String path : configuration.keySet())
         {

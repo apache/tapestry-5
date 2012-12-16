@@ -1,8 +1,0 @@
-<html><head><meta/><script></script></head><body><script type="text/javascript">Tapestry.init({
-  "fred" : [
-    "barney",
-    "wilma",
-    "betty"
-  ]
-});
-</script></body></html>

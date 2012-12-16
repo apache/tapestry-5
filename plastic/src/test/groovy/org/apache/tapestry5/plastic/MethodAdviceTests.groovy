@@ -11,6 +11,7 @@ import testsubjects.SingleMethod
 import java.sql.SQLException
 
 class MethodAdviceTests extends AbstractPlasticSpecification {
+
     def "advice for a void method"() {
         setup:
 
@@ -266,7 +267,40 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
         then:
 
         1 * container.magic() >> "via context"
+    }
 
+    def "method advice added before changing method implementation does not wipe out the method implementation"() {
+        def mgr = createMgr({ PlasticClass pc ->
+            def methods = pc.introduceInterface(MagicContainer)
+
+            methods.each { PlasticMethod m ->
+                m.addAdvice({ MethodInvocation iv ->
+                    iv.proceed()
+
+                    // Can't use a GString here as the unevaluated GString gets assigned, causing a
+                    // ClassCastException
+                    iv.returnValue = String.format("<<%s>>", iv.returnValue)
+                } as MethodAdvice)
+
+                m.changeImplementation({ InstructionBuilder b ->
+
+                    b.loadConstant "MAGIC!"
+                    b.returnResult()
+
+                } as InstructionBuilderCallback)
+            }
+        } as PlasticClassTransformer)
+
+        when:
+
+        def o = mgr.getClassInstantiator(testsubjects.AdviceAndImplementationSubject.name).newInstance()
+
+        then:
+
+        // This demonstrates that the implementation was changed and the advice wrapped around
+        // the new implementation. Before fixing TAP5-1979 this would be "<<null>>".
+
+        o.magic() == "<<MAGIC!>>"
     }
 
 }

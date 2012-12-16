@@ -40,11 +40,13 @@ public enum Severity
 
     /**
      * The CSS class to be used for the client list element.
+     *
+     * @deprecated Deprecated in Tapestry 5.4 with no replacement (beyond the name of the value itself).
      */
     public final String cssClass;
 
     private Severity()
     {
-        cssClass = "t-" + name().toLowerCase();
+        cssClass = name().toLowerCase();
     }
 }

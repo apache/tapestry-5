@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
@@ -37,7 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
-public class StackAssetRequestHandler implements AssetRequestHandler, InvalidationListener
+public class StackAssetRequestHandler implements AssetRequestHandler
 {
     private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
 
@@ -88,7 +91,8 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     @PostInjection
     public void listenToInvalidations(ResourceChangeTracker resourceChangeTracker)
     {
-        resourceChangeTracker.addInvalidationListener(this);
+        resourceChangeTracker.clearOnInvalidation(uncompressedCache);
+        resourceChangeTracker.clearOnInvalidation(compressedCache);
     }
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
@@ -107,15 +111,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
                 });
 
         return true;
-    }
-
-    /**
-     * Notified by the {@link ResourceChangeTracker} when (any) resource files change; the internal caches are cleared.
-     */
-    public synchronized void objectWasInvalidated()
-    {
-        uncompressedCache.clear();
-        compressedCache.clear();
     }
 
     private StreamableResource getResource(String extraPath, boolean compressed) throws IOException

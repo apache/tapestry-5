@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import java.util.List;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetSource;
+
+import java.util.List;
 
 /**
  * A high level description of a group of related JavaScript libraries and stylesheets. The built-in "core"
@@ -27,17 +27,19 @@ import org.apache.tapestry5.services.AssetSource;
  * Prototype and Scriptaculous, as well as Tapestry-specific libraries). Other component libraries may
  * define additional stacks for related sets of resources, for example, to bundle together some portion
  * of the ExtJS or YUI libraries.
- * <p>
+ * <p/>
  * A JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
  * client as a single URL (identifying the stack by name). The individual assets are combined into a single virtual
  * asset, which is then streamed to the client.
- * <p>
+ * <p/>
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
  * of the JavaScript library or stylesheet assets are localized). They will generally need to inject the
  * {@link AssetSource} service as well.
- * 
- * @since 5.2.0
+ * <p/>
+ * The {@link ExtensibleJavaScriptStack} is the best way to create new stacks.
+ *
  * @see ThreadLocale
+ * @since 5.2.0
  */
 public interface JavaScriptStack
 {
@@ -63,6 +65,9 @@ public interface JavaScriptStack
      * page that imports the stack. The code executes outside of any other function (i.e., the code is not deferred
      * until the DOM is loaded). As with the other methods, if localization is a factor, the result of this method
      * should be localized.
+     *
+     * @deprecated Deprecated in Tapestry 5.4; may be removed in a future release. Implementations
+     *             may return null.
      */
     String getInitialization();
 }

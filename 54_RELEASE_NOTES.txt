@@ -1,0 +1,164 @@
+Scratch pad for changes destined for the 5.4 release notes page.
+
+# Non-Breaking Changes:
+
+A new DeprecationWarning service exists to write runtime-warnings about deprecated component parameters.
+
+There have been sweeping changes to the client-side support in JavaScript, including the long-awaited abstraction layer.
+Tapestry is moving to the use of asynchronously-loaded modules, using the RequireJS module. Much of Tapestry's existing
+JavaScript libraries are being recoded as JavaScript modules; in 5.5, the remaining JavaScript libraries will be removed.
+
+All of the clients-side objects available inside the T5 or Tapestry objects (in Tapestry 5.3) are considered deprecated
+in Tapestry 5.4.  Where possible, the implementations of such objects have been reworked to use the new support provided
+by the modules. In many cases, logic that was previously supplied using client-side objects and the T5.initializers
+object is now provided using the event handlers.
+
+The abstraction layer is a set of wrappers that encapsulate most of the differences between Prototype and jQuery (or
+other, more modern JavaScript foundation libraries). By coding the the abstraction layer, it will be possible to swap
+out Prototype support for jQuery.  Prototype will no longer be bundled with Tapestry starting in Tapestry 5.5.
+
+Prior releases of Tapestry would require several moving parts to initialize client behavior:
+
+* A unique id, generated on the server, on a client-side element
+* A JavaScript library that extended T5.initializers with an initialization function
+* Creating a _spec_ to describe behavior, including URLs and the unique client element id
+* Many similar client-side event handlers on specific elements (created by the initialization function)
+
+Although this was well-structured, it had pain points for developers, as well as some client-side performance issues.
+For example, it means that components that occur many times on the page will include many similar event handler
+functions.
+
+Tapestry 5.4 represents a shift to a more modern, lighter approach. Behavior of components is encoded into
+`data-` attributes on the element, and logic shifts to a module that provides top-level event handlers on the
+body object. This is an overall win: it reduces the number of event handlers, solves some timing issues related
+to running initialization functions, deals with DOM updates better, and is overall more performant.
+
+Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant "data-"
+attributes.
+
+* data-prevent-submission: Used on a HTML form to indicate that normal submission should be suppressed; typically because
+  client-side code will be submitting the form's contents via an Ajax request.
+
+* data-skip-validation: Used on an HTML form; the immediately subsequent form submission will skip all validation.
+  This is often associated with buttons that cause a form to be canceled or otherwise submitted without client-side
+  validation.
+
+* data-validation: Used on form control elements; a non-null value indicates that the field should have the
+  `events.field.validate` event triggered on it, when the form is validating, prior to submission.
+
+# Breaking Changes:
+
+## RenderSupport Removed
+
+The RenderSupport interface, which was deprecated in Tapestry 5.2, has been removed entirely.
+
+## FormFragment Component
+
+The FormFragment component's visibleBound parameter is no longer supported; it was used to make a decision about how
+far up the DOM above the FormFragment's client-side element should be searched when determining visibility. This may
+resurface in the future as a CSS expression, but is currently not supported.
+
+## Symbol tapestry.asset-path-prefix
+
+The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
+slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
+
+## Libraries de-emphasized for modules
+
+JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded with
+RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly attach
+properties to the global JavaScript window object, rather than assume that the context (this) is the window.
+
+## T5 and Tapestry namespaces all but eliminated
+
+Only a limited number of properties exported as the `T5` and `Tapestry` namespaces (on the client) still exist; enough
+to continue to support the `T5.initializers` approach to page initialization that was used in Tapestry 5.3 and earlier.
+
+## New method on ResourceTransformer
+
+The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
+getTransformedContentType(). This makes it possible to determine which file extensions map to which content types
+(for example, a ResourceTransformer for CoffeeScript files, with extension ".coffee", would map to "text/javascript").
+
+Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual
+element to be updated when new content is provided for the zone in a partial page render response. This feature has been
+removed with no replacement.
+
+## Scriptaculous Deprecated
+
+Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
+decide to animate them using whatever library is desired. The event names are defined in the core/events module.
+
+## Floating Console
+
+On the client side, the "floating console" is now only used in cases where a native console is not available.
+
+## Form.clientValidation parameter
+
+Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
+was introduced in Tapestry 5.2, and has now been removed.
+
+Support for validating fields on blur (i.e., when tabbing out of a field) has been removed. Validation now occurs when
+the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated as
+SUBMIT.
+
+## Wait-for-page logic removed
+
+Tapestry 5.3 contained code that attempted to prevent Ajax requests until after the page had loaded; this was based
+on the function Tapestry.waitForPage().  Server components no longer make use of this function, and the function
+itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
+the page initialization has completed may be implemented in the future.
+
+However, once initial page initialization has occurred, the attribute `data-page-initialized` on the root HTML element
+is set to "true".
+
+## Twitter Bootstrap
+
+Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the
+file "default.css" automatically included in rendered pages). The Tapestry CSS has been largely eliminated; instead
+components now refer to standard Bootstrap CSS classes.
+
+The Bootstrap CSS is now only present if the `core` JavaScript stack is imported. You may need to change your application's
+layout component to do so explicitly, by adding `@Import(stack="core")` to the class.
+
+ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
+implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
+to the client, and expects and leverages the Twitter Bootstrap CSS.
+
+Fields that require validation messages to be displayed fire events, and the default handlers show and update
+help blocks that appear (by default) beneath the fields. To get the full effect, you should enclose your fields inside
+.control-group elements, as described in the Bootstrap documentation:
+http://twitter.github.com/bootstrap/base-css.html#forms
+
+## BeanEditor / BeanEditForm
+
+The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
+div.control-group, which is provided around the editor for each property.
+
+## ClientBehaviorSupport
+
+This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
+still exists, but the methods do nothing, and the service and interface will be removed in 5.5.
+
+## JavaScriptSupport
+
+In prior releases, adding _any_ JavaScript to the application would implicitly import the `core` JavaScript stack.
+This no longer occurs; in most cases, the core stack is provided automatically by other components.
+
+You may want to consider adding `@Import(stack="core")` to your applications' main layout component.
+
+## Palette Component
+
+The selected property is now type `Collection`, not specifically type `List`. It is no longer allowed to be null.
+
+## Autocomplete Mixin
+
+The Autocomplete mixin has been rewritten to use Bootstrap; this implies it will also force jQuery onto the page,
+to support the Bootstrap JavaScript library. In addition, Bootstrap's typeahead component does not support multiple
+tokens, so this behavior has been removed.
+
+## RenderNotification Mixin
+
+The timing of this mixin has changed, it now has the @MixinAfter annotation, so it triggers its events *after*
+the component to which it attaches has executed its @BeginRender phase, and *before* the component executes
+its @AfterRender phase.

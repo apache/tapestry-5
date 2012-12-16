@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.RequestHandler;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -40,17 +39,13 @@ import java.util.Map;
 
 /**
  * This class is used to run a Tapestry app in a single-threaded, in-process testing environment.
- * You can ask it to
- * render a certain page and check the DOM object created. You can also ask it to click on a link
- * element in the DOM
- * object to get the next page. Because no servlet container is required, it is very fast and you
- * can directly debug
- * into your code in your IDE.
+ * You can ask it to render a certain page and check the DOM object created. You can also ask it to click on a link
+ * element in the DOM object to get the next page. Because no servlet container is required, it is very fast and you
+ * can directly debug into your code in your IDE.
  */
 @SuppressWarnings("all")
 public class PageTester
 {
-    private final Logger logger = LoggerFactory.getLogger(PageTester.class);
 
     private final Registry registry;
 
@@ -80,16 +75,20 @@ public class PageTester
      * Initializes a PageTester that acts as a browser and a servlet container to test drive your
      * Tapestry pages.
      *
-     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter.
-     *                      As this
-     *                      testing environment is not run in a servlet container, you need to specify it.
-     * @param appName       The same value you would specify as the filter name. It is used to form the name
-     *                      of the
-     *                      module class for your app. If you don't have one, pass an empty string.
-     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're
-     *                      put
-     *                      there).
-     * @param moduleClasses Classes of additional modules to load
+     * @param appPackage
+     *         The same value you would specify using the tapestry.app-package context parameter.
+     *         As this
+     *         testing environment is not run in a servlet container, you need to specify it.
+     * @param appName
+     *         The same value you would specify as the filter name. It is used to form the name
+     *         of the
+     *         module class for your app. If you don't have one, pass an empty string.
+     * @param contextPath
+     *         The path to the context root so that Tapestry can find the templates (if they're
+     *         put
+     *         there).
+     * @param moduleClasses
+     *         Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
@@ -99,7 +98,7 @@ public class PageTester
 
         SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
-        TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,
+        TapestryAppInitializer initializer = new TapestryAppInitializer(LoggerFactory.getLogger(PageTester.class), provider, appName,
                 null);
 
         initializer.addModules(PageTesterModule.class);
@@ -157,7 +156,8 @@ public class PageTester
      * more complicated
      * queries.
      *
-     * @param serviceInterface used to select the service
+     * @param serviceInterface
+     *         used to select the service
      */
     public <T> T getService(Class<T> serviceInterface)
     {
@@ -167,7 +167,8 @@ public class PageTester
     /**
      * Renders a page specified by its name.
      *
-     * @param pageName The name of the page to be rendered.
+     * @param pageName
+     *         The name of the page to be rendered.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document renderPage(String pageName)
@@ -188,7 +189,8 @@ public class PageTester
     /**
      * Renders a page specified by its name and returns the response.
      *
-     * @param pageName The name of the page to be rendered.
+     * @param pageName
+     *         The name of the page to be rendered.
      * @return The response object to assert against
      * @since 5.2.3
      */
@@ -234,7 +236,8 @@ public class PageTester
     /**
      * Simulates a click on a link.
      *
-     * @param linkElement The Link object to be "clicked" on.
+     * @param linkElement
+     *         The Link object to be "clicked" on.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickLink(Element linkElement)
@@ -247,7 +250,8 @@ public class PageTester
     /**
      * Simulates a click on a link.
      *
-     * @param linkElement The Link object to be "clicked" on.
+     * @param linkElement
+     *         The Link object to be "clicked" on.
      * @return The response object to assert against
      * @since 5.2.3
      */
@@ -380,8 +384,10 @@ public class PageTester
      * fields, which act as
      * overrides on the values stored inside the elements.
      *
-     * @param form       the form to be submitted.
-     * @param parameters the query parameter name/value pairs
+     * @param form
+     *         the form to be submitted.
+     * @param parameters
+     *         the query parameter name/value pairs
      * @return The DOM created. Typically you will assert against it.
      */
     public Document submitForm(Element form, Map<String, String> parameters)
@@ -396,8 +402,10 @@ public class PageTester
      * fields, which act as
      * overrides on the values stored inside the elements.
      *
-     * @param form       the form to be submitted.
-     * @param parameters the query parameter name/value pairs
+     * @param form
+     *         the form to be submitted.
+     * @param parameters
+     *         the query parameter name/value pairs
      * @return The response object to assert against.
      * @since 5.2.3
      */
@@ -501,8 +509,10 @@ public class PageTester
      * specify values for the
      * form fields.
      *
-     * @param submitButton the submit button to be clicked.
-     * @param fieldValues  the field values keyed on field names.
+     * @param submitButton
+     *         the submit button to be clicked.
+     * @param fieldValues
+     *         the field values keyed on field names.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
@@ -517,8 +527,10 @@ public class PageTester
      * specify values for the
      * form fields.
      *
-     * @param submitButton the submit button to be clicked.
-     * @param fieldValues  the field values keyed on field names.
+     * @param submitButton
+     *         the submit button to be clicked.
+     * @param fieldValues
+     *         the field values keyed on field names.
      * @return The response object to assert against.
      * @since 5.2.3
      */
@@ -584,7 +596,8 @@ public class PageTester
      * Sets the simulated browser's preferred language, i.e., the value returned from
      * {@link org.apache.tapestry5.services.Request#getLocale()}.
      *
-     * @param preferedLanguage preferred language setting
+     * @param preferedLanguage
+     *         preferred language setting
      */
     public void setPreferedLanguage(Locale preferedLanguage)
     {

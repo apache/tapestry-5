@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,43 +17,44 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 import java.util.List;
-import java.util.Map;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
-    private final List<String> scripts = CollectionFactory.newList();
+    private final List<String> libraryURLs = CollectionFactory.newList();
 
-    private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
-
-    private final Map<InitializationPriority, JSONObject> priorityToInit = CollectionFactory.newMap();
+    private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
-    private final boolean compactJSON;
+    private final ModuleManager moduleManager;
 
     private final boolean omitGeneratorMetaTag;
 
     private final String tapestryBanner;
 
-    private boolean hasDynamicScript;
+    // Initially false; set to true when a scriptURL or any kind of initialization is added.
+    private boolean hasScriptsOrInitializations;
 
     /**
-     * @param omitGeneratorMetaTag via symbol configuration
-     * @param tapestryVersion      version of Tapestry framework (for meta tag)
-     * @param compactJSON          should JSON content be compact or pretty printed?
+     * @param moduleManager
+     *         used to identify the root folder for dynamically loaded modules
+     * @param omitGeneratorMetaTag
+     *         via symbol configuration
+     * @param tapestryVersion
+     *         version of Tapestry framework (for meta tag)
      */
-    public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
+    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion)
     {
+        this.moduleManager = moduleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
-
-        this.compactJSON = compactJSON;
     }
 
     public void addStylesheetLink(StylesheetLink sheet)
@@ -61,40 +62,31 @@ public class DocumentLinkerImpl implements DocumentLinker
         includedStylesheets.add(sheet);
     }
 
-    public void addScriptLink(String scriptURL)
+
+    public void addLibrary(String libraryURL)
     {
-        scripts.add(scriptURL);
+        libraryURLs.add(libraryURL);
+
+        hasScriptsOrInitializations = true;
     }
 
     public void addScript(InitializationPriority priority, String script)
     {
-
-        StringBuilder builder = priorityToScript.get(priority);
-
-        if (builder == null)
-        {
-            builder = new StringBuilder();
-            priorityToScript.put(priority, builder);
-        }
-
-        builder.append(script);
-
-        builder.append("\n");
-
-        hasDynamicScript = true;
+        addInitialization(priority, "core/pageinit", "evalJavaScript", new JSONArray().put(script));
     }
 
-    public void setInitialization(InitializationPriority priority, JSONObject initialization)
+    public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
-        priorityToInit.put(priority, initialization);
+        initsManager.addInitialization(priority, moduleName, functionName, arguments);
 
-        hasDynamicScript = true;
+        hasScriptsOrInitializations = true;
     }
 
     /**
      * Updates the supplied Document, possibly adding &lt;head&gt; or &lt;body&gt; elements.
      *
-     * @param document to be updated
+     * @param document
+     *         to be updated
      */
     public void updateDocument(Document document)
     {
@@ -103,7 +95,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         // If the document failed to render at all, that's a different problem and is reported elsewhere.
 
         if (root == null)
+        {
             return;
+        }
 
         addStylesheetsToHead(root, includedStylesheets);
 
@@ -136,8 +130,10 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void addScriptElements(Element root)
     {
-        if (scripts.isEmpty() && !hasDynamicScript)
+        if (!hasScriptsOrInitializations)
+        {
             return;
+        }
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
@@ -148,23 +144,21 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(String.format("The root element of the rendered document was <%s>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.", rootElementName));
 
-        Element head = findOrCreateElement(root, "head", true);
-
         // TAPESTRY-2364
 
-        addScriptLinksForIncludedScripts(head, scripts);
-
-        if (hasDynamicScript)
-            addDynamicScriptBlock(findOrCreateElement(root, "body", false));
+        addScriptsToEndOfBody(findOrCreateElement(root, "body", false));
     }
 
     /**
      * Finds an element by name, or creates it. Returns the element (if found), or creates a new element
      * with the given name, and returns it. The new element will be positioned at the top or bottom of the root element.
      *
-     * @param root         element to search
-     * @param childElement element name of child
-     * @param atTop        if not found, create new element at top of root, or at bottom
+     * @param root
+     *         element to search
+     * @param childElement
+     *         element name of child
+     * @param atTop
+     *         if not found, create new element at top of root, or at bottom
      * @return the located element, or null
      */
     private Element findOrCreateElement(Element root, String childElement, boolean atTop)
@@ -174,91 +168,28 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Create the element is it is missing.
 
         if (container == null)
+        {
             container = atTop ? root.elementAt(0, childElement) : root.element(childElement);
+        }
 
         return container;
     }
 
-    /**
-     * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
-     *
-     * @param body element to add the dynamic scripting to
-     */
-    protected void addDynamicScriptBlock(Element body)
-    {
-        StringBuilder block = new StringBuilder();
-
-        boolean wrapped = false;
-
-        for (InitializationPriority p : InitializationPriority.values())
-        {
-            if (p != InitializationPriority.IMMEDIATE && !wrapped
-                    && (priorityToScript.containsKey(p) || priorityToInit.containsKey(p)))
-            {
-
-                block.append("Tapestry.onDOMLoaded(function() {\n");
-
-                wrapped = true;
-            }
-
-            add(block, p);
-        }
-
-        if (wrapped)
-            block.append("});\n");
-
-        Element e = body.element("script", "type", "text/javascript");
-
-        e.raw(block.toString());
-
-    }
-
-    private void add(StringBuilder block, InitializationPriority priority)
-    {
-        add(block, priorityToScript.get(priority));
-        add(block, priorityToInit.get(priority));
-    }
-
-    private void add(StringBuilder block, JSONObject init)
-    {
-        if (init == null)
-            return;
-
-        block.append("Tapestry.init(");
-        block.append(init.toString(compactJSON));
-        block.append(");\n");
-    }
-
-    private void add(StringBuilder block, StringBuilder content)
-    {
-        if (content == null)
-            return;
-
-        block.append(content);
-    }
 
     /**
-     * Adds a script link for each included script to the top of the the {@code <head>} element.
-     * The new elements are inserted just before the first {@code <script>} tag, or appended at
-     * the end.
+     * Adds {@code <script>} elements for the RequireJS library, then any statically includes JavaScript libraries
+     * (including JavaScript stack virtual assets), then the initialization script block.
      *
-     * @param headElement element to add the script links to
-     * @param scripts     scripts URLs to add as {@code <script>} elements
+     * @param body
+     *         element to add the dynamic scripting to
      */
-    protected void addScriptLinksForIncludedScripts(final Element headElement, List<String> scripts)
+    protected void addScriptsToEndOfBody(Element body)
     {
-        // TAP5-1486
+        // In prior releases of Tapestry, we've vacillated about where the <script> tags go
+        // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
+        // Eventually, (nearly) everything will be loaded as modules.
 
-        // Find the first existing <script> tag if it exists.
-
-        Element container = createTemporaryContainer(headElement, "script", "script-container");
-
-        for (String script : scripts)
-        {
-            container.element("script", "type", "text/javascript", "src", script);
-        }
-
-        container.pop();
+        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
@@ -274,8 +205,10 @@ public class DocumentLinkerImpl implements DocumentLinker
      * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
      * it.
      *
-     * @param root        element of document
-     * @param stylesheets to add to the document
+     * @param root
+     *         element of document
+     * @param stylesheets
+     *         to add to the document
      */
     protected void addStylesheetsToHead(Element root, List<StylesheetLink> stylesheets)
     {

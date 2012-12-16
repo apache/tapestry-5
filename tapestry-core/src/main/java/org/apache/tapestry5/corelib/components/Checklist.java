@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,13 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.Collections;
 import java.util.List;
@@ -84,22 +81,8 @@ public class Checklist extends AbstractField
     @Inject
     private FieldValidationSupport fieldValidationSupport;
 
-    @Environmental
-    private ValidationTracker tracker;
-
-    @Inject
-    private ComponentResources componentResources;
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
-    private JavaScriptSupport javaScriptSupport;
-
     @Property
     private List<Renderable> availableOptions;
-
-    private MarkupWriter markupWriter;
 
     private final class RenderRadio implements Renderable
     {
@@ -112,7 +95,7 @@ public class Checklist extends AbstractField
 
         public void render(MarkupWriter writer)
         {
-            final String clientId = javaScriptSupport.allocateClientId(componentResources);
+            final String clientId = javaScriptSupport.allocateClientId(resources);
 
             final String clientValue = encoder.toClient(model.getValue());
 
@@ -130,10 +113,8 @@ public class Checklist extends AbstractField
         }
     }
 
-    void setupRender(final MarkupWriter writer)
+    void setupRender()
     {
-        markupWriter = writer;
-
         availableOptions = CollectionFactory.newList();
 
         final SelectModelVisitor visitor = new SelectModelVisitor()
@@ -187,12 +168,12 @@ public class Checklist extends AbstractField
 
         try
         {
-            this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
+            fieldValidationSupport.validate(selected, this.resources, this.validate);
 
             this.selected = selected;
         } catch (final ValidationException e)
         {
-            this.tracker.recordError(this, e.getMessage());
+            validationTracker.recordError(this, e.getMessage());
         }
 
         removePropertyNameFromBeanValidationContext();
@@ -215,7 +196,7 @@ public class Checklist extends AbstractField
 
     Binding defaultValidate()
     {
-        return this.defaultProvider.defaultValidatorBinding("selected", this.componentResources);
+        return this.defaultProvider.defaultValidatorBinding("selected", resources);
     }
 
     @Override

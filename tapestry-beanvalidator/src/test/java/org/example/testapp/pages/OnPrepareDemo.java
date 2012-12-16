@@ -13,9 +13,11 @@
 // limitations under the License.
 package org.example.testapp.pages;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.example.testapp.entities.User;
 
+@Import(stack = "core")
 public class OnPrepareDemo 
 {
 

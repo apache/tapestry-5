@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.example.testapp.pages;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -20,12 +21,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.example.testapp.services.Foo;
 
+@Import(stack = "core")
 public class FormValidationDemo
 {
 	@NotNull(groups=Foo.class)
@@ -61,6 +64,12 @@ public class FormValidationDemo
 	@Property
 	@Persist
 	private Date date;
+
+    public void onPrepare() {
+        if (languages == null) {
+            languages = new ArrayList<String>();
+        }
+    }
 
 	public StringValueEncoder getStringValueEncoder()
 	{

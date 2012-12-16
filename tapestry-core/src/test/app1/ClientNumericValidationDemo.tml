@@ -14,10 +14,9 @@
         <dd id="outputDoubleValue">${doubleValue}</dd>
     </dl>
 
-    <p>
-        <t:actionlink t:id="reset">reset</t:actionlink>
-        |
-        <t:actionlink t:id="german">switch to German</t:actionlink>
-    </p>
+    <div class="btn-toolbar btn-group">
+        <t:actionlink class="btn" t:id="setup">Setup Values</t:actionlink>
+        <t:actionlink class="btn" t:id="german">Switch to German</t:actionlink>
+    </div>
 
 </t:border>

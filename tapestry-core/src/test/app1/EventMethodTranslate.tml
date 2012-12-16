@@ -1,7 +1,7 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <h1>Event Handler Method Translate</h1>
 
-    <t:form clientvalidation="false">
+    <t:form clientvalidation="none">
 
         <t:errors/>
 
