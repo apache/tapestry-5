@@ -71,11 +71,7 @@ public class Alerts extends BaseClientElement
         resources.renderInformalParameters(writer);
         writer.end();
 
-        if (storage != null)
-        {
-            addAlertsFromStorage();
-        }
-
+        addAlertsFromStorage();
 
         return false;
     }
@@ -101,9 +97,14 @@ public class Alerts extends BaseClientElement
     @HeartbeatDeferred
     void addAlertsFromStorage()
     {
+        if (storage == null)
+        {
+            return;
+        }
+
         for (Alert alert : storage.getAlerts())
         {
-            javaScriptSupport.addInitializerCall("addAlert", alert.toJSON());
+            javaScriptSupport.require("core/alert").with(alert.toJSON());
         }
 
         storage.dismissNonPersistent();

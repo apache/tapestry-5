@@ -17,6 +17,7 @@ package org.apache.tapestry5.test;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class SanityCheckTestSuite extends SeleniumTestCase
 {
     @Test

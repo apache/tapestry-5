@@ -24,6 +24,8 @@ public class ZoneRefreshTest extends SeleniumTestCase
     {
         openBaseURL();
 
+        waitForPageInitialized();
+
         clickAndWait("link=Zone Refresh With Event Handler Returning Void");
 
         checkZoneValues("zone", 3);
@@ -33,7 +35,11 @@ public class ZoneRefreshTest extends SeleniumTestCase
     public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
     {
         openBaseURL();
+
+        waitForPageInitialized();
+
         clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
+
         checkZoneValues("zone", 3);
     }
 
