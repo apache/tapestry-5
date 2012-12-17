@@ -6,7 +6,6 @@ import org.apache.tapestry5.annotations.Import;
         "context:qunit/qunit-1.9.0.js",
         "qunit-config.js",
 
-        "test-pubsub.js",
         "test-dom.js",
         "test-messages.js",
         "test-validation.js",
