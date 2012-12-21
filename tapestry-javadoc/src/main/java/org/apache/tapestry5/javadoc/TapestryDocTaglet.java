@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
 
 package org.apache.tapestry5.javadoc;
 
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Tag;
+import com.sun.tools.doclets.Taglet;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Tag;
-import com.sun.tools.doclets.Taglet;
 
 /**
  * An inline tag allowed inside a type; it produces Tapestry component reference and other information.
@@ -139,8 +138,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             streamXdoc(classDoc, writer);
 
             return writer.toString();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             System.err.println(ex);
             System.exit(-1);
@@ -151,7 +149,8 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
     private void element(Writer writer, String elementName, String text) throws IOException
     {
-        writer.write(String.format("<%s>%s</%1$s>", elementName, text));
+        writer.write(String.format("<%s>%s</%1$s>", elementName,
+                InternalUtils.isBlank(text) ? "&nbsp;" : text));
     }
 
     private void writeClassDescription(ClassDescription cd, Writer writer) throws IOException
@@ -167,15 +166,15 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             return;
 
         writer.write("</dl>"
-        		+ "<table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
-        		+ "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
-        		+ "<th align='left' colspan='7'>"
-        		+ "<font size='+2'><b>Component Parameters</b></font>"
-        		+ "</th></tr>"
-        		+ "<tr class='columnHeaders'>"
-        		+ "<th>Name</th><th>Description</th><th>Type</th><th>Flags</th><th>Default</th>"
-                + "<th>Default Prefix</th><th>Since</th>"
-        		+ "</tr></thead><tbody>");
+                + "<table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
+                + "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
+                + "<th align='left' colspan='5'>"
+                + "<font size='+2'><b>Component Parameters</b></font>"
+                + "</th></tr>"
+                + "<tr class='columnHeaders'>"
+                + "<th>Name</th><th>Type</th><th>Flags</th><th>Default</th>"
+                + "<th>Default Prefix</th>"
+                + "</tr></thead><tbody>");
 
         for (String name : InternalUtils.sortedKeys(cd.parameters))
         {
@@ -189,33 +188,49 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
     private void writerParameter(ParameterDescription pd, Writer writer) throws IOException
     {
-        writer.write("<tr>");
 
-        element(writer, "th", pd.name);
-
-        writer.write("<td>");
-        pd.writeDescription(writer);
-        writer.write("</td>");
+        element(writer, "td", pd.name);
 
         element(writer, "td", addWordBreaks(shortenClassName(pd.type)));
 
         List<String> flags = CollectionFactory.newList();
 
         if (pd.required)
+        {
             flags.add("Required");
+        }
 
         if (!pd.cache)
+        {
             flags.add("Not Cached");
+        }
 
         if (!pd.allowNull)
+        {
             flags.add("Not Null");
+        }
+
+        if (InternalUtils.isNonBlank(pd.since)) {
+            flags.add("Since " + pd.since);
+        }
 
         element(writer, "td", InternalUtils.join(flags));
         element(writer, "td", addWordBreaks(pd.defaultValue));
         element(writer, "td", pd.defaultPrefix);
-        element(writer, "td", pd.since);
 
         writer.write("</tr>");
+
+        String description = pd.extractDescription();
+
+        if (description.length() > 0)
+        {
+
+            writer.write("<tr>");
+            writer.write("<td colspan='5' class='parameter-description'>");
+            writer.write(description);
+            writer.write("</td>");
+            writer.write("</tr>");
+        }
     }
 
     private void writeEvents(ClassDescription cd, Writer writer) throws IOException
@@ -224,9 +239,9 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             return;
 
         writer.write("<p><table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
-        		+ "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
-        		+ "<th align='left'>"
-        		+ "<font size='+2'><b>Events:</b></font></th></tr></thead></table></p><dl>");
+                + "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
+                + "<th align='left'>"
+                + "<font size='+2'><b>Events:</b></font></th></tr></thead></table></p><dl>");
 
         for (String name : InternalUtils.sortedKeys(cd.events))
         {
@@ -242,31 +257,32 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
         writer.write("</dl>");
     }
-    
+
     /**
-	 * Insert a <wbr/> tag after each period and colon in the given string, to
-	 * allow browsers to break words at those points. (Otherwise the Parameters
-	 * tables are too wide.)
-	 * 
-	 * @param words
-	 *            any string, possibly containing periods or colons
-	 * @return the new string, possibly containing <wbr/> tags
-	 */
+     * Insert a <wbr/> tag after each period and colon in the given string, to
+     * allow browsers to break words at those points. (Otherwise the Parameters
+     * tables are too wide.)
+     *
+     * @param words
+     *         any string, possibly containing periods or colons
+     * @return the new string, possibly containing <wbr/> tags
+     */
     private String addWordBreaks(String words)
     {
-		return words.replace(".", ".<wbr/>").replace(":", ":<wbr/>");
+        return words.replace(".", ".<wbr/>").replace(":", ":<wbr/>");
     }
-    
+
     /**
      * Shorten the given class name by removing built-in Java packages
      * (currently just java.lang)
-     * 
-     * @param className name of class, with package
+     *
+     * @param className
+     *         name of class, with package
      * @return potentially shorter class name
      */
     private String shortenClassName(String name)
     {
-    	return name.replace("java.lang.", "");
+        return name.replace("java.lang.", "");
     }
 
     private void streamXdoc(ClassDoc classDoc, Writer writer) throws Exception
@@ -289,8 +305,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
                 new XDocStreamer(xdocFile, writer).writeContent();
                 // Open a new (empty) definition list, that HtmlDoclet will close.
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 System.err.println("Error streaming XDOC content for " + classDoc);
                 throw ex;

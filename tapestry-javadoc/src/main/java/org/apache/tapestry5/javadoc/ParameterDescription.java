@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.javadoc;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.regex.Pattern;
-
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.SeeTag;
 import com.sun.javadoc.Tag;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class ParameterDescription
 {
@@ -47,7 +46,7 @@ public class ParameterDescription
     private static final Pattern STRIPPER = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
 
     public ParameterDescription(FieldDoc fieldDoc, String name, String type, String defaultValue, String defaultPrefix,
-            boolean required, boolean allowNull, boolean cache, String since, boolean deprecated)
+                                boolean required, boolean allowNull, boolean cache, String since, boolean deprecated)
     {
         this.field = fieldDoc;
         this.name = name;
@@ -61,7 +60,13 @@ public class ParameterDescription
         this.deprecated = deprecated;
     }
 
-    public void writeDescription(Writer writer) throws IOException
+    /**
+     * Extracts the description, converting Text and @link nodes as needed into markup text.
+     *
+     * @return markup text, ready for writing
+     * @throws IOException
+     */
+    public String extractDescription() throws IOException
     {
         StringBuilder builder = new StringBuilder();
 
@@ -101,8 +106,6 @@ public class ParameterDescription
 
         // Remove any simple open or close tags found in the text, as well as any XML entities.
 
-        String stripped = STRIPPER.matcher(text).replaceAll("");
-
-        writer.write(stripped);
+        return STRIPPER.matcher(text).replaceAll("").trim();
     }
 }
