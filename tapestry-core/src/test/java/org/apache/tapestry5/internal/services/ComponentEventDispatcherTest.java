@@ -289,7 +289,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     private void train_for_request_locale(Request request, LocalizationSetter localizationSetter)
     {
         train_getLocale(request, Locale.CANADA_FRENCH);
-        localizationSetter.setNonPeristentLocaleFromLocaleName("fr_CA");
+        localizationSetter.setNonPersistentLocaleFromLocaleName("fr_CA");
     }
 
     @Test

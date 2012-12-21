@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public interface LocalizationSetter
      *            locale in effect for this request
      * @since 5.1.0.0
      */
-    void setNonPeristentLocaleFromLocaleName(String localeName);
+    void setNonPersistentLocaleFromLocaleName(String localeName);
 
     /**
      * Returns a list of supported locales, as per the {@link org.apache.tapestry5.SymbolConstants#SUPPORTED_LOCALES}

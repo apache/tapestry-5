@@ -153,3 +153,8 @@ tokens, so this behavior has been removed.
 The timing of this mixin has changed, it now has the @MixinAfter annotation, so it triggers its events *after*
 the component to which it attaches has executed its @BeginRender phase, and *before* the component executes
 its @AfterRender phase.
+
+## LocalizationSetter service
+
+The method setNonPeristentLocaleFromLocaleName() was renamed to setNonPersistentLocaleFromLocaleName() to correct
+the typo (the missing 's').

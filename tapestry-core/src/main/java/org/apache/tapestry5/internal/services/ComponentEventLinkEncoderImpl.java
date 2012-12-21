@@ -393,7 +393,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         // And explicit locale will have invoked setLocaleFromLocaleName().
 
-        localizationSetter.setNonPeristentLocaleFromLocaleName(locale.toString());
+        localizationSetter.setNonPersistentLocaleFromLocaleName(locale.toString());
     }
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)

@@ -160,7 +160,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private StreamableResource assembleStackContent(String localeName, String stackName) throws IOException
     {
-        localizationSetter.setNonPeristentLocaleFromLocaleName(localeName);
+        localizationSetter.setNonPersistentLocaleFromLocaleName(localeName);
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
         List<Asset> libraries = stack.getJavaScriptLibraries();
