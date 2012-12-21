@@ -15,4 +15,12 @@ class MiscTests extends TapestryCoreTestCase {
 
     assertTextPresent "[Operation Description]"
   }
+
+    @Test
+    void meta_tag_identifying_page_name_is_present()
+    {
+        openLinks "Zone Demo"
+
+        assertAttribute "//meta[@name='tapestry-page-name']/@content", "nested/ZoneDemo"
+    }
 }

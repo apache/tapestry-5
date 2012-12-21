@@ -1210,7 +1210,7 @@ public final class TapestryModule
 
     public static ComponentClassResolver buildComponentClassResolver(@Autobuild
                                                                      ComponentClassResolverImpl service, @ComponentClasses
-    InvalidationEventHub hub)
+                                                                     InvalidationEventHub hub)
     {
         // Allow the resolver to clean its cache when the component classes
         // change
@@ -1430,7 +1430,7 @@ public final class TapestryModule
      */
     public static DataTypeAnalyzer buildDefaultDataTypeAnalyzer(@Autobuild
                                                                 DefaultDataTypeAnalyzer service, @ComponentClasses
-    InvalidationEventHub hub)
+                                                                InvalidationEventHub hub)
     {
         hub.addInvalidationCallback(service);
 
@@ -1796,12 +1796,14 @@ public final class TapestryModule
      * <dl>
      * <dt>DocumentLinker</dt>
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}</dd>
-     * <dt>ClientBehaviorSupport</dt>
+     * <dt>ClientBehaviorSupport (deprecated in 5.4)</dt>
      * <dd>Provides {@link ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt>
      * <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
-     * <dt>ValidationDecorator</dt>
+     * <dt>ValidationDecorator (deprecated in 5.4)</dt>
      * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (via {@link ValidationDecoratorFactory#newInstance(org.apache.tapestry5.MarkupWriter)})</dd>
+     * <dt>PageNameMeta (since 5.4)</dt>
+     * <dd>Renders a {@code <meta/>} tag describing the active page name (development mode only)</dd>
      * </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
@@ -1813,6 +1815,9 @@ public final class TapestryModule
 
                                          @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
+
+                                         @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                         boolean productionMode,
 
                                          final ValidationDecoratorFactory validationDecoratorFactory)
     {
@@ -1883,6 +1888,14 @@ public final class TapestryModule
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
+
+        if (productionMode)
+        {
+            configuration.add("PageNameMeta", null);
+        } else
+        {
+            configuration.addInstance("PageNameMeta", PageNameMetaInjector.class);
+        }
     }
 
     /**
@@ -2212,7 +2225,7 @@ public final class TapestryModule
     public void contributeApplicationInitializer(OrderedConfiguration<ApplicationInitializerFilter> configuration,
                                                  final TypeCoercer typeCoercer, final ComponentClassResolver componentClassResolver, @ComponentClasses
     final InvalidationEventHub invalidationEventHub, final @Autobuild
-    RestoreDirtySessionObjects restoreDirtySessionObjects)
+                                                 RestoreDirtySessionObjects restoreDirtySessionObjects)
     {
         final Runnable callback = new Runnable()
         {
