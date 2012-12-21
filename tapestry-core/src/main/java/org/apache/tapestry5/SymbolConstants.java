@@ -340,6 +340,7 @@ public class SymbolConstants
 
     /**
      * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
+     * This is either a blank string or a string that starts with a slash but does not end with one.
      *
      * @since 5.4
      */
