@@ -54,13 +54,31 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         this.fullyQualified = fullyQualified;
 
-        StringBuilder prefix = new StringBuilder("/");
+        StringBuilder prefix = new StringBuilder();
 
-        // Either blank, or ending in a slash:
-        prefix.append(contextPath);
+        boolean needsSlash = false;
+
+        if (contextPath.length() == 0) {
+            prefix.append("/");
+        }
+        else {
+            prefix.append(contextPath);
+            needsSlash = true;
+        }
 
         if (!applicationFolder.equals("")) {
+
+            if (needsSlash) {
+                prefix.append("/");
+            }
+
             prefix.append(applicationFolder).append("/");
+
+            needsSlash = false;
+        }
+
+        if (needsSlash) {
+            prefix.append("/");
         }
 
         prefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");

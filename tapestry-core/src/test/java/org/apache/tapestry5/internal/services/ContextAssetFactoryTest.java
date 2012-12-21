@@ -58,7 +58,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
         AssetFactory factory = new ContextAssetFactory(
                 new AssetPathConstructorImpl(request,
                         baseURLSource,
-                        "context/", "4.5.6",
+                        "/context", "4.5.6",
                         "",
                         false,
                         "assets"
@@ -81,6 +81,36 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     }
 
     @Test
+    public void asset_client_URL_with_default_context() {
+        Context context = mockContext();
+        Request request = mockRequest();
+
+        BaseURLSource baseURLSource = newMock(BaseURLSource.class);
+
+        Resource r = new ContextResource(context, "foo/Bar.txt");
+
+        replay();
+
+        AssetFactory factory = new ContextAssetFactory(
+                new AssetPathConstructorImpl(request,
+                        baseURLSource,
+                        "", "4.5.6",
+                        "",
+                        false,
+                        "assets"
+                ),
+                context,
+                new IdentityAssetPathConverter()
+        );
+
+        Asset asset = factory.createAsset(r);
+
+        assertEquals(asset.toClientURL(), "/assets/4.5.6/ctx/foo/Bar.txt");
+
+        verify();
+    }
+
+    @Test
     public void asset_client_URL_fully_qualified()
     {
         Context context = mockContext();
@@ -97,7 +127,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
         AssetFactory factory = new ContextAssetFactory(
                 new AssetPathConstructorImpl(request,
                         baseURLSource,
-                        "context/", "4.5.6",
+                        "/context", "4.5.6",
                         "",
                         true,
                         "assets"
