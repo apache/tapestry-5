@@ -11,7 +11,6 @@ project.ext.versions = [
   // tag the release in Subversion.
   // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
   // during a release
-  tapestry: "5.4-SNAPSHOT",
   jetty: "7.0.0.v20091005",
   tomcat: "6.0.30",
   testng: "6.5.2",
@@ -23,7 +22,13 @@ project.ext.versions = [
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-version = System.getProperty("project-version", versions.tapestry)
+project.version =  "5.4-alpha-1" + suffix()
+
+def suffix() {
+    // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
+    // When building normally, or for a release, no suffix is desired.
+    Boolean.getBoolean("ci") ? "-SNAPSHOT" : ""
+}
 
 // Let analysis.apache.org get in touch with our builds
 
@@ -122,12 +127,11 @@ subprojects {
     configurations {
         provided
         deployerJars
-
     }
 
     apply plugin: "java"
     apply plugin: "groovy" // mostly for testing
-    apply plugin: "maven"
+    apply plugin: "maven"  // for deployment
     apply plugin: "project-report"
 
     sourceCompatibility = "1.5"
