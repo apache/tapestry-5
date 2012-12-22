@@ -22,7 +22,7 @@ project.ext.versions = [
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-project.version =  "5.4-alpha-1" + suffix()
+project.version =  "5.4-alpha-2" + suffix()
 
 def suffix() {
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
