@@ -53,7 +53,7 @@ class AssetPathConstructorImplTest extends TestBase {
   void "construct asset path with a context path"() {
     def request = newMock(Request)
 
-    def apc = new AssetPathConstructorImpl(request, null, "ctx/", "123", "myapp", false, "assets")
+    def apc = new AssetPathConstructorImpl(request, null, "/ctx", "123", "myapp", false, "assets")
 
     replay()
 
@@ -67,7 +67,7 @@ class AssetPathConstructorImplTest extends TestBase {
     def request = newMock(Request)
     def baseURLSource = newMock(BaseURLSource)
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, "mycontext/", "123", "myapp", true, "assets")
+    def apc = new AssetPathConstructorImpl(request, baseURLSource, "/mycontext", "123", "myapp", true, "assets")
 
     expect(request.secure).andReturn(false)
     expect(baseURLSource.getBaseURL(false)).andReturn("http://localhost:8080")
