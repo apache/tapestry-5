@@ -90,6 +90,8 @@ public final class Element extends Node
 
     /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
+     * The "class" attribute is treated specially: the new value is appended, after a space, to the
+     * existing value.
      *
      * @param name
      *         the name of the attribute to add
@@ -104,9 +106,11 @@ public final class Element extends Node
 
     /**
      * Adds a namespaced attribute to the element, but only if the attribute name does not already exist.
+     * The "class" attribute of the default namespace is treated specially: the new value
+     * is appended, after a space, to the existing value.
      *
      * @param namespace
-     *         the namespace to contain the attribute, or null
+     *         the namespace to contain the attribute, or null for the default namespace
      * @param name
      *         the name of the attribute to add
      * @param value
@@ -116,6 +120,7 @@ public final class Element extends Node
     public Element attribute(String namespace, String name, String value)
     {
         assert InternalUtils.isNonBlank(name);
+
         updateAttribute(namespace, name, value, false);
 
         return this;
@@ -124,7 +129,9 @@ public final class Element extends Node
     private void updateAttribute(String namespace, String name, String value, boolean force)
     {
         if (!force && value == null)
+        {
             return;
+        }
 
         Attribute prior = null;
         Attribute cursor = firstAttribute;
@@ -133,21 +140,35 @@ public final class Element extends Node
         {
             if (cursor.matches(namespace, name))
             {
-                if (!force)
+                boolean isClass = namespace == null && name.equals("class");
+
+                if (!(force || isClass))
+                {
                     return;
+                }
 
                 if (value != null)
                 {
-                    cursor.value = value;
+                    if (!force && isClass)
+                    {
+                        cursor.value += (" " + value);
+                    } else
+                    {
+                        cursor.value = value;
+                    }
+
                     return;
                 }
 
                 // Remove this Attribute node from the linked list
 
                 if (prior == null)
+                {
                     firstAttribute = cursor.nextAttribute;
-                else
+                } else
+                {
                     prior.nextAttribute = cursor.nextAttribute;
+                }
 
                 return;
             }
@@ -156,12 +177,12 @@ public final class Element extends Node
             cursor = cursor.nextAttribute;
         }
 
-        // Don't add a Attribute if the value is null.
+        // Don't add an Attribute if the value is null.
 
-        if (value == null)
-            return;
-
-        firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
+        if (value != null)
+        {
+            firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
+        }
     }
 
     /**
@@ -199,7 +220,7 @@ public final class Element extends Node
 
     /**
      * Forces changes to a number of attributes in the global namespace. The new attributes <em>overwrite</em> previous
-     * values. Overriding attribute's value to null will remove the attribute entirely.
+     * values (event for the "class" attribute). Overriding attribute's value to null will remove the attribute entirely.
      * TAP5-708: don't use element namespace for attributes
      *
      * @param namespace
@@ -616,65 +637,19 @@ public final class Element extends Node
     }
 
     /**
-     * Adds one or more CSS class names to the "class" attribute, using {@link #extendAttribute}. Note that CSS class
-     * names are case insensitive on the client.
+     * Adds one or more CSS class names to the "class" attribute.
      *
      * @param classNames
      *         one or more CSS class names
      * @return the element for further configuration
+     * @deprecated Deprecated in 5.4, as this is now special behavior for the "class" attribute.
      */
     public Element addClassName(String... classNames)
     {
-        return extendAttribute("class", classNames);
-    }
-
-    /**
-     * Adds one or more new values to an attribute; the attribute is considered to have multiple
-     * value separated by spaces (such as the HTML {@code class} attribute). The new values are added
-     * to the existing ones. Duplicates are removed (the comparison is, however, case sensitive). The order
-     * of the individual words inside the attribute value may change.
-     *
-     * @param name
-     *         name of attribute to update
-     * @param words
-     *         additional words to add to the attribute value; they should not contain any whitespace
-     * @return the element for further configuration
-     * @since 5.4
-     */
-    public Element extendAttribute(String name, String... words)
-    {
-        Set<String> values = CollectionFactory.newSet();
-
-        String attributeValue = getAttribute(name);
-
-        String[] existing = attributeValue == null ? EMPTY_ARRAY : SPACES.split(attributeValue);
-
-        int length = 0;
-
-        for (String word : existing)
+        for (String name : classNames)
         {
-            length += word.length() + 1;
-
-            values.add(word);
+            attribute("class", name);
         }
-
-        for (String word : words)
-        {
-            length += word.length() + 1;
-
-            values.add(word);
-        }
-
-        StringBuilder builder = new StringBuilder(length);
-        String sep = "";
-
-        for (String word : values)
-        {
-            builder.append(sep).append(word);
-            sep = " ";
-        }
-
-        updateAttribute(null, name, builder.toString(), true);
 
         return this;
     }

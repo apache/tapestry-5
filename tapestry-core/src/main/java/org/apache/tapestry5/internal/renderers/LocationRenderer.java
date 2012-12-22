@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,16 +87,25 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
                 writer.element("td", "class", "t-location-line");
 
-                if (line == current) writer.getElement().addClassName("t-location-current");
+                if (line == current)
+                {
+                    writer.getElement().attribute("class", "t-location-current");
+                }
 
                 writer.write(Integer.toString(current));
                 writer.end();
 
                 Element td = writer.element("td", "class", "t-location-content");
 
-                if (line == current) td.addClassName("t-location-current");
+                if (line == current)
+                {
+                    td.attribute("class", "t-location-current");
+                }
 
-                if (start == current) td.addClassName("t-location-content-first");
+                if (start == current)
+                {
+                    td.attribute("class", "t-location-content-first");
+                }
 
                 writer.write(input);
                 writer.end();

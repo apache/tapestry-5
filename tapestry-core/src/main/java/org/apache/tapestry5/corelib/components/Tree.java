@@ -138,7 +138,7 @@ public class Tree
         @Override
         public void render(MarkupWriter writer, RenderQueue queue)
         {
-            writer.getElement().addClassName("t-selected-leaf-node");
+            writer.getElement().attribute("class", "t-selected-leaf-node");
         }
     };
 
@@ -176,7 +176,7 @@ public class Tree
 
                 if (isLeaf)
                 {
-                    writer.getElement().addClassName("t-leaf-node");
+                    writer.getElement().attribute("class", "t-leaf-node");
                 }
 
                 Element e = writer.element("span", "class", "t-tree-icon");
