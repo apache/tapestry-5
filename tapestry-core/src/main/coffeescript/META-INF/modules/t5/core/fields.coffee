@@ -87,8 +87,12 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       return block
 
+    # This may be removed soon:
     showValidationError = (id, message) ->
       dom.wrap(id).trigger events.field.showValidationError, { message }
+
+    collectOptionValues = (wrapper) ->
+      _.pluck wrapper.element.options, "value"
 
     # Default registrations:
 
@@ -102,7 +106,13 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       failure = false
 
-      memo = value: this.value()
+      fieldValue =
+        if (this.attribute "data-value-mode") is "options"
+          collectOptionValues this
+        else
+          this.value()
+
+      memo = value: fieldValue
 
       postEventTrigger = =>
         if memo.error
@@ -110,6 +120,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
           failure = true
 
           if _.isString memo.error
+
             this.trigger events.field.showValidationError, { message: memo.error }
 
       this.trigger events.field.optional, memo

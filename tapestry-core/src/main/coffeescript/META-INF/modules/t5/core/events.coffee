@@ -55,10 +55,17 @@ define
   field:
 
     # Perform the optionality check. The event memo includes a `value` property. If the field is required
-    # but the value is blank, then a validation error should be presented (as described above).
+    # but the value is blank, then a validation error should be presented (as described above). The `value`
+    # property of the memo is as described for the `translate` event.
     optional: "t5:field:optional"
 
-    # Trigged by the field if there is a field value. The event memo includes the value as the `value` property.
+    # Trigged by the field if there is a field value (a non-empty string, or a non-empty array in the case
+    # of a select element). The event memo includes the field's value as the `value` property.
+    # For text fields, the value is the text inside the field. For select elements, it is an array of the values
+    # of selected options. If the element has the attribute `data-value-mode` set to 'options', then the
+    # value will be the array of all options (selected or not; this is provided for the core/Palette Tapestry
+    # component).
+    #
     # An event handler may update the event, setting the `translated` property to an alternate formatting, or
     # alternate representation (e.g., `Date`, or a number) for the input value. If the input can not be translated,
     # then a validation error should be presented (as described above).

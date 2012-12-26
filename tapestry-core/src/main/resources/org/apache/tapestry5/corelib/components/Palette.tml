@@ -43,7 +43,10 @@
         <div class="t-palette-title">
             <t:delegate to="selectedLabel"/>
         </div>
-        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" t:mixins="rendernotification">
+        <t:remove>
+            data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all options, selected or not.
+        </t:remove>
+        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" data-value-mode="options" t:mixins="rendernotification">
             <t:remove>Starts empty, populated on the client side.</t:remove>
         </select>
     </div>
