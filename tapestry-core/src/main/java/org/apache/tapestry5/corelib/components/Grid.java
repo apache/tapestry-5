@@ -482,8 +482,8 @@ public class Grid implements GridModel
 
         if (inPlace && zone == null)
         {
-            javaScriptSupport.require("core/zone");
-            javaScriptSupport.require("core/grid");
+            javaScriptSupport.require("t5/core/zone");
+            javaScriptSupport.require("t5/core/grid");
 
             writer.element("div", "data-container-type", "zone");
 

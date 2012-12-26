@@ -41,7 +41,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
     void partial_mode_add_script() {
         DocumentLinker linker = mockDocumentLinker()
 
-        linker.addInitialization(InitializationPriority.NORMAL, "core/pageinit", "evalJavaScript",
+        linker.addInitialization(InitializationPriority.NORMAL, "t5/core/pageinit", "evalJavaScript",
             new JSONArray().put("doSomething();"))
 
         replay()
@@ -315,7 +315,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         arguments.each { initArgs.put it }
 
-        linker.addInitialization(priority, "core/init", null, initArgs)
+        linker.addInitialization(priority, "t5/core/init", null, initArgs)
     }
 
     @Test

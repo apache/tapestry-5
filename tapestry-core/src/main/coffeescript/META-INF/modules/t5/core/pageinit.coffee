@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/pageinit
+# ## t5/core/pageinit
 #
 # Module that defines functions used for page initialization.
 # The initialize function is passed an array of initializers; each initializer is itself
@@ -20,7 +20,7 @@
 # The module name may also indicate the function exported by the module, as a suffix following a colon:
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define ["_", "core/console", "core/dom", "core/events"],
+define ["_", "./console", "./dom", "./events"],
   (_, console, dom, events) ->
     pathPrefix = null
 

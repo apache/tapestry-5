@@ -104,7 +104,7 @@ public class Alerts extends BaseClientElement
 
         for (Alert alert : storage.getAlerts())
         {
-            javaScriptSupport.require("core/alert").with(alert.toJSON());
+            javaScriptSupport.require("t5/core/alert").with(alert.toJSON());
         }
 
         storage.dismissNonPersistent();

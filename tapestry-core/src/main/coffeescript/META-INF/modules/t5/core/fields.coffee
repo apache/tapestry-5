@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/fields
+# ## t5/core/fields
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-define ["_", "core/events", "core/dom", "core/builder", "core/utils", "core/forms"],
+define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
   (_, events, dom, builder, utils) ->
 
     ensureFieldId = (field) ->

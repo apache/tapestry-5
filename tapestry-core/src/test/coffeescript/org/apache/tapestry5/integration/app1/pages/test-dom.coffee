@@ -1,5 +1,5 @@
-require ["core/dom"], (dom) ->
-  module "core/dom"
+require ["t5/core/dom"], (dom) ->
+  module "t5/core/dom"
 
   test "get wrapped element by id", ->
     e = dom "dom-eventelement-native"

@@ -23,6 +23,9 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     public static final String EXCEPTION_PROCESSING_REQUEST = "An exception has occurred processing this request.";
     public static final String TEST_APP_BANNER = "Tapestry Integration Test Application";
 
+    // Rule of thumb time, in ms, to wait for Ajax to occur.
+    public static final int AJAX_WAIT_TIME = 250;
+
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)

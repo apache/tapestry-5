@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/console
+# ## t5/core/console
 #
 # A wrapper around the native console, when it exists.
-define ["core/dom", "core/builder", "_"], (dom, builder, _) ->
+define ["./dom", "./builder", "_"], (dom, builder, _) ->
   nativeConsole = {}
   floatingConsole = null
 

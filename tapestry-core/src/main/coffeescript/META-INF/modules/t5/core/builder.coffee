@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/builder
+# ## t5/core/builder
 #
 # A system for constructing DOM element nodes for a particular structure in minimal code.  The basic syntax is:
-# `builder(elementDescription, body...)` and the result is a `core/dom:ElementWrapper` (a wrapper around the constructed
+# `builder(elementDescription, body...)` and the result is a `t5/core/dom:ElementWrapper` (a wrapper around the constructed
 # DOM elements). The element description is primarily the name of the element.
 #
 # The element description may contain sequences of "._name_"; these appropriate CSS syntax to describe a CSS class name
@@ -36,7 +36,7 @@
 # * Strings: literal markup text
 # * Array: a nested element definition
 #
-# Literal text is NOT escaped. You should be careful to use `core/dom:escapeHTML` if the body contains
+# Literal text is NOT escaped. You should be careful to use `t5/core/dom:escapeHTML` if the body contains
 # any potential markup that should be escaped; alternately, it may be easier to use embedded markup in the body
 # than to use an element definition.
 #
@@ -49,7 +49,7 @@
 # and
 #
 #     { on: { click: -> ... }}
-define ["_", "core/dom", "core/utils"], (_, dom, utils) ->
+define ["_", "./dom", "./utils"], (_, dom, utils) ->
   # _internal_: creates a single DOM element and CSS class attribute
   createElement = (elementDescription) ->
     # TODO: Support #id for setting the id of an element, maybe others, such as ?name for the name of an input element.
@@ -121,7 +121,7 @@ define ["_", "core/dom", "core/utils"], (_, dom, utils) ->
     return element
 
   # The module exports a single function that builds the tree of elements and returns the top element, wrapped as an
-  # `core/dom:ElementWrapper`.
+  # `t5/core/dom:ElementWrapper`.
   (elementDescription, body...) ->
     element = buildTree elementDescription, body
 

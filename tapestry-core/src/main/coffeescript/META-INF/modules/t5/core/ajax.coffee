@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/ajax
+# ## t5/core/ajax
 #
-# Exports a single function, that invokes `core/dom:ajaxRequest()` with the provided `url` and a modified version of the
+# Exports a single function, that invokes `t5/core/dom:ajaxRequest()` with the provided `url` and a modified version of the
 # `options`.
 #
 # It wraps (or provides) `onsuccess`, `onexception`, and `onfailure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
-# `core/exceptionframe` module to display a server-side processing exception.
-define ["core/pageinit", "core/dom", "core/exceptionframe", "core/console", "_"],
+# `t5/core/exceptionframe` module to display a server-side processing exception.
+define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
   (pageinit, dom, exceptionframe, console, _) ->
     (url, options) ->
       newOptions = _.extend {}, options,

@@ -263,9 +263,11 @@ public class GridTests extends TapestryCoreTestCase
         String timestamp = getText("lastupdate");
 
         click("link=2");
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
+
         click("link=Album");
-        sleep(100);
+
+        sleep(AJAX_WAIT_TIME);
 
         assertEquals(getText("lastupdate"), timestamp,
                 "Timestamp should not have changed because updates are in-place.");

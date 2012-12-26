@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##beanvalidator/validation
+# ## t5/beanvalidator/validation
 #
 # Supports extra validations related to the beanvalidator module.
-define ["_", "core/dom", "core/events", "core/utils", "core/validation"],
+define ["_", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validation"],
   (_, dom, events, utils) ->
 
     rangeValue = (element, attribute, defaultValue) ->

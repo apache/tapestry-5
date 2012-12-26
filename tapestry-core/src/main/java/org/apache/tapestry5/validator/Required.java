@@ -59,7 +59,7 @@ public final class Required extends AbstractValidator<Void, Object>
 
         if (formSupport.isClientValidationEnabled())
         {
-            javaScriptSupport.require("core/validation");
+            javaScriptSupport.require("t5/core/validation");
 
             writer.attributes(
                     DataConstants.VALIDATION_ATTRIBUTE, true,

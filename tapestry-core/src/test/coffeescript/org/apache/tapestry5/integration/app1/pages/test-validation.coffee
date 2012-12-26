@@ -1,8 +1,8 @@
-require ["core/validation"], (v) ->
+require ["t5/core/validation"], (v) ->
 
   parse = v.parseNumber
 
-  module "core/validation"
+  module "t5/core/validation"
 
   # Tests assume, currently, that the active locale is "en". This affects
   # the decimal format symbols.

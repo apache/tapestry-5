@@ -49,7 +49,7 @@ public class Max extends AbstractValidator<Long, Number>
     {
         if (formSupport.isClientValidationEnabled())
         {
-            javaScriptSupport.require("core/validation");
+            javaScriptSupport.require("t5/core/validation");
 
             writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-max", constraintValue.toString(),

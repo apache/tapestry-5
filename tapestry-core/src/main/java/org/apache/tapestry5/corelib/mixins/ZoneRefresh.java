@@ -74,7 +74,7 @@ public class ZoneRefresh
     {
         Link link = resources.createEventLink("zoneRefresh", context);
 
-        javaScriptSupport.require("core/zone-refresh").with(zone.getClientId(), period, link.toString());
+        javaScriptSupport.require("t5/core/zone-refresh").with(zone.getClientId(), period, link.toString());
     }
 
     Object onZoneRefresh()

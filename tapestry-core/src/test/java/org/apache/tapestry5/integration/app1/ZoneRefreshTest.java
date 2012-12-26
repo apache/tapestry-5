@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.integration.app1;
 
+import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.testng.annotations.Test;
 
-public class ZoneRefreshTest extends SeleniumTestCase
+public class ZoneRefreshTest extends TapestryCoreTestCase
 {
-
-    private static final int WAIT = 250;
 
     @Test
     public void test_if_zone_with_event_handler_returning_void_works() throws Exception
@@ -31,7 +30,7 @@ public class ZoneRefreshTest extends SeleniumTestCase
 
         clickAndWait("link=Zone Refresh With Event Handler Returning Void");
 
-        sleep(WAIT);
+        sleep(AJAX_WAIT_TIME);
 
         checkZoneValues("zone", 3);
     }
@@ -45,7 +44,7 @@ public class ZoneRefreshTest extends SeleniumTestCase
 
         clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
 
-        sleep(WAIT);
+        sleep(AJAX_WAIT_TIME);
 
         checkZoneValues("zone", 3);
     }

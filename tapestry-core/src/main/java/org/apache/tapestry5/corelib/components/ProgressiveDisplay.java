@@ -100,7 +100,7 @@ public class ProgressiveDisplay
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
 
-        jsSupport.require("core/zone").invoke("deferredZoneUpdate").with(clientId, link.toURI());
+        jsSupport.require("t5/core/zone").invoke("deferredZoneUpdate").with(clientId, link.toURI());
 
         // Return the placeholder for the full content. That will render instead of the main body
         // of the component.

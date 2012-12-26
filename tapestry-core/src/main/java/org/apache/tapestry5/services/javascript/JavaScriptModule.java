@@ -249,7 +249,7 @@ public class JavaScriptModule
         {
             MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource, resourceChangeTracker, compactJSON);
 
-            configuration.add("core/messages/" + locale.toString(), new JavaScriptModuleConfiguration(resource));
+            configuration.add("t5/core/messages/" + locale.toString(), new JavaScriptModuleConfiguration(resource));
         }
     }
 

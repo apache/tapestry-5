@@ -152,7 +152,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         if (focusFieldId != null)
         {
-            require("core/pageinit").invoke("focus").with(focusFieldId);
+            require("t5/core/pageinit").invoke("focus").with(focusFieldId);
         }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
@@ -201,7 +201,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert parameter != null;
         assert InternalUtils.isNonBlank(functionName);
 
-        require("core/init").priority(priority).with(functionName, parameter);
+        require("t5/core/init").priority(priority).with(functionName, parameter);
     }
 
     public void addInitializerCall(String functionName, JSONObject parameter)
@@ -228,7 +228,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (partialMode)
         {
-            require("core/pageinit").invoke("evalJavaScript").with(newScript);
+            require("t5/core/pageinit").invoke("evalJavaScript").with(newScript);
         } else
         {
             linker.addScript(priority, newScript);

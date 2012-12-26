@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/palette
+# ## t5/core/palette
 #
 # Support for the `core/Palette` component.
-define ["core/dom", "_"],
+define ["./dom", "_"],
   (dom, _) ->
     class PaletteController
 

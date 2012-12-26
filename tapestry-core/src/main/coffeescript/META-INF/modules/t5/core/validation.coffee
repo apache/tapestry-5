@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## core/translator
+# ## t5/core/translator
 #
 # Support for Tapestry's built-in set of translators and validators.
 #
-define ["_", "core/dom", "core/events", "core/utils", "core/messages", "core/fields"],
+define ["_", "./dom", "./events", "./utils", "./messages", "./fields"],
   (_, dom, events, utils, messages) ->
 
     REGEXP_META = "t5:regular-expression"
@@ -26,7 +26,7 @@ define ["_", "core/dom", "core/events", "core/utils", "core/messages", "core/fie
     decimal = messages "decimal-symbols.decimal"
 
     # Formats a string for a localized number into a simple number. This uses localization
-    # information provided by `core/messages` to remove grouping seperators and convert the
+    # information provided by `t5/core/messages` to remove grouping seperators and convert the
     # minus sign and decimal seperator into english norms ("-" and ".") that are compatible
     # with the `Number` constructor. May throw `Error` if the input can not be parsed.
     #

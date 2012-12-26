@@ -93,7 +93,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("core/pageinit:evalJavaScript", "pageInitialization();")])
+        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageInitialization();")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -197,7 +197,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager([], [new JSONArray("core/pageinit:evalJavaScript", "doSomething();")])
+        def manager = mockModuleManager([], [new JSONArray("t5/core/pageinit:evalJavaScript", "doSomething();")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 

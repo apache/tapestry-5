@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-# ##core/dom
+# ## t5/core/dom
 #
 # This is the abstraction layer that allows the majority of components to operate without caring whether the
 # underlying infrastructure framework is Prototype, jQuery, or something else.  This implementation is specific
@@ -29,7 +29,7 @@
 # It is quite concievable that some components will require direct access to the infrastructure framework, especially
 # those that are wrappers around third party libraries or plugins; however many simple components may need no more than
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
-define ["_", "core/utils", "prototype"], (_, utils) ->
+define ["_", "./utils", "prototype"], (_, utils) ->
 
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
@@ -418,7 +418,7 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
-  # This is very low level; most code will want to go through the `core/ajax` module instead,
+  # This is very low level; most code will want to go through the `t5/core/ajax` module instead,
   # which adds better handling of exceptions and failures, and handles Tapestry's partial page
   # render reponse keys.
   #

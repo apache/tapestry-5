@@ -117,7 +117,7 @@ public class Autocomplete
         JSONObject spec = new JSONObject("id", field.getClientId(),
                 "url", link.toString()).put("minChars", minChars);
 
-        jsSupport.require("core/autocomplete").with(spec);
+        jsSupport.require("t5/core/autocomplete").with(spec);
     }
 
     Object onAutocomplete(@RequestParameter("t:input")

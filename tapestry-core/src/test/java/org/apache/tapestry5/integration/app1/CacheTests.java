@@ -36,7 +36,7 @@ public class CacheTests extends TapestryCoreTestCase
 
         click("link=update");
 
-        sleep(250);
+        sleep(AJAX_WAIT_TIME);
 
         String time2_1 = getText("time1");
         String time2_2 = getText("time1");

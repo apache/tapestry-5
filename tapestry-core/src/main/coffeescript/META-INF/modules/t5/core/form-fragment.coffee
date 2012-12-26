@@ -13,9 +13,9 @@
 # limitations under the License.
 
 
-# ##core/form-fragment
+# ## t5/core/form-fragment
 #
-define ["_", "core/dom", "core/events", "core/forms"],
+define ["_", "./dom", "./events", "./forms"],
   (_, dom, events) ->
 
     SELECTOR = '[data-component-type="core/FormFragment"]'

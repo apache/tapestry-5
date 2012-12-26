@@ -34,8 +34,6 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void form_fragment()
     {
-        // setSpeed("250");
-
         openLinks("Form Fragment Demo", "Clear Errors");
 
         waitForPageInitialized();
@@ -201,7 +199,7 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("link=Add another value");
 
-        sleep(250);
+        sleep(AJAX_WAIT_TIME);
 
         type("//input[@type='text'][1]", "5.1");
 
@@ -213,7 +211,7 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("link=remove");
 
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         clickAndWait(SUBMIT);
 

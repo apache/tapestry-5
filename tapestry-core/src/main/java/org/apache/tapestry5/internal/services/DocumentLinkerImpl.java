@@ -72,7 +72,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addScript(InitializationPriority priority, String script)
     {
-        addInitialization(priority, "core/pageinit", "evalJavaScript", new JSONArray().put(script));
+        addInitialization(priority, "t5/core/pageinit", "evalJavaScript", new JSONArray().put(script));
     }
 
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)

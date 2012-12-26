@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## core/tree
+# ## t5/core/tree
 #
 # Handlers to support to the core/Tree Tapestry component
-define ["core/dom", "core/ajax", "core/zone"],
+define ["./dom", "./ajax", "./zone"],
   (dom, ajax) ->
     TREE = "[data-component-type=core/Tree]"
     NODE_ID = "data-node-id"

@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# ## t5/core/messages
+#
 # For all of these modules, we've turned off CoffeeScript's normal outer function
 # wrapper, as each module is just a call to `define()` with a function that fulfills
 # the same purpose. This one is different, as it is necessary to compute one of the dependencies.
-# On the server `core/messages/<locale>` is actually generated dynamically, as is a simple
+# On the server `t5/core/messages/<locale>` is actually generated dynamically, as is a simple
 # mapping of message keys to message values, from the global application message catalog.
 #
 # This module provides access to localized messages from the Tapestry applications' server-side
@@ -31,7 +33,7 @@ do ->
   # In the unexpected case that the data-locale attribute is missing, assume English
   locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-  define ["core/messages/#{locale}", "_", "core/console"],
+  define ["./messages/#{locale}", "_", "./console"],
     (messages, _, console) ->
 
       # Returns the application message catalog message for the given key. Returns

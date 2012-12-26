@@ -34,7 +34,7 @@ class JavaScriptSupportAutofocusTests extends InternalBaseTestCase {
         def stackSource = newMock(JavaScriptStackSource.class)
         def stackPathConstructor = newMock(JavaScriptStackPathConstructor.class)
 
-        linker.addInitialization(InitializationPriority.NORMAL, "core/pageinit", "focus",
+        linker.addInitialization(InitializationPriority.NORMAL, "t5/core/pageinit", "focus",
             JSONArray.from([expectedFieldId]))
 
         replay()

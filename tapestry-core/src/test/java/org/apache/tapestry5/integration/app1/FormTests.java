@@ -222,7 +222,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("css=.x-birthday i.icon-calendar");
 
-        sleep(200);
+        sleep(AJAX_WAIT_TIME);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
     }
@@ -239,7 +239,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("css=.x-impact .btn");
 
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         assertSourcePresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
@@ -365,7 +365,7 @@ public class FormTests extends TapestryCoreTestCase
         //immediately after picking the month label, so we sleep the test for a few seconds to provide
         //ammple time for the bug to manifest.
 
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         assertTrue(isVisible("css=div.datePicker"));
     }

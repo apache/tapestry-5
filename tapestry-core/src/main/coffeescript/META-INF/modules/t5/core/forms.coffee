@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## core/forms
+# ## t5/core/forms
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["core/events", "core/dom", "core/builder", "_"],
+define ["./events", "./dom", "./builder", "_"],
   (events, dom, builder, _) ->
 
     # Meta-data name that indicates the next submission should skip validation (typically, because
@@ -123,7 +123,7 @@ define ["core/events", "core/dom", "core/builder", "_"],
       this.trigger events.form.prepareForSubmit
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
-      # Possibly, the document event handler in core/zone will intercept form submission if this
+      # Possibly, the document event handler provided by the t5/core/zone module will intercept form submission if this
       # is an Ajax submission.
       return
 

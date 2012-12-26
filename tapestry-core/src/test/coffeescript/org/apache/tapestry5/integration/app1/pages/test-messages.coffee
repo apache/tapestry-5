@@ -1,6 +1,6 @@
-require ["core/messages", "_"], (messages, _) ->
+require ["t5/core/messages", "_"], (messages, _) ->
 
-  module "core/messages"
+  module "t5/core/messages"
 
   missing = (key) ->
     (_.indexOf messages.keys(), key) is -1

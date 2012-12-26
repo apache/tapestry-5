@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## core/events
+# ## t5/core/events
 #
 # This module defines logical names for all events that Tapestry-controlled elements
 # trigger or listener for. Prototype requires that all custom events have a namespace prefix; jQuery appears to
 # allow it without issue.
 define
-  # Defines events related to the validation and submission of forms. See module `core/forms` for further details.
+  # Defines events related to the validation and submission of forms. See module `t5/core/forms` for further details.
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:
     # Triggered after fields have been validated, when there are no field validation exceptions, to allow for
@@ -109,11 +109,11 @@ define
 
   # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
   # to correctly support dynamic updates from the server via an Ajax request, and a standard response
-  # (the partial page render reponse). More details are available in the `core/zone` module.
+  # (the partial page render reponse). More details are available in the `t5/core/zone` module.
   zone:
     # Invoked on a zone element to force an update to its content. The event memo should contain a `content` key (an
-    # Element, or a `core/dom:ElementWrapper`, or more typically, a string containing HTML markup). A standard top-level
-    # handler is defined by module `core/zone`, and is responsible for the actual update; it triggers the
+    # Element, or a `t5/core/dom:ElementWrapper`, or more typically, a string containing HTML markup). A standard top-level
+    # handler is defined by module `t5/core/zone`, and is responsible for the actual update; it triggers the
     # `events.zone.willUpdate` and `events.zone.didUpdate` events just before and just after changing the element's
     # content.
     update: "t5:zone:update"
@@ -127,7 +127,7 @@ define
     #
     # Certain components bind this event to scan new additions to the page to see if certain structures exist and
     # create client-side support in the form of controllers and event handlers. DateField is one such example
-    # (see `core/datefield` module).
+    # (see `t5/core/datefield` module).
     didUpdate: "t5:zone:did-update"
 
     # Triggered on a zone element, the default handler will peform an Ajax request and, when the response is available,

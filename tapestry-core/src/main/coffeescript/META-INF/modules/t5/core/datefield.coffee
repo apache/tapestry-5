@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/datefield
+# ## t5/core/datefield
 #
 # Provides support for the `core/DateField` component.
-define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
-  "_", "core/fields"],
+define ["./dom", "./events", "./messages", "./builder", "./ajax",
+  "_", "./fields"],
   (dom, events, messages, builder, ajax, _) ->
 
 

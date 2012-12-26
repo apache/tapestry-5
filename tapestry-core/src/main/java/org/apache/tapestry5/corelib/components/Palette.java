@@ -242,7 +242,7 @@ public class Palette extends AbstractField
 
         // The client side just need to know the id of the selected (right column) select;
         // it can take it from there.
-        javaScriptSupport.require("core/palette").with(clientId);
+        javaScriptSupport.require("t5/core/palette").with(clientId);
     }
 
     /**

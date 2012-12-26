@@ -51,7 +51,7 @@ class AlertsTests extends TapestryCoreTestCase {
 
         click "css=$CONTAINER button.close"
 
-        sleep 50
+        sleep AJAX_WAIT_TIME
 
         // Check that the alert container is now empty
 
@@ -94,7 +94,7 @@ class AlertsTests extends TapestryCoreTestCase {
 
         click "//input[@value='Ajax Update']"
 
-        sleep 100
+        sleep AJAX_WAIT_TIME
 
         waitForCSSSelectedElementToAppear "div.t-error"
 

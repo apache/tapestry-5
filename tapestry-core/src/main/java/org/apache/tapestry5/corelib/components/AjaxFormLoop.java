@@ -56,7 +56,7 @@ import java.util.Iterator;
  */
 @Events(
         {EventConstants.ADD_ROW, EventConstants.REMOVE_ROW})
-@Import(module = "core/ajaxformloop")
+@Import(module = "t5/core/ajaxformloop")
 @SupportsInformalParameters
 public class AjaxFormLoop
 {

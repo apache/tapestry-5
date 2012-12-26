@@ -13,13 +13,13 @@
 # limitations under the License.
 
 
-# ##core/grid
+# ## t5/core/grid
 #
 # Adds support for in-place updates of the Grid component.  The Grid renders a
 # div[data-zone] around the table, and code here intercepts clicks on links that
 # are inside a div[data-inplace-grid-links].
 #
-define ["core/dom", "core/events", "core/console"],
+define ["./dom", "./events", "./console"],
 
   (dom, events, console) ->
 

@@ -36,21 +36,19 @@ public class ZoneTests extends TapestryCoreTestCase
 
         select("carMaker", "Bmw");
 
-        waitForElementToAppear("carModelContainer");
+        sleep(AJAX_WAIT_TIME);
 
         click(SUBMIT);
 
-        String condition = String.format("window.$$(\"%s\")", "t-error-popup");
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-
         assertTextPresent("You must provide a value for Car Model.");
 
-        String selectLocator = "css=div#modelZone select";
+        String selectLocator = "css=#modelZone select";
 
         select(selectLocator, "7 Series");
 
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
 
         assertTextPresent("Car Maker: BMW");
 
@@ -58,9 +56,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         select("carMaker", "Mercedes");
 
-        sleep(250);
-
-        waitForElementToAppear("carModelContainer");
+        sleep(AJAX_WAIT_TIME);
 
         select(selectLocator, "E-Class");
 
@@ -82,7 +78,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         click("link=Select \"Mr. <Roboto>\"");
 
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         assertTextPresent("Selected: Mr. <Roboto>");
 
@@ -150,14 +146,16 @@ public class ZoneTests extends TapestryCoreTestCase
         // If we're too fast that innernow doesn't change because its all within
         // a single second.
 
-        sleep(1050);
+        sleep(1200);
 
         click(SUBMIT);
+
+        sleep(AJAX_WAIT_TIME);
 
         waitForElementToAppear("message");
 
         // Make sure it was just an Ajax update.
-        assertEquals(getText("outernow"), outerNow);
+        assertText("outernow", outerNow);
 
         assertFalse(getText("innernow").equals(innerNow));
     }
@@ -175,7 +173,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         // Give it some time to process.
 
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         assertText("zone-update-message", "Zone updated.");
     }
@@ -343,9 +341,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         click("link=Update zone with empty body");
 
-        // Give it some time to process.
-
-        sleep(100);
+        sleep(AJAX_WAIT_TIME);
 
         assertText("zone-update-message", "Zone updated.");
     }

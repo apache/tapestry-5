@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/zone
+# ## t5/core/zone
 #
 # Provides a default handler for events related to zones. A zone is any kind of
 # client-side element that can be updated; a zone will normally have a unique id.
@@ -22,7 +22,7 @@
 #
 # Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
 # to a core/Zone server-side component.
-define ["core/dom", "core/events", "core/ajax", "core/console", "core/forms",  "_"],
+define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
 
   (dom, events, ajax, console, forms, _) ->
 

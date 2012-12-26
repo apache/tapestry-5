@@ -47,7 +47,7 @@ import java.util.List;
 @SuppressWarnings(
         {"rawtypes", "unchecked", "unused"})
 @Events({EventConstants.NODE_SELECTED, EventConstants.NODE_UNSELECTED})
-@Import(module = "core/tree")
+@Import(module = "t5/core/tree")
 public class Tree
 {
     /**

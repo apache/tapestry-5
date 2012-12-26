@@ -195,7 +195,7 @@ public class Select extends AbstractField
 
         if (this.zone != null)
         {
-            javaScriptSupport.require("core/select");
+            javaScriptSupport.require("t5/core/select");
 
             Link link = resources.createEventLink(CHANGE_EVENT);
 

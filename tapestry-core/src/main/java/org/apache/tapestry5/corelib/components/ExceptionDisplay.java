@@ -34,7 +34,7 @@ import java.util.List;
  * @tapestrydoc
  * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
-@Import(stylesheet = "ExceptionDisplay.css", module = "core/exception-display")
+@Import(stylesheet = "ExceptionDisplay.css", module = "t5/core/exception-display")
 public class ExceptionDisplay
 {
     /**

@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# core/exceptionframe
+# ## t5/core/exceptionframe
 #
 # Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["core/dom", "core/builder", "_"],
+define ["./dom", "./builder", "_"],
   (dom, builder, _) ->
     container = null
     iframe = null

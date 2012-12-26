@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/alert
+# ## t5/core/alert
 #
 # Support for the core/Alerts components.
 #
-define ["core/dom", "core/console", "core/messages", "core/builder", "core/ajax", "_"],
+define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
   (dom, console, messages, builder, ajax, _) ->
 
     severityToClass =

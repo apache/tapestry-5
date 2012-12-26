@@ -65,7 +65,7 @@ import org.slf4j.Logger;
  * @see FormFragment
  */
 @SupportsInformalParameters
-@Import(module = "core/zone")
+@Import(module = "t5/core/zone")
 public class Zone implements ClientBodyElement
 {
     /**

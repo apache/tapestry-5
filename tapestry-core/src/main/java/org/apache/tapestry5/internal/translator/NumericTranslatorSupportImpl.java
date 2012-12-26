@@ -60,7 +60,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     {
         String translation = isIntegerType(type) ? "integer" : "numeric";
 
-        javascriptSupport.require("core/validation");
+        javascriptSupport.require("t5/core/validation");
 
         element.attributes("data-validation", "true",
                 "data-translation", translation,

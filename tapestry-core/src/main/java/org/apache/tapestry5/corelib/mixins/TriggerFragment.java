@@ -68,6 +68,6 @@ public class TriggerFragment
             spec.put("invert", true);
         }
 
-        javascriptSupport.require("core/form-fragment").invoke("linkTrigger").with(spec);
+        javascriptSupport.require("t5/core/form-fragment").invoke("linkTrigger").with(spec);
     }
 }

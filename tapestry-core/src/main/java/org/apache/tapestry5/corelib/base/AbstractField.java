@@ -238,7 +238,7 @@ public abstract class AbstractField implements Field
 
         if (error != null)
         {
-            javaScriptSupport.require("core/fields").invoke("showValidationError").with(assignedClientId, error);
+            javaScriptSupport.require("t5/core/fields").invoke("showValidationError").with(assignedClientId, error);
         }
     }
 

@@ -84,7 +84,7 @@ public class AlertManagerImpl implements AlertManager
         {
             public void run(JavaScriptSupport javascriptSupport)
             {
-                javascriptSupport.require("core/alert").with(alert.toJSON());
+                javascriptSupport.require("t5/core/alert").with(alert.toJSON());
             }
         });
 

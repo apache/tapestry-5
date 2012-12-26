@@ -45,7 +45,7 @@ public class Regexp extends AbstractValidator<Pattern, String>
     {
         if (formSupport.isClientValidationEnabled())
         {
-            javaScriptSupport.require("core/validation");
+            javaScriptSupport.require("t5/core/validation");
 
             writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-regexp", constraintValue.pattern(),

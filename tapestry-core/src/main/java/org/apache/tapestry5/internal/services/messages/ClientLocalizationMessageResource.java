@@ -28,7 +28,7 @@ import java.util.*;
 
 /**
  * Provides a number of symbols related to client-side localization; by exposing these in the global message catalog,
- * they are available to the client (via the "core/messages" module).
+ * they are available to the client (via the "t5/core/messages" module).
  *
  * @since 5.4
  */

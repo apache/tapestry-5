@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/autocomplete
+# ## t5/core/autocomplete
 #
 # Support for the core/Autocomplete Tapestry mixin.
-define ["core/dom", "core/ajax", "jquery", "bootstrap"],
+define ["./dom", "./ajax", "jquery", "bootstrap"],
   (dom, ajax, $) ->
 
     doLookup = ($field, url, query, process) ->

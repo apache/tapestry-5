@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/select
+# ## t5/core/exception-report
 #
-# Provides a document event handler that triggers an update a zone when the value
-# of a select element within the zone changes.
-define ["core/events", "core/dom", "core/zone"],
+# Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
+# filtering the stack trace.
+define ["./dom"],
+  (dom) ->
 
-  (events, dom, zone) ->
+    dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
+      checked = this.element.checked
 
-        dom.onDocument "change", "select[data-update-zone]", ->
+      for traceList in dom.body().find "ul.t-stack-trace"
+        traceList[if checked then "addClass" else "removeClass"] "t-filtered"
 
-          containingZone = zone.findZone this
+      return
 
-          containingZone and containingZone.trigger events.zone.refresh,
-            url: this.attribute "data-update-url"
-            parameters:
-              "t:selectvalue": this.value()
+    return null

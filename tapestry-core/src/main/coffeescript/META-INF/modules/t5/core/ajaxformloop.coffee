@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## core/ajaxformloop
+# ## t5/core/ajaxformloop
 #
 # Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
 # core/RemoveRowLink).
-define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
+define ["./dom", "./events", "./console", "./ajax", "./builder"],
   (dom, events, console, ajax, builder) ->
 
     # "afl" is short for "AjaxFormLoop".
@@ -42,7 +42,7 @@ define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
 
           fragment = this.findContainer "[data-container-type=#{FRAGMENT_TYPE}]"
 
-          # TODO: Fire some before & after events, so allow for animation.
+          # TODO: Fire some before & after events, to allow for animation.
 
           # The fragment takes with it the hidden fields that control form submission
           # for its portion of the form.
