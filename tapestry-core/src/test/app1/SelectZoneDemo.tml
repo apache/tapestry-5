@@ -1,30 +1,45 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-	<p>Car Maker: ${carMaker}</p>
-	<p>Car Model: ${carModel}</p>
-	<t:form>
-		<p>
-			<t:errors />
-		</p>
-		<p>
-			<t:select t:id="carMaker" validate="required"
-				model="makeModel" zone="modelZone" encoder="makeEncoder" />
-		</p>
 
-		<t:zone t:id="modelZone">
-			<t:if test="carMaker">
-				<t:delegate to="modelBlock" />
-			</t:if>
-		</t:zone>
+    <div class="well">
+        <dl class="dl-horizontal">
+            <dt>Car Maker:</dt>
+            <dd>${carMaker}</dd>
+            <dt>Car Model:</dt>
+            <dd>${carModel}</dd>
+        </dl>
+    </div>
 
-		<t:block id="modelBlock">
-			<p id="carModelContainer">
-				<t:select t:id="carModel" model="availableModels" validate="required" blankOption="always" />
-			</p>
-		</t:block>
-		
-		<p>
-			<t:submit value="literal:Submit" />
-		</p>
-	</t:form>
+    <t:form class="well">
+        <t:errors/>
+
+        <div class="control-group">
+            <t:label for="carMaker"/>
+            <div class="controls">
+                <t:select t:id="carMaker" validate="required"
+                          model="makeModel" zone="modelZone" encoder="makeEncoder"/>
+
+            </div>
+        </div>
+
+        <t:zone t:id="modelZone">
+            <t:if test="carMaker">
+                <t:delegate to="modelBlock"/>
+            </t:if>
+        </t:zone>
+
+        <t:block id="modelBlock">
+            <div class="control-group">
+                <t:label for="carModel"/>
+                <div class="controls">
+
+                    <t:select t:id="carModel" model="availableModels" validate="required" blankOption="always"/>
+                </div>
+            </div>
+        </t:block>
+
+        <div class="form-actions">
+            <t:submit value="literal:Submit" class="btn btn-primary"/>
+        </div>
+    </t:form>
 
 </t:border>
