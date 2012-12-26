@@ -105,7 +105,26 @@ define ["_", "./console", "./dom", "./events"],
 
         tracker()
 
-    exports =
+    # Loads all specified libraries in order (this includes other the core stack, other stacks, and
+    # any free-standing libraries). It then executes the initializations. Once all initializations have
+    # completed (which is usually an asynchronous operation, as initializations may require the loading
+    # of further modules), then the `data-page-initialized` attribute of the root HTML element is set to
+    # 'true'.
+    #
+    # This is the main export of the module; other functions are attached as properties.
+    loadLibrariesAndInitialize = (libraries, inits) ->
+      console.debug "Loading #{libraries?.length or 0} libraries"
+      exports.loadLibraries libraries,
+        -> exports.initialize inits,
+          ->
+            # At this point, all libraries have been loaded, and all inits should have executed. Unless some of
+            # the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
+            # be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
+            # Note that later Ajax requests do not change this attribute, so their timing continues to be tricky.
+
+            (dom document.documentElement).attribute "data-page-initialized", "true"
+
+    exports = _.extend loadLibrariesAndInitialize,
       # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
       # of modules, the exact order in which initializer functions are invoked is not predictable.
       initialize: (inits = [], callback) ->
@@ -145,22 +164,6 @@ define ["_", "./console", "./dom", "./events"],
         finalCallback = _.reduceRight libraries, reducer, callback
 
         finalCallback.call null
-
-      # Loads all specified libraries in order (this includes other the core stack, other stacks, and
-      # any free-standing libraries). It then executes the immediate initializations. After that, it waits for the DOM to be
-      # ready (which, given typical Tapestry page structure, it almost certainly is at the point this function
-      # executed), and then executes the other initializations.
-      loadLibrariesAndInitialize: (libraries, inits) ->
-        console.debug "Loading #{libraries?.length or 0} libraries"
-        exports.loadLibraries libraries,
-          -> exports.initialize inits,
-            ->
-              # At this point, all libraries have been loaded, and all inits should have executed. Unless some of
-              # the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
-              # be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
-              # Note that later Ajax requests do not change this attribute, so their timing continues to be tricky.
-
-              (dom document.documentElement).attribute "data-page-initialized", "true"
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"
