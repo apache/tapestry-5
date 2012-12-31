@@ -13,6 +13,9 @@ http://json.org/
 This product includes the WebFX DatePicker, a JavaScript library released under the Apache Software License 2.0
 http://webfx.eae.net/dhtml/datepicker/datepicker.html
 
+This product includes images from the Silk icon set, distributed under the terms of the Creative Commons Attribution 2.5 License.
+http://www.famfamfam.com/lab/icons/silk/
+
 This product includes Underscore.js.
 http://documentcloud.github.com/underscore/
 
