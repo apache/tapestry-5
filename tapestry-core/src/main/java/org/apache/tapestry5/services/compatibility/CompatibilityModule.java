@@ -16,9 +16,7 @@ package org.apache.tapestry5.services.compatibility;
 
 import org.apache.tapestry5.internal.services.compatibility.CompatibilityImpl;
 import org.apache.tapestry5.internal.services.compatibility.DeprecationWarningImpl;
-import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Contribute;
 
 /**
  * Defines services for managing compatibility across releases.
@@ -32,14 +30,4 @@ public class CompatibilityModule
         binder.bind(Compatibility.class, CompatibilityImpl.class);
         binder.bind(DeprecationWarning.class, DeprecationWarningImpl.class);
     }
-
-    @Contribute(Compatibility.class)
-    public void enableAllCompatibilityTemporarily(Configuration<Trait> configuration)
-    {
-        for (Trait t : Trait.values())
-        {
-            configuration.add(t);
-        }
-    }
-
 }
