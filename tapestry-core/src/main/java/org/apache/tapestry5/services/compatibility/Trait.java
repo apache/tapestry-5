@@ -25,5 +25,10 @@ public enum Trait
      * some kinds of animations when certain elements were updated or removed; that is no longer present in Tapestry 5.4
      * and Scriptaculous is not used.
      */
-    SCRIPTACULOUS;
+    SCRIPTACULOUS,
+
+    /**
+     * Support for Tapestry 5.3 style initializers (the client-side {@code T5.initializers} namespace).</code>
+     */
+    INITIALIZERS;
 }
