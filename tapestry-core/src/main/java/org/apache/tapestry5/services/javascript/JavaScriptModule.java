@@ -34,8 +34,8 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.assets.ResourceTransformer;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 import java.util.Locale;
@@ -77,14 +77,22 @@ public class JavaScriptModule
 
     @Contribute(JavaScriptStack.class)
     @Core
-    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration)
+    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility)
     {
         final String ROOT = "${tapestry.asset.root}";
 
-        add(configuration, StackExtensionType.LIBRARY, "${tapestry.scriptaculous}/scriptaculous.js",
-                "${tapestry.scriptaculous}/effects.js",
-                ROOT + "/t53-compatibility.js"
-        );
+        if (compatibility.enabled(Trait.SCRIPTACULOUS))
+        {
+            add(configuration, StackExtensionType.LIBRARY, "${tapestry.scriptaculous}/scriptaculous.js",
+                    "${tapestry.scriptaculous}/effects.js");
+        }
+
+        if (compatibility.enabled(Trait.INITIALIZERS))
+        {
+            add(configuration, StackExtensionType.LIBRARY,
+                    ROOT + "/t53-compatibility.js"
+            );
+        }
 
         add(configuration, StackExtensionType.STYLESHEET,
                 "${tapestry.bootstrap-root}/css/bootstrap.css",
