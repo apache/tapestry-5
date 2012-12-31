@@ -21,10 +21,6 @@ define ["./console"],
 
   (console) ->
 
-    # Temporary, until we rework the client-side input validation.
-
-    T5.initializers.validate = ->
-
     # Exports a single function that finds an initializer in `T5.initializers` and invokes it.
     (initName, args...) ->
       fn = T5.initializers[initName]
