@@ -55,9 +55,9 @@ public class KaptchaModule
     public static void provideLibraryMessages(
             OrderedConfiguration<Resource> configuration,
             @Value("classpath:org/apache/tapestry5/kaptcha/tapestry-kaptcha.properties")
-            Resource coreCatalog)
+            Resource kaptchaCatalog)
     {
-        configuration.add("TapestryKaptcha", coreCatalog, "before:AppCatalog");
+        configuration.add("TapestryKaptcha", kaptchaCatalog, "before:AppCatalog");
     }
 
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration)

@@ -86,7 +86,10 @@ public class Upload extends AbstractField
            ComponentResources resources, FieldValidationSupport fieldValidationSupport)
     {
         this.value = value;
-        if (validate != null) this.validate = validate;
+        if (validate != null)
+        {
+            this.validate = validate;
+        }
         this.decoder = decoder;
         this.validationTracker = tracker;
         this.resources = resources;
@@ -99,9 +102,9 @@ public class Upload extends AbstractField
     {
         UploadedFile uploaded = decoder.getFileUpload(controlName);
 
-        if (uploaded != null)
+        if (uploaded != null && (uploaded.getFileName() == null || uploaded.getFileName().length() == 0))
         {
-            if (uploaded.getFileName() == null || uploaded.getFileName().length() == 0) uploaded = null;
+            uploaded = null;
         }
 
         try
@@ -118,7 +121,8 @@ public class Upload extends AbstractField
     /**
      * Render the upload tags.
      *
-     * @param writer Writer to output markup
+     * @param writer
+     *         Writer to output markup
      */
     protected void beginRender(MarkupWriter writer)
     {
@@ -135,8 +139,7 @@ public class Upload extends AbstractField
         // TAPESTRY-2453
         if (request.isXHR())
         {
-            javaScriptSupport.importJavaScriptLibrary(uploadScript);
-            javaScriptSupport.addInitializerCall("injectedUpload", getClientId());
+            javaScriptSupport.require("t5/core/injected-uploader").with(getClientId());
         }
     }
 
