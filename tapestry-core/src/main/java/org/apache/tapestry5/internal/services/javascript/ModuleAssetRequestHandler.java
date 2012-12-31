@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.javascript.ModuleManager;
 import java.io.IOException;
 
 /**
- * Handler contributed to {@link AssetDispatcher} with key "module-root". It interprets the extra path as a module name,
+ * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
  * and searches for the corresponding JavaScript module.
  */
 public class ModuleAssetRequestHandler implements AssetRequestHandler

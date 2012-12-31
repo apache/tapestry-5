@@ -28,7 +28,6 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
@@ -57,7 +56,7 @@ public class ModuleManagerImpl implements ModuleManager
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
-    public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource,
+    public ModuleManagerImpl(AssetPathConstructor constructor, AssetSource assetSource,
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
                              Map<String, JavaScriptModuleConfiguration> configuration,
@@ -72,7 +71,7 @@ public class ModuleManagerImpl implements ModuleManager
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
 
-        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), configuration, !productionMode);
+        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("modules", ""), configuration, !productionMode);
 
         classpathRoot = assetSource.resourceForPath("");
 

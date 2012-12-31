@@ -212,7 +212,7 @@ public class JavaScriptModule
     @AssetRequestDispatcher
     public static void handleModuleAssetRequests(MappedConfiguration<String, AssetRequestHandler> configuration)
     {
-        configuration.addInstance("module-root", ModuleAssetRequestHandler.class);
+        configuration.addInstance("modules", ModuleAssetRequestHandler.class);
     }
 
     @Contribute(ModuleManager.class)
