@@ -14,16 +14,17 @@
 
 package org.apache.tapestry5.services.compatibility;
 
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
- * Used globally to track what compatibility traits are enabled.
+ * Used globally to track what compatibility traits are enabled.  By default, in Tapestry 5.4,
+ * all traits are enabled unless explicitly disabled. This behavior may change in Tapestry 5.5.
  * <p/>
- * Temporarily, all traits are enabled.
+ * The configuration allows traits to be explicitly enabled or disabled.
  *
  * @since 5.4
  */
-@UsesConfiguration(Trait.class)
+@UsesMappedConfiguration(key = Trait.class, value = Boolean.class)
 public interface Compatibility
 {
     /**

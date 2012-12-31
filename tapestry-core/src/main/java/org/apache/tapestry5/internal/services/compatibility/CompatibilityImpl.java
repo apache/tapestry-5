@@ -17,18 +17,26 @@ package org.apache.tapestry5.internal.services.compatibility;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 
-import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Map;
 
 public class CompatibilityImpl implements Compatibility
 {
     private final EnumSet<Trait> traits;
 
-    public CompatibilityImpl(Collection<Trait> configuration)
+    public CompatibilityImpl(Map<Trait, Boolean> configuration)
     {
-        traits = EnumSet.noneOf(Trait.class);
+        // Since the default in 5.4 is true, we can just remove those for which the value is false.
 
-        traits.addAll(configuration);
+        traits = EnumSet.allOf(Trait.class);
+
+        for (Map.Entry<Trait, Boolean> entry : configuration.entrySet())
+        {
+            if (entry.getValue().equals(Boolean.FALSE))
+            {
+                traits.remove(entry.getKey());
+            }
+        }
     }
 
     @Override
