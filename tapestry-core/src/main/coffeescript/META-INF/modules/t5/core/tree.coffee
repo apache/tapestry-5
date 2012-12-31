@@ -44,7 +44,7 @@ define ["./dom", "./ajax", "./zone"],
       node.meta LOADING, true
 
       node.addClass "t-empty-node"
-      node.update "<span class='t-ajax-wait'/>"
+      node.update "<span class='t-tree-ajax-wait'/>"
 
       send node, "expand", (reply) ->
         # Remove the Ajax spinner and  mark the node as expanded (it will have a "-"

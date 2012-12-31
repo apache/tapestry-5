@@ -75,7 +75,7 @@ SPAN.t-tree-expanded {
   background-position: 0px -16px;
 }
 
-SPAN.t-ajax-wait {
+SPAN.t-tree-ajax-wait {
   width: 16px;
   height: 16px;
   display: inline-block;
