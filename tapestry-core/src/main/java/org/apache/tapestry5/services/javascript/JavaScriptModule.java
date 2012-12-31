@@ -207,12 +207,6 @@ public class JavaScriptModule
         configuration.addInstance("module-root", ModuleAssetRequestHandler.class);
     }
 
-    @Contribute(StreamableResourceSource.class)
-    public static void setupJavaScriptWrapper(MappedConfiguration<String, ResourceTransformer> configuration)
-    {
-        configuration.addInstance("jsw", JavaScriptWrapperResourceTransformer.class);
-    }
-
     @Contribute(ModuleManager.class)
     public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
                                             @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
