@@ -244,19 +244,19 @@ public class JavaScriptModule
 
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
-    public static void declareDefaultJavaScriptFoundation(MappedConfiguration<String, Object> configuration)
+    public static void declareDefaultJavaScriptInfrastructureProvider(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(SymbolConstants.JAVASCRIPT_FOUNDATION, "prototype");
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "prototype");
     }
 
     @Contribute(ModuleManager.class)
     public static void setupFoundationFramework(MappedConfiguration<String, Object> configuration,
-                                                @Inject @Symbol(SymbolConstants.JAVASCRIPT_FOUNDATION)
-                                                String foundation,
+                                                @Inject @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                                                String provider,
                                                 @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
                                                 Resource domPrototype)
     {
-        if (foundation.equals("prototype"))
+        if (provider.equals("prototype"))
         {
             configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domPrototype));
         }
