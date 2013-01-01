@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
@@ -216,21 +218,21 @@ public class JavaScriptModule
     }
 
     @Contribute(ModuleManager.class)
-    public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
-                                            @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
-                                            Resource underscore,
+    public static void setupBaseModules(MappedConfiguration<String, Object> configuration,
+                                        @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
+                                        Resource underscore,
 
-                                            @Inject @Path("${tapestry.asset.root}/jquery-shim.js")
-                                            Resource jqueryShim,
+                                        @Inject @Path("${tapestry.asset.root}/jquery-shim.js")
+                                        Resource jqueryShim,
 
-                                            @Inject @Path("${tapestry.scriptaculous}/prototype.js")
-                                            Resource prototype,
+                                        @Inject @Path("${tapestry.scriptaculous}/prototype.js")
+                                        Resource prototype,
 
-                                            @Inject @Path("${tapestry.asset.root}/jquery-1.8.3.js")
-                                            Resource jQuery,
+                                        @Inject @Path("${tapestry.asset.root}/jquery-1.8.3.js")
+                                        Resource jQuery,
 
-                                            @Inject @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
-                                            Resource bootstrap)
+                                        @Inject @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
+                                        Resource bootstrap)
     {
         configuration.add("_", new JavaScriptModuleConfiguration(underscore).exports("_"));
         // Hacking around https://github.com/jrburke/requirejs/issues/534
@@ -238,6 +240,28 @@ public class JavaScriptModule
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
         configuration.add("prototype", new JavaScriptModuleConfiguration(prototype));
         configuration.add("bootstrap", new JavaScriptModuleConfiguration(bootstrap).dependsOn("jquery"));
+    }
+
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void declareDefaultJavaScriptFoundation(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(SymbolConstants.JAVASCRIPT_FOUNDATION, "prototype");
+    }
+
+    @Contribute(ModuleManager.class)
+    public static void setupFoundationFramework(MappedConfiguration<String, Object> configuration,
+                                                @Inject @Symbol(SymbolConstants.JAVASCRIPT_FOUNDATION)
+                                                String foundation,
+                                                @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
+                                                Resource domPrototype)
+    {
+        if (foundation.equals("prototype"))
+        {
+            configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domPrototype));
+        }
+
+        // TODO: support for "jquery"
     }
 
     @Contribute(ModuleManager.class)

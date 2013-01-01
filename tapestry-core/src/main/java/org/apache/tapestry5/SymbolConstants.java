@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2008-2013The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -365,4 +365,21 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String BOOTSTRAP_ROOT = "tapestry.bootstrap-root";
+
+    /**
+     * Tapestry relies on an underlying client-side JavaScript foundation framework to handle DOM manipulation,
+     * event handling, and Ajax requests. Through Tapestry 5.3, the foundation was
+     * <a href="http://http://prototypejs.org/">Prototype</a>. In 5.4, support for
+     * <a href="http://jquery.org/">jQuery</a> has been added, and it is possible to add others. This symbol defines a value that is used to select
+     * a resource that is provided to the {@link org.apache.tapestry5.services.javascript.ModuleManager} service
+     * as a {@link org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration} to provide a specific implementation
+     * of the {@code t5/core/dom} module. Tapestry 5.4 directly supports "prototype" or "jquery".  To support
+     * other foundation frameworks, override this symbol value and supply your own module configuration.
+     * <p/>
+     * In Tapestry 5.4, this defaults to "prototype" for compatibility with 5.3. This will likely change in
+     * 5.4 to default to "jquery". At some point in the future, Prototype support will no longer be present.
+     *
+     * @since 5.4
+     */
+    public static final String JAVASCRIPT_FOUNDATION = "tapestry.javascript-foundation";
 }
