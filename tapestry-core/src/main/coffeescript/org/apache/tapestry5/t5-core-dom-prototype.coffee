@@ -13,11 +13,11 @@
 # limitations under the License.
 
 
-# ## t5/core/dom
+# ## t5/core/dom (prototype)
 #
 # This is the abstraction layer that allows the majority of components to operate without caring whether the
 # underlying infrastructure framework is Prototype, jQuery, or something else.  This implementation is specific
-# to Prototype, but Tapestry can be adapted to any infrastreucture framework by re-implementing this module.
+# to Prototype, but Tapestry can be adapted to any infrastructure framework by re-implementing this module.
 #
 # The abstraction layer has a number of disadvantages:
 #
@@ -29,6 +29,8 @@
 # It is quite concievable that some components will require direct access to the infrastructure framework, especially
 # those that are wrappers around third party libraries or plugins; however many simple components may need no more than
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
+#
+# Changes to this library should be coordinated with the jQuery version.
 define ["_", "./utils", "prototype"], (_, utils) ->
 
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
@@ -305,8 +307,8 @@ define ["_", "./utils", "prototype"], (_, utils) ->
       else
         return null
 
-    # Returns an ElementWrapper for this element's containing element.  The ElementWrapper is created lazily, and
-    # cached. Returns null if this element has no parentNode (either because this element is the document object, or
+    # Returns an ElementWrapper for this element's containing element.
+    # Returns null if this element has no parent (either because this element is the document object, or
     # because this element is not yet attached to the DOM).
     container: ->
       parentNode = @element.parentNode
@@ -413,8 +415,6 @@ define ["_", "./utils", "prototype"], (_, utils) ->
     # Assume its a single DOM element
 
     [selector]
-
-  bodyWrapper = null
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
@@ -534,5 +534,4 @@ define ["_", "./utils", "prototype"], (_, utils) ->
     # Returns a wrapped version of the document.body element. Because all Tapestry JavaScript occurs
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
-    body: ->
-      bodyWrapper ?= (wrapElement document.body)
+    body: -> (wrapElement document.body)
