@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
@@ -27,6 +21,12 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.DoubleItem;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FormInjectorDemo
 {
@@ -39,7 +39,8 @@ public class FormInjectorDemo
     @Property(write = false)
     private double sum;
 
-    private static final Map<Long, DoubleItem> DB = CollectionFactory.newConcurrentMap();
+    @Persist
+    private Map<Long, DoubleItem> database;
 
     private static final AtomicLong ID_ALLOCATOR = new AtomicLong(System.currentTimeMillis());
 
@@ -60,7 +61,7 @@ public class FormInjectorDemo
             {
                 Long key = new Long(clientValue);
 
-                return DB.get(key);
+                return database.get(key);
             }
 
             public String toClient(DoubleItem value)
@@ -68,6 +69,15 @@ public class FormInjectorDemo
                 return String.valueOf(value.getId());
             }
         };
+    }
+
+
+    void onActivate()
+    {
+        if (database == null)
+        {
+            database = CollectionFactory.newConcurrentMap();
+        }
     }
 
     public long getDemoContextValue()
@@ -78,7 +88,7 @@ public class FormInjectorDemo
     @Log
     public List<DoubleItem> getDoubleItems()
     {
-        List<DoubleItem> items = CollectionFactory.newList(DB.values());
+        List<DoubleItem> items = CollectionFactory.newList(database.values());
 
         Collections.sort(items, new DoubleItemComparator());
 
@@ -93,14 +103,14 @@ public class FormInjectorDemo
         DoubleItem item = new DoubleItem();
         item.setId(ID_ALLOCATOR.incrementAndGet());
 
-        DB.put(item.getId(), item);
+        database.put(item.getId(), item);
 
         return item;
     }
 
     void onRemoveRow(DoubleItem item)
     {
-        DB.remove(item.getId());
+        database.remove(item.getId());
     }
 
     void onPrepareForSubmit()
