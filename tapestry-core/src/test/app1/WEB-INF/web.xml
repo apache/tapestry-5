@@ -28,6 +28,10 @@
       <param-name>tapestry.production-modules</param-name>
       <param-value>org.apache.tapestry5.integration.app1.services.TestOnlyModule</param-value>
     </context-param>
+    <context-param>
+        <param-name>tapestry.jquery-modules</param-name>
+        <param-value>org.apache.tapestry5.integration.app1.services.EnableJQueryModule</param-value>
+    </context-param>
     <filter>
         <filter-name>app</filter-name>
         <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
