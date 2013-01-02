@@ -39,7 +39,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       # When the field has an id (the normal case!), search the body for
       # the matching help block.
       if fieldId
-        block = dom.body().findFirst "[data-error-block-for=#{fieldId}]"
+        block = dom.body().findFirst "[data-error-block-for='#{fieldId}']"
 
         return block if block
       else

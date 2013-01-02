@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ define ["_"], (_) ->
       input.replace(/^\s+/, '').replace(/\s+$/, '')
 
   exports =
+    startsWith: (string, pattern) -> (string.lastIndexOf pattern) is 0
     # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
     trim: trim
     # Determines if the input is a blank string, or null, or an empty array.

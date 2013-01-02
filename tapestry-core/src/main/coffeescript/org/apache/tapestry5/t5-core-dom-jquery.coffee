@@ -177,17 +177,17 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
 
     # Adds the class name to the element.
     addClass: (name) ->
-      @element.addClass name
+      @$.addClass name
 
       return this
 
     # Updates this element with new content, replacing any old content. The new content may be HTML text, or a DOM
-    # element, or null (to remove the body of the element).
+    # element, or an ElementWrapper, or null (to remove the body of the element).
     update: (content) ->
       @$.empty()
 
       if content
-        @$.update (convertContent content)
+        @$.append (convertContent content)
 
       return this
 
@@ -206,14 +206,14 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately before
     # this ElementWrapper's element.
     insertBefore: (content) ->
-      @$.insertBefore (convertContent content)
+      @$.before (convertContent content)
 
       return this
 
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
     # this ElementWrapper's element.
     insertAfter: (content) ->
-      @$.insertAfter (convertContent content)
+      @$.after (convertContent content)
 
       return this
 
@@ -252,13 +252,13 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     find: (selector) ->
       matches = @$.find selector
 
-      for i in [0..matches.length]
+      for i in [0..(matches.length - 1)]
         new ElementWrapper matches.eq i
 
     # Find the first container element that matches the selector (wrapped as an ElementWrapper),
     # or returns null.
-    findContainer: (selector) ->
-      parents = @element.parents selector
+    findParent: (selector) ->
+      parents = @$.parents selector
 
       return null unless parents.length
 
@@ -326,7 +326,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
       current = @$.val()
 
       if arguments.length > 0
-        @element.val newValue
+        @$.val newValue
 
       return current
 
@@ -398,13 +398,13 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
       # jQuery doesn't have the equivalent of Protoype's onException
       error: (jqXHR, textStatus, errorThrown) ->
         message = "Request to #{url} failed with status #{textStatus}"
-        text = response.statusText
+        text = jqXHR.statusText
         if not _.isEmpty text
           message += " -- #{text}"
         message += "."
 
         if options.failure
-          options.failure (new ResponseWrapper response), message
+          options.failure (new ResponseWrapper jqXHR), message
         else
           throw new Error message
 

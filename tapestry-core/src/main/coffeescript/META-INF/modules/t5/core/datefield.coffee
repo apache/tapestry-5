@@ -147,7 +147,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
 
 
     scan = (root) ->
-      for container in root.find "[data-component-type=core/DateField]"
+      for container in root.find "[data-component-type='core/DateField']"
         # Hide it from later scans
         container.attribute "data-component-type", null
 

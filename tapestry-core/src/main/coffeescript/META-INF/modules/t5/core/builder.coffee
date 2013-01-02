@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ define ["_", "./dom", "./utils"], (_, dom, utils) ->
       if name is "on"
         for eventName, handler of value
           wrapper.on eventName, handler
-      else if name.startsWith "on"
+      else if (utils.startsWith name, "on")
         wrapper.on (name.substring 2), value
       else
         wrapper.attribute name, value

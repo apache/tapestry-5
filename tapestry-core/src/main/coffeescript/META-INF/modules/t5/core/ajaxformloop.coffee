@@ -20,7 +20,7 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
   (dom, events, console, ajax, builder) ->
 
     # "afl" is short for "AjaxFormLoop".
-    AFL_SELECTOR = "[data-container-type=core/AjaxFormLoop]"
+    AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']"
     FRAGMENT_TYPE = "core/ajaxformloop-fragment"
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
@@ -40,7 +40,7 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
           # The server has removed the row from persistent storage, lets
           # do the same on the UI.
 
-          fragment = this.findParent "[data-container-type=#{FRAGMENT_TYPE}]"
+          fragment = this.findParent "[data-container-type='#{FRAGMENT_TYPE}']"
 
           # TODO: Fire some before & after events, to allow for animation.
 

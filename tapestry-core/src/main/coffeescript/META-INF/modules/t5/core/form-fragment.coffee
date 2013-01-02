@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 define ["_", "./dom", "./events", "./forms"],
   (_, dom, events) ->
 
-    SELECTOR = '[data-component-type="core/FormFragment"]'
+    SELECTOR = "[data-component-type='core/FormFragment']"
 
     # This is mostly for compatibility with 5.3, which supported
     # a DOM event to ask a fragment to remove itself.  This makes less sense since
@@ -37,7 +37,7 @@ define ["_", "./dom", "./events", "./forms"],
 
         fragmentId = frag.attribute "id"
 
-        hidden = frag.findFirst "input[type=hidden][data-for-fragment=#{fragmentId}]"
+        hidden = frag.findFirst "input[type=hidden][data-for-fragment='#{fragmentId}']"
 
         # If found (e.g., not alwaysSubmit), then enable/disable the field.
         hidden && hidden.attribute "disabled", not frag.deepVisible()

@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,9 +49,10 @@ define ["./events", "./dom", "./builder", "_"],
 
       # TODO: Research why we need id and name and get rid of one if possible.
       name = if isCancel then "cancel" else submitter.element.name
-      value = Object.toJSON [ submitter.element.id, name ]
-
-      hidden.value value
+      # Not going to drag in all of json2 just for this one purpose, but even
+      # so, I'd like to get rid of this. Prototype includes Object.toJSON(), but jQuery
+      # is curiously absent an equivalent.
+      hidden.value "[\"#{submitter.element.id}\",\"#{name}\"]"
 
       return
 
