@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
 
           onsuccess: (response) =>
             @field.removeClass "ajax-wait"
-            reply = response.responseJSON
+            reply = response.json
 
             if reply.result
               @clearFieldError()
@@ -136,13 +136,13 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
         ajax (@container.attribute "data-format-url"),
           parameters:
             input: date.getTime()
-          onerror: (message) =>
+          onfailure: (response, message) =>
             @field.removeClass "ajax-wait"
             @fieldError message
           onsuccess: (response) =>
             @field.removeClass "ajax-wait"
             @clearFieldError()
-            @field.value response.responseJSON.result
+            @field.value response.json.result
             @hidePopup()
 
 

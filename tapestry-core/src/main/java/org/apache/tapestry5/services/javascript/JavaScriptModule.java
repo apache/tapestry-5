@@ -254,14 +254,22 @@ public class JavaScriptModule
                                                 @Inject @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
                                                 String provider,
                                                 @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
-                                                Resource domPrototype)
+                                                Resource domPrototype,
+                                                @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-jquery.js")
+                                                Resource domJQuery)
     {
         if (provider.equals("prototype"))
         {
             configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domPrototype));
         }
 
-        // TODO: support for "jquery"
+        if (provider.equals("jquery"))
+        {
+            configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domJQuery));
+        }
+
+        // If someone wants to support a different infastructure, they should set the provider symbol to some other value
+        // and contribute their own version of the t5/core/dom module.
     }
 
     @Contribute(ModuleManager.class)

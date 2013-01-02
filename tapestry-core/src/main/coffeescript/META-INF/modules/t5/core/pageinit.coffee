@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -188,7 +188,7 @@ define ["_", "./console", "./dom", "./events"],
 
         # Capture the partial page response portion of the overall response, and
         # then remove it so it doesn't interfere elsewhere.
-        responseJSON = response.responseJSON or {}
+        responseJSON = response.json or {}
         partial = responseJSON._tapestry
         delete responseJSON._tapestry
 

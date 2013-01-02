@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ define ["./dom", "./ajax", "jquery", "bootstrap"],
         onsuccess: (response) ->
           $field.removeClass "ajax-wait"
 
-          process response.responseJSON.matches
+          process response.json.matches
 
     init = (spec) ->
       $field = $ document.getElementById spec.id

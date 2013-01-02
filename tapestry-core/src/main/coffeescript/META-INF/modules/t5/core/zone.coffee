@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -97,8 +97,8 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
 
       ajax event.memo.url,
         parameters: _.extend { "t:zoneid": this.element.id }, parameters, event.memo.parameters
-        onsuccess: (reply) =>
-          this.trigger events.zone.update, content: reply.responseJSON?.content
+        onsuccess: (response) =>
+          this.trigger events.zone.update, content: response.json?.content
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
     # performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.

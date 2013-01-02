@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,14 +46,14 @@ define ["./dom", "./ajax", "./zone"],
       node.addClass "t-empty-node"
       node.update "<span class='t-tree-ajax-wait'/>"
 
-      send node, "expand", (reply) ->
+      send node, "expand", (response) ->
         # Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
         # icon instead of a "+" icon)
         node.update("").addClass(EXPANDED).removeClass("t-empty-node")
 
         label = node.findContainer("li").findFirst(".t-tree-label")
 
-        label.insertAfter reply.responseJSON.content
+        label.insertAfter response.json.content
 
         node.meta LOADING, false
         node.meta LOADED, true

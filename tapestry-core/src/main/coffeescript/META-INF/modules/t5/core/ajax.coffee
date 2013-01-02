@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,17 +36,17 @@ define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
             throw exception
 
         onfailure: (response, failureMessage) ->
-          raw = response.getHeader "X-Tapestry-ErrorMessage"
+          raw = response.header "X-Tapestry-ErrorMessage"
           unless _.isEmpty raw
             message = window.unescape raw
             console.error "Request to #{url} failed with '#{message}'."
 
-            contentType = response.getHeader "content-type"
+            contentType = response.header "content-type"
 
             isHTML = contentType and (contentType.split(';')[0] is "text/html")
 
             if isHTML
-              exceptionframe response.responseText
+              exceptionframe response.text
           else
             console.error failureMessage
 

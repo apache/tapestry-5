@@ -416,6 +416,20 @@ define ["_", "./utils", "prototype"], (_, utils) ->
 
     [selector]
 
+  # Wrapper around the Prototype `Ajax.Response` object
+  class ResponseWrapper
+
+    constructor: (@res) ->
+
+      @status = res.status
+      @statusText = res.statusText
+      @json = res.responseJSON
+      @text = res.responseText
+
+    # Retrieves a response header by name
+    header: (name) ->
+      @res.getHeader name
+
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
   # This is very low level; most code will want to go through the `t5/core/ajax` module instead,
@@ -426,15 +440,14 @@ define ["_", "./utils", "prototype"], (_, utils) ->
   #   Adds a "_method" parameter and uses "post" to handle "delete", etc.
   # * options.contentType - default "context "application/x-www-form-urlencoded"
   # * options.parameters - optional, additional key/value pairs
-  # * options.onsuccess - handler to invoke on success. Passed the XMLHttpRequest transport object.
+  # * options.onsuccess - handler to invoke on success, passed the ResponseWrapper
   #   Default does nothing.
-  # * options.onfailure - handler to invoke on failure (server responds with a non-2xx code).
-  #   Passed the response. Default will throw the exception
+  # * options.onfailure - handler to invoke on failure (server responds with a non-2xx code),
+  #   Passed the ResponseWrapper and an error message. Defaults throws an Error.
   # * options.onexception - handler to invoke when an exception occurs (often means the server is unavailable).
-  #   Passed the exception. Default will generate an exception message and throw an `Error`.
+  #   Passed the exception. Default re-throws the underlying exception.
   #
-  # TODO: Clarify what the response object looks like and/or wrap the Prototype Ajax.Response object.
-  # TODO: Define what the return value is, or return exports
+  # Returns the module's exports
   ajaxRequest = (url, options = {}) ->
     finalOptions =
       method: options.method or "post"
@@ -446,38 +459,38 @@ define ["_", "./utils", "prototype"], (_, utils) ->
         else
           throw exception
 
-      onFailure: (response) ->
-        if options.onfailure
-          options.onfailure response
-        else
-          message = "Request to #{url} failed with status #{response.getStatus()}"
-          text = response.getStatusText()
-          if not _.isEmpty text
-            message += " -- #{text}"
-          message += "."
+        return
 
-          if options.onfailure
-            options.onfailure response, message
-          else
-            throw new Error message
+      onFailure: (response) ->
+        message = "Request to #{url} failed with status #{response.getStatus()}"
+        text = response.getStatusText()
+        if not _.isEmpty text
+          message += " -- #{text}"
+        message += "."
+
+        if options.onfailure
+          options.onfailure (new ResponseWrapper response), message
+        else
+          throw new Error message
+
+        return
 
       onSuccess: (response) ->
 
         # Prototype treats status == 0 as success, even though it may
         # indicate that the server didn't respond.
         if (not response.getStatus()) or (not response.request.success())
-          finalOptions.onFailure(response)
+          finalOptions.onFailure(new ResponseWrapper response)
           return
 
         # Tapestry 5.3 includes lots more exception catching ... that just got in the way
         # of identifying the source of problems.  That's been stripped out.
-        # Still sorting out how this will all work, especially in terms
-        # of the abstraction.
-        options.onsuccess and options.onsuccess(response)
+        options.onsuccess and options.onsuccess(new ResponseWrapper response)
+        return
 
-
-    # TODO: This is not good; we need yet another wrapper of some kind here.
     new Ajax.Request(url, finalOptions)
+
+    return exports
 
 
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as

@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
       ajax url,
         onsuccess: (response) =>
-          content = response.responseJSON?.content
+          content = response.json?.content
 
           # Create a new element with the same type (usually "div") and class as this element.
           # It will contain the new content.
