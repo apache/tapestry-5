@@ -5,7 +5,7 @@
 # Should be executed from the tapestry-core folder.
 # Doe NOT compile the test scripts.
 
-inputDir=src/test/coffeescript/org/apache/tapestry5/integration/app1/pages
-outputDir=build/generated-sources/compiled-test-coffeescript/org/apache/tapestry5/integration/app1/pages
+inputDir=src/test/coffeescript
+outputDir=build/generated-sources/compiled-test-coffeescript
 
-coffee --watch --bare --output $outputDir $inputDir/*.coffee
+coffee --watch --bare --output $outputDir $inputDir
