@@ -335,7 +335,7 @@ public class PageTester
         setupRequestFromURI(link.toRedirectURI());
     }
 
-     void setupRequestFromURI(String URI)
+    public void setupRequestFromURI(String URI)
     {
         String linkPath = stripContextFromPath(URI);
 
