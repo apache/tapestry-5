@@ -24,7 +24,7 @@ define ["./dom", "./ajax", "jquery", "bootstrap"],
       ajax url,
         parameters:
           "t:input": query
-        onsuccess: (response) ->
+        success: (response) ->
           $field.removeClass "ajax-wait"
 
           process response.json.matches

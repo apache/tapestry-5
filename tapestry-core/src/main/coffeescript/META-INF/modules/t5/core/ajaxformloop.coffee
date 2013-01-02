@@ -25,7 +25,7 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
 
-      afl = this.findContainer AFL_SELECTOR
+      afl = this.findParent AFL_SELECTOR
 
       unless afl
         console.error "Enclosing element for AjaxFormLoop remove row link not found."
@@ -36,11 +36,11 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
       ajax url,
         parameters:
           "t:rowvalue": this.attribute "data-afl-row-value"
-        onsuccess: =>
+        success: =>
           # The server has removed the row from persistent storage, lets
           # do the same on the UI.
 
-          fragment = this.findContainer "[data-container-type=#{FRAGMENT_TYPE}]"
+          fragment = this.findParent "[data-container-type=#{FRAGMENT_TYPE}]"
 
           # TODO: Fire some before & after events, to allow for animation.
 
@@ -52,14 +52,14 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]", ->
 
-      afl = this.findContainer AFL_SELECTOR
+      afl = this.findParent AFL_SELECTOR
 
-      insertionPoint = this.findContainer "[data-afl-behavior=insert-before]"
+      insertionPoint = this.findParent "[data-afl-behavior=insert-before]"
 
       url = afl.attribute "data-inject-row-url"
 
       ajax url,
-        onsuccess: (response) =>
+        success: (response) =>
           content = response.json?.content
 
           # Create a new element with the same type (usually "div") and class as this element.

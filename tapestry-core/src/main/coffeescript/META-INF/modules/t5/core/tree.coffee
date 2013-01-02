@@ -26,15 +26,15 @@ define ["./dom", "./ajax", "./zone"],
     EXPANDED = "t-tree-expanded"
     SELECTED = "t-selected-leaf-node"
 
-    send = (node, action, onsuccess) ->
-      container = node.findContainer TREE
+    send = (node, action, success) ->
+      container = node.findParent TREE
       url = container.attribute "data-tree-action-url"
 
       ajax url,
         parameters:
           "t:action": action
           "t:nodeid": node.attribute NODE_ID
-        onsuccess: onsuccess
+        success: success
 
     loadChildren = (node) ->
 
@@ -51,7 +51,7 @@ define ["./dom", "./ajax", "./zone"],
         # icon instead of a "+" icon)
         node.update("").addClass(EXPANDED).removeClass("t-empty-node")
 
-        label = node.findContainer("li").findFirst(".t-tree-label")
+        label = node.findParent("li").findFirst(".t-tree-label")
 
         label.insertAfter response.json.content
 
@@ -59,7 +59,7 @@ define ["./dom", "./ajax", "./zone"],
         node.meta LOADED, true
 
     toggle = (node) ->
-      sublist = node.findContainer("li").findFirst("ul")
+      sublist = node.findParent("li").findFirst("ul")
 
       if node.hasClass EXPANDED
         node.removeClass EXPANDED
@@ -91,7 +91,7 @@ define ["./dom", "./ajax", "./zone"],
 
       selected = this.hasClass SELECTED
 
-      node = this.findContainer("li").findFirst("[#{NODE_ID}]")
+      node = this.findParent("li").findFirst("[#{NODE_ID}]")
 
       if selected
         this.removeClass SELECTED

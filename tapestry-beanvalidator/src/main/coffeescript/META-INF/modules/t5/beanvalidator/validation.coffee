@@ -29,7 +29,7 @@ define ["_", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validati
       # A select that is used as part of a palette is different; the validation attributes
       # are attached to the selected (right side) <select>, and anything there counts as part
       # of the selection.
-      if e.findContainer ".t-palette"
+      if e.findParent ".t-palette"
         e.element.options.length
       else
         # An ordinary <select> may have multiple options (the clumsy control-click way)

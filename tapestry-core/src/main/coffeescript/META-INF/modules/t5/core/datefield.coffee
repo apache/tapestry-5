@@ -89,7 +89,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
             @field.removeClass "ajax-wait"
             @fieldError message
 
-          onsuccess: (response) =>
+          success: (response) =>
             @field.removeClass "ajax-wait"
             reply = response.json
 
@@ -136,10 +136,10 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
         ajax (@container.attribute "data-format-url"),
           parameters:
             input: date.getTime()
-          onfailure: (response, message) =>
+          failure: (response, message) =>
             @field.removeClass "ajax-wait"
             @fieldError message
-          onsuccess: (response) =>
+          success: (response) =>
             @field.removeClass "ajax-wait"
             @clearFieldError()
             @field.value response.json.result

@@ -50,7 +50,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       # Not found by id, but see if an empty placeholder was provided within
       # the same .controls or .control-group.
 
-      group = field.findContainer ".controls, .control-group"
+      group = field.findParent ".controls, .control-group"
 
       return null unless group
 
@@ -74,7 +74,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       # No containing group ... this is a problem, probably an old 5.3 application upgraded to 5.4
       # or beyond.  Place the block just after the field.
 
-      container = field.container()
+      container = field.parent()
 
       block = builder "p.help-block", "data-error-block-for": fieldId
 
@@ -154,7 +154,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       if block
         block.hide().update("")
 
-      group = this.findContainer ".control-group"
+      group = this.findParent ".control-group"
 
       group and group.removeClass "error"
 
@@ -168,7 +168,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       block.show().update(memo.message)
 
-      group = this.findContainer ".control-group"
+      group = this.findParent ".control-group"
 
       group and group.addClass "error"
 

@@ -35,7 +35,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
       zoneId = element.attribute "data-update-zone"
 
       if zoneId is "^"
-        zone = element.findContainer "[data-container-type=zone]"
+        zone = element.findParent "[data-container-type=zone]"
 
         if zone is null
           console.error "Unable to locate containing zone for #{element}."
@@ -97,7 +97,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
 
       ajax event.memo.url,
         parameters: _.extend { "t:zoneid": this.element.id }, parameters, event.memo.parameters
-        onsuccess: (response) =>
+        success: (response) =>
           this.trigger events.zone.update, content: response.json?.content
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),

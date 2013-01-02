@@ -21,7 +21,7 @@ define ["./dom", "_"],
 
       constructor: (id) ->
         @selected = (dom id)
-        @container = @selected.findContainer ".t-palette"
+        @container = @selected.findParent ".t-palette"
         @available = @container.findFirst ".t-palette-available select"
         @hidden = @container.findFirst "input[type=hidden]"
 

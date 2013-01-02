@@ -42,12 +42,12 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
         return
 
       ajax (getURL container),
-        onsuccess: -> container.update null
+        success: -> container.update null
 
     dismissOne = (container, button) ->
       console.debug "dismiss single"
 
-      alert = button.container()
+      alert = button.parent()
 
       id = alert.attribute "data-alert-id"
 
@@ -57,7 +57,7 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
 
       ajax (getURL container),
         parameters: { id }
-        onsuccess: -> removeAlert container, alert
+        success: -> removeAlert container, alert
 
     setupUI = (container) ->
 

@@ -299,22 +299,22 @@ define ["_", "./utils", "prototype"], (_, utils) ->
 
     # Find the first container element that matches the selector (wrapped as an ElementWrapper),
     # or returns null.
-    findContainer: (selector) ->
-      container = @element.up selector
+    findParent: (selector) ->
+      parent = @element.up selector
 
-      if container
-        return new ElementWrapper container
-      else
-        return null
+      return null unless parent
 
-    # Returns an ElementWrapper for this element's containing element.
+      new ElementWrapper parent
+
+    # Returns an ElementWrapper for this element's immediate containing element.
     # Returns null if this element has no parent (either because this element is the document object, or
     # because this element is not yet attached to the DOM).
-    container: ->
-      parentNode = @element.parentNode
-      return null unless parentNode
+    parent: ->
+      parent = @element.parentNode
 
-      new ElementWrapper(parentNode)
+      return null unless parent
+
+      new ElementWrapper parent
 
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
@@ -328,7 +328,7 @@ define ["_", "./utils", "prototype"], (_, utils) ->
       cursor = this
       while cursor
         return false unless cursor.visible()
-        cursor = cursor.container()
+        cursor = cursor.parent()
 
         return true if cursor and cursor.element is document.body
 
@@ -440,11 +440,11 @@ define ["_", "./utils", "prototype"], (_, utils) ->
   #   Adds a "_method" parameter and uses "post" to handle "delete", etc.
   # * options.contentType - default "context "application/x-www-form-urlencoded"
   # * options.parameters - optional, additional key/value pairs
-  # * options.onsuccess - handler to invoke on success, passed the ResponseWrapper
+  # * options.success - handler to invoke on success, passed the ResponseWrapper
   #   Default does nothing.
-  # * options.onfailure - handler to invoke on failure (server responds with a non-2xx code),
+  # * options.failure - handler to invoke on failure (server responds with a non-2xx code),
   #   Passed the ResponseWrapper and an error message. Defaults throws an Error.
-  # * options.onexception - handler to invoke when an exception occurs (often means the server is unavailable).
+  # * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
   #   Passed the exception. Default re-throws the underlying exception.
   #
   # Returns the module's exports
@@ -454,8 +454,8 @@ define ["_", "./utils", "prototype"], (_, utils) ->
       contentType: options.contentType or "application/x-www-form-urlencoded"
       parameters: options.parameters or {}
       onException: (ajaxRequest, exception) ->
-        if options.onexception
-          options.onexception exception
+        if options.exception
+          options.exception exception
         else
           throw exception
 
@@ -468,8 +468,8 @@ define ["_", "./utils", "prototype"], (_, utils) ->
           message += " -- #{text}"
         message += "."
 
-        if options.onfailure
-          options.onfailure (new ResponseWrapper response), message
+        if options.failure
+          options.failure (new ResponseWrapper response), message
         else
           throw new Error message
 
@@ -485,7 +485,7 @@ define ["_", "./utils", "prototype"], (_, utils) ->
 
         # Tapestry 5.3 includes lots more exception catching ... that just got in the way
         # of identifying the source of problems.  That's been stripped out.
-        options.onsuccess and options.onsuccess(new ResponseWrapper response)
+        options.success and options.success(new ResponseWrapper response)
         return
 
     new Ajax.Request(url, finalOptions)

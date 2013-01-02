@@ -25,7 +25,7 @@ define ["./dom", "./events", "./console"],
 
     dom.onDocument "[data-inplace-grid-links] a", ->
 
-      zone = this.findContainer "[data-container-type=zone]"
+      zone = this.findParent "[data-container-type=zone]"
 
       unless zone
         console.error "Unable to find containing zone for live update of grid."

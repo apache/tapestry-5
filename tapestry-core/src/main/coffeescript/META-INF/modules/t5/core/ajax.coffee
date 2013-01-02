@@ -17,7 +17,7 @@
 # Exports a single function, that invokes `t5/core/dom:ajaxRequest()` with the provided `url` and a modified version of the
 # `options`.
 #
-# It wraps (or provides) `onsuccess`, `onexception`, and `onfailure` handlers, extended to handle a partial page render
+# It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
 # `t5/core/exceptionframe` module to display a server-side processing exception.
 define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
@@ -27,15 +27,15 @@ define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
 
         # Logs the exception to the console before passing it to the
         # provided exception handler or throwing the exception.
-        onexception: (exception) ->
+        exception: (exception) ->
           console.error "Request to #{url} failed with #{exception}"
 
-          if options.onexception
-            options.onexception exception
+          if options.exception
+            options.exception exception
           else
             throw exception
 
-        onfailure: (response, failureMessage) ->
+        failure: (response, failureMessage) ->
           raw = response.header "X-Tapestry-ErrorMessage"
           unless _.isEmpty raw
             message = window.unescape raw
@@ -50,11 +50,11 @@ define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
           else
             console.error failureMessage
 
-          options.onfailure and options.onfailure(response)
+          options.failure and options.failure(response)
 
           return null
 
-        onsuccess: (response) ->
-          pageinit.handlePartialPageRenderResponse response, options.onsuccess
+        success: (response) ->
+          pageinit.handlePartialPageRenderResponse response, options.success
 
       dom.ajaxRequest url, newOptions

@@ -139,7 +139,7 @@ define ["./events", "./dom", "./builder", "_"],
     # Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
     # Update the hidden field, but also cancel the default behavior for the click.
     dom.onDocument "click", "a[data-submit-mode]", ->
-      form = this.findContainer "form"
+      form = this.findParent "form"
 
       unless form
         console.error "Submitting link element not contained inside a form element."
