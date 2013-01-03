@@ -1,5 +1,7 @@
 description = "Apache Tapestry 5 Project"
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: "base"
 apply plugin: "sonar"
 
@@ -7,22 +9,22 @@ apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
 project.ext.versions = [
-  // Remember that when generating a release, this should be incremented. Also don"t forget to
-  // tag the release in Subversion.
-  // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
-  // during a release
-  jetty: "7.0.0.v20091005",
-  tomcat: "6.0.30",
-  testng: "6.5.2",
-  easymock: "3.0",
-  servletapi: "2.5",
-  spock: "0.7-groovy-2.0",
-  hibernate: "4.1.2.Final",
-  groovy: "2.0.5"
+    // Remember that when generating a release, this should be incremented. Also don"t forget to
+    // tag the release in Subversion.
+    // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
+    // during a release
+    jetty: "7.0.0.v20091005",
+    tomcat: "6.0.30",
+    testng: "6.5.2",
+    easymock: "3.0",
+    servletapi: "2.5",
+    spock: "0.7-groovy-2.0",
+    hibernate: "4.1.2.Final",
+    groovy: "2.0.5"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-project.version =  "5.4-alpha-2" + suffix()
+project.version = "5.4-alpha-2" + suffix()
 
 def suffix() {
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
@@ -280,7 +282,7 @@ task aggregateJavadoc(type: Javadoc) {
 
     // As part of generating the documentation, ALSO copy any related files:
     // Any extra images (Tapestry logo)
-    // Any images stored under src/main/java ... everything exclude .java, .xdoc and package.html
+    // Any images stored under src/main/java ... everything but .java, .xdoc and package.html
 
     doLast {
         copy {
@@ -297,6 +299,27 @@ task aggregateJavadoc(type: Javadoc) {
         }
     }
 }
+
+task coffeeScriptDocs(type: Exec) {
+    group "Documentation"
+    description "Build docco documentation for all CoffeeScript sources"
+
+    def outputDir = file("$buildDir/documentation/coffeescript")
+
+    def sources = subprojects*.fileTree("src/main", {
+        include "**/*.coffee"
+    })*.files.flatten()
+
+    // Needs to be installed via "npm install -g docco"
+    executable "docco"
+    args "--output", outputDir
+    args sources
+
+    inputs.files sources
+    outputs.dir outputDir
+}
+
+
 
 dependencies {
     meta aggregateJavadoc.outputs.files
@@ -335,7 +358,7 @@ task zippedSources(type: Zip) {
 
 task zippedJavadoc(type: Zip) {
     dependsOn aggregateJavadoc
-    description "Zip archive of the project's aggregate JavaDoc"
+    description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
     group "Release artifact"
 
     destinationDir buildDir
@@ -343,8 +366,15 @@ task zippedJavadoc(type: Zip) {
     version project.version
     classifier "javadocs"
 
-    from aggregateJavadoc.outputs.files
-    into "apidocs"
+    from file("src/docroot-template"), {
+        filter ReplaceTokens, tokens: [version: project.version]
+    }
+
+    into "apidocs", { from aggregateJavadoc.outputs.files }
+
+
+    into "coffeescript", { from coffeeScriptDocs.outputs.files }
+
 }
 
 task zippedBinaries(type: Zip) {
@@ -373,7 +403,7 @@ task zippedBinaries(type: Zip) {
         include "*.txt"
     }
 
-    subprojects.each {  sub ->
+    subprojects.each { sub ->
         from(sub.projectDir) {
             include "*.txt"
             into sub.name
@@ -425,7 +455,7 @@ if (canDeploy) {
 
         doFirst {
             logger.info "Uploading the following files to people.apache.org (as user '${userName}'):"
-            source.files.each { logger.info "  $it"}
+            source.files.each { logger.info "  $it" }
         }
     }
 
