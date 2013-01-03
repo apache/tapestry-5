@@ -28,7 +28,6 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -79,13 +78,14 @@ public class JavaScriptModule
 
     @Contribute(JavaScriptStack.class)
     @Core
-    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility)
+    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility, @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER) String provider)
     {
         final String ROOT = "${tapestry.asset.root}";
 
-        if (compatibility.enabled(Trait.SCRIPTACULOUS))
+        if (provider.equals("prototype") && compatibility.enabled(Trait.SCRIPTACULOUS))
         {
-            add(configuration, StackExtensionType.LIBRARY, "${tapestry.scriptaculous}/scriptaculous.js",
+            add(configuration, StackExtensionType.LIBRARY,
+                    "${tapestry.scriptaculous}/scriptaculous.js",
                     "${tapestry.scriptaculous}/effects.js");
         }
 
@@ -219,19 +219,19 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModules(MappedConfiguration<String, Object> configuration,
-                                        @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
+                                        @Path("${tapestry.asset.root}/underscore_1_4_2.js")
                                         Resource underscore,
 
-                                        @Inject @Path("${tapestry.asset.root}/jquery-shim.js")
+                                        @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
 
-                                        @Inject @Path("${tapestry.scriptaculous}/prototype.js")
+                                        @Path("${tapestry.scriptaculous}/prototype.js")
                                         Resource prototype,
 
-                                        @Inject @Path("${tapestry.asset.root}/jquery-1.8.3.js")
+                                        @Path("${tapestry.asset.root}/jquery-1.8.3.js")
                                         Resource jQuery,
 
-                                        @Inject @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
+                                        @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
                                         Resource bootstrap)
     {
         configuration.add("_", new JavaScriptModuleConfiguration(underscore).exports("_"));
@@ -251,11 +251,11 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupFoundationFramework(MappedConfiguration<String, Object> configuration,
-                                                @Inject @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                                                @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
                                                 String provider,
-                                                @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
+                                                @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
                                                 Resource domPrototype,
-                                                @Inject @Path("classpath:org/apache/tapestry5/t5-core-dom-jquery.js")
+                                                @Path("classpath:org/apache/tapestry5/t5-core-dom-jquery.js")
                                                 Resource domJQuery)
     {
         if (provider.equals("prototype"))

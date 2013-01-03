@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ public enum Trait
     /**
      * Indicates that the Scriptaculous JavaScript libraries should be included.  Tapestry 5.3 includes options for performing
      * some kinds of animations when certain elements were updated or removed; that is no longer present in Tapestry 5.4
-     * and Scriptaculous is not used.
+     * and Scriptaculous is not used. This trait is only used if the
+     * {@linkplain org.apache.tapestry5.SymbolConstants#JAVASCRIPT_INFRASTRUCTURE_PROVIDER JavaScript infrastructure provider}
+     * is set to "prototype".
      */
     SCRIPTACULOUS,
 
