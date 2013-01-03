@@ -18,9 +18,8 @@ public class EnableJQueryModule
     }
 
     @Contribute(Compatibility.class)
-    public static void disableScriptaculous(MappedConfiguration<Trait, Boolean> configuration)
+    public static void disableInitializers(MappedConfiguration<Trait, Boolean> configuration)
     {
-        configuration.add(Trait.SCRIPTACULOUS, false);
         configuration.add(Trait.INITIALIZERS, false);
     }
 }
