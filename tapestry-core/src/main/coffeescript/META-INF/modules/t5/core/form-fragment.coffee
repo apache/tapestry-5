@@ -20,12 +20,6 @@ define ["_", "./dom", "./events", "./forms"],
 
     SELECTOR = "[data-component-type='core/FormFragment']"
 
-    # This is mostly for compatibility with 5.3, which supported
-    # a DOM event to ask a fragment to remove itself.  This makes less sense since
-    # default animations were eliminated in 5.4.
-    dom.onDocument events.formfragment.remove, SELECTOR, (event) ->
-      this.remove()
-
     # When any form fires the prepareForSubmit event, check to see if
     # any form fragments are contained within, and give them a chance
     # to enabled/disable their hidden field.
@@ -77,4 +71,5 @@ define ["_", "./dom", "./events", "./forms"],
       else
         trigger.on "click", update
 
+    # Module exports:
     { linkTrigger }

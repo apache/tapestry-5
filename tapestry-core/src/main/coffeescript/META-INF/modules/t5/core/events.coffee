@@ -159,7 +159,3 @@ define
     # boolean. The fragment will show or hide itself if necessary (triggering the `element.didShow` or
     # `element.didHide` event).
     changeVisibility: "t5:fragment:change-visibility"
-    # Requests that the fragment remove itself entirely. This event is of no practical use, as it is simply equivalent
-    # to invoking `dom/ElementWrapper.remove()` on the fragment's element; the event exists for compatibility with
-    # Tapestry 5.3 and will be removed in Tapestry 5.5.
-    remove: "t5:fragment:remove"
