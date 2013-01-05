@@ -3,81 +3,108 @@
 <head>
     <title>Apache Tapestry @version@ - API Documentation</title>
     <link href="bootstrap-2.2.2/css/bootstrap.min.css" rel="stylesheet" media="screen">
-
-    <div class="navbar">
-        <div class="navbar-inner">
-            <a class="brand" href="http://tapestry.apache.org/">
-                <img src="tapestry-logo.png" alt="Apache Tapestry Logo"/>
-                Apache Tapestry @version@</a>
-            </ul>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="span4 offset2">
-            <a href="coffeescript/t5-core-dom-jquery.html" class="btn btn-primary btn-large btn-block">CoffeeScript Documentation</a>
-        </div>
-
-
-        <div class="span4 offset2">
-            <a href="apidocs/index.html" class="btn btn-primary btn-large btn-block">JavaDocs</a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="span4 offset2">
-            <p>Documentation for Tapestry's client-side CoffeeScript modules.</p>
-        </div>
-
-        <div class="span4 offset2">
-            <p>Documentation for Tapestry's server-side Java classes.</p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="offset2 span6">
-
-            <p>Quick links:</p>
-
-            <ul>
-                <li><a href="coffeescript/events.html">t5/core/events</a></li>
-                <li><a href="coffeescript/t5-core-dom-jquery.html">t5/core/dom (jQuery)</a></li>
-            </ul>
-
-            <p>See also:</p>
-
-            <ul>
-                <li><a href="http://coffeescript.org">CoffeeScript</a> - a little language that compiles into JavaScript
-                </li>
-                <li><a href="http://requirejs.org">RequireJS</a> - a JavaScript module loader</li>
-            </ul>
-
-        </div>
-
-        <div class="span6">
-
-            <p>Quick links:</p>
-
-            <ul>
-                <li><a href="apidocs/org/apache/tapestry5/ComponentResources.html">ComponentResources</a></li>
-                <li><a href="apidocs/org/apache/tapestry5/MarkupWriter.html">MarkupWriter</a></li>
-                <li><a href="apidocs/org/apache/tapestry5/SymbolConstants.html">SymbolConstants</a></li>
-                <li><a href="apidocs/org/apache/tapestry5/alerts/AlertManager.html">AlertManager</a></li>
-
-
-                <li><a href="apidocs//org/apache/tapestry5/annotations/package-summary.html">org.apache.tapestry5.annotations</a></li>
-                <li><a href="apidocs//org/apache/tapestry5/corelib/components/package-summary.html">org.apache.tapestry5.corelib.components</a></li>
-
-            </ul>
-        </div>
-    </div>
-
-    <div class="navbar navbar-fixed-bottom">
-        <div class="navbar-inner">
-            &copy; 2013 <a href="http://apache.org/">The Apache Software Foundation</a>
-        </div>
-    </div>
+    <style>
+        body {
+            margin-top: 50px
+        }
+    </style>
 </head>
 <body>
-</body>
+
+<div class="navbar navbar-fixed-top navbar-inverse">
+
+    <div class="navbar-inner">
+
+        <div class="container">
+
+            <a href="http://tapestry.apache.org" class="brand">
+                Apache Tapestry <strong>@version@</strong></a>
+
+            <ul class="nav">
+                <li class="divider-vertical"/>
+                <li>
+                    <p class="navbar-text">
+                        CoffeeScript and Java Class Documentation
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+
+    <div class="container">
+
+        <img src="tapestry-logo.png" alt="Apache Tapestry Logo"/>
+
+        <div class="row">
+            <div class="span4">
+                <a href="coffeescript/t5-core-dom-jquery.html" class="btn btn-primary btn-large btn-block">CoffeeScript
+                    Documentation</a>
+
+                <p>Documentation for Tapestry's client-side CoffeeScript modules.</p>
+            </div>
+
+
+            <div class="span4 offset2">
+                <a href="apidocs/index.html" class="btn btn-primary btn-large btn-block">JavaDocs</a>
+
+                <p>Documentation for Tapestry's server-side Java classes.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span6">
+
+                <p>Quick links:</p>
+
+                <ul>
+                    <li><a href="coffeescript/events.html">t5/core/events</a></li>
+                    <li><a href="coffeescript/t5-core-dom-jquery.html">t5/core/dom (jQuery)</a></li>
+                </ul>
+
+                <p>See also:</p>
+
+                <ul>
+                    <li><a href="http://coffeescript.org">CoffeeScript</a> - a little language that compiles into
+                        JavaScript
+                    </li>
+                    <li><a href="http://requirejs.org">RequireJS</a> - a JavaScript module loader</li>
+                </ul>
+
+            </div>
+
+            <div class="span4">
+
+                <p>Quick links:</p>
+
+                <ul>
+                    <li><a href="apidocs/org/apache/tapestry5/ComponentResources.html">ComponentResources</a></li>
+                    <li><a href="apidocs/org/apache/tapestry5/services/javascript/JavaScriptSupport.html">JavaScriptSupport</a>
+                    </li>
+                    <li><a href="apidocs/org/apache/tapestry5/MarkupWriter.html">MarkupWriter</a></li>
+                    <li><a href="apidocs/org/apache/tapestry5/SymbolConstants.html">SymbolConstants</a></li>
+                    <li><a href="apidocs/org/apache/tapestry5/alerts/AlertManager.html">AlertManager</a></li>
+                    <li><a href="apidocs//org/apache/tapestry5/annotations/package-summary.html">org.apache.tapestry5.annotations</a>
+                    </li>
+                    <li><a href="apidocs//org/apache/tapestry5/corelib/components/package-summary.html">org.apache.tapestry5.corelib.components</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class=" navbar navbar-fixed-bottom">
+            <div class="navbar-inner">
+                <div class="container">
+
+          <span class="brand">
+            &copy; 2013 <a href="http://apache.org/">The Apache Software Foundation</a>
+              </brand>
+                </div>
+            </div>
+        </div>
+    </div>
 </html>
