@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -2509,6 +2509,8 @@ public final class TapestryModule
     /**
      * Contributes:
      * <dl>
+     * <dt>OperationTracker</dt>
+     * <dd>Tracks general inforamtion about the request using {@link OperationTracker}</dd>
      * <dt>InitializeActivePageName
      * <dd>{@link InitializeActivePageName}
      * </dl>
@@ -2517,6 +2519,7 @@ public final class TapestryModule
      */
     public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration)
     {
+        configuration.addInstance("OperationTracker", RequestOperationTracker.class);
         configuration.addInstance("InitializeActivePageName", InitializeActivePageName.class);
     }
 
