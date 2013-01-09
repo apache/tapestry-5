@@ -252,6 +252,8 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     find: (selector) ->
       matches = @$.find selector
 
+      return [] if matches.length is 0
+
       for i in [0..(matches.length - 1)]
         new ElementWrapper matches.eq i
 
