@@ -199,7 +199,6 @@ public class ClasspathScannerImpl implements ClasspathScanner
             {
                 queue.push(new IOWork()
                 {
-                    @Override
                     public void run() throws IOException
                     {
                         scanDirStream(packagePath, url);
@@ -236,7 +235,6 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                         queue.push(new IOWork()
                         {
-                            @Override
                             public void run() throws IOException
                             {
                                 scanDir(nestedPackagePath, file);
@@ -295,7 +293,6 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                             queue.push(new IOWork()
                             {
-                                @Override
                                 public void run() throws IOException
                                 {
                                     scanURL(nestedPackagePath, newURL);

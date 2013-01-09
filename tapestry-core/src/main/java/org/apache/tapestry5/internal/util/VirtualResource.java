@@ -42,50 +42,42 @@ public abstract class VirtualResource implements Resource
         throw new UnsupportedOperationException(String.format("Method %s() is not supported for a VirtualResource.", name));
     }
 
-    @Override
     public boolean exists()
     {
 
         return true;
     }
 
-    @Override
     public URL toURL()
     {
         return unsupported("toURL");
     }
 
-    @Override
     public Resource forLocale(Locale locale)
     {
         return unsupported("forLocale");
     }
 
-    @Override
     public Resource forFile(String relativePath)
     {
         return this;
     }
 
-    @Override
     public Resource withExtension(String extension)
     {
         return unsupported("withExtension");
     }
 
-    @Override
     public String getFolder()
     {
         return unsupported("getFolder");
     }
 
-    @Override
     public String getFile()
     {
         return unsupported("getFile");
     }
 
-    @Override
     public String getPath()
     {
         return unsupported("getPath");

@@ -46,7 +46,6 @@ public class ClojureBuilderImpl implements ClojureBuilder
         this.tracker = tracker;
     }
 
-    @Override
     public <T> T build(final Class<T> interfaceType)
     {
         assert interfaceType != null;
@@ -64,7 +63,6 @@ public class ClojureBuilderImpl implements ClojureBuilder
 
         ClassInstantiator<T> instantiator = proxyFactory.createProxy(interfaceType, new PlasticClassTransformer()
         {
-            @Override
             public void transform(PlasticClass plasticClass)
             {
                 for (final Method m : interfaceType.getMethods())
@@ -90,7 +88,6 @@ public class ClojureBuilderImpl implements ClojureBuilder
                         desc.toShortString(),
                         symbol.toString()), new Runnable()
                 {
-                    @Override
                     public void run()
                     {
                         Symbol namespaceSymbol = Symbol.create(symbol.getNamespace());
@@ -103,7 +100,6 @@ public class ClojureBuilderImpl implements ClojureBuilder
 
                         plasticClass.introduceMethod(desc).changeImplementation(new InstructionBuilderCallback()
                         {
-                            @Override
                             public void doBuild(InstructionBuilder builder)
                             {
                                 bridgeToClojure(builder, desc, varField);

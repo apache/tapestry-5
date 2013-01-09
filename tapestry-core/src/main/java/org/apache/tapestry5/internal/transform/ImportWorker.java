@@ -190,7 +190,6 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         return new MethodAdvice()
         {
-            @Override
             public void advise(MethodInvocation invocation)
             {
                 for (ModuleImport moduleImport : moduleImports)

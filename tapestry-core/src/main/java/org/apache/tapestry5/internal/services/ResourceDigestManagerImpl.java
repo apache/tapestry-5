@@ -95,19 +95,16 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager
         return get(resource).requiresDigest;
     }
 
-    @Override
     public void addInvalidationListener(InvalidationListener listener)
     {
         resourceChangeTracker.addInvalidationListener(listener);
     }
 
-    @Override
     public void addInvalidationCallback(Runnable callback)
     {
         resourceChangeTracker.addInvalidationCallback(callback);
     }
 
-    @Override
     public void clearOnInvalidation(Map<?, ?> map)
     {
         resourceChangeTracker.clearOnInvalidation(map);

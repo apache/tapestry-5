@@ -1412,7 +1412,6 @@ public final class TapestryModule
         //As the registry will cache component classes, we need to clear the cache when we reload components to avoid memory leaks in permgen
         hub.addInvalidationCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 registry.clearCache();

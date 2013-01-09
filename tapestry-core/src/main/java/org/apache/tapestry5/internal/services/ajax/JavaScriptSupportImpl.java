@@ -79,7 +79,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             this.moduleName = moduleName;
         }
 
-        @Override
         public Initialization invoke(String functionName)
         {
             assert InternalUtils.isNonBlank(functionName);
@@ -89,7 +88,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             return this;
         }
 
-        @Override
         public Initialization priority(InitializationPriority priority)
         {
             assert priority != null;
@@ -99,7 +97,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             return this;
         }
 
-        @Override
         public void with(Object... arguments)
         {
             this.arguments = new JSONArray(arguments);
@@ -165,14 +162,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         F.flow(inits).sort(new Comparator<InitializationImpl>()
         {
-            @Override
             public int compare(InitializationImpl o1, InitializationImpl o2)
             {
                 return o1.priority.compareTo(o2.priority);
             }
         }).each(new Worker<InitializationImpl>()
         {
-            @Override
             public void work(InitializationImpl element)
             {
                 linker.addInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
@@ -385,7 +380,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return this;
     }
 
-    @Override
     public Initialization require(String moduleName)
     {
         assert InternalUtils.isNonBlank(moduleName);

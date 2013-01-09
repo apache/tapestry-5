@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.test;
+package org.apache.tapestry5.test.integration;
 
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
+import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 

@@ -628,13 +628,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         return DOT.split(packageName);
     }
 
-    @Override
     public List<String> getLibraryNames()
     {
         return F.flow(libraryNameToPackageNames.keySet()).remove(F.IS_BLANK).sort().toList();
     }
 
-    @Override
     public String getLibraryNameForClass(String className)
     {
         assert className != null;

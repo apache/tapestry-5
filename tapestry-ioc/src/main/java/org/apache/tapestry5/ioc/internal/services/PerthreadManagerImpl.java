@@ -64,7 +64,6 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
-            @Override
             public void run()
             {
                 cleanup();

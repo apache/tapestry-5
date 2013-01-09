@@ -36,7 +36,6 @@ public class PageNameMetaInjector implements MarkupRendererFilter
         this.globals = globals;
     }
 
-    @Override
     public void renderMarkup(MarkupWriter writer, MarkupRenderer delegate)
     {
         delegate.renderMarkup(writer);

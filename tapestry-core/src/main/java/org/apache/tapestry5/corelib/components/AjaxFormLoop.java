@@ -162,7 +162,6 @@ public class AjaxFormLoop
 
     private final AjaxFormLoopContext formLoopContext = new AjaxFormLoopContext()
     {
-        @Override
         public String encodedRowValue()
         {
             return encoder.toClient(value);

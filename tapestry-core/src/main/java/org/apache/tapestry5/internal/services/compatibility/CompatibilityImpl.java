@@ -39,7 +39,6 @@ public class CompatibilityImpl implements Compatibility
         }
     }
 
-    @Override
     public boolean enabled(Trait trait)
     {
         assert trait != null;

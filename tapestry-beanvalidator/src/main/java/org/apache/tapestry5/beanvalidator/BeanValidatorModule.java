@@ -91,7 +91,6 @@ public class BeanValidatorModule
     {
         configuration.add(new BaseCCD(Max.class, "value")
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/core/validation");
@@ -105,7 +104,6 @@ public class BeanValidatorModule
 
         configuration.add(new BaseCCD(Min.class, "value")
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/core/validation");
@@ -119,7 +117,6 @@ public class BeanValidatorModule
 
         configuration.add(new BaseCCD(NotNull.class)
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/core/validation");
@@ -132,7 +129,6 @@ public class BeanValidatorModule
 
         configuration.add(new BaseCCD(Null.class)
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/beanvalidator/validation");
@@ -145,7 +141,6 @@ public class BeanValidatorModule
 
         configuration.add(new BaseCCD(Pattern.class, "regexp")
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/core/validation");
@@ -158,7 +153,6 @@ public class BeanValidatorModule
 
         configuration.add(new BaseCCD(Size.class, "min", "max")
         {
-            @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
                 javaScriptSupport.require("t5/beanvalidator/validation");

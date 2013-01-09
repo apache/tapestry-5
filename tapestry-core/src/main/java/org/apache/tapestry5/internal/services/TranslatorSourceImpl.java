@@ -124,7 +124,6 @@ public Translator get(String name)
     /**
      * Invoked by InvalidationEventHub
      */
-    @Override
     public void run()
     {
         registry.clearCache();

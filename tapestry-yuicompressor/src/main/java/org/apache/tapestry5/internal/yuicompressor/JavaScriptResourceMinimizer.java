@@ -78,7 +78,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
         Runnable identifyWarnings = new Runnable()
         {
-            @Override
             public void run()
             {
                 if (warningCount.get() > 0)

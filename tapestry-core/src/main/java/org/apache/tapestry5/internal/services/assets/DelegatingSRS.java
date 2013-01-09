@@ -37,13 +37,11 @@ public abstract class DelegatingSRS implements StreamableResourceSource
         this.delegate = delegate;
     }
 
-    @Override
     public Set<String> fileExtensionsForContentType(String contentType)
     {
         return delegate.fileExtensionsForContentType(contentType);
     }
 
-    @Override
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies) throws IOException
     {
         return delegate.getStreamableResource(baseResource, processing, dependencies);

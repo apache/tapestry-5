@@ -85,9 +85,9 @@ allprojects {
 
     idea {
         project {
-            // Technically, Tapestry is built for JDK 1.5, but we're all using Eclipse or IntelliJ with
-            // JDK 1.6 at this point.
-            jdkName = "1.6"
+            // Leave at 1.5 to make sure that IDEA doesn't break the build for non-IDEA users by inserting
+            // @Override on implementations all over the place.
+            jdkName = "1.5"
         }
     }
 

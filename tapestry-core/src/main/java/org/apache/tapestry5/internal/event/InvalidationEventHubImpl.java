@@ -56,7 +56,6 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         }
     }
 
-    @Override
     public final void addInvalidationCallback(Runnable callback)
     {
         assert callback != null;
@@ -69,14 +68,12 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         }
     }
 
-    @Override
     public final void clearOnInvalidation(final Map<?, ?> map)
     {
         assert map != null;
 
         addInvalidationCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 map.clear();
@@ -84,14 +81,12 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         });
     }
 
-    @Override
     public final void addInvalidationListener(final InvalidationListener listener)
     {
         assert listener != null;
 
         addInvalidationCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.objectWasInvalidated();

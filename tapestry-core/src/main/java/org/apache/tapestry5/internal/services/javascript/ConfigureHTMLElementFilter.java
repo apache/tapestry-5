@@ -40,7 +40,6 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
         this.debugEnabled = !productionMode;
     }
 
-    @Override
     public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
     {
         renderer.renderMarkup(writer);

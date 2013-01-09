@@ -90,7 +90,6 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         }
     }
 
-    @Override
     public String getLibraryName()
     {
         return libraryName;

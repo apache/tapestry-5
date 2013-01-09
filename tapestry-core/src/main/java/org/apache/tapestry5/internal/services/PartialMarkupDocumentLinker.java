@@ -52,7 +52,6 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
                 "DocumentLinker.addScript() is not implemented for partial page renders.");
     }
 
-    @Override
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
         initsManager.addInitialization(priority, moduleName, functionName, arguments);

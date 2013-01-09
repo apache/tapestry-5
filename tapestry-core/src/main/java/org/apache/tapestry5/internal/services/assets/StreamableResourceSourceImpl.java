@@ -45,7 +45,6 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         this.resourceChangeTracker = resourceChangeTracker;
     }
 
-    @Override
     public Set<String> fileExtensionsForContentType(String contentType)
     {
         Set<String> result = CollectionFactory.newSet();

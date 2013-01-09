@@ -37,7 +37,6 @@ public class RequestOperationTracker implements ComponentRequestFilter
         this.request = request;
     }
 
-    @Override
     public void handleComponentEvent(final ComponentEventRequestParameters parameters, final ComponentRequestHandler handler) throws IOException
     {
         String componentId = parameters.getNestedComponentId().equals("")
@@ -52,7 +51,6 @@ public class RequestOperationTracker implements ComponentRequestFilter
                 componentId),
                 new Runnable()
         {
-            @Override
             public void run()
             {
                 try
@@ -71,7 +69,6 @@ public class RequestOperationTracker implements ComponentRequestFilter
         }
     }
 
-    @Override
     public void handlePageRender(final PageRenderRequestParameters parameters, final ComponentRequestHandler handler) throws IOException
     {
         final Holder<IOException> holder = Holder.create();
@@ -79,7 +76,6 @@ public class RequestOperationTracker implements ComponentRequestFilter
         tracker.run("Handling page render request for page " + parameters.getLogicalPageName(),
                 new Runnable()
                 {
-                    @Override
                     public void run()
                     {
                         try

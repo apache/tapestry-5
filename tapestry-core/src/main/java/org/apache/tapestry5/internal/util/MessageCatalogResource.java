@@ -42,7 +42,6 @@ public class MessageCatalogResource extends VirtualResource
 
         messagesSource.getInvalidationEventHub().addInvalidationCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 bytes = null;
@@ -84,7 +83,6 @@ public class MessageCatalogResource extends VirtualResource
         return null;
     }
 
-    @Override
     public InputStream openStream() throws IOException
     {
         return toInputStream(getBytes());

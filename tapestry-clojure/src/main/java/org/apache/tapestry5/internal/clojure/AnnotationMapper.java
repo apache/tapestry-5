@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 
 public class AnnotationMapper implements MethodToFunctionSymbolMapper
 {
-    @Override
     public Symbol mapMethod(String namespace, Method method)
     {
         FunctionName annotation = method.getAnnotation(FunctionName.class);

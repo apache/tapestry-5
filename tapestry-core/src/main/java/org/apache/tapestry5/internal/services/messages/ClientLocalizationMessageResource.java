@@ -76,7 +76,6 @@ public class ClientLocalizationMessageResource extends VirtualResource
         return new ClientLocalizationMessageResource(locale);
     }
 
-    @Override
     public InputStream openStream() throws IOException
     {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance(locale);

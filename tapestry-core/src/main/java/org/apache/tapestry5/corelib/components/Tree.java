@@ -135,7 +135,6 @@ public class Tree
 
     private static RenderCommand MARK_SELECTED = new RenderCommand()
     {
-        @Override
         public void render(MarkupWriter writer, RenderQueue queue)
         {
             writer.getElement().attribute("class", "t-selected-leaf-node");

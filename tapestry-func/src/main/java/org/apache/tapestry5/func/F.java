@@ -66,7 +66,6 @@ public class F
      */
     public static Predicate<String> IS_BLANK = new Predicate<String>()
     {
-        @Override
         public boolean accept(String element)
         {
             return element == null || element.trim().length() == 0;

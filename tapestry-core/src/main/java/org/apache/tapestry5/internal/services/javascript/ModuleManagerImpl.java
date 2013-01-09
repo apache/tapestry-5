@@ -174,7 +174,6 @@ public class ModuleManagerImpl implements ModuleManager
         return new JSONArray().putAll(input).toString(compactJSON);
     }
 
-    @Override
     public Resource findResourceForModule(String moduleName)
     {
         Resource resource = cache.get(moduleName);

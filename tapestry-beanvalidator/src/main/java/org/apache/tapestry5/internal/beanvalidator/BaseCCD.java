@@ -47,7 +47,6 @@ public abstract class BaseCCD implements ClientConstraintDescriptor
     /**
      * Returns the annotation describing the constraint declaration.
      */
-    @Override
     public Class getAnnotationClass()
     {
         return annotationClass;
@@ -58,7 +57,6 @@ public abstract class BaseCCD implements ClientConstraintDescriptor
      * Attribute names of the constraint annotation to be passed (along with their values) to the JavaScript validator
      * function as an {@link JSONObject}.
      */
-    @Override
     public Set<String> getAttributes()
     {
         return attributes;

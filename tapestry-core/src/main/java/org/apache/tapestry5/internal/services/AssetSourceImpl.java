@@ -107,7 +107,6 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
         return getUnlocalizedAsset(symbolSource.expandSymbols(path));
     }
 
-    @Override
     public Asset getComponentAsset(ComponentResources resources, String path)
     {
         assert resources != null;

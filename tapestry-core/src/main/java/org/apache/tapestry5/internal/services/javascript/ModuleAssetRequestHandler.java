@@ -47,7 +47,6 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
         this.tracker = tracker;
     }
 
-    @Override
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there

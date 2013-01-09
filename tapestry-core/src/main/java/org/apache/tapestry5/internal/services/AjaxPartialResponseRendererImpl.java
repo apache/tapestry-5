@@ -66,7 +66,6 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         this.environment = environment;
     }
 
-    @Override
     public void renderPartialPageMarkup(JSONObject reply) throws IOException
     {
         assert reply != null;

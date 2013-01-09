@@ -112,7 +112,6 @@ public class DeprecationWarningImpl implements DeprecationWarning
         this.alertManager = alertManager;
     }
 
-    @Override
     public void componentParameter(ComponentResources resources, String parameterName, String message)
     {
         assert resources != null;
@@ -131,7 +130,6 @@ public class DeprecationWarningImpl implements DeprecationWarning
         logMessage(resources, parameterName, message);
     }
 
-    @Override
     public void ignoredComponentParameters(ComponentResources resources, String... parameterNames)
     {
         assert resources != null;
@@ -146,7 +144,6 @@ public class DeprecationWarningImpl implements DeprecationWarning
         }
     }
 
-    @Override
     public void componentParameterValue(ComponentResources resources, String parameterName, Object parameterValue, String message)
     {
         assert resources != null;

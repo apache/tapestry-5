@@ -31,7 +31,6 @@ public class DelegatingSymbolProvider implements SymbolProvider
         this.secondary = secondary;
     }
 
-    @Override
     public String valueForSymbol(String symbolName)
     {
         String value = primary.valueForSymbol(symbolName);

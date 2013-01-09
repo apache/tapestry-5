@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
  */
 public class DefaultMapper implements MethodToFunctionSymbolMapper
 {
-    @Override
     public Symbol mapMethod(String namespace, Method method)
     {
         return mapMethodName(namespace, method.getName());

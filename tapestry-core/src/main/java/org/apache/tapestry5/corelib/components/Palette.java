@@ -171,7 +171,6 @@ public class Palette extends AbstractField
 
     public final Renderable mainRenderer = new Renderable()
     {
-        @Override
         public void render(MarkupWriter writer)
         {
             SelectModelRenderer visitor = new SelectModelRenderer(writer, encoder);
