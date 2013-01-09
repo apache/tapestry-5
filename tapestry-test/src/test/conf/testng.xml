@@ -12,7 +12,7 @@
   <parameter name="tapestry.web-app-folder" value="src/test/webapp"/>
   <test name="SeleniumLauncher and SeleniumTestBase">
     <classes>
-      <class name="org.apache.tapestry5.test.SanityCheckTestSuite"/>
+      <class name="org.apache.tapestry5.test.integration.SanityCheckTestSuite"/>
     </classes>
 
   </test>
