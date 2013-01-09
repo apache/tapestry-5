@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.CookieBuilder;
 import org.apache.tapestry5.services.Cookies;
 
 public class NoOpCookieSource implements Cookies
@@ -58,6 +59,22 @@ public class NoOpCookieSource implements Cookies
     public void removeCookieValue(String name)
     {
 
+    }
+
+    public CookieBuilder getBuilder(String name, String value)
+    {
+        return new CookieBuilder(name, value)
+        {
+            @Override
+            public void write()
+            {
+            }
+
+            @Override
+            public void delete()
+            {
+            }
+        };
     }
 
 }

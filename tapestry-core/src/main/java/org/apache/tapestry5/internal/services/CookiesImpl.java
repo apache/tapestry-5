@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import javax.servlet.http.Cookie;
+
+import org.apache.tapestry5.CookieBuilder;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.Request;
-
-import javax.servlet.http.Cookie;
 
 /**
  * Implementation of the {@link org.apache.tapestry5.services.Cookies} service interface.
@@ -81,63 +82,69 @@ public class CookiesImpl implements Cookies
 
     public void writeCookieValue(String name, String value)
     {
-        writeCookieValue(name, value, defaultMaxAge);
+        getBuilder(name, value).write();
     }
 
     public void writeCookieValue(String name, String value, int maxAge)
     {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(defaultCookiePath);
-        cookie.setMaxAge(maxAge);
-        cookie.setSecure(request.isSecure());
-
-        cookieSink.addCookie(cookie);
+        getBuilder(name, value).setMaxAge(maxAge).write();
     }
 
     public void writeCookieValue(String name, String value, String path)
     {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(path);
-        cookie.setMaxAge(defaultMaxAge);
-        cookie.setSecure(request.isSecure());
-
-        cookieSink.addCookie(cookie);
+        getBuilder(name, value).setPath(path).write();
     }
 
     public void writeDomainCookieValue(String name, String value, String domain)
     {
-        writeDomainCookieValue(name, value, domain, defaultMaxAge);
+        getBuilder(name, value).setDomain(domain).write();
     }
 
     public void writeDomainCookieValue(String name, String value, String domain, int maxAge)
     {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(defaultCookiePath);
-        cookie.setDomain(domain);
-        cookie.setMaxAge(maxAge);
-        cookie.setSecure(request.isSecure());
-
-        cookieSink.addCookie(cookie);
+        getBuilder(name, value).setDomain(domain).setMaxAge(maxAge).write();
     }
 
     public void writeCookieValue(String name, String value, String path, String domain)
     {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(path);
-        cookie.setDomain(domain);
-        cookie.setMaxAge(defaultMaxAge);
-        cookie.setSecure(request.isSecure());
-
-        cookieSink.addCookie(cookie);
+        getBuilder(name, value).setPath(path).setDomain(domain).write();
     }
 
     public void removeCookieValue(String name)
     {
-        Cookie cookie = new Cookie(name, null);
-        cookie.setPath(defaultCookiePath);
-        cookie.setMaxAge(0);
-        cookie.setSecure(request.isSecure());
+        getBuilder(name, null).delete();
+    }
 
-        cookieSink.addCookie(cookie);
+    public CookieBuilder getBuilder(String name, String value)
+    {
+        CookieBuilder builder = new CookieBuilder(name, value)
+        {
+            @Override
+            public void write()
+            {
+                Cookie cookie = new Cookie(name, value);
+                
+                cookie.setPath(path == null ? defaultCookiePath : path);
+                
+                if(domain != null)
+                    cookie.setDomain(domain);
+                
+                cookie.setMaxAge(maxAge == null ? defaultMaxAge : maxAge);
+                
+                cookie.setSecure(secure == null ? request.isSecure() : secure);
+
+                cookieSink.addCookie(cookie);
+            }
+
+            @Override
+            public void delete()
+            {
+                setMaxAge(0);
+                
+                write();
+            }
+        };
+        
+        return builder;
     }
 }

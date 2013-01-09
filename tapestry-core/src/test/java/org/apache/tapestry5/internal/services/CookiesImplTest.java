@@ -167,4 +167,16 @@ public class CookiesImplTest extends Assert
         assertEquals(cookies.size(), 1);
         assertEquals(cookies.get(0), expectedCookie);
     }
+    
+    public void test_remove_cookie_with_nondefault_path()
+    {
+        final List<Cookie> cookies = CollectionFactory.newList();
+        CookiesImpl cs = createCookiesFixture("/ctx", cookies);
+
+        cs.getBuilder("foo", null).setPath("/nondefault/").delete();
+        Cookie expectedCookie = new ComparableCookie("foo", null, 0);
+        expectedCookie.setPath("/nondefault/");
+        assertEquals(cookies.size(), 1);
+        assertEquals(cookies.get(0), expectedCookie);
+    }
 }
