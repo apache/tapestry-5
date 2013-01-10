@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 {
     private final Lock lock = JDKUtils.createLockForThreadLocalCreation();
 
-    private final PerThreadValue<List<ThreadCleanupListener>> listenersValue;
+    private final PerThreadValue<List<Runnable>> callbacksValue;
 
     private static class MapHolder extends ThreadLocal<Map>
     {
@@ -57,7 +57,7 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         this.logger = logger;
 
-        listenersValue = createValue();
+        callbacksValue = createValue();
     }
 
     public void registerForShutdown(RegistryShutdownHub hub)
@@ -93,22 +93,39 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
     }
 
-    private List<ThreadCleanupListener> getListeners()
+    private List<Runnable> getCallbacks()
     {
-        List<ThreadCleanupListener> result = listenersValue.get();
+        List<Runnable> result = callbacksValue.get();
 
         if (result == null)
         {
             result = CollectionFactory.newList();
-            listenersValue.set(result);
+            callbacksValue.set(result);
         }
 
         return result;
     }
 
-    public void addThreadCleanupListener(ThreadCleanupListener listener)
+    public void addThreadCleanupListener(final ThreadCleanupListener listener)
     {
-        getListeners().add(listener);
+        assert listener != null;
+
+        addThreadCleanupCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.threadDidCleanup();
+            }
+        });
+    }
+
+    @Override
+    public void addThreadCleanupCallback(Runnable callback)
+    {
+        assert callback != null;
+
+        getCallbacks().add(callback);
     }
 
     /**
@@ -117,18 +134,18 @@ public class PerthreadManagerImpl implements PerthreadManager
      */
     public void cleanup()
     {
-        List<ThreadCleanupListener> listeners = getListeners();
+        List<Runnable> callbacks = getCallbacks();
 
-        listenersValue.set(null);
+        callbacksValue.set(null);
 
-        for (ThreadCleanupListener listener : listeners)
+        for (Runnable callback : callbacks)
         {
             try
             {
-                listener.threadDidCleanup();
+                callback.run();
             } catch (Exception ex)
             {
-                logger.warn(String.format("Error invoking listener %s: %s", listener, ex),
+                logger.warn(String.format("Error invoking callback %s: %s", callback, ex),
                         ex);
             }
         }

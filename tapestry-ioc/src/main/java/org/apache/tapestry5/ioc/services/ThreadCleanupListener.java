@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.EventListener;
  * <p/>
  * Note that registration with the {@link org.apache.tapestry5.ioc.services.PerthreadManager} is a one-shot affair; it
  * lasts no longer than the next cleanup.
+ *
+ * @deprecated Deprecated in 5.4, use {@link PerthreadManager#addThreadCleanupCallback(Runnable)} instead.
  */
 public interface ThreadCleanupListener extends EventListener
 {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,13 +30,23 @@ public interface PerthreadManager
     /**
      * Adds a listener to the hub. All listeners are discarded at the {@link #cleanup()}.
      *
-     * @param listener to add
+     * @param listener
+     *         to add
+     * @deprecated Deprecated in 5.4, use {@link #addThreadCleanupCallback(Runnable)} instead.
      */
     void addThreadCleanupListener(ThreadCleanupListener listener);
 
     /**
-     * Immediately performs a cleanup of the thread, notifying all listeners, then discarding all per-thread data
-     * stored by the manager.
+     * Adds a callback to be invoked when {@link #cleanup()} is invoked; callbacks are then removed.
+     *
+     * @param callback
+     * @since 5.4
+     */
+    void addThreadCleanupCallback(Runnable callback);
+
+    /**
+     * Immediately performs a cleanup of the thread, invoking all callback, then discarding all per-thread data
+     * stored by the manager (including the list of callbacks).
      */
     void cleanup();
 

@@ -65,7 +65,7 @@ class PerthreadManagerImplSpec extends Specification {
     then:
 
     1 * l1.threadDidCleanup() >> { throw t }
-    1 * logger.warn({ it.contains "Error invoking listener"}, t)
+    1 * logger.warn({ it.contains "Error invoking callback"}, t)
 
     then:
 
