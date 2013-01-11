@@ -34,6 +34,11 @@ to running initialization functions, deals with DOM updates better, and is overa
 Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant "data-"
 attributes.
 
+## ControlGroup Mixin
+
+This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
+inside a Twitter Bootstrap form.
+
 # Breaking Changes:
 
 ## RenderSupport Removed

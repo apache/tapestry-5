@@ -12,14 +12,9 @@
     <t:form class="well">
         <t:errors/>
 
-        <div class="control-group">
-            <t:label for="carMaker"/>
-            <div class="controls">
-                <t:select t:id="carMaker" validate="required"
-                          model="makeModel" zone="modelZone" encoder="makeEncoder"/>
+        <t:select t:id="carMaker" validate="required" t:mixins="controlgroup"
+                  model="makeModel" zone="modelZone" encoder="makeEncoder"/>
 
-            </div>
-        </div>
 
         <t:zone t:id="modelZone">
             <t:if test="carMaker">
@@ -28,13 +23,8 @@
         </t:zone>
 
         <t:block id="modelBlock">
-            <div class="control-group">
-                <t:label for="carModel"/>
-                <div class="controls">
-
-                    <t:select t:id="carModel" model="availableModels" validate="required" blankOption="always"/>
-                </div>
-            </div>
+            <t:select t:id="carModel" model="availableModels" validate="required" blankOption="always"
+                      t:mixins="controlgroup"/>
         </t:block>
 
         <div class="form-actions">

@@ -23,4 +23,13 @@ class MiscTests extends TapestryCoreTestCase {
 
         assertAttribute "//meta[@name='tapestry-page-name']/@content", "nested/ZoneDemo"
     }
+
+    @Test
+    void ControlGroup_mixin() {
+        openLinks "Autocomplete Mixin Demo"
+
+        assertText "css=div.control-group > label", "Title"
+
+        // Using Geb, we could do a lot more. Sigh.
+    }
 }
