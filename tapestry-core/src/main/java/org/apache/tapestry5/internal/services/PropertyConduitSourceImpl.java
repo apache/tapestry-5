@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1213,13 +1213,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             Type returnType = GenericsUtils.extractActualType(activeType, method);
 
-            return new Term(returnType, toUniqueId(method), new AnnotationProvider()
-            {
-                public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-                {
-                    return method.getAnnotation(annotationClass);
-                }
-            }, new InstructionBuilderCallback()
+            return new Term(returnType, toUniqueId(method), InternalUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
