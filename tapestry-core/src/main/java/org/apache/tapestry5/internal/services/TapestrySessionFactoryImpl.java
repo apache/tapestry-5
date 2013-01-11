@@ -1,4 +1,4 @@
-//  Copyright 2011 The Apache Software Foundation
+//  Copyright 2011, 2013 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
@@ -25,18 +26,24 @@ import javax.servlet.http.HttpSession;
 public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 {
     private boolean clustered;
+
     private final SessionPersistedObjectAnalyzer analyzer;
+
     private final HttpServletRequest request;
+
+    private final PerthreadManager perthreadManager;
 
     public TapestrySessionFactoryImpl(
             @Symbol(SymbolConstants.CLUSTERED_SESSIONS)
             boolean clustered,
             SessionPersistedObjectAnalyzer analyzer,
-            HttpServletRequest request)
+            HttpServletRequest request,
+            PerthreadManager perthreadManager)
     {
         this.clustered = clustered;
         this.analyzer = analyzer;
         this.request = request;
+        this.perthreadManager = perthreadManager;
     }
 
     public Session getSession(boolean create)
@@ -50,9 +57,9 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 
         if (clustered)
         {
-            return new ClusteredSessionImpl(request, httpSession, analyzer);
+            return new ClusteredSessionImpl(request, httpSession, perthreadManager, analyzer);
         }
 
-        return new SessionImpl(request, httpSession);
+        return new SessionImpl(request, httpSession, perthreadManager);
     }
 }

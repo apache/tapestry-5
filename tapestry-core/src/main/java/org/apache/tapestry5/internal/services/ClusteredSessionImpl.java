@@ -1,4 +1,4 @@
-//  Copyright 2011 The Apache Software Foundation
+//  Copyright 2011, 2013 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +23,12 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
- * A thin wrapper around {@link javax.servlet.http.HttpSession}.
+ * A thin wrapper around {@link javax.servlet.http.HttpSession} that supports re-storing of mutable
+ * session attributes at the end of the request (see {@link #restoreDirtyObjects()}). This is only
+ * used when {@linkplain org.apache.tapestry5.SymbolConstants#CLUSTERED_SESSIONS clustering}.
  *
  * @since 5.3
+ * @see SessionPersistedObjectAnalyzer
  */
 public class ClusteredSessionImpl extends SessionImpl
 {
@@ -40,9 +44,10 @@ public class ClusteredSessionImpl extends SessionImpl
     public ClusteredSessionImpl(
             HttpServletRequest request,
             HttpSession session,
+            PerthreadManager perthreadManager,
             SessionPersistedObjectAnalyzer analyzer)
     {
-        super(request, session);
+        super(request, session, perthreadManager);
         this.analyzer = analyzer;
     }
 
@@ -72,9 +77,15 @@ public class ClusteredSessionImpl extends SessionImpl
 
     public void restoreDirtyObjects()
     {
-        if (isInvalidated()) return;
+        if (isInvalidated())
+        {
+            return;
+        }
 
-        if (sessionAttributeCache.isEmpty()) return;
+        if (sessionAttributeCache.isEmpty())
+        {
+            return;
+        }
 
         for (Map.Entry<String, Object> entry : sessionAttributeCache.entrySet())
         {
@@ -82,7 +93,10 @@ public class ClusteredSessionImpl extends SessionImpl
 
             Object attributeValue = entry.getValue();
 
-            if (attributeValue == null) continue;
+            if (attributeValue == null)
+            {
+                continue;
+            }
 
             if (analyzer.checkAndResetDirtyState(attributeValue))
             {

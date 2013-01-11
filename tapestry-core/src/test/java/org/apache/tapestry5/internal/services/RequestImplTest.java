@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ public class RequestImplTest extends InternalBaseTestCase
 {
     public static final String CHARSET = "UTF-8";
 
+
     @Test
     public void get_session_doesnt_exist()
     {
@@ -52,17 +53,15 @@ public class RequestImplTest extends InternalBaseTestCase
         HttpServletRequest sr = mockHttpServletRequest();
         HttpSession ss = mockHttpSession();
         TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
+        Session session = mockSession();
 
-        expect(sf.getSession(true)).andReturn(new SessionImpl(sr, ss));
-
-        train_getAttribute(ss, "foo", "bar");
+        expect(sf.getSession(true)).andReturn(session);
 
         replay();
 
         Request request = new RequestImpl(sr, CHARSET, sf);
-        Session session = request.getSession(true);
 
-        assertEquals(session.getAttribute("foo"), "bar");
+        assertSame(request.getSession(true), session);
 
         verify();
     }
@@ -196,44 +195,6 @@ public class RequestImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @Test
-    public void get_session_returns_null_if_invalid()
-    {
-        HttpServletRequest sr = mockHttpServletRequest();
-        HttpSession hsession1 = mockHttpSession();
-        HttpSession hsession2 = mockHttpSession();
-
-        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
-
-        expect(sf.getSession(true)).andReturn(new SessionImpl(sr, hsession1));
-
-        replay();
-
-        Request request = new RequestImpl(sr, CHARSET, sf);
-
-        Session session1 = request.getSession(true);
-
-        verify();
-
-        hsession1.invalidate();
-
-        expect(sr.getSession(false)).andReturn(null);
-
-        SessionImpl session = new SessionImpl(sr, hsession2);
-        expect(sf.getSession(true)).andReturn(session);
-        expect(sf.getSession(true)).andReturn(session);
-
-        replay();
-
-        session1.invalidate();
-
-        Session session2 = request.getSession(true);
-
-        assertNotSame(session2, session1);
-        assertSame(request.getSession(true), session2);
-
-        verify();
-    }
 
     protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
     {
