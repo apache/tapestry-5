@@ -31,7 +31,7 @@ Tapestry 5.4 represents a shift to a more modern, lighter approach. Behavior of 
 document object. This is an overall win: it reduces the number of event handlers, solves some timing issues related
 to running initialization functions, deals with DOM updates better, and is overall more performant.
 
-Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant "data-"
+Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant `data-`
 attributes.
 
 ## ControlGroup Mixin
@@ -60,12 +60,13 @@ slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
 
 JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded with
 RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly attach
-properties to the global JavaScript window object, rather than assume that the context (this) is the window.
+properties to the global JavaScript window object, rather than assume that the context (the value of `this`) is the window.
 
 ## T5 and Tapestry namespaces all but eliminated
 
 Only a limited number of properties exported in the `T5` and `Tapestry` namespaces (on the client) still exist; enough
 to continue to support the `T5.initializers` approach to page initialization that was used in Tapestry 5.3 and earlier.
+These will be eliminated in Tapestry 5.5.
 
 ## New method on ResourceTransformer
 
@@ -128,6 +129,8 @@ help blocks that appear (by default) beneath the fields. To get the full effect,
 .control-group elements, as described in the Bootstrap documentation:
 http://twitter.github.com/bootstrap/base-css.html#forms
 
+You may also use the new ControlGroup mixin for most fields.
+
 ## BeanEditor / BeanEditForm
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
@@ -160,7 +163,7 @@ tokens, so this behavior has been removed.
 ## RenderNotification Mixin
 
 The timing of this mixin has changed, it now has the @MixinAfter annotation, so it triggers its events *after*
-the component to which it attaches has executed its @BeginRender phase, and *before* the component executes
+the component to which it is attached has executed its @BeginRender phase, and *before* the component executes
 its @AfterRender phase.
 
 ## LocalizationSetter service
