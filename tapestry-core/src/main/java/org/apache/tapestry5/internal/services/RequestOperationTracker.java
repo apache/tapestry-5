@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.services.*;
 
@@ -43,30 +44,19 @@ public class RequestOperationTracker implements ComponentRequestFilter
                 ? parameters.getContainingPageName()
                 : parameters.getContainingPageName() + ":" + parameters.getNestedComponentId();
 
-        final Holder<IOException> holder = Holder.create();
-
-        tracker.run(String.format("Handling %s '%s' component event request for %s.",
+        tracker.perform(String.format("Handling %s '%s' component event request for %s.",
                 request.isXHR() ? "Ajax" : "traditional",
                 parameters.getEventType(),
                 componentId),
-                new Runnable()
-        {
-            public void run()
-            {
-                try
+                new IOOperation<Void>()
                 {
-                    handler.handleComponentEvent(parameters);
-                } catch (IOException e)
-                {
-                    holder.put(e);
-                }
-            }
-        });
+                    public Void perform() throws IOException
+                    {
+                        handler.handleComponentEvent(parameters);
 
-        if (holder.hasValue())
-        {
-            throw holder.get();
-        }
+                        return null;
+                    }
+                });
     }
 
     public void handlePageRender(final PageRenderRequestParameters parameters, final ComponentRequestHandler handler) throws IOException

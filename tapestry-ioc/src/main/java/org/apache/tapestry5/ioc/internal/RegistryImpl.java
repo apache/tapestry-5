@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -1108,6 +1109,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operationTracker.invoke(description, operation);
+    }
+
+    public <T> T perform(String description, IOOperation<T> operation) throws IOException
+    {
+        return operationTracker.perform(description, operation);
     }
 
     public Set<Class> getMarkerAnnotations()

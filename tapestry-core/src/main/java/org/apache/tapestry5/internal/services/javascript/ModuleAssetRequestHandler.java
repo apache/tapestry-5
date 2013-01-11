@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import org.apache.tapestry5.internal.IOOperation;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.Request;
@@ -66,11 +65,9 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
 
         final String moduleName = extraPath.substring(0, dotx);
 
-        final Holder<Boolean> handledHolder = Holder.create(false);
-
-        TapestryInternalUtils.performIO(tracker, String.format("Streaming module %s", extraPath), new IOOperation()
+        return tracker.perform(String.format("Streaming module %s", extraPath), new IOOperation<Boolean>()
         {
-            public void perform() throws IOException
+            public Boolean perform() throws IOException
             {
                 Resource resource = moduleManager.findResourceForModule(moduleName);
 
@@ -78,11 +75,11 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
                 {
                     streamer.streamResource(resource);
 
-                    handledHolder.put(true);
+                    return true;
                 }
+
+                return false;
             }
         });
-
-        return handledHolder.get();
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2011-2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
 
 package org.apache.tapestry5.internal.yuicompressor;
 
-import org.apache.tapestry5.internal.IOOperation;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.internal.services.assets.StreamableResourceImpl;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.CompressionStatus;
@@ -58,9 +57,9 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
         final Writer writer = new OutputStreamWriter(bos);
 
-        TapestryInternalUtils.performIO(tracker, "Minimizing " + resourceType, new IOOperation()
+        tracker.perform("Minimizing " + resourceType, new IOOperation<Void>()
         {
-            public void perform() throws IOException
+            public Void perform() throws IOException
             {
                 try
                 {
@@ -71,6 +70,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
                             InternalUtils.toMessage(ex)), ex);
                 }
 
+                return null;
             }
         });
 

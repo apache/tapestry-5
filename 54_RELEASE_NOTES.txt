@@ -170,3 +170,7 @@ its @AfterRender phase.
 
 The method setNonPeristentLocaleFromLocaleName() was renamed to setNonPersistentLocaleFromLocaleName() to correct
 the typo (the missing 's').
+
+## OperationTracker Extended
+
+The OperationTracker interface has had a new method added, for performing an IO Operation (that may throw IOException).

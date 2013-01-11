@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.IOOperation;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -83,9 +82,9 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return;
         }
 
-        TapestryInternalUtils.performIO(tracker, String.format("Streaming %s", resource), new IOOperation()
+        tracker.perform(String.format("Streaming %s", resource), new IOOperation<Void>()
         {
-            public void perform() throws IOException
+            public Void perform() throws IOException
             {
                 StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
                         : StreamableResourceProcessing.COMPRESSION_DISABLED;
@@ -93,6 +92,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
                 StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
                 streamResource(streamable);
+
+                return null;
             }
         });
     }

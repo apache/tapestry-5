@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -563,32 +563,6 @@ public class TapestryInternalUtils
         int dotx = fileName.lastIndexOf('.');
 
         return dotx < 0 ? "" : fileName.substring(dotx + 1);
-    }
-
-    /**
-     * Performs an operation and re-throws the IOException that may occur.
-     */
-    public static void performIO(OperationTracker tracker, String description, final IOOperation operation)
-            throws IOException
-    {
-        final Holder<IOException> exceptionHolder = Holder.create();
-
-        tracker.run(description, new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    operation.perform();
-                } catch (IOException ex)
-                {
-                    exceptionHolder.put(ex);
-                }
-            }
-        });
-
-        if (exceptionHolder.hasValue())
-            throw exceptionHolder.get();
     }
 
     /**

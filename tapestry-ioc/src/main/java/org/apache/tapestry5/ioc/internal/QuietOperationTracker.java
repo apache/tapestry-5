@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
+
+import java.io.IOException;
 
 /**
  * Minimal implementation used for testing, that does no logging, tracking, or exception catching.
@@ -30,5 +33,11 @@ public class QuietOperationTracker implements OperationTracker
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operation.invoke();
+    }
+
+    @Override
+    public <T> T perform(String description, IOOperation<T> operation) throws IOException
+    {
+        return operation.perform();
     }
 }

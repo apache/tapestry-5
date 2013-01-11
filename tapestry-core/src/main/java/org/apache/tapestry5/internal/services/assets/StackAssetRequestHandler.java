@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.IOOperation;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
@@ -97,16 +95,19 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
     {
-        TapestryInternalUtils.performIO(tracker, String.format("Streaming asset stack %s", extraPath),
-                new IOOperation()
+        tracker.perform(String.format("Streaming asset stack %s", extraPath),
+                new org.apache.tapestry5.ioc.IOOperation<Void>()
                 {
-                    public void perform() throws IOException
+                    @Override
+                    public Void perform() throws IOException
                     {
                         boolean compress = compressionAnalyzer.isGZipSupported();
 
                         StreamableResource resource = getResource(extraPath, compress);
 
                         resourceStreamer.streamResource(resource);
+
+                        return null;
                     }
                 });
 

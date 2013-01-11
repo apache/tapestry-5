@@ -1,10 +1,10 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,23 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal;
+package org.apache.tapestry5.ioc;
 
 import java.io.IOException;
 
 /**
- * This interface is similar to {@link Runnable}, except that
- * the operation may throw an {@link IOException}.
- * 
- * @since 5.3
- * @see TapestryInternalUtils#performIO(org.apache.tapestry5.ioc.OperationTracker, String, IOOperation)
+ * An operation that, when performed, returns a value (like {@link Invokable}, but may throw an {@link java.io.IOException}.
+ *
+ * @since 5.4
+ * @see OperationTracker#perform(String, IOOperation)
  */
-public interface IOOperation
+public interface IOOperation<T>
 {
-    /**
-     * Perform some work.
-     * 
-     * @throws IOException
-     */
-    void perform() throws IOException;
+    /** Perform an operation and return a value, or throw the exception. */
+    T perform() throws IOException;
 }

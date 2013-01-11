@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -33,6 +30,8 @@ import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 public class ComponentPageElementResourcesImpl implements ComponentPageElementResources
 {
@@ -59,10 +58,10 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     private final PerthreadManager perThreadManager;
 
     public ComponentPageElementResourcesImpl(ComponentResourceSelector selector,
-            ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
-            ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder, LinkSource linkSource,
-            RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
-            LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
+                                             ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
+                                             ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder, LinkSource linkSource,
+                                             RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
+                                             LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
     {
         this.selector = selector;
         this.componentMessagesSource = componentMessagesSource;
@@ -98,7 +97,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     }
 
     public Link createComponentEventLink(ComponentResources resources, String eventType, boolean forForm,
-            Object... context)
+                                         Object... context)
     {
         Page page = requestPageCache.get(resources.getPageName());
 
@@ -144,6 +143,11 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return tracker.invoke(description, operation);
+    }
+
+    public <T> T perform(String description, IOOperation<T> operation) throws IOException
+    {
+        return tracker.perform(description, operation);
     }
 
     public void run(String description, Runnable operation)

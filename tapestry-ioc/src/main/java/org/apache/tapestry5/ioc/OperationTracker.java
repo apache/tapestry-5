@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import java.io.IOException;
+
 /**
  * Used to track some set of operations in such a way that a failure (a thrown RuntimeException) will be logged along
  * with a trace of the stack of operations.
@@ -21,19 +23,36 @@ package org.apache.tapestry5.ioc;
 public interface OperationTracker
 {
     /**
-     * Executes the operation.
+     * Executes the operation.  If the operation throws a {@link RuntimeException} it will be logged and rethrown
+     * wrapped as a {@link org.apache.tapestry5.ioc.internal.OperationException}.
      *
-     * @param description used if there is an exception
-     * @param operation   to execute
+     * @param description
+     *         used if there is an exception
+     * @param operation
+     *         to execute
      */
     void run(String description, Runnable operation);
 
     /**
-     * Executes the operation, returning its value.
+     * As with {@link #run(String, Runnable)}, but the operation may return a value.
      *
-     * @param description used if there is an exception
-     * @param operation   to invoke
+     * @param description
+     *         used if there is an exception
+     * @param operation
+     *         to invoke
      * @return result of operation
      */
     <T> T invoke(String description, Invokable<T> operation);
+
+    /**
+     * As with {@link #invoke(String, Invokable)}, but the operation may throw an {@link java.io.IOException}.
+     *
+     * @param description
+     *         used if there is an exception (outside of IOException)
+     * @param operation
+     *         to perform
+     * @return result of operation
+     * @since 5.4
+     */
+    <T> T perform(String description, IOOperation<T> operation) throws IOException;
 }
