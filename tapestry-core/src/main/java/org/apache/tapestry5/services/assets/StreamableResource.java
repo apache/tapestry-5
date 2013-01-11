@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public interface StreamableResource
 
     /**
      * Returns the time the resource was last modified, with accuracy to one second (so as to match
-     * the HTTP request/response date headers.
+     * the HTTP request/response date headers).
      */
     long getLastModified();
 }
