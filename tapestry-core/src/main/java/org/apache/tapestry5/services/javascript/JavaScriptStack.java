@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 The Apache Software Foundation
+// Copyright 2010, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,14 +23,17 @@ import java.util.List;
 
 /**
  * A high level description of a group of related JavaScript libraries and stylesheets. The built-in "core"
- * stack is used to define the core JavaScript libraries needed by Tapestry (currently, this includes
- * Prototype and Scriptaculous, as well as Tapestry-specific libraries). Other component libraries may
+ * stack is used to define the core JavaScript libraries needed by Tapestry (though this has been largely replaced by
+ * JavaScript modules in Tapestry 5.4,
+ * and the may be no libraries in the core stack by Tapestry 5.5). Other component libraries may
  * define additional stacks for related sets of resources, for example, to bundle together some portion
  * of the ExtJS or YUI libraries.
  * <p/>
- * A JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
- * client as a single URL (identifying the stack by name). The individual assets are combined into a single virtual
- * asset, which is then streamed to the client.
+ * The JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
+ * client as a single URL (identifying the stack by name). The individual JavaScript  assets are combined into a single virtual
+ * asset, which is then streamed to the client. The individual JavaScript libraries, or the combined virtual library,
+ * may be {@linkplain SymbolConstants#MINIFICATION_ENABLED minimized} and the content (both compressed and
+ * uncompressed) cached.
  * <p/>
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
  * of the JavaScript library or stylesheet assets are localized). They will generally need to inject the
