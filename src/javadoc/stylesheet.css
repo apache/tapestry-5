@@ -107,6 +107,17 @@ body > dt > b
         background: #f7ffee;
  
 }
+.TableSubHeadingColor a
+{
+        color: white;
+        text-decoration: underline;
+}
+.TableSubHeadingColor a:hover
+{
+        color: white;
+        text-decoration: underline;
+}
+
 .TableRowColor         
 {
         background: #fff;
