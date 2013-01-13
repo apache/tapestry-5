@@ -1704,6 +1704,7 @@ public final class TapestryModule
         configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
         configuration.addInstance(String.class, AjaxPageNameComponentEventResultProcessor.class);
         configuration.addInstance(Link.class, AjaxLinkComponentEventResultProcessor.class);
+        configuration.addInstance(URL.class, AjaxURLComponentEventResultProcessor.class);
         configuration.addInstance(Class.class, AjaxPageClassComponentEventResultProcessor.class);
         configuration.addInstance(MultiZoneUpdate.class, MultiZoneUpdateEventResultProcessor.class);
         configuration.addInstance(HttpError.class, HttpErrorComponentEventResultProcessor.class);
