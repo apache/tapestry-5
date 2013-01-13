@@ -17,10 +17,12 @@ package org.apache.tapestry5.services.assets;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.assets.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.Core;
 
 /**
@@ -40,12 +42,12 @@ public class AssetsModule
 
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
-    public static void setupSymbols(MappedConfiguration<String, String> configuration)
+    public static void setupSymbols(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
-        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
+        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, true);
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
-        configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, "false");
+        configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, false);
     }
 
     // The use of decorators is to allow third-parties to get their own extensions
@@ -55,7 +57,7 @@ public class AssetsModule
     public StreamableResourceSource enableCompression(StreamableResourceSource delegate,
                                                       @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
                                                       boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-    int compressionCutoff)
+                                                      int compressionCutoff)
     {
         return gzipEnabled
                 ? new SRSCompressingInterceptor(delegate, compressionCutoff)
@@ -78,11 +80,10 @@ public class AssetsModule
     public StreamableResourceSource enableUncompressedCaching(StreamableResourceSource delegate,
                                                               ResourceChangeTracker tracker)
     {
-        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(delegate, tracker);
-
-        return interceptor;
+        return new SRSCachingInterceptor(delegate, tracker);
     }
 
+    // Goes after cache, to ensure that what we are caching is the minified version.
     @Decorate(id = "Minification", serviceInterface = StreamableResourceSource.class)
     @Order("after:Cache")
     public StreamableResourceSource enableMinification(StreamableResourceSource delegate, ResourceMinimizer minimizer,
@@ -92,6 +93,18 @@ public class AssetsModule
         return enabled
                 ? new SRSMinimizingInterceptor(delegate, minimizer)
                 : null;
+    }
+
+    // Ordering this after minification means that the URL replacement happens first;
+    // then the minification, then the uncompressed caching, then compression, then compressed
+    // cache.
+    @Decorate(id = "CSSURLRewrite", serviceInterface = StreamableResourceSource.class)
+    @Order("after:Minification")
+    public StreamableResourceSource enableCSSURLRewriting(StreamableResourceSource delegate,
+                                                          OperationTracker tracker,
+                                                          AssetSource assetSource)
+    {
+        return new CSSURLRewriter(delegate, tracker, assetSource);
     }
 
     /**
