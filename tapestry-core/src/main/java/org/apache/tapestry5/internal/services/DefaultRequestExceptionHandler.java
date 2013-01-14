@@ -40,8 +40,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Default implementation of {@link RequestExceptionHandler} that displays the standard ExceptionReport page. The page
- * must implement the {@link ExceptionReporter} interface.
+ * Default implementation of {@link RequestExceptionHandler} that displays the standard ExceptionReport page. Similarly to the
+ * servlet spec's standard error handling, the default exception handler allows configuring handlers for specific types of
+ * exceptions. The error-page/exception-type configuration in web.xml does not work in Tapestry application as errors are
+ * wrapped in Tapestry's exception types (see {@link OperationException} and {@link ComponentEventException} ).
+ *
+ * Configurations are flexible. You can either contribute a {@link ExceptionHandlerAssistant} to use arbitrary complex logic
+ * for error handling or a page class to render for the specific exception. Additionally, exceptions can carry context for the
+ * error page. Exception context is formed either from the name of Exception (e.g. SmtpNotRespondingException -> ServiceFailure mapping
+ * would render a page with URL /servicefailure/smtpnotresponding) or they can implement {@link ContextAwareException} interface.
+ *
+ * If no configured exception type is found, the default exception page {@link SymbolConstants.EXCEPTION_REPORT_PAGE} is rendered.
+ * This fallback exception page must implement the {@link ExceptionReporter} interface.
  */
 public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 {
@@ -64,6 +74,19 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
     // should be Class<? extends Throwable>, Object but it's not allowed to configure subtypes
     private final Map<Class, Object> configuration;
 
+    /**
+     * @param pageCache
+     * @param renderer
+     * @param logger
+     * @param pageName
+     * @param request
+     * @param response
+     * @param componentClassResolver
+     * @param linkSource
+     * @param serviceResources
+     * @param configuration A map of Exception class and handler values. A handler is either a page class or an ExceptionHandlerAssistant. ExceptionHandlerAssistant can be a class
+     * in which case the instance is autobuilt.
+     */
     @SuppressWarnings("rawtypes")
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
 
@@ -105,9 +128,19 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         this.configuration = configuration;
     }
 
+    /**
+     * Handles the exception thrown at some point the request was being processed
+     *
+     * First checks if there was a specific exception handler/page configured for this exception type, it's super class or super-super class.
+     * Renders the default exception page if none was configured.
+     *
+     * @param exception The exception that was thrown
+     *
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void handleRequestException(Throwable exception) throws IOException
     {
-        // skip handling of known exceptions if there are none configured 
+        // skip handling of known exceptions if there are none configured
         if (configuration.isEmpty())
         {
             renderException(exception);
@@ -224,6 +257,13 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         renderer.renderPageResponse(page);
     }
 
+    /**
+     * Form exception context either from the name of the exception, or the context the exception contains if it's of type
+     * {@link ContextAwareException}
+     *
+     * @param exception The exception that the context is formed for
+     * @return Returns an array of objects to be used as the exception context
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Object[] formExceptionContext(Throwable exception)
     {
