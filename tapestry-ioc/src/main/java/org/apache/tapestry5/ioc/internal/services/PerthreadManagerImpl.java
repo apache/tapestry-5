@@ -112,7 +112,6 @@ public class PerthreadManagerImpl implements PerthreadManager
 
         addThreadCleanupCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.threadDidCleanup();
@@ -120,7 +119,6 @@ public class PerthreadManagerImpl implements PerthreadManager
         });
     }
 
-    @Override
     public void addThreadCleanupCallback(Runnable callback)
     {
         assert callback != null;

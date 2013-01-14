@@ -35,7 +35,6 @@ public class QuietOperationTracker implements OperationTracker
         return operation.invoke();
     }
 
-    @Override
     public <T> T perform(String description, IOOperation<T> operation) throws IOException
     {
         return operation.perform();

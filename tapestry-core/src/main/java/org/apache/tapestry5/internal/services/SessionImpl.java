@@ -82,7 +82,6 @@ public class SessionImpl implements Session
 
             perthreadManager.addThreadCleanupCallback(new Runnable()
             {
-                @Override
                 public void run()
                 {
                     lock.unlock();

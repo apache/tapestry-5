@@ -98,7 +98,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler
         tracker.perform(String.format("Streaming asset stack %s", extraPath),
                 new org.apache.tapestry5.ioc.IOOperation<Void>()
                 {
-                    @Override
                     public Void perform() throws IOException
                     {
                         boolean compress = compressionAnalyzer.isGZipSupported();
