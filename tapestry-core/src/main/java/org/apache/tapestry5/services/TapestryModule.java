@@ -2471,7 +2471,7 @@ public final class TapestryModule
         configuration.add("Synthetic", new SyntheticStackTraceElementAnalyzer());
         configuration.add("SunReflect", new PrefixCheckStackTraceElementAnalyzer(
                 StackTraceElementClassConstants.OMITTED, "sun.reflect."));
-        configuration.add("OperationTracker", new RegexpStackTraceElementAnalyzer(Pattern.compile("internal\\.(RegistryImpl|PerThreadOperationTracker|OperationTrackerImpl).*(run|invoke)\\("), StackTraceElementClassConstants.OMITTED));
+        configuration.add("OperationTracker", new RegexpStackTraceElementAnalyzer(Pattern.compile("internal\\.(RegistryImpl|PerThreadOperationTracker|OperationTrackerImpl).*(run|invoke|perform)\\("), StackTraceElementClassConstants.OMITTED));
         configuration.add("Access", new RegexpStackTraceElementAnalyzer(Pattern.compile("\\.access\\$\\d+\\("), StackTraceElementClassConstants.OMITTED));
 
         configuration.addInstance("Application", ApplicationStackTraceElementAnalyzer.class);
