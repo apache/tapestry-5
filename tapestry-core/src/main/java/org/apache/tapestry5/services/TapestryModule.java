@@ -2458,7 +2458,7 @@ public final class TapestryModule
      * <dt>OperationTracker</dt>
      * <dd>Omits stack frames related to {@link OperationTracker}</dd>
      * <dt>Access</dt>
-     * <dd>Omits tack frames used to provide with access to container class private members</dd>
+     * <dd>Omits stack frames used to provide access to container class private members</dd>
      * </dl>
      *
      * @since 5.1.0.0
