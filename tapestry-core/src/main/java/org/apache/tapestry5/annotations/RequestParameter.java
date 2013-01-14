@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.Request;
 /**
  * Annotation that may be placed on parameters of event handler methods.
  * Annotated parameters will be {@linkplain Request#getParameter(String) extracted from the request},
- * then {@linkplain TypeCoercer coerced} to the type of the parameter. Such parameters are separate
+ * then {@linkplain org.apache.tapestry5.ValueEncoder converted} to the type of the parameter. Such parameters are separate
  * from ordinary context parameters (extracted from the Request path). Typically, this is used when
  * client-side JavaScript adds a query parameter to a request to communicate some information from the client
  * side to the server side.
@@ -55,7 +55,8 @@ public @interface RequestParameter
 
     /**
      * If false (the default), then an exception is thrown when the query parameter is read, if it is blank (null or an
-     * empty string). If true, then blank values are allowed.
+     * empty string). If true, then blank values are allowed and will be passed through the appropriate {@link org.apache.tapestry5.ValueEncoder}
+     * implementation.
      */
     boolean allowBlank() default false;
 }

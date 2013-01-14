@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
  * <em>not</em> affect annotated fields, only assigning them back to null will.
  * 
  * @see RequestParameter
+ * @see ValueEncoder
  */
 @Target(
 { ElementType.FIELD })

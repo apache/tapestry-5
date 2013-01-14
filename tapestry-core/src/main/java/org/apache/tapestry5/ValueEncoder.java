@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ package org.apache.tapestry5;
  * Tapestry can automatically generate ValueEncoders for enums as well as
  * Collections of any object types for which a coercion can be found from a
  * formatted String, such as primitives, primitive wrappers, Dates, Calendars,
- * "name=value" strings, and any types for which a custom coercion has been
- * contributed.  
+ * "name=value" strings, and any types for which a {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer
+ * custom type coercion} has been contributed.
  * <p/>
  * Custom ValueEncoder implementations will need to be supplied for entity type
  * objects. In such cases the {@link #toClient(Object)} method typically returns
@@ -60,6 +60,8 @@ package org.apache.tapestry5;
  * @see org.apache.tapestry5.services.ValueEncoderSource
  * @see org.apache.tapestry5.services.ValueEncoderFactory
  * @see org.apache.tapestry5.annotations.PageActivationContext
+ * @see org.apache.tapestry5.annotations.RequestParameter
+ * @see org.apache.tapestry5.annotations.ActivationRequestParameter
  */
 public interface ValueEncoder<V>
 {
