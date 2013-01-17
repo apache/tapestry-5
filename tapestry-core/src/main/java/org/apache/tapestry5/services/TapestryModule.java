@@ -2214,6 +2214,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
 
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_2_1_1");
+
+        configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
     }
 
     /**

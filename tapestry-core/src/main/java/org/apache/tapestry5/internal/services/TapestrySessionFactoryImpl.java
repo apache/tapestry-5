@@ -38,9 +38,22 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 
     private final PerthreadManager perthreadManager;
 
+    private final boolean sessionLockingEnabled;
+
     private final Lock mapLock = new ReentrantLock();
 
     private final Map<HttpSession, SessionLock> sessionToLock = new WeakHashMap<HttpSession, SessionLock>();
+
+    private final SessionLock NO_OP_LOCK = new SessionLock()
+    {
+        public void acquireReadLock()
+        {
+        }
+
+        public void acquireWriteLock()
+        {
+        }
+    };
 
     private class SessionLockImpl implements SessionLock
     {
@@ -111,12 +124,15 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
             boolean clustered,
             SessionPersistedObjectAnalyzer analyzer,
             HttpServletRequest request,
-            PerthreadManager perthreadManager)
+            PerthreadManager perthreadManager,
+            @Symbol(SymbolConstants.SESSION_LOCKING_ENABLED)
+            boolean sessionLockingEnabled)
     {
         this.clustered = clustered;
         this.analyzer = analyzer;
         this.request = request;
         this.perthreadManager = perthreadManager;
+        this.sessionLockingEnabled = sessionLockingEnabled;
     }
 
     public Session getSession(boolean create)
@@ -140,6 +156,11 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 
     private SessionLock lockForSession(HttpSession session)
     {
+        if (!sessionLockingEnabled)
+        {
+            return NO_OP_LOCK;
+        }
+
         // Because WeakHashMap does not look thread safe to me, we use an exclusive
         // lock.
         mapLock.lock();

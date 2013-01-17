@@ -1,4 +1,4 @@
-// Copyright 2008-2013The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -382,4 +382,17 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String JAVASCRIPT_INFRASTRUCTURE_PROVIDER = "tapestry.javascript-infrastructure-provider";
+
+    /**
+     * If true (the default), then Tapestry will apply locking semantics around access to the {@link javax.servlet.http.HttpSession}.
+     * Reading attribute names occurs with a shared read lock; getting or setting an attribute upgrades to an exclusive write lock.
+     * This can tend to serialize threads when a number of simultaneous (Ajax) requests from the client arrive ... however,
+     * many implementations of HttpSession are not thread safe, and often mutable objects are stored in the session and shared
+     * between threads. Leaving this on the default will yield a more robust application; setting it to false may speed
+     * up processing for more Ajax intensive applications (but care should then be given to ensuring that objects shared inside
+     * the session are themeselves immutable or thread-safe).
+     *
+     * @since 5.4
+     */
+    public static final String SESSION_LOCKING_ENABLED = "tapestry.session-locking-enabled";
 }
