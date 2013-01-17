@@ -15,15 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,58 +28,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionImplTest extends InternalBaseTestCase
 {
-    private PerthreadManager perThreadManager;
-
-    private final ReentrantLock lock = new ReentrantLock();
-
-    @BeforeClass
-    public void setup()
+    private SessionLock mockLock()
     {
-        perThreadManager = getService(PerthreadManager.class);
-    }
-
-    @AfterMethod
-    public void releaseLock()
-    {
-        perThreadManager.cleanup();
-
-        assertFalse(lock.isLocked());
-    }
-
-    void trainForLock(HttpSession session)
-    {
-        expect(session.getAttribute(SessionImpl.LOCK_KEY)).andReturn(lock);
-    }
-
-    @Test
-    public void will_create_lock_if_not_present()
-    {
-        HttpSession hs = mockHttpSession();
-
-        final Holder<ReentrantLock> holder = Holder.create();
-
-        expect(hs.getAttribute(SessionImpl.LOCK_KEY)).andReturn(null);
-
-        hs.setAttribute(EasyMock.eq(SessionImpl.LOCK_KEY), EasyMock.isA(ReentrantLock.class));
-        EasyMock.expectLastCall().andStubAnswer(new IAnswer<Object>()
-        {
-            public Object answer() throws Throwable
-            {
-                ReentrantLock lock = (ReentrantLock) EasyMock.getCurrentArguments()[1];
-
-                holder.put(lock);
-
-                return null;
-            }
-        });
-
-        replay();
-
-        new SessionImpl(null, hs, perThreadManager);
-
-        assertFalse(holder.get().isLocked());
-
-        verify();
+        return newMock(SessionLock.class);
     }
 
     @Test
@@ -94,18 +38,16 @@ public class SessionImplTest extends InternalBaseTestCase
     {
         Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney"));
         HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
 
-        trainForLock(hs);
-
+        lock.acquireReadLock();
         expect(hs.getAttributeNames()).andReturn(e);
 
         replay();
 
-        Session session = new SessionImpl(null, hs, perThreadManager);
+        Session session = new SessionImpl(null, hs, lock);
 
         assertEquals(session.getAttributeNames(), Arrays.asList("barney", "fred"));
-
-        assertTrue(lock.isLocked());
 
         verify();
     }
@@ -115,18 +57,17 @@ public class SessionImplTest extends InternalBaseTestCase
     {
         Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney", "fanny"));
         HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
 
-        trainForLock(hs);
+        lock.acquireReadLock();
 
         expect(hs.getAttributeNames()).andReturn(e);
 
         replay();
 
-        Session session = new SessionImpl(null, hs, perThreadManager);
+        Session session = new SessionImpl(null, hs, lock);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
-
-        assertTrue(lock.isLocked());
 
         verify();
     }
@@ -135,14 +76,13 @@ public class SessionImplTest extends InternalBaseTestCase
     public void invalidate()
     {
         HttpSession hs = mockHttpSession();
-
-        trainForLock(hs);
+        SessionLock lock = mockLock();
 
         hs.invalidate();
 
         replay();
 
-        Session session = new SessionImpl(null, hs, perThreadManager);
+        Session session = new SessionImpl(null, hs, lock);
 
         session.invalidate();
 
@@ -154,13 +94,13 @@ public class SessionImplTest extends InternalBaseTestCase
     {
         HttpSession hs = mockHttpSession();
         HttpServletRequest hsr = mockHttpServletRequest();
+        SessionLock lock = mockLock();
 
         train_getSession(hsr, false, hs);
-        trainForLock(hs);
 
         replay();
 
-        Session session = new SessionImpl(hsr, hs, perThreadManager);
+        Session session = new SessionImpl(hsr, hs, lock);
 
         assertFalse(session.isInvalidated());
 
@@ -187,13 +127,12 @@ public class SessionImplTest extends InternalBaseTestCase
     {
         HttpSession hs = mockHttpSession();
         int seconds = 999;
-        trainForLock(hs);
 
         hs.setMaxInactiveInterval(seconds);
 
         replay();
 
-        Session session = new SessionImpl(null, hs, perThreadManager);
+        Session session = new SessionImpl(null, hs, null);
 
         session.setMaxInactiveInterval(seconds);
 
@@ -205,15 +144,13 @@ public class SessionImplTest extends InternalBaseTestCase
     {
         HttpSession hs = mockHttpSession();
 
-        trainForLock(hs);
-
         int seconds = 999;
 
         expect(hs.getMaxInactiveInterval()).andReturn(seconds);
 
         replay();
 
-        Session session = new SessionImpl(null, hs, perThreadManager);
+        Session session = new SessionImpl(null, hs, null);
 
         assertEquals(session.getMaxInactiveInterval(), seconds);
 
@@ -227,13 +164,15 @@ public class SessionImplTest extends InternalBaseTestCase
         HttpServletRequest hsr = mockHttpServletRequest();
         SessionPersistedObjectAnalyzer analyzer = newMock(SessionPersistedObjectAnalyzer.class);
         Object dirty = new Object();
+        SessionLock lock = mockLock();
 
-        trainForLock(hs);
+        lock.acquireWriteLock();
+
         train_getAttribute(hs, "dirty", dirty);
 
         replay();
 
-        Session session = new ClusteredSessionImpl(hsr, hs, perThreadManager, analyzer);
+        Session session = new ClusteredSessionImpl(hsr, hs, lock, analyzer);
 
         assertSame(session.getAttribute("dirty"), dirty);
 
@@ -242,6 +181,8 @@ public class SessionImplTest extends InternalBaseTestCase
         expect(analyzer.checkAndResetDirtyState(dirty)).andReturn(true);
 
         train_getSession(hsr, false, hs);
+
+        lock.acquireWriteLock();
 
         hs.setAttribute("dirty", dirty);
 

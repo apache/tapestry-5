@@ -22,6 +22,11 @@ import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 {
@@ -32,6 +37,74 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
     private final HttpServletRequest request;
 
     private final PerthreadManager perthreadManager;
+
+    private final Lock mapLock = new ReentrantLock();
+
+    private final Map<HttpSession, SessionLock> sessionToLock = new WeakHashMap<HttpSession, SessionLock>();
+
+    private class SessionLockImpl implements SessionLock
+    {
+
+        private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+        private boolean isReadLocked()
+        {
+            return lock.getReadHoldCount() != 0;
+        }
+
+        private boolean isWriteLocked()
+        {
+            return lock.isWriteLockedByCurrentThread();
+        }
+
+        public void acquireReadLock()
+        {
+            if (isReadLocked() || isWriteLocked())
+            {
+                return;
+            }
+
+            lock.readLock().lock();
+
+            perthreadManager.addThreadCleanupCallback(new Runnable()
+            {
+                public void run()
+                {
+                    // The read lock may have been released, if upgraded to a write lock.
+                    if (isReadLocked())
+                    {
+                        lock.readLock().unlock();
+                    }
+                }
+            });
+        }
+
+        public void acquireWriteLock()
+        {
+            if (isWriteLocked())
+            {
+                return;
+            }
+
+            if (isReadLocked())
+            {
+                lock.readLock().unlock();
+            }
+
+            // During this window, no lock is held, and the next call may block.
+
+            lock.writeLock().lock();
+
+            perthreadManager.addThreadCleanupCallback(new Runnable()
+            {
+                public void run()
+                {
+                    // This is the only way a write lock is unlocked, so no check is needed.
+                    lock.writeLock().unlock();
+                }
+            });
+        }
+    }
 
     public TapestrySessionFactoryImpl(
             @Symbol(SymbolConstants.CLUSTERED_SESSIONS)
@@ -55,11 +128,36 @@ public class TapestrySessionFactoryImpl implements TapestrySessionFactory
             return null;
         }
 
+        SessionLock lock = lockForSession(httpSession);
+
         if (clustered)
         {
-            return new ClusteredSessionImpl(request, httpSession, perthreadManager, analyzer);
+            return new ClusteredSessionImpl(request, httpSession, lock, analyzer);
         }
 
-        return new SessionImpl(request, httpSession, perthreadManager);
+        return new SessionImpl(request, httpSession, lock);
+    }
+
+    private SessionLock lockForSession(HttpSession session)
+    {
+        // Because WeakHashMap does not look thread safe to me, we use an exclusive
+        // lock.
+        mapLock.lock();
+
+        try
+        {
+            SessionLock result = sessionToLock.get(session);
+
+            if (result == null)
+            {
+                result = new SessionLockImpl();
+                sessionToLock.put(session, result);
+            }
+
+            return result;
+        } finally
+        {
+            mapLock.unlock();
+        }
     }
 }

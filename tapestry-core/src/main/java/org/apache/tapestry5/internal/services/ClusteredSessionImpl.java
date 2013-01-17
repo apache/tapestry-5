@@ -41,13 +41,12 @@ public class ClusteredSessionImpl extends SessionImpl
      */
     private final Map<String, Object> sessionAttributeCache = CollectionFactory.newMap();
 
-    public ClusteredSessionImpl(
-            HttpServletRequest request,
+    public ClusteredSessionImpl(HttpServletRequest request,
             HttpSession session,
-            PerthreadManager perthreadManager,
-            SessionPersistedObjectAnalyzer analyzer)
+            SessionLock lock, SessionPersistedObjectAnalyzer analyzer)
     {
-        super(request, session, perthreadManager);
+        super(request, session, lock);
+
         this.analyzer = analyzer;
     }
 
