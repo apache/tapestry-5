@@ -30,6 +30,7 @@ task processFiltered(type: Copy) {
             servletApiReleaseVersion: versions.servletapi,
             testngReleaseVersion: versions.testng,
             easymockReleaseVersion: versions.easymock,
+            slf4jReleaseVersion: versions.slf4j,
             year: new GregorianCalendar()[Calendar.YEAR].toString()
     ])
 }

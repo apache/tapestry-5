@@ -47,6 +47,9 @@ dependencies {
 
     compile "org.apache.tapestry:tapestry-core:@tapestryReleaseVersion@"
 
+    // Include the Log4j implementation for the SLF4J logging framework
+    runtime "org.slf4j:slf4j-log4j12:@slf4jReleaseVersion@"
+
     // This adds automatic compression of JavaScript and CSS in production mode:
     compile "org.apache.tapestry:tapestry-yuicompressor:@tapestryReleaseVersion@"
 

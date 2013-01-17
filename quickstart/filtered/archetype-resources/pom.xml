@@ -8,7 +8,7 @@
     <name>${artifactId} Tapestry 5 Application</name>
     #set( $D = '$' )
     <dependencies>
-        <!-- Too set up an application with a database, change the artifactId below to
+        <!-- To set up an application with a database, change the artifactId below to
              tapestry-hibernate, and add a dependency on your JDBC driver. You'll also
              need to add Hibernate configuration files, such as hibernate.cfg.xml. -->
         <dependency>
@@ -16,6 +16,14 @@
             <artifactId>tapestry-core</artifactId>
             <version>${D}{tapestry-release-version}</version>
         </dependency>
+
+        <!-- Include the Log4j implementation for the SLF4J logging framework -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${D}{slf4j-release-version}</version>
+        </dependency>
+
 
         <!-- This adds automatic compression of JavaScript and CSS when in production mode. -->
         <dependency>
@@ -141,5 +149,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <servlet-api-release-version>@servletApiReleaseVersion@</servlet-api-release-version>
         <testng-release-version>@testngReleaseVersion@</testng-release-version>
         <easymock-release-version>@easymockReleaseVersion@</easymock-release-version>
+        <slf4j-release-version>@slf4jReleaseVersion@</slf4j-release-version>
+
     </properties>
 </project>

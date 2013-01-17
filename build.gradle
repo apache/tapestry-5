@@ -20,7 +20,8 @@ project.ext.versions = [
     servletapi: "2.5",
     spock: "0.7-groovy-2.0",
     hibernate: "4.1.2.Final",
-    groovy: "2.0.5"
+    groovy: "2.0.5",
+    slf4j: "1.7.2"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
@@ -114,9 +115,7 @@ dependencies {
 
     // From tapestry-ioc:
     binaries "javax.inject:javax.inject:1"
-    binaries "org.slf4j:slf4j-api:1.6.1"
-    binaries "log4j:log4j:1.2.14"
-    binaries "org.slf4j:slf4j-log4j12:1.6.1"
+    binaries "org.slf4j:slf4j-api:${versions.slf4j}"
     binaries "commons-codec:commons-codec:1.5"
     binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
 }
@@ -159,6 +158,8 @@ subprojects {
         groovy "org.codehaus.groovy:groovy-all:${versions.groovy}"
 
         deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
+
+        testRuntime "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     }
 
     test {
