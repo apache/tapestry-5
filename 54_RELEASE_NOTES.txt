@@ -174,3 +174,10 @@ the typo (the missing 's').
 ## OperationTracker Extended
 
 The OperationTracker interface has had a new method added, for performing an IO Operation (that may throw IOException).
+
+## Session Locking
+
+Tapestry now uses a lock on access to the HttpSession; a shared read lock is acquired when reading session attribute
+names; an exclusive write lock is acquired when reading or writing session attributes. Locks, once acquired, are kept
+until the end of the request. A new configuration symbol can be used to turn this feature off, reverting to Tapestry
+5.3 behavior.
