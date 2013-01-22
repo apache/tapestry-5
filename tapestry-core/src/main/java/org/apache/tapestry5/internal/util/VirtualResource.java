@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Locale;
  * the contents of the virtual resource.
  *
  * @see org.apache.tapestry5.services.javascript.ModuleManager
- * @see org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler
+ * @see org.apache.tapestry5.internal.services.javascript.ModuleDispatcher
  * @since 5.4
  */
 public abstract class VirtualResource implements Resource

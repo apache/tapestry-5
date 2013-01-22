@@ -28,13 +28,13 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
@@ -211,10 +211,10 @@ public class JavaScriptModule
     }
 
     @Contribute(Dispatcher.class)
-    @AssetRequestDispatcher
-    public static void handleModuleAssetRequests(MappedConfiguration<String, AssetRequestHandler> configuration)
+    @Primary
+    public static void handleModuleRequests(OrderedConfiguration<Dispatcher> configuration)
     {
-        configuration.addInstance("modules", ModuleAssetRequestHandler.class);
+        configuration.addInstance("Module", ModuleDispatcher.class, "before:PageRender");
     }
 
     @Contribute(ModuleManager.class)

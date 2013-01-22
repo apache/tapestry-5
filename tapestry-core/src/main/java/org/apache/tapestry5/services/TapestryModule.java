@@ -380,6 +380,7 @@ public final class TapestryModule
         binder.bind(PageActivationContextCollector.class, PageActivationContextCollectorImpl.class);
         binder.bind(StringInterner.class, StringInternerImpl.class);
         binder.bind(ValueEncoderSource.class, ValueEncoderSourceImpl.class);
+        binder.bind(PathConstructor.class, PathConstructorImpl.class);
     }
 
     // ========================================================================
@@ -395,7 +396,7 @@ public final class TapestryModule
     // ========================================================================
 
     /**
-     * Contributes the factory for serveral built-in binding prefixes ("asset",
+     * Contributes the factory for several built-in binding prefixes ("asset",
      * "block", "component", "literal", prop",
      * "nullfieldstrategy", "message", "validate", "translate", "var").
      */

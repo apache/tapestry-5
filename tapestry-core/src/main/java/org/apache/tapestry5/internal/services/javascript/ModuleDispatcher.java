@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.IOException;
@@ -31,7 +33,7 @@ import java.io.IOException;
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
  * and searches for the corresponding JavaScript module.
  */
-public class ModuleAssetRequestHandler implements AssetRequestHandler, Dispatcher
+public class ModuleDispatcher implements Dispatcher
 {
     private final ModuleManager moduleManager;
 
@@ -39,20 +41,33 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler, Dispatche
 
     private final OperationTracker tracker;
 
-    public ModuleAssetRequestHandler(ModuleManager moduleManager, ResourceStreamer streamer, OperationTracker tracker)
+    private final String prefix;
+
+    public ModuleDispatcher(ModuleManager moduleManager,
+                            ResourceStreamer streamer,
+                            PathConstructor pathConstructor,
+                            @Symbol(SymbolConstants.APPLICATION_VERSION)
+                            String applicationVersion,
+                            OperationTracker tracker)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
+
+        prefix = pathConstructor.constructDispatchPath("modules", applicationVersion, "");
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
     {
-        return false;
-    }
+        String requestPath = request.getPath();
 
-    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
-    {
+        if (!requestPath.startsWith(prefix))
+        {
+            return false;
+        }
+
+        String extraPath = requestPath.substring(prefix.length());
+
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
         // to be a hierarchy of static JavaScript files here.
 
