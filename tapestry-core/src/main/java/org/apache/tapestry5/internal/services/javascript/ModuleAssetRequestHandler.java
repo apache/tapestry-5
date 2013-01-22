@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
-import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
@@ -31,7 +31,7 @@ import java.io.IOException;
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
  * and searches for the corresponding JavaScript module.
  */
-public class ModuleAssetRequestHandler implements AssetRequestHandler
+public class ModuleAssetRequestHandler implements AssetRequestHandler, Dispatcher
 {
     private final ModuleManager moduleManager;
 
@@ -44,6 +44,11 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
+    }
+
+    public boolean dispatch(Request request, Response response) throws IOException
+    {
+        return false;
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
