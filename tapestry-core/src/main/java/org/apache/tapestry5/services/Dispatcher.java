@@ -22,7 +22,7 @@ import java.io.IOException;
  * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered chain of command, with
  * each dispatcher responsible for recognizing requests that it can process.  This is the interface for the
  * MasterDispatcher service, which takes an ordered configuration of Dispatchers (that is, the chain of command
- * pattern). If no dispatcher processes the request, it will utltimately be passed off to the servlet container.
+ * pattern). If no dispatcher processes the request, it will ultimately be passed off to the servlet container.
  */
 @UsesOrderedConfiguration(Dispatcher.class)
 public interface Dispatcher
