@@ -258,4 +258,21 @@ public class RequestImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void request_secure_with_x_forwarded_proto() throws Exception
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        expect(sr.isSecure()).andReturn(false);
+        expect(sr.getHeader(RequestImpl.X_FORWARDED_PROTO_HEADER)).andReturn("https");
+
+        replay();
+
+        Request request = new RequestImpl(sr, CHARSET, null);
+
+        assertTrue(request.isSecure());
+
+        verify();
+    }
 }

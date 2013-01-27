@@ -34,6 +34,9 @@ public class RequestImpl implements Request
 
     static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
+    static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
+    static final String X_FORWARDED_PROTO_HTTPS = "https";
+
     private final HttpServletRequest request;
 
     private final String requestEncoding;
@@ -164,7 +167,8 @@ public class RequestImpl implements Request
 
     public boolean isSecure()
     {
-        return request.isSecure();
+        return request.isSecure() ||
+                X_FORWARDED_PROTO_HTTPS.equals(request.getHeader(X_FORWARDED_PROTO_HEADER));
     }
 
     public boolean isRequestedSessionIdValid()
