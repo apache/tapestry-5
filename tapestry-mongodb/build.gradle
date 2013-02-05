@@ -1,0 +1,24 @@
+description = "Basic MongoDB services for Tapestry, useable outside of a Tapestry web application"
+
+dependencies {
+    compile project(':tapestry-ioc')
+    compile project(':tapestry-test')
+
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '2.10.1'
+
+    testCompile group: 'org.jongo', name: 'jongo', version: '0.3'
+
+    testCompile "org.spockframework:spock-core:${versions.spock}"
+
+    testCompile "de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28"
+}
+
+test {
+    useJUnit()
+}
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.mongodb.MongodbModule'
+    }
+}
