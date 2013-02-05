@@ -1,5 +1,5 @@
 include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
 include "tapestry-beanvalidator", "tapestry-yuicompressor", "tapestry-jpa", "tapestry-kaptcha"
-include "tapestry-javadoc", "quickstart", "tapestry-clojure"
+include "tapestry-javadoc", "quickstart", "tapestry-clojure", "tapestry-mongodb"
 
