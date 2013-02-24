@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
 package org.apache.tapestry5;
 
 /**
- * Allows control over validation concerns of a Form component.
+ * Allows control over the validation concerns of a Form component.
  */
 public interface FormValidationControl
 {
     /**
-     * A convienience for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(String)}.
+     * A convenience method for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(String)}.
      */
     void recordError(String errorMessage);
 
     /**
-     * A convienience for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(Field, String)}.
+     * A convenience method for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(Field, String)}.
      */
     void recordError(Field field, String errorMessage);
 

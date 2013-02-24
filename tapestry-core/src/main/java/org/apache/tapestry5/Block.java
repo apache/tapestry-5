@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.apache.tapestry5;
  * template, a block is demarcated using the &lt;t:block&gt; or &lt;t:parameter&gt; elements. The interface defines no
  * methods, but the provided implementations of Block are capable of rendering their contents on demand.
  * <p/>
- * Tapestry includes coecions from String to {@link org.apache.tapestry5.Renderable} and {@link
+ * Tapestry includes coercions from String to {@link org.apache.tapestry5.Renderable} and {@link
  * org.apache.tapestry5.Renderable} to Block. This means that components that take Block parameters may be bound to
  * literal strings, to arbitrary numbers (or other objects, with the expectation that they will be converted to
  * strings), or to renderable objects such as components.

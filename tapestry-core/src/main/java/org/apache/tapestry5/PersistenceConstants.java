@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class PersistenceConstants
     public static final String CLIENT = "client";
 
     /**
-     * A that stores data in the session, but only until the next request. This is often
+     * The field's value is stored in the session, but only until the next request. This is often
      * used for confirmation messages presented to the user.
      */
     public static final String FLASH = "flash";

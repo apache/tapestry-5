@@ -1,4 +1,4 @@
-//  Copyright 2008, 2012 The Apache Software Foundation
+//  Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class TapestryMarkers
     public static final Marker EVENT_DISPATCH = MarkerFactory.getMarker("EVENT_DISPATCH");
 
     /**
-     * Marker for logging, at trace level verbose details about each individual {@link
+     * Marker for logging, at trace level, verbose details about each individual {@link
      * org.apache.tapestry5.runtime.RenderCommand} involved in rendering the page, as well as a final (debug level)
      * summary of command count and elapsed time.
      */

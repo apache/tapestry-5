@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
  * A binding is a connection between a component and its container (another component), that allows the embedded
  * component to gain access to <em>resources</em> defined by the container. Resources can represent any kind of value
  * that can be obtained from the parent component, but is often a JavaBean property that can be read and updated.
- * Different implementations of Binding as used to access different kinds of resources of the container.
+ * Different implementations of Binding are used to access different kinds of resources of the container.
  * <p/>
  * A binding ultimately must provide access to the underlying annotations. In most cases, there are no annotations, but
  * bindings that ultimate invoke methods or read and update fields must provide access to those annotations.

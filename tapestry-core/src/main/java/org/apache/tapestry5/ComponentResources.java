@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns the component which contains this component, or null for the root component. For mixins, this returns the
-     * componet to which the mixin is attached.
+     * component to which the mixin is attached.
      */
     Component getContainer();
 
@@ -216,7 +216,7 @@ public interface ComponentResources extends ComponentResourcesCommon
     List<String> getInformalParameterNames();
 
     /**
-     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercers} the bound
+     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coerces} the bound
      * value to the indicated type.
      *
      * @param name

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public interface ComponentResourcesCommon extends Locatable
     String getId();
 
     /**
-     * Return a string consisting the concatinated ids of all containing components, separated by periods. In addition,
+     * Return a string consisting the concatenated ids of all containing components, separated by periods. In addition,
      * nested ids are always all lower case. I.e., "foo.bar.baz". Returns null for the root component of a page.
      */
     String getNestedId();
@@ -51,7 +51,7 @@ public interface ComponentResourcesCommon extends Locatable
     String getCompleteId();
 
     /**
-     * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
+     * A convenience method for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
      * the context values into an {@link org.apache.tapestry5.EventContext}.
      * 
      * @param eventType
@@ -241,7 +241,7 @@ public interface ComponentResourcesCommon extends Locatable
      * @param context
      *            the activation context for the page. If omitted, the activation context is obtained from the
      *            target page
-     * @return link for a render request to the targetted page
+     * @return link for a render request to the targeted page
      * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(String)} or
      *             {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(String, Object[])}
      *             instead
@@ -260,7 +260,7 @@ public interface ComponentResourcesCommon extends Locatable
      * @param context
      *            the activation context for the page. If omitted, the activation context is obtained from the
      *            target page
-     * @return link for a render request to the targetted page
+     * @return link for a render request to the targeted page
      * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(Class)} or
      *             {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(Class, Object[])}
      *             instead

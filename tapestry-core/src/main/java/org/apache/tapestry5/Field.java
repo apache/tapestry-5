@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package org.apache.tapestry5;
  * Timing is important, as components may render multiple times, due to looping and other factors. Generally, a
  * component's {@link #getControlName()} will only be accurate after it has rendered.  In some cases, when generating
  * JavaScript for example, it is necessary to {@linkplain org.apache.tapestry5.services.Heartbeat#defer(Runnable) wait
- * until the end of the current Heartbeat} to ensure that all components have had thier chance to render.
+ * until the end of the current Heartbeat} to ensure that all components have had their chance to render.
  */
 public interface Field extends ClientElement
 {

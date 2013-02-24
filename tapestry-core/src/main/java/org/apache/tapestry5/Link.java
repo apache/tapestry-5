@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ public interface Link
     /**
      * Returns the absolute URL, which includes the scheme, hostname and possibly port (as per
      * {@link BaseURLSource#getBaseURL(boolean)}).
-     * By default, the scheme is chosen to match the current {@linkplain Request#isSecure() requests security}.
+     * By default, the scheme is chosen to match the {@linkplain Request#isSecure() security} of the current request.
      * <p/>
      * Note: the semantics of this method changed between Tapestry 5.1 and 5.2. Most code should use toString() or
      * {@link #toURI()} (which are equivalent) instead.
@@ -150,7 +150,7 @@ public interface Link
     void setSecurity(LinkSecurity newSecurity);
 
     /**
-     * Returns the current security for this link, which reflects whether the targetted page is itself secure or insecure.
+     * Returns the current security for this link, which reflects whether the targeted page is itself secure or insecure.
      *
      * @since 5.3
      */

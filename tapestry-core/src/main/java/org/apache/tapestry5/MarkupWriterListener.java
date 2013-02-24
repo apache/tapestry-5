@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.dom.Element;
 
 
 /**
- * An interface that allows objects to be alerted when after an element is started, and after an element is ended.
+ * An interface that allows objects to be alerted after an element is started, and after an element is ended.
  */
 public interface MarkupWriterListener
 {

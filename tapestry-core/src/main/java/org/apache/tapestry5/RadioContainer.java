@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.corelib.components.Radio;
 
 /**
  * A container of {@link Radio} components, used to identify the element name used when rendering the individual radio
- * buttons (all buttons in a group share the same element name) and to
+ * buttons. (All buttons in a group share the same element name.)
  */
 public interface RadioContainer
 {
@@ -31,7 +31,7 @@ public interface RadioContainer
     String getControlName();
 
     /**
-     * If true, then all buttons within the container should also be disabled.
+     * If true, then all radio buttons within the container should be disabled.
      */
     boolean isDisabled();
 

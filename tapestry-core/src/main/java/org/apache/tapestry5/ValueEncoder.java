@@ -19,7 +19,7 @@ package org.apache.tapestry5;
  * strings (typically IDs) and back. This mechanism is widely used in Tapestry
  * to allow you to work more seamlessly with objects rather than manually
  * managing the encoding and decoding process throughout your application.
- * 
+ * <p/>
  * Tapestry uses a ValueEncoder when generating an
  * {@link org.apache.tapestry5.EventContext} as part of a URL, and when
  * components (such as {@link org.apache.tapestry5.corelib.components.Select})

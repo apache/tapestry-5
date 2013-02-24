@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class TapestryFilter implements Filter
     private HttpServletRequestHandler handler;
 
     /**
-     * Key under which that Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the
+     * Key under which the Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the
      * ServletContext. This
      * allows other code, beyond Tapestry, to obtain the Registry and, from it, any Tapestry
      * services. Such code should
@@ -124,7 +124,7 @@ public class TapestryFilter implements Filter
     /**
      * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
      * additional
-     * initialization to occur. This implementation does nothing, and my be overriden in subclasses.
+     * initialization to occur. This implementation does nothing, and my be overridden in subclasses.
      *
      * @param registry
      *         from which services may be extracted
@@ -146,7 +146,7 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Overriden in subclasses to provide additional module classes beyond those normally located. This implementation
+     * Overridden in subclasses to provide additional module classes beyond those normally located. This implementation
      * returns an empty array.
      *
      * @since 5.3
@@ -175,7 +175,7 @@ public class TapestryFilter implements Filter
     /**
      * Shuts down and discards the registry. Invokes
      * {@link #destroy(org.apache.tapestry5.ioc.Registry)} to allow
-     * subclasses to peform any shutdown logic, then shuts down the registry, and removes it from
+     * subclasses to perform any shutdown logic, then shuts down the registry, and removes it from
      * the ServletContext.
      */
     public final void destroy()

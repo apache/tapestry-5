@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * Represents an HTTP content type. Allows to set various elements like the mime type, the character set, and other
+ * Represents an HTTP content type. Allows to set various elements like the MIME type, the character set, and other
  * parameters. This is similar to a number of other implementations of the same concept in JAF, etc. We have created
  * this simple implementation to avoid including the whole libraries.
  */
@@ -64,7 +64,7 @@ public final class ContentType
 
 
     /**
-     * Returns true only if the other object is another instance of ContentType, and has the ssame baseType, subType and
+     * Returns true only if the other object is another instance of ContentType, and has the same baseType, subType and
      * set of parameters.
      */
     @Override

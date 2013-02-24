@@ -34,8 +34,11 @@ public class SymbolConstants
      */
     public static final String EXECUTION_MODE = "tapestry.execution-mode";
     /**
-     * Indicates whether Tapestry is running in production mode or developer mode. The primary difference is how
-     * exceptions are reported.
+     * Indicates whether Tapestry is running in production mode or developer mode. This affects a large
+     * number of Tapestry behaviors related to performance and security, including how exceptions are
+     * reported, whether far-future expire headers are emitted, whether JavaScript files may be combined,
+     * whether JSON is compressed, whether component field & parameter values are shadowed to instance
+     * variables (to assist with debugging), and more.  
      */
     public static final String PRODUCTION_MODE = "tapestry.production-mode";
 
@@ -57,20 +60,21 @@ public class SymbolConstants
 
     /**
      * Controls whether whitespace is compressed by default in templates, or left as is. The factory default is to
-     * compress whitespace. This can be overridden using the xml:space attribute inside template elements.
+     * compress whitespace. (This can also be overridden using the xml:space attribute inside template elements.)
      */
     public static final String COMPRESS_WHITESPACE = "tapestry.compress-whitespace";
 
     /**
-     * Time interval defining how often Tapestry will check for updates to local files (including classes). This number
-     * can be raised in a production environment. The default is "1 s" (one second), which is appropriate for
-     * development.
+     * Time interval defining how often Tapestry will check for updates to local files (including classes).
+     * Starting with 5.3, this is only used when not running in production mode. The default is "1 s"
+     * (one second), which is appropriate for development. With Tapestry 5.2 and earlier this number
+     * should be raised in a production environment. 
      */
     public static final String FILE_CHECK_INTERVAL = "tapestry.file-check-interval";
 
     /**
      * Time interval that sets how long Tapestry will wait to obtain the exclusive lock needed to check local files. The
-     * default is "50 ms".
+     * default is "50 ms". Starting with 5.3, this is only used when not running in production mode.
      */
     public static final String FILE_CHECK_UPDATE_TIMEOUT = "tapestry.file-check-update-timeout";
 
@@ -146,7 +150,7 @@ public class SymbolConstants
 
     /**
      * If "true" (the default) then GZip compression is enabled for dynamic requests and for static assets. If you are
-     * using a server that handles GZip compression for you, or you don't want to ue the extra processing power
+     * using a server that handles GZip compression for you, or you don't want to use the extra processing power
      * necessary to GZIP requests, then override this to "false".
      *
      * @see #MIN_GZIP_SIZE
@@ -200,7 +204,7 @@ public class SymbolConstants
     public static final String START_PAGE_NAME = "tapestry.start-page-name";
 
     /**
-     * The default stylesheet automatically injected into every rendered HTML page.
+     * The default stylesheet automatically inserted into every rendered HTML page.
      *
      * @since 5.2.0
      * @deprecated Deprecated in 5.4 with no replacement; the stylesheet is now associated with the core {@link JavaScriptStack}.
@@ -390,7 +394,7 @@ public class SymbolConstants
      * many implementations of HttpSession are not thread safe, and often mutable objects are stored in the session and shared
      * between threads. Leaving this on the default will yield a more robust application; setting it to false may speed
      * up processing for more Ajax intensive applications (but care should then be given to ensuring that objects shared inside
-     * the session are themeselves immutable or thread-safe).
+     * the session are themselves immutable or thread-safe).
      *
      * @since 5.4
      */
