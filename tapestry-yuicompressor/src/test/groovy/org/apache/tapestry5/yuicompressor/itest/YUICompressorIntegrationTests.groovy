@@ -15,8 +15,10 @@
 package org.apache.tapestry5.yuicompressor.itest
 
 import org.apache.tapestry5.test.SeleniumTestCase
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 class YUICompressorIntegrationTests extends SeleniumTestCase
 {
     def AVAILABLE_OPTIONS = "css=.t-palette-available select";
