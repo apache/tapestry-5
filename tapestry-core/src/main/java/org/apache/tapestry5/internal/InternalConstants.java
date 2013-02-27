@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
@@ -69,6 +70,12 @@ public final class InternalConstants
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
 
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
+    
+    /**
+     * As above but to store the name of the page. Necessary for determining the correct
+     * {@link MarkupModel} for the response.
+     */
+    public static final String PAGE_NAME_ATTRIBUTE_NAME = "page-name";
 
     /**
      * Required MIME type for JSON responses. If this MIME type is not used, the client-side

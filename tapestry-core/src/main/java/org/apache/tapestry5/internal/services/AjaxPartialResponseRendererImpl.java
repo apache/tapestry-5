@@ -78,11 +78,11 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
             // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
             // separated. So we inform the stateful queue service what it needs to do here ...
 
-            ContentType pageContentType = (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
-
             ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
+            
+            String pageName = (String) request.getAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME);
 
-            MarkupWriter writer = factory.newPartialMarkupWriter(pageContentType);
+            MarkupWriter writer = factory.newPartialMarkupWriter(pageName);
 
             // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
 

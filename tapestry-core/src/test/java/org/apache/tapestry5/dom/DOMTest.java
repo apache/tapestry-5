@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.dom;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -950,5 +950,31 @@ public class DOMTest extends InternalBaseTestCase
 
         assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
                 "<ul><li>0</li><li>1</li><li>3</li></ul>");
+    }
+    
+    /**
+     * TAP5-2071
+     */
+    @Test
+    public void html5_void_elements()
+    {
+        final List<String> voidElements = CollectionFactory.newList("area", "base", "br", "col",
+                "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param",
+                "source", "track", "wbr");
+        
+        MarkupWriter writer = new MarkupWriterImpl(new Html5MarkupModel());
+        
+        writer.element("html");
+        
+        for(String element : voidElements)
+        {
+            writer.element(element);
+            writer.end();
+        }
+        
+        writer.end();
+        
+        assertEquals(writer.toString(),
+                "<html><area><base><br><col><command><embed><hr><img><input><keygen><link><meta><param><source><track><wbr></html>");
     }
 }

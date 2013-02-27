@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2008, 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,5 +29,10 @@ public enum EndTagStyle
      * in XML documents, but {@link org.apache.tapestry5.dom.DefaultMarkupModel} forces most tags to use {@link
      * #REQUIRE} for semi-obscure browser compatibility issues.
      */
-    ABBREVIATE
+    ABBREVIATE,
+    
+    /**
+     * No end tags for HTML5 compatibility.
+     */
+    VOID
 }

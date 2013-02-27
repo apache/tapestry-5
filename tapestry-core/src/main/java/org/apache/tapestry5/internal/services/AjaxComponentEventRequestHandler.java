@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ContentType;
+import java.io.IOException;
+
 import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
@@ -22,15 +23,18 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
-
-import java.io.IOException;
+import org.apache.tapestry5.services.Ajax;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Similar to {@link ComponentEventRequestHandlerImpl}, but built around the Ajax request cycle, where the action
  * request sends back an immediate JSON response containing the new content.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class AjaxComponentEventRequestHandler implements ComponentEventRequestHandler
 {
     private final RequestPageCache cache;
@@ -41,8 +45,6 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     private final ComponentEventResultProcessor resultProcessor;
 
-    private final PageContentTypeAnalyzer pageContentTypeAnalyzer;
-
     private final Environment environment;
 
     private final AjaxPartialResponseRenderer partialRenderer;
@@ -51,14 +53,13 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue, @Ajax
     ComponentEventResultProcessor resultProcessor, PageActivator pageActivator,
-                                            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
+                                            Environment environment,
                                             AjaxPartialResponseRenderer partialRenderer)
     {
         this.cache = cache;
         this.queue = queue;
         this.resultProcessor = resultProcessor;
         this.pageActivator = pageActivator;
-        this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         this.request = request;
         this.environment = environment;
         this.partialRenderer = partialRenderer;
@@ -90,9 +91,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
                 .getPageActivationContext(), interceptor))
             return;
 
-        ContentType contentType = pageContentTypeAnalyzer.findContentType(activePage);
-
-        request.setAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME, contentType);
+        request.setAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME, parameters.getActivePageName());
 
         Page containerPage = cache.get(parameters.getContainingPageName());
 

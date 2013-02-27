@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,32 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.DefaultMarkupModel;
+import org.apache.tapestry5.dom.Html5MarkupModel;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.parser.DTDToken;
+import org.apache.tapestry5.internal.parser.TemplateToken;
+import org.apache.tapestry5.internal.parser.TokenType;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 {
-    private final PageContentTypeAnalyzer analyzer;
+    private final PageContentTypeAnalyzer pageContentTypeAnalyzer;
 
     private final RequestPageCache cache;
+    
+    private final ComponentTemplateSource templateSource;
+    
+    private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer;
 
     private final MarkupModel htmlModel = new DefaultMarkupModel();
 
@@ -35,32 +48,41 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
     private final MarkupModel htmlPartialModel = new DefaultMarkupModel(true);
 
     private final MarkupModel xmlPartialModel = new XMLMarkupModel(true);
+    
+    private final MarkupModel html5Model = new Html5MarkupModel();
+    
+    private final MarkupModel html5PartialModel = new Html5MarkupModel(true);
 
-    public MarkupWriterFactoryImpl(PageContentTypeAnalyzer analyzer, RequestPageCache cache)
+    public MarkupWriterFactoryImpl(PageContentTypeAnalyzer pageContentTypeAnalyzer,
+            RequestPageCache cache, ComponentTemplateSource templateSource,
+            ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer)
     {
-        this.analyzer = analyzer;
+        this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         this.cache = cache;
+        this.templateSource = templateSource;
+        this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;
     }
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
-        return newMarkupWriter(contentType, false);
+        return constructMarkupWriter(contentType, false, false);
     }
 
     public MarkupWriter newPartialMarkupWriter(ContentType contentType)
     {
-        return newMarkupWriter(contentType, true);
+        return constructMarkupWriter(contentType, true, false);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    private MarkupWriter newMarkupWriter(ContentType contentType, boolean partial)
+    private MarkupWriter constructMarkupWriter(ContentType contentType, boolean partial, boolean HTML5)
     {
         boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
 
-        MarkupModel model = partial
-                            ? (isHTML ? htmlPartialModel : xmlPartialModel)
-                            : (isHTML ? htmlModel : xmlModel);
-
+        MarkupModel model;
+        
+        if(isHTML)
+            model = HTML5 ? (partial ? html5PartialModel : html5Model) : (partial ? htmlPartialModel : htmlModel);
+        else
+            model = partial ? xmlPartialModel : xmlModel;
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.
 
@@ -71,8 +93,53 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
     {
         Page page = cache.get(pageName);
 
-        ContentType contentType = analyzer.findContentType(page);
+        return newMarkupWriter(page);
+    }
+    
+    private boolean hasHTML5Doctype(Page page)
+    {
+        ComponentModel componentModel = page.getRootComponent().getComponentResources().getComponentModel();
+        
+        ComponentResourceSelector selector = componentRequestSelectorAnalyzer.buildSelectorForRequest();
+        
+        List<TemplateToken> tokens = templateSource.getTemplate(componentModel, selector).getTokens();
+        
+        DTDToken dtd = null;
+        
+        for(TemplateToken token : tokens)
+        {
+            if(token.getTokenType() == TokenType.DTD)
+            {
+                dtd = (DTDToken) token;
+                break;
+            }
+        }
+        
+        return dtd != null && dtd.name.equalsIgnoreCase("html") && dtd.publicId == null && dtd.systemId == null;
+    }
 
-        return newMarkupWriter(contentType);
+    public MarkupWriter newMarkupWriter(Page page)
+    {
+        boolean isHTML5 = hasHTML5Doctype(page);
+        
+        ContentType contentType = pageContentTypeAnalyzer.findContentType(page);
+        
+        return constructMarkupWriter(contentType, false, isHTML5);
+    }
+
+    public MarkupWriter newPartialMarkupWriter(Page page)
+    {
+        boolean isHTML5 = hasHTML5Doctype(page);
+        
+        ContentType contentType = pageContentTypeAnalyzer.findContentType(page);
+        
+        return constructMarkupWriter(contentType, true, isHTML5);
+    }
+
+    public MarkupWriter newPartialMarkupWriter(String pageName)
+    {
+        Page page = cache.get(pageName);
+        
+        return newPartialMarkupWriter(page);
     }
 }
