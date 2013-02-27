@@ -86,7 +86,7 @@ public class Alert implements Serializable
 
         if (duration == Duration.TRANSIENT)
         {
-            result.put("transient", true);
+            result.put("ephemeral", true);
         }
 
         if (duration.persistent)

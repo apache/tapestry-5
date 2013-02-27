@@ -117,10 +117,10 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
 
       container.append element
 
-      if data.transient
-        _.delay removeAlert, exports.TRAINSIENT_DURATION, container, element
+      if data.ephemeral
+        _.delay removeAlert, exports.TRANSIENT_DURATION, container, element
 
-    alert.TRAINSIENT_DURATION = 5000
+    alert.TRANSIENT_DURATION = 5000
 
     # Export the alert function
     exports = alert
