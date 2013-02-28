@@ -117,7 +117,7 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
 
       container.append element
 
-      if data.ephemeral
+      if data['transient']
         _.delay removeAlert, exports.TRANSIENT_DURATION, container, element
 
     alert.TRANSIENT_DURATION = 5000
