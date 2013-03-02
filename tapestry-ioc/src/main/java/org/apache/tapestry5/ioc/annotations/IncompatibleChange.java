@@ -22,7 +22,7 @@ import java.lang.annotation.*;
 public @interface IncompatibleChange
 {
     /**
-     * Identifies the release in which this signature of the method.
+     * Identifies the release in which the signature of the method was modified.
      *
      * @return a release number, e.g., "5.4"
      */
