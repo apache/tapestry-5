@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 /**
  * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It will try to honor it
@@ -52,6 +53,7 @@ public interface LocalizationSetter
      *            locale in effect for this request
      * @since 5.1.0.0
      */
+    @IncompatibleChange(release = "5.4", details = "typo is method name corrected")
     void setNonPersistentLocaleFromLocaleName(String localeName);
 
     /**
