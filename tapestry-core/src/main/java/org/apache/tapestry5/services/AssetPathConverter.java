@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,12 +27,13 @@ package org.apache.tapestry5.services;
 public interface AssetPathConverter
 {
     /**
-     * Returns true if the converter returns that same converted path for any specific asset path (in which case, the
-     * converted asset path may be cached in component instance variables more aggresively). This value should be false
+     * Returns true if the converter returns the exact same converted path for any specific asset path (in which case, the
+     * converted asset path may be cached in component instance variables more aggressively). This value should be false
      * if the converted path can vary for the same input path ... that is, if external factors (such as the identity of
-     * the user, or information obtained from the request) is involved in generating the final client URI.
+     * the user, or information obtained from the request) is involved in generating the final client URI. With a CDN
+     * this can sometimes be the case, where the user's identity may indicate which CDN server to vend the asset from.
      *
-     * @return true if invariant (and therefore cachable)
+     * @return true if invariant (and therefore cacheable)
      */
     boolean isInvariant();
 
