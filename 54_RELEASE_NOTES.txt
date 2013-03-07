@@ -181,3 +181,7 @@ Tapestry now uses a lock on access to the HttpSession; a shared read lock is acq
 names; an exclusive write lock is acquired when reading or writing session attributes. Locks, once acquired, are kept
 until the end of the request. A new configuration symbol can be used to turn this feature off, reverting to Tapestry
 5.3 behavior.
+
+## AssetPathConstructor
+
+The interface for AssetPathConstructor was changed incompatibly, to allow for individual asset checksums.

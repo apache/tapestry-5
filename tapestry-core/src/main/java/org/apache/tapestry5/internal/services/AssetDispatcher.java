@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.services.AssetRequestDispatcher;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,28 +55,21 @@ public class AssetDispatcher implements Dispatcher
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
-                           @Symbol(SymbolConstants.APPLICATION_VERSION)
-                           String applicationVersion,
-
                            @Symbol(SymbolConstants.APPLICATION_FOLDER)
                            String applicationFolder,
+
+                           PathConstructor pathConstructor,
 
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
                            String assetPathPrefix)
     {
-        StringBuilder pathPrefix = new StringBuilder("/");
-
-        if (! applicationFolder.equals("")) {
-            pathPrefix.append(applicationFolder).append("/");
-        }
-
-        pathPrefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
-
-        this.pathPrefix = pathPrefix.toString();
+        pathPrefix = pathConstructor.constructDispatchPath(assetPathPrefix, "");
 
         for (String path : configuration.keySet())
         {
-            String extendedPath = this.pathPrefix + path + "/";
+            String extendedPath = path.length() == 0
+                    ? pathPrefix
+                    : pathPrefix + path + "/";
 
             pathToHandler.put(extendedPath, configuration.get(path));
 

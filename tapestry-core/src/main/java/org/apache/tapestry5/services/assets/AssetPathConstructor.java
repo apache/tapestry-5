@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,14 @@
 
 package org.apache.tapestry5.services.assets;
 
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
+
 /**
  * Encapsulates the logic or creating the path portion of an asset URL, including
  * the application version.
  *
+ * @see org.apache.tapestry5.services.PathConstructor
  * @since 5.2.0
  */
 public interface AssetPathConstructor
@@ -30,10 +34,11 @@ public interface AssetPathConstructor
      * @param path
      *         within the virtual folder (should <em>not</em> start with a slash). May be the empty string.
      *         When non-blank, separated from the rest of the path with a slash.
-     * @return path portion of asset URL, including the context path, the application folder,
-     *         the /assets/ virtual folder, the application
-     *         version number,
-     *         the virtual folder, and the path extension
+     * @param resource
+     *         underlying resource for the asset path, used to compute checksums (since 5.4)
+     * @return path portion of asset URL, which is everything needed by the {@link org.apache.tapestry5.internal.services.AssetDispatcher}
+     *         to find and stream the resource
      */
-    String constructAssetPath(String virtualFolder, String path);
+    @IncompatibleChange(release = "5.4", details = "resource parameter added")
+    String constructAssetPath(String virtualFolder, String path, Resource resource);
 }

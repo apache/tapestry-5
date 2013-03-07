@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class ContextAssetRequestHandlerTest extends TestBase
     {
         ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null);
 
-        assertFalse(handler.handleAssetRequest(null, null, path), "Handler should return false for invalid path.");
+        assertFalse(handler.handleAssetRequest(null, null, "fake-checksum/" + path),
+            "Handler should return false for invalid path.");
     }
 }

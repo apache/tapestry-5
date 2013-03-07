@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class ClasspathAssetFactory implements AssetFactory
             path = path.substring(0, lastdotx + 1) + digestManager.getDigest(resource) + path.substring(lastdotx);
         }
 
-        return aliasManager.toClientURL(path);
+        return aliasManager.toClientURL(resource);
     }
 
     public Asset createAsset(Resource resource)

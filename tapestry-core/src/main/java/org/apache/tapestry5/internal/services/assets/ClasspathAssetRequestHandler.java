@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.internal.services.AssetResourceLocator;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
+import java.io.IOException;
+
 /**
  * A handler for asset requests for classpath assets (within a specific folder).
  * Each mapping of the {@link ClasspathAssetAliasManager} gets one of these.
- * 
+ *
  * @since 5.2.0
  */
 public class ClasspathAssetRequestHandler implements AssetRequestHandler
@@ -39,7 +38,7 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
     private final String baseFolder;
 
     public ClasspathAssetRequestHandler(ResourceStreamer streamer, AssetResourceLocator assetResourceLocator,
-            String baseFolder)
+                                        String baseFolder)
     {
         this.streamer = streamer;
         this.assetResourceLocator = assetResourceLocator;
@@ -48,15 +47,8 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        String assetPath = baseFolder + "/" + extraPath;
+        ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
 
-        Resource resource = assetResourceLocator.findClasspathResourceForPath(assetPath);
-
-        if (resource == null)
-            return false;
-
-        streamer.streamResource(resource);
-
-        return true;
+        return path.stream(assetResourceLocator.findClasspathResourceForPath(path.resourcePath));
     }
 }

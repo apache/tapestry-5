@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,14 +45,14 @@ public class ContextAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        if (illegal.matcher(extraPath).matches())
+        ChecksumPath path = new ChecksumPath(resourceStreamer, null, extraPath);
+
+        if (illegal.matcher(path.resourcePath).matches())
+        {
             return false;
+        }
 
-        Resource resource = rootContextResource.forFile(extraPath);
-
-        resourceStreamer.streamResource(resource);
-
-        return true;
+        return path.stream(rootContextResource.forFile(path.resourcePath));
     }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,7 +80,10 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     {
         String path = String.format("%s/%s.js", threadLocale.getLocale().toString(), stackName);
 
-        String stackURL = assetPathConstructor.constructAssetPath(RequestConstants.STACK_FOLDER, path);
+        // TODO: Come up with a virtual Resource that represents the actual combined contents. This may involve
+        // looping through the StreamableResourceSource and wrapping the result as a VirtualResource.
+
+        String stackURL = assetPathConstructor.constructAssetPath(RequestConstants.STACK_FOLDER, path, null);
 
         return CollectionFactory.newList(stackURL);
     }
