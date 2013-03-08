@@ -14,38 +14,41 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Handles requests for context assets, screening out attempt to
  * access anything under WEB-INF or META-INF.
- * 
+ *
  * @since 5.2.0
  */
 public class ContextAssetRequestHandler implements AssetRequestHandler
 {
     private final ResourceStreamer resourceStreamer;
 
+    private final AssetChecksumGenerator checksumGenerator;
     private final Resource rootContextResource;
 
     private final Pattern illegal = Pattern.compile("^(((web|meta)-inf.*)|(.*\\.tml$))", Pattern.CASE_INSENSITIVE);
 
-    public ContextAssetRequestHandler(ResourceStreamer resourceStreamer, Resource rootContextResource)
+    public ContextAssetRequestHandler(ResourceStreamer resourceStreamer, AssetChecksumGenerator checksumGenerator, Resource rootContextResource)
     {
         this.resourceStreamer = resourceStreamer;
+        this.checksumGenerator = checksumGenerator;
         this.rootContextResource = rootContextResource;
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        ChecksumPath path = new ChecksumPath(resourceStreamer, null, extraPath);
+        ChecksumPath path = new ChecksumPath(resourceStreamer, checksumGenerator, null, extraPath);
 
         if (illegal.matcher(path.resourcePath).matches())
         {

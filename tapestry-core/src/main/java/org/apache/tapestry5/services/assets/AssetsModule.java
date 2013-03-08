@@ -219,6 +219,8 @@ public class AssetsModule
                                                       @Autobuild
                                                       StackAssetRequestHandler stackAssetRequestHandler,
 
+                                                      AssetChecksumGenerator assetChecksumGenerator,
+
                                                       ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
                                                       AssetResourceLocator assetResourceLocator)
     {
@@ -228,11 +230,11 @@ public class AssetsModule
         {
             String path = mappings.get(folder);
 
-            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, path));
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, assetChecksumGenerator, path));
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,
-                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
+                new ContextAssetRequestHandler(streamer, assetChecksumGenerator, contextAssetFactory.getRootResource()));
 
         configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
 

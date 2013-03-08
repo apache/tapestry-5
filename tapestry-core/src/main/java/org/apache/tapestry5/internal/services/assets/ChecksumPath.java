@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 
 import java.io.IOException;
 
@@ -25,35 +26,56 @@ import java.io.IOException;
  *
  * @since 5.4
  */
-public class ChecksumPath {
-  public final String checksum;
+public class ChecksumPath
+{
+    public final String checksum;
 
-  public final String resourcePath;
+    public final String resourcePath;
 
-  private final ResourceStreamer streamer;
+    private final ResourceStreamer streamer;
 
-  public ChecksumPath(ResourceStreamer streamer, String baseFolder, String extraPath) {
-    this.streamer = streamer;
-    int slashx = extraPath.indexOf('/');
+    private final AssetChecksumGenerator assetChecksumGenerator;
 
-    checksum = extraPath.substring(0, slashx);
+    public ChecksumPath(ResourceStreamer streamer, AssetChecksumGenerator assetChecksumGenerator, String baseFolder, String extraPath)
+    {
+        this.streamer = streamer;
+        this.assetChecksumGenerator = assetChecksumGenerator;
+        int slashx = extraPath.indexOf('/');
 
-    String morePath = extraPath.substring(slashx + 1);
+        checksum = extraPath.substring(0, slashx);
 
-    resourcePath = baseFolder == null
-        ? morePath
-        : baseFolder + "/" + morePath;
-  }
+        String morePath = extraPath.substring(slashx + 1);
 
-  public boolean stream(Resource resource) throws IOException {
-    if (resource == null) {
-      return false;
+        resourcePath = baseFolder == null
+                ? morePath
+                : baseFolder + "/" + morePath;
     }
 
-    // TODO: Handle incorrect checksum ... maybe with a redirect?
+    /**
+     * If the resource exists and the checksum is correct, stream it to the client and return true. Otherwise,
+     * return false.
+     *
+     * @param resource
+     *         to stream
+     * @return true if streamed, false otherwise
+     * @throws IOException
+     */
+    public boolean stream(Resource resource) throws IOException
+    {
+        if (resource == null || !resource.exists())
+        {
+            return false;
+        }
 
-    streamer.streamResource(resource);
+        String actualChecksum = assetChecksumGenerator.generateChecksum(resource);
 
-    return true;
-  }
+        if (!actualChecksum.equals(checksum))
+        {
+            return false;
+        }
+
+        streamer.streamResource(resource);
+
+        return true;
+    }
 }
