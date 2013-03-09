@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.Resource;
 import java.io.IOException;
 
 /**
- * Generates a checksum of an arbitrary {@link org.apache.tapestry5.Resource} which can be incorporated into
+ * Generates a checksum of an arbitrary {@link org.apache.tapestry5.Resource} or {@link StreamableResource} which can be incorporated into
  * the {@linkplain org.apache.tapestry5.Asset#toClientURL() client URL} of an Asset.
  *
  * @since 5.4
@@ -34,4 +34,13 @@ public interface AssetChecksumGenerator
      * @throws IOException
      */
     String generateChecksum(Resource resource) throws IOException;
+
+    /**
+     * Given a streamable resource, generates an MD5 checksum of the resource's contents.
+     *
+     * @param resource
+     * @return checksum of contents
+     * @throws IOException
+     */
+    String generateChecksum(StreamableResource resource) throws IOException;
 }

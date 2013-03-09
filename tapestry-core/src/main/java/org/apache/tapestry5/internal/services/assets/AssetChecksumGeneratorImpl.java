@@ -47,7 +47,13 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
         StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, StreamableResourceProcessing.COMPRESSION_DISABLED,
                 tracker);
 
-        return toChecksum(streamable.openStream());
+        return generateChecksum(streamable);
+    }
+
+    @Override
+    public String generateChecksum(StreamableResource resource) throws IOException
+    {
+        return toChecksum(resource.openStream());
     }
 
     private String toChecksum(InputStream is) throws IOException
