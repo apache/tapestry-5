@@ -43,7 +43,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     if _.isElement content
       return content
 
-    if content.constructor?.name is "ElementWrapper"
+    if content instanceof ElementWrapper
       return content.$
 
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
