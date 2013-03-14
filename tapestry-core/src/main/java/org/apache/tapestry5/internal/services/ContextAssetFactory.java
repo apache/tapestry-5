@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetFactory;
@@ -29,7 +30,7 @@ import java.io.IOException;
  *
  * @see org.apache.tapestry5.internal.services.ContextResource
  */
-public class ContextAssetFactory implements AssetFactory
+public class ContextAssetFactory extends AbstractAssetFactory
 {
     private final AssetPathConstructor assetPathConstructor;
 
@@ -52,16 +53,19 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(Resource resource)
     {
+        if (invariant)
+        {
+            return createInvariantAsset(resource);
+        }
+
+        return createVariantAsset(resource);
+    }
+
+    private String defaultPath(Resource resource)
+    {
         try
         {
-            String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
-
-            if (invariant)
-            {
-                return createInvariantAsset(resource, defaultPath);
-            }
-
-            return createVariantAsset(resource, defaultPath);
+            return assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
         } catch (IOException ex)
         {
             throw new RuntimeException(String.format("Unable to construct asset path for %s: %s",
@@ -69,11 +73,18 @@ public class ContextAssetFactory implements AssetFactory
         }
     }
 
-    private Asset createInvariantAsset(final Resource resource, final String defaultPath)
+    private Asset createInvariantAsset(final Resource resource)
     {
         return new AbstractAsset(true)
         {
-            private String clientURL;
+            private final Invokable<String> clientURL = recomputable.create(new Invokable<String>()
+            {
+                @Override
+                public String invoke()
+                {
+                    return converter.convertAssetPath(defaultPath(resource));
+                }
+            });
 
             public Resource getResource()
             {
@@ -82,20 +93,24 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                if (clientURL == null)
-                {
-                    clientURL = converter.convertAssetPath(defaultPath);
-                }
-
-                return clientURL;
+                return clientURL.invoke();
             }
         };
     }
 
-    private Asset createVariantAsset(final Resource resource, final String defaultPath)
+    private Asset createVariantAsset(final Resource resource)
     {
         return new AbstractAsset(false)
         {
+            private final Invokable<String> defaultPath = recomputable.create(new Invokable<String>()
+            {
+                @Override
+                public String invoke()
+                {
+                    return defaultPath(resource);
+                }
+            });
+
             public Resource getResource()
             {
                 return resource;
@@ -103,7 +118,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return converter.convertAssetPath(defaultPath);
+                return converter.convertAssetPath(defaultPath.invoke());
             }
         };
     }

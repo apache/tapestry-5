@@ -31,6 +31,8 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  */
 public final class StylesheetLink
 {
+    private final Asset asset;
+
     private final String url;
 
     private final StylesheetOptions options;
@@ -39,29 +41,39 @@ public final class StylesheetLink
 
     public StylesheetLink(Asset asset)
     {
-        this(asset, null);
+        this(asset, null, null);
     }
 
     public StylesheetLink(Asset asset, StylesheetOptions options)
     {
-        this(asset.toClientURL(), options);
+        this(asset, null, options);
     }
 
     public StylesheetLink(String url)
     {
-        this(url, null);
+        this(null, url, null);
     }
 
     public StylesheetLink(String url, StylesheetOptions options)
     {
-        assert InternalUtils.isNonBlank(url);
+        this(null, url, options);
+    }
+
+    private StylesheetLink(Asset asset, String url, StylesheetOptions options)
+    {
+        assert asset != null || InternalUtils.isNonBlank(url);
+
+        this.asset = asset;
         this.url = url;
         this.options = options != null ? options : BLANK_OPTIONS;
     }
 
     public String getURL()
     {
-        return url;
+        // Only one of asset or url will be non-null.
+        // Starting in 5.4, we keep the asset around and ask it for its clientURL; this is because
+        // clientURLs can change if the content of the underlying Resource changes.
+        return asset != null ? asset.toClientURL() : url;
     }
 
     /**
@@ -76,7 +88,8 @@ public final class StylesheetLink
     /**
      * Invoked to add the stylesheet link to a container element.
      *
-     * @param container to add the new element to
+     * @param container
+     *         to add the new element to
      */
     public void add(Element container)
     {
@@ -90,7 +103,11 @@ public final class StylesheetLink
 
         String rel = options.ajaxInsertionPoint ? "stylesheet t-ajax-insertion-point" : "stylesheet";
 
-        container.element("link", "href", url, "rel", rel, "type", "text/css", "media", options.media);
+        container.element("link",
+                "href", getURL(),
+                "rel", rel,
+                "type", "text/css",
+                "media", options.media);
 
         if (hasCondition)
         {
@@ -115,7 +132,7 @@ public final class StylesheetLink
 
         StylesheetLink ssl = (StylesheetLink) obj;
 
-        return TapestryInternalUtils.isEqual(url, ssl.url) && TapestryInternalUtils.isEqual(options, ssl.options);
+        return TapestryInternalUtils.isEqual(getURL(), ssl.getURL()) && TapestryInternalUtils.isEqual(options, ssl.options);
     }
 
 }

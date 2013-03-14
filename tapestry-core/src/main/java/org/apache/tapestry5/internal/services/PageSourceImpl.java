@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -111,11 +112,18 @@ public class PageSourceImpl implements PageSource
     @PostInjection
     public void setupInvalidation(@ComponentClasses InvalidationEventHub classesHub,
                                   @ComponentTemplates InvalidationEventHub templatesHub,
-                                  @ComponentMessages InvalidationEventHub messagesHub)
+                                  @ComponentMessages InvalidationEventHub messagesHub,
+                                  ResourceChangeTracker resourceChangeTracker)
     {
         classesHub.clearOnInvalidation(pageCache);
         templatesHub.clearOnInvalidation(pageCache);
         messagesHub.clearOnInvalidation(pageCache);
+
+        // Because Assets can be injected into pages, and Assets are invalidated when
+        // an Asset's value is changed (partly due to the change, in 5.4, to include the asset's
+        // checksum as part of the asset URL), then when we notice a change to
+        // any Resource, it is necessary to discard all page instances.
+        resourceChangeTracker.clearOnInvalidation(pageCache);
     }
 
     public void clearCache()

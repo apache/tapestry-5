@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
@@ -25,6 +26,7 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Map;
 
 public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 {
@@ -34,16 +36,18 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 
     private final ResourceChangeTracker tracker;
 
+    private final Map<StreamableResource, String> cache = CollectionFactory.newConcurrentMap();
+
     public AssetChecksumGeneratorImpl(StreamableResourceSource streamableResourceSource, ResourceChangeTracker tracker)
     {
         this.streamableResourceSource = streamableResourceSource;
         this.tracker = tracker;
+
+        tracker.clearOnInvalidation(cache);
     }
 
     public String generateChecksum(Resource resource) throws IOException
     {
-        // TODO: Caching, and cache invalidation.
-
         StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, StreamableResourceProcessing.COMPRESSION_DISABLED,
                 tracker);
 
@@ -53,7 +57,16 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
     @Override
     public String generateChecksum(StreamableResource resource) throws IOException
     {
-        return toChecksum(resource.openStream());
+        String result = cache.get(resource);
+
+        if (result == null)
+        {
+            result = toChecksum(resource.openStream());
+
+            cache.put(resource, result);
+        }
+
+        return result;
     }
 
     private String toChecksum(InputStream is) throws IOException

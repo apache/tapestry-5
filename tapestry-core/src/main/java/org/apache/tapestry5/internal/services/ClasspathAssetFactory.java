@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2013 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathProvider;
@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.ClasspathProvider;
  * @see AssetDispatcher
  */
 @Marker(ClasspathProvider.class)
-public class ClasspathAssetFactory implements AssetFactory
+public class ClasspathAssetFactory extends AbstractAssetFactory
 {
     private final ClasspathAssetAliasManager aliasManager;
 
@@ -86,13 +86,21 @@ public class ClasspathAssetFactory implements AssetFactory
     }
 
     /**
-     * An invariant asset is normal, and only needs to compute the clientURL for the resource once.
+     * An invariant asset is normal, and only needs to compute the clientURL for the resource once (
+     * or when the underlying Resource's content has changed).
      */
     private Asset createInvariantAsset(final Resource resource)
     {
         return new AbstractAsset(true)
         {
-            private String clientURL;
+            private final Invokable<String> clientURL = recomputable.create(new Invokable<String>()
+            {
+                @Override
+                public String invoke()
+                {
+                    return clientURL(resource);
+                }
+            });
 
             public Resource getResource()
             {
@@ -101,12 +109,7 @@ public class ClasspathAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                if (clientURL == null)
-                {
-                    clientURL = clientURL(resource);
-                }
-
-                return clientURL;
+                return clientURL.invoke();
             }
         };
     }
