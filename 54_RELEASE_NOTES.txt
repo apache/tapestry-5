@@ -34,6 +34,20 @@ to running initialization functions, deals with DOM updates better, and is overa
 Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant `data-`
 attributes.
 
+## Asset Improvements
+
+Prior versions of Tapestry created cacheable URLs for Assets that incorporated the application version number. The
+Assets were served with a far-future expires header: the client browser would not even need to check to see
+if the asset had changed.
+
+Unfortunately, when any asset changed in a new deployment of the application, the version number needed to
+change, resulting in all assets being downloaded (because the application version number in their URLs changed).
+
+In this release, individual assets are given a checksum based on the asset's content. When the underlying
+file is changed, the asset will be served with the new URL, but unchanged assets will not be affected. This means
+that when redeploying your application, you'll see far less asset traffic, as most client web browsers will already
+have most assets (whose contents have not changed) in their local cache.
+
 ## ControlGroup Mixin
 
 This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
