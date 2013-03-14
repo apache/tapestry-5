@@ -34,7 +34,9 @@ define ["./dom", "./ajax", "jquery", "bootstrap"],
 
       $field.typeahead
         minLength: spec.minChars
-        source: (query, process) -> doLookup $field, spec.url, query, process
+        source: (query, process) ->
+          doLookup $field, spec.url, query, process
+          return
 
 
     exports = init
