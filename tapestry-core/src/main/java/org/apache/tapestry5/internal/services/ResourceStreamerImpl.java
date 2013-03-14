@@ -62,7 +62,9 @@ public class ResourceStreamerImpl implements ResourceStreamer
                                 OperationTracker tracker,
 
                                 @Symbol(SymbolConstants.PRODUCTION_MODE)
-                                boolean productionMode, ResourceChangeTracker resourceChangeTracker)
+                                boolean productionMode,
+
+                                ResourceChangeTracker resourceChangeTracker)
     {
         this.request = request;
         this.response = response;

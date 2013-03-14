@@ -16,10 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+
+import java.io.IOException;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
@@ -49,14 +52,21 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(Resource resource)
     {
-        String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
-
-        if (invariant)
+        try
         {
-            return createInvariantAsset(resource, defaultPath);
-        }
+            String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
 
-        return createVariantAsset(resource, defaultPath);
+            if (invariant)
+            {
+                return createInvariantAsset(resource, defaultPath);
+            }
+
+            return createVariantAsset(resource, defaultPath);
+        } catch (IOException ex)
+        {
+            throw new RuntimeException(String.format("Unable to construct asset path for %s: %s",
+                    resource, InternalUtils.toMessage(ex)), ex);
+        }
     }
 
     private Asset createInvariantAsset(final Resource resource, final String defaultPath)

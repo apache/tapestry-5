@@ -14,83 +14,52 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.assets.*;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.ResourceMinimizer;
+import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
-import java.io.*;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 public class StackAssetRequestHandler implements AssetRequestHandler
 {
-    private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
-
-    private final StreamableResourceSource streamableResourceSource;
-
-    private final JavaScriptStackSource javascriptStackSource;
-
     private final LocalizationSetter localizationSetter;
 
     private final ResponseCompressionAnalyzer compressionAnalyzer;
 
     private final ResourceStreamer resourceStreamer;
 
-    private final Pattern pathPattern = Pattern.compile("^(.+)/(.+)\\.js$");
-
-    // Two caches, keyed on extra path. Both are accessed only from synchronized blocks.
-    private final Map<String, StreamableResource> uncompressedCache = CollectionFactory.newCaseInsensitiveMap();
-
-    private final Map<String, StreamableResource> compressedCache = CollectionFactory.newCaseInsensitiveMap();
-
-    private final ResourceMinimizer resourceMinimizer;
+    // Group 1: checksum
+    // Group 2: locale
+    // Group 3: path
+    private final Pattern pathPattern = Pattern.compile("^(.+)/(.+)/(.+)\\.js$");
 
     private final OperationTracker tracker;
 
-    private final boolean minificationEnabled;
+    private final JavaScriptStackAssembler javaScriptStackAssembler;
 
-    private final ResourceChangeTracker resourceChangeTracker;
-
-    public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
-                                    JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
-                                    ResponseCompressionAnalyzer compressionAnalyzer, ResourceStreamer resourceStreamer,
-                                    ResourceMinimizer resourceMinimizer, OperationTracker tracker,
-
-                                    @Symbol(SymbolConstants.MINIFICATION_ENABLED)
-                                    boolean minificationEnabled, ResourceChangeTracker resourceChangeTracker)
+    public StackAssetRequestHandler(LocalizationSetter localizationSetter,
+                                    ResponseCompressionAnalyzer compressionAnalyzer,
+                                    ResourceStreamer resourceStreamer,
+                                    OperationTracker tracker,
+                                    JavaScriptStackAssembler javaScriptStackAssembler)
     {
-        this.streamableResourceSource = streamableResourceSource;
-        this.javascriptStackSource = javascriptStackSource;
         this.localizationSetter = localizationSetter;
         this.compressionAnalyzer = compressionAnalyzer;
         this.resourceStreamer = resourceStreamer;
-        this.resourceMinimizer = resourceMinimizer;
         this.tracker = tracker;
-        this.minificationEnabled = minificationEnabled;
-        this.resourceChangeTracker = resourceChangeTracker;
-    }
-
-    @PostInjection
-    public void listenToInvalidations(ResourceChangeTracker resourceChangeTracker)
-    {
-        resourceChangeTracker.clearOnInvalidation(uncompressedCache);
-        resourceChangeTracker.clearOnInvalidation(compressedCache);
+        this.javaScriptStackAssembler = javaScriptStackAssembler;
     }
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
@@ -115,114 +84,25 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private StreamableResource getResource(String extraPath, boolean compressed) throws IOException
     {
-        return compressed ? getCompressedResource(extraPath) : getUncompressedResource(extraPath);
-    }
-
-    private synchronized StreamableResource getCompressedResource(String extraPath) throws IOException
-    {
-        StreamableResource result = compressedCache.get(extraPath);
-
-        if (result == null)
-        {
-            StreamableResource uncompressed = getUncompressedResource(extraPath);
-            result = compressStream(uncompressed);
-            compressedCache.put(extraPath, result);
-        }
-
-        return result;
-    }
-
-    private synchronized StreamableResource getUncompressedResource(String extraPath) throws IOException
-    {
-        StreamableResource result = uncompressedCache.get(extraPath);
-
-        if (result == null)
-        {
-            result = assembleStackContent(extraPath);
-            uncompressedCache.put(extraPath, result);
-        }
-
-        return result;
-    }
-
-    private StreamableResource assembleStackContent(String extraPath) throws IOException
-    {
         Matcher matcher = pathPattern.matcher(extraPath);
 
         if (!matcher.matches())
-            throw new RuntimeException("Invalid path for a stack asset request.");
-
-        String localeName = matcher.group(1);
-        String stackName = matcher.group(2);
-
-        return assembleStackContent(localeName, stackName);
-    }
-
-    private StreamableResource assembleStackContent(String localeName, String stackName) throws IOException
-    {
-        localizationSetter.setNonPersistentLocaleFromLocaleName(localeName);
-
-        JavaScriptStack stack = javascriptStackSource.getStack(stackName);
-        List<Asset> libraries = stack.getJavaScriptLibraries();
-
-        StreamableResource stackContent = assembleStackContent(localeName, stackName, libraries);
-
-        return minificationEnabled ? resourceMinimizer.minimize(stackContent) : stackContent;
-    }
-
-    private StreamableResource assembleStackContent(String localeName, String stackName, List<Asset> libraries) throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(stream, "UTF-8");
-        PrintWriter writer = new PrintWriter(osw, true);
-        long lastModified = 0;
-
-        StringBuilder description = new StringBuilder(String.format("'%s' JavaScript stack, for locale %s, resources=", stackName, localeName));
-        String sep = "";
-
-        JSONArray paths = new JSONArray();
-
-        for (Asset library : libraries)
         {
-            String path = library.toClientURL();
-
-            paths.put(path);
-
-            writer.format("\n/* %s */;\n", path);
-
-            Resource resource = library.getResource();
-
-            description.append(sep).append(resource.toString());
-            sep = ", ";
-
-            StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
-                    StreamableResourceProcessing.FOR_AGGREGATION, resourceChangeTracker);
-
-            streamable.streamTo(stream);
-
-            lastModified = Math.max(lastModified, streamable.getLastModified());
+            throw new RuntimeException("Invalid path for a stack asset request.");
         }
 
-        writer.close();
+        // TODO: Extract the stack's aggregate checksum as well
 
-        return new StreamableResourceImpl(
-                description.toString(),
-                JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
-                new BytestreamCache(stream));
-    }
+        String localeName = matcher.group(2);
+        String stackName = matcher.group(3);
 
-    private StreamableResource compressStream(StreamableResource uncompressed) throws IOException
-    {
-        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-        OutputStream compressor = new BufferedOutputStream(new GZIPOutputStream(compressed));
+        // Yes, I have a big regret that the JavaScript stack stuff relies on this global, rather than
+        // having it passed around properly.
 
-        uncompressed.streamTo(compressor);
+        localizationSetter.setNonPersistentLocaleFromLocaleName(localeName);
 
-        compressor.close();
+        // TODO: Verify request checksum against actual
 
-        BytestreamCache cache = new BytestreamCache(compressed);
-
-        return new StreamableResourceImpl(uncompressed.getDescription(), JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSED,
-                uncompressed.getLastModified(), cache);
+        return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
     }
 }

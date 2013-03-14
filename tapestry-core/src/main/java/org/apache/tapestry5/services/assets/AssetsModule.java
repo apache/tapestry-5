@@ -48,6 +48,7 @@ public class AssetsModule
         binder.bind(ResourceChangeTracker.class, ResourceChangeTrackerImpl.class);
         binder.bind(ResourceMinimizer.class, MasterResourceMinimizer.class);
         binder.bind(AssetChecksumGenerator.class, AssetChecksumGeneratorImpl.class);
+        binder.bind(JavaScriptStackAssembler.class, JavaScriptStackAssemblerImpl.class);
     }
 
     @Contribute(AssetSource.class)

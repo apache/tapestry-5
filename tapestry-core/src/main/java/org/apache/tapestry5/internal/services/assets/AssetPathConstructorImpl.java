@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResource;
 
 import java.io.IOException;
 
@@ -60,7 +62,26 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         prefix = pathConstructor.constructClientPath(assetPathPrefix, "");
     }
 
-    public String constructAssetPath(String virtualFolder, String path, Resource resource)
+    public String constructStackAssetPath(String localeName, String path, StreamableResource resource) throws IOException
+    {
+        StringBuilder builder = new StringBuilder();
+
+        if (fullyQualified)
+        {
+            builder.append(baseURLSource.getBaseURL(request.isSecure()));
+        }
+
+        builder.append(prefix);  // ends with a slash
+
+        builder.append(RequestConstants.STACK_FOLDER).append("/");
+        builder.append(assetChecksumGenerator.generateChecksum(resource)).append("/");
+        builder.append(localeName).append("/");
+        builder.append(path);
+
+        return builder.toString();
+    }
+
+    public String constructAssetPath(String virtualFolder, String path, Resource resource) throws IOException
     {
         assert InternalUtils.isNonBlank(virtualFolder);
         assert path != null;
@@ -76,14 +97,11 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         builder.append(virtualFolder);
         builder.append("/");
 
-        try
-        {
-            builder.append(assetChecksumGenerator.generateChecksum(resource));
-        } catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        builder.append(assetChecksumGenerator.generateChecksum(resource));
 
+        // TODO: Under what conditions would the path ever be blank? Is this allowed? It may have made sense
+        // in 5.3, to allow access to a folder (to allow the client to build relative URLs), but that
+        // is no longer true in 5.4 because of the checksum in the URL.
         if (InternalUtils.isNonBlank(path))
         {
             builder.append('/');

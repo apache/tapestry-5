@@ -22,6 +22,8 @@ import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+
 public class ContextAssetFactoryTest extends InternalBaseTestCase
 {
     private final IdentityAssetPathConverter converter = new IdentityAssetPathConverter();
@@ -42,7 +44,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     }
 
     @Test
-    public void asset_client_URL()
+    public void asset_client_URL() throws IOException
     {
         Context context = mockContext();
         AssetPathConstructor apc = newMock(AssetPathConstructor.class);

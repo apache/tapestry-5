@@ -16,11 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -103,7 +105,14 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
                 String virtualPath = resourcePath.substring(pathPrefix.length() + 1);
 
-                return assetPathConstructor.constructAssetPath(virtualFolder, virtualPath, resource);
+                try
+                {
+                    return assetPathConstructor.constructAssetPath(virtualFolder, virtualPath, resource);
+                } catch (IOException ex)
+                {
+                    throw new RuntimeException(String.format("Unable to construct asset path for %s/%s (from %s): %s",
+                            virtualFolder, virtualPath, resource, InternalUtils.toMessage(ex)), ex);
+                }
             }
         }
 

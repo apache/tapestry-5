@@ -17,6 +17,8 @@ package org.apache.tapestry5.services.assets;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
+import java.io.IOException;
+
 /**
  * Encapsulates the logic or creating the path portion of an asset URL, including
  * the application version.
@@ -39,6 +41,20 @@ public interface AssetPathConstructor
      * @return path portion of asset URL, which is everything needed by the {@link org.apache.tapestry5.internal.services.AssetDispatcher}
      *         to find and stream the resource
      */
-    @IncompatibleChange(release = "5.4", details = "resource parameter added")
-    String constructAssetPath(String virtualFolder, String path, Resource resource);
+    @IncompatibleChange(release = "5.4", details = "resource parameter added, IOException may not be thrown")
+    String constructAssetPath(String virtualFolder, String path, Resource resource) throws IOException;
+
+    /**
+     * Constructs an asset path for a aggregated {@linkplain org.apache.tapestry5.services.javascript.JavaScriptStack stack}.
+     *
+     * @param localeName
+     *         name of the locale
+     * @param path
+     *         based on the name of the core stack
+     * @param resource
+     *         the aggregated stack (used when generating the checksum)
+     * @return path that identifies the checksum, locale, and path
+     * @since 5.4
+     */
+    String constructStackAssetPath(String localeName, String path, StreamableResource resource) throws IOException;
 }
