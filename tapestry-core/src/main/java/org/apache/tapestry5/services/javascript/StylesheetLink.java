@@ -93,12 +93,11 @@ public final class StylesheetLink
      */
     public void add(Element container)
     {
-        String condition = options.getCondition();
-        boolean hasCondition = InternalUtils.isNonBlank(condition);
+        boolean hasCondition = InternalUtils.isNonBlank(options.condition);
 
         if (hasCondition)
         {
-            container.raw(String.format("\n<!--[if %s]>\n", condition));
+            container.raw(String.format("\n<!--[if %s]>\n", options.condition));
         }
 
         String rel = options.ajaxInsertionPoint ? "stylesheet t-ajax-insertion-point" : "stylesheet";
