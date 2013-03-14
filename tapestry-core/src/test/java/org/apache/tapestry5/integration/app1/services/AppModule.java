@@ -281,6 +281,7 @@ public class AppModule
         configuration.add("PreApp", preappResource, "before:AppCatalog");
     }
 
+    // Remove this in 5.5:
     @Contribute(ResourceDigestGenerator.class)
     public static void protectPropertiesFiles(Configuration<String> configuration)
     {

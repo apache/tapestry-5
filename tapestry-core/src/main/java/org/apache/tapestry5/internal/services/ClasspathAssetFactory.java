@@ -24,16 +24,13 @@ import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathProvider;
 
 /**
- * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears that cache when
- * notified to do so by the {@link ResourceDigestManager}.
+ * Generates Assets for files on the classpath.
  *
  * @see AssetDispatcher
  */
 @Marker(ClasspathProvider.class)
 public class ClasspathAssetFactory implements AssetFactory
 {
-    private final ResourceDigestManager digestManager;
-
     private final ClasspathAssetAliasManager aliasManager;
 
     private final ClasspathResource rootResource;
@@ -42,10 +39,8 @@ public class ClasspathAssetFactory implements AssetFactory
 
     private final boolean invariant;
 
-    public ClasspathAssetFactory(ResourceDigestManager digestManager, ClasspathAssetAliasManager aliasManager,
-                                 AssetPathConverter converter)
+    public ClasspathAssetFactory(ClasspathAssetAliasManager aliasManager, AssetPathConverter converter)
     {
-        this.digestManager = digestManager;
         this.aliasManager = aliasManager;
         this.converter = converter;
 
@@ -56,27 +51,9 @@ public class ClasspathAssetFactory implements AssetFactory
 
     private String clientURL(Resource resource)
     {
-        String defaultPath = buildDefaultPath(resource);
+        String assetPath = aliasManager.toClientURL(resource);
 
-        return converter.convertAssetPath(defaultPath);
-    }
-
-    private String buildDefaultPath(Resource resource)
-    {
-        boolean requiresDigest = digestManager.requiresDigest(resource);
-
-        String path = resource.getPath();
-
-        if (requiresDigest)
-        {
-            // Resources with extensions go from foo/bar/baz.txt --> foo/bar/baz.CHECKSUM.txt
-
-            int lastdotx = path.lastIndexOf('.');
-
-            path = path.substring(0, lastdotx + 1) + digestManager.getDigest(resource) + path.substring(lastdotx);
-        }
-
-        return aliasManager.toClientURL(resource);
+        return converter.convertAssetPath(assetPath);
     }
 
     public Asset createAsset(Resource resource)

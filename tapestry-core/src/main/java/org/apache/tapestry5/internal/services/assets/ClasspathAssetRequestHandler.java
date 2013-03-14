@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.internal.services.AssetResourceLocator;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -34,18 +35,18 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
 {
     private final ResourceStreamer streamer;
 
-    private final AssetResourceLocator assetResourceLocator;
-
     private final AssetChecksumGenerator checksumGenerator;
+
+    private final AssetSource assetSource;
 
     private final String baseFolder;
 
-    public ClasspathAssetRequestHandler(ResourceStreamer streamer, AssetResourceLocator assetResourceLocator,
-                                        AssetChecksumGenerator checksumGenerator, String baseFolder)
+    public ClasspathAssetRequestHandler(ResourceStreamer streamer,
+                                        AssetChecksumGenerator checksumGenerator, AssetSource assetSource, String baseFolder)
     {
         this.streamer = streamer;
-        this.assetResourceLocator = assetResourceLocator;
         this.checksumGenerator = checksumGenerator;
+        this.assetSource = assetSource;
         this.baseFolder = baseFolder;
     }
 
@@ -53,6 +54,8 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
     {
         ChecksumPath path = new ChecksumPath(streamer, checksumGenerator, baseFolder, extraPath);
 
-        return path.stream(assetResourceLocator.findClasspathResourceForPath(path.resourcePath));
+        Resource resource = assetSource.resourceForPath(path.resourcePath);
+
+        return path.stream(resource);
     }
 }

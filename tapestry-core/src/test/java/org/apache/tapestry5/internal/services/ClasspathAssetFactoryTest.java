@@ -29,13 +29,9 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
     @Test
     public void asset_client_URL_is_cached()
     {
-        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
-
         Resource r = new ClasspathResource("foo/Bar.txt");
 
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
-
-        train_requiresDigest(digestManager, r, false);
 
         String expectedClientURL = "/context/asset/foo/Bar.txt";
 
@@ -43,7 +39,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, converter);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(aliasManager, converter);
 
         Asset asset = factory.createAsset(r);
 
@@ -59,12 +55,9 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
     @Test
     public void simple_asset_client_URL()
     {
-        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
 
         Resource r = new ClasspathResource("foo/Bar.txt");
-
-        train_requiresDigest(digestManager, r, false);
 
         String expectedClientURL = "/context/asset/foo/Bar.txt";
 
@@ -72,7 +65,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, new IdentityAssetPathConverter());
+        AssetFactory factory = new ClasspathAssetFactory(aliasManager, new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 
@@ -82,34 +75,4 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         verify();
     }
-
-    @Test
-    public void protected_asset_client_URL()
-    {
-        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
-        ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
-
-        Resource r = new ClasspathResource("foo/Bar.txt");
-
-        train_requiresDigest(digestManager, r, true);
-
-        expect(digestManager.getDigest(r)).andReturn("ABC123");
-
-        String expectedClientURL = "/context/asset/foo/Bar.ABC123.txt";
-
-        expect(aliasManager.toClientURL(r)).andReturn(expectedClientURL);
-
-        replay();
-
-        AssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, new IdentityAssetPathConverter());
-
-        Asset asset = factory.createAsset(r);
-
-        assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), expectedClientURL);
-        assertEquals(asset.toString(), expectedClientURL);
-
-        verify();
-    }
-
 }

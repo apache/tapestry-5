@@ -22,13 +22,16 @@ import java.net.URL;
  * Responsible for determining which classpath resources require checksums, and for generating checksums for such
  * resources.
  * <p/>
- * The service's configuration identifies which file extensions will be secured using an checksum. The default list is
- * "class" and "tml".
+ * The service's configuration identifies which file extensions will be secured using an checksum. The default list
+ * (in Tapestry 5.3) is
+ * "class" and "tml". Note that in 5.4, there are no longer any contributions to this service by Tapestry, and
+ * that the service is not normally instantiated: it is maintained for backwards compatibility, in case
+ * applications or third-party modules make a contribution.
  *
  * @see org.apache.tapestry5.ioc.internal.util.ClasspathResource
  * @see org.apache.tapestry5.internal.services.ClasspathAssetFactory
  * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving
- *             to /META-INF/assets/.
+ *             to /META-INF/assets/, and content checksums inside asset URLs
  */
 @UsesConfiguration(String.class)
 public interface ResourceDigestGenerator
@@ -36,6 +39,8 @@ public interface ResourceDigestGenerator
     /**
      * Examines the path (typically, the file name extension at the end of the path) to determine if a checksum is
      * required for the path. The path is {@link org.apache.tapestry5.ioc.Resource} style, without a leading slash.
+     * <p/>
+     * As of Tapestry 5.4, simply returns false.
      */
     boolean requiresDigest(String path);
 
@@ -44,6 +49,8 @@ public interface ResourceDigestGenerator
      * This digest will be incorporated into the URL provided to the client, to verify that the client has been
      * "granted" access to this resource. This is only used for resources where {@link #requiresDigest(String)} is
      * true.
+     * <p/>
+     * As of Tapestry 5.4, simply returns null.
      *
      * @param url
      * @return the digest for the resource

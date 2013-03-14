@@ -55,9 +55,6 @@ public class AssetDispatcher implements Dispatcher
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
-                           @Symbol(SymbolConstants.APPLICATION_FOLDER)
-                           String applicationFolder,
-
                            PathConstructor pathConstructor,
 
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)

@@ -253,11 +253,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(RequestHandler.class);
     }
 
-    protected final ResourceDigestGenerator mockResourceDigestGenerator()
-    {
-        return newMock(ResourceDigestGenerator.class);
-    }
-
     protected final Response mockResponse()
     {
         return newMock(Response.class);
@@ -616,11 +611,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         };
 
         setAnswer(answer);
-    }
-
-    protected final void train_requiresDigest(ResourceDigestGenerator generator, String path, boolean requiresDigest)
-    {
-        expect(generator.requiresDigest(path)).andReturn(requiresDigest);
     }
 
     protected final void train_service(RequestHandler handler, Request request, Response response, boolean result)

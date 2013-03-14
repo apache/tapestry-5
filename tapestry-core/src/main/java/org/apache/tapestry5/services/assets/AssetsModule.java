@@ -222,8 +222,9 @@ public class AssetsModule
 
                                                       AssetChecksumGenerator assetChecksumGenerator,
 
-                                                      ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
-                                                      AssetResourceLocator assetResourceLocator)
+                                                      ClasspathAssetAliasManager classpathAssetAliasManager,
+                                                      ResourceStreamer streamer,
+                                                      AssetSource assetSource)
     {
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
@@ -231,7 +232,7 @@ public class AssetsModule
         {
             String path = mappings.get(folder);
 
-            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, assetChecksumGenerator, path));
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetChecksumGenerator, assetSource, path));
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,

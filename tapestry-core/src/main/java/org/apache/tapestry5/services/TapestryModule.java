@@ -312,7 +312,7 @@ public final class TapestryModule
         binder.bind(Cookies.class, CookiesImpl.class);
         binder.bind(FieldValidatorDefaultSource.class, FieldValidatorDefaultSourceImpl.class);
         binder.bind(RequestGlobals.class, RequestGlobalsImpl.class);
-        binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);
+        binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);  // Remove in 5.5
         binder.bind(ValidationConstraintGenerator.class, ValidationConstraintGeneratorImpl.class);
         binder.bind(EnvironmentalShadowBuilder.class, EnvironmentalShadowBuilderImpl.class);
         binder.bind(ComponentSource.class, ComponentSourceImpl.class);
@@ -1946,33 +1946,6 @@ public final class TapestryModule
         };
 
         configuration.add("Secure", secureFilter);
-    }
-
-    /**
-     * Configures the extensions that will require a digest to be downloaded via
-     * the asset dispatcher. Most resources
-     * are "safe", they don't require a digest. For unsafe resources, the digest
-     * is incorporated into the URL to ensure
-     * that the client side isn't just "fishing".
-     * <p/>
-     * The extensions must be all lower case.
-     * <p/>
-     * This contributes "class", "properties" and "tml" (the template extension).
-     *
-     * @param configuration
-     *         collection of extensions
-     */
-    public static void contributeResourceDigestGenerator(Configuration<String> configuration)
-    {
-        // Java class files always require a digest.
-        configuration.add("class");
-
-        // Even though properties don't contain sensible data we should protect
-        // them.
-        configuration.add("properties");
-
-        // Likewise, we don't want people fishing for templates.
-        configuration.add(TapestryConstants.TEMPLATE_EXTENSION);
     }
 
     public static void contributeTemplateParser(MappedConfiguration<String, URL> config)

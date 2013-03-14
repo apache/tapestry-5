@@ -60,10 +60,9 @@ public class InternalModule
         binder.bind(EndOfRequestEventHub.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(ComponentModelSource.class);
-        binder.bind(AssetResourceLocator.class);
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
-        binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
+        binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);  // Remove in Tapestry 5.5
         binder.bind(RequestPageCache.class, RequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
         binder.bind(InternalComponentInvalidationEventHub.class);
