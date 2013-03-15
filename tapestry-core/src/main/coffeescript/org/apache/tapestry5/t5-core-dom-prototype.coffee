@@ -375,6 +375,10 @@ define ["_", "./utils", "prototype"], (_, utils) ->
         @element.setValue newValue
 
       return current
+      
+    # Returns true if a checkbox is checked
+    checked: ->
+      return @element.checked
 
     # Stores or retrieves meta-data on the element. With one parameter, the current value for the name
     # is returned (or undefined). With two parameters, the meta-data is updated and the previous value returned.
