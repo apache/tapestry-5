@@ -316,7 +316,7 @@ task coffeeScriptDocs(type: Exec) {
     })*.files.flatten()
 
     // Needs to be installed via "npm install -g docco"
-    executable "docco"
+    executable isWindows() ? "docco.cmd" : "docco"
     args "--output", outputDir
     args sources
 
@@ -473,4 +473,8 @@ if (canDeploy) {
 
 boolean isSnapshot() {
     project.version.contains("SNAPSHOT")
+}
+
+boolean isWindows() {
+    System.properties['os.name'].toLowerCase().contains('windows')
 }
