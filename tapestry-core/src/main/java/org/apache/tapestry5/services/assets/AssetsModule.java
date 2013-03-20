@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,19 @@
 package org.apache.tapestry5.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.AssetConstants;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.assets.*;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+
+import java.util.Map;
 
 /**
  * @since 5.3
@@ -33,21 +37,45 @@ public class AssetsModule
 {
     public static void bind(ServiceBinder binder)
     {
+        binder.bind(AssetFactory.class, ClasspathAssetFactory.class).withSimpleId();
+        binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
+        binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
+        binder.bind(ClasspathAssetAliasManager.class, ClasspathAssetAliasManagerImpl.class);
+        binder.bind(AssetSource.class, AssetSourceImpl.class);
         binder.bind(StreamableResourceSource.class, StreamableResourceSourceImpl.class);
         binder.bind(CompressionAnalyzer.class, CompressionAnalyzerImpl.class);
         binder.bind(ContentTypeAnalyzer.class, ContentTypeAnalyzerImpl.class);
         binder.bind(ResourceChangeTracker.class, ResourceChangeTrackerImpl.class);
         binder.bind(ResourceMinimizer.class, MasterResourceMinimizer.class);
+        binder.bind(AssetChecksumGenerator.class, AssetChecksumGeneratorImpl.class);
+        binder.bind(JavaScriptStackAssembler.class, JavaScriptStackAssemblerImpl.class);
     }
+
+    @Contribute(AssetSource.class)
+    public void configureStandardAssetFactories(MappedConfiguration<String, AssetFactory> configuration,
+                                                @ContextProvider
+                                                AssetFactory contextAssetFactory,
+
+                                                @ClasspathProvider
+                                                AssetFactory classpathAssetFactory)
+    {
+        configuration.add(AssetConstants.CONTEXT, contextAssetFactory);
+        configuration.add(AssetConstants.CLASSPATH, classpathAssetFactory);
+    }
+
 
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
     public static void setupSymbols(MappedConfiguration<String, Object> configuration)
     {
+        // Minification may be enabled in production mode, but unless a minimizer is provided, nothing
+        // will change.
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, true);
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, false);
+
+        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
     }
 
     // The use of decorators is to allow third-parties to get their own extensions
@@ -155,5 +183,112 @@ public class AssetsModule
         configuration.add("image/gif", false);
         configuration.add("image/png", false);
         configuration.add("application/x-shockwave-flash", false);
+    }
+
+    @Marker(ContextProvider.class)
+    public static AssetFactory buildContextAssetFactory(ApplicationGlobals globals,
+
+                                                        AssetPathConstructor assetPathConstructor,
+
+                                                        AssetPathConverter converter)
+    {
+        return new ContextAssetFactory(assetPathConstructor, globals.getContext(), converter);
+    }
+
+    @Contribute(ClasspathAssetAliasManager.class)
+    public static void addApplicationAndTapestryMappings(MappedConfiguration<String, String> configuration,
+
+                                                         @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                         String appPackage)
+    {
+        configuration.add("tapestry", "org/apache/tapestry5");
+
+        configuration.add("app", toPackagePath(appPackage));
+    }
+
+    /**
+     * Contributes an handler for each mapped classpath alias, as well handlers for context assets
+     * and stack assets (combined {@link org.apache.tapestry5.services.javascript.JavaScriptStack} files).
+     */
+    @Contribute(Dispatcher.class)
+    @AssetRequestDispatcher
+    public static void provideBuiltinAssetDispatchers(MappedConfiguration<String, AssetRequestHandler> configuration,
+
+                                                      @ContextProvider
+                                                      AssetFactory contextAssetFactory,
+
+                                                      @Autobuild
+                                                      StackAssetRequestHandler stackAssetRequestHandler,
+
+                                                      AssetChecksumGenerator assetChecksumGenerator,
+
+                                                      ClasspathAssetAliasManager classpathAssetAliasManager,
+                                                      ResourceStreamer streamer,
+                                                      AssetSource assetSource)
+    {
+        Map<String, String> mappings = classpathAssetAliasManager.getMappings();
+
+        for (String folder : mappings.keySet())
+        {
+            String path = mappings.get(folder);
+
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetChecksumGenerator, assetSource, path));
+        }
+
+        configuration.add(RequestConstants.CONTEXT_FOLDER,
+                new ContextAssetRequestHandler(streamer, assetChecksumGenerator, contextAssetFactory.getRootResource()));
+
+        configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
+
+    }
+
+    @Contribute(ClasspathAssetAliasManager.class)
+    public static void addMappingsForLibraryVirtualFolders(MappedConfiguration<String, String> configuration,
+                                                           ComponentClassResolver resolver)
+    {
+        // Each library gets a mapping or its folder automatically
+
+        Map<String, String> folderToPackageMapping = resolver.getFolderToPackageMapping();
+
+        for (String folder : folderToPackageMapping.keySet())
+        {
+            // This is the 5.3 version, which is still supported:
+            configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
+
+            // This is the 5.4 version; once 5.3 support is dropped, this can be simplified, and the
+            // "meta/" prefix stripped out.
+
+            String folderSuffix = folder.equals("") ? folder : "/" + folder;
+
+            configuration.add("meta" + folderSuffix, "META-INF/assets" + folderSuffix);
+        }
+    }
+
+    private static String toPackagePath(String packageName)
+    {
+        return packageName.replace('.', '/');
+    }
+
+    /**
+     * Contributes:
+     * <dl>
+     * <dt>ClientLocalization</dt>
+     * <dd>A virtual resource of formatting symbols for decimal numbers</dd>
+     * <dt>Core</dt>
+     * <dd>Built in messages used by Tapestry's default validators and components</dd>
+     * <dt>AppCatalog</dt>
+     * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
+     * <dt>
+     *
+     * @since 5.2.0
+     */
+    @Contribute(ComponentMessagesSource.class)
+    public static void setupGlobalMessageCatalog(AssetSource assetSource,
+                                                 @Symbol(SymbolConstants.APPLICATION_CATALOG)
+                                                 Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
+    {
+        configuration.add("ClientLocalization", new ClientLocalizationMessageResource());
+        configuration.add("Core", assetSource.resourceForPath("org/apache/tapestry5/core.properties"));
+        configuration.add("AppCatalog", applicationCatalog);
     }
 }

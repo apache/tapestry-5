@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,18 +15,22 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+
+import java.io.IOException;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
  *
  * @see org.apache.tapestry5.internal.services.ContextResource
  */
-public class ContextAssetFactory implements AssetFactory
+public class ContextAssetFactory extends AbstractAssetFactory
 {
     private final AssetPathConstructor assetPathConstructor;
 
@@ -49,21 +53,38 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(Resource resource)
     {
-        String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath());
-
         if (invariant)
         {
-            return createInvariantAsset(resource, defaultPath);
+            return createInvariantAsset(resource);
         }
 
-        return createVariantAsset(resource, defaultPath);
+        return createVariantAsset(resource);
     }
 
-    private Asset createInvariantAsset(final Resource resource, final String defaultPath)
+    private String defaultPath(Resource resource)
+    {
+        try
+        {
+            return assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
+        } catch (IOException ex)
+        {
+            throw new RuntimeException(String.format("Unable to construct asset path for %s: %s",
+                    resource, InternalUtils.toMessage(ex)), ex);
+        }
+    }
+
+    private Asset createInvariantAsset(final Resource resource)
     {
         return new AbstractAsset(true)
         {
-            private String clientURL;
+            private final Invokable<String> clientURL = recomputable.create(new Invokable<String>()
+            {
+                @Override
+                public String invoke()
+                {
+                    return converter.convertAssetPath(defaultPath(resource));
+                }
+            });
 
             public Resource getResource()
             {
@@ -72,20 +93,24 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                if (clientURL == null)
-                {
-                    clientURL = converter.convertAssetPath(defaultPath);
-                }
-
-                return clientURL;
+                return clientURL.invoke();
             }
         };
     }
 
-    private Asset createVariantAsset(final Resource resource, final String defaultPath)
+    private Asset createVariantAsset(final Resource resource)
     {
         return new AbstractAsset(false)
         {
+            private final Invokable<String> defaultPath = recomputable.create(new Invokable<String>()
+            {
+                @Override
+                public String invoke()
+                {
+                    return defaultPath(resource);
+                }
+            });
+
             public Resource getResource()
             {
                 return resource;
@@ -93,7 +118,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return converter.convertAssetPath(defaultPath);
+                return converter.convertAssetPath(defaultPath.invoke());
             }
         };
     }

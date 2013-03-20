@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LockSupport;
@@ -75,6 +77,11 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
         }
 
         registry = StrategyRegistry.newInstance(AssetFactory.class, byResourceClass);
+    }
+
+    @PostInjection
+    public void clearCacheWhenResourcesChange(ResourceChangeTracker tracker) {
+        tracker.clearOnInvalidation(cache);
     }
 
     public Asset getClasspathAsset(String path)

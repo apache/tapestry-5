@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010, 2011, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
@@ -76,20 +81,28 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     }
 
     @Test(dataProvider = "to_client_url_data")
-    public void to_client_url(String resourcePath, String expectedClientURL)
+    public void to_client_url(String resourcePath, String expectedClientURL) throws IOException
     {
         Request request = mockRequest();
+        Resource r = mockResource();
+
+        expect(r.getPath()).andReturn(resourcePath);
 
         BaseURLSource baseURLSource = newMock(BaseURLSource.class);
+        PathConstructor pc = newMock(PathConstructor.class);
+        AssetChecksumGenerator acg = newMock(AssetChecksumGenerator.class);
+
+        expect(pc.constructClientPath("assets", "")).andReturn("/ctx/assets/");
+        expect(acg.generateChecksum(r)).andReturn("abcde");
 
         replay();
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(
                 new AssetPathConstructorImpl(request,
-                baseURLSource, "/ctx", APP_VERSION, "", false, "assets"), configuration());
+                        baseURLSource, false, "assets", pc, acg), configuration());
 
-        String expectedPath = "/ctx/assets/" + APP_VERSION + "/" + expectedClientURL;
-        assertEquals(manager.toClientURL(resourcePath), expectedPath);
+        String expectedPath = "/ctx/assets/" + expectedClientURL.replace("#", "abcde");
+        assertEquals(manager.toClientURL(r), expectedPath);
 
         verify();
     }
@@ -97,11 +110,17 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void failure_if_path_not_in_mapped_alias_folder()
     {
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
+        AssetPathConstructor pc = newMock(AssetPathConstructor.class);
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(pc, configuration());
+        Resource resource = mockResource();
+
+        expect(resource.getPath()).andReturn("org/example/icons/flag.gif").atLeastOnce();
+
+        replay();
 
         try
         {
-            manager.toClientURL("org/example/icons/flag.gif");
+            manager.toClientURL(resource);
             unreachable();
         } catch (UnknownValueException ex)
         {
@@ -110,6 +129,8 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
             assertListsEquals(ex.getAvailableValues().getValues(), "com/example/mylib", "org/apache/tapestry5",
                     "org/apache/tapestry5/internal");
         }
+
+        verify();
     }
 
     @DataProvider
@@ -117,10 +138,10 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         return new Object[][]
                 {
-                        {"com/example/mylib/Foo.bar", "mylib/Foo.bar"},
-                        {"com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar"},
-                        {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar"},
-                        {"org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar"},};
+                        {"com/example/mylib/Foo.bar", "mylib/#/Foo.bar"},
+                        {"com/example/mylib/nested/Foo.bar", "mylib/#/nested/Foo.bar"},
+                        {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/#/Foo.bar"},
+                        {"org/apache/tapestry5/Foo.bar", "tapestry/#/Foo.bar"},};
     }
 
 }

@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 5.2
  */
 @Scope(ScopeConstants.PERTHREAD)
-public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
+public class RequestPageCacheImpl implements RequestPageCache, Runnable
 {
     private final Logger logger;
 
@@ -54,10 +54,10 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
     @PostInjection
     public void listenForThreadCleanup(PerthreadManager perthreadManager)
     {
-        perthreadManager.addThreadCleanupListener(this);
+        perthreadManager.addThreadCleanupCallback(this);
     }
 
-    public void threadDidCleanup()
+    public void run()
     {
         for (Page page : cache.values())
         {

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,17 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-
+import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class ContextAssetRequestHandlerTest extends TestBase
 {
@@ -26,18 +32,42 @@ public class ContextAssetRequestHandlerTest extends TestBase
     public Object[][] invalid_paths()
     {
         return new Object[][]
-        {
-        { "web-Inf/classes/hibernate.cfg.xml" },
-        { "Meta-Inf/MANIFEST.mf" },
-        { "Index.tml" },
-        { "folder/FolderIndex.TML" } };
+                {
+                        {"web-Inf/classes/hibernate.cfg.xml"},
+                        {"Meta-Inf/MANIFEST.mf"},
+                        {"Index.tml"},
+                        {"folder/FolderIndex.TML"}};
     }
 
     @Test(dataProvider = "invalid_paths")
     public void ensure_assets_are_rejected(String path) throws IOException
     {
-        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null);
+        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null, null);
 
-        assertFalse(handler.handleAssetRequest(null, null, path), "Handler should return false for invalid path.");
+        assertFalse(handler.handleAssetRequest(null, null, "fake-checksum/" + path),
+                "Handler should return false for invalid path.");
+    }
+
+    @Test
+    public void invalid_checksums_are_treated_as_if_missing() throws IOException
+    {
+        ResourceStreamer streamer = newMock(ResourceStreamer.class);
+        AssetChecksumGenerator gen = newMock(AssetChecksumGenerator.class);
+        Resource root = newMock(Resource.class);
+        Resource r = newMock(Resource.class);
+        Request req = newMock(Request.class);
+        Response res = newMock(Response.class);
+
+        expect(root.forFile("folder/icon.png")).andReturn(r);
+        expect(r.exists()).andReturn(true);
+        expect(gen.generateChecksum(r)).andReturn("def");
+
+        replay();
+
+        AssetRequestHandler h = new ContextAssetRequestHandler(streamer, gen, root);
+
+        assertFalse(h.handleAssetRequest(req, res, "abc/folder/icon.png"));
+
+        verify();
     }
 }

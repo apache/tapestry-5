@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010, 2011, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,18 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResource;
+
+import java.io.IOException;
 
 public class AssetPathConstructorImpl implements AssetPathConstructor
 {
@@ -29,64 +36,52 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     private final BaseURLSource baseURLSource;
 
+    private final AssetChecksumGenerator assetChecksumGenerator;
+
     private final boolean fullyQualified;
 
     public AssetPathConstructorImpl(Request request,
                                     BaseURLSource baseURLSource,
 
-                                    @Symbol(SymbolConstants.CONTEXT_PATH)
-                                    String contextPath,
-
-                                    @Symbol(SymbolConstants.APPLICATION_VERSION)
-                                    String applicationVersion,
-
-                                    @Symbol(SymbolConstants.APPLICATION_FOLDER)
-                                    String applicationFolder,
-
                                     @Symbol(SymbolConstants.ASSET_URL_FULL_QUALIFIED)
                                     boolean fullyQualified,
 
                                     @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                                    String assetPathPrefix)
+                                    String assetPathPrefix,
+
+                                    PathConstructor pathConstructor,
+
+                                    AssetChecksumGenerator assetChecksumGenerator)
     {
         this.request = request;
         this.baseURLSource = baseURLSource;
 
         this.fullyQualified = fullyQualified;
+        this.assetChecksumGenerator = assetChecksumGenerator;
 
-        StringBuilder prefix = new StringBuilder();
-
-        boolean needsSlash = false;
-
-        if (contextPath.length() == 0) {
-            prefix.append("/");
-        }
-        else {
-            prefix.append(contextPath);
-            needsSlash = true;
-        }
-
-        if (!applicationFolder.equals("")) {
-
-            if (needsSlash) {
-                prefix.append("/");
-            }
-
-            prefix.append(applicationFolder).append("/");
-
-            needsSlash = false;
-        }
-
-        if (needsSlash) {
-            prefix.append("/");
-        }
-
-        prefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
-
-        this.prefix = prefix.toString();
+        prefix = pathConstructor.constructClientPath(assetPathPrefix, "");
     }
 
-    public String constructAssetPath(String virtualFolder, String path)
+    public String constructStackAssetPath(String localeName, String path, StreamableResource resource) throws IOException
+    {
+        StringBuilder builder = new StringBuilder();
+
+        if (fullyQualified)
+        {
+            builder.append(baseURLSource.getBaseURL(request.isSecure()));
+        }
+
+        builder.append(prefix);  // ends with a slash
+
+        builder.append(RequestConstants.STACK_FOLDER).append("/");
+        builder.append(assetChecksumGenerator.generateChecksum(resource)).append("/");
+        builder.append(localeName).append("/");
+        builder.append(path);
+
+        return builder.toString();
+    }
+
+    public String constructAssetPath(String virtualFolder, String path, Resource resource) throws IOException
     {
         assert InternalUtils.isNonBlank(virtualFolder);
         assert path != null;
@@ -100,7 +95,13 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         builder.append(prefix);
         builder.append(virtualFolder);
+        builder.append("/");
 
+        builder.append(assetChecksumGenerator.generateChecksum(resource));
+
+        // TODO: Under what conditions would the path ever be blank? Is this allowed? It may have made sense
+        // in 5.3, to allow access to a folder (to allow the client to build relative URLs), but that
+        // is no longer true in 5.4 because of the checksum in the URL.
         if (InternalUtils.isNonBlank(path))
         {
             builder.append('/');

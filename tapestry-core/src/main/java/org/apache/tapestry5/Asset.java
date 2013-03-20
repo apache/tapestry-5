@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,10 +34,14 @@ public interface Asset
      * Returns a URL that can be passed, unchanged, to the client in order for it to access the resource. The same value
      * is returned from <code>toString()</code>.
      * <p/>
-     * Tapestry's built-in asset types (context and classpath) always incorporate a version number as part of the path,
+     * Tapestry's built-in asset types (context and classpath) always incorporate a checksum as part of the path,
      * and alternate implementations are encouraged to do so as well. In addition, Tapestry ensures that context and
      * classpath assets have a far-future expires header (to ensure aggressive caching by the client).
-     * <p/>
+     * <p/>Note that starting in Tapestry 5.4, it is expected that Asset instances recognize
+     * when the underlying Resource's content has changed, and update the clientURL to reflect the new content's
+     * checksum. This wasn't an issue in earlier releases where the clientURL incorporated a version number.
+     *
+     * @see org.apache.tapestry5.services.AssetSource
      */
     String toClientURL();
 

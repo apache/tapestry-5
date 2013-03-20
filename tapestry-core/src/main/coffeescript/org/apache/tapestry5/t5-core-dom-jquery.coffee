@@ -43,7 +43,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     if _.isElement content
       return content
 
-    if content.constructor?.name is "ElementWrapper"
+    if content instanceof ElementWrapper
       return content.$
 
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
@@ -331,6 +331,10 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
         @$.val newValue
 
       return current
+      
+    # Returns true if a checkbox is checked
+    checked: ->
+      return @$.is(':checked')
 
     # Stores or retrieves meta-data on the element. With one parameter, the current value for the name
     # is returned (or undefined). With two parameters, the meta-data is updated and the previous value returned.

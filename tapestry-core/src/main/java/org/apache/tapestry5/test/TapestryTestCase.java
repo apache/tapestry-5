@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -251,11 +251,6 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final RequestHandler mockRequestHandler()
     {
         return newMock(RequestHandler.class);
-    }
-
-    protected final ResourceDigestGenerator mockResourceDigestGenerator()
-    {
-        return newMock(ResourceDigestGenerator.class);
     }
 
     protected final Response mockResponse()
@@ -618,11 +613,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         setAnswer(answer);
     }
 
-    protected final void train_requiresDigest(ResourceDigestGenerator generator, String path, boolean requiresDigest)
-    {
-        expect(generator.requiresDigest(path)).andReturn(requiresDigest);
-    }
-
     protected final void train_service(RequestHandler handler, Request request, Response response, boolean result)
             throws IOException
     {
@@ -644,14 +634,12 @@ public abstract class TapestryTestCase extends IOCTestCase
         response.setDateHeader(headerName, date);
     }
 
+    /**
+     * @deprecated Deprecated in 5.4 with no replacement.
+     */
     protected final void train_toClientURL(Asset asset, String URL)
     {
         expect(asset.toClientURL()).andReturn(URL).atLeastOnce();
-    }
-
-    protected final void train_toClientURL(ClasspathAssetAliasManager manager, String resourcePath, String clientURL)
-    {
-        expect(manager.toClientURL(resourcePath)).andReturn(clientURL);
     }
 
     protected final void train_toRedirectURI(Link link, String URI)

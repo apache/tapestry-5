@@ -21,7 +21,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * An object, derived from a {@link Resource}, that can be streamed (ultimately, to a client web browser).
+ * An object, derived from a {@link Resource}, that can be streamed (ultimately, to a client web browser). In addition,
+ * a StreamableResource may be transformed (by the stack of interceptors around {@link StreamableResourceSource}: this
+ * includes transforming a Resource (example: CoffeeScript to JavaScript compilation), as well as aggregation
+ * and compression.
  *
  * @since 5.3
  */
@@ -39,7 +42,7 @@ public interface StreamableResource
     CompressionStatus getCompression();
 
     /**
-     * Returns the MIME content type, e.g., "image/jpeg".
+     * Returns the MIME content type, for example, "image/jpeg".
      */
     String getContentType();
 

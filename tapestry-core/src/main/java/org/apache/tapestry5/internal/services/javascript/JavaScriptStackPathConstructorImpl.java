@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,22 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import java.util.List;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssembler;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+
+import java.io.IOException;
+import java.util.List;
 
 public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathConstructor
 {
@@ -35,6 +38,8 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     private final AssetPathConstructor assetPathConstructor;
 
     private final JavaScriptStackSource javascriptStackSource;
+
+    private final JavaScriptStackAssembler assembler;
 
     private final boolean combineScripts;
 
@@ -47,14 +52,15 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     };
 
     public JavaScriptStackPathConstructorImpl(ThreadLocale threadLocale, AssetPathConstructor assetPathConstructor,
-            JavaScriptStackSource javascriptStackSource,
-
-            @Symbol(SymbolConstants.COMBINE_SCRIPTS)
-            boolean combineScripts)
+                                              JavaScriptStackSource javascriptStackSource,
+                                              JavaScriptStackAssembler assembler,
+                                              @Symbol(SymbolConstants.COMBINE_SCRIPTS)
+                                              boolean combineScripts)
     {
         this.threadLocale = threadLocale;
         this.assetPathConstructor = assetPathConstructor;
         this.javascriptStackSource = javascriptStackSource;
+        this.assembler = assembler;
         this.combineScripts = combineScripts;
     }
 
@@ -65,7 +71,9 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
         List<Asset> assets = stack.getJavaScriptLibraries();
 
         if (assets.size() > 1 && combineScripts)
+        {
             return combinedStackURL(stackName);
+        }
 
         return toPaths(assets);
     }
@@ -73,16 +81,27 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     private List<String> toPaths(List<Asset> assets)
     {
         assert assets != null;
+
         return F.flow(assets).map(toPath).toList();
     }
 
     private List<String> combinedStackURL(String stackName)
     {
-        String path = String.format("%s/%s.js", threadLocale.getLocale().toString(), stackName);
+        try
+        {
+            StreamableResource streamable = assembler.assembleJavaScriptResourceForStack(stackName, false);
 
-        String stackURL = assetPathConstructor.constructAssetPath(RequestConstants.STACK_FOLDER, path);
+            String path = stackName + ".js";
 
-        return CollectionFactory.newList(stackURL);
+            String stackURL = assetPathConstructor.constructStackAssetPath(threadLocale.getLocale().toString(), path, streamable);
+
+            return CollectionFactory.newList(stackURL);
+        } catch (IOException ex)
+        {
+            throw new RuntimeException(String.format("Unable to construct path for '%s' JavaScript stack: %s",
+                    stackName,
+                    InternalUtils.toMessage(ex)), ex);
+        }
     }
 
 }

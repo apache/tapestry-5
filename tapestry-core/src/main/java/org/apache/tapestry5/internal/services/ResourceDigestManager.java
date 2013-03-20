@@ -25,14 +25,22 @@ import org.apache.tapestry5.services.ResourceDigestGenerator;
  * <p/>
  * Note that the name and role of this class changed (and diminished) quite a bit in Tapestry 5.3. It is now focused on
  * determining which files require a digest, and which what the digests are for resources.
+ * <p/>
+ * Further, in 5.4, this service has been stripped down to an unused placeholder; it only present to prevent
+ * errors where modules have contributed a String extension to protected (even though the service is internal). As of
+ * 5.4, all assets have a built-in checksum in the URL directly (in 5.3 and earlier, the URL included the application
+ * version number).
  *
  * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving to /META-INF/assets/.
+ *             To be removed in 5.5.
  */
 public interface ResourceDigestManager extends InvalidationEventHub
 {
     /**
      * Returns true if the path requires that the client URL for the resource include a digest to validate that the
      * client is authorized to access the resource.
+     *
+     * As of 5.4, simply returns false.
      *
      * @param resource
      * @return true if digest is required for the resource
@@ -42,6 +50,8 @@ public interface ResourceDigestManager extends InvalidationEventHub
 
     /**
      * Returns the digest for the given path.
+     * <p/>
+     * As of 5.4, simple returns null.
      *
      * @param resource
      * @return the digest, or null if the resource does not exist

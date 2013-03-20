@@ -39,10 +39,6 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
-import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
-import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
-import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
-import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
@@ -75,14 +71,11 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.compatibility.CompatibilityModule;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 import org.apache.tapestry5.services.javascript.JavaScriptModule;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
@@ -309,7 +302,6 @@ public final class TapestryModule
 
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(ClasspathAssetAliasManager.class, ClasspathAssetAliasManagerImpl.class);
         binder.bind(PersistentLocale.class, PersistentLocaleImpl.class);
         binder.bind(ApplicationStateManager.class, ApplicationStateManagerImpl.class);
         binder.bind(ApplicationStatePersistenceStrategySource.class,
@@ -317,11 +309,10 @@ public final class TapestryModule
         binder.bind(BindingSource.class, BindingSourceImpl.class);
         binder.bind(FieldValidatorSource.class, FieldValidatorSourceImpl.class);
         binder.bind(ApplicationGlobals.class, ApplicationGlobalsImpl.class);
-        binder.bind(AssetSource.class, AssetSourceImpl.class);
         binder.bind(Cookies.class, CookiesImpl.class);
         binder.bind(FieldValidatorDefaultSource.class, FieldValidatorDefaultSourceImpl.class);
         binder.bind(RequestGlobals.class, RequestGlobalsImpl.class);
-        binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);
+        binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);  // Remove in 5.5
         binder.bind(ValidationConstraintGenerator.class, ValidationConstraintGeneratorImpl.class);
         binder.bind(EnvironmentalShadowBuilder.class, EnvironmentalShadowBuilderImpl.class);
         binder.bind(ComponentSource.class, ComponentSourceImpl.class);
@@ -354,7 +345,6 @@ public final class TapestryModule
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withSimpleId();
         binder.bind(TapestrySessionFactory.class, TapestrySessionFactoryImpl.class);
-        binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
@@ -363,7 +353,6 @@ public final class TapestryModule
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
         binder.bind(Dispatcher.class, AssetDispatcher.class).withSimpleId();
-        binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
@@ -374,7 +363,6 @@ public final class TapestryModule
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
         binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
         binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
-        binder.bind(AssetFactory.class, ClasspathAssetFactory.class).withSimpleId();
         binder.bind(MetaDataLocator.class, MetaDataLocatorImpl.class);
         binder.bind(ComponentClassCache.class, ComponentClassCacheImpl.class);
         binder.bind(PageActivationContextCollector.class, PageActivationContextCollectorImpl.class);
@@ -441,76 +429,6 @@ public final class TapestryModule
         configuration.add(BindingConstants.SYMBOL, symbolBindingFactory);
     }
 
-    @Contribute(ClasspathAssetAliasManager.class)
-    public static void addMappingsForLibraryVirtualFolders(MappedConfiguration<String, String> configuration,
-                                                           ComponentClassResolver resolver)
-    {
-        // Each library gets a mapping or its folder automatically
-
-        Map<String, String> folderToPackageMapping = resolver.getFolderToPackageMapping();
-
-        for (String folder : folderToPackageMapping.keySet())
-        {
-            // This is the 5.3 version, which is still supported:
-            configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
-
-            // This is the 5.4 version; once 5.3 support is dropped, this can be simplified, and the
-            // "meta/" prefix stripped out.
-
-            String folderSuffix = folder.equals("") ? folder : "/" + folder;
-
-            configuration.add("meta" + folderSuffix, "META-INF/assets" + folderSuffix);
-        }
-    }
-
-    @Contribute(ClasspathAssetAliasManager.class)
-    public static void addApplicationAndTapestryMappings(MappedConfiguration<String, String> configuration,
-
-                                                         @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                                         String appPackage)
-    {
-        configuration.add("tapestry", "org/apache/tapestry5");
-
-        configuration.add("app", toPackagePath(appPackage));
-    }
-
-    /**
-     * Contributes an handler for each mapped classpath alias, as well handlers for context assets
-     * and stack assets (combined {@link JavaScriptStack} files).
-     */
-    @Contribute(Dispatcher.class)
-    @AssetRequestDispatcher
-    public static void provideBuiltinAssetDispatchers(MappedConfiguration<String, AssetRequestHandler> configuration,
-
-                                                      @ContextProvider
-                                                      AssetFactory contextAssetFactory,
-
-                                                      @Autobuild
-                                                      StackAssetRequestHandler stackAssetRequestHandler,
-
-                                                      ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
-                                                      AssetResourceLocator assetResourceLocator)
-    {
-        Map<String, String> mappings = classpathAssetAliasManager.getMappings();
-
-        for (String folder : mappings.keySet())
-        {
-            String path = mappings.get(folder);
-
-            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, path));
-        }
-
-        configuration.add(RequestConstants.CONTEXT_FOLDER,
-                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
-
-        configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
-
-    }
-
-    private static String toPackagePath(String packageName)
-    {
-        return packageName.replace('.', '/');
-    }
 
     @Contribute(ComponentClassResolver.class)
     public static void setupCoreAndAppLibraries(Configuration<LibraryMapping> configuration,
@@ -1221,15 +1139,6 @@ public final class TapestryModule
         return service;
     }
 
-    @Marker(ContextProvider.class)
-    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals,
-
-                                                 AssetPathConstructor assetPathConstructor,
-
-                                                 AssetPathConverter converter)
-    {
-        return new ContextAssetFactory(assetPathConstructor, globals.getContext(), converter);
-    }
 
     /**
      * Builds the PropBindingFactory as a chain of command. The terminator of
@@ -1598,16 +1507,6 @@ public final class TapestryModule
             ApplicationStatePersistenceStrategy sessionStategy)
     {
         configuration.add("session", sessionStategy);
-    }
-
-    public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration, @ContextProvider
-    AssetFactory contextAssetFactory,
-
-                                      @ClasspathProvider
-                                      AssetFactory classpathAssetFactory)
-    {
-        configuration.add(AssetConstants.CONTEXT, contextAssetFactory);
-        configuration.add(AssetConstants.CLASSPATH, classpathAssetFactory);
     }
 
     /**
@@ -2049,33 +1948,6 @@ public final class TapestryModule
         configuration.add("Secure", secureFilter);
     }
 
-    /**
-     * Configures the extensions that will require a digest to be downloaded via
-     * the asset dispatcher. Most resources
-     * are "safe", they don't require a digest. For unsafe resources, the digest
-     * is incorporated into the URL to ensure
-     * that the client side isn't just "fishing".
-     * <p/>
-     * The extensions must be all lower case.
-     * <p/>
-     * This contributes "class", "properties" and "tml" (the template extension).
-     *
-     * @param configuration
-     *         collection of extensions
-     */
-    public static void contributeResourceDigestGenerator(Configuration<String> configuration)
-    {
-        // Java class files always require a digest.
-        configuration.add("class");
-
-        // Even though properties don't contain sensible data we should protect
-        // them.
-        configuration.add("properties");
-
-        // Likewise, we don't want people fishing for templates.
-        configuration.add(TapestryConstants.TEMPLATE_EXTENSION);
-    }
-
     public static void contributeTemplateParser(MappedConfiguration<String, URL> config)
     {
         // Any class inside the internal module would do. Or we could move all
@@ -2124,8 +1996,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
-
-        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
 
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
@@ -2583,29 +2453,6 @@ public final class TapestryModule
         updateListenerHub.addUpdateListener(service);
 
         return service;
-    }
-
-    /**
-     * Contributes:
-     * <dl>
-     * <dt>ClientLocalization</dt>
-     * <dd>A virtual resource of formatting symbols for decimal numbers</dd>
-     * <dt>Core</dt>
-     * <dd>Built in messages used by Tapestry's default validators and components</dd>
-     * <dt>AppCatalog</dt>
-     * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
-     * <dt>
-     *
-     * @since 5.2.0
-     */
-    @Contribute(ComponentMessagesSource.class)
-    public static void setupGlobalMessageCatalog(AssetSource assetSource,
-                                                 @Symbol(SymbolConstants.APPLICATION_CATALOG)
-                                                 Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
-    {
-        configuration.add("ClientLocalization", new ClientLocalizationMessageResource());
-        configuration.add("Core", assetSource.resourceForPath("org/apache/tapestry5/core.properties"));
-        configuration.add("AppCatalog", applicationCatalog);
     }
 
     /**

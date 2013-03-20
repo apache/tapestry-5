@@ -73,6 +73,8 @@ define ["./events", "./dom", "./builder", "_"],
           # is handled by keeping a hidden field active with the data Tapestry needs
           # on the server.
           return if type is "file" || type is "submit"
+          
+          return if type is "checkbox" && field.checked() is false
 
           value = field.value()
 

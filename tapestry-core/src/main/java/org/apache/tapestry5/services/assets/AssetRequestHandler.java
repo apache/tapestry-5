@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 The Apache Software Foundation
+// Copyright 2010, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.services.assets;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -25,20 +24,13 @@ import java.io.IOException;
 
 /**
  * Handler for asset requests, which expose some kind of {@link Asset} to
- * the user agent (i.e., the client web browser). Starting in Tapestry 5.2,
- * asset paths are more structured, consisting of four parts:
- * <ul>
- * <li><em>application folder</em> -- optional, based on {@link SymbolConstants#APPLICATION_FOLDER} Symbol     </li>
- * <li><code>assets</code> -- the root path for all assets (as defined by {@link SymbolConstants#ASSET_PATH_PREFIX} Symbol)
- * <li><em>application version</em> -- the application version, as defined by the
- * {@link SymbolConstants#APPLICATION_VERSION} symbol
- * <li><em>handler id</em> -- a handler for this part of the asset path (defined by contributions to the
- * <code>AssetDispatcher</code> service)
- * <li><em>extra path</em> -- additional path beyond the handler id, used to identify the specific resource
- * </ul>
+ * the user agent (i.e., the client web browser). When contributed to the {@link AssetDispatcher} service,
+ * the contributed key is a handler id (such as "meta/core").
  * <p/>
- * So, an example path might be <code>/assets/1.0.1/corelib/components/select.png</code>. The handler id would be
- * <code>corelib</code>, and the extra path would be <code>components/select.png</code>.
+ * An example request path might be <code>/assets/meta/core/dd8d73ac51dbab28caaec4865d302bf2/deselect.png</code>.
+ * The handler id would be
+ * <code>meta/core</code>, the {@linkplain AssetChecksumGenerator checksum of the resource content} is the
+ * hex string, and the extra path would be <code>select.png</code>.
  *
  * @see AssetDispatcher
  * @see org.apache.tapestry5.services.AssetRequestDispatcher
@@ -57,10 +49,6 @@ public interface AssetRequestHandler
      * The handler should return true if it provided a response. If the handler returns false, this indicates that the
      * extra path did not identify a known asset (virtual or otherwise) and the AssetDispatcher service should send a
      * {@link HttpServletResponse#SC_NOT_FOUND} response.
-     * <p/>
-     * AssetRequestHandlers are contributed to the {@link AssetDispatcher} service as a mapped configuration; the
-     * key is the path used to select the handler.  For a request with path "/assets/{appversion}/handler/extra/path" and a key of "handler"
-     * the extra path will be "extra/path".
      *
      * @param request
      *         incoming asset request

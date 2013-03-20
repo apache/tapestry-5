@@ -90,29 +90,6 @@ public final class StylesheetOptions
         return new StylesheetOptions(media, condition, true);
     }
 
-    /**
-     * The media associated with this stylesheet, i.e., "print". Becomes the media attribute
-     * of the &lt;link&gt; tag. May be null.
-     *
-     * @deprecated in 5.3, may be removed in a later release, use the {@link #media} field instead
-     */
-    public String getMedia()
-    {
-        return media;
-    }
-
-    /**
-     * The Internet Explorer condition associated with the link. When non-blank, the
-     * &lt;link&gt; element will be written inside a specially formatted comment interpreted
-     * by Internet Explorer. Usually null.
-     *
-     * @see <a href="http://en.wikipedia.org/wiki/Conditional_comment">http://en.wikipedia.org/wiki/Conditional_comment</a>
-     * @deprecated in 5.3, may be removed in a later release, use the {@link #condition} field instead
-     */
-    public String getCondition()
-    {
-        return condition;
-    }
 
     @Override
     public String toString()

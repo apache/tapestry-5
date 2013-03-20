@@ -233,16 +233,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(page.getRootComponent()).andReturn(component).atLeastOnce();
     }
 
-    protected final ResourceDigestManager mockResourceResourceDigestManager()
-    {
-        return newMock(ResourceDigestManager.class);
-    }
-
-    protected final void train_requiresDigest(ResourceDigestManager manager, Resource resource, boolean requiresChecksum)
-    {
-        expect(manager.requiresDigest(resource)).andReturn(requiresChecksum);
-    }
-
     protected final InvalidationListener mockInvalidationListener()
     {
         return newMock(InvalidationListener.class);

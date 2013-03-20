@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+//  Copyright 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry5.services.ResourceDigestGenerator;
+import java.lang.annotation.*;
 
-import java.net.URL;
-
-/**
- * Gutted implementation; will be removed in Tapestry 5.5.
- */
-public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.CLASS)
+@Documented
+public @interface IncompatibleChange
 {
-    public String generateDigest(URL url)
-    {
-        return null;
-    }
+    /**
+     * Identifies the release in which the signature of the method was modified.
+     *
+     * @return a release number, e.g., "5.4"
+     */
+    String release();
 
-
-    public boolean requiresDigest(String path)
-    {
-        return false;
-    }
-
+    /**
+     * Short string describing what changed.
+     */
+    String details();
 }
