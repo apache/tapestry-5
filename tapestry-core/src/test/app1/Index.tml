@@ -159,6 +159,10 @@
         -- refreshes zone with an event handler returning zone
     </li>
     <li>
+        <a href="ZoneRefreshWithContext">Zone Refresh With Context</a>
+        -- refreshes zone with a context
+    </li>
+    <li>
         <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>
         -- informal block parameter to a component that does not support informal parameters
     </li>

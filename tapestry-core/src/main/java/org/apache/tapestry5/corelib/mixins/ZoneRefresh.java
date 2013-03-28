@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.mixins;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Events;
@@ -83,10 +84,10 @@ public class ZoneRefresh
         javaScriptSupport.require("t5/core/zone-refresh").with(zone.getClientId(), period, link.toString());
     }
 
-    Object onZoneRefresh()
+    Object onZoneRefresh(EventContext eventContext)
     {
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
-        resources.triggerEvent(EventConstants.REFRESH, context, callback);
+        resources.triggerContextEvent(EventConstants.REFRESH, eventContext, callback);
 
         if (callback.getResult() != null)
         {

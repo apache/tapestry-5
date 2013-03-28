@@ -1,0 +1,13 @@
+<html xmlns:t='http://tapestry.apache.org/schema/tapestry_5_1_0.xsd'>
+   <head>
+   </head>
+   
+   <body>
+      Using zone with context :
+      <span t:type='zone' t:mixins='zonerefresh' t:period='2' t:context='counter' id='zone' t:id='zone'>
+         ${changed}
+      </span>
+      <t:actionlink t:id='link' zone='zone'>Add</t:actionlink>
+   </body>
+   
+</html>
