@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public enum CompressionStatus
 {
     /**
      * The content may be compressed but has not yet been compressed. This is true for most text-oriented content types,
-     * but not found most image content types.
+     * but not for most image content types.
      */
     COMPRESSABLE,
 
