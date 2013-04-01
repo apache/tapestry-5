@@ -199,3 +199,8 @@ until the end of the request. A new configuration symbol can be used to turn thi
 ## AssetPathConstructor
 
 The interface for AssetPathConstructor was changed incompatibly, to allow for individual asset checksums.
+
+## StreamableResource Extended
+
+StreamableResource has been modified, adding a new `getChecksum()` method; this interface is rarely, if ever,
+used or implemented by application code.

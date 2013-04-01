@@ -35,14 +35,17 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
     private final ResourceChangeTracker resourceChangeTracker;
 
+    private final AssetChecksumGenerator checksumGenerator;
+
     public StreamableResourceSourceImpl(Map<String, ResourceTransformer> configuration,
                                         ContentTypeAnalyzer contentTypeAnalyzer, CompressionAnalyzer compressionAnalyzer,
-                                        ResourceChangeTracker resourceChangeTracker)
+                                        ResourceChangeTracker resourceChangeTracker, AssetChecksumGenerator checksumGenerator)
     {
         this.configuration = configuration;
         this.contentTypeAnalyzer = contentTypeAnalyzer;
         this.compressionAnalyzer = compressionAnalyzer;
         this.resourceChangeTracker = resourceChangeTracker;
+        this.checksumGenerator = checksumGenerator;
     }
 
     public Set<String> fileExtensionsForContentType(String contentType)
@@ -92,7 +95,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         long lastModified = resourceChangeTracker.trackResource(baseResource);
 
         return new StreamableResourceImpl(baseResource.toString(), contentType, compressable ? CompressionStatus.COMPRESSABLE
-                : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache);
+                : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache, checksumGenerator);
     }
 
     private BytestreamCache readStream(InputStream stream) throws IOException

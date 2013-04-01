@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.services.assets.StreamableResourceImpl;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
@@ -40,13 +41,16 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
     protected final OperationTracker tracker;
 
+    private final AssetChecksumGenerator checksumGenerator;
+
     private final String resourceType;
 
-    public AbstractMinimizer(Logger logger, OperationTracker tracker, String resourceType)
+    public AbstractMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, String resourceType)
     {
         this.logger = logger;
         this.tracker = tracker;
         this.resourceType = resourceType;
+        this.checksumGenerator = checksumGenerator;
     }
 
     public StreamableResource minimize(final StreamableResource input) throws IOException
@@ -80,7 +84,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
         StreamableResource output = new StreamableResourceImpl("minimized " + input.getDescription(),
                 input.getContentType(), CompressionStatus.COMPRESSABLE,
-                input.getLastModified(), new BytestreamCache(bos));
+                input.getLastModified(), new BytestreamCache(bos), checksumGenerator);
 
         if (logger.isInfoEnabled())
         {

@@ -19,18 +19,17 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 {
@@ -44,17 +43,20 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final JavaScriptStackSource stackSource;
 
+    private final AssetChecksumGenerator checksumGenerator;
+
     private final Map<String, StreamableResource> cache = CollectionFactory.newCaseInsensitiveMap();
 
     // TODO: Support for minimization
     // TODO: Support for aggregated CSS as well as aggregated JavaScript
 
-    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource, JavaScriptStackSource stackSource)
+    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource, JavaScriptStackSource stackSource, AssetChecksumGenerator checksumGenerator)
     {
         this.threadLocale = threadLocale;
         this.resourceChangeTracker = resourceChangeTracker;
         this.streamableResourceSource = streamableResourceSource;
         this.stackSource = stackSource;
+        this.checksumGenerator = checksumGenerator;
 
         resourceChangeTracker.clearOnInvalidation(cache);
     }
@@ -90,7 +92,9 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
     {
         if (compress)
         {
-            return compressStream(assembleJavascriptResourceForStack(locale, stackName, false));
+            StreamableResource uncompressed = assembleJavascriptResourceForStack(locale, stackName, false);
+
+            return new CompressedStreamableResource(uncompressed);
         }
 
         JavaScriptStack stack = stackSource.getStack(stackName);
@@ -137,23 +141,8 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         return new StreamableResourceImpl(
                 description.toString(),
                 JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
-                new BytestreamCache(stream));
+                new BytestreamCache(stream), checksumGenerator);
     }
 
-
-    private StreamableResource compressStream(StreamableResource uncompressed) throws IOException
-    {
-        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-        OutputStream compressor = new BufferedOutputStream(new GZIPOutputStream(compressed));
-
-        uncompressed.streamTo(compressor);
-
-        compressor.close();
-
-        BytestreamCache cache = new BytestreamCache(compressed);
-
-        return new StreamableResourceImpl(uncompressed.getDescription(), JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSED,
-                uncompressed.getLastModified(), cache);
-    }
 
 }

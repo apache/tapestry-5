@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@ package org.apache.tapestry5.internal.services.assets;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.*;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
 
 public class SRSCompressingInterceptor extends DelegatingSRS
 {
@@ -57,19 +54,6 @@ public class SRSCompressingInterceptor extends DelegatingSRS
             return uncompressed;
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
-
-        GZIPOutputStream gos = new GZIPOutputStream(bos);
-        BufferedOutputStream buffered = new BufferedOutputStream(gos);
-
-        uncompressed.streamTo(buffered);
-
-        buffered.close();
-
-        BytestreamCache cache = new BytestreamCache(bos);
-
-        return new StreamableResourceImpl(uncompressed.getDescription(),
-                uncompressed.getContentType(), CompressionStatus.COMPRESSED,
-                uncompressed.getLastModified(), cache);
+        return new CompressedStreamableResource(uncompressed);
     }
 }

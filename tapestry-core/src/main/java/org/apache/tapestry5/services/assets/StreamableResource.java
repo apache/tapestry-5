@@ -71,4 +71,14 @@ public interface StreamableResource
      * the HTTP request/response date headers).
      */
     long getLastModified();
+
+    /**
+     * Compute and return the checksum of the content for this asset; the checksum should be computed
+     * based on the uncompressed content.
+     *
+     * @return checksum for uncompressed content
+     * @since 5.4
+     * @see AssetChecksumGenerator#generateChecksum(StreamableResource)
+     */
+    String getChecksum() throws IOException;
 }

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
 
@@ -21,67 +22,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class StreamableResourceImpl implements StreamableResource
+public class StreamableResourceImpl extends BaseStreamableResourceImpl
 {
-    private final String description;
-
-    private final String contentType;
-
-    private final CompressionStatus compression;
-
-    private final long lastModified;
-
-    private final BytestreamCache bytestreamCache;
+    private final AssetChecksumGenerator assetChecksumGenerator;
 
     public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified,
-                                  BytestreamCache bytestreamCache)
+                                  BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator)
     {
-        this.description = description;
-        this.contentType = contentType;
-        this.compression = compression;
-        this.lastModified = lastModified;
-        this.bytestreamCache = bytestreamCache;
+        super(lastModified, description, bytestreamCache, contentType, compression);
+
+        this.assetChecksumGenerator = assetChecksumGenerator;
     }
 
-    public String getDescription()
+    public String getChecksum() throws IOException
     {
-        return description;
+        // Currently, we rely on AssetChecksumGenerator to manage a cache, but that may be better done
+        // here (but must be threadsafe).
+        return assetChecksumGenerator.generateChecksum(this);
     }
 
-    public CompressionStatus getCompression()
-    {
-        return compression;
-    }
-
-    public String getContentType()
-    {
-        return contentType;
-    }
-
-    public int getSize()
-    {
-        return bytestreamCache.size();
-    }
-
-    public long getLastModified()
-    {
-        return lastModified;
-    }
-
-    public void streamTo(OutputStream os) throws IOException
-    {
-        bytestreamCache.writeTo(os);
-    }
-
-    public InputStream openStream() throws IOException
-    {
-        return bytestreamCache.openStream();
-    }
-
-    @Override
-    public String toString()
-    {
-        return String.format("StreamableResource<%s %s %s lastModified: %tc size: %d>", contentType, description, compression.name(),
-                lastModified, getSize());
-    }
 }

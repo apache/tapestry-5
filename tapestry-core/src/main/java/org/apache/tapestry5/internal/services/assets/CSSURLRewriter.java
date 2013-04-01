@@ -44,11 +44,14 @@ public class CSSURLRewriter extends DelegatingSRS
 
     private final AssetSource assetSource;
 
-    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource)
+    private final AssetChecksumGenerator checksumGenerator;
+
+    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource, AssetChecksumGenerator checksumGenerator)
     {
         super(delegate);
         this.tracker = tracker;
         this.assetSource = assetSource;
+        this.checksumGenerator = checksumGenerator;
     }
 
     @Override
@@ -86,7 +89,7 @@ public class CSSURLRewriter extends DelegatingSRS
                         return new StreamableResourceImpl(base.getDescription(), "text/css",
                                 CompressionStatus.COMPRESSABLE,
                                 base.getLastModified(),
-                                cache);
+                                cache, checksumGenerator);
                     }
                 });
     }

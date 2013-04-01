@@ -18,6 +18,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
@@ -50,9 +51,9 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
             "has already been declared in the same scope"
     };
 
-    public JavaScriptResourceMinimizer(final Logger logger, OperationTracker tracker)
+    public JavaScriptResourceMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator)
     {
-        super(logger, tracker, "JavaScript");
+        super(logger, tracker, checksumGenerator, "JavaScript");
     }
 
     protected void doMinimize(final StreamableResource resource, Writer output) throws IOException

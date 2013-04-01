@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.yuicompressor;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.slf4j.Logger;
 
@@ -30,9 +31,9 @@ import java.io.Writer;
  */
 public class CSSResourceMinimizer extends AbstractMinimizer
 {
-    public CSSResourceMinimizer(Logger logger, OperationTracker tracker)
+    public CSSResourceMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator)
     {
-        super(logger, tracker, "CSS");
+        super(logger, tracker, checksumGenerator, "CSS");
     }
 
     @Override

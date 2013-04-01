@@ -130,9 +130,10 @@ public class AssetsModule
     @Order("after:Minification")
     public StreamableResourceSource enableCSSURLRewriting(StreamableResourceSource delegate,
                                                           OperationTracker tracker,
-                                                          AssetSource assetSource)
+                                                          AssetSource assetSource,
+                                                          AssetChecksumGenerator checksumGenerator)
     {
-        return new CSSURLRewriter(delegate, tracker, assetSource);
+        return new CSSURLRewriter(delegate, tracker, assetSource, checksumGenerator);
     }
 
     /**
@@ -257,7 +258,6 @@ public class AssetsModule
 
             // This is the 5.4 version; once 5.3 support is dropped, this can be simplified, and the
             // "meta/" prefix stripped out.
-
             String folderSuffix = folder.equals("") ? folder : "/" + folder;
 
             configuration.add("meta" + folderSuffix, "META-INF/assets" + folderSuffix);

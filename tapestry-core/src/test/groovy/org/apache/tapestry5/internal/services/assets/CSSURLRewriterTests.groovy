@@ -17,7 +17,7 @@ body {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -43,7 +43,7 @@ body {
         replay()
 
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -65,7 +65,7 @@ body {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -95,7 +95,7 @@ div.busy {
 
         replay()
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
 
         def output = rewriter.replaceURLs input, resource
 
