@@ -38,7 +38,9 @@ import java.util.regex.Pattern;
  */
 public class CSSURLRewriter extends DelegatingSRS
 {
-    private final Pattern urlPattern = Pattern.compile("url\\(\\s*\"(.*?)\"\\s*\\)", Pattern.MULTILINE);
+    // Group 1 is the optional single or double quote
+    // Group 2 is the text inside the quotes, or inside the parens if no quotes
+    private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)\\1\\s*\\)", Pattern.MULTILINE);
 
     private final OperationTracker tracker;
 
@@ -114,18 +116,22 @@ public class CSSURLRewriter extends DelegatingSRS
 
         while (matcher.find())
         {
+            String url = matcher.group(2); // the string inside the quotes
 
-            String url = matcher.group(1); // the string inside the quotes
-
+            // When the URL starts with a slash, there's no need to rewrite it (this is actually rare in Tapestry
+            // as you want to use relative URLs to leverage the asset pipeline.
             if (url.startsWith("/"))
             {
-                matcher.appendReplacement(output, matcher.group());
+                // This may normalize single quotes, or missing quotes, to double quotes, but is not
+                // considered a real change, since all such variations are valid.
+                appendReplacement(matcher, output, url);
                 continue;
             }
 
             Asset asset = assetSource.getAsset(baseResource, url, null);
 
-            matcher.appendReplacement(output, String.format("url(\"%s\")", asset.toClientURL()));
+            String assetURL = asset.toClientURL();
+            appendReplacement(matcher, output, assetURL);
 
             didReplace = true;
         }
@@ -138,6 +144,11 @@ public class CSSURLRewriter extends DelegatingSRS
         matcher.appendTail(output);
 
         return output.toString();
+    }
+
+    private void appendReplacement(Matcher matcher, StringBuffer output, String assetURL)
+    {
+        matcher.appendReplacement(output, String.format("url(\"%s\")", assetURL));
     }
 
 

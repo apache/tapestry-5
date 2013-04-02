@@ -58,6 +58,41 @@ body {
     }
 
     @Test
+    void unquoted_urls_are_matched() {
+        def input = '''
+body {
+  background: white url(images/back.png) attach-x;
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+        def asset = newMock Asset
+
+        expect(
+            assetSource.getAsset(resource, "images/back.png", null)
+        ).andReturn asset
+
+        expect(asset.toClientURL()).andReturn "/ctx/images/back.png"
+
+        replay()
+
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+
+        def output = rewriter.replaceURLs input, resource
+
+        assertEquals output, '''
+body {
+  background: white url("/ctx/images/back.png") attach-x;
+}
+'''
+
+        verify()
+
+    }
+
+    @Test
     void absolute_urls_not_replaced() {
         def input = '''
 body {
