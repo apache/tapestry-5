@@ -69,7 +69,9 @@ public class ModuleDispatcher implements Dispatcher
         String extraPath = requestPath.substring(prefix.length());
 
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
-        // to be a hierarchy of static JavaScript files here.
+        // to be a hierarchy of static JavaScript files here. In reality, we may be cross-compiling CoffeeScript to
+        // JavaScript, or generating modules on-the-fly, or exposing arbitrary Resources from somewhere on the classpath
+        // as a module.
 
         int dotx = extraPath.lastIndexOf('.');
 

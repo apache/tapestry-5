@@ -14,19 +14,16 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -34,6 +31,8 @@ import java.util.regex.Pattern;
 
 public class StackAssetRequestHandler implements AssetRequestHandler
 {
+    private final Logger logger;
+
     private final LocalizationSetter localizationSetter;
 
     private final ResponseCompressionAnalyzer compressionAnalyzer;
@@ -49,12 +48,13 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private final JavaScriptStackAssembler javaScriptStackAssembler;
 
-    public StackAssetRequestHandler(LocalizationSetter localizationSetter,
+    public StackAssetRequestHandler(Logger logger, LocalizationSetter localizationSetter,
                                     ResponseCompressionAnalyzer compressionAnalyzer,
                                     ResourceStreamer resourceStreamer,
                                     OperationTracker tracker,
                                     JavaScriptStackAssembler javaScriptStackAssembler)
     {
+        this.logger = logger;
         this.localizationSetter = localizationSetter;
         this.compressionAnalyzer = compressionAnalyzer;
         this.resourceStreamer = resourceStreamer;
@@ -64,22 +64,25 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
     {
-        tracker.perform(String.format("Streaming asset stack %s", extraPath),
-                new org.apache.tapestry5.ioc.IOOperation<Void>()
+        return tracker.perform(String.format("Streaming asset stack %s", extraPath),
+                new IOOperation<Boolean>()
                 {
-                    public Void perform() throws IOException
+                    public Boolean perform() throws IOException
                     {
                         boolean compress = compressionAnalyzer.isGZipSupported();
 
                         StreamableResource resource = getResource(extraPath, compress);
 
+                        if (resource == null)
+                        {
+                            return false;
+                        }
+
                         resourceStreamer.streamResource(resource);
 
-                        return null;
+                        return true;
                     }
                 });
-
-        return true;
     }
 
     private StreamableResource getResource(String extraPath, boolean compressed) throws IOException
@@ -88,11 +91,12 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         if (!matcher.matches())
         {
-            throw new RuntimeException("Invalid path for a stack asset request.");
+            logger.warn(String.format("Unable to parse '%s' as an asset stack path", extraPath));
+
+            return null;
         }
 
-        // TODO: Extract the stack's aggregate checksum as well
-
+        String checksum = matcher.group(1);
         String localeName = matcher.group(2);
         String stackName = matcher.group(3);
 
@@ -101,8 +105,10 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         localizationSetter.setNonPersistentLocaleFromLocaleName(localeName);
 
-        // TODO: Verify request checksum against actual
+        StreamableResource resource = javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
 
-        return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
+        return checksum.equals(resource.getChecksum())
+                ? resource
+                : null;
     }
 }

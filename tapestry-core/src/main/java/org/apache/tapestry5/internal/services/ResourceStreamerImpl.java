@@ -125,14 +125,35 @@ public class ResourceStreamerImpl implements ResourceStreamer
             }
         }
 
+        // ETag should be surrounded with quotes.
+        String token = "\"" + streamable.getChecksum() + "\"";
+
+        // Even when sending a 304, we want the ETag associated with the request.
+        // In most cases (except JavaScript modules), the checksum is also embedded into the URL.
+        // However, E-Tags are also useful for enabling caching inside intermediate servers, CDNs, etc.
+        response.setHeader("ETag", token);
+
+        // If the client can send the correct ETag token, then its cache already contains the correct
+        // content.
+
+        String providedToken = request.getHeader("If-None-Match");
+
+        if (providedToken != null && providedToken.equals(token)) {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+
         // Prevent the upstream code from compressing when we don't want to.
 
         response.disableCompression();
 
         response.setDateHeader("Last-Modified", lastModified);
 
+
         if (productionMode)
         {
+            // Starting in 5.4, this is a lot less necessary; any change to a Resource will result
+            // in a new asset URL with the changed checksum incorporated into the URL.
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
         }
 
