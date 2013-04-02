@@ -15,9 +15,9 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
@@ -25,12 +25,10 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.util.Map;
 
 public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 {
-    private final static int BUFFER_SIZE = 4096;
 
     private final StreamableResourceSource streamableResourceSource;
 
@@ -71,41 +69,9 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 
     private String toChecksum(InputStream is) throws IOException
     {
-        try
-        {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] digest = DigestUtils.md5(is);
 
-            digestStream(digest, is);
-
-            is.close();
-
-            byte[] bytes = digest.digest();
-            char[] encoded = Hex.encodeHex(bytes);
-
-            return new String(encoded);
-        } catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        } finally
-        {
-            InternalUtils.close(is);
-        }
+        return Hex.encodeHexString(digest);
     }
 
-    private void digestStream(MessageDigest digest, InputStream stream) throws IOException
-    {
-        byte[] buffer = new byte[BUFFER_SIZE];
-
-        while (true)
-        {
-            int length = stream.read(buffer);
-
-            if (length < 0)
-            {
-                return;
-            }
-
-            digest.update(buffer, 0, length);
-        }
-    }
 }
