@@ -5,55 +5,59 @@ import t5build.*
 description = "Central module for Tapestry, containing all core services and components"
 
 project.ext {
-  antlrSource = "src/main/antlr"
-  generatedDir = "$buildDir/generated-sources"
-  antlrOutput = "$generatedDir/antlr"
+    antlrSource = "src/main/antlr"
+    generatedDir = "$buildDir/generated-sources"
+    antlrOutput = "$generatedDir/antlr"
 }
 
 configurations {
-  antlr3
+    antlr3
 }
 
 sourceSets.main.java.srcDir antlrOutput
 
 dependencies {
-  compile project(':tapestry-ioc')
-  compile project(':tapestry-json')
+    compile project(':tapestry-ioc')
+    compile project(':tapestry-json')
 
-  provided project(":tapestry-test")
-  provided "javax.servlet:servlet-api:${versions.servletapi}"
+    provided project(":tapestry-test")
+    provided "javax.servlet:servlet-api:${versions.servletapi}"
 
-  compile "commons-codec:commons-codec:1.5"
+    compile "commons-codec:commons-codec:1.5"
 
-  // Transitive will bring in the unwanted string template library as well
-  compile "org.antlr:antlr-runtime:3.3", { transitive = false }
+    // May want to refactor things at some point, so that the RRD support can be
+    // used by non-web applications.
+    compile "org.rrd4j:rrd4j:2.1.1"
 
-  // Antlr3 tool path used with the antlr3 task
-  antlr3 "org.antlr:antlr:3.3"
+    // Transitive will bring in the unwanted string template library as well
+    compile "org.antlr:antlr-runtime:3.3", { transitive = false }
 
-  testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+    // Antlr3 tool path used with the antlr3 task
+    antlr3 "org.antlr:antlr:3.3"
+
+    testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
 
 // This may spin out as a plugin once we've got the details down pat
 
 task generateGrammarSource(type: JavaExec) {
-  description "Generates Java sources from Antlr3 grammars."
-  inputs.source fileTree(dir: antlrSource, include: "**/*.g")
-  outputs.dir file(antlrOutput)
+    description "Generates Java sources from Antlr3 grammars."
+    inputs.source fileTree(dir: antlrSource, include: "**/*.g")
+    outputs.dir file(antlrOutput)
 
-  classpath configurations.antlr3
+    classpath configurations.antlr3
 
-  main "org.antlr.Tool"
-  args "-o", "${antlrOutput}/org/apache/tapestry5/internal/antlr"
-  args inputs.sourceFiles
+    main "org.antlr.Tool"
+    args "-o", "${antlrOutput}/org/apache/tapestry5/internal/antlr"
+    args inputs.sourceFiles
 
-  doFirst {
-    logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
-  }
+    doFirst {
+        logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
+    }
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {
-  outputDir "${generatedDir}/compiled-coffeescript"
+    outputDir "${generatedDir}/compiled-coffeescript"
 }
 
 task compileTestCoffeeScript(type: CompileCoffeeScript) {
@@ -61,29 +65,27 @@ task compileTestCoffeeScript(type: CompileCoffeeScript) {
     outputDir "${generatedDir}/compiled-test-coffeescript"
 }
 
-processResources {
-  from compileCoffeeScript
-}
 
-processTestResources {
-  dependsOn processResources
-  from compileTestCoffeeScript
+sourceSets {
+    main {
+        output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
+        output.dir(antlrOutput, builtBy: generateGrammarSource)
+    }
+    test {
+        output.dir(compileTestCoffeeScript.outputDir, builtBy: compileTestCoffeeScript)
+    }
 }
 
 idea.module {
-  sourceDirs += compileCoffeeScript.srcDir
-  sourceDirs += compileCoffeeScript.outputDir
+    sourceDirs += compileCoffeeScript.srcDir
 
-  testSourceDirs += compileTestCoffeeScript.srcDir
-  testSourceDirs += compileTestCoffeeScript.outputDir
+    testSourceDirs += compileTestCoffeeScript.srcDir
 
-  // Hack the IML so that "build" is not excluded; necessary because several directories under build
-  // are added as source, resources, or test folders.
-  iml.whenMerged { module ->
-    module.excludeFolders.removeAll {
-      it.canonicalUrl.endsWith "/build"
+// Hack the IML so that "build" is not excluded; necessary because several directories under build
+// are added as source, resources, or test folders.
+    iml.whenMerged { module ->
+        module.excludeFolders.removeAll { it.canonicalUrl.endsWith "/build" }
     }
-  }
 }
 
 compileJava {
@@ -95,7 +97,7 @@ compileJava {
 compileTestGroovy.dependsOn compileTestJava
 
 jar {
-  from("src/main/filtered-resources") {
-    filter(ReplaceTokens, tokens: [version: project.version])
-  }
+    from("src/main/filtered-resources") {
+        filter(ReplaceTokens, tokens: [version: project.version])
+    }
 }
