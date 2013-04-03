@@ -21,3 +21,5 @@ as minimizer may only shrink a few spaces.
 
 Require that all assets be stored under MODULE-INF/assets/. Make @Inject @Path & related
 code smart to check in both places (in 5.4) or just MODULE-INF/ in 5.5.
+
+Make sure that all new dependencies have their LICENCE-foo.txt file included.
