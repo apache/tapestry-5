@@ -8,12 +8,13 @@ New module to replace tapestry-yuicompressor that is based on WRO4J.
 
 Merge PageCatalog and ServiceStatus into a Dashboard page
 - make it extensible
+- Hibernate status too
+
+Start collecting various stats, store in RRD (round robin database), expose on Dashboard
 
 Add way to have services self describe (for dashboard and/or exception report).
 
 Add way for services to expose simple actions to the Dashboard (i.e., tie a UI button to a callback).
-
-JavaScriptWrapper (.jsw) may not be needed after all, due to ShimModule.
 
 Higher level way to assemble JavaScript inside ModuleManagerImpl and ability to feed it though minimizer? Probably not worth effort,
 as minimizer may only shrink a few spaces.
