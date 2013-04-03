@@ -407,6 +407,9 @@ define ["_", "./utils", "prototype"], (_, utils) ->
       exports.on @element, events, match, handler
       return this
 
+    # Returns the text of the element (and its children).
+    text: -> @element.textContent or @element.innerText
+
   # converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
     if _.isString selector
