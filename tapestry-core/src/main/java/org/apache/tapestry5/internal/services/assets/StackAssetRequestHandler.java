@@ -64,7 +64,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
     {
-        return tracker.perform(String.format("Streaming asset stack %s", extraPath),
+        return tracker.perform(String.format("Streaming JavaScript asset stack %s", extraPath),
                 new IOOperation<Boolean>()
                 {
                     public Boolean perform() throws IOException
@@ -85,7 +85,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
                 });
     }
 
-    private StreamableResource getResource(String extraPath, boolean compressed) throws IOException
+    private StreamableResource getResource(String extraPath, final boolean compressed) throws IOException
     {
         Matcher matcher = pathPattern.matcher(extraPath);
 
@@ -98,14 +98,24 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         String checksum = matcher.group(1);
         String localeName = matcher.group(2);
-        String stackName = matcher.group(3);
+        final String stackName = matcher.group(3);
 
         // Yes, I have a big regret that the JavaScript stack stuff relies on this global, rather than
         // having it passed around properly.
 
         localizationSetter.setNonPersistentLocaleFromLocaleName(localeName);
 
-        StreamableResource resource = javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
+        StreamableResource resource =
+                tracker.perform(String.format("Assembling JavaScript asset stack '%s' (%s)",
+                        stackName, localeName),
+                        new IOOperation<StreamableResource>()
+                        {
+                            public StreamableResource perform() throws IOException
+                            {
+                                return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
+
+                            }
+                        });
 
         return checksum.equals(resource.getChecksum())
                 ? resource

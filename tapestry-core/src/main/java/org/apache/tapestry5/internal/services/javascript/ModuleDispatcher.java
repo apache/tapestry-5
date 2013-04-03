@@ -28,6 +28,8 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
@@ -42,6 +44,8 @@ public class ModuleDispatcher implements Dispatcher
     private final OperationTracker tracker;
 
     private final String prefix;
+
+    private final Set<ResourceStreamer.Options> omitExpiration = EnumSet.of(ResourceStreamer.Options.OMIT_EXPIRATION);
 
     public ModuleDispatcher(ModuleManager moduleManager,
                             ResourceStreamer streamer,
@@ -95,7 +99,7 @@ public class ModuleDispatcher implements Dispatcher
 
                 if (resource != null)
                 {
-                    streamer.streamResource(resource);
+                    streamer.streamResource(resource, omitExpiration);
 
                     return true;
                 }

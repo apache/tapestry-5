@@ -32,6 +32,8 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
@@ -50,6 +52,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
     private final OperationTracker tracker;
 
     private final ResourceChangeTracker resourceChangeTracker;
+
+    private final Set<Options> defaultOptions = EnumSet.noneOf(Options.class);
 
     public ResourceStreamerImpl(Request request,
 
@@ -76,7 +80,12 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.resourceChangeTracker = resourceChangeTracker;
     }
 
-    public void streamResource(final Resource resource) throws IOException
+    public void streamResource(Resource resource) throws IOException
+    {
+        streamResource(resource, defaultOptions);
+    }
+
+    public void streamResource(final Resource resource, final Set<Options> options) throws IOException
     {
         if (!resource.exists())
         {
@@ -88,20 +97,29 @@ public class ResourceStreamerImpl implements ResourceStreamer
         {
             public Void perform() throws IOException
             {
-                StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
+                StreamableResourceProcessing processing = analyzer.isGZipSupported()
+                        ? StreamableResourceProcessing.COMPRESSION_ENABLED
                         : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
                 StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
-                streamResource(streamable);
+                streamResource(streamable, options);
 
                 return null;
             }
         });
     }
 
-    public void streamResource(StreamableResource streamable) throws IOException
+    public void streamResource(StreamableResource resource) throws IOException
     {
+        streamResource(resource, defaultOptions);
+    }
+
+    public void streamResource(StreamableResource streamable, Set<Options> options) throws IOException
+    {
+        assert streamable != null;
+        assert options != null;
+
         long lastModified = streamable.getLastModified();
 
         long ifModifiedSince = 0;
@@ -116,13 +134,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
             ifModifiedSince = -1;
         }
 
-        if (ifModifiedSince > 0)
+        if (ifModifiedSince > 0 && ifModifiedSince >= lastModified)
         {
-            if (ifModifiedSince >= lastModified)
-            {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                return;
-            }
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
         }
 
         // ETag should be surrounded with quotes.
@@ -135,10 +150,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         // If the client can send the correct ETag token, then its cache already contains the correct
         // content.
-
         String providedToken = request.getHeader("If-None-Match");
 
-        if (providedToken != null && providedToken.equals(token)) {
+        if (token.equals(providedToken))
+        {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
@@ -150,7 +165,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         response.setDateHeader("Last-Modified", lastModified);
 
 
-        if (productionMode)
+        if (productionMode && !options.contains(Options.OMIT_EXPIRATION))
         {
             // Starting in 5.4, this is a lot less necessary; any change to a Resource will result
             // in a new asset URL with the changed checksum incorporated into the URL.
@@ -170,4 +185,5 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         os.close();
     }
+
 }
