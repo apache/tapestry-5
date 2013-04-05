@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -700,9 +700,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void services_status()
     {
-        open(getBaseURL() + "servicestatus");
+        open(getBaseURL() + "t5dashboard/services");
 
-        assertTextPresent("Tapestry IoC Services Status");
+        assertTextPresent("services defined in the IoC Registry");
     }
 
     /**

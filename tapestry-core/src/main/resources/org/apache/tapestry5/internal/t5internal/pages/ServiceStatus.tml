@@ -1,0 +1,59 @@
+<t:block id="content"
+         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <p><strong>${activity.size()}</strong> services defined in the IoC Registry.</p>
+
+    <t:if test="! productionMode">
+
+        <t:grid t:id="services" inplace="true" rowsperpage="100" model="model" rowClass="row.status" source="activity"
+                row="row" t:mixins="renderNotification">
+
+            <p:serviceInterfaceCell>
+                <t:if test="! row.serviceInterface.interface">
+                    <em>Class</em>
+                </t:if>
+                ${row.serviceInterface.name}
+            </p:serviceInterfaceCell>
+
+        </t:grid>
+
+
+        <p:else>
+            <p>
+                <em>${message:service-status-hidden}</em>
+            </p>
+        </p:else>
+    </t:if>
+
+
+    <dl>
+        <dt>Builtin</dt>
+        <dd>
+            A fundamental service that exists even before the Registry is
+            created.
+        </dd>
+
+        <dt>Defined</dt>
+        <dd>
+            The service is defined, but has not yet been referenced.
+        </dd>
+
+        <dt>Virtual</dt>
+        <dd>
+            The service has been referenced (usually for injection into
+            another service) but has not yet been
+            <em>realized</em>
+            into an instantiated service. Realization occurs with the
+            first method invocation on the proxy.
+        </dd>
+
+        <dt>Real</dt>
+        <dd>
+            The service has been realized: instantiated, dependencies
+            injected, decorated with interceptors and is fully in
+            operation.
+        </dd>
+
+    </dl>
+
+</t:block>

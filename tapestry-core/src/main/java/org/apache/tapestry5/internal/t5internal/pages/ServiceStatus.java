@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.corelib.pages;
+package org.apache.tapestry5.internal.t5internal.pages;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
@@ -35,16 +35,11 @@ import java.util.List;
  * <p/>
  * TODO: Add filters to control which services are displayed
  */
-@ContentType("text/html")
-@Import(stylesheet = "ServiceStatus.css")
 @WhitelistAccessOnly
 public class ServiceStatus
 {
     @Inject
     private ServiceActivityScoreboard scoreboard;
-
-    @Property
-    private List<ServiceActivity> activity;
 
     @Property
     private ServiceActivity row;
@@ -74,8 +69,14 @@ public class ServiceStatus
         model.reorder("serviceId", "serviceInterface", "scope", "status");
     }
 
-    void setupRender()
+    @Cached
+    public List<ServiceActivity> getActivity()
     {
-        activity = scoreboard.getServiceActivity();
+        return scoreboard.getServiceActivity();
+    }
+
+    @Import(stylesheet = "service-status.css")
+    void onAfterRenderFromServices()
+    {
     }
 }

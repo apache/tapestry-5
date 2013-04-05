@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 The Apache Software Foundation
+// Copyright 2008, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -147,9 +147,7 @@ public class TapestryHibernateIntegrationTests extends SeleniumTestCase
 
     public void hibernate_statistics()
     {
-        open(getBaseURL() + "hibernate/Statistics");
-
-        assertTextPresent("Hibernate Statistics");
+        open(getBaseURL() + "t5dashboard/hibernate");
 
         assertTextPresent("Entities Statistics");
 

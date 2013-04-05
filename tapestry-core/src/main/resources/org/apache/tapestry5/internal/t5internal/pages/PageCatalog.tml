@@ -1,31 +1,5 @@
-<i:internallayout title="Page Catalog" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-                  xmlns:p="tapestry:parameter"
-                  xmlns:i="tapestry-library:t5internal">
-
-    <p:leftnav>
-
-        <ul class="nav nav-pills nav-stacked">
-            <li>
-                <t:pagelink page="pagecatalog">refresh this page</t:pagelink>
-            </li>
-            <li>
-                <t:actionlink t:id="forceLoad" zone="pages">load all pages</t:actionlink>
-            </li>
-            <t:if test="! productionMode">
-                <li>
-                    <t:actionlink t:id="clearCache" zone="pages">clear the cache</t:actionlink>
-                </li>
-                <li>
-                    <t:actionlink t:id="reloadClasses" zone="pages">reload component classes</t:actionlink>
-                </li>
-                <li>
-                    <t:actionlink t:id="runGC" zone="pages">Run the GC</t:actionlink>
-                </li>
-            </t:if>
-        </ul>
-
-    </p:leftnav>
-
+<t:block id="content" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+         xmlns:p="tapestry:parameter">
 
     <t:zone t:id="pagesZone" id="pages">
 
@@ -52,10 +26,26 @@
 
     </t:zone>
 
+
+    <div class="btn-group">
+        <t:actionlink t:id="forceLoad" zone="pages" class="btn">Load all pages</t:actionlink>
+        <t:if test="! productionMode">
+            <t:actionlink t:id="clearCache" zone="pages" class="btn">Clear the cache</t:actionlink>
+            <t:actionlink t:id="reloadClasses" zone="pages" class="btn">Reload component classes</t:actionlink>
+        </t:if>
+        <t:actionlink t:id="runGC" zone="pages" class="btn">Run the GC</t:actionlink>
+    </div>
+
+
+    <ul class="nav nav-pills nav-stacked">
+        <li>
+        </li>
+    </ul>
+
     <t:form t:id="singlePageLoad" zone="pages" class="form-inline">
 
-            <t:label for="pageName">Load single page:</t:label>
-            <t:select t:id="pageName" model="pageNames"/>
+        <t:label for="pageName">Load single page:</t:label>
+        <t:select t:id="pageName" model="pageNames"/>
 
         <input type="submit" value="Load Page" class="btn btn-primary"/>
 
@@ -85,5 +75,4 @@
         <dd>Arbitrary number that includes number of components and mixins, template tokens, and other factors.</dd>
     </dl>
 
-
-</i:internallayout>
+</t:block>

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.corelib.pages;
+package org.apache.tapestry5.internal.t5internal.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
@@ -43,7 +43,6 @@ import java.util.Set;
  * Lists out the currently loaded pages, using a {@link org.apache.tapestry5.corelib.components.Grid}.
  * Provides an option to force all pages to be loaded. In development mode, includes an option to clear the page cache.
  */
-@ContentType("text/html")
 @WhitelistAccessOnly
 public class PageCatalog
 {
@@ -298,12 +297,6 @@ public class PageCatalog
 
     Object onActionFromRunGC()
     {
-        if (productionMode)
-        {
-            alertManager.error("Executing a garbage collection is only allowed in development mode.");
-            return null;
-        }
-
         Runtime runtime = Runtime.getRuntime();
 
         long initialFreeMemory = runtime.freeMemory();

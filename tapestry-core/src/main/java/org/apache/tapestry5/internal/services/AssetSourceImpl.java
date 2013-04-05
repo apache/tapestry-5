@@ -116,7 +116,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
     public Asset getComponentAsset(ComponentResources resources, String path)
     {
-        assert resources != null;
+            assert resources != null;
 
         assert InternalUtils.isNonBlank(path);
 

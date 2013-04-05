@@ -73,6 +73,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.compatibility.CompatibilityModule;
+import org.apache.tapestry5.services.dashboard.DashboardModule;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 import org.apache.tapestry5.services.javascript.JavaScriptModule;
@@ -112,7 +113,7 @@ import java.util.regex.Pattern;
  */
 @Marker(Core.class)
 @SubModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;

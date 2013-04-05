@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.dashboard.DashboardManager;
+import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
@@ -187,7 +189,12 @@ public class HibernateModule
      */
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
     {
-        configuration.add(new LibraryMapping("hibernate", "org.apache.tapestry5.hibernate"));
+        configuration.add(new LibraryMapping("t5internal", "org.apache.tapestry5.hibernate.t5internal"));
     }
 
+    @Contribute(DashboardManager.class)
+    public static void provideHibernateDashboardTab(OrderedConfiguration<DashboardTab> configuration)
+    {
+        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "t5internal/HibernateStatistics"));
+    }
 }

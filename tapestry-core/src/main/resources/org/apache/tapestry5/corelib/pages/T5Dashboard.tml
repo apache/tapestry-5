@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head><title>Tapestry 5 Dashboard</title></head>
+<body>
+
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar-inner">
+        <a href="${symbol:tapestry.context-path}/" class="brand">Apache Tapestry 5
+            <sub>${frameworkVersion}
+                <t:if test="!productionMode">
+                    (dev mode)
+                </t:if>
+            </sub>
+        </a>
+        <ul class="nav nav-pills">
+            <t:loop source="dashboardManager.tabNames" value="tabName">
+                <li class="${tabClass}">
+                    <t:pagelink page="core/t5dashboard" context="tabName.toLowerCase()">${tabName}</t:pagelink>
+                </li>
+            </t:loop>
+        </ul>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <t:alerts/>
+    <t:delegate to="content"/>
+</div>
+</body>
+</html>

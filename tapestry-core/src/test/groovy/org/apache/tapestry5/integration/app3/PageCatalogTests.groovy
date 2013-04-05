@@ -9,15 +9,11 @@ class PageCatalogTests extends TapestryCoreTestCase
     @Test
     void load_page_catalog_page()
     {
-        def title = "Tapestry 5: Page Catalog"
-
-        open("${baseURL}pagecatalog")
-
-        assertTitle title
+        open("${baseURL}t5dashboard/pages")
 
         waitForPageInitialized()
 
-        click "link=clear the cache"
+        click "link=Clear the cache"
 
         sleep 1000
 
@@ -29,7 +25,7 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         assertTextPresent "Garbage collection freed"
 
-        click "link=load all pages"
+        click "link=Load all pages"
 
         // Ignore any errors that occur.
     }

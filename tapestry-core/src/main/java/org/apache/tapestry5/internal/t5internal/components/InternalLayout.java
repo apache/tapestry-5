@@ -9,7 +9,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
 /**
- * A default layout for a number of internal pages in Tapestry, such as {@link org.apache.tapestry5.corelib.pages.ServiceStatus} and {@link org.apache.tapestry5.corelib.pages.PageCatalog}.
+ * A default layout for a number of internal pages in Tapestry, such as {@link org.apache.tapestry5.internal.t5internal.pages.ServiceStatus} and {@link org.apache.tapestry5.internal.t5internal.pages.PageCatalog}.
  * <strong>This component is not intended for use in user applications, and may change at any time.</strong>
  *
  * @tapestrydoc
