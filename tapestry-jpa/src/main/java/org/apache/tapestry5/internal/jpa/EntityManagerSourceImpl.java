@@ -190,14 +190,15 @@ public class EntityManagerSourceImpl implements EntityManagerSource
         return emf;
     }
 
-    private EntityManagerFactory createEntityManagerFactory(final String persistenceUnitName)
+    @SuppressWarnings("unchecked")
+    EntityManagerFactory createEntityManagerFactory(final String persistenceUnitName)
     {
 
         for (final TapestryPersistenceUnitInfo info : persistenceUnitInfos)
         {
             if (info.getPersistenceUnitName().equals(persistenceUnitName))
             {
-                final Map<String, String> properties = CollectionFactory.newCaseInsensitiveMap();
+                final Map properties = info.getEntityManagerProperties() == null ? CollectionFactory.newCaseInsensitiveMap() : info.getEntityManagerProperties();
                 properties.put(JpaConstants.PERSISTENCE_UNIT_NAME, persistenceUnitName);
 
                 String providerClassName = info.getPersistenceProviderClassName();

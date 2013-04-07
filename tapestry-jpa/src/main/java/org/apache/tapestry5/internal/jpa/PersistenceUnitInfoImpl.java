@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -60,6 +61,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     private final Properties properties = new Properties();
 
+		private Map entityManagerProperties;
 
     public PersistenceUnitInfoImpl(String persistenceUnitName)
     {
@@ -363,5 +365,15 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         }
 
     }
+
+    public TapestryPersistenceUnitInfo setEntityManagerProperties(Map properties) {
+    	entityManagerProperties = properties;
+    	return this;
+    }
+
+    public Map getEntityManagerProperties() {
+    	return entityManagerProperties;
+    }
+
 
 }
