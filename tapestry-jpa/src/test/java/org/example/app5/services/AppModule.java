@@ -36,7 +36,7 @@ public class AppModule {
 
         PersistenceProviderResolverHolder.setPersistenceProviderResolver(new PersistenceProviderResolver() {
             public List<PersistenceProvider> getPersistenceProviders() {
-                return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider());
+                return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider(), new org.eclipse.persistence.jpa.PersistenceProvider());
             }
 
             public void clearCachedProviders() {
