@@ -2077,14 +2077,14 @@ public final class TapestryModule
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
-        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require-2.1.1.js");
+        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require-2.1.5.js");
         configuration.add(SymbolConstants.CONTEXT_PATH, "");
 
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
 
-        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_2_1_1");
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_2_3_1");
 
         configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
     }

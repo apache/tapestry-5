@@ -219,7 +219,7 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModules(MappedConfiguration<String, Object> configuration,
-                                        @Path("${tapestry.asset.root}/underscore_1_4_2.js")
+                                        @Path("${tapestry.asset.root}/underscore_1_4_4.js")
                                         Resource underscore,
 
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
@@ -228,7 +228,7 @@ public class JavaScriptModule
                                         @Path("${tapestry.scriptaculous}/prototype.js")
                                         Resource prototype,
 
-                                        @Path("${tapestry.asset.root}/jquery-1.8.3.js")
+                                        @Path("${tapestry.asset.root}/jquery-1.9.1.js")
                                         Resource jQuery,
 
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
