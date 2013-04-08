@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
@@ -50,15 +48,13 @@ public class ModuleDispatcher implements Dispatcher
     public ModuleDispatcher(ModuleManager moduleManager,
                             ResourceStreamer streamer,
                             PathConstructor pathConstructor,
-                            @Symbol(SymbolConstants.APPLICATION_VERSION)
-                            String applicationVersion,
                             OperationTracker tracker)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
 
-        prefix = pathConstructor.constructDispatchPath("modules", applicationVersion, "");
+        prefix = pathConstructor.constructDispatchPath("modules", "");
     }
 
     public boolean dispatch(Request request, Response response) throws IOException

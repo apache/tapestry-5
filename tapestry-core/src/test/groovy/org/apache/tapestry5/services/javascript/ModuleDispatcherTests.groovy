@@ -16,13 +16,13 @@ class ModuleDispatcherTests extends TestBase {
 
         def request = newMock Request
 
-        expect(pc.constructDispatchPath("modules", "123", "")).andReturn "/modules/123/"
+        expect(pc.constructDispatchPath("modules", "")).andReturn "/modules/"
 
         expect(request.path).andReturn path
 
         replay()
 
-        def handler = new ModuleDispatcher(null, null, pc, "123", new QuietOperationTracker())
+        def handler = new ModuleDispatcher(null, null, pc, new QuietOperationTracker())
 
         assertEquals handler.dispatch(request, null), false
 
@@ -36,7 +36,7 @@ class ModuleDispatcherTests extends TestBase {
             "foo",
             "foo/bar",
             ""
-        ].collect({ it -> ["/modules/123/$it"] as Object[] }) as Object[][]
+        ].collect({ it -> ["/modules/$it"] as Object[] }) as Object[][]
     }
 
     @Test
@@ -48,15 +48,15 @@ class ModuleDispatcherTests extends TestBase {
 
         def request = newMock Request
 
-        expect(pc.constructDispatchPath("modules", "123", "")).andReturn "/modules/123/"
+        expect(pc.constructDispatchPath("modules", "")).andReturn "/modules/"
 
-        expect(request.path).andReturn("/modules/123/foo/bar.js")
+        expect(request.path).andReturn("/modules/foo/bar.js")
 
         expect(manager.findResourceForModule("foo/bar")).andReturn null
 
         replay()
 
-        def handler = new ModuleDispatcher(manager, null, pc, "123", new QuietOperationTracker())
+        def handler = new ModuleDispatcher(manager, null, pc, new QuietOperationTracker())
 
         assertEquals handler.dispatch(request, null), false
 

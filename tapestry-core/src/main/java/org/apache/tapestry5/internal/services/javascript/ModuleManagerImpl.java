@@ -57,8 +57,6 @@ public class ModuleManagerImpl implements ModuleManager
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
     public ModuleManagerImpl(PathConstructor constructor,
-                             @Symbol(SymbolConstants.APPLICATION_VERSION)
-                             String applicationVersion,
                              AssetSource assetSource,
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
@@ -74,7 +72,7 @@ public class ModuleManagerImpl implements ModuleManager
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
 
-        this.requireConfig = buildRequireJSConfig(constructor.constructClientPath("modules", applicationVersion, ""), configuration, !productionMode);
+        this.requireConfig = buildRequireJSConfig(constructor.constructClientPath("modules", ""), configuration, !productionMode);
 
         classpathRoot = assetSource.resourceForPath("");
 

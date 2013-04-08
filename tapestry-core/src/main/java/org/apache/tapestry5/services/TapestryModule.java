@@ -41,7 +41,6 @@ import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
-import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
@@ -2034,7 +2033,7 @@ public final class TapestryModule
 
         Random random = new Random(System.currentTimeMillis());
 
-        configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(random.nextLong()));
+        configuration.add(SymbolConstants.APPLICATION_VERSION, "0.0.1");
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, false);
 

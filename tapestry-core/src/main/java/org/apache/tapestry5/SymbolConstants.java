@@ -38,7 +38,7 @@ public class SymbolConstants
      * number of Tapestry behaviors related to performance and security, including how exceptions are
      * reported, whether far-future expire headers are emitted, whether JavaScript files may be combined,
      * whether JSON is compressed, whether component field & parameter values are shadowed to instance
-     * variables (to assist with debugging), and more.  
+     * variables (to assist with debugging), and more.
      */
     public static final String PRODUCTION_MODE = "tapestry.production-mode";
 
@@ -68,7 +68,7 @@ public class SymbolConstants
      * Time interval defining how often Tapestry will check for updates to local files (including classes).
      * Starting with 5.3, this is only used when not running in production mode. The default is "1 s"
      * (one second), which is appropriate for development. With Tapestry 5.2 and earlier this number
-     * should be raised in a production environment. 
+     * should be raised in a production environment.
      */
     public static final String FILE_CHECK_INTERVAL = "tapestry.file-check-interval";
 
@@ -128,11 +128,11 @@ public class SymbolConstants
     public static final String MIN_GZIP_SIZE = "tapestry.min-gzip-size";
 
     /**
-     * Version number integrated into URLs for assets. This should be changed for each release, otherwise
-     * out-of-date files may be used from the client's local cache (due to far-future expired headers). The default
-     * value is semi-random and different for each execution, which will adversely affect client caching, but is
-     * reasonable
-     * for development.
+     * Version number of the application. Prior to 5.4, this version number was integrated into asset URLs. Starting
+     * with 5.4, a checksum of the individual asset's content is used instead, and this version number is only used
+     * for documentation purposes; it appears in the default exception report page, for example.
+     * <p/>
+     * The default value is "0.0.1".  In 5.3 and earlier, the default value was a random hexadecimal string.
      *
      * @see AssetDispatcher
      * @see AssetPathConstructor
