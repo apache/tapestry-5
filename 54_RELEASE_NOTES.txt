@@ -43,7 +43,7 @@ if the asset had changed.
 Unfortunately, when any asset changed in a new deployment of the application, the version number needed to
 change, resulting in all assets being downloaded (because the application version number in their URLs changed).
 
-In this release, individual assets are given a checksum based on the asset's content. When the underlying
+In this release, individual assets are given a URL containing a checksum based on the asset's content. When the underlying
 file is changed, the asset will be served with the new URL, but unchanged assets will not be affected. This means
 that when redeploying your application, you'll see far less asset traffic, as most client web browsers will already
 have most assets (whose contents have not changed) in their local cache.
