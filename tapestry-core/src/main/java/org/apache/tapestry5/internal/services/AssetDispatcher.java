@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a bytestream. Also
- * handles requests that are simply polling for a change to the file.
+ * Recognizes requests where the path begins with "/asset/" (actually, as defined by the
+ * {@link SymbolConstants#ASSET_PATH_PREFIX} symbol), and delivers the content therein as a bytestream. Also
+ * handles requests that are simply polling for a change to the file (including checking the ETag in the
+ * request against {@linkplain org.apache.tapestry5.services.assets.StreamableResource#getChecksum() the asset's checksum}.
  *
  * @see ResourceStreamer
  * @see ClasspathAssetAliasManager
@@ -51,26 +53,27 @@ public class AssetDispatcher implements Dispatcher
      */
     private final List<String> assetPaths = CollectionFactory.newList();
 
-    private final String pathPrefix;
+    private final String uncompressedPathPrefix, compressedPathPrefix;
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
                            PathConstructor pathConstructor,
 
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                           String assetPathPrefix)
+                           String uncompressedPrefix,
+
+                           @Symbol(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX)
+                           String compressedPrefix)
     {
-        pathPrefix = pathConstructor.constructDispatchPath(assetPathPrefix, "");
+        uncompressedPathPrefix = pathConstructor.constructDispatchPath(uncompressedPrefix, "");
+        compressedPathPrefix = pathConstructor.constructDispatchPath(compressedPrefix, "");
 
         for (String path : configuration.keySet())
         {
-            String extendedPath = path.length() == 0
-                    ? pathPrefix
-                    : pathPrefix + path + "/";
+            AssetRequestHandler handler = configuration.get(path);
 
-            pathToHandler.put(extendedPath, configuration.get(path));
-
-            assetPaths.add(extendedPath);
+            addPath(uncompressedPathPrefix, path, handler);
+            addPath(compressedPathPrefix, path, handler);
         }
 
         // Sort by descending length
@@ -84,6 +87,29 @@ public class AssetDispatcher implements Dispatcher
         });
     }
 
+    private void addPath(String prefix, String path, AssetRequestHandler handler)
+    {
+        String extendedPath = buildPath(prefix, path);
+
+        pathToHandler.put(extendedPath, handler);
+
+        assetPaths.add(extendedPath);
+    }
+
+    private String buildPath(String prefix, String path)
+    {
+        // TODO: Not sure when path would be length 0!
+        return path.length() == 0
+                ? prefix
+                : prefix + path + "/";
+    }
+
+    private boolean matchesEitherPrefix(String path)
+    {
+        return path.startsWith(compressedPathPrefix) ||
+                path.startsWith(uncompressedPathPrefix);
+    }
+
     public boolean dispatch(Request request, Response response) throws IOException
     {
         String path = request.getPath();
@@ -91,7 +117,7 @@ public class AssetDispatcher implements Dispatcher
         // Remember that the request path does not include the context path, so we can simply start
         // looking for the asset path prefix right off the bat.
 
-        if (!path.startsWith(pathPrefix))
+        if (!matchesEitherPrefix(path))
         {
             return false;
         }

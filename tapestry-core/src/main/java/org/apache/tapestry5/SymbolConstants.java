@@ -330,9 +330,19 @@ public class SymbolConstants
     /**
      * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
      * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
-     * Its default is "assets".  It may contain slashes, but should not begin or end with one.
+     * Its default is "assets".  It may contain slashes, but should not begin or end with one. This is the prefix
+     * for uncompressed assets.
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
+
+    /**
+     * As with {@link #ASSET_PATH_PREFIX} but for compressed versions of assets. At render time, it is determined
+     * whether each asset is compressable (for example, image file formats are already compressed). A path for
+     * either {@link #ASSET_PATH_PREFIX} or this prefix is selected at render time.  Defaults to the asset path prefix suffixed with ".gz".
+     *
+     * @since 5.4
+     */
+    public static final String COMPRESSED_ASSET_PATH_PREFIX = "tapestry.compressed-asset-path-prefix";
 
     /**
      * The Asset path to the copy of Require JS to include in rendered pages. Any page that makes use of any JavaScript will
