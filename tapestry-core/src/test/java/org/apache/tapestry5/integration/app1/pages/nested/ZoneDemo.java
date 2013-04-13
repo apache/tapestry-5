@@ -57,6 +57,9 @@ public class ZoneDemo
     @InjectComponent
     private Zone output;
 
+    @InjectComponent
+    private Zone zoneWithEmptyBody;
+
     @InjectPage
     private SecurePage securePage;
 
@@ -199,6 +202,12 @@ public class ZoneDemo
     Object onActionFromBlankUpdate()
     {
         return empty;
+    }
+
+
+    Object onActionFromUpdateZoneWithEmptyBody()
+    {
+        return zoneWithEmptyBody.getBody();
     }
 
     void afterRender()

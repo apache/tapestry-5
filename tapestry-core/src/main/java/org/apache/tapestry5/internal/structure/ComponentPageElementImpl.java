@@ -63,11 +63,16 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Placeholder for the body used when the component has no real content.
      */
-    private static class PlaceholderBlock implements Block, Renderable
+    private static class PlaceholderBlock implements Block, Renderable, RenderCommand
     {
         public void render(MarkupWriter writer)
         {
         }
+
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+        }
+
 
         @Override
         public String toString()

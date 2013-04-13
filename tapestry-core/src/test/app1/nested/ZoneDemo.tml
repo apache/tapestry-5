@@ -82,6 +82,9 @@
             <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
         </li>
         <li>
+            <t:actionLink t:id="updateZoneWithEmptyBody" zone="output">Update zone with empty body</t:actionLink>
+        </li>
+        <li>
             <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
                 failure
             </t:actionlink>
@@ -102,6 +105,8 @@
     <div id="notAZone"/>
 
     <t:block id="empty"/>
+
+    <t:zone t:id="zoneWithEmptyBody"/>
 
     <t:block id="forUnknownZone">
         <p>Content for the unknown zone.</p>
