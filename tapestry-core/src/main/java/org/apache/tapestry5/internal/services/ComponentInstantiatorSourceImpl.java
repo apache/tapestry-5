@@ -425,42 +425,60 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
             model.addEventHandler(eventType);
 
-            MethodAdvice advice = new MethodAdvice()
-            {
-                public void advise(MethodInvocation invocation)
-                {
-                    final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                    boolean matches = !event.isAborted() && event.matches(eventType, "", minContextValues);
-
-                    if (matches)
-                    {
-                        final Component instance = (Component) invocation.getInstance();
-
-                        tracker.invoke(operationDescription, new Invokable<Object>()
-                        {
-                            public Object invoke()
-                            {
-                                handler.handleEvent(instance, event);
-
-                                return null;
-                            }
-                        });
-                    }
-
-                    // Order of operations is key here. This logic takes precedence; base class event dispatch and event handler methods
-                    // in the class come AFTER.
-
-                    invocation.proceed();
-
-                    if (matches)
-                    {
-                        invocation.setReturnValue(true);
-                    }
-                }
-            };
+            MethodAdvice advice = new EventMethodAdvice(tracker, eventType, minContextValues, operationDescription, handler);
 
             plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
         }
     }
+    
+    private static class EventMethodAdvice implements MethodAdvice
+    {
+        final OperationTracker tracker;
+        final String eventType;
+        final int minContextValues;
+        final String operationDescription;
+        final ComponentEventHandler handler;
+
+        public EventMethodAdvice(OperationTracker tracker, String eventType, int minContextValues, String operationDescription, ComponentEventHandler handler)
+        {
+            this.tracker = tracker;
+            this.eventType = eventType;
+            this.minContextValues = minContextValues;
+            this.operationDescription = operationDescription;
+            this.handler = handler;
+        }
+        
+        public void advise(MethodInvocation invocation)
+        {
+            final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+            boolean matches = !event.isAborted() && event.matches(eventType, "", minContextValues);
+
+            if (matches)
+            {
+                final Component instance = (Component) invocation.getInstance();
+
+                tracker.invoke(operationDescription, new Invokable<Object>()
+                {
+                    public Object invoke()
+                    {
+                        handler.handleEvent(instance, event);
+
+                        return null;
+                    }
+                });
+            }
+
+            // Order of operations is key here. This logic takes precedence; base class event dispatch and event handler methods
+            // in the class come AFTER.
+
+            invocation.proceed();
+
+            if (matches)
+            {
+                invocation.setReturnValue(true);
+            }
+        }
+    };
+    
 }

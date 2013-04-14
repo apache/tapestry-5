@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,36 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
+
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DECIMAL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.FALSE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.IDENTIFIER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INTEGER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INVOKE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.LIST;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.MAP;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NOT;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NULL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.RANGEOP;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.SAFEDEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.STRING;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.THIS;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.TRUE;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -29,23 +59,27 @@ import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.services.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
@@ -491,11 +525,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             conduitPropertyName = propertyName;
             annotationProvider = adapter;
 
-            implementGetter(activeType, adapter);
-            implementSetter(activeType, adapter);
+            implementGetter(adapter);
+            implementSetter(adapter);
         }
 
-        private void implementSetter(Type activeType, PropertyAdapter adapter)
+        private void implementSetter(PropertyAdapter adapter)
         {
             if (adapter.getWriteMethod() != null)
             {
@@ -572,7 +606,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private void implementGetter(Type activeType, PropertyAdapter adapter)
+        private void implementGetter(PropertyAdapter adapter)
         {
             if (adapter.getReadMethod() != null)
             {
@@ -663,7 +697,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
 
         /**
-         * @param node subexpression to invert
+         * @param node
+         *         subexpression to invert
          */
         private void implementNotOpGetter(final Tree node)
         {
@@ -699,9 +734,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Uses the builder to add instructions for a subexpression.
          *
-         * @param builder    used to add instructions
-         * @param activeType type of value on top of the stack when this code will execute, or null if no value on stack
-         * @param node       defines the expression
+         * @param builder
+         *         used to add instructions
+         * @param activeType
+         *         type of value on top of the stack when this code will execute, or null if no value on stack
+         * @param node
+         *         defines the expression
          * @return the expression type
          */
         private Type implementSubexpression(InstructionBuilder builder, Type activeType, Tree node)
@@ -908,11 +946,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * Invokes a method that may take parameters. The children of the invokeNode are subexpressions
          * to be evaluated, and potentially coerced, so that they may be passed to the method.
          *
-         * @param builder     constructs code
-         * @param method      method to invoke
-         * @param node        INVOKE or RANGEOP node
-         * @param childOffset offset within the node to the first child expression (1 in an INVOKE node because the
-         *                    first child is the method name, 0 in a RANGEOP node)
+         * @param builder
+         *         constructs code
+         * @param method
+         *         method to invoke
+         * @param node
+         *         INVOKE or RANGEOP node
+         * @param childOffset
+         *         offset within the node to the first child expression (1 in an INVOKE node because the
+         *         first child is the method name, 0 in a RANGEOP node)
          */
         private void invokeMethod(InstructionBuilder builder, Method method, Tree node, int childOffset)
         {
@@ -1170,9 +1212,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Casts the results of a field read or method invocation based on generic information.
          *
-         * @param builder     used to add instructions
-         * @param rawType     the simple type (often Object) of the field (or method return type)
-         * @param genericType the generic Type, from which parameterizations can be determined
+         * @param builder
+         *         used to add instructions
+         * @param rawType
+         *         the simple type (often Object) of the field (or method return type)
+         * @param genericType
+         *         the generic Type, from which parameterizations can be determined
          */
         private void castToGenericType(InstructionBuilder builder, Class rawType, final Type genericType)
         {
@@ -1199,13 +1244,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             Type returnType = GenericsUtils.extractActualType(activeType, method);
 
-            return new Term(returnType, toUniqueId(method), new AnnotationProvider()
-            {
-                public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-                {
-                    return method.getAnnotation(annotationClass);
-                }
-            }, new InstructionBuilderCallback()
+            return new Term(returnType, toUniqueId(method), InternalUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -1344,8 +1383,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * rootClass/expression, and it will get sorted out when the conduit is
      * stored into the cache.
      *
-     * @param rootClass  class of root object for expression evaluation
-     * @param expression expression to be evaluated
+     * @param rootClass
+     *         class of root object for expression evaluation
+     * @param expression
+     *         expression to be evaluated
      * @return the conduit
      */
     private PropertyConduit build(final Class rootClass, String expression)
@@ -1433,7 +1474,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             public void set(Object instance, Object value)
             {
-                throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
+                throw new RuntimeException("Literal values are not updateable.");
             }
 
             public Class getPropertyType()
@@ -1487,6 +1528,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     /**
      * May be invoked from fabricated PropertyConduit instances.
      */
+    @SuppressWarnings("unused")
     public static NullPointerException nullTerm(String term, String expression, Object root)
     {
         String message = String.format("Property '%s' (within property expression '%s', of %s) is null.", term,
