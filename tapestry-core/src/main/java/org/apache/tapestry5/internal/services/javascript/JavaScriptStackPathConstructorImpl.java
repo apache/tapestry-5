@@ -18,11 +18,13 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssembler;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -41,6 +43,8 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
 
     private final JavaScriptStackAssembler assembler;
 
+    private final ResponseCompressionAnalyzer compressionAnalyzer;
+
     private final boolean combineScripts;
 
     private final Mapper<Asset, String> toPath = new Mapper<Asset, String>()
@@ -54,13 +58,14 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     public JavaScriptStackPathConstructorImpl(ThreadLocale threadLocale, AssetPathConstructor assetPathConstructor,
                                               JavaScriptStackSource javascriptStackSource,
                                               JavaScriptStackAssembler assembler,
-                                              @Symbol(SymbolConstants.COMBINE_SCRIPTS)
-                                              boolean combineScripts)
+                                              ResponseCompressionAnalyzer compressionAnalyzer, @Symbol(SymbolConstants.COMBINE_SCRIPTS)
+    boolean combineScripts)
     {
         this.threadLocale = threadLocale;
         this.assetPathConstructor = assetPathConstructor;
         this.javascriptStackSource = javascriptStackSource;
         this.assembler = assembler;
+        this.compressionAnalyzer = compressionAnalyzer;
         this.combineScripts = combineScripts;
     }
 
@@ -89,11 +94,13 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     {
         try
         {
-            StreamableResource streamable = assembler.assembleJavaScriptResourceForStack(stackName, false);
+            StreamableResource assembled = assembler.assembleJavaScriptResourceForStack(stackName, compressionAnalyzer.isGZipSupported());
 
-            String path = stackName + ".js";
+            String path = String.format("%s/%s.js",
+                    threadLocale.getLocale(),
+                    stackName);
 
-            String stackURL = assetPathConstructor.constructStackAssetPath(threadLocale.getLocale().toString(), path, streamable);
+            String stackURL = assetPathConstructor.constructAssetPath(RequestConstants.STACK_FOLDER, path, assembled);
 
             return CollectionFactory.newList(stackURL);
         } catch (IOException ex)

@@ -34,11 +34,15 @@ import java.util.regex.Pattern;
  * the CSS file and the image assets it may refer to (useful for incorporating a hash of the resource's content into
  * the exposed URL).
  *
+ * <p>
+ * One potential problem with URL rewriting is the way that URLs for referenced resources are generated; we are
+ * somewhat banking on the fact that referenced resources are non-compressable images.
+ *
  * @since 5.4
  */
 public class CSSURLRewriter extends DelegatingSRS
 {
-    // Group 1 is the optional single or double quote
+    // Group 1 is the optional single or double quote (note the use of backtracking to match it)
     // Group 2 is the text inside the quotes, or inside the parens if no quotes
     private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)\\1\\s*\\)", Pattern.MULTILINE);
 

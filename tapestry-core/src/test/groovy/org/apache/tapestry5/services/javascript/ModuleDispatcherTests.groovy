@@ -1,6 +1,6 @@
 package org.apache.tapestry5.services.javascript
 
-import org.apache.tapestry5.internal.services.javascript.ModuleDispatcher
+import org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.test.TestBase
 import org.apache.tapestry5.services.PathConstructor
@@ -22,7 +22,7 @@ class ModuleDispatcherTests extends TestBase {
 
         replay()
 
-        def handler = new ModuleDispatcher(null, null, pc, new QuietOperationTracker())
+        def handler = new ModuleAssetRequestHandler(null, null, new QuietOperationTracker())
 
         assertEquals handler.dispatch(request, null), false
 
@@ -56,7 +56,7 @@ class ModuleDispatcherTests extends TestBase {
 
         replay()
 
-        def handler = new ModuleDispatcher(manager, null, pc, new QuietOperationTracker())
+        def handler = new ModuleAssetRequestHandler(manager, null, new QuietOperationTracker())
 
         assertEquals handler.dispatch(request, null), false
 

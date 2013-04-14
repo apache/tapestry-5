@@ -30,7 +30,7 @@ import java.util.Locale;
  * the contents of the virtual resource.
  *
  * @see org.apache.tapestry5.services.javascript.ModuleManager
- * @see org.apache.tapestry5.internal.services.javascript.ModuleDispatcher
+ * @see org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler
  * @since 5.4
  */
 public abstract class VirtualResource implements Resource

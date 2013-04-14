@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.IOOperation;
@@ -23,7 +24,6 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
@@ -32,12 +32,13 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.EnumSet;
 import java.util.Set;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
+
+    private static final String QUOTE = "\"";
 
     private final Request request;
 
@@ -45,23 +46,17 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final StreamableResourceSource streamableResourceSource;
 
-    private final ResponseCompressionAnalyzer analyzer;
-
     private final boolean productionMode;
 
     private final OperationTracker tracker;
 
     private final ResourceChangeTracker resourceChangeTracker;
 
-    private final Set<Options> defaultOptions = EnumSet.noneOf(Options.class);
-
     public ResourceStreamerImpl(Request request,
 
                                 Response response,
 
                                 StreamableResourceSource streamableResourceSource,
-
-                                ResponseCompressionAnalyzer analyzer,
 
                                 OperationTracker tracker,
 
@@ -74,51 +69,52 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.response = response;
         this.streamableResourceSource = streamableResourceSource;
 
-        this.analyzer = analyzer;
         this.tracker = tracker;
         this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
     }
 
-    public void streamResource(Resource resource) throws IOException
-    {
-        streamResource(resource, defaultOptions);
-    }
-
-    public void streamResource(final Resource resource, final Set<Options> options) throws IOException
+    public boolean streamResource(final Resource resource, final String providedChecksum, final Set<Options> options) throws IOException
     {
         if (!resource.exists())
         {
+            // TODO: Or should we just return false here and not send back a specific error with the (eventual) 404?
+
             response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("Unable to locate asset '%s' (the file does not exist).", resource));
-            return;
+
+            return true;
         }
 
-        tracker.perform(String.format("Streaming %s", resource), new IOOperation<Void>()
+        final boolean compress = (Boolean) request.getAttribute(TapestryConstants.COMPRESS_CONTENT);
+
+
+        return tracker.perform(String.format("Streaming %s%s", resource, compress ? " (compressed)" : ""), new IOOperation<Boolean>()
         {
-            public Void perform() throws IOException
+            public Boolean perform() throws IOException
             {
-                StreamableResourceProcessing processing = analyzer.isGZipSupported()
+                StreamableResourceProcessing processing = compress
                         ? StreamableResourceProcessing.COMPRESSION_ENABLED
                         : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
                 StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
-                streamResource(streamable, options);
-
-                return null;
+                return streamResource(streamable, providedChecksum, options);
             }
         });
     }
 
-    public void streamResource(StreamableResource resource) throws IOException
-    {
-        streamResource(resource, defaultOptions);
-    }
-
-    public void streamResource(StreamableResource streamable, Set<Options> options) throws IOException
+    public boolean streamResource(StreamableResource streamable, String providedChecksum, Set<Options> options) throws IOException
     {
         assert streamable != null;
+        assert providedChecksum != null;
         assert options != null;
+
+        String actualChecksum = streamable.getChecksum();
+
+        if (providedChecksum.length() > 0 && !providedChecksum.equals(actualChecksum))
+        {
+            return false;
+        }
 
         long lastModified = streamable.getLastModified();
 
@@ -137,11 +133,11 @@ public class ResourceStreamerImpl implements ResourceStreamer
         if (ifModifiedSince > 0 && ifModifiedSince >= lastModified)
         {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+            return true;
         }
 
         // ETag should be surrounded with quotes.
-        String token = "\"" + streamable.getChecksum() + "\"";
+        String token = QUOTE + actualChecksum + QUOTE;
 
         // Even when sending a 304, we want the ETag associated with the request.
         // In most cases (except JavaScript modules), the checksum is also embedded into the URL.
@@ -155,7 +151,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         if (token.equals(providedToken))
         {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+            return true;
         }
 
         // Prevent the upstream code from compressing when we don't want to.
@@ -184,6 +180,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
         streamable.streamTo(os);
 
         os.close();
+
+        return true;
     }
 
 }

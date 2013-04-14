@@ -94,7 +94,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         {
             StreamableResource uncompressed = assembleJavascriptResourceForStack(locale, stackName, false);
 
-            return new CompressedStreamableResource(uncompressed);
+            return new CompressedStreamableResource(uncompressed, checksumGenerator);
         }
 
         JavaScriptStack stack = stackSource.getStack(stackName);
@@ -117,7 +117,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
         for (Asset library : libraries)
         {
-            String path = library.toClientURL();
+            String path = library.getResource().toString();
 
             paths.put(path);
 

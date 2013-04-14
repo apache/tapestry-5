@@ -41,22 +41,22 @@ import java.util.Map;
  * <p/>
  * Tapestry automatically contributes a number of mappings: for the application root package itself (as alias "app") and
  * for each library (via {@link ComponentClassResolver#getFolderToPackageMapping()});
+ *
+ * @deprecated Deprecated in 5.4, with no replacement. This will no longer be used in Tapestry 5.5, as all classpath assets
+ *             will need to be under the {@code META-INF/assets} folder (but may be maintained for compatibility reasons until 5.6).
  */
 @UsesMappedConfiguration(String.class)
 public interface ClasspathAssetAliasManager
 {
     /**
-     * Takes a resource path to a classpath resource and adds the asset path prefix to the path. May also convert part
-     * of the path to an alias (based on the manager's configuration).
-     * <p/>
-     * Note: this method's signature changed incompatibly in Tapestry 5.4.
+     * Takes a classpath resource and determines the proper alias for it based on the mappings contributed to the service.
      *
      * @param resource
      *         classpath resource
      * @return URL ready to send to the client
      */
-    @IncompatibleChange(release = "5.4", details = "parameter changed from String to Resource")
-    String toClientURL(Resource resource);
+    @IncompatibleChange(release = "5.4", details = "parameter changed from String to Resource, renamed from toClientURL() to better identify purpose")
+    AssetAlias extractAssetAlias(Resource resource);
 
     /**
      * Returns the mappings used by the service: the keys are the folder aliases (i.e, "corelib")

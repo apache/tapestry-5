@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 import java.io.IOException;
 
 /**
- * Encapsulates the logic or creating the path portion of an asset URL, including
- * the application version.
+ * Encapsulates the logic or creating the path portion of an asset URL, including hooking the {@link org.apache.tapestry5.services.AssetPathConverter}
+ * into the generation.
  *
  * @see org.apache.tapestry5.services.PathConstructor
  * @since 5.2.0
@@ -30,31 +29,38 @@ public interface AssetPathConstructor
 {
     /**
      * Constructs an asset URL path from the virtual folder and path (within the virtual folder).
+     * After constructing the string (and honoring the {@link org.apache.tapestry5.SymbolConstants#ASSET_URL_FULL_QUALIFIED}
+     * symbol), the result is passed through the {@link org.apache.tapestry5.services.AssetPathConverter}.
      *
      * @param virtualFolder
      *         corresponds to a {@link AssetRequestHandler} contributed to the AssetDispatcher service
      * @param path
-     *         within the virtual folder (should <em>not</em> start with a slash). May be the empty string.
-     *         When non-blank, separated from the rest of the path with a slash.
+     *         a path that can be used to identify the underlying {@link org.apache.tapestry5.ioc.Resource} or
+     *         or re-acquire the {@link StreamableResource}; this will be the final portion of the URL, after
+     *         the appropriate prefix (based on whether the resource is compressed or not) and the checksum for the
+     *         resource
      * @param resource
-     *         underlying resource for the asset path, used to compute checksums (since 5.4)
+     *         underlying resource for the asset path; the checksum portion of the URL is obtained from the resource
      * @return path portion of asset URL, which is everything needed by the {@link org.apache.tapestry5.internal.services.AssetDispatcher}
      *         to find and stream the resource
+     * @see StreamableResourceSource
      */
-    @IncompatibleChange(release = "5.4", details = "resource parameter added, IOException may not be thrown")
-    String constructAssetPath(String virtualFolder, String path, Resource resource) throws IOException;
+    @IncompatibleChange(release = "5.4", details = "resource parameter added, IOException may now be thrown")
+    String constructAssetPath(String virtualFolder, String path, StreamableResource resource) throws IOException;
 
     /**
-     * Constructs an asset path for a aggregated {@linkplain org.apache.tapestry5.services.javascript.JavaScriptStack stack}.
+     * Generates a base URL for a virtual folder (this exists mostly for {@link org.apache.tapestry5.services.javascript.ModuleManager}
+     * and {@link org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler}). Uses much of the same logic
+     * as {@link #constructAssetPath(String, String, StreamableResource)}, including
+     * {@link org.apache.tapestry5.SymbolConstants#ASSET_URL_FULL_QUALIFIED} and the {@link org.apache.tapestry5.services.AssetPathConverter}.
      *
-     * @param localeName
-     *         name of the locale
-     * @param path
-     *         based on the name of the core stack
-     * @param resource
-     *         the aggregated stack (used when generating the checksum)
-     * @return path that identifies the checksum, locale, and path
+     * @param virtualFolder
+     *         folder that will be used to select a {@link }
+     * @param compressed
+     *         build a path that indicates GZip compression
+     * @return complete path
      * @since 5.4
      */
-    String constructStackAssetPath(String localeName, String path, StreamableResource resource) throws IOException;
+    String constructAssetPath(String virtualFolder, boolean compressed);
+
 }

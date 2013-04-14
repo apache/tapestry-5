@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
@@ -55,6 +56,20 @@ public class AssetDispatcher implements Dispatcher
 
     private final String uncompressedPathPrefix, compressedPathPrefix;
 
+    private AssetRequestHandler wrap(final boolean compress, final AssetRequestHandler handler)
+    {
+        return new AssetRequestHandler()
+        {
+            @Override
+            public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
+            {
+                request.setAttribute(TapestryConstants.COMPRESS_CONTENT, compress);
+
+                return handler.handleAssetRequest(request, response, extraPath);
+            }
+        };
+    }
+
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
                            PathConstructor pathConstructor,
@@ -72,8 +87,8 @@ public class AssetDispatcher implements Dispatcher
         {
             AssetRequestHandler handler = configuration.get(path);
 
-            addPath(uncompressedPathPrefix, path, handler);
-            addPath(compressedPathPrefix, path, handler);
+            addPath(uncompressedPathPrefix, path, wrap(false, handler));
+            addPath(compressedPathPrefix, path, wrap(true, handler));
         }
 
         // Sort by descending length
@@ -124,7 +139,6 @@ public class AssetDispatcher implements Dispatcher
 
         for (String extendedPath : assetPaths)
         {
-
             if (path.startsWith(extendedPath))
             {
                 AssetRequestHandler handler = pathToHandler.get(extendedPath);

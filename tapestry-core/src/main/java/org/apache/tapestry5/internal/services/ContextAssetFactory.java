@@ -15,15 +15,13 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
-
-import java.io.IOException;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
@@ -32,102 +30,19 @@ import java.io.IOException;
  */
 public class ContextAssetFactory extends AbstractAssetFactory
 {
-    private final AssetPathConstructor assetPathConstructor;
 
-    private final Resource rootResource;
-
-    private final AssetPathConverter converter;
-
-    private final boolean invariant;
-
-    public ContextAssetFactory(AssetPathConstructor assetPathConstructor, Context context,
-
-                               AssetPathConverter converter)
+    public ContextAssetFactory(ResponseCompressionAnalyzer compressionAnalyzer,
+                               ResourceChangeTracker resourceChangeTracker,
+                               StreamableResourceSource streamableResourceSource,
+                               AssetPathConstructor assetPathConstructor,
+                               Context context)
     {
-        this.assetPathConstructor = assetPathConstructor;
-        this.converter = converter;
-
-        rootResource = new ContextResource(context, "/");
-        invariant = this.converter.isInvariant();
+        super(compressionAnalyzer, resourceChangeTracker, streamableResourceSource, assetPathConstructor,
+                new ContextResource(context, "/"));
     }
 
-    public Asset createAsset(Resource resource)
+    public Asset createAsset(final Resource resource)
     {
-        if (invariant)
-        {
-            return createInvariantAsset(resource);
-        }
-
-        return createVariantAsset(resource);
-    }
-
-    private String defaultPath(Resource resource)
-    {
-        try
-        {
-            return assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath(), resource);
-        } catch (IOException ex)
-        {
-            throw new RuntimeException(String.format("Unable to construct asset path for %s: %s",
-                    resource, InternalUtils.toMessage(ex)), ex);
-        }
-    }
-
-    private Asset createInvariantAsset(final Resource resource)
-    {
-        return new AbstractAsset(true)
-        {
-            private final Invokable<String> clientURL = recomputable.create(new Invokable<String>()
-            {
-                @Override
-                public String invoke()
-                {
-                    return converter.convertAssetPath(defaultPath(resource));
-                }
-            });
-
-            public Resource getResource()
-            {
-                return resource;
-            }
-
-            public String toClientURL()
-            {
-                return clientURL.invoke();
-            }
-        };
-    }
-
-    private Asset createVariantAsset(final Resource resource)
-    {
-        return new AbstractAsset(false)
-        {
-            private final Invokable<String> defaultPath = recomputable.create(new Invokable<String>()
-            {
-                @Override
-                public String invoke()
-                {
-                    return defaultPath(resource);
-                }
-            });
-
-            public Resource getResource()
-            {
-                return resource;
-            }
-
-            public String toClientURL()
-            {
-                return converter.convertAssetPath(defaultPath.invoke());
-            }
-        };
-    }
-
-    /**
-     * Returns the root {@link org.apache.tapestry5.internal.services.ContextResource}.
-     */
-    public Resource getRootResource()
-    {
-        return rootResource;
+        return createAsset(resource, RequestConstants.CONTEXT_FOLDER, resource.getPath());
     }
 }

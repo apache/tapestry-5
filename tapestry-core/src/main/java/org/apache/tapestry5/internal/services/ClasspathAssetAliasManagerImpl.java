@@ -16,13 +16,11 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.services.AssetAlias;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,8 +28,6 @@ import java.util.Map;
 
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
-    private final AssetPathConstructor assetPathConstructor;
-
     /**
      * Map from alias to path.
      */
@@ -42,24 +38,17 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      */
     private final Map<String, String> pathPrefixToAlias = CollectionFactory.newMap();
 
-    private final List<String> sortedAliases;
-
     private final List<String> sortedPathPrefixes;
 
     /**
-     * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
-     * one will be provided as necessary, so don't both.
+     * Configuration is a map of aliases (short names) to complete names. Keys and values must not start or end with a slash,
+     * but may contain them.
      */
-    public ClasspathAssetAliasManagerImpl(AssetPathConstructor assetPathConstructor,
-
-                                          Map<String, String> configuration)
+    public ClasspathAssetAliasManagerImpl(Map<String, String> configuration)
     {
-        this.assetPathConstructor = assetPathConstructor;
-
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
             String alias = verify("folder name", e.getKey());
-
 
             String path = verify("path", e.getValue());
 
@@ -74,9 +63,6 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
                 return o2.length() - o1.length();
             }
         };
-
-        sortedAliases = CollectionFactory.newList(aliasToPathPrefix.keySet());
-        Collections.sort(sortedAliases, sortDescendingByLength);
 
         sortedPathPrefixes = CollectionFactory.newList(aliasToPathPrefix.values());
         Collections.sort(sortedPathPrefixes, sortDescendingByLength);
@@ -93,7 +79,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     }
 
-    public String toClientURL(Resource resource)
+    public AssetAlias extractAssetAlias(Resource resource)
     {
         String resourcePath = resource.getPath();
 
@@ -101,18 +87,18 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         {
             if (resourcePath.startsWith(pathPrefix))
             {
+                // Prevent matching path prefix "foo" against "foobar" ... it must match against "foo/".
+                if (resourcePath.charAt(pathPrefix.length()) != '/')
+                {
+                    continue;
+                }
+
                 String virtualFolder = pathPrefixToAlias.get(pathPrefix);
 
-                String virtualPath = resourcePath.substring(pathPrefix.length() + 1);
+                // Don't want that slash seperating the folder from the rest of the path.
+                String path = resourcePath.substring(pathPrefix.length() + 1);
 
-                try
-                {
-                    return assetPathConstructor.constructAssetPath(virtualFolder, virtualPath, resource);
-                } catch (IOException ex)
-                {
-                    throw new RuntimeException(String.format("Unable to construct asset path for %s/%s (from %s): %s",
-                            virtualFolder, virtualPath, resource, InternalUtils.toMessage(ex)), ex);
-                }
+                return new AssetAlias(virtualFolder, path);
             }
         }
 

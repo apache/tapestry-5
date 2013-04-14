@@ -49,6 +49,9 @@ public interface AssetRequestHandler
      * The handler should return true if it provided a response. If the handler returns false, this indicates that the
      * extra path did not identify a known asset (virtual or otherwise) and the AssetDispatcher service should send a
      * {@link HttpServletResponse#SC_NOT_FOUND} response.
+     * <p/>
+     * Starting in Tapestry 5.4, the handler is informed by the {@link org.apache.tapestry5.services.AssetRequestDispatcher}
+     * whether or not the content should be compressed (this is determined based on information in the URL).
      *
      * @param request
      *         incoming asset request
@@ -56,7 +59,8 @@ public interface AssetRequestHandler
      *         used to send a response to client
      * @param extraPath
      *         additional path to identify the specific asset
-     * @return true if request handler, false if asset not found
+     * @return true if request was handled (and response sent), false if asset not found
+     * @see org.apache.tapestry5.TapestryConstants#COMPRESS_CONTENT
      */
     boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException;
 }

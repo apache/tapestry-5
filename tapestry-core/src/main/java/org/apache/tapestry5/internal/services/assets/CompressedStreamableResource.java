@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
 
@@ -28,22 +29,13 @@ import java.util.zip.GZIPOutputStream;
  *
  * @since 5.4
  */
-public class CompressedStreamableResource extends BaseStreamableResourceImpl
+public class CompressedStreamableResource extends StreamableResourceImpl
 {
-    private final StreamableResource base;
-
-    public String getChecksum() throws IOException
+    public CompressedStreamableResource(StreamableResource base, AssetChecksumGenerator assetChecksumGenerator) throws IOException
     {
-        return base.getChecksum();
-    }
-
-    public CompressedStreamableResource(StreamableResource base) throws IOException
-    {
-        super(base.getLastModified(), base.getDescription(), compressContent(base), base.getContentType(), CompressionStatus.COMPRESSED);
+        super(base.getDescription(), base.getContentType(), CompressionStatus.COMPRESSED, base.getLastModified(), compressContent(base), assetChecksumGenerator);
 
         assert base.getCompression() == CompressionStatus.COMPRESSABLE;
-
-        this.base = base;
     }
 
     private static BytestreamCache compressContent(StreamableResource resource) throws IOException

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.internal.structure.PageResetListener;
-import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 
 /**
  * Constants needed by end-user classes.
- * 
+ *
  * @since 5.2.0
  */
 public class TapestryConstants
@@ -40,12 +39,22 @@ public class TapestryConstants
      * notification} after the initialization event; the
      * LOOPBACK
      * prevents this reset notification.
-     * 
-     * @since 5.2.0
+     *
      * @see ComponentEventLinkEncoder#createPageRenderLink(org.apache.tapestry5.services.PageRenderRequestParameters)
      * @see ComponentEventLinkEncoder#decodePageRenderRequest(org.apache.tapestry5.services.Request)
      * @see PageResetListener
+     * @since 5.2.0
      */
     public static final String PAGE_LOOPBACK_PARAMETER_NAME = "t:lb";
+
+    /**
+     * {@link org.apache.tapestry5.services.Request} attribute set to true or false before an
+     * {@link org.apache.tapestry5.services.assets.AssetRequestHandler} is invoked. This information
+     * is used downstream, typically by {@link org.apache.tapestry5.internal.services.ResourceStreamer},
+     * to decide whether to obtain a normal, or compressed, {@link org.apache.tapestry5.services.assets.StreamableResource}.
+     *
+     * @since 5.4
+     */
+    public static final String COMPRESS_CONTENT = "tapestry.compress-content";
 
 }

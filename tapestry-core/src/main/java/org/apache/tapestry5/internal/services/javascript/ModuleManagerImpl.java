@@ -28,7 +28,8 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.PathConstructor;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.ModuleManager;
@@ -39,9 +40,12 @@ import java.util.Set;
 
 public class ModuleManagerImpl implements ModuleManager
 {
-    private final String requireConfig;
+
+    private final ResponseCompressionAnalyzer compressionAnalyzer;
 
     private final Asset requireJS;
+
+    private final Map<String, JavaScriptModuleConfiguration> configuration;
 
     private final Messages globalMessages;
 
@@ -56,7 +60,11 @@ public class ModuleManagerImpl implements ModuleManager
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
-    public ModuleManagerImpl(PathConstructor constructor,
+    private final boolean devMode;
+
+    private final AssetPathConstructor assetPathConstructor;
+
+    public ModuleManagerImpl(ResponseCompressionAnalyzer compressionAnalyzer,
                              AssetSource assetSource,
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
@@ -66,23 +74,28 @@ public class ModuleManagerImpl implements ModuleManager
                              @Symbol(SymbolConstants.COMPACT_JSON)
                              boolean compactJSON,
                              @Symbol(SymbolConstants.PRODUCTION_MODE)
-                             boolean productionMode)
+                             boolean productionMode,
+                             AssetPathConstructor assetPathConstructor)
     {
+        this.compressionAnalyzer = compressionAnalyzer;
         this.requireJS = requireJS;
+        this.configuration = configuration;
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
+        this.assetPathConstructor = assetPathConstructor;
 
-        this.requireConfig = buildRequireJSConfig(constructor.constructClientPath("modules", ""), configuration, !productionMode);
+        this.devMode = !productionMode;
 
         classpathRoot = assetSource.resourceForPath("");
-
         extensions = CollectionFactory.newSet("js");
 
         extensions.addAll(streamableResourceSource.fileExtensionsForContentType("text/javascript"));
     }
 
-    private String buildRequireJSConfig(String baseURL, Map<String, JavaScriptModuleConfiguration> configuration, boolean devMode)
+    private String buildRequireJSConfig()
     {
+        String baseURL = getBaseURL();
+
         JSONObject config = new JSONObject("baseUrl", baseURL);
 
         // In DevMode, wait up to five minutes for a script, as the developer may be using the debugger.
@@ -108,6 +121,11 @@ public class ModuleManagerImpl implements ModuleManager
         }
 
         return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
+    }
+
+    private String getBaseURL()
+    {
+        return assetPathConstructor.constructAssetPath("module", compressionAnalyzer.isGZipSupported());
     }
 
     private void addModuleToConfig(JSONObject config, String name, JavaScriptModuleConfiguration module)
@@ -159,7 +177,10 @@ public class ModuleManagerImpl implements ModuleManager
 
         Element element = body.element("script", "type", "text/javascript");
 
-        element.raw(requireConfig);
+        // Build it each time because we don't know if the client supports GZip or not, and
+        // (in development mode) URLs for some referenced assets could change (due to URLs
+        // containing a checksum on the resource content).
+        element.raw(buildRequireJSConfig());
 
         StringBuilder content = new StringBuilder(1000);
 
@@ -198,7 +219,6 @@ public class ModuleManagerImpl implements ModuleManager
         {
             return resource;
         }
-
 
         // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled
         // by Resource.withExtension().

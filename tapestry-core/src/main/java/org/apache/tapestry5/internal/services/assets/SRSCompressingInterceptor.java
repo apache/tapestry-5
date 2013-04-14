@@ -23,10 +23,13 @@ public class SRSCompressingInterceptor extends DelegatingSRS
 {
     private final int compressionCutoff;
 
-    public SRSCompressingInterceptor(StreamableResourceSource delegate, int compressionCutoff)
+    private final AssetChecksumGenerator checksumGenerator;
+
+    public SRSCompressingInterceptor(StreamableResourceSource delegate, int compressionCutoff, AssetChecksumGenerator checksumGenerator)
     {
         super(delegate);
         this.compressionCutoff = compressionCutoff;
+        this.checksumGenerator = checksumGenerator;
     }
 
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
@@ -54,6 +57,6 @@ public class SRSCompressingInterceptor extends DelegatingSRS
             return uncompressed;
         }
 
-        return new CompressedStreamableResource(uncompressed);
+        return new CompressedStreamableResource(uncompressed, checksumGenerator);
     }
 }

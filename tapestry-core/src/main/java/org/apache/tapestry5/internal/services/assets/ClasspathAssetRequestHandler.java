@@ -20,7 +20,6 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 import java.io.IOException;
@@ -35,24 +34,21 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
 {
     private final ResourceStreamer streamer;
 
-    private final AssetChecksumGenerator checksumGenerator;
-
     private final AssetSource assetSource;
 
     private final String baseFolder;
 
     public ClasspathAssetRequestHandler(ResourceStreamer streamer,
-                                        AssetChecksumGenerator checksumGenerator, AssetSource assetSource, String baseFolder)
+                                        AssetSource assetSource, String baseFolder)
     {
         this.streamer = streamer;
-        this.checksumGenerator = checksumGenerator;
         this.assetSource = assetSource;
         this.baseFolder = baseFolder;
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        ChecksumPath path = new ChecksumPath(streamer, checksumGenerator, baseFolder, extraPath);
+        ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
 
         Resource resource = assetSource.resourceForPath(path.resourcePath);
 

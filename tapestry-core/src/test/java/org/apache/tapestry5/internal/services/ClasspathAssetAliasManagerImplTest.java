@@ -14,17 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.AssetAlias;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.PathConstructor;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -33,8 +28,6 @@ import java.util.Map;
 
 public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 {
-    private static final String APP_VERSION = "1.2.3";
-
     public Map<String, String> configuration()
     {
         Map<String, String> configuration = CollectionFactory.newMap();
@@ -55,7 +48,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         try
         {
-            new ClasspathAssetAliasManagerImpl(null, configuration);
+            new ClasspathAssetAliasManagerImpl(configuration);
             unreachable();
         } catch (RuntimeException ex)
         {
@@ -75,34 +68,26 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         expected.put("tapestry-internal", "org/apache/tapestry5/internal");
         expected.put("mylib", "com/example/mylib");
 
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(configuration());
 
         assertEquals(manager.getMappings(), expected);
     }
 
     @Test(dataProvider = "to_client_url_data")
-    public void to_client_url(String resourcePath, String expectedClientURL) throws IOException
+    public void to_client_url(String resourcePath, String expectedFolder, String expectedPath) throws IOException
     {
-        Request request = mockRequest();
         Resource r = mockResource();
 
         expect(r.getPath()).andReturn(resourcePath);
 
-        BaseURLSource baseURLSource = newMock(BaseURLSource.class);
-        PathConstructor pc = newMock(PathConstructor.class);
-        AssetChecksumGenerator acg = newMock(AssetChecksumGenerator.class);
-
-        expect(pc.constructClientPath("assets", "")).andReturn("/ctx/assets/");
-        expect(acg.generateChecksum(r)).andReturn("abcde");
-
         replay();
 
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(
-                new AssetPathConstructorImpl(request,
-                        baseURLSource, false, "assets", pc, acg), configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(configuration());
 
-        String expectedPath = "/ctx/assets/" + expectedClientURL.replace("#", "abcde");
-        assertEquals(manager.toClientURL(r), expectedPath);
+        AssetAlias alias = manager.extractAssetAlias(r);
+
+        assertEquals(alias.virtualFolder, expectedFolder);
+        assertEquals(alias.path, expectedPath);
 
         verify();
     }
@@ -110,8 +95,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void failure_if_path_not_in_mapped_alias_folder()
     {
-        AssetPathConstructor pc = newMock(AssetPathConstructor.class);
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(pc, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(configuration());
         Resource resource = mockResource();
 
         expect(resource.getPath()).andReturn("org/example/icons/flag.gif").atLeastOnce();
@@ -120,7 +104,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         try
         {
-            manager.toClientURL(resource);
+            manager.extractAssetAlias(resource);
             unreachable();
         } catch (UnknownValueException ex)
         {
@@ -138,10 +122,11 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         return new Object[][]
                 {
-                        {"com/example/mylib/Foo.bar", "mylib/#/Foo.bar"},
-                        {"com/example/mylib/nested/Foo.bar", "mylib/#/nested/Foo.bar"},
-                        {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/#/Foo.bar"},
-                        {"org/apache/tapestry5/Foo.bar", "tapestry/#/Foo.bar"},};
+                        {"com/example/mylib/Foo.bar", "mylib", "Foo.bar"},
+                        {"com/example/mylib/nested/Foo.bar", "mylib", "nested/Foo.bar"},
+                        {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal", "Foo.bar"},
+                        {"org/apache/tapestry5/Foo.bar", "tapestry", "Foo.bar"}
+                };
     }
 
 }

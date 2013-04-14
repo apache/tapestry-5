@@ -28,13 +28,13 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
@@ -130,6 +130,13 @@ public class JavaScriptModule
         return environmentalBuilder.build(JavaScriptSupport.class);
     }
 
+    @Contribute(Dispatcher.class)
+    @AssetRequestDispatcher
+    public static void provideModuleHandler(MappedConfiguration<String, AssetRequestHandler> configuration)
+    {
+        configuration.addInstance("module", ModuleAssetRequestHandler.class);
+    }
+
     /**
      * Adds page render filters, each of which provides an {@link org.apache.tapestry5.annotations.Environmental}
      * service. Filters
@@ -210,12 +217,6 @@ public class JavaScriptModule
         configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
     }
 
-    @Contribute(Dispatcher.class)
-    @Primary
-    public static void handleModuleRequests(OrderedConfiguration<Dispatcher> configuration)
-    {
-        configuration.addInstance("Module", ModuleDispatcher.class, "before:PageRender");
-    }
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModules(MappedConfiguration<String, Object> configuration,

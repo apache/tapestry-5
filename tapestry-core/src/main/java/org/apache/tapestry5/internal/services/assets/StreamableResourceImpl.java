@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,23 +22,74 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class StreamableResourceImpl extends BaseStreamableResourceImpl
+public class StreamableResourceImpl implements StreamableResource
 {
-    private final AssetChecksumGenerator assetChecksumGenerator;
+    protected final String description, contentType;
 
-    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified,
-                                  BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator)
+    protected final CompressionStatus compression;
+
+    protected final long lastModified;
+
+    protected final BytestreamCache bytestreamCache;
+
+    protected final AssetChecksumGenerator assetChecksumGenerator;
+
+    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified, BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator)
     {
-        super(lastModified, description, bytestreamCache, contentType, compression);
-
+        this.lastModified = lastModified;
+        this.description = description;
+        this.bytestreamCache = bytestreamCache;
+        this.contentType = contentType;
+        this.compression = compression;
         this.assetChecksumGenerator = assetChecksumGenerator;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public CompressionStatus getCompression()
+    {
+        return compression;
+    }
+
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    public int getSize()
+    {
+        return bytestreamCache.size();
+    }
+
+    public long getLastModified()
+    {
+        return lastModified;
+    }
+
+    public void streamTo(OutputStream os) throws IOException
+    {
+        bytestreamCache.writeTo(os);
+    }
+
+    public InputStream openStream() throws IOException
+    {
+        return bytestreamCache.openStream();
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("StreamableResource<%s %s %s lastModified: %tc size: %d>", contentType, description, compression.name(),
+                lastModified, getSize());
     }
 
     public String getChecksum() throws IOException
     {
         // Currently, we rely on AssetChecksumGenerator to manage a cache, but that may be better done
-        // here (but must be threadsafe).
+        // here (but must be threads-afe).
         return assetChecksumGenerator.generateChecksum(this);
     }
-
 }

@@ -75,7 +75,7 @@ public class AssetsModule
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, false);
 
-        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
+        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "asset");
         configuration.add(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX, "${tapestry.asset-path-prefix}.gz");
     }
 
@@ -86,10 +86,11 @@ public class AssetsModule
     public StreamableResourceSource enableCompression(StreamableResourceSource delegate,
                                                       @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
                                                       boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-                                                      int compressionCutoff)
+                                                      int compressionCutoff,
+                                                      AssetChecksumGenerator checksumGenerator)
     {
         return gzipEnabled
-                ? new SRSCompressingInterceptor(delegate, compressionCutoff)
+                ? new SRSCompressingInterceptor(delegate, compressionCutoff, checksumGenerator)
                 : null;
     }
 
@@ -189,12 +190,12 @@ public class AssetsModule
 
     @Marker(ContextProvider.class)
     public static AssetFactory buildContextAssetFactory(ApplicationGlobals globals,
-
                                                         AssetPathConstructor assetPathConstructor,
-
-                                                        AssetPathConverter converter)
+                                                        ResponseCompressionAnalyzer compressionAnalyzer,
+                                                        ResourceChangeTracker resourceChangeTracker,
+                                                        StreamableResourceSource streamableResourceSource)
     {
-        return new ContextAssetFactory(assetPathConstructor, globals.getContext(), converter);
+        return new ContextAssetFactory(compressionAnalyzer, resourceChangeTracker, streamableResourceSource, assetPathConstructor, globals.getContext());
     }
 
     @Contribute(ClasspathAssetAliasManager.class)
@@ -222,8 +223,6 @@ public class AssetsModule
                                                       @Autobuild
                                                       StackAssetRequestHandler stackAssetRequestHandler,
 
-                                                      AssetChecksumGenerator assetChecksumGenerator,
-
                                                       ClasspathAssetAliasManager classpathAssetAliasManager,
                                                       ResourceStreamer streamer,
                                                       AssetSource assetSource)
@@ -234,11 +233,11 @@ public class AssetsModule
         {
             String path = mappings.get(folder);
 
-            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetChecksumGenerator, assetSource, path));
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetSource, path));
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,
-                new ContextAssetRequestHandler(streamer, assetChecksumGenerator, contextAssetFactory.getRootResource()));
+                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
 
         configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
 

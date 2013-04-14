@@ -154,6 +154,8 @@ public class SymbolConstants
      * necessary to GZIP requests, then override this to "false".
      *
      * @see #MIN_GZIP_SIZE
+     * @see org.apache.tapestry5.services.ResponseCompressionAnalyzer
+     * @see org.apache.tapestry5.services.assets.CompressionAnalyzer
      * @since 5.1.0.0
      */
     public static final String GZIP_COMPRESSION_ENABLED = "tapestry.gzip-compression-enabled";
@@ -330,7 +332,7 @@ public class SymbolConstants
     /**
      * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
      * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
-     * Its default is "assets".  It may contain slashes, but should not begin or end with one. This is the prefix
+     * Its default is "asset".  It may contain slashes, but should not begin or end with one. This is the prefix
      * for uncompressed assets.
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
@@ -338,7 +340,8 @@ public class SymbolConstants
     /**
      * As with {@link #ASSET_PATH_PREFIX} but for compressed versions of assets. At render time, it is determined
      * whether each asset is compressable (for example, image file formats are already compressed). A path for
-     * either {@link #ASSET_PATH_PREFIX} or this prefix is selected at render time.  Defaults to the asset path prefix suffixed with ".gz".
+     * either {@link #ASSET_PATH_PREFIX} or this prefix is selected at render time.  Defaults to the asset path prefix
+     * suffixed with ".gz".
      *
      * @since 5.4
      */
@@ -409,4 +412,5 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String SESSION_LOCKING_ENABLED = "tapestry.session-locking-enabled";
+
 }

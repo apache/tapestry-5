@@ -31,7 +31,7 @@ import java.io.OutputStream;
 public interface StreamableResource
 {
     /**
-     * Describes the underlying {@link Resource} (or resources} for this streamble resource; expressly used
+     * Describes the underlying {@link Resource} (or resources} for this streamable resource; expressly used
      * as part of the object's {@code toString()}.
      */
     String getDescription();

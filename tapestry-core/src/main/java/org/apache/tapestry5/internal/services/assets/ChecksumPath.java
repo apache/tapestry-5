@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 
 import java.io.IOException;
 
@@ -34,12 +33,9 @@ public class ChecksumPath
 
     private final ResourceStreamer streamer;
 
-    private final AssetChecksumGenerator assetChecksumGenerator;
-
-    public ChecksumPath(ResourceStreamer streamer, AssetChecksumGenerator assetChecksumGenerator, String baseFolder, String extraPath)
+    public ChecksumPath(ResourceStreamer streamer, String baseFolder, String extraPath)
     {
         this.streamer = streamer;
-        this.assetChecksumGenerator = assetChecksumGenerator;
         int slashx = extraPath.indexOf('/');
 
         checksum = extraPath.substring(0, slashx);
@@ -67,15 +63,7 @@ public class ChecksumPath
             return false;
         }
 
-        String actualChecksum = assetChecksumGenerator.generateChecksum(resource);
 
-        if (!actualChecksum.equals(checksum))
-        {
-            return false;
-        }
-
-        streamer.streamResource(resource);
-
-        return true;
+        return streamer.streamResource(resource, checksum, ResourceStreamer.DEFAULT_OPTIONS);
     }
 }

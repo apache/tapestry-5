@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 /**
- * Used to determine if the client supports GZIP compression of the response.
+ * Used to determine if the client supports GZip compression of the response.
  *
  * @see CompressionAnalyzer
+ * @see org.apache.tapestry5.SymbolConstants#GZIP_COMPRESSION_ENABLED
  * @since 5.1.0.0
  */
 public interface ResponseCompressionAnalyzer
@@ -31,4 +32,14 @@ public interface ResponseCompressionAnalyzer
      * @return true if gzip is supported by client
      */
     boolean isGZipSupported();
+
+    /**
+     * Uses {@link CompressionAnalyzer} to determine if the content is compressable, but only if the request
+     * indicates the client supports compression.
+     *
+     * @param contentType
+     * @return true if the content can be compressed for the current request
+     * @since 5.4
+     */
+    boolean isGZipEnabled(String contentType);
 }

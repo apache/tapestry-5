@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2008, 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,18 +20,22 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Responsible for streaming the contents of a resource to the client. The {@link org.apache.tapestry5.ioc.Resource} to
- * stream is a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource} or {@link ContextResource}.
+ * Responsible for streaming the contents of a resource to the client. This is sometimes a simple
+ * {@link Resource} (often from the {@link org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler},
+ * or more frequently an asset represented as a {@link StreamableResource} (via {@link AssetDispatcher}, {@link org.apache.tapestry5.services.assets.AssetRequestHandler},
+ * and {@link StreamableResourceSource}). As of 5.4, the ResourceStreamer handles ETag support, as well as
+ * validation of the checksum (provided in the URL).
  *
  * @since 5.1.0.0
  */
 public interface ResourceStreamer
 {
     /**
-     * Used to customize the behavior of {@link #streamResource(org.apache.tapestry5.ioc.Resource, java.util.Set)}.
+     * Used to customize the behavior of {@link #streamResource(org.apache.tapestry5.ioc.Resource, java.lang.String, java.util.Set)}.
      *
      * @since 5.4
      */
@@ -44,42 +48,37 @@ public interface ResourceStreamer
         OMIT_EXPIRATION
     }
 
-    /**
-     * Streams the content of the resource to the client (or sends
-     * an alternative response such as {@link HttpServletResponse#SC_NOT_MODIFIED}). Encapsulates logic for compression
-     * and for caching.
-     *
-     * @see StreamableResourceSource
-     */
-    void streamResource(Resource resource) throws IOException;
+    static final Set<Options> DEFAULT_OPTIONS = EnumSet.noneOf(Options.class);
 
     /**
      * Streams the content of the resource to the client (or sends
      * an alternative response such as {@link HttpServletResponse#SC_NOT_MODIFIED}). Encapsulates logic for compression
      * and for caching.
-     *
-     * @see StreamableResourceSource
-     */
-    void streamResource(Resource resource, Set<Options> options) throws IOException;
-
-    /**
-     * Streams a resource that has been assembled elsewhere, using default options of none.
      *
      * @param resource
-     * @throws IOException
-     * @since 5.3
+     *         to stream
+     * @param providedChecksum
+     *         checksum from URL (or null to not validate against checksum, which is normal for modules)
+     * @param options
+     *         enable or disable certain features
+     * @see StreamableResourceSource
      */
-    void streamResource(StreamableResource resource) throws IOException;
+    boolean streamResource(Resource resource, String providedChecksum, Set<Options> options) throws IOException;
 
     /**
      * Streams a resource that has been assembled elsewhere.
      *
      * @param resource
      *         content to stream
+     * @param providedChecksum
+     *         checksum provided (in the URL) to validate against the {@linkplain org.apache.tapestry5.services.assets.StreamableResource#getChecksum()} actual checksum}
+     *         for the resource, may be blank to not validate against the checksum
      * @param options
-     *         any special options related to streaming the resource
+     *         enable or disable certain features
+     * @return true if the request was handled (even if sending a {@link HttpServletResponse#SC_NOT_MODIFIED} response),
+     *         or false if the request was not handled (because the provided checksum did not match the actual checksum).
      * @throws IOException
      * @since 5.4
      */
-    void streamResource(StreamableResource resource, Set<Options> options) throws IOException;
+    boolean streamResource(StreamableResource resource, String providedChecksum, Set<Options> options) throws IOException;
 }

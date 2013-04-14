@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.slf4j.Logger;
@@ -35,8 +35,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private final LocalizationSetter localizationSetter;
 
-    private final ResponseCompressionAnalyzer compressionAnalyzer;
-
     private final ResourceStreamer resourceStreamer;
 
     // Group 1: checksum
@@ -48,18 +46,19 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private final JavaScriptStackAssembler javaScriptStackAssembler;
 
+    private final Request request;
+
     public StackAssetRequestHandler(Logger logger, LocalizationSetter localizationSetter,
-                                    ResponseCompressionAnalyzer compressionAnalyzer,
                                     ResourceStreamer resourceStreamer,
                                     OperationTracker tracker,
-                                    JavaScriptStackAssembler javaScriptStackAssembler)
+                                    JavaScriptStackAssembler javaScriptStackAssembler, Request request)
     {
         this.logger = logger;
         this.localizationSetter = localizationSetter;
-        this.compressionAnalyzer = compressionAnalyzer;
         this.resourceStreamer = resourceStreamer;
         this.tracker = tracker;
         this.javaScriptStackAssembler = javaScriptStackAssembler;
+        this.request = request;
     }
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
@@ -69,23 +68,12 @@ public class StackAssetRequestHandler implements AssetRequestHandler
                 {
                     public Boolean perform() throws IOException
                     {
-                        boolean compress = compressionAnalyzer.isGZipSupported();
-
-                        StreamableResource resource = getResource(extraPath, compress);
-
-                        if (resource == null)
-                        {
-                            return false;
-                        }
-
-                        resourceStreamer.streamResource(resource);
-
-                        return true;
+                        return streamStackResource(extraPath);
                     }
                 });
     }
 
-    private StreamableResource getResource(String extraPath, final boolean compressed) throws IOException
+    private boolean streamStackResource(String extraPath) throws IOException
     {
         Matcher matcher = pathPattern.matcher(extraPath);
 
@@ -93,7 +81,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
         {
             logger.warn(String.format("Unable to parse '%s' as an asset stack path", extraPath));
 
-            return null;
+            return false;
         }
 
         String checksum = matcher.group(1);
@@ -112,13 +100,20 @@ public class StackAssetRequestHandler implements AssetRequestHandler
                         {
                             public StreamableResource perform() throws IOException
                             {
+                                boolean compressed =
+                                        (Boolean) request.getAttribute(TapestryConstants.COMPRESS_CONTENT);
+
                                 return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
 
                             }
                         });
 
-        return checksum.equals(resource.getChecksum())
-                ? resource
-                : null;
+
+        if (resource == null)
+        {
+            return false;
+        }
+
+        return resourceStreamer.streamResource(resource, checksum, ResourceStreamer.DEFAULT_OPTIONS);
     }
 }

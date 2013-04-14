@@ -19,10 +19,9 @@ import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.IOException;
@@ -31,9 +30,12 @@ import java.util.Set;
 
 /**
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
- * and searches for the corresponding JavaScript module.
+ * and searches for the corresponding JavaScript module.  Unlike normal assets, modules do not include any kind of checksum
+ * in the URL, and do not set a far-future expires header.
+ *
+ * @see ModuleManager
  */
-public class ModuleDispatcher implements Dispatcher
+public class ModuleAssetRequestHandler implements AssetRequestHandler
 {
     private final ModuleManager moduleManager;
 
@@ -41,33 +43,20 @@ public class ModuleDispatcher implements Dispatcher
 
     private final OperationTracker tracker;
 
-    private final String prefix;
-
     private final Set<ResourceStreamer.Options> omitExpiration = EnumSet.of(ResourceStreamer.Options.OMIT_EXPIRATION);
 
-    public ModuleDispatcher(ModuleManager moduleManager,
-                            ResourceStreamer streamer,
-                            PathConstructor pathConstructor,
-                            OperationTracker tracker)
+    public ModuleAssetRequestHandler(ModuleManager moduleManager,
+                                     ResourceStreamer streamer,
+                                     OperationTracker tracker)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
-
-        prefix = pathConstructor.constructDispatchPath("modules", "");
     }
 
-    public boolean dispatch(Request request, Response response) throws IOException
+    @Override
+    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        String requestPath = request.getPath();
-
-        if (!requestPath.startsWith(prefix))
-        {
-            return false;
-        }
-
-        String extraPath = requestPath.substring(prefix.length());
-
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
         // to be a hierarchy of static JavaScript files here. In reality, we may be cross-compiling CoffeeScript to
         // JavaScript, or generating modules on-the-fly, or exposing arbitrary Resources from somewhere on the classpath
@@ -95,9 +84,7 @@ public class ModuleDispatcher implements Dispatcher
 
                 if (resource != null)
                 {
-                    streamer.streamResource(resource, omitExpiration);
-
-                    return true;
+                    return streamer.streamResource(resource, "", omitExpiration);
                 }
 
                 return false;

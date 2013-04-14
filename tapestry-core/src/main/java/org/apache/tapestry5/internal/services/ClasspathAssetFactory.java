@@ -15,13 +15,16 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.AssetPathConverter;
+import org.apache.tapestry5.services.AssetAlias;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathProvider;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
  * Generates Assets for files on the classpath.
@@ -33,89 +36,23 @@ public class ClasspathAssetFactory extends AbstractAssetFactory
 {
     private final ClasspathAssetAliasManager aliasManager;
 
-    private final ClasspathResource rootResource;
-
-    private final AssetPathConverter converter;
-
-    private final boolean invariant;
-
-    public ClasspathAssetFactory(ClasspathAssetAliasManager aliasManager, AssetPathConverter converter)
+    public ClasspathAssetFactory(ResponseCompressionAnalyzer compressionAnalyzer,
+                                 ResourceChangeTracker resourceChangeTracker,
+                                 StreamableResourceSource streamableResourceSource,
+                                 AssetPathConstructor assetPathConstructor,
+                                 ClasspathAssetAliasManager aliasManager)
     {
+        super(compressionAnalyzer, resourceChangeTracker, streamableResourceSource, assetPathConstructor,
+                new ClasspathResource(""));
+
         this.aliasManager = aliasManager;
-        this.converter = converter;
-
-        rootResource = new ClasspathResource("");
-
-        invariant = converter.isInvariant();
     }
 
-    private String clientURL(Resource resource)
-    {
-        String assetPath = aliasManager.toClientURL(resource);
-
-        return converter.convertAssetPath(assetPath);
-    }
-
+    @Override
     public Asset createAsset(Resource resource)
     {
-        if (invariant)
-        {
-            return createInvariantAsset(resource);
-        }
+        AssetAlias alias = aliasManager.extractAssetAlias(resource);
 
-        return createVariantAsset(resource);
-    }
-
-    /**
-     * A variant asset must pass the resource through clientURL() all the time; very inefficient.
-     */
-    private Asset createVariantAsset(final Resource resource)
-    {
-        return new AbstractAsset(false)
-        {
-            public Resource getResource()
-            {
-                return resource;
-            }
-
-            public String toClientURL()
-            {
-                return clientURL(resource);
-            }
-        };
-    }
-
-    /**
-     * An invariant asset is normal, and only needs to compute the clientURL for the resource once (
-     * or when the underlying Resource's content has changed).
-     */
-    private Asset createInvariantAsset(final Resource resource)
-    {
-        return new AbstractAsset(true)
-        {
-            private final Invokable<String> clientURL = recomputable.create(new Invokable<String>()
-            {
-                @Override
-                public String invoke()
-                {
-                    return clientURL(resource);
-                }
-            });
-
-            public Resource getResource()
-            {
-                return resource;
-            }
-
-            public String toClientURL()
-            {
-                return clientURL.invoke();
-            }
-        };
-    }
-
-    public Resource getRootResource()
-    {
-        return rootResource;
+        return createAsset(resource, alias.virtualFolder, alias.path);
     }
 }

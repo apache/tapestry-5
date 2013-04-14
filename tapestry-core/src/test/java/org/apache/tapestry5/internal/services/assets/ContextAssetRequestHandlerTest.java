@@ -42,7 +42,7 @@ public class ContextAssetRequestHandlerTest extends TestBase
     @Test(dataProvider = "invalid_paths")
     public void ensure_assets_are_rejected(String path) throws IOException
     {
-        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null, null);
+        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null);
 
         assertFalse(handler.handleAssetRequest(null, null, "fake-checksum/" + path),
                 "Handler should return false for invalid path.");
@@ -64,7 +64,7 @@ public class ContextAssetRequestHandlerTest extends TestBase
 
         replay();
 
-        AssetRequestHandler h = new ContextAssetRequestHandler(streamer, gen, root);
+        AssetRequestHandler h = new ContextAssetRequestHandler(streamer, root);
 
         assertFalse(h.handleAssetRequest(req, res, "abc/folder/icon.png"));
 

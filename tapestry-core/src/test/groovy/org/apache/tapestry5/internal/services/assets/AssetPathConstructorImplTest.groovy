@@ -31,7 +31,7 @@ class AssetPathConstructorImplTest extends TestBase {
 
     replay()
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, false, "assets", pc, gen)
+    def apc = new AssetPathConstructorImpl(request, baseURLSource, false, "assets", null, pc, pathConverter)
 
     assert apc.constructAssetPath("virt", "extra.png", virtExtra) == "/assets/virt/abc/extra.png"
 
@@ -58,7 +58,7 @@ class AssetPathConstructorImplTest extends TestBase {
 
     replay()
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", pc, gen)
+    def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", null, pc, pathConverter)
 
     assert apc.constructAssetPath("virt", "icon.gif", r) == "http://localhost:8080/assets/virt/911/icon.gif"
 
