@@ -395,18 +395,25 @@ public class Form implements ClientElement, FormValidationControl
 
         for (String parameterName : link.getParameterNames())
         {
-            String value = link.getParameterValue(parameterName);
-            // The parameter value is expected to be encoded,
-            // but the input value shouldn't be encoded.
-            try
+            String[] values = link.getParameterValues(parameterName);
+
+            for (String value : values)
             {
-                value = URLDecoder.decode(value, "UTF-8");
-            } catch (UnsupportedEncodingException e)
-            {
-                logger.error("Enable to decode parameter value", e);
+                // The parameter value is expected to be encoded,
+                // but the input value shouldn't be encoded.
+                try
+                {
+                    value = URLDecoder.decode(value, "UTF-8");
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    logger.error(String.format(
+                            "Enable to decode parameter value for parameter %s in form %s",
+                            parameterName, form.getName()), e);
+                }
+                writer.element("input", "type", "hidden", "name", parameterName, "value", value);
+                writer.end();
             }
-            writer.element("input", "type", "hidden", "name", parameterName, "value", value);
-            writer.end();
         }
 
         writer.end(); // div

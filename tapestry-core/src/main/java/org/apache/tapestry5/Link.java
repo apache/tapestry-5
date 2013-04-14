@@ -45,7 +45,13 @@ public interface Link
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
      *
-     * @return the string value of the named parameter
+     * <p>Use this method only when you are sure the parameter has only one value. If the parameter might have more than
+     * one value, use {@link #getParameterValues}.
+     *
+     * <p>If you use this method with a multivalued parameter, the value returned is equal to the first value in the
+     * array returned by <code>getParameterValues</code>.
+     *
+     * @return a string representing the single value of the named parameter
      */
     String getParameterValue(String name);
 
@@ -55,7 +61,6 @@ public interface Link
      *
      * @param parameterName the name of the parameter to store
      * @param value         the value to store, a null or blank value is allowed (as of Tapestry 5.3)
-     * @throws IllegalArgumentException if the link already has a parameter with the given name
      */
     void addParameter(String parameterName, String value);
 
@@ -155,4 +160,10 @@ public interface Link
      * @since 5.3
      */
     LinkSecurity getSecurity();
+
+    /**
+     * Returns the parameter values for the given name. Returns null if no such parameter is stored in the link.
+     */
+    String[] getParameterValues(String parameterName);
+
 }

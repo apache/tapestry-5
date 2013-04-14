@@ -15,18 +15,19 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class LinkImpl implements Link
 {
-    private Map<String, String> parameters;
+	private Map<String, List<String>> parameters;
 
     private final String basePath;
 
@@ -63,10 +64,19 @@ public class LinkImpl implements Link
 
         for (String name : getParameterNames())
         {
-            copy.addParameter(name, parameters.get(name));
+            copy.addParameter(name, getParameterValues(name));
         }
 
         return copy;
+    }
+
+    private void addParameter(String parameterName, String[] value)
+    {
+        assert InternalUtils.isNonBlank(parameterName);
+        if (parameters == null)
+            parameters = new TreeMap<String, List<String>>();
+
+        parameters.put(parameterName, Arrays.asList(value));
     }
 
     public void addParameter(String parameterName, String value)
@@ -74,9 +84,9 @@ public class LinkImpl implements Link
         assert InternalUtils.isNonBlank(parameterName);
 
         if (parameters == null)
-            parameters = CollectionFactory.newMap();
+            parameters = new TreeMap<String, List<String>>();
 
-        parameters.put(parameterName, value == null ? "" : value);
+        InternalUtils.addToMapList(parameters, parameterName, value == null ? "" : value);
     }
 
     public String getBasePath()
@@ -103,7 +113,8 @@ public class LinkImpl implements Link
 
     public String getParameterValue(String name)
     {
-        return InternalUtils.get(parameters, name);
+        List<String> values = InternalUtils.get(parameters, name);
+        return values != null && !values.isEmpty() ? values.get(0) : null;
     }
 
     public void setAnchor(String anchor)
@@ -198,18 +209,21 @@ public class LinkImpl implements Link
 
             for (String name : getParameterNames())
             {
-                String value = parameters.get(name);
+                List<String> values = parameters.get(name);
 
-                builder.append(sep);
+                for (String value : values)
+                {
+                    builder.append(sep);
 
-                // We assume that the name is URL safe and that the value will already have been URL
-                // encoded if it is not known to be URL safe.
+                    // We assume that the name is URL safe and that the value will already have been URL
+                    // encoded if it is not known to be URL safe.
 
-                builder.append(name);
-                builder.append("=");
-                builder.append(value);
+                    builder.append(name);
+                    builder.append("=");
+                    builder.append(value);
 
-                sep = "&";
+                    sep = "&";
+                }
             }
         }
 
@@ -221,6 +235,12 @@ public class LinkImpl implements Link
         addParameter(parameterName, contextPathEncoder.encodeValue(value));
 
         return this;
+    }
+
+    public String[] getParameterValues(String parameterName)
+    {
+        List<String> values = InternalUtils.get(parameters, parameterName);
+        return values.toArray(new String[values.size()]);
     }
 
 }
