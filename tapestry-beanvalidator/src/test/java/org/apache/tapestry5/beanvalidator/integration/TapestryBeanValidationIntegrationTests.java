@@ -216,4 +216,18 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         assertTextPresent("Login Name size must be between 7 and 10", "Login Name must match \"[0-9]+\"");
     }
 
+    @Test
+    public void beaneditor_validation() throws Exception
+    {
+        openLinks("ComplexBean Demo");
+
+        // Test JSR-303 validator
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Simple Not Null Property may not be null",
+                "Min Value must be greater than or equal to 6", "Not Null String may not be null");
+    }
+
+
 }

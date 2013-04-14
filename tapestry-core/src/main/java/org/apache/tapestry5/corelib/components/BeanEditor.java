@@ -166,6 +166,8 @@ public class BeanEditor
      */
     private Object cachedObject;
 
+    private BeanValidationContext originalBeanValidationContext;
+    
     // Needed for testing as well
 
     public Object getObject()
@@ -213,10 +215,6 @@ public class BeanEditor
                         PlasticUtils.toTypeName(model.getBeanType()), resources.getCompleteId(), ex);
                 throw new TapestryException(message, resources.getLocation(), ex);
             }
-
-            // If 'object' parameter is bound to a null-value BeanValidationContext is empty.
-            // This prevents JSR-303 javascript validators to be rendered properly .
-            refreshBeanValidationContext();
         }
 
         BeanEditContext context = new BeanEditContext()
@@ -235,20 +233,22 @@ public class BeanEditor
         cachedObject = object;
 
         environment.push(BeanEditContext.class, context);
+        // Always provide a new BeanValidationContext
+        originalBeanValidationContext = environment.push(BeanValidationContext.class,
+                new BeanValidationContextImpl(object));
+        
     }
 
     void cleanupEnvironment()
     {
         environment.pop(BeanEditContext.class);
-    }
-
-    private void refreshBeanValidationContext()
-    {
-        if (environment.peek(BeanValidationContext.class) != null)
+        environment.pop(BeanValidationContext.class);
+        // Restore the original BeanValidationContext as it might still be useful to the enclosing
+        // form
+        if (originalBeanValidationContext != null)
         {
-            environment.pop(BeanValidationContext.class);
-
-            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(object));
+            environment.push(BeanValidationContext.class, originalBeanValidationContext);
+            originalBeanValidationContext = null;
         }
     }
 

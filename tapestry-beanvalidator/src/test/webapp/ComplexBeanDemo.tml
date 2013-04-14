@@ -1,0 +1,19 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+        <t:form clientValidation="none" validate="complexBean">
+        	<t:errors/>
+
+        	<br/>
+        	<t:BeanEditor object="complexBean" />
+
+        	<br/>
+        	<t:BeanEditor object="complexBean.someSimpleBean" />
+
+        	<br/>
+        	<t:BeanEditor object="complexBean.someOtherSimpleBean" />
+
+        	<br/>
+        	<input type="submit" value="Go"/>
+        </t:form>
+     </body>
+</html>
