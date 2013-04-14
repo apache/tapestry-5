@@ -17,7 +17,7 @@ class ResponseCompressionAnalyzerTest extends TestBase {
 
     replay()
 
-    ResponseCompressionAnalyzer rca = new ResponseCompressionAnalyzerImpl(request, true, compressionAnalyzer)
+    ResponseCompressionAnalyzer rca = new ResponseCompressionAnalyzerImpl(request, true, null)
 
     assert rca.isGZipSupported() == false
 
