@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@ package org.apache.tapestry5.internal.test;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.services.MarkupRendererFilter;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 import org.apache.tapestry5.test.PageTester;
 
 /**
@@ -46,7 +45,7 @@ public class PageTesterModule
     @Contribute(ServiceOverride.class)
     public static void setupTestableOverrides(MappedConfiguration<Class, Object> configuration, @Local
     TestableRequest request, @Local
-    TestableResponse response)
+                                              TestableResponse response, final ObjectLocator locator)
     {
         configuration.add(Request.class, request);
         configuration.add(Response.class, response);
@@ -55,6 +54,26 @@ public class PageTesterModule
 
         configuration.add(CookieSink.class, cookies);
         configuration.add(CookieSource.class, cookies);
+
+        // With the significant changes to the handling of assets in 5.4, we introduced a problem:
+        // We were checking at page render time whether to generate URLs for normal or compressed
+        // assets and that peeked at the HttpServletRequest global, which isn't set up by PageTester.
+        // What we're doing here is using a hacked version of that code to force GZip support
+        // on.
+        configuration.add(ResponseCompressionAnalyzer.class, new ResponseCompressionAnalyzer()
+        {
+            @Override
+            public boolean isGZipEnabled(String contentType)
+            {
+                return locator.getObject(CompressionAnalyzer.class, null).isCompressable(contentType);
+            }
+
+            @Override
+            public boolean isGZipSupported()
+            {
+                return true;
+            }
+        });
     }
 
     public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration)
