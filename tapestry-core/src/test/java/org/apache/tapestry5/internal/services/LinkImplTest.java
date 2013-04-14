@@ -284,6 +284,33 @@ public class LinkImplTest extends InternalBaseTestCase
         verify();
     }
 
+    /**
+     * TAP5-2063
+     */
+    @Test
+    public void multivalued_parameter_support()
+    {
+        Response response = mockResponse();
+
+        String expectedURI = "/ctx?barney=&barney=foo&barney=bar&barney=baz&fred=flintstone";
+        train_encodeURL(response, expectedURI, expectedURI);
+
+        replay();
+
+        Link link = new LinkImpl("/ctx", false, LinkSecurity.INSECURE, response, null, null);
+
+        link.addParameter("fred", "flintstone");
+        link.addParameter("barney", null);
+        link.addParameter("barney", "foo");
+        link.addParameter("barney", "bar");
+        link.addParameter("barney", "baz");
+
+        assertEquals(link.toURI(), expectedURI);
+
+        verify();
+    }
+
+
     @Test
     public void force_link_to_secure()
     {

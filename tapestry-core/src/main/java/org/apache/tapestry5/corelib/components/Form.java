@@ -14,14 +14,43 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FormValidationControl;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.ValidationTrackerImpl;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.BeanValidationContext;
+import org.apache.tapestry5.internal.BeanValidationContextImpl;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.InternalSymbols;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.Location;
@@ -35,16 +64,16 @@ import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.StreamPageContent;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 /**
  * An HTML form, which will enclose other components to render out the various
@@ -364,18 +393,25 @@ public class Form implements ClientElement, FormValidationControl
 
         for (String parameterName : link.getParameterNames())
         {
-            String value = link.getParameterValue(parameterName);
-            // The parameter value is expected to be encoded,
-            // but the input value shouldn't be encoded.
-            try
+            String[] values = link.getParameterValues(parameterName);
+
+            for (String value : values)
             {
-                value = URLDecoder.decode(value, "UTF-8");
-            } catch (UnsupportedEncodingException e)
-            {
-                logger.error("Enable to decode parameter value", e);
+                // The parameter value is expected to be encoded,
+                // but the input value shouldn't be encoded.
+                try
+                {
+                    value = URLDecoder.decode(value, "UTF-8");
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    logger.error(String.format(
+                            "Enable to decode parameter value for parameter %s in form %s",
+                            parameterName, form.getName()), e);
+                }
+                writer.element("input", "type", "hidden", "name", parameterName, "value", value);
+                writer.end();
             }
-            writer.element("input", "type", "hidden", "name", parameterName, "value", value);
-            writer.end();
         }
 
         writer.end(); // div
