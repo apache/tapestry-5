@@ -512,8 +512,9 @@ public class Index
 
                     new Item("FormFragmentExplicitVisibleBoundsDemo", "Form Fragment Explicit Visible Bounds Demo", "Check for form fragment parent visibility can be bounded to"),
 
-                    new Item("OverrideFieldFocusDemo", "OverrideFieldFocus Demo", "Setting the focus in a form to a specific field")
+                    new Item("OverrideFieldFocusDemo", "OverrideFieldFocus Demo", "Setting the focus in a form to a specific field"),
 
+                    new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field")
             );
 
     static

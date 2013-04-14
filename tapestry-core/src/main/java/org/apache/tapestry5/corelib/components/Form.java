@@ -44,6 +44,8 @@ import org.slf4j.Logger;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * An HTML form, which will enclose other components to render out the various
@@ -394,7 +396,15 @@ public class Form implements ClientElement, FormValidationControl
         for (String parameterName : link.getParameterNames())
         {
             String value = link.getParameterValue(parameterName);
-
+            // The parameter value is expected to be encoded,
+            // but the input value shouldn't be encoded.
+            try
+            {
+                value = URLDecoder.decode(value, "UTF-8");
+            } catch (UnsupportedEncodingException e)
+            {
+                logger.error("Enable to decode parameter value", e);
+            }
             writer.element("input", "type", "hidden", "name", parameterName, "value", value);
             writer.end();
         }
