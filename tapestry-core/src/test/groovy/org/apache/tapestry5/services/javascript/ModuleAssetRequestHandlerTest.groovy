@@ -3,9 +3,6 @@ package org.apache.tapestry5.services.javascript
 import org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.test.TestBase
-import org.apache.tapestry5.services.PathConstructor
-import org.apache.tapestry5.services.Request
-import org.apache.tapestry5.services.Response
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
@@ -13,57 +10,34 @@ class ModuleAssetRequestHandlerTest extends TestBase {
 
     @Test(dataProvider = "unknownPaths")
     void "invalid extension is ignored"(path) {
-        def pc = newMock PathConstructor
-        
-        def request = newMock Request
-        
-        def response = newMock Response
-        
-        expect(request.getPath()).andReturn path
 
-        expect(pc.constructDispatchPath("modules", "")).andReturn "/modules/"
-
-        replay()
-        
         def handler = new ModuleAssetRequestHandler(null, null, new QuietOperationTracker())
-        
-        assertEquals handler.dispatch(request, response), false
 
-        verify()
+        assertEquals handler.handleAssetRequest(null, null, path), false
     }
 
     @DataProvider
     Object[][] unknownPaths() {
         [
-            "foo/bar.xyz",
-            "foo",
-            "foo/bar",
-            ""
-        ].collect({ it -> ["/modules/$it"] as Object[] }) as Object[][]
+            ["foo/bar.xyz"],
+            ["foo"],
+            ["foo/bar"],
+            [""]
+        ] as Object[][]
     }
 
     @Test
     void "returns false if no module is found"() {
 
-        def pc = newMock PathConstructor
-
         def manager = newMock ModuleManager
-        
-        def request = newMock Request
-        
-        def response = newMock Response
-        
-        expect(request.getPath()).andReturn "/modules/foo/bar.js"
-        
-        expect(pc.constructDispatchPath("modules", "")).andReturn "/modules/"
-        
+
         expect(manager.findResourceForModule("foo/bar")).andReturn null
-        
+
         replay()
 
         def handler = new ModuleAssetRequestHandler(manager, null, new QuietOperationTracker())
-        
-        assertEquals handler.dispatch(request, response), false
+
+        assertEquals handler.handleAssetRequest(null, null, "foo/bar.js"), false
 
         verify()
     }
