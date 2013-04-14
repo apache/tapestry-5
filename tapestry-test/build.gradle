@@ -1,22 +1,21 @@
 description = "Utilities for unit and integration testing of Tapestry applications"
 
-versions.selenium = '2.14.0'
+versions.selenium = '2.26.0'
 
 dependencies {
   compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}"
   compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}"
-  compile "jetty:org.mortbay.jetty:5.1.12"
 
   compile "org.testng:testng:${versions.testng}"
-    
+
   compile "org.eclipse.jetty:jetty-server:${versions.jetty}"
   compile "org.eclipse.jetty:jetty-jndi:${versions.jetty}"
   compile "org.eclipse.jetty:jetty-plus:${versions.jetty}"
   compile "org.eclipse.jetty:jetty-webapp:${versions.jetty}"
-  
+
   compile "org.apache.tomcat:catalina:${versions.tomcat}"
   compile "org.apache.tomcat:coyote:${versions.tomcat}"
-  
+
   compile "org.apache.tomcat:dbcp:${versions.tomcat}"
 
   compile "org.easymock:easymock:${versions.easymock}"

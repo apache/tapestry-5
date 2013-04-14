@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import com.thoughtworks.selenium.Selenium;
  * Base class for creating Selenium-based integration test cases. This class implements all the
  * methods of {@link Selenium} and delegates to an instance (setup once per test by
  * {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)}.
- * 
+ *
  * @since 5.2.0
  */
 public abstract class SeleniumTestCase extends Assert implements Selenium
@@ -55,7 +55,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * An XPath expression for locating a submit element (very commonly used
      * with {@link #clickAndWait(String)}.
-     * 
+     *
      * @since 5.3
      */
     public static final String SUBMIT = "//input[@type='submit']";
@@ -65,7 +65,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * this can be useful when attempting to use SeleniumTestCase with a newer version of Selenium which
      * has added some methods to the interface. This field will not be set until the test case instance
      * has gone through its full initialization.
-     * 
+     *
      * @since 5.3
      */
     protected Selenium selenium;
@@ -127,21 +127,19 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * <td>Command string used to launch the browser, as defined by Selenium</td>
      * </tr>
      * </table>
-     * <p>
+     * <p/>
      * Tests in the <em>beforeStartup</em> group will be run before the start of Selenium. This can be used to
-     * programmatically override the above parameter values. For an example see
-     * org.apache.tapestry5.integration.reload.ReloadTests#beforeStartup in
-     * Tapestry-core.
-     * <p>
+     * programmatically override the above parameter values.
+     * <p/>
      * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
      * the {@link ITestContext} to see if the necessary keys are already present).
-     * 
+     *
      * @param testContext
-     *            Used to share objects between the launcher and the test suites
+     *         Used to share objects between the launcher and the test suites
      * @throws Exception
      */
     @BeforeTest(dependsOnGroups =
-    { "beforeStartup" })
+            {"beforeStartup"})
     public void testStartup(final ITestContext testContext, XmlTest xmlTest) throws Exception
     {
         // This is not actually necessary, because TestNG will only invoke this method once
@@ -149,7 +147,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         // just invokes it on the "first" TestCase instance it has test methods for.
 
         if (testContext.getAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE) != null)
+        {
             return;
+        }
 
         // If a parameter is overridden in another test method, TestNG won't pass the
         // updated value via a parameter, but still passes the original (coming from testng.xml or the default).
@@ -157,13 +157,38 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         // Map<String, String> testParameters = xmlTest.getParameters();
 
-        String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, "src/main/webapp");
-        String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER, JETTY_7);
-        String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER, "");
-        int port = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, "9090"));
-        int sslPort = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER, "8443"));
+        TapestryTestConfiguration annotation = this.getClass().getAnnotation(TapestryTestConfiguration.class);
+        if (annotation == null)
+        {
+            @TapestryTestConfiguration
+            final class EmptyInnerClass
+            {
+            }
+
+            annotation = EmptyInnerClass.class.getAnnotation(TapestryTestConfiguration.class);
+        }
+
+        String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER,
+                annotation.webAppFolder());
+        String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER,
+                annotation.container());
+        String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER,
+                annotation.contextPath());
+        int port = getIntParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, annotation.port());
+        int sslPort = getIntParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER, annotation.sslPort());
         String browserStartCommand = getParameter(xmlTest, TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER,
-                "*firefox");
+                annotation.browserStartCommand());
+
+        String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
+
+        System.err.println("Starting SeleniumTestCase:");
+        System.err.println("    currentDir: " + System.getProperty("user.dir"));
+        System.err.println("  webAppFolder: " + webAppFolder);
+        System.err.println("     container: " + container);
+        System.err.println("   contextPath: " + contextPath);
+        System.err.printf("         ports: %d / %d%n", port, sslPort);
+        System.err.println("  browserStart: " + browserStartCommand);
+        System.err.println("       baseURL: " + baseURL);
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
@@ -172,11 +197,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         File ffProfileTemplate = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
 
         if (ffProfileTemplate.isDirectory())
+        {
             seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
+        }
 
         seleniumServer.start();
 
-        String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
 
         CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost",
                 RemoteControlConfiguration.DEFAULT_PORT, browserStartCommand, baseURL);
@@ -211,8 +237,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                     // builds.
 
                     errorReporter.writeOutputPaths();
-                }
-                finally
+                } finally
                 {
                     testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
@@ -231,6 +256,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         return value != null ? value : defaultValue;
     }
 
+    private final int getIntParameter(XmlTest xmlTest, String key, int defaultValue)
+    {
+        String value = xmlTest.getParameter(key);
+
+        return value != null ? Integer.parseInt(value) : defaultValue;
+    }
+
     /**
      * Like {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)} , this may
      * be called multiple times against multiple instances, but only does work the first time.
@@ -245,42 +277,33 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         // and the runnable is the last thing it puts into the test context.
 
         if (r != null)
+        {
             r.run();
+        }
     }
 
     /**
      * Invoked from {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)} to launch the web
-     * server to be
-     * tested. The return value is a Runnable that will shut down the launched server at the end of
-     * the test (it is coded this way so that the default Jetty web server can be more easily
-     * replaced).
-     * 
+     * server to be tested. The return value is a Runnable that can be invoked later to cleanly shut down the launched
+     * server at the end of the test.
+     *
+     * @param container
+     *         identifies which web server should be launched
      * @param webAppFolder
-     *            path to the web application context
+     *         path to the web application context
      * @param contextPath
-     *            the path the context is mapped to, usually the empty string
+     *         the path the context is mapped to, usually the empty string
      * @param port
-     *            the port number the server should handle
+     *         the port number the server should handle
      * @param sslPort
-     *            the port number on which the server should handle secure requests
+     *         the port number on which the server should handle secure requests
      * @return Runnable used to shut down the server
      * @throws Exception
      */
-    protected Runnable launchWebServer(String webAppFolder, String contextPath, int port, int sslPort) throws Exception
-    {
-        return launchWebServer(TOMCAT_6, webAppFolder, contextPath, port, sslPort);
-    }
-
     protected Runnable launchWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort)
             throws Exception
     {
-        final ServletContainerRunner runner;
-        if (TOMCAT_6.equals(container))
-            runner = new Tomcat6Runner(webAppFolder, contextPath, port, sslPort);
-        else if (JETTY_7.equals(container))
-            runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
-        else
-            throw new RuntimeException("Unknown servlet container: " + container);
+        final ServletContainerRunner runner = createWebServer(container, webAppFolder, contextPath, port, sslPort);
 
         return new Runnable()
         {
@@ -289,6 +312,21 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                 runner.stop();
             }
         };
+    }
+
+    private ServletContainerRunner createWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort) throws Exception
+    {
+        if (TOMCAT_6.equals(container))
+        {
+            return new Tomcat6Runner(webAppFolder, contextPath, port, sslPort);
+        }
+
+        if (JETTY_7.equals(container))
+        {
+            return new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
+        }
+
+        throw new RuntimeException("Unknown servlet container: " + container);
     }
 
     @BeforeClass
@@ -311,10 +349,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Delegates to {@link ErrorReporter#writeErrorReport()} to capture the current page markup in a
+     * Delegates to {@link ErrorReporter#writeErrorReport(String)} to capture the current page markup in a
      * file for later analysis.
      */
-    protected void writeErrorReport()
+    protected void writeErrorReport(String reportText)
     {
         errorReporter.writeErrorReport();
     }
@@ -322,7 +360,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Returns the base URL for the application. This is of the typically <code>http://localhost:9999/</code> (i.e., it
      * includes a trailing slash).
-     * <p>
+     * <p/>
      * Generally, you should use {@link #openLinks(String...)} to start from your application's home page.
      */
     public String getBaseURL()
@@ -1129,14 +1167,56 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     // End of delegate methods
     // ---------------------------------------------------------------------
 
-    protected final void unreachable()
+    /**
+     * Formats a message from the provided arguments, which is written to System.err. In addition,
+     * captures the AUT's markup, screenshot, and a report to the output directory.
+     *
+     * @param message
+     * @param arguments
+     * @since 5.4
+     */
+    protected final void reportAndThrowAssertionError(String message, Object... arguments)
     {
-        writeErrorReport();
+        StringBuilder builder = new StringBuilder(5000);
 
-        throw new AssertionError("This statement should not be reachable.");
+        String formatted = String.format(message, arguments);
+
+        builder.append(formatted);
+
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+        StringBuilder buffer = new StringBuilder(5000);
+
+        boolean enabled = false;
+
+        for (StackTraceElement e : stackTrace)
+        {
+            if (enabled)
+            {
+                buffer.append("\n- ");
+                buffer.append(e);
+                continue;
+            }
+
+            if (e.getMethodName().equals("reportAndThrowAssertionError"))
+            {
+                enabled = true;
+            }
+        }
+
+        writeErrorReport(builder.toString());
+
+        throw new AssertionError(formatted);
     }
 
-    /** Open the {@linkplain #getBaseURL()}, and waits for the page to load. */
+    protected final void unreachable()
+    {
+        reportAndThrowAssertionError("An unreachable statement was reached.");
+    }
+
+    /**
+     * Open the {@linkplain #getBaseURL()}, and waits for the page to load.
+     */
     protected final void openBaseURL()
     {
         open(baseURL);
@@ -1146,11 +1226,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Asserts the text of an element, identified by the locator.
-     * 
+     *
      * @param locator
-     *            identifies the element whose text value is to be asserted
+     *         identifies the element whose text value is to be asserted
      * @param expected
-     *            expected value for the element's text
+     *         expected value for the element's text
      */
     protected final void assertText(String locator, String expected)
     {
@@ -1159,8 +1239,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         try
         {
             actual = getText(locator);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(), getHtmlSource());
 
@@ -1168,11 +1247,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         }
 
         if (actual.equals(expected))
+        {
             return;
+        }
 
-        writeErrorReport();
-
-        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+        reportAndThrowAssertionError("%s was '%s' not '%s'", locator, actual, expected);
     }
 
     protected final void assertTextPresent(String... text)
@@ -1180,19 +1259,19 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         for (String item : text)
         {
             if (isTextPresent(item))
+            {
                 continue;
+            }
 
-            writeErrorReport();
-
-            throw new AssertionError("Page did not contain '" + item + "'.");
+            reportAndThrowAssertionError("Page did not contain '" + item + "'.");
         }
     }
 
     /**
      * Assets that each string provided is present somewhere in the current document.
-     * 
+     *
      * @param expected
-     *            string expected to be present
+     *         string expected to be present
      */
     protected final void assertSourcePresent(String... expected)
     {
@@ -1201,20 +1280,20 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         for (String snippet : expected)
         {
             if (source.contains(snippet))
+            {
                 continue;
+            }
 
-            writeErrorReport();
-
-            throw new AssertionError("Page did not contain source '" + snippet + "'.");
+            reportAndThrowAssertionError("Page did not contain source '" + snippet + "'.");
         }
     }
 
     /**
      * Click a link identified by a locator, then wait for the resulting page to load.
      * This is not useful for Ajax updates, just normal full-page refreshes.
-     * 
+     *
      * @param locator
-     *            identifies the link to click
+     *         identifies the link to click
      */
     protected final void clickAndWait(String locator)
     {
@@ -1234,11 +1313,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Used when the locator identifies an attribute, not an element.
-     * 
+     *
      * @param locator
-     *            identifies the attribute whose value is to be asserted
+     *         identifies the attribute whose value is to be asserted
      * @param expected
-     *            expected value for the attribute
+     *         expected value for the attribute
      */
     protected final void assertAttribute(String locator, String expected)
     {
@@ -1247,31 +1326,27 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         try
         {
             actual = getAttribute(locator);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
-            System.err.printf("Error accessing %s: %s", locator, ex.getMessage());
 
-            writeErrorReport();
-
-            throw ex;
+            reportAndThrowAssertionError("Error accessing %s: %s", locator, ex.getMessage());
         }
 
         if (actual.equals(expected))
+        {
             return;
+        }
 
-        writeErrorReport();
-
-        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+        reportAndThrowAssertionError("%s was '%s' not '%s'", locator, actual, expected);
     }
 
     /**
      * Assets that the value in the field matches the expectation
-     * 
+     *
      * @param locator
-     *            identifies the field
+     *         identifies the field
      * @param expected
-     *            expected value for the field
+     *         expected value for the field
      * @since 5.3
      */
     protected final void assertFieldValue(String locator, String expected)
@@ -1279,19 +1354,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         try
         {
             assertEquals(getValue(locator), expected);
-        }
-        catch (AssertionError ex)
+        } catch (AssertionError ex)
         {
-            writeErrorReport();
-
-            throw ex;
+            reportAndThrowAssertionError("Failure accessing %s: %s", locator, ex);
         }
     }
 
     /**
      * Opens the base URL, then clicks through a series of links to get to a desired application
      * state.
-     * 
+     *
      * @since 5.3
      */
     protected final void openLinks(String... linkText)
@@ -1306,7 +1378,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Sleeps for the indicated number of seconds.
-     * 
+     *
      * @since 5.3
      */
     protected final void sleep(long millis)
@@ -1314,8 +1386,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         try
         {
             Thread.sleep(millis);
-        }
-        catch (InterruptedException ex)
+        } catch (InterruptedException ex)
         {
             // Ignore.
         }
@@ -1324,14 +1395,14 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
      * (it is not assured that the element will be visible).
-     * 
+     *
      * @param cssRule
-     *            used to locate the element
+     *         used to locate the element
      * @since 5.3
      */
     protected void waitForCSSSelectedElementToAppear(String cssRule)
     {
-        String condition = String.format("window.$$(\"%s\").size() > 0", cssRule);
+        String condition = String.format("window.$$ && window.$$(\"%s\").size() > 0", cssRule);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1339,9 +1410,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits for the element with the given client-side id to be present in the DOM (
      * does not assure that the element is visible).
-     * 
+     *
      * @param elementId
-     *            identifies the element
+     *         identifies the element
      * @since 5.3
      */
     protected final void waitForElementToAppear(String elementId)
@@ -1354,9 +1425,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Waits for the element to be removed from the DOM.
-     * 
+     *
      * @param elementId
-     *            client-side id of element
+     *         client-side id of element
      * @since 5.3
      */
     protected final void waitForElementToDisappear(String elementId)
@@ -1370,8 +1441,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Waits for the element specified by the selector to become visible
      * Note that waitForElementToAppear waits for the element to be present in the dom, visible or not. waitForVisible
      * waits for an element that already exists in the dom to become visible.
+     *
      * @param selector
-     *              element selector
+     *         element selector
      * @since 5.3
      */
     protected final void waitForVisible(String selector)
@@ -1385,8 +1457,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Waits for the element specified by the selector to become invisible
      * Note that waitForElementToDisappear waits for the element to be absent from the dom, visible or not. waitForInvisible
      * waits for an existing element to become invisible.
+     *
      * @param selector
-     *              element selector
+     *         element selector
      * @since 5.3
      */
     protected final void waitForInvisible(String selector)
@@ -1395,40 +1468,63 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
+
     /**
      * Asserts that the current page's title matches the expected value.
-     * 
-     * @since 5.3
+     *
      * @param expected
-     *            value for title
+     *         value for title
+     * @since 5.3
      */
     protected final void assertTitle(String expected)
     {
         try
         {
             assertEquals(getTitle(), expected);
-        }
-        catch (AssertionError ex)
+        } catch (AssertionError ex)
         {
-            writeErrorReport();
+            reportAndThrowAssertionError("Unexpected title: %s", ex);
 
             throw ex;
         }
     }
 
     /**
-     * Waits until all active XHR requests are completed.
+     * Waits until all active XHR requests are completed. However, this is Prototype-based.
      *
+     * @param timeout
+     *         timeout to wait for
      * @since 5.3
-     *
-     * @param timeout timeout to wait for
+     * @deprecated Deprecated in 5.4 as it is tied to Prototype.
      */
     protected final void waitForAjaxRequestsToComplete(String timeout)
     {
         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", timeout);
     }
 
-    public Number getCssCount(String str) {
+    public Number getCssCount(String str)
+    {
         return selenium.getCssCount(str);
+    }
+
+    /**
+     * Waits for page initialization to finish, which is recognized by the {@code data-page-initialized} attribute
+     * being added to the HTML element. Polls at 20ms intervals for 200ms.
+     *
+     * @since 5.4
+     */
+    protected final void waitForPageInitialized()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (isElementPresent("css=html[data-page-initialized]"))
+            {
+                return;
+            }
+
+            sleep(20);
+        }
+
+        reportAndThrowAssertionError("Page did not finish initializing.");
     }
 }
