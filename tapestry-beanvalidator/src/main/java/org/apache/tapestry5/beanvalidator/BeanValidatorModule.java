@@ -13,18 +13,20 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.internal.beanvalidator.*;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 
 import javax.validation.MessageInterpolator;
 import javax.validation.Validator;
@@ -96,32 +98,17 @@ public class BeanValidatorModule
         configuration.add(new ClientConstraintDescriptor(Size.class, "size", "min", "max"));
     }
 
-    public void contributeMarkupRenderer(
-            OrderedConfiguration<MarkupRendererFilter> configuration,
-
-            final AssetSource assetSource,
-
-            final ThreadLocale threadLocale,
-
-            final Environment environment)
+    @Contribute(JavaScriptStackSource.class)
+    public static void addBeanValidationStack(MappedConfiguration<String, JavaScriptStack> configuration)
     {
-        MarkupRendererFilter injectBeanValidatorScript = new MarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
-            {
-                RenderSupport renderSupport = environment.peek(RenderSupport.class);
+        configuration.addInstance(BeanValidatorStack.STACK_ID, BeanValidatorStack.class);
+    }
 
-                Asset validators = assetSource.getAsset(null, "org/apache/tapestry5/beanvalidator/tapestry-beanvalidator.js",
-                        threadLocale.getLocale());
-
-                renderSupport.addScriptLink(validators);
-
-                renderer.renderMarkup(writer);
-            }
-        };
-
-
-        configuration.add("BeanValidatorScript", injectBeanValidatorScript, "after:*");
+    @Contribute(ComponentClassTransformWorker2.class)
+    @Primary
+    public static void addWorker(OrderedConfiguration<ComponentClassTransformWorker2> configuration)
+    {
+        configuration.addInstance("FeebboFormResourcesInclusionWorker", FormResourcesInclusionWorker.class);
     }
 
 }
