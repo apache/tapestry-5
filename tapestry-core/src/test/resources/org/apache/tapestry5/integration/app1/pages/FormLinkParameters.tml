@@ -1,0 +1,16 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p>Result = '${result}'</p>
+
+    <t:eventLink t:id="eventLink" t:event="MyAction">SetValue</t:eventLink>
+
+    <t:form t:id="simpleform" >
+
+        <t:label for="val" />
+        <t:textfield t:id="val" />
+
+        <input type="submit" value="GO"/>
+
+    </t:form>
+
+</html>

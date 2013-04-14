@@ -1102,4 +1102,17 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Selected colors: [Blue, Red]");
     }
+    
+    @Test
+    public void checkFormLinkParameters() throws Exception
+    {
+        openLinks("FormLinkParameters Demo");
+        assertAttribute("//input[@name='myparam']/@value", "!@#$%^&*()_+=");
+
+        clickAndWait("link=SetValue");
+        assertTextPresent("Result = '!@#$%^&*()_+='");
+        
+        clickAndWait(SUBMIT);
+        assertTextPresent("Result = '!@#$%^&*()_+='");
+    }
 }
