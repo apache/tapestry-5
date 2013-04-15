@@ -1,68 +1,71 @@
 package org.apache.tapestry5.internal.services.assets
 
-import org.apache.tapestry5.ioc.Resource
+import org.apache.tapestry5.internal.services.IdentityAssetPathConverter
 import org.apache.tapestry5.ioc.test.TestBase
 import org.apache.tapestry5.services.BaseURLSource
 import org.apache.tapestry5.services.PathConstructor
 import org.apache.tapestry5.services.Request
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator
+import org.apache.tapestry5.services.assets.CompressionStatus
+import org.apache.tapestry5.services.assets.StreamableResource
 import org.testng.annotations.Test
 
 class AssetPathConstructorImplTest extends TestBase {
 
-  @Test
-  void "construct an asset path with no application folder"() {
+    def pathConverter = new IdentityAssetPathConverter()
 
-    def request = newMock(Request)
+    @Test
+    void "construct an asset path with no application folder"() {
 
-    def baseURLSource = newMock(BaseURLSource)
+        def pc = newMock(PathConstructor)
 
-    def pc = newMock(PathConstructor)
+        def gen = newMock(AssetChecksumGenerator)
 
-    def gen = newMock(AssetChecksumGenerator)
+        def r = newMock(StreamableResource)
 
-    def virtExtra = newMock(Resource)
+        expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
+        expect(pc.constructClientPath("assets.gz", "")).andReturn("/assets.gz/")
 
-    def virtb = newMock(Resource)
+        expect(r.compression).andReturn(CompressionStatus.COMPRESSED)
 
-    expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
+        expect(r.checksum).andReturn("abc")
 
-    expect(gen.generateChecksum(virtExtra)).andReturn("abc")
+        replay()
 
-    replay()
+        def apc = new AssetPathConstructorImpl(null, null, false, "assets", "assets.gz", pc, pathConverter)
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, false, "assets", null, pc, pathConverter)
+        assert apc.constructAssetPath("virt", "extra.png", r) == "/assets.gz/virt/abc/extra.png"
 
-    assert apc.constructAssetPath("virt", "extra.png", virtExtra) == "/assets/virt/abc/extra.png"
+        verify()
+    }
 
-    verify()
-  }
+    @Test
+    void "fully qualified path has base URL prepended"() {
+        def request = newMock(Request)
 
-  @Test
-  void "fully qualified path has base URL prepended"() {
-    def request = newMock(Request)
-    def baseURLSource = newMock(BaseURLSource)
+        def baseURLSource = newMock(BaseURLSource)
 
-    def pc = newMock(PathConstructor)
+        def pc = newMock(PathConstructor)
 
-    def gen = newMock(AssetChecksumGenerator)
+        def r = newMock(StreamableResource)
 
-    def r = newMock(Resource)
+        expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
+        expect(pc.constructClientPath("assets.gz", "")).andReturn("/assets.gz/")
 
-    expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
+        expect(request.secure).andReturn(false)
+        expect(baseURLSource.getBaseURL(false)).andReturn("http://localhost:8080")
 
-    expect(request.secure).andReturn(false)
-    expect(baseURLSource.getBaseURL(false)).andReturn("http://localhost:8080")
+        expect(r.compression).andReturn(CompressionStatus.NOT_COMPRESSABLE)
 
-    expect(gen.generateChecksum(r)).andReturn("911")
+        expect(r.checksum).andReturn("abc")
 
-    replay()
+        replay()
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", null, pc, pathConverter)
+        def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", "assets.gz", pc, pathConverter)
 
-    assert apc.constructAssetPath("virt", "icon.gif", r) == "http://localhost:8080/assets/virt/911/icon.gif"
+        assert apc.constructAssetPath("virt", "icon.gif", r) == "http://localhost:8080/assets/virt/abc/icon.gif"
 
-    verify()
+        verify()
 
-  }
+    }
 }
