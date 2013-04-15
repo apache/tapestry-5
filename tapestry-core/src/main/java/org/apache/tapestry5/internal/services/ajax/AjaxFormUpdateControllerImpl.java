@@ -134,7 +134,7 @@ public class AjaxFormUpdateControllerImpl implements AjaxFormUpdateController
         // JavaScriptSupport's job). It would be nice if we could agree on the uid, but
         // not essential.
 
-        String uid = Long.toHexString(System.currentTimeMillis());
+        String uid = Long.toHexString(System.nanoTime());
 
         IdAllocator idAllocator = new IdAllocator("_" + uid);
 
