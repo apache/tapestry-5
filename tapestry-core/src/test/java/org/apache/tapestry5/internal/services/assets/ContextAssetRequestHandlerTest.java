@@ -14,13 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.internal.services.ResourceStreamer;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.test.TestBase;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -46,28 +40,5 @@ public class ContextAssetRequestHandlerTest extends TestBase
 
         assertFalse(handler.handleAssetRequest(null, null, "fake-checksum/" + path),
                 "Handler should return false for invalid path.");
-    }
-
-    @Test
-    public void invalid_checksums_are_treated_as_if_missing() throws IOException
-    {
-        ResourceStreamer streamer = newMock(ResourceStreamer.class);
-        AssetChecksumGenerator gen = newMock(AssetChecksumGenerator.class);
-        Resource root = newMock(Resource.class);
-        Resource r = newMock(Resource.class);
-        Request req = newMock(Request.class);
-        Response res = newMock(Response.class);
-
-        expect(root.forFile("folder/icon.png")).andReturn(r);
-        expect(r.exists()).andReturn(true);
-        expect(gen.generateChecksum(r)).andReturn("def");
-
-        replay();
-
-        AssetRequestHandler h = new ContextAssetRequestHandler(streamer, root);
-
-        assertFalse(h.handleAssetRequest(req, res, "abc/folder/icon.png"));
-
-        verify();
     }
 }
