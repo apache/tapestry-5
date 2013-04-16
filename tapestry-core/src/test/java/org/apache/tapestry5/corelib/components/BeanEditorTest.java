@@ -18,11 +18,14 @@ import static org.easymock.EasyMock.isA;
 
 import static org.easymock.EasyMock.eq;
 
+import static org.easymock.EasyMock.anyObject;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.internal.BeanValidationContext;
+import org.apache.tapestry5.internal.BeanValidationContextImpl;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -160,8 +163,6 @@ public class BeanEditorTest extends TapestryTestCase
 
         expect(model.newInstance()).andReturn(data);
 
-        expect(env.peek(eq(BeanValidationContext.class))).andReturn(null);
-
         expect(model.getBeanType()).andReturn(RegistrationData.class);
 
         BeanEditContext ctxt = new BeanEditContext()
@@ -178,6 +179,9 @@ public class BeanEditorTest extends TapestryTestCase
         };
 
         expect(env.push(eq(BeanEditContext.class), contextEq())).andReturn(ctxt);
+        expect(env.push(eq(BeanValidationContext.class), isA(BeanValidationContext.class)))
+                .andReturn(null);
+
         replay();
 
         BeanEditor component = new BeanEditor();
