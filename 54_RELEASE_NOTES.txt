@@ -48,10 +48,27 @@ file is changed, the asset will be served with the new URL, but unchanged assets
 that when redeploying your application, you'll see far less asset traffic, as most client web browsers will already
 have most assets (whose contents have not changed) in their local cache.
 
+In prior releases of Tapestry, the response to an asset URL could be compressed (with GZip) if the client supported
+it, and the file was itself compressable. Compressable assets include CSS files and JavaScript, but not image
+format files (those have built in compression). The fact that two different versions of the file were available
+with the same URL could confuse some Content Delivery Networks. In Tapestry 5.4, compressed and uncompressed
+asset URLs are distinct.
+
+Tapestry 5.4 now re-writes CSS files, expanding any `url()` references in them into fully qualify URLs; this
+is to allow for the checksum embedded into each URL, which breaks relative references.
+
 ## ControlGroup Mixin
 
 This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
 inside a Twitter Bootstrap form.
+
+## tapestry-test deprecated
+
+The tapestry-test module contains base classes used when writing TestNG, Selenium, and EasyMock tests.
+It has been deprecated; users are directed to the Spock Framework (as a replacement for TestNG and EasyMock),
+and to Geb (which is a vastly improved wrapper around Selenium, and works nicely with Spock).
+
+The useful RandomDataSource class has been extracted into a new module, tapestry-test-data.
 
 # Breaking Changes:
 
@@ -68,7 +85,11 @@ resurface in the future as a CSS expression, but is currently not supported.
 ## Symbol tapestry.asset-path-prefix
 
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
-slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
+slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "asset".
+
+A second symbol, "tapestry.compressed-asset-path-prefix" has been added; this is used when assets are to be compressed.
+It defaults to "${tapestry.asset-path-prefix}.gz". You should generally see "/asset" URLs for image files, and
+"/asset.gz" URLs for CSS and JavaScript.
 
 ## Libraries de-emphasized
 
