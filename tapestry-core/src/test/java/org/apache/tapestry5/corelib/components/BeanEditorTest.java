@@ -154,6 +154,7 @@ public class BeanEditorTest extends TapestryTestCase
         RegistrationData data = new RegistrationData();
         Messages messages = mockMessages();
         PropertyOverrides overrides = mockPropertyOverrides();
+        BeanValidationContext beanValidationContext = newMock(BeanValidationContext.class);
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
@@ -180,7 +181,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         expect(env.push(eq(BeanEditContext.class), contextEq())).andReturn(ctxt);
         expect(env.push(eq(BeanValidationContext.class), isA(BeanValidationContext.class)))
-                .andReturn(null);
+                .andReturn(beanValidationContext);
 
         replay();
 
@@ -212,10 +213,6 @@ public class BeanEditorTest extends TapestryTestCase
         train_getOverrideMessages(overrides, messages);
 
         expect(model.newInstance()).andReturn(data);
-
-        expect(env.peek(eq(BeanValidationContext.class))).andReturn(beanValidationContext);
-
-        expect(env.pop(eq(BeanValidationContext.class))).andReturn(beanValidationContext);
 
         expect(env.push(eq(BeanValidationContext.class), isA(BeanValidationContext.class))).andReturn(beanValidationContext);
 
