@@ -1,0 +1,10 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product includes software developed by Geoff Kuenning and
+other unpaid contributors.
+http://fmg-www.cs.ucla.edu/geoff/ispell.html
+
+
+
+

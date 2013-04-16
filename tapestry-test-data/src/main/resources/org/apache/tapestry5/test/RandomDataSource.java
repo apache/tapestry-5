@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
-import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,30 +29,36 @@ import java.util.Random;
  */
 public final class RandomDataSource
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RandomDataSource.class);
+
     private final Random random = new Random(System.currentTimeMillis());
 
-    private final List<String> words = new ArrayList<String>();
+    private final static List<String> words = new ArrayList<String>();
 
-    public RandomDataSource()
+    private static void loadWords()
     {
-        for (int i = 0; i < 4; i++)
-            readWords("english." + i);
+        if (words.isEmpty())
+        {
 
-        for (int i = 0; i < 3; i++)
-            readWords("american." + i);
+            for (int i = 0; i < 4; i++)
+                readWords("english." + i);
 
-        System.out.printf("Dictionary contains %d words\n", words.size());
+            for (int i = 0; i < 3; i++)
+                readWords("american." + i);
+
+            LOGGER.info(String.format("Dictionary contains %,d words.", words.size()));
+        }
     }
 
-    private void readWords(String name)
+    private static void readWords(String name)
     {
-        System.out.println("Reading " + name + " ...");
+        LOGGER.info("Reading {} ...", name);
 
         int count = 0;
 
-        InputStream is = getClass().getResourceAsStream(name);
+        InputStream is = RandomDataSource.class.getResourceAsStream(name);
 
-        if (is == null) throw new RuntimeException(format("File '%s' not found.", name));
+        if (is == null) throw new RuntimeException(String.format("File '%s' not found.", name));
 
         try
         {
@@ -69,13 +77,12 @@ public final class RandomDataSource
             }
 
             r.close();
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
-            throw new RuntimeException(format("Error reading '%s': %s", name + ex.getMessage()), ex);
+            throw new RuntimeException(String.format("Error reading '%s': %s", name + ex.getMessage()), ex);
         }
 
-        System.out.printf("... %d words\n", count);
+        LOGGER.info(String.format("... %,d words", count));
     }
 
     public boolean maybe(int percent)
@@ -97,6 +104,8 @@ public final class RandomDataSource
      */
     public String word()
     {
+        loadWords();
+
         int index = random.nextInt(words.size());
 
         return words.get(index);
@@ -152,9 +161,12 @@ public final class RandomDataSource
      * Creates a space-separated list of random words. If in sentence form, then the first word is capitalized, and a
      * period is appended.
      *
-     * @param minWords   minimun number of words in the list
-     * @param maxWords   maximum number of words in the list
-     * @param asSentence if true, the output is "dressed up" as a non-sensical sentence
+     * @param minWords
+     *         minimun number of words in the list
+     * @param maxWords
+     *         maximum number of words in the list
+     * @param asSentence
+     *         if true, the output is "dressed up" as a non-sensical sentence
      * @return the word list / sentence
      */
     public String wordList(int minWords, int maxWords, boolean asSentence)
@@ -186,10 +198,14 @@ public final class RandomDataSource
      * Strings together a random number of word lists (in sentence form) to create something that looks like a
      * paragraph.
      *
-     * @param minSentences per paragraph
-     * @param maxSentences per paragraph
-     * @param minWords     per sentence
-     * @param maxWords     per sentence
+     * @param minSentences
+     *         per paragraph
+     * @param maxSentences
+     *         per paragraph
+     * @param minWords
+     *         per sentence
+     * @param maxWords
+     *         per sentence
      * @return the random paragraph
      */
     public String paragraph(int minSentences, int maxSentences, int minWords, int maxWords)

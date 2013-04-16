@@ -3,6 +3,9 @@ description = "Utilities for unit and integration testing of Tapestry applicatio
 versions.selenium = '2.26.0'
 
 dependencies {
+
+  compile project(":tapestry-test-data")
+
   compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}"
   compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}"
 
