@@ -35,7 +35,7 @@ import java.util.Set;
  *
  * @see ModuleManager
  */
-public class ModuleAssetRequestHandler implements AssetRequestHandler
+public class MARH implements AssetRequestHandler
 {
     private final ModuleManager moduleManager;
 
@@ -45,9 +45,9 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
 
     private final Set<ResourceStreamer.Options> omitExpiration = EnumSet.of(ResourceStreamer.Options.OMIT_EXPIRATION);
 
-    public ModuleAssetRequestHandler(ModuleManager moduleManager,
-                                     ResourceStreamer streamer,
-                                     OperationTracker tracker)
+    public MARH(ModuleManager moduleManager,
+                ResourceStreamer streamer,
+                OperationTracker tracker)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
