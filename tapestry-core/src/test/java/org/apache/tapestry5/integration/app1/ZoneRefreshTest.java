@@ -35,19 +35,42 @@ public class ZoneRefreshTest extends SeleniumTestCase
       checkZoneValues("zone", 3);
    }
 
+   @Test
+   public void test_if_zone_with_context_works() throws Exception
+   {
+      openBaseURL();
+      clickAndWait("link=Zone Refresh With Context");
+
+      // assert that counter value didn't changed
+      checkZoneValue("zone", "false");
+      checkZoneValue("zone", "false");
+
+      // increment counter
+      click("link=Add");
+      waitForAjaxRequestsToComplete(PAGE_LOAD_TIMEOUT);
+
+      // assert that counter value didn't changed
+      checkZoneValue("zone", "true");
+      checkZoneValue("zone", "true");
+   }
+
    private void checkZoneValues(String zone, int times) throws Exception
    {
       for(int i = 1; i <= times; ++i)
       {
-         //Wait for ajax call to begin
-         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount != 0", "20000");
-         
-         //Wait for ajax call from end
-         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", "20000");
-         
-         //Check the value changed
-         assertText(zone, String.valueOf(i));
+         checkZoneValue(zone, String.valueOf(i));
       }
    }
 
+   private void checkZoneValue(String zone, String expected)
+   {
+      //Wait for ajax call to begin
+      waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount != 0", "20000");
+
+      //Wait for ajax call from end
+      waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", "20000");
+
+      //Check the value changed
+      assertText(zone, expected);
+   }
 }
