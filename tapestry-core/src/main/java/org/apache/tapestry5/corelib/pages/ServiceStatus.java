@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.t5internal.pages;
+package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Cached;

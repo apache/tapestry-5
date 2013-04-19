@@ -3,7 +3,7 @@
 
     <t:zone t:id="pagesZone" id="pages">
 
-        <p xml:space="preserve">
+        <p>
             This page provides a list of pages currently loaded in the application.
         </p>
 
@@ -51,7 +51,7 @@
 
     </t:form>
 
-    <dl>
+    <dl class="dl-horizontal">
         <dt>Defined Pages</dt>
         <dd>Number of page classes.</dd>
         <dt>Pages in Cache</dt>

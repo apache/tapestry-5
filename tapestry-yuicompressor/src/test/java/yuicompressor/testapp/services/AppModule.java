@@ -1,6 +1,7 @@
 package yuicompressor.testapp.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.t5internal.modules.InternalTestModule;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
@@ -8,7 +9,7 @@ import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.yuicompressor.services.YuiCompressorModule;
 
-@SubModule(YuiCompressorModule.class)
+@SubModule({YuiCompressorModule.class, InternalTestModule.class})
 public class AppModule
 {
     @Contribute(SymbolProvider.class)

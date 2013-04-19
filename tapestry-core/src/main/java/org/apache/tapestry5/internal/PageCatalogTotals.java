@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 
 /**
- * @see org.apache.tapestry5.internal.t5internal.pages.PageCatalog
+ * @see org.apache.tapestry5.corelib.pages.PageCatalog
  */
 @ReorderProperties("definedPages,loadedPages,uniquePageNames,selectors,components")
 public class PageCatalogTotals

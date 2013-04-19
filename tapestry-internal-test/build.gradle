@@ -1,0 +1,5 @@
+description = "Internal utilties used to assist with testing; not intended for outside use"
+
+dependencies {
+    compile project(":tapestry-core")
+}

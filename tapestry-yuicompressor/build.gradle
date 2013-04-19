@@ -5,6 +5,7 @@ dependencies {
   compile "com.yahoo.platform.yui:yuicompressor:2.4.6"
     
   testCompile project(':tapestry-test')
+  testCompile project(":tapestry-internal-test")
 }
 
 jar {

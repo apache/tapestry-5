@@ -29,7 +29,7 @@ public class DashboardModule
     @Contribute(DashboardManager.class)
     public static void defaultTabs(OrderedConfiguration<DashboardTab> configuration)
     {
-        configuration.add("Pages", new DashboardTab("Pages", "t5internal/PageCatalog"));
-        configuration.add("Services", new DashboardTab("Services", "t5internal/ServiceStatus"));
+        configuration.add("Pages", new DashboardTab("Pages", "core/PageCatalog"));
+        configuration.add("Services", new DashboardTab("Services", "core/ServiceStatus"));
     }
 }

@@ -26,7 +26,7 @@
     </t:if>
 
 
-    <dl>
+    <dl class="dl-horizontal">
         <dt>Builtin</dt>
         <dd>
             A fundamental service that exists even before the Registry is

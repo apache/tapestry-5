@@ -53,7 +53,7 @@ public interface PageSource
      * garbage collector, and may include the same page loaded for different {@link ComponentResourceSelector}s. This is needed
      * for reporting purposes only.
      *
-     * @see org.apache.tapestry5.internal.t5internal.pages.PageCatalog
+     * @see org.apache.tapestry5.corelib.pages.PageCatalog
      * @since 5.3
      */
     Set<Page> getAllPages();
