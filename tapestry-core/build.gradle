@@ -25,10 +25,6 @@ dependencies {
 
     compile "commons-codec:commons-codec:1.5"
 
-    // May want to refactor things at some point, so that the RRD support can be
-    // used by non-web applications.
-    compile "org.rrd4j:rrd4j:2.1.1"
-
     // Transitive will bring in the unwanted string template library as well
     compile "org.antlr:antlr-runtime:3.3", { transitive = false }
 

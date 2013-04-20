@@ -1,27 +1,29 @@
 description = "A code-centric, high-performance, simple Inversion of Control container"
 
 dependencies {
-  compile project(':tapestry-func')
-  compile project(':tapestry5-annotations')
-  compile project(":plastic")
+    compile project(':tapestry-func')
+    compile project(':tapestry5-annotations')
+    compile project(":plastic")
 
-  provided project(':tapestry-test')
+    provided project(':tapestry-test')
 
-  // For now, keep these compile dependencies synchronized with the binaries dependencies
-  // of the top-level build:
+    // For now, keep these compile dependencies synchronized with the binaries dependencies
+    // of the top-level build:
 
-  compile "javax.inject:javax.inject:1"
+    compile "javax.inject:javax.inject:1"
 
-  compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
-  testCompile "org.spockframework:spock-core:${versions.spock}"
-  testCompile "commons-lang:commons-lang:2.6"
+    testCompile "org.spockframework:spock-core:${versions.spock}"
+    testCompile "commons-lang:commons-lang:2.6"
 
-  provided "org.testng:testng:${versions.testng}", { transitive = false }
+    compile "org.rrd4j:rrd4j:2.1.1"
+
+    provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
 
 test {
-  useJUnit()
-  // Override the master build.gradle
-  systemProperties.remove("tapestry.service-reloading-enabled")
+    useJUnit()
+    // Override the master build.gradle
+    systemProperties.remove("tapestry.service-reloading-enabled")
 }

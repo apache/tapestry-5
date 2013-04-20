@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.internal.services.cron.PeriodicExecutorImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.modules.MetricsModule;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -42,6 +43,7 @@ import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
  */
 @SuppressWarnings("all")
 @Marker(Builtin.class)
+@SubModule(MetricsModule.class)
 public final class TapestryIOCModule
 {
     public static void bind(ServiceBinder binder)
