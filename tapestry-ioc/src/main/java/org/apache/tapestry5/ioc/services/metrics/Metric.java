@@ -1,15 +1,16 @@
 package org.apache.tapestry5.ioc.services.metrics;
 
-import org.apache.xpath.operations.String;
-
 import java.util.List;
 
+/**
+ * @since 5.4
+ */
 public interface Metric
 {
     enum Type
     {
         /**
-         * Storing a value accum;ulates into an ever increasing total. Example:
+         * Storing a value accumulates into an ever increasing total. Example:
          * number of burgers served.
          */
         TOTAL,
@@ -38,7 +39,7 @@ public interface Metric
         /**
          * Placeholder for all other kinds of units, such as "pages viewed" or "messages processed".
          */
-        UNIT
+        COUNTER
     }
 
     /**
@@ -63,12 +64,14 @@ public interface Metric
     Units getUnits();
 
     /**
-     * Stores a value of 1; useful  when the metric's type is {@linkplain Units#UNIT unit}.
+     * Stores a value of 1; useful  when the metric's type is {@link Units#COUNTER}.
      */
     void increment();
 
     /**
-     * Stores a value into the current time interval.
+     * Stores a value into the current time interval. This may be called multiple times during
+     * a time interval, and the values will accumulate. In addition, {@link #store(double)}
+     * propagates the value up to the parent metrics, if any, all the way up to the root metric.
      *
      * @param value
      */
