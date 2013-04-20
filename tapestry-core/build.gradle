@@ -6,7 +6,7 @@ description = "Central module for Tapestry, containing all core services and com
 
 project.ext {
     antlrSource = "src/main/antlr"
-    generatedDir = "$buildDir/generated-sources"
+    generatedDir = "src/main/generated"
     antlrOutput = "$generatedDir/antlr"
 }
 
@@ -76,12 +76,6 @@ idea.module {
     sourceDirs += compileCoffeeScript.srcDir
 
     testSourceDirs += compileTestCoffeeScript.srcDir
-
-// Hack the IML so that "build" is not excluded; necessary because several directories under build
-// are added as source, resources, or test folders.
-    iml.whenMerged { module ->
-        module.excludeFolders.removeAll { it.canonicalUrl.endsWith "/build" }
-    }
 }
 
 compileJava {
