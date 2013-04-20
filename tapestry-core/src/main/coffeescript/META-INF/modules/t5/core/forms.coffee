@@ -154,7 +154,7 @@ define ["./events", "./dom", "./builder", "_"],
       # the form's "submit" event, which we need.
 
       if form.trigger "submit"
-        form.submit()
+        form.element.submit()
 
       # And cancel the default behavior for the original click event
       return false
