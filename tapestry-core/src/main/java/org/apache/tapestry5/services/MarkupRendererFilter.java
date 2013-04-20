@@ -1,4 +1,4 @@
-// Copyright 2007, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.apache.tapestry5.MarkupWriter;
  * and/or after the main rendering process. Typically, this is to allow for the placement of
  * {@linkplain org.apache.tapestry5.services.Environment environmental services}.
  * 
- * @see org.apache.tapestry5.services.TapestryModule#contributeMarkupRenderer
+ * @see org.apache.tapestry5.modules.TapestryModule#contributeMarkupRenderer
  */
 public interface MarkupRendererFilter
 {

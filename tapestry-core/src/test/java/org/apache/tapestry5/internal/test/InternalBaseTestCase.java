@@ -32,6 +32,7 @@ import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.modules.TapestryModule;
 import org.apache.tapestry5.root.FieldComponent;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderCommand;

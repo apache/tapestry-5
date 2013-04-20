@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.assets;
+package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.AssetConstants;
@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 import java.util.Map;

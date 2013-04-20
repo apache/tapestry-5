@@ -59,9 +59,10 @@ class ClassNameLocatorImplSpec extends Specification {
 
         then:
 
-        assertInList names, packageName, "SymbolSource", "TapestryIOCModule"
+        assertInList names, packageName, "SymbolSource", "CoercionTuple"
 
-        assertNotInList names, packageName, 'TapestryIOCMOdules$1'
+        // This is an inner class and those should never be provided.
+        assertNotInList names, packageName, 'CoercionTuple$CoercionWrapper'
     }
 
     def "can locate classes in subpackage of local folders"() {

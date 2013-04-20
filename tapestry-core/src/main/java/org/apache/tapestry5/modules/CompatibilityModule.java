@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.compatibility;
+package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.internal.services.compatibility.CompatibilityImpl;
 import org.apache.tapestry5.internal.services.compatibility.DeprecationWarningImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 /**
  * Defines services for managing compatibility across releases.

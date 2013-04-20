@@ -194,8 +194,7 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
             {
                 acquireReadLock();
 
-                F.flow(children.values()).sort().toList();
-
+                return F.flow(children.values()).sort().toList();
             } finally
             {
                 releaseReadLock();
@@ -229,7 +228,7 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
         factory = inMemory ? new RrdMemoryBackendFactory() : new RrdNioBackendFactory();
 
         logger.info(String.format("Collecting metrics %s.",
-                inMemory ? "in memory" : (" to" + dbDir));
+                inMemory ? "in memory" : (" to" + dbDir)));
     }
 
 

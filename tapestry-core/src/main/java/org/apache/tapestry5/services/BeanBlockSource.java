@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
  * org.apache.tapestry5.services.BeanBlockOverrideSource} service allows these to be overridden.
  *
  * @see org.apache.tapestry5.services.DataTypeAnalyzer
- * @see org.apache.tapestry5.services.TapestryModule#provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)
+ * @see org.apache.tapestry5.modules.TapestryModule#provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)
  */
 @UsesConfiguration(BeanBlockContribution.class)
 public interface BeanBlockSource

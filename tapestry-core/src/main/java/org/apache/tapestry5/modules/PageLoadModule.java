@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.pageload;
+package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
@@ -21,6 +21,8 @@ import org.apache.tapestry5.internal.services.ComponentTemplateSourceImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 
 /**
  * @since 5.3

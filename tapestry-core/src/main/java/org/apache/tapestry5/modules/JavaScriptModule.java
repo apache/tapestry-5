@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.javascript;
+package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
@@ -37,6 +37,7 @@ import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
+import org.apache.tapestry5.services.javascript.*;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 import java.util.Locale;

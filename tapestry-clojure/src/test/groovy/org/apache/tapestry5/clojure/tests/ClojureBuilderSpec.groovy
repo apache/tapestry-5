@@ -3,7 +3,7 @@ package org.apache.tapestry5.clojure.tests
 import org.apache.tapestry5.clojure.ClojureModule
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
-import org.apache.tapestry5.services.TapestryModule
+import org.apache.tapestry5.modules.TapestryModule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
