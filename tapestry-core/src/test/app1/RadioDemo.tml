@@ -1,52 +1,63 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <h1>Radio Demo</h1>
+<h1>Radio Demo</h1>
 
-  <p>Choose a department and position:</p>
+<p>Choose a department and position:</p>
 
-  <t:form>
+<t:form>
     <t:errors/>
 
     <t:radiogroup t:id="department" t:validate="required">
-      <t:loop source="departments" value="loopValue">
-        <p>
-          <t:radio t:id="radio" value="loopValue" label="prop:label"/>
-          <t:label for="radio"/>
-        </p>
-      </t:loop>
-    </t:radiogroup>
+        <div class="well">
 
-    <br/>
+            <t:loop source="departments" value="loopValue">
+
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="radio">
+                            <t:radio t:id="radio" value="loopValue"/>
+                            ${label}
+                        </label>
+                    </div>
+                </div>
+
+            </t:loop>
+        </div>
+    </t:radiogroup>
 
     <t:radiogroup t:id="position">
-      <p>
-        <t:radio t:id="radio1" value="literal:TEMP" label="Temp"/>
-        <t:label for="radio1"/>
-      </p>
-      <p>
-        <t:radio t:id="radio2" value="literal:LIFER" label="Lifer"/>
-        <t:label for="radio2"/>
-      </p>
+        <div class="well">
+            <div class="control-group">
+                <label class="radio">
+                    <t:radio t:id="radio1" value="literal:TEMP"/>
+                    Temp
+                </label>
+                <label class="radio">
+                    <t:radio t:id="radio2" value="literal:LIFER"/>
+                    Lifer
+                </label>
+            </div>
+        </div>
     </t:radiogroup>
 
-    <p>
-      <input type="submit" value="Update"/>
-    </p>
-  </t:form>
+    <div class="form-actions">
+        <input type="submit" value="Update"/>
+    </div>
+</t:form>
 
 
-  <t:if test="department">
+<t:if test="department">
     <hr/>
     Selected department: ${department}
-  </t:if>
+</t:if>
 
-  <t:if test="position">
+<t:if test="position">
     <hr/>
     Selected position: ${position}
-  </t:if>
+</t:if>
 
-  <p>
+<p>
     <t:actionlink t:id="reset">reset</t:actionlink>
-  </p>
+</p>
 
 </html>
