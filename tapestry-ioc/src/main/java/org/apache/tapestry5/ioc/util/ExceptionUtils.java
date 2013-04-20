@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,5 +91,25 @@ public class ExceptionUtils
 
 
         return null;
+    }
+
+    /**
+     * Extracts the message from an exception. If the exception's message is null, returns the exceptions class name.
+     *
+     * @param exception
+     *         to extract message from
+     * @return message or class name
+     * @since 5.4
+     */
+    public static String toMessage(Throwable exception)
+    {
+        assert exception != null;
+
+        String message = exception.getMessage();
+
+        if (message != null)
+            return message;
+
+        return exception.getClass().getName();
     }
 }

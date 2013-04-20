@@ -18,6 +18,7 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
@@ -94,7 +95,7 @@ public abstract class AbstractAssetFactory implements AssetFactory
                 } catch (IOException ex)
                 {
                     throw new RuntimeException(String.format("Unable to construct asset path for %s: %s",
-                            resource, InternalUtils.toMessage(ex)), ex);
+                            resource, ExceptionUtils.toMessage(ex)), ex);
                 }
             }
 

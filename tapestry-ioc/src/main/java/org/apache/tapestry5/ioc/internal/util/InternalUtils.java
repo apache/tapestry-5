@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
 
@@ -410,7 +411,7 @@ public class InternalUtils
         } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s", field.getName(),
-                    target, value, toMessage(ex)));
+                    target, value, ExceptionUtils.toMessage(ex)));
         }
     }
 
@@ -793,15 +794,12 @@ public class InternalUtils
      * @param exception
      *         to extract message from
      * @return message or class name
+     * @deprecated Deprecated in 5.4; use {@link ExceptionUtils#toMessage(Throwable)} instead.
      */
+    // Cause it gets used a lot outside of Tapestry proper even though it is internal.
     public static String toMessage(Throwable exception)
     {
-        String message = exception.getMessage();
-
-        if (message != null)
-            return message;
-
-        return exception.getClass().getName();
+        return ExceptionUtils.toMessage(exception);
     }
 
     public static void validateConstructorForAutobuild(Constructor constructor)
@@ -1577,7 +1575,7 @@ public class InternalUtils
                                 if (fail != null)
                                 {
                                     throw new RuntimeException(String
-                                            .format("Exception invoking method %s: %s", method, toMessage(fail)), fail);
+                                            .format("Exception invoking method %s: %s", method, ExceptionUtils.toMessage(fail)), fail);
                                 }
                             }
                         });

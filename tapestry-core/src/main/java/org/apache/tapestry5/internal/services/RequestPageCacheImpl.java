@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
@@ -66,7 +65,7 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
                 page.detached();
             } catch (Throwable t)
             {
-                logger.error(String.format("Error detaching page %s: %s", page, InternalUtils.toMessage(t)), t);
+                logger.error(String.format("Error detaching page %s: %s", page, ExceptionUtils.toMessage(t)), t);
             }
         }
     }
@@ -87,7 +86,7 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
             } catch (Throwable t)
             {
                 throw new RuntimeException(String.format("Unable to attach page %s: %s", canonical,
-                        InternalUtils.toMessage(t)), t);
+                        ExceptionUtils.toMessage(t)), t);
             }
 
             cache.put(canonical, page);

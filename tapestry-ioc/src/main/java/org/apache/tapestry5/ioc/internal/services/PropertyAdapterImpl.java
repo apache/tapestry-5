@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -169,7 +169,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
         throw new RuntimeException(String.format("Error updating property '%s' of %s: %s",
                 name, toClassName(instance),
-                InternalUtils.toMessage(fail)), fail);
+                ExceptionUtils.toMessage(fail)), fail);
     }
 
     private String toClassName(Object instance)

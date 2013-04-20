@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import org.apache.tapestry5.clojure.ClojureBuilder;
 import org.apache.tapestry5.clojure.MethodToFunctionSymbolMapper;
 import org.apache.tapestry5.clojure.Namespace;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.reflect.Method;
@@ -134,7 +134,7 @@ public class ClojureBuilderImpl implements ClojureBuilder
                 } catch (NoSuchMethodException ex)
                 {
                     throw new RuntimeException(String.format("Unable to find correct IFn.invoke() method: %s",
-                            InternalUtils.toMessage(ex)), ex);
+                            ExceptionUtils.toMessage(ex)), ex);
                 }
 
                 builder.invoke(ifnMethod);

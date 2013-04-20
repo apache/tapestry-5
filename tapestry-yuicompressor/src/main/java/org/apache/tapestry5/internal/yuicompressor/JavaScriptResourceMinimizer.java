@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.yuicompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.mozilla.javascript.ErrorReporter;
@@ -171,7 +171,7 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
     private void recoverFromException(Exception ex, StreamableResource resource, Writer output) throws IOException
     {
-        logger.error(InternalUtils.toMessage(ex), ex);
+        logger.error(ExceptionUtils.toMessage(ex), ex);
 
         streamUnminimized(resource, output);
     }

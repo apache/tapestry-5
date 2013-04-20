@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -177,7 +178,7 @@ public class SaxTemplateParser
         } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure parsing template %s: %s", resource,
-                    InternalUtils.toMessage(ex)), tokenStream.getLocation(), ex);
+                    ExceptionUtils.toMessage(ex)), tokenStream.getLocation(), ex);
         }
 
     }

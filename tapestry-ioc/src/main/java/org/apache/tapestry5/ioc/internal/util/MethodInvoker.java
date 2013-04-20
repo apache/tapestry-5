@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,6 +60,6 @@ public class MethodInvoker<T> implements Invokable<T>
         }
 
         throw new RuntimeException(String.format("Error invoking method %s: %s",
-                method, InternalUtils.toMessage(fail)), fail);
+                method, ExceptionUtils.toMessage(fail)), fail);
     }
 }

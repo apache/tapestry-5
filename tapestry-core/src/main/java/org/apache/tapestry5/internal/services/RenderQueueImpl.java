@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -74,7 +74,7 @@ public class RenderQueueImpl implements RenderQueue
             }
         } catch (RuntimeException ex)
         {
-            String message = String.format("Render queue error in %s: %s", command, InternalUtils.toMessage(ex));
+            String message = String.format("Render queue error in %s: %s", command, ExceptionUtils.toMessage(ex));
 
             logger.error(message, ex);
 

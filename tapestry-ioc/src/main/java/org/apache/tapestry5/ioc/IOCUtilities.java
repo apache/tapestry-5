@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
-import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
 import org.apache.tapestry5.ioc.annotations.SubModule;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,6 +23,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
+
+import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
 
 /**
  * A collection of utility methods for a couple of different areas, including creating the initial {@link
@@ -122,7 +123,7 @@ public final class IOCUtilities
         if (fail != null)
             throw new RuntimeException(String.format("Exception loading module(s) from manifest %s: %s",
                                                      url.toString(),
-                                                     InternalUtils.toMessage(fail)), fail);
+                                                     ExceptionUtils.toMessage(fail)), fail);
 
     }
 

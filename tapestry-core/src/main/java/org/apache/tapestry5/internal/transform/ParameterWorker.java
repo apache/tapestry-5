@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.BindingSource;
@@ -266,7 +267,7 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         {
                             throw new TapestryException(String.format(
                                     "Failure reading parameter '%s' of component %s: %s", parameterName,
-                                    icr.getCompleteId(), InternalUtils.toMessage(ex)), parameterBinding, ex);
+                                    icr.getCompleteId(), ExceptionUtils.toMessage(ex)), parameterBinding, ex);
                         }
 
                         if (result == null && !allowNull)
@@ -299,7 +300,7 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         {
                             throw new TapestryException(String.format(
                                     "Failure writing parameter '%s' of component %s: %s", parameterName,
-                                    icr.getCompleteId(), InternalUtils.toMessage(ex)), icr, ex);
+                                    icr.getCompleteId(), ExceptionUtils.toMessage(ex)), icr, ex);
                         }
                     }
 

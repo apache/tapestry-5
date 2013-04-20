@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 
@@ -184,7 +185,7 @@ public class OperationTrackerImpl implements OperationTracker
 
     private String[] log(Throwable ex)
     {
-        logger.error(InternalUtils.toMessage(ex));
+        logger.error(ExceptionUtils.toMessage(ex));
         logger.error("Operations trace:");
 
         Object[] snapshot = operations.getSnapshot();

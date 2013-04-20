@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.PersistentFieldBundle;
@@ -208,7 +208,7 @@ public class PageImpl implements Page
             {
                 result = true;
 
-                getLogger().error(String.format("Callback %s failed during page detach: %s", callback, InternalUtils.toMessage(ex)), ex);
+                getLogger().error(String.format("Callback %s failed during page detach: %s", callback, ExceptionUtils.toMessage(ex)), ex);
             }
         }
 

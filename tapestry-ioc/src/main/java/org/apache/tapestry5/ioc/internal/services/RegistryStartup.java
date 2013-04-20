@@ -1,4 +1,4 @@
-// Copyright 2007, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class RegistryStartup implements Runnable
                 // startup-failure=An exception occurred during startup: %s
 
                 logger.error(String.format("An exception occurred during startup: %s",
-                        InternalUtils.toMessage(ex)), ex);
+                        ExceptionUtils.toMessage(ex)), ex);
             }
         }
 

@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.xml.sax.*;
 import org.xml.sax.ext.Attributes2;
 import org.xml.sax.ext.LexicalHandler;
@@ -98,7 +99,7 @@ public class XMLTokenStream
             } catch (IOException ex)
             {
                 throw new SAXException(String.format("Unable to open stream for resource %s: %s",
-                        url, InternalUtils.toMessage(ex)), ex);
+                        url, ExceptionUtils.toMessage(ex)), ex);
             }
 
             return null;

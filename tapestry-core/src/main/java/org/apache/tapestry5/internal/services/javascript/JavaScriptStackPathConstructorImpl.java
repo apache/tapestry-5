@@ -1,4 +1,4 @@
-// Copyright 2010, 2013 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssembler;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
@@ -107,7 +107,7 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
         {
             throw new RuntimeException(String.format("Unable to construct path for '%s' JavaScript stack: %s",
                     stackName,
-                    InternalUtils.toMessage(ex)), ex);
+                    ExceptionUtils.toMessage(ex)), ex);
         }
     }
 

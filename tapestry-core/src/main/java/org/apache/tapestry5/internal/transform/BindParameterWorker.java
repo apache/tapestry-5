@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -147,7 +148,7 @@ public class BindParameterWorker implements ComponentClassTransformWorker2
                     throw new TapestryException(String.format(
                             "Failure binding parameter field '%s' of mixin %s (type %s): %s", fieldName, resources
                             .getCompleteId(), resources.getComponentModel().getComponentClassName(),
-                            InternalUtils.toMessage(ex)), ex);
+                            ExceptionUtils.toMessage(ex)), ex);
                 }
             }
 

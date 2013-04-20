@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.slf4j.Logger;
 
@@ -98,7 +99,7 @@ public class JpaValueEncoder<E> implements ValueEncoder<E>
             throw new RuntimeException(String.format(
                     "Exception converting '%s' to instance of %s (id type for entity %s): %s",
                     clientValue, propertyAdapter.getType().getName(), entityClass.getName(),
-                    InternalUtils.toMessage(ex)), ex);
+                    ExceptionUtils.toMessage(ex)), ex);
         }
 
         final EntityManager em = entityManagerManager.getEntityManager(persistenceUnitName);

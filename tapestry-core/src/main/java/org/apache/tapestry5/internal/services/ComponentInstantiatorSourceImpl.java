@@ -35,6 +35,7 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
@@ -396,7 +397,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             {
                 throw new RuntimeException(String.format(
                         "Unable to convert type '%s' to a Class: %s", typeName,
-                        InternalUtils.toMessage(ex)), ex);
+                        ExceptionUtils.toMessage(ex)), ex);
             }
         }
 

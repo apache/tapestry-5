@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -82,7 +83,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         {
             throw new RuntimeException(String.format(
                     "Exception converting '%s' to instance of %s (id type for entity %s): %s", clientValue,
-                    propertyAdapter.getType().getName(), entityClass.getName(), InternalUtils.toMessage(ex)), ex);
+                    propertyAdapter.getType().getName(), entityClass.getName(), ExceptionUtils.toMessage(ex)), ex);
         }
 
         Serializable ser = (Serializable) id;

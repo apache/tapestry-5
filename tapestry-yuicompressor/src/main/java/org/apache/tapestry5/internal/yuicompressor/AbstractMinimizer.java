@@ -18,7 +18,7 @@ import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.internal.services.assets.StreamableResourceImpl;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
@@ -71,7 +71,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
                 } catch (RuntimeErrorException ex)
                 {
                     throw new RuntimeException(String.format("Unable to minimize %s: %s", resourceType,
-                            InternalUtils.toMessage(ex)), ex);
+                            ExceptionUtils.toMessage(ex)), ex);
                 }
 
                 return null;

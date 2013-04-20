@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 class OrderedConfigurationOverride<T>
 {
@@ -50,7 +50,7 @@ class OrderedConfigurationOverride<T>
         {
             String message = String.format("Failure processing override from %s: %s",
                                            contribDef,
-                                           InternalUtils.toMessage(ex));
+                                           ExceptionUtils.toMessage(ex));
 
             throw new RuntimeException(message, ex);
         }

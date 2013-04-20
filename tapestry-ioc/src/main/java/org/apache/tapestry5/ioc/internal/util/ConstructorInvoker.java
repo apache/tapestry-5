@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -55,6 +56,6 @@ public class ConstructorInvoker<T> implements Invokable<T>
         }
 
         throw new RuntimeException(String.format("Error invoking constructor %s: %s",
-                constructor, InternalUtils.toMessage(fail)), fail);
+                constructor, ExceptionUtils.toMessage(fail)), fail);
     }
 }

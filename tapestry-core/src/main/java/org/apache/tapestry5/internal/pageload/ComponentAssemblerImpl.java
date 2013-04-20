@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -134,7 +135,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             return pageAssembly.createdElement.peek();
         } catch (RuntimeException ex)
         {
-            throw new RuntimeException(String.format("Exception assembling root component of page %s: %s", pageAssembly.page.getName(), InternalUtils.toMessage(ex)), ex);
+            throw new RuntimeException(String.format("Exception assembling root component of page %s: %s", pageAssembly.page.getName(), ExceptionUtils.toMessage(ex)), ex);
         }
     }
 
@@ -196,7 +197,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
                             embeddedId,
                             componentClassName,
                             container.getCompleteId(),
-                            InternalUtils.toMessage(ex)), location, ex);
+                            ExceptionUtils.toMessage(ex)), location, ex);
                 }
             }
         });
@@ -339,7 +340,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
         } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure creating embedded component '%s' of %s: %s", embeddedId, instantiator
-                    .getModel().getComponentClassName(), InternalUtils.toMessage(ex)), location, ex);
+                    .getModel().getComponentClassName(), ExceptionUtils.toMessage(ex)), location, ex);
         }
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
@@ -165,7 +166,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         } catch (Throwable ex)
         {
             throw new RuntimeException(String.format("Unable to %s class %s: %s", firstTime ? "load" : "reload",
-                    implementationClassName, InternalUtils.toMessage(ex)), ex);
+                    implementationClassName, ExceptionUtils.toMessage(ex)), ex);
         }
     }
 
@@ -196,7 +197,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         } catch (IOException ex)
         {
             throw new ClassNotFoundException(String.format("Unable to analyze and load class %s: %s", className,
-                    InternalUtils.toMessage(ex)), ex);
+                    ExceptionUtils.toMessage(ex)), ex);
         }
 
         trackClassFileChanges(className);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
@@ -79,7 +79,7 @@ public class InjectWorker implements ComponentClassTransformWorker2
                         }
                     } catch (RuntimeException ex)
                     {
-                        throw new RuntimeException(String.format("Error obtaining injected value for field %s.%s: %s", plasticClass.getClassName(), fieldName, InternalUtils.toMessage(ex)), ex);
+                        throw new RuntimeException(String.format("Error obtaining injected value for field %s.%s: %s", plasticClass.getClassName(), fieldName, ExceptionUtils.toMessage(ex)), ex);
                     }
                 }
             });

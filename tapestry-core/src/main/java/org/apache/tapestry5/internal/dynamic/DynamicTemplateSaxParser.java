@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
@@ -85,7 +86,7 @@ public class DynamicTemplateSaxParser
         } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure parsing dynamic template %s: %s", resource,
-                    InternalUtils.toMessage(ex)), tokenStream.getLocation(), ex);
+                    ExceptionUtils.toMessage(ex)), tokenStream.getLocation(), ex);
         }
     }
 
@@ -270,7 +271,7 @@ public class DynamicTemplateSaxParser
                 {
                     throw new TapestryException(String.format(
                             "Exception rendering block '%s' as part of dynamic template: %s", blockId,
-                            InternalUtils.toMessage(ex)), location, ex);
+                            ExceptionUtils.toMessage(ex)), location, ex);
                 }
             }
         };
@@ -456,7 +457,7 @@ public class DynamicTemplateSaxParser
                     return boundValue == null ? null : boundValue.toString();
                 } catch (Throwable t)
                 {
-                    throw new TapestryException(InternalUtils.toMessage(t), location, t);
+                    throw new TapestryException(ExceptionUtils.toMessage(t), location, t);
                 }
             }
         };

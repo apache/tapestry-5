@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import javax.crypto.Mac;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class MacOutputStream extends OutputStream
             return new MacOutputStream(mac);
         } catch (Exception ex)
         {
-            throw new IOException("Unable to create MacOutputStream: " + InternalUtils.toMessage(ex), ex);
+            throw new IOException("Unable to create MacOutputStream: " + ExceptionUtils.toMessage(ex), ex);
         }
     }
 

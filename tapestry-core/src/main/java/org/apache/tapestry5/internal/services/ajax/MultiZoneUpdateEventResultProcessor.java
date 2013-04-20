@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.internal.services.AjaxPartialResponseRenderer;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
@@ -81,7 +81,7 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
         } catch (Exception ex)
         {
             throw new IllegalArgumentException(String.format("Failure converting renderer for zone '%s': %s", zoneId,
-                    InternalUtils.toMessage(ex)), ex);
+                    ExceptionUtils.toMessage(ex)), ex);
         }
     }
 }

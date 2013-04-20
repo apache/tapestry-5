@@ -1,5 +1,4 @@
-//
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,6 +27,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
@@ -451,7 +451,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                             String.format(
                                     "Unable process query parameter '%s' as parameter #%d of event handler method %s: %s",
                                     parameterName, parameterIndex + 1, methodIdentifier,
-                                    InternalUtils.toMessage(ex)), ex);
+                                    ExceptionUtils.toMessage(ex)), ex);
                 }
             }
         };

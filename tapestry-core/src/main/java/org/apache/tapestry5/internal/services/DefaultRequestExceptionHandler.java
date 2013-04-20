@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.OperationException;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.ComponentEventException;
 import org.apache.tapestry5.services.*;
@@ -238,7 +238,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        String rawMessage = InternalUtils.toMessage(exception);
+        String rawMessage = ExceptionUtils.toMessage(exception);
 
         // Encode it compatibly with the JavaScript escape() function.
 

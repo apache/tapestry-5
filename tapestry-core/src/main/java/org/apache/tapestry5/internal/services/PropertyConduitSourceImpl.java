@@ -31,6 +31,7 @@ import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.ComponentClasses;
@@ -1416,7 +1417,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
         } catch (Exception ex)
         {
             throw new PropertyExpressionException(String.format("Exception generating conduit for expression '%s': %s",
-                    expression, InternalUtils.toMessage(ex)), expression, ex);
+                    expression, ExceptionUtils.toMessage(ex)), expression, ex);
         }
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.lang.reflect.AnnotatedElement;
@@ -151,7 +151,7 @@ public final class RegistryBuilder
         } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s", classname,
-                    InternalUtils.toMessage(ex), ex));
+                    ExceptionUtils.toMessage(ex), ex));
         }
 
         return this;

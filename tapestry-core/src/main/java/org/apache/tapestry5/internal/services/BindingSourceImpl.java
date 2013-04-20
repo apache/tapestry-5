@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.BindingSource;
 
@@ -80,7 +81,7 @@ public class BindingSourceImpl implements BindingSource
             return factory.newBinding(interner.intern(description), container, component, subexpression, location);
         } catch (Exception ex)
         {
-            throw new TapestryException(String.format("Could not convert '%s' into a component parameter binding: %s", expression, InternalUtils.toMessage(ex)), location, ex);
+            throw new TapestryException(String.format("Could not convert '%s' into a component parameter binding: %s", expression, ExceptionUtils.toMessage(ex)), location, ex);
         }
     }
 }
