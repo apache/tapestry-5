@@ -165,7 +165,9 @@ public class TapestryFilter implements Filter
                     (HttpServletResponse) response);
 
             if (!handled)
+            {
                 chain.doFilter(request, response);
+            }
         } finally
         {
             registry.cleanupThread();

@@ -108,7 +108,7 @@ import java.util.regex.Pattern;
  */
 @Marker(Core.class)
 @SubModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class, WebMetricsModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
@@ -235,8 +235,10 @@ public final class TapestryModule
             Response response = new ResponseImpl(servletRequest, servletResponse);
 
             // TAP5-257: Make sure that the "initial guess" for request/response
-            // is available, even if
-            // some filter in the RequestHandler pipeline replaces them.
+            // is available, even ifsome filter in the RequestHandler pipeline replaces them.
+            // Which just goes to show that there should have been only one way to access the Request/Response:
+            // either functionally (via parameters) or global (via ReqeuestGlobals) but not both.
+            // That ship has sailed.
 
             requestGlobals.storeRequestResponse(request, response);
 
@@ -428,8 +430,8 @@ public final class TapestryModule
 
     @Contribute(ComponentClassResolver.class)
     public static void provideCoreAndAppLibraries(Configuration<LibraryMapping> configuration,
-                                                @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                                String appRootPackage)
+                                                  @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                  String appRootPackage)
     {
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib"));
         configuration.add(new LibraryMapping("", appRootPackage));

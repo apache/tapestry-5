@@ -1,8 +1,23 @@
+// Copyright 2013 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5.ioc.internal.services.metrics;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -13,15 +28,19 @@ import org.apache.tapestry5.ioc.services.metrics.Metric;
 import org.apache.tapestry5.ioc.services.metrics.MetricCollector;
 import org.apache.tapestry5.ioc.services.metrics.MetricsSymbols;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
+import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
 import org.rrd4j.core.*;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@PreventServiceDecoration
 public class MetricCollectorImpl extends LockSupport implements MetricCollector, Runnable
 {
     private final boolean inMemory;
@@ -38,7 +57,7 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
 
     public static final String DS_NAME = "data";
 
-    private class MetricImpl extends LockSupport implements Metric, Comparable<MetricImpl>, Runnable
+    public class MetricImpl extends LockSupport implements Metric, Comparable<MetricImpl>, Runnable
     {
         private final MetricImpl parent;
 
@@ -82,6 +101,8 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
                         path,
                         ExceptionUtils.toMessage(ex)), ex);
             }
+
+            updates.add(this);
         }
 
         private RrdDb createDb() throws IOException
@@ -110,7 +131,13 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
 
         private RrdDef createDef(String filePath)
         {
-            return null;
+            RrdDef result = new RrdDef(filePath, HEARTBEAT);
+
+            result.addDatasource(DS_NAME, DsType.COUNTER, HEARTBEAT, 0, Double.NaN);
+            // One archive: average for each new data point, 10 minutes worth.
+            result.addArchive(new ArcDef(ConsolFun.AVERAGE, .5, 1, 60));
+
+            return result;
         }
 
         public int compareTo(MetricImpl o)
@@ -175,16 +202,16 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
 
         public void increment()
         {
-            store(1);
+            accumulate(1);
         }
 
-        public void store(double value)
+        public void accumulate(double value)
         {
             accumulator.addAndGet(value);
 
             if (parent != null)
             {
-                parent.store(value);
+                parent.accumulate(value);
             }
         }
 
@@ -201,11 +228,21 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
             }
         }
 
+        public Date getLastUpdateTime()
+        {
+            try
+            {
+                return new Date(db.getLastUpdateTime());
+            } catch (IOException ex)
+            {
+                return null;
+            }
+        }
+
         public void run()
         {
             try
             {
-
                 db.createSample().setValue(DS_NAME, accumulator.getAndSet(0)).update();
             } catch (IOException ex)
             {

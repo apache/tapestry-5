@@ -1,5 +1,20 @@
+// Copyright 2013 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5.ioc.services.metrics;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,21 +79,28 @@ public interface Metric
     Units getUnits();
 
     /**
-     * Stores a value of 1; useful  when the metric's type is {@link Units#COUNTER}.
+     * Accumulates a value of 1; useful  when the metric's type is {@link Units#COUNTER}.
      */
     void increment();
 
     /**
-     * Stores a value into the current time interval. This may be called multiple times during
-     * a time interval, and the values will accumulate. In addition, {@link #store(double)}
+     * Adds the provided value to the current time interval's value. This may be called multiple times during
+     * a time interval, and the values will accumulate. In addition, {@link #accumulate(double)}
      * propagates the value up to the parent metrics, if any, all the way up to the root metric.
      *
      * @param value
      */
-    void store(double value);
+    void accumulate(double value);
 
     /**
      * Returns the children of this metric, sorted by name.
      */
     List<Metric> getChildren();
+
+    /**
+     * Returns the last time the archive was updated (this happens a regular intervals called heartbeats).
+     *
+     * @return archive update time, or null if there is an exception accessing the time
+     */
+    Date getLastUpdateTime();
 }
