@@ -1,4 +1,4 @@
-package org.apache.tapestry5.ioc.modules;
+package org.apache.tapestry5.ioc.services.metrics;
 
 public class MetricsSymbols
 {

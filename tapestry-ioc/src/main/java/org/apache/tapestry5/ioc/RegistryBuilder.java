@@ -20,8 +20,8 @@ import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.modules.TapestryIOCModule;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.slf4j.Logger;
 

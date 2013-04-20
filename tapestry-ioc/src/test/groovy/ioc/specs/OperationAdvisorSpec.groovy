@@ -5,10 +5,10 @@ import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl
 import org.apache.tapestry5.ioc.internal.LoggerSourceImpl
 import org.apache.tapestry5.ioc.internal.RegistryImpl
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl
+import org.apache.tapestry5.ioc.modules.TapestryIOCModule
 import org.apache.tapestry5.ioc.services.OperationTrackedModule
 import org.apache.tapestry5.ioc.services.OperationTrackedService
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory
-import org.apache.tapestry5.ioc.services.TapestryIOCModule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification

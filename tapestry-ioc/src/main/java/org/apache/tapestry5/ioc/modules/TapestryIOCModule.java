@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.ioc.modules;
 
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.ioc.*;
@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.internal.services.cron.PeriodicExecutorImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.modules.MetricsModule;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.UpdateListenerHub;

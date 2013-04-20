@@ -225,3 +225,12 @@ The interface for AssetPathConstructor was changed incompatibly, to allow for in
 
 StreamableResource has been modified, adding a new `getChecksum()` method; this interface is rarely, if ever,
 used or implemented by application code.
+
+## Module classes moved to new modules
+
+Traditionally, Tapestry IoC Module classes have lived in the same package as the service interfaces they define, and
+at the same time reference implementation classes in a separate (usually internal) package. This is not a desirable
+approach, as proper practices is to avoid cases where separate packages import classes from each other.
+
+To resolve this, new `modules` packages have been created, and module classes have been moved there. Since module
+classes are typically not used directly by end-user code, this is not expected to be a disruptive change.

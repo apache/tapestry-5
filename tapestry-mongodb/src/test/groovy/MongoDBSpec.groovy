@@ -8,7 +8,7 @@ import org.apache.tapestry5.internal.mongodb.MongoDBTestModule
 import org.apache.tapestry5.internal.mongodb.People
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
-import org.apache.tapestry5.ioc.services.TapestryIOCModule
+import org.apache.tapestry5.ioc.modules.TapestryIOCModule
 import org.apache.tapestry5.mongodb.MongoDB
 import org.apache.tapestry5.mongodb.MongoDBSource
 import org.apache.tapestry5.mongodb.MongodbModule

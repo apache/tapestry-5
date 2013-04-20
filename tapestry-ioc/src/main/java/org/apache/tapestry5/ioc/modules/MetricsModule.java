@@ -9,6 +9,7 @@ import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.metrics.MetricCollector;
+import org.apache.tapestry5.ioc.services.metrics.MetricsSymbols;
 
 @Marker(Builtin.class)
 public class MetricsModule
