@@ -45,11 +45,17 @@
 </t:block>
 
 <t:block id="voteForm">
-    <t:form t:id="vote" zone="^">
-        Vote:
-        <input type="submit" name="abstain" value="Abstain"/>
-        <t:submit t:id="voteYes" value="Yes"/>
-        <t:submit t:id="voteNo" value="No"/>
+    <t:form class="form-horizontal well" t:id="vote" zone="^">
+        <div class="control-group">
+            <label class="control-label">Vote:</label>
+            <div class="controls">
+                <div class="btn-group">
+=                    <input type="submit" name="abstain" value="Abstain" class="btn"/>
+                    <t:submit t:id="voteYes" value="Yes"/>
+                    <t:submit t:id="voteNo" value="No"/>
+                </div>
+            </div>
+        </div>
     </t:form>
 </t:block>
 
