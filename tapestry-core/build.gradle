@@ -72,11 +72,7 @@ sourceSets {
     }
 }
 
-idea.module {
-    sourceDirs += compileCoffeeScript.srcDir
-
-    testSourceDirs += compileTestCoffeeScript.srcDir
-}
+clean.delete generatedDir
 
 compileJava {
     dependsOn generateGrammarSource
