@@ -159,9 +159,7 @@ public class BeanEditorTest extends TapestryTestCase
         train_getOverrideMessages(overrides, messages);
 
         expect(model.newInstance()).andReturn(data);
-        
-        expect(env.peek(eq(BeanValidationContext.class))).andReturn(null);
-        
+
         expect(model.getBeanType()).andReturn(RegistrationData.class);
 
         BeanEditContext ctxt = new BeanEditContext()
@@ -178,6 +176,10 @@ public class BeanEditorTest extends TapestryTestCase
         };
 
         expect(env.push(eq(BeanEditContext.class), contextEq())).andReturn(ctxt);
+
+        expect(env.push(eq(BeanValidationContext.class), isA(BeanValidationContext.class)))
+                .andReturn(null);
+
         replay();
 
         BeanEditor component = new BeanEditor();
@@ -188,7 +190,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         verify();
     }
-    
+
     @Test
     public void refresh_bean_validation_context()
     {
@@ -208,13 +210,9 @@ public class BeanEditorTest extends TapestryTestCase
         train_getOverrideMessages(overrides, messages);
 
         expect(model.newInstance()).andReturn(data);
-        
-        expect(env.peek(eq(BeanValidationContext.class))).andReturn(beanValidationContext);
-        
-        expect(env.pop(eq(BeanValidationContext.class))).andReturn(beanValidationContext);
-        
+
         expect(env.push(eq(BeanValidationContext.class), isA(BeanValidationContext.class))).andReturn(beanValidationContext);
-        
+
         expect(model.getBeanType()).andReturn(RegistrationData.class);
 
         BeanEditContext ctxt = new BeanEditContext()
@@ -251,6 +249,8 @@ public class BeanEditorTest extends TapestryTestCase
         PropertyOverrides overrides = mockPropertyOverrides();
 
         expect(env.pop(BeanEditContext.class)).andReturn(null);
+
+        expect(env.pop(BeanValidationContext.class)).andReturn(null);
 
         replay();
 
