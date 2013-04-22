@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -421,22 +421,29 @@ public class FormTests extends TapestryCoreTestCase
 
         String update = SUBMIT;
 
-        // in a loop ...
-        click("//label[.='Accounting']");
+        click("css=label:contains('Accounting')");
+
         clickAndWait(update);
+
         assertTextPresent("Selected department: ACCOUNTING");
 
-        click("//label[.='Sales And Marketing']");
+        click("css=label:contains('Sales And Marketing')");
+
         clickAndWait(update);
+
         assertTextPresent("Selected department: SALES_AND_MARKETING");
 
         // not in a loop ...
-        click("//label[.='Temp']");
+        click("css=label:contains('Temp')");
+
         clickAndWait(update);
+
         assertTextPresent("Selected position: TEMP");
 
-        click("//label[.='Lifer']");
+        click("css=label:contains('Lifer')");
+
         clickAndWait(update);
+
         assertTextPresent("Selected position: LIFER");
     }
 
