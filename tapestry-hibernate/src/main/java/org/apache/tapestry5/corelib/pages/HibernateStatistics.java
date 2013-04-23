@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate.t5internal.pages;
+package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;
@@ -21,11 +21,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.stat.CollectionStatistics;
-import org.hibernate.stat.EntityStatistics;
-import org.hibernate.stat.QueryStatistics;
-import org.hibernate.stat.SecondLevelCacheStatistics;
-import org.hibernate.stat.Statistics;
+import org.hibernate.stat.*;
 
 import java.util.Collection;
 

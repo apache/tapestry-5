@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.hibernate;
 
-import java.util.Iterator;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
@@ -34,7 +32,6 @@ import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
@@ -42,6 +39,8 @@ import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
+
+import java.util.Iterator;
 
 /**
  * Supplements the services defined by {@link org.apache.tapestry5.hibernate.HibernateCoreModule} with additional
@@ -184,17 +183,9 @@ public class HibernateModule
         configuration.addInstance("CommitAfter", CommitAfterWorker.class, "after:Log");
     }
 
-    /**
-     * Contribution to the {@link org.apache.tapestry5.services.ComponentClassResolver} service configuration.
-     */
-    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
-    {
-        configuration.add(new LibraryMapping("t5internal", "org.apache.tapestry5.hibernate.t5internal"));
-    }
-
     @Contribute(DashboardManager.class)
     public static void provideHibernateDashboardTab(OrderedConfiguration<DashboardTab> configuration)
     {
-        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "t5internal/HibernateStatistics"));
+        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "core/HibernateStatistics"));
     }
 }
