@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.upload.integration;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.upload.pages.Start;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -25,7 +26,8 @@ import java.io.IOException;
 /**
  * . TODO: These tests wont work because Selenium cannot enter values for input type="file'
  */
-public class UploadIntegrationTest extends AbstractIntegrationTestSuite
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+public class UploadIntegrationTest extends SeleniumTestCase
 {
 
     @BeforeTest
@@ -48,8 +50,7 @@ public class UploadIntegrationTest extends AbstractIntegrationTestSuite
     @Test(enabled = false)
     public void integration_test() throws Exception
     {
-
-        open(BASE_URL);
+        openBaseURL();
 
         File source = new File("test/data/upload.txt");
 
