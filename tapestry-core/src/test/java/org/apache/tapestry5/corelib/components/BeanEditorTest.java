@@ -56,6 +56,7 @@ public class BeanEditorTest extends TapestryTestCase
         train_getOverrideMessages(overrides, messages);
 
         expect(model.newInstance()).andReturn(data);
+        expect(model.getBeanType()).andReturn(RegistrationData.class);
 
         replay();
         EasyMock.replay(env);
