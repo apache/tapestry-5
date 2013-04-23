@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.spring;
+package org.apache.tapestry5.spring.modules;
 
 import org.apache.tapestry5.internal.spring.SymbolBeanFactoryPostProcessor;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -27,6 +27,8 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.ApplicationInitializer;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
 import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.spring.ApplicationContextCustomizer;
+import org.apache.tapestry5.spring.SpringConstants;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
