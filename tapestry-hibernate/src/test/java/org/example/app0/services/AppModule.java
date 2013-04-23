@@ -15,10 +15,10 @@
 package org.example.app0.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.hibernate.HibernateCoreModule;
 import org.apache.tapestry5.hibernate.HibernateModule;
 import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
+import org.apache.tapestry5.hibernate.modules.HibernateCoreModule;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;

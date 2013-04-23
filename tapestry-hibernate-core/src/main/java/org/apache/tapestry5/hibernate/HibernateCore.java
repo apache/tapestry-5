@@ -18,7 +18,7 @@ import java.lang.annotation.*;
 
 
 /**
- * Marker annotation used to identify services defined in the {@link org.apache.tapestry5.hibernate.HibernateCoreModule}.
+ * Marker annotation used to identify services defined in the {@link org.apache.tapestry5.hibernate.modules.HibernateCoreModule}.
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

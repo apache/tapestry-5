@@ -43,7 +43,7 @@ import org.hibernate.mapping.PersistentClass;
 import java.util.Iterator;
 
 /**
- * Supplements the services defined by {@link org.apache.tapestry5.hibernate.HibernateCoreModule} with additional
+ * Supplements the services defined by {@link org.apache.tapestry5.hibernate.modules.HibernateCoreModule} with additional
  * services and configuration specific to Tapestry web application.
  */
 public class HibernateModule

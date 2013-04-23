@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate;
+package org.apache.tapestry5.hibernate.modules;
 
+import org.apache.tapestry5.hibernate.*;
 import org.apache.tapestry5.internal.hibernate.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -25,12 +26,9 @@ import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.hibernate.Session;
-import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Defines core services that support initialization of Hibernate and access to the Hibernate {@link
