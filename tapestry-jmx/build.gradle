@@ -13,6 +13,6 @@ test {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jmx.JmxModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jmx.modules.JmxModule'
     }
 }

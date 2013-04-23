@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Decorate;
 import org.apache.tapestry5.ioc.annotations.SubModule;
-import org.apache.tapestry5.jmx.JmxModule;
 import org.apache.tapestry5.jmx.MBeanSupport;
+import org.apache.tapestry5.jmx.modules.JmxModule;
 
 @SubModule(JmxModule.class)
 public class AppModule
