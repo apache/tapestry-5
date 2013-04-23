@@ -30,7 +30,7 @@ class PlasticUtilsTests extends Specification
 				file.createNewFile();
 				file.deleteOnExit();
 				expect:
-				PlasticInternalUtils.getStreamForPath(getClass().classLoader, file.getAbsolutePath().substring(new File(url.toURI()).getAbsolutePath().length()) ) != null
+				PlasticInternalUtils.getStreamForPath(getClass().classLoader, "webapp##01.test" ) != null
 		}
 
     def "Descriptor #descriptor as class name should be #className"()
