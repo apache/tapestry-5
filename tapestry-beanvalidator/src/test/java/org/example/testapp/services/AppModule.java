@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ package org.example.testapp.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanvalidator.BeanValidatorConfigurer;
-import org.apache.tapestry5.beanvalidator.BeanValidatorModule;
+import org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;

@@ -32,4 +32,4 @@ idea.module {
     }
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.BeanValidatorModule'
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule'
