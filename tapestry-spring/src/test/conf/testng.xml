@@ -22,4 +22,14 @@
             <package name="org.apache.tapestry5.internal.spring"/>
         </packages>
     </test>
+    <test name="Tapestry Spring Integration - Standard">
+        <packages>
+            <package name="org.apache.tapestry5.spring.integration.standard"/>
+        </packages>
+    </test>
+    <test name="Tapestry Spring Integration - External Configuration">
+        <packages>
+            <package name="org.apache.tapestry5.spring.integration.external"/>
+        </packages>
+    </test>
 </suite>

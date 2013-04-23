@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.spring;
+package org.apache.tapestry5.spring.integration.external;
 
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
