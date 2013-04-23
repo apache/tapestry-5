@@ -11,6 +11,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.upload.services.UploadModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.upload.modules.UploadModule'
     }
 }
