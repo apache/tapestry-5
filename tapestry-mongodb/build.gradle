@@ -19,6 +19,6 @@ test {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.mongodb.MongodbModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.mongodb.modules.MongodbModule'
     }
 }

@@ -1,4 +1,4 @@
-package org.apache.tapestry5.mongodb;
+package org.apache.tapestry5.mongodb.modules;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -13,6 +13,9 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.mongodb.MongoDB;
+import org.apache.tapestry5.mongodb.MongoDBSource;
+import org.apache.tapestry5.mongodb.MongoDBSymbols;
 import org.slf4j.Logger;
 
 /**

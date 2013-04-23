@@ -11,7 +11,7 @@ import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.modules.TapestryIOCModule
 import org.apache.tapestry5.mongodb.MongoDB
 import org.apache.tapestry5.mongodb.MongoDBSource
-import org.apache.tapestry5.mongodb.MongodbModule
+import org.apache.tapestry5.mongodb.modules.MongodbModule
 import org.jongo.Jongo
 import org.jongo.MongoCollection
 import spock.lang.AutoCleanup
