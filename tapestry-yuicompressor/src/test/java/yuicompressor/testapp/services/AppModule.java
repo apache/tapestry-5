@@ -7,7 +7,7 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.yuicompressor.services.YuiCompressorModule;
+import org.apache.tapestry5.yuicompressor.modules.YuiCompressorModule;
 
 @SubModule({YuiCompressorModule.class, InternalTestModule.class})
 public class AppModule

@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,4 +15,4 @@
 /**
  * [INTERNAL USE ONLY] support services for the YUICompressor; API subject to change
  */
-package org.apache.tapestry5.yuicompressor.services;
+package org.apache.tapestry5.yuicompressor.modules;

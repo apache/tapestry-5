@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.yuicompressor.services;
+package org.apache.tapestry5.yuicompressor.modules;
 
+import com.yahoo.platform.yui.compressor.YUICompressor;
 import org.apache.tapestry5.internal.yuicompressor.CSSResourceMinimizer;
 import org.apache.tapestry5.internal.yuicompressor.JavaScriptResourceMinimizer;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
-
-import com.yahoo.platform.yui.compressor.YUICompressor;
 
 /**
  * Sets up Tapestry to compress JavaScript assets using {@link YUICompressor}.
@@ -33,7 +32,6 @@ public class YuiCompressorModule
     /**
      * Contibutes minimizers for <code>text/javascript</code> and <code>test/css</code>.
      * 
-     * @param configuration
      */
     @Contribute(ResourceMinimizer.class)
     @Primary
