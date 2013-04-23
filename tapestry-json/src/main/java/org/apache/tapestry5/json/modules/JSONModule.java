@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.json.services;
+package org.apache.tapestry5.json.modules;
 
 import org.apache.tapestry5.internal.json.StringToJSONArray;
 import org.apache.tapestry5.internal.json.StringToJSONObject;

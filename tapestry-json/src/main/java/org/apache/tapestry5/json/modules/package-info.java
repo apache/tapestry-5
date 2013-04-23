@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 /**
- * JSON services
+ * Optional module that allows JSON objects to be used with the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service, when
+ * the tapestry-ioc module is present.
  */
-package org.apache.tapestry5.json.services;
+package org.apache.tapestry5.json.modules;
