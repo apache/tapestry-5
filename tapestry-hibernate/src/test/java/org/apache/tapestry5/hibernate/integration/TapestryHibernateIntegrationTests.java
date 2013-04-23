@@ -15,17 +15,15 @@
 package org.apache.tapestry5.hibernate.integration;
 
 import org.apache.tapestry5.internal.hibernate.PersistedEntity;
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.app0.entities.User;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSuite
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+public class TapestryHibernateIntegrationTests extends SeleniumTestCase
 {
-    public TapestryHibernateIntegrationTests()
-    {
-        super("src/test/webapp");
-    }
 
     public void valueencode_all_entity_types() throws Exception
     {
@@ -103,7 +101,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
      */
     public void using_cached_with_form()
     {
-        start("Cached Form", "setup");
+        openLinks("Cached Form", "setup");
         assertTextSeries("name_%d", 0);
 
         type("name", "name1");
@@ -117,7 +115,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 
     public void commit_after_on_component_methods()
     {
-        start("CommitAfter Demo");
+        openLinks("CommitAfter Demo");
 
         assertText("name", "Diane");
 
@@ -137,7 +135,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 
     public void grid()
     {
-        start("Grid Demo", "setup");
+        openLinks("Grid Demo", "setup");
 
         clickAndWait("link=First Name");
 
@@ -150,7 +148,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
     
     public void hibernate_statistics()
     {
-    	open(BASE_URL + "hibernate/Statistics");
+    	open(getBaseURL() + "hibernate/Statistics");
     	
     	assertTextPresent("Hibernate Statistics");
     	
@@ -159,5 +157,14 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
     	assertTextPresent(User.class.getName());
     }
 
+	protected final void assertTextSeries(String idFormat, int startIndex, String... values)
+	{
+		for (int i = 0; i < values.length; i++)
+		{
+			String id = String.format(idFormat, startIndex + i);
+
+			assertText(id, values[i]);
+		}
+	}
 
 }
