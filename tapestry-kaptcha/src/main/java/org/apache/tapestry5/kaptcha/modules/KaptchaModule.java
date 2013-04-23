@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.kaptcha.services;
+package org.apache.tapestry5.kaptcha.modules;
 
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.*;
@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.kaptcha.KaptchaSymbolConstants;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaDataTypeAnalyzer;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaProducerImpl;
+import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 

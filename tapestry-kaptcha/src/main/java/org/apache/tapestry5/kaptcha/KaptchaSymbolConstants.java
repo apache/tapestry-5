@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.kaptcha;
 
 /**
- * Defines constants used by the {@link org.apache.tapestry5.kaptcha.services.KaptchaModule} and related components.
+ * Defines constants used by the {@link org.apache.tapestry5.kaptcha.modules.KaptchaModule} and related components.
  *
  * @since 5.3
  */

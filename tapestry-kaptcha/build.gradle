@@ -13,6 +13,6 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.kaptcha.services.KaptchaModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.kaptcha.modules.KaptchaModule'
     }
 }
