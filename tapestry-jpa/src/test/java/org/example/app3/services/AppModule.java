@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.jpa.*;
-import org.example.app1.AppConstants;
-import org.example.app1.entities.Thang;
-import org.example.app1.entities.User;
+import org.apache.tapestry5.jpa.EntityManagerSource;
+import org.apache.tapestry5.jpa.JpaSymbols;
+import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+import org.apache.tapestry5.jpa.modules.JpaModule;
 
 @SubModule(JpaModule.class)
 public class AppModule
