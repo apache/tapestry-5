@@ -23,6 +23,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.internal.BeanEditContextImpl;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
@@ -166,10 +167,7 @@ public class BeanEditor
      */
     private Object cachedObject;
 
-    private BeanValidationContext originalBeanValidationContext;
-    
     // Needed for testing as well
-
     public Object getObject()
     {
         return cachedObject;
@@ -217,39 +215,19 @@ public class BeanEditor
             }
         }
 
-        BeanEditContext context = new BeanEditContext()
-        {
-            public Class<?> getBeanClass()
-            {
-                return model.getBeanType();
-            }
-
-            public <T extends Annotation> T getAnnotation(Class<T> type)
-            {
-                return getBeanClass().getAnnotation(type);
-            }
-        };
+        BeanEditContext context = new BeanEditContextImpl(model.getBeanType());
 
         cachedObject = object;
 
         environment.push(BeanEditContext.class, context);
-        // Always provide a new BeanValidationContext
-        originalBeanValidationContext = environment.push(BeanValidationContext.class,
-                new BeanValidationContextImpl(object));
-        
+        // TAP5-2101: Always provide a new BeanValidationContext
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(object));
     }
 
     void cleanupEnvironment()
     {
         environment.pop(BeanEditContext.class);
         environment.pop(BeanValidationContext.class);
-        // Restore the original BeanValidationContext as it might still be useful to the enclosing
-        // form
-        if (originalBeanValidationContext != null)
-        {
-            environment.push(BeanValidationContext.class, originalBeanValidationContext);
-            originalBeanValidationContext = null;
-        }
     }
 
     // For testing
