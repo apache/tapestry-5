@@ -14,20 +14,17 @@
 
 package org.apache.tapestry5.spring;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
-public class TapestryExternalSpringContextIntegrationTest extends AbstractIntegrationTestSuite
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp1")
+public class TapestryExternalSpringContextIntegrationTest extends SeleniumTestCase
 {
-    public TapestryExternalSpringContextIntegrationTest()
-    {
-        super("src/test/webapp1");
-    }
-
     @Test
     public void external_context_integration_test() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertTextPresent("Demonstrates Spring Context Configured Externally", "Instantiated via a factory bean.");
     }
