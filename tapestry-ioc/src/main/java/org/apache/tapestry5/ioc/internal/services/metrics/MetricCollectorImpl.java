@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services.metrics;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
@@ -39,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @PreventServiceDecoration
 public class MetricCollectorImpl extends LockSupport implements MetricCollector, Runnable
@@ -75,7 +75,7 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
 
         // TODO: May want to initialize this from stored data for Type.TOTAL
 
-        private final AtomicDouble accumulator = new AtomicDouble();
+        private final AtomicReference<Double> accumulator = new AtomicReference<Double>(0d);
 
         MetricImpl(MetricImpl parent, String name, Type type, Units units)
         {
@@ -207,7 +207,20 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
 
         public void accumulate(double value)
         {
-            accumulator.addAndGet(value);
+            while (true)
+            {
+                Double current = accumulator.get();
+                Double updated = current + value;
+
+                // This is where an Atomic is better than a simple volatile, we can detect
+                // when a race condition would have caused the loss of data by overlapping
+                // read-and-increment operations. Still miss Clojure's approach, of course.
+
+                if (accumulator.compareAndSet(current, updated))
+                {
+                    break;
+                }
+            }
 
             if (parent != null)
             {
