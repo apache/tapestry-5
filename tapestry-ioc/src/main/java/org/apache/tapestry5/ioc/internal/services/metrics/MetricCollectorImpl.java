@@ -256,7 +256,7 @@ public class MetricCollectorImpl extends LockSupport implements MetricCollector,
         {
             try
             {
-                db.createSample().setValue(DS_NAME, accumulator.getAndSet(0)).update();
+                db.createSample().setValue(DS_NAME, accumulator.getAndSet(0d)).update();
             } catch (IOException ex)
             {
                 logger.error(String.format("Unable to update database for metric '%s': %s",
