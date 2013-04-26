@@ -1,0 +1,6 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product imports and repackages ASM 3.3.1 code which is
+released under the BSD License
+http://asm.ow2.org/license.html
