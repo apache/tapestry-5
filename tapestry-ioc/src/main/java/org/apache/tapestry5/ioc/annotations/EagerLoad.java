@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
 package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
 
 /**
  * Marker annotation placed on a service builder method to indicate that the service should be eagerly loaded: realized
@@ -28,9 +29,11 @@ import java.lang.annotation.Target;
  * <p/>
  * This annotation may also be placed directly on a service implementation class, when using autobuilding via the {@link
  * org.apache.tapestry5.ioc.ServiceBinder}.
+ *
+ * @see org.apache.tapestry5.ioc.ServiceBindingOptions#eagerLoad()
  */
 @Target(
-        { TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 @UseWith(AnnotationUseContext.SERVICE)
