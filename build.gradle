@@ -157,6 +157,8 @@ subprojects {
     idea.module {
         scopes.PROVIDED.plus += configurations.provided
     }
+    
+    eclipse.classpath.plusConfigurations += configurations.provided
 
     dependencies {
         groovy "org.codehaus.groovy:groovy-all:${versions.groovy}"
