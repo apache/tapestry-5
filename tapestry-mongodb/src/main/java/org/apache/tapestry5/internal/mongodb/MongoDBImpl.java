@@ -1,11 +1,12 @@
 package org.apache.tapestry5.internal.mongodb;
 
-import com.mongodb.DB;
-import com.mongodb.Mongo;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.mongodb.MongoDB;
 import org.apache.tapestry5.mongodb.MongoDBSource;
 import org.slf4j.Logger;
+
+import com.mongodb.DB;
+import com.mongodb.Mongo;
 
 /**
  * Default implementation for {@link org.apache.tapestry5.mongodb.MongoDB}
@@ -42,13 +43,11 @@ public class MongoDBImpl implements MongoDB, ThreadCleanupListener
 		this.dbPassword = dbPassword;
     }
 
-    @Override
     public DB getDefaultMongoDb()
     {
         return buildDbSession(defaultDbName);
     }
 
-    @Override
     public DB getMongoDb(String dbname)
     {
 		return buildDbSession(dbname);

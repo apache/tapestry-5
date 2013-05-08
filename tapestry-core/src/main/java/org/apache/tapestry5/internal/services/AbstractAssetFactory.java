@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
@@ -25,8 +27,6 @@ import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
-
-import java.io.IOException;
 
 public abstract class AbstractAssetFactory implements AssetFactory
 {
@@ -74,7 +74,6 @@ public abstract class AbstractAssetFactory implements AssetFactory
 
         return new AbstractAsset(false)
         {
-            @Override
             public String toClientURL()
             {
                 // TODO: Some caching to ensure this is fast!  Fortunately, the SRS pipeline includes caching already,
@@ -99,7 +98,6 @@ public abstract class AbstractAssetFactory implements AssetFactory
                 }
             }
 
-            @Override
             public Resource getResource()
             {
                 return resource;

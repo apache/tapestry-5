@@ -42,7 +42,6 @@ public class RecomputableSupport
     {
         hub.addInvalidationCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 invalidate();
@@ -68,7 +67,6 @@ public class RecomputableSupport
 
             private volatile T cachedResult;
 
-            @Override
             public T invoke()
             {
                 // Has the master version changed since the computation was last executed?

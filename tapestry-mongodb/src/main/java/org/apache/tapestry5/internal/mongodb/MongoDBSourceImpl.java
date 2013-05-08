@@ -1,13 +1,18 @@
 package org.apache.tapestry5.internal.mongodb;
 
-import com.mongodb.*;
+import java.net.UnknownHostException;
+import java.util.List;
+
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.mongodb.MongoDBSource;
 import org.apache.tapestry5.mongodb.MongoDBSymbols;
 import org.slf4j.Logger;
 
-import java.net.UnknownHostException;
-import java.util.List;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.ReadPreference;
+import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 /**
  * Default implementation for {@link org.apache.tapestry5.mongodb.MongoDBSource}
@@ -49,8 +54,6 @@ public class MongoDBSourceImpl implements MongoDBSource
 		}
     }
 
-
-    @Override
     public MongoClient getMongo()
     {
         return this.mongoClient;

@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnalyzer
 {
@@ -70,7 +70,6 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
         return false;
     }
 
-    @Override
     public boolean isGZipEnabled(String contentType)
     {
         return isGZipSupported() && compressionAnalyzer.isCompressable(contentType);

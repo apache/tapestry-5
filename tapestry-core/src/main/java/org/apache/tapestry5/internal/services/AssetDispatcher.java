@@ -14,21 +14,27 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.AssetRequestDispatcher;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.PathConstructor;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Recognizes requests where the path begins with "/asset/" (actually, as defined by the
@@ -60,7 +66,6 @@ public class AssetDispatcher implements Dispatcher
     {
         return new AssetRequestHandler()
         {
-            @Override
             public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
             {
                 request.setAttribute(TapestryConstants.COMPRESS_CONTENT, compress);

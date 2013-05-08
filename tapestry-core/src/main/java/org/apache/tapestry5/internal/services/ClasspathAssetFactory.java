@@ -48,7 +48,6 @@ public class ClasspathAssetFactory extends AbstractAssetFactory
         this.aliasManager = aliasManager;
     }
 
-    @Override
     public Asset createAsset(Resource resource)
     {
         AssetAlias alias = aliasManager.extractAssetAlias(resource);

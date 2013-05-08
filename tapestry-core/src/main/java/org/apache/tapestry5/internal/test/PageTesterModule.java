@@ -23,7 +23,11 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 import org.apache.tapestry5.test.PageTester;
 
@@ -62,13 +66,11 @@ public class PageTesterModule
         // on.
         configuration.add(ResponseCompressionAnalyzer.class, new ResponseCompressionAnalyzer()
         {
-            @Override
             public boolean isGZipEnabled(String contentType)
             {
                 return locator.getObject(CompressionAnalyzer.class, null).isCompressable(contentType);
             }
 
-            @Override
             public boolean isGZipSupported()
             {
                 return true;

@@ -1,7 +1,5 @@
 package org.apache.tapestry5.mongodb.modules;
 
-import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
 import org.apache.tapestry5.internal.mongodb.MongoDBImpl;
 import org.apache.tapestry5.internal.mongodb.MongoDBSourceImpl;
 import org.apache.tapestry5.ioc.Configuration;
@@ -17,6 +15,9 @@ import org.apache.tapestry5.mongodb.MongoDB;
 import org.apache.tapestry5.mongodb.MongoDBSource;
 import org.apache.tapestry5.mongodb.MongoDBSymbols;
 import org.slf4j.Logger;
+
+import com.mongodb.ReadPreference;
+import com.mongodb.WriteConcern;
 
 /**
  * Defines services which are responsible for MongoDB initializations and connections.
@@ -69,7 +70,6 @@ public class MongodbModule
     {
         configuration.add(new CoercionTuple(String.class, WriteConcern.class,
                 new Coercion<String, WriteConcern>() {
-                    @Override
                     public WriteConcern coerce(String input)
                     {
                         if (input.equalsIgnoreCase("FSYNC_SAFE"))
@@ -109,7 +109,6 @@ public class MongodbModule
         ));
 
         configuration.add(new CoercionTuple(String.class, ReadPreference.class, new Coercion<String, ReadPreference>() {
-            @Override
             public ReadPreference coerce(String input)
             {
                 if (input.equalsIgnoreCase("SECONDARY"))

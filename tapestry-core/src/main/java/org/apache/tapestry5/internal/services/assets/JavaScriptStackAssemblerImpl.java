@@ -14,15 +14,6 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.assets.*;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -30,6 +21,19 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
+import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
 public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 {
@@ -61,7 +65,6 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         resourceChangeTracker.clearOnInvalidation(cache);
     }
 
-    @Override
     public StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress) throws IOException
     {
         Locale locale = threadLocale.getLocale();

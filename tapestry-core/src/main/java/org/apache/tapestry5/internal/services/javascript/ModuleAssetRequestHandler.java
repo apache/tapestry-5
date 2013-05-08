@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
@@ -23,10 +27,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.ModuleManager;
-
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
@@ -54,7 +54,6 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
         this.tracker = tracker;
     }
 
-    @Override
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
