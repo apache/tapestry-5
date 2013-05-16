@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 package org.apache.tapestry5.yuicompressor.itest
 
 import org.apache.tapestry5.test.SeleniumTestCase
-import org.apache.tapestry5.test.TapestryTestConfiguration;
-import org.testng.annotations.Test;
+import org.apache.tapestry5.test.TapestryTestConfiguration
+import org.testng.annotations.Test
 
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
-class YUICompressorIntegrationTests extends SeleniumTestCase
-{
+class YUICompressorIntegrationTests extends SeleniumTestCase {
+
     def AVAILABLE_OPTIONS = "css=.t-palette-available select";
 
     def SELECT_BUTTON = "css=.t-palette [data-action=select]";
@@ -30,6 +30,11 @@ class YUICompressorIntegrationTests extends SeleniumTestCase
 
         openBaseURL()
 
+        // Added this sleep in 5.4; necessary since JS is compressed
+        // during initial page render, not on subsequent request to
+        // load the JS.
+        sleep 500
+
         waitForPageInitialized()
 
         addSelection AVAILABLE_OPTIONS, "label=Clojure"
@@ -37,7 +42,7 @@ class YUICompressorIntegrationTests extends SeleniumTestCase
 
         addSelection AVAILABLE_OPTIONS, "label=Java"
         click SELECT_BUTTON
-        
+
         clickAndWait SUBMIT
 
         waitForPageInitialized()
