@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ public final class MinLength extends AbstractValidator<Integer, String>
     {
         if (formSupport.isClientValidationEnabled())
         {
+            javaScriptSupport.require("t5/core/validation");
+
             writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-min-length", constraintValue.toString(),
                     "data-min-length-message", buildMessage(formatter, field, constraintValue));
