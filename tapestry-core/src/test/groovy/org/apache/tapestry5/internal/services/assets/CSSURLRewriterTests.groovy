@@ -79,7 +79,6 @@ body {
 
         replay()
 
-
         def rewriter = new CSSURLRewriter(null, null, assetSource, null)
 
         def output = rewriter.replaceURLs input, resource
@@ -146,6 +145,20 @@ body {
         def input = '''
 body {
   background: white url("data:image/png;base64,CODE64A") attach-x;
+}
+'''
+
+        def rewriter = new CSSURLRewriter(null, null, null, null)
+
+        assertNull rewriter.replaceURLs(input, null)
+    }
+
+
+    @Test
+    void vml_urls_are_not_replaced() {
+        def input = '''
+span {
+  behavior: url(#default#VML);
 }
 '''
 

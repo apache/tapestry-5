@@ -48,7 +48,7 @@ public class CSSURLRewriter extends DelegatingSRS
     private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)(\\?.*)?\\1\\s*\\)", Pattern.MULTILINE);
 
     // Does it start with a '/' or what looks like a scheme ("http:")?
-    private final Pattern completeURLPattern = Pattern.compile("^/|(\\p{Alpha}\\w*:)");
+    private final Pattern completeURLPattern = Pattern.compile("^[#/]|(\\p{Alpha}\\w*:)");
 
     private final OperationTracker tracker;
 
