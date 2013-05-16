@@ -12,7 +12,9 @@ class PathConstructorImplSpec extends Assert {
             ["", "", "/foo/bar", "/foo/bar"],
             ["", "myapp", "/myapp/foo/bar", "/myapp/foo/bar"],
             ["/ctx", "", "/ctx/foo/bar", "/foo/bar"],
-            ["/ctx", "myapp", "/ctx/myapp/foo/bar", "/myapp/foo/bar"]
+            ["/ctx", "myapp", "/ctx/myapp/foo/bar", "/myapp/foo/bar"],
+            // TAP5-2079
+            ["/", "myapp", "/myapp/foo/bar", "/myapp/foo/bar"]
         ] as Object[][]
     }
 
