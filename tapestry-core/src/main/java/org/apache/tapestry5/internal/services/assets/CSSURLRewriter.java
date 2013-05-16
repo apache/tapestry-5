@@ -47,6 +47,8 @@ public class CSSURLRewriter extends DelegatingSRS
     // Group 3 is any query parmameters (see issue TAP5-2106)
     private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)(\\?.*)?\\1\\s*\\)", Pattern.MULTILINE);
 
+    private final Pattern urlPrefixPattern = Pattern.compile("^\\p{Alpha}\\w*:");
+
     private final OperationTracker tracker;
 
     private final AssetSource assetSource;
@@ -125,7 +127,7 @@ public class CSSURLRewriter extends DelegatingSRS
 
             // When the URL starts with a slash, there's no need to rewrite it (this is actually rare in Tapestry
             // as you want to use relative URLs to leverage the asset pipeline.
-            if (url.startsWith("/"))
+            if (url.startsWith("/") || urlPrefixPattern.matcher(url).find())
             {
                 // This may normalize single quotes, or missing quotes, to double quotes, but is not
                 // considered a real change, since all such variations are valid.

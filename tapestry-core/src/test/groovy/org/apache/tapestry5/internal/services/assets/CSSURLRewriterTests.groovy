@@ -142,6 +142,19 @@ body {
     }
 
     @Test
+    void complete_urls_are_not_replaced() {
+        def input = '''
+body {
+  background: white url("data:image/png;base64,CODE64A") attach-x;
+}
+'''
+
+        def rewriter = new CSSURLRewriter(null, null, null, null)
+
+        assertNull rewriter.replaceURLs(input, null)
+    }
+
+    @Test
     void absolute_urls_passed_through_unchanged() {
 
         def input = '''
