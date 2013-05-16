@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.TapestryAppInitializer;
 import org.apache.tapestry5.internal.util.DelegatingSymbolProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.ServletApplicationInitializer;
@@ -85,12 +86,13 @@ public class TapestryFilter implements Filter
 
         String filterName = config.getFilterName();
 
-        SymbolProvider contextProvider = new ServletContextSymbolProvider(context);
-        SymbolProvider contextPathProvider = new SingleKeySymbolProvider(SymbolConstants.CONTEXT_PATH, context.getContextPath());
+        SymbolProvider combinedProvider = new DelegatingSymbolProvider(
+                new SystemPropertiesSymbolProvider(),
+                new SingleKeySymbolProvider(SymbolConstants.CONTEXT_PATH, context.getContextPath()),
+                new ServletContextSymbolProvider(context),
+                new SingleKeySymbolProvider(SymbolConstants.EXECUTION_MODE, "production"));
 
-        SymbolProvider combinedProvider = new DelegatingSymbolProvider(contextPathProvider, contextProvider);
-
-        String executionMode = System.getProperty(SymbolConstants.EXECUTION_MODE, "production");
+        String executionMode = combinedProvider.valueForSymbol(SymbolConstants.EXECUTION_MODE);
 
         TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, combinedProvider,
                 filterName, executionMode);

@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,29 +17,31 @@ package org.apache.tapestry5.internal.util;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 
 /**
- * Combines two symbol providers.
+ * Combines multiple symbol providers.
  *
  * @since 5.4
  */
 public class DelegatingSymbolProvider implements SymbolProvider
 {
-    private final SymbolProvider primary, secondary;
+    private final SymbolProvider[] providers;
 
-    public DelegatingSymbolProvider(SymbolProvider primary, SymbolProvider secondary)
+    public DelegatingSymbolProvider(SymbolProvider... providers)
     {
-        this.primary = primary;
-        this.secondary = secondary;
+        this.providers = providers;
     }
 
     public String valueForSymbol(String symbolName)
     {
-        String value = primary.valueForSymbol(symbolName);
-
-        if (value == null)
+        for (SymbolProvider p : providers)
         {
-            value = secondary.valueForSymbol(symbolName);
+            String value = p.valueForSymbol(symbolName);
+
+            if (value != null)
+            {
+                return value;
+            }
         }
 
-        return value;
+        return null;
     }
 }
