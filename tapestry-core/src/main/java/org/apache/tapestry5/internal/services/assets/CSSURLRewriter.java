@@ -44,7 +44,8 @@ public class CSSURLRewriter extends DelegatingSRS
 {
     // Group 1 is the optional single or double quote (note the use of backtracking to match it)
     // Group 2 is the text inside the quotes, or inside the parens if no quotes
-    private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)\\1\\s*\\)", Pattern.MULTILINE);
+    // Group 3 is any query parmameters (see issue TAP5-2106)
+    private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)(\\?.*)?\\1\\s*\\)", Pattern.MULTILINE);
 
     private final OperationTracker tracker;
 
@@ -135,6 +136,12 @@ public class CSSURLRewriter extends DelegatingSRS
             Asset asset = assetSource.getAsset(baseResource, url, null);
 
             String assetURL = asset.toClientURL();
+
+            String queryParameters = matcher.group(3);
+            if (queryParameters != null) {
+                assetURL += queryParameters;
+            }
+
             appendReplacement(matcher, output, assetURL);
 
             didReplace = true;

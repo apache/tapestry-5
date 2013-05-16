@@ -57,6 +57,42 @@ body {
 
     }
 
+
+    // See TAP5-2106
+    @Test
+    void query_parameters_in_relative_url_are_maintained() {
+        def input = '''
+body {
+  background: white url("images/back.png?v=1.0.0") attach-x;
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+        def asset = newMock Asset
+
+        expect(
+            assetSource.getAsset(resource, "images/back.png", null)
+        ).andReturn asset
+
+        expect(asset.toClientURL()).andReturn "/ctx/images/back.png"
+
+        replay()
+
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+
+        def output = rewriter.replaceURLs input, resource
+
+        assertEquals output, '''
+body {
+  background: white url("/ctx/images/back.png?v=1.0.0") attach-x;
+}
+'''
+
+
+    }
+
     @Test
     void unquoted_urls_are_matched() {
         def input = '''
