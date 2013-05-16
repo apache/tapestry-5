@@ -12,6 +12,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.HibernateModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.modules.HibernateModule'
     }
 }

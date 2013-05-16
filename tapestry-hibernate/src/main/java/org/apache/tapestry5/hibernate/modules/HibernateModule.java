@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate;
+package org.apache.tapestry5.hibernate.modules;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.hibernate.HibernateCore;
+import org.apache.tapestry5.hibernate.HibernatePersistenceConstants;
+import org.apache.tapestry5.hibernate.HibernateSessionSource;
+import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
 import org.apache.tapestry5.internal.hibernate.EntityApplicationStatePersistenceStrategy;
@@ -60,8 +64,8 @@ public class HibernateModule
      */
     public static void contributeHibernateEntityPackageManager(Configuration<String> configuration,
 
-    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    String appRootPackage)
+                                                               @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                               String appRootPackage)
     {
         configuration.add(appRootPackage + ".entities");
     }
@@ -80,9 +84,9 @@ public class HibernateModule
      */
     @SuppressWarnings("unchecked")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-            @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
-            boolean provideEncoders, final HibernateSessionSource sessionSource, final Session session,
-            final TypeCoercer typeCoercer, final PropertyAccess propertyAccess, final LoggerSource loggerSource)
+                                                    @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
+                                                    boolean provideEncoders, final HibernateSessionSource sessionSource, final Session session,
+                                                    final TypeCoercer typeCoercer, final PropertyAccess propertyAccess, final LoggerSource loggerSource)
     {
         if (!provideEncoders)
             return;
@@ -140,13 +144,13 @@ public class HibernateModule
 
     /**
      * Contributes {@link ApplicationStateContribution}s for all registered Hibernate entity classes.
-     * 
+     *
      * @param configuration
-     *            Configuration to contribute
+     *         Configuration to contribute
      * @param entitySessionStatePersistenceStrategyEnabled
-     *            indicates if contribution should take place
+     *         indicates if contribution should take place
      * @param sessionSource
-     *            creates Hibernate session
+     *         creates Hibernate session
      */
     public static void contributeApplicationStateManager(
             MappedConfiguration<Class, ApplicationStateContribution> configuration,
