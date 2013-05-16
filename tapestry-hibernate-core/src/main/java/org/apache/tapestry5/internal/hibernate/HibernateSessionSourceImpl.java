@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 
@@ -47,9 +47,9 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
 
         long factoryCreated = System.currentTimeMillis();
 
-        logger.info(HibernateCoreMessages.startupTiming(configurationComplete - startTime, factoryCreated - startTime));
+        logger.info(String.format("Hibernate startup: %,d ms to configure, %,d ms overall.", configurationComplete - startTime, factoryCreated - startTime));
 
-        logger.info(HibernateCoreMessages.entityCatalog(sessionFactory.getAllClassMetadata().keySet()));
+        logger.info(String.format("Configured Hibernate entities: %s", InternalUtils.joinSorted(sessionFactory.getAllClassMetadata().keySet())));
     }
 
     @PostInjection

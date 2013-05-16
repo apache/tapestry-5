@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008m 2913 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
         }
         catch (HibernateException ex)
         {
-            throw new IllegalArgumentException(HibernateMessages.entityNotAttached(newValue), ex);
+            throw new IllegalArgumentException(String.format("Failed persisting an entity in the session. Only entities attached to a Hibernate Session can be persisted. entity: %s", newValue), ex);
         }
     }
 
