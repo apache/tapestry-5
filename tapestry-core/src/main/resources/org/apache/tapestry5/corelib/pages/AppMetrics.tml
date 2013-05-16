@@ -1,6 +1,0 @@
-<t:block id="content" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-        >
-
-    <t:grid source="rootMetrics" model="metricModel"/>"
-
-</t:block>

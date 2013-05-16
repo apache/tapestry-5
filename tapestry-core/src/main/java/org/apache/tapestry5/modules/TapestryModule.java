@@ -108,7 +108,7 @@ import java.util.regex.Pattern;
  */
 @Marker(Core.class)
 @SubModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class, WebMetricsModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
