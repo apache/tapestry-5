@@ -29,7 +29,8 @@ import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 import java.io.*;
 
 /**
- * Compiles CoffeeScript to JavaScript, using {@link RhinoCoffeeScriptProcessor}.
+ * Compiles CoffeeScript to JavaScript, using {@link RhinoCoffeeScriptProcessor}. Because what is most commonly written
+ * are AMD Modules, which have (effectively) an implicit hygenic function wrapper, we compile as with "--bare".
  *
  * @since 5.4
  */
@@ -44,10 +45,11 @@ public class CoffeeScriptResourceCompiler implements ResourceTransformer
     private final ResourcePreProcessor compiler =
             new RhinoCoffeeScriptProcessor()
             {
+
                 @Override
                 protected CoffeeScript newCoffeeScript()
                 {
-                    return new CoffeeScript();
+                    return new CoffeeScript().setOptions("bare");
                 }
             };
 
