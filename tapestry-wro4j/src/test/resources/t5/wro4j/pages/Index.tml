@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>WRO4J Tests</title>
+</head>
+
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+
+            <a class="brand" href="/">WRO4J Module Tests</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <p>This page is used to demonstrate the integration of WRO4J.</p>
+
+
+    <div class="alert alert-success" id="banner"/>
+
+</div>
+
+</html>

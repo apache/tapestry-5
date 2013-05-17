@@ -1,0 +1,13 @@
+description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, etc."
+
+dependencies {
+    compile project(":tapestry-core")
+    compile "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}", {
+        exclude group: "org.codehaus.gmaven.runtime"
+        exclude group: "com.github.lltyk"
+    }
+}
+
+jar.manifest {
+    attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.wro4j.modules.WRO4JModule'
+}

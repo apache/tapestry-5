@@ -21,7 +21,8 @@ project.ext.versions = [
     spock: "0.7-groovy-2.0",
     hibernate: "4.1.2.Final",
     groovy: "2.0.6",
-    slf4j: "1.7.2"
+    slf4j: "1.7.2",
+    wro4j: "1.6.3"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
