@@ -1,0 +1,6 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product includes WRO4J (Web Resource Optimizer for Java), distributed under the terms of the of the Apache Software
+License 2.0. WRO4J has significant dependencies that should also be reviewed.
+https://code.google.com/p/wro4j/
