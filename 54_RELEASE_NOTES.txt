@@ -72,6 +72,20 @@ The useful RandomDataSource class has been extracted into a new module, tapestry
 
 # Breaking Changes:
 
+## tapestry-yuicompressor replaced with tapestry-wro4j
+
+The tapestry-yuicompressor module has been removed and superseded by tapestry-wro4j. WRO4J (Web Resource
+Optimizer for Java) is a Apache-licensed project that provides support for CoffeeScript support, Less and
+SASS processing, and various forms of JavaScript and CSS minimization. The new tapestry-wro4j module enables
+a base set of these.
+
+With tapestry-wro4j in place, you can write your client-side code in CoffeeScript (with the ".coffee" file
+extension) and Tapestry will take care of converting it, at runtime, to JavaScript.
+
+The WRO4J support is separate and optional, as it is not an Apache Software Foundation project, and it has a
+large number of dependencies needed to run the various processors (some of which are written in Ruby and require JRuby,
+for example).
+
 ## RenderSupport Removed
 
 The RenderSupport interface, which was deprecated in Tapestry 5.2, has been removed entirely.

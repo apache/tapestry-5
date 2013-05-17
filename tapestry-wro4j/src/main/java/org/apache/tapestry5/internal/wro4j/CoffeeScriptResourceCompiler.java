@@ -14,23 +14,20 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
-import org.apache.tapestry5.internal.services.assets.BytestreamCache;
-import org.apache.tapestry5.ioc.IOOperation;
-import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
+import org.apache.tapestry5.wro4j.services.ResourceProcessor;
+import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import org.slf4j.Logger;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
-import ro.isdc.wro.extensions.processor.support.coffeescript.CoffeeScript;
-import ro.isdc.wro.model.resource.ResourceType;
-import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Compiles CoffeeScript to JavaScript, using {@link RhinoCoffeeScriptProcessor}. Because what is most commonly written
- * are AMD Modules, which have (effectively) an implicit hygenic function wrapper, we compile as with "--bare".
+ * are AMD Modules, which have (effectively) an implicit hygienic function wrapper, we compile as with "--bare".
  *
  * @since 5.4
  */
@@ -38,25 +35,16 @@ public class CoffeeScriptResourceCompiler implements ResourceTransformer
 {
     private final Logger logger;
 
-    private final OperationTracker tracker;
-
     private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
 
-    private final ResourcePreProcessor compiler =
-            new RhinoCoffeeScriptProcessor()
-            {
+    private final ResourceProcessor compiler;
 
-                @Override
-                protected CoffeeScript newCoffeeScript()
-                {
-                    return new CoffeeScript().setOptions("bare");
-                }
-            };
-
-    public CoffeeScriptResourceCompiler(Logger logger, OperationTracker tracker)
+    public CoffeeScriptResourceCompiler(Logger logger, ResourceProcessorSource processorSource)
     {
         this.logger = logger;
-        this.tracker = tracker;
+
+        // Could set up some special kind of injection for this, but overkill for the couple of places it is used.
+        compiler = processorSource.getProcessor("CoffeeScriptCompiler");
     }
 
     public String getTransformedContentType()
@@ -64,37 +52,20 @@ public class CoffeeScriptResourceCompiler implements ResourceTransformer
         return "text/javascript";
     }
 
-
     public InputStream transform(final Resource source, ResourceDependencies dependencies) throws IOException
     {
+        final long startTime = System.nanoTime();
 
-        return tracker.perform(String.format("Compiling %s from CoffeeScript to JavaScript", source),
-                new IOOperation<InputStream>()
-                {
-                    public InputStream perform() throws IOException
-                    {
-                        final long startTime = System.nanoTime();
+        InputStream result = compiler.process(String.format("Compiling %s from CoffeeScript to JavaScript", source),
+                source.toURL().toString(),
+                source.openStream());
 
+        final long elapsedTime = System.nanoTime() - startTime;
 
-                        ro.isdc.wro.model.resource.Resource res = ro.isdc.wro.model.resource.Resource.create(
-                                source.toURL().toString(),
-                                ResourceType.JS);
+        logger.info(String.format("Compiled %s to JavaScript in %.2f ms",
+                source,
+                ((double) elapsedTime) * NANOS_TO_MILLIS));
 
-                        Reader reader = new InputStreamReader(source.openStream());
-                        ByteArrayOutputStream out = new ByteArrayOutputStream(5000);
-                        Writer writer = new OutputStreamWriter(out);
-
-                        compiler.process(res, reader, writer);
-
-                        final long elapsedTime = System.nanoTime() - startTime;
-
-
-                        logger.info(String.format("Compiled %s to JavaScript in %.2f ms",
-                                source,
-                                ((double) elapsedTime) * NANOS_TO_MILLIS));
-
-                        return new BytestreamCache(out).openStream();
-                    }
-                });
+        return result;
     }
 }
