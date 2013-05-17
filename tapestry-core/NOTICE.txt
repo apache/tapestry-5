@@ -29,6 +29,3 @@ https://github.com/twitter/bootstrap
 This product includes jQuery, distributed under the MIT License:
 http://jquery.org/
 
-This produce RRD4J, distributed distributed under the terms of the Apache Software License 2.0
-https://code.google.com/p/rrd4j/
-
