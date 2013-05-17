@@ -1,14 +1,8 @@
 Ideas and TODOs:
 
-Replace default.css with Twitter Bootstrap + Tapestry extensions.
-
 Include a new Java module that supports writing an exception log file on error.
 
 New module to replace tapestry-yuicompressor that is based on WRO4J.
-
-Merge PageCatalog and ServiceStatus into a Dashboard page
-- make it extensible
-- Hibernate status too
 
 Start collecting various stats, store in RRD (round robin database), expose on Dashboard
 
