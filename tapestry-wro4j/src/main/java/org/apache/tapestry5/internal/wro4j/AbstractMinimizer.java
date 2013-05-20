@@ -14,19 +14,20 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.internal.services.assets.StreamableResourceImpl;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.slf4j.Logger;
 
-import javax.management.RuntimeErrorException;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Base class for resource minimizers.
@@ -57,28 +58,19 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
     {
         long startNanos = System.nanoTime();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
 
-        final Writer writer = new OutputStreamWriter(bos);
-
-        tracker.perform("Minimizing " + resourceType, new IOOperation<Void>()
+        tracker.perform("Minimizing " + input, new IOOperation<Void>()
         {
             public Void perform() throws IOException
             {
-                try
-                {
-                    doMinimize(input, writer);
-                } catch (RuntimeErrorException ex)
-                {
-                    throw new RuntimeException(String.format("Unable to minimize %s: %s", resourceType,
-                            ExceptionUtils.toMessage(ex)), ex);
-                }
+                InputStream in = doMinimize(input);
+
+                TapestryInternalUtils.copy(in, bos);
 
                 return null;
             }
         });
-
-        writer.close();
 
         // The content is minimized, but can still be (GZip) compressed.
 
@@ -104,20 +96,12 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
         return output;
     }
 
-    protected Reader toReader(StreamableResource input) throws IOException
-    {
-        InputStream is = input.openStream();
-
-        return new InputStreamReader(is, "UTF-8");
-    }
-
     /**
      * Implemented in subclasses to do the actual work.
      *
      * @param resource
      *         content to minimize
-     * @param output
-     *         writer for minimized version of input
+     * @return stream of minimized content
      */
-    protected abstract void doMinimize(StreamableResource resource, Writer output) throws IOException;
+    protected abstract InputStream doMinimize(StreamableResource resource) throws IOException;
 }

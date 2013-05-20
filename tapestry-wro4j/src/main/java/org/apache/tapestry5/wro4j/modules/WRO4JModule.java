@@ -14,17 +14,22 @@
 
 package org.apache.tapestry5.wro4j.modules;
 
+import org.apache.tapestry5.internal.wro4j.CSSMinimizer;
 import org.apache.tapestry5.internal.wro4j.CoffeeScriptResourceCompiler;
 import org.apache.tapestry5.internal.wro4j.ResourceProcessorSourceImpl;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
 import ro.isdc.wro.extensions.processor.support.coffeescript.CoffeeScript;
+import ro.isdc.wro.model.resource.processor.impl.css.CssCompressorProcessor;
 
 /**
  * Configures CoffeeScript-to-JavaScript compilation.
@@ -39,7 +44,7 @@ public class WRO4JModule
     }
 
     @Contribute(ResourceProcessorSource.class)
-    public static void provideDefaultProcessors(MappedConfiguration<String, ObjectCreator> configuration)
+    public static void provideDefaultProcessors(MappedConfiguration<String, ObjectCreator> configuration, final ObjectLocator locator)
     {
         configuration.add("CoffeeScriptCompiler",
                 new ObjectCreator()
@@ -57,6 +62,15 @@ public class WRO4JModule
                     }
                 }
         );
+
+
+        configuration.add("CSSMinimizer", new ObjectCreator()
+        {
+            public Object createObject()
+            {
+                return new CssCompressorProcessor();
+            }
+        });
     }
 
     @Contribute(StreamableResourceSource.class)
@@ -64,5 +78,12 @@ public class WRO4JModule
             (MappedConfiguration<String, ResourceTransformer> configuration)
     {
         configuration.addInstance("coffee", CoffeeScriptResourceCompiler.class);
+    }
+
+    @Contribute(ResourceMinimizer.class)
+    @Primary
+    public static void setupDefaultResourceMinimizers(MappedConfiguration<String, ResourceMinimizer> configuration)
+    {
+        configuration.addInstance("text/css", CSSMinimizer.class);
     }
 }

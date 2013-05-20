@@ -22,8 +22,9 @@ public class AppModule
 
     @Contribute(SymbolProvider.class)
     @ApplicationDefaults
-    public static void enableJQuery(MappedConfiguration<String, Object> configuration)
+    public static void setupEnvironment(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+        configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
     }
 }

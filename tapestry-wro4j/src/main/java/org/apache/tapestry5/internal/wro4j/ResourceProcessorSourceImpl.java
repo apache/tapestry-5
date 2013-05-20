@@ -35,9 +35,15 @@ public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 
     private final Map<String, ResourceProcessor> cache = CollectionFactory.newCaseInsensitiveMap();
 
+    private final Map<String, ResourceType> contentType2resourceType = CollectionFactory.newMap();
+
+
     public ResourceProcessorSourceImpl(Map<String, ObjectCreator> configuration)
     {
         this.configuration = configuration;
+
+        contentType2resourceType.put("text/css", ResourceType.CSS);
+        contentType2resourceType.put("text/javascript", ResourceType.JS);
     }
 
     // Not called very often so synchronized is easier.
@@ -67,10 +73,9 @@ public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 
         return new ResourceProcessor()
         {
-            public InputStream process(String operationDescription, String inputURL, InputStream input) throws IOException
+            public InputStream process(String operationDescription, String inputURL, InputStream input, String contentType) throws IOException
             {
-                // That second parameter will cause us some grief, shortly:
-                Resource resource = Resource.create(inputURL, ResourceType.JS);
+                Resource resource = Resource.create(inputURL, contentType2resourceType.get(contentType));
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream(5000);
 

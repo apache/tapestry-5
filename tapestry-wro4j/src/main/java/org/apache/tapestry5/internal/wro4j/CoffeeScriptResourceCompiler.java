@@ -58,7 +58,7 @@ public class CoffeeScriptResourceCompiler implements ResourceTransformer
 
         InputStream result = compiler.process(String.format("Compiling %s from CoffeeScript to JavaScript", source),
                 source.toURL().toString(),
-                source.openStream());
+                source.openStream(), "text/javascript");
 
         final long elapsedTime = System.nanoTime() - startTime;
 

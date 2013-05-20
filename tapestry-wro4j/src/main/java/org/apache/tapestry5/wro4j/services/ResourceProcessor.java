@@ -30,14 +30,16 @@ public interface ResourceProcessor
     /**
      * Processes an input stream, producing an output stream.
      *
+     *
      * @param operationDescription
      *         used to {@linkplain org.apache.tapestry5.ioc.OperationTracker#perform(String, org.apache.tapestry5.ioc.IOOperation) track the operation}
      * @param inputURL
      *         represents the resource being processed (typically, just used for error reporting)
      * @param input
      *         stream of bytes to process
+     * @param contentType "text/javascript" or "text/css"
      * @return processed stream
      * @throws IOException
      */
-    InputStream process(String operationDescription, String inputURL, InputStream input) throws IOException;
+    InputStream process(String operationDescription, String inputURL, InputStream input, String contentType) throws IOException;
 }
