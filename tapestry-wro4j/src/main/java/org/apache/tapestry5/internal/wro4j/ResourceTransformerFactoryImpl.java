@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import org.apache.tapestry5.ioc.IOOperation;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
@@ -32,10 +34,13 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
     private final ResourceProcessorSource source;
 
-    public ResourceTransformerFactoryImpl(Logger logger, ResourceProcessorSource source)
+    private final OperationTracker tracker;
+
+    public ResourceTransformerFactoryImpl(Logger logger, ResourceProcessorSource source, OperationTracker tracker)
     {
         this.logger = logger;
         this.source = source;
+        this.tracker = tracker;
     }
 
     public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName)
@@ -49,21 +54,29 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                 return contentType;
             }
 
-            public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
+            public InputStream transform(final Resource source, ResourceDependencies dependencies) throws IOException
             {
-                final long startTime = System.nanoTime();
+                final String description = String.format("Compiling %s from %s to %s", source, sourceName, targetName);
 
-                InputStream result = compiler.process(String.format("Compiling %s from %s to %s", source, sourceName, targetName),
-                        source.toURL().toString(),
-                        source.openStream(), contentType);
+                return tracker.perform(description, new IOOperation<InputStream>()
+                {
+                    public InputStream perform() throws IOException
+                    {
+                        final long startTime = System.nanoTime();
 
-                final long elapsedTime = System.nanoTime() - startTime;
+                        InputStream result = compiler.process(description,
+                                source.toURL().toString(),
+                                source.openStream(), contentType);
 
-                logger.info(String.format("Compiled %s to %s in %.2f ms",
-                        source, targetName,
-                        ((double) elapsedTime) * NANOS_TO_MILLIS));
+                        final long elapsedTime = System.nanoTime() - startTime;
 
-                return result;
+                        logger.info(String.format("Compiled %s to %s in %.2f ms",
+                                source, targetName,
+                                ((double) elapsedTime) * NANOS_TO_MILLIS));
+
+                        return result;
+                    }
+                });
             }
         };
     }
