@@ -18,8 +18,6 @@ import com.github.sommeri.less4j.core.parser.AntlrException;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.wro4j.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -34,12 +32,13 @@ import ro.isdc.wro.extensions.processor.css.Less4jProcessor;
 import ro.isdc.wro.extensions.processor.js.GoogleClosureCompressorProcessor;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
 import ro.isdc.wro.extensions.processor.support.coffeescript.CoffeeScript;
+import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 import ro.isdc.wro.model.resource.processor.impl.css.CssCompressorProcessor;
 
 import java.util.List;
 
 /**
- * Configures CoffeeScript-to-JavaScript compilation.
+ * Configures use of various WRO4J processors.
  *
  * @since 5.4
  */
@@ -61,59 +60,29 @@ public class WRO4JModule
      * in a single bundle, not a given for Tapestry.</dd>
      * <dt>LessCompiler</dt> <dd>Compiles Less source files into CSS.</dd>
      * </dl>
-     *
-     * @param configuration
-     * @param locator
      */
     @Contribute(ResourceProcessorSource.class)
-    public static void provideDefaultProcessors(MappedConfiguration<String, ObjectCreator> configuration, final ObjectLocator locator)
+    public static void provideDefaultProcessors(MappedConfiguration<String, ResourcePreProcessor> configuration)
     {
         configuration.add("CoffeeScriptCompiler",
-                new ObjectCreator()
+                new RhinoCoffeeScriptProcessor()
                 {
-                    public Object createObject()
+                    @Override
+                    protected CoffeeScript newCoffeeScript()
                     {
-                        return new RhinoCoffeeScriptProcessor()
-                        {
-                            @Override
-                            protected CoffeeScript newCoffeeScript()
-                            {
-                                return new CoffeeScript().setOptions("bare");
-                            }
-                        };
+                        return new CoffeeScript().setOptions("bare");
                     }
                 }
         );
 
 
-        configuration.add("CSSMinimizer", new ObjectCreator()
-        {
-            public Object createObject()
-            {
-                return new CssCompressorProcessor();
-            }
-        });
-
-        configuration.add("JavaScriptMinimizer", new ObjectCreator()
-        {
-            public Object createObject()
-            {
-                return new GoogleClosureCompressorProcessor();
-            }
-        });
-
-        configuration.add("LessCompiler", new ObjectCreator()
-        {
-            public Object createObject()
-            {
-                return new Less4jProcessor();
-            }
-        });
+        configuration.addInstance("CSSMinimizer", CssCompressorProcessor.class);
+        configuration.add("JavaScriptMinimizer", new GoogleClosureCompressorProcessor());
+        configuration.addInstance("LessCompiler", Less4jProcessor.class);
     }
 
     @Contribute(StreamableResourceSource.class)
-    public static void provideCompilations
-            (MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory)
+    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory)
     {
         configuration.add("coffee",
                 factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript"));
@@ -129,9 +98,14 @@ public class WRO4JModule
         configuration.addInstance("text/javascript", JavaScriptMinimizer.class);
     }
 
+    /**
+     * Alas {@link AntlrException}s do not have a useful toString() which makes them useless in the exception report;
+     * here we provide an {@link ObjectRenderer} that breaks them apart into useful strings. Eventually we may be
+     * able to synthesize a {@link org.apache.tapestry5.ioc.Location} from them as well and show some of the source .less file.
+     */
     @Contribute(ObjectRenderer.class)
     @Primary
-    public static void decodeLessErrors(MappedConfiguration<Class, ObjectRenderer> configuration)
+    public static void provideLessErrorRenderers(MappedConfiguration<Class, ObjectRenderer> configuration)
     {
         configuration.add(AntlrException.class, new ObjectRenderer<AntlrException>()
         {

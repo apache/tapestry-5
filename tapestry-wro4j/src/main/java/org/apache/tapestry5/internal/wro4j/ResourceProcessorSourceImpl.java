@@ -15,8 +15,6 @@
 package org.apache.tapestry5.internal.wro4j;
 
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.internal.services.CachingObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
@@ -31,14 +29,14 @@ import java.util.Map;
 
 public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 {
-    private final Map<String, ObjectCreator> configuration;
+    private final Map<String, ResourcePreProcessor> configuration;
 
     private final Map<String, ResourceProcessor> cache = CollectionFactory.newCaseInsensitiveMap();
 
     private final Map<String, ResourceType> contentType2resourceType = CollectionFactory.newMap();
 
 
-    public ResourceProcessorSourceImpl(Map<String, ObjectCreator> configuration)
+    public ResourceProcessorSourceImpl(Map<String, ResourcePreProcessor> configuration)
     {
         this.configuration = configuration;
 
@@ -62,14 +60,12 @@ public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 
     private ResourceProcessor create(String name)
     {
-        ObjectCreator<ResourcePreProcessor> creator = configuration.get(name);
+        final ResourcePreProcessor preProcessor = configuration.get(name);
 
-        if (creator == null)
+        if (preProcessor == null)
         {
             throw new UnknownValueException(String.format("Unknown resource processor '%s'.", name), new AvailableValues("configured processors", configuration));
         }
-
-        final ObjectCreator<ResourcePreProcessor> lazyCreator = new CachingObjectCreator<ResourcePreProcessor>(creator);
 
         return new ResourceProcessor()
         {
@@ -81,7 +77,7 @@ public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 
                 OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 
-                lazyCreator.createObject().process(resource, new InputStreamReader(input), writer);
+                preProcessor.process(resource, new InputStreamReader(input), writer);
 
                 // close the writer to flush content into the outputStream
                 writer.close();
