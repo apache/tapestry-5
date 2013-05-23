@@ -57,8 +57,8 @@ asset URLs are distinct.
 Tapestry 5.4 now re-writes CSS files, expanding any `url()` references in them into fully qualify URLs; this
 is to allow for the checksum embedded into each URL, which breaks relative references.
 
-Tapestry 5.4 introduces a new module, tapestry-wro4j, that provides support for compiling CoffeeScript and JavaScript,
-and for minimizing CSS and JavaScript. All processing takes place at runtime.
+Tapestry 5.4 introduces a new module, tapestry-wro4j, that provides support for compiling CoffeeScript into JavaScript,
+Less into CSS, and for minimizing CSS and JavaScript. All processing takes place at runtime.
 
 ## ControlGroup Mixin
 
@@ -91,6 +91,7 @@ for example).
 
 By default, tapestry-wro4j enables:
 - compilation of CoffeeScript to JavaScript (using Java's Rhino JavaScript engine)
+- compilation of Less to CSS
 - minification of CSS using Andy Robert's csscompressor
 - minification of JavaScript using the Google Closure compiler (in simple optimizations mode)
 

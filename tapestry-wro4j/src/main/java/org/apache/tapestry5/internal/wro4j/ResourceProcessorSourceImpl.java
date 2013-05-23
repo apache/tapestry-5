@@ -79,7 +79,12 @@ public class ResourceProcessorSourceImpl implements ResourceProcessorSource
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream(5000);
 
-                lazyCreator.createObject().process(resource, new InputStreamReader(input), new OutputStreamWriter(outputStream));
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+
+                lazyCreator.createObject().process(resource, new InputStreamReader(input), writer);
+
+                // close the writer to flush content into the outputStream
+                writer.close();
 
                 return new BytestreamCache(outputStream).openStream();
             }
