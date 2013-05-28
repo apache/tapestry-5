@@ -2,7 +2,7 @@ description = "Basic MongoDB services for Tapestry, useable outside of a Tapestr
 
 dependencies {
     compile project(':tapestry-ioc')
-    compile project(':tapestry-test')
+    testCompile project(':tapestry-test')
 
     compile group: 'org.mongodb', name: 'mongo-java-driver', version: '2.10.1'
 
