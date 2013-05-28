@@ -130,6 +130,12 @@ public class CSSURLRewriter extends DelegatingSRS
             // as you want to use relative URLs to leverage the asset pipeline.
             if (completeURLPattern.matcher(url).find())
             {
+                String queryParameters = matcher.group(3);
+
+                if (queryParameters != null) {
+                    url = url + queryParameters;
+                }
+
                 // This may normalize single quotes, or missing quotes, to double quotes, but is not
                 // considered a real change, since all such variations are valid.
                 appendReplacement(matcher, output, url);
@@ -174,7 +180,7 @@ public class CSSURLRewriter extends DelegatingSRS
 
         InputStream is = resource.openStream();
 
-        InputStreamReader reader = new InputStreamReader(resource.openStream(), "UTF-8");
+        InputStreamReader reader = new InputStreamReader(is, "UTF-8");
 
         try
         {
@@ -193,6 +199,7 @@ public class CSSURLRewriter extends DelegatingSRS
         } finally
         {
             reader.close();
+            is.close();
         }
 
         return result.toString();

@@ -208,4 +208,43 @@ div.busy {
 
     }
 
+
+    @Test
+    void query_parameters_in_absolute_url_are_maintained() {
+
+        def input = '''
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+div.busy {
+  background-image: url( "images/ajax.gif" );
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+        def asset = newMock Asset
+
+        expect(
+            assetSource.getAsset(resource, "images/ajax.gif", null)
+        ).andReturn asset
+
+        expect(asset.toClientURL()).andReturn "/ctx/images/ajax.gif"
+
+        replay()
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+
+        def output = rewriter.replaceURLs input, resource
+
+        assertEquals output, '''
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic");
+
+div.busy {
+  background-image: url("/ctx/images/ajax.gif");
+}
+'''
+
+
+    }
+
 }
