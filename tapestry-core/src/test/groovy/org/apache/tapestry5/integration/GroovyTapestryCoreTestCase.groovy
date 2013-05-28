@@ -1,6 +1,6 @@
 package org.apache.tapestry5.integration
 
-import org.apache.tapestry5.test.TapestryTestConstants
+import org.apache.tapestry5.test.TapestryRunnerConstants
 
 class GroovyTapestryCoreTestCase extends TapestryCoreTestCase
 {
@@ -12,7 +12,7 @@ class GroovyTapestryCoreTestCase extends TapestryCoreTestCase
 
         byte[] downloaded = url.bytes
 
-        byte[] actual = new File(TapestryTestConstants.MODULE_BASE_DIR, path).bytes
+        byte[] actual = new File(TapestryRunnerConstants.MODULE_BASE_DIR, path).bytes
 
         assertEquals downloaded, actual, "Contents of $path do not match"
     }

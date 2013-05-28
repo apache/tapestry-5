@@ -1,0 +1,14 @@
+description = "Utilities for running a Tapestry application in Jetty or Tomcat as part of test suite."
+
+dependencies {
+
+    compile "org.eclipse.jetty:jetty-server:${versions.jetty}"
+    compile "org.eclipse.jetty:jetty-jndi:${versions.jetty}"
+    compile "org.eclipse.jetty:jetty-plus:${versions.jetty}"
+    compile "org.eclipse.jetty:jetty-webapp:${versions.jetty}"
+
+    compile "org.apache.tomcat:catalina:${versions.tomcat}"
+    compile "org.apache.tomcat:coyote:${versions.tomcat}"
+
+    compile "org.apache.tomcat:dbcp:${versions.tomcat}"
+}

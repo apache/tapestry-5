@@ -1,4 +1,4 @@
-description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, etc."
+description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more."
 
 dependencies {
     compile project(":tapestry-core")
@@ -6,8 +6,17 @@ dependencies {
         exclude group: "org.codehaus.gmaven.runtime"
         exclude group: "com.github.lltyk"
     }
+
+    testCompile project(":tapestry-runner")
+    testCompile "org.gebish:geb-spock:${versions.geb}"
+    testCompile "org.spockframework:spock-core:${versions.spock}"
 }
 
 jar.manifest {
     attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.wro4j.modules.WRO4JModule'
+}
+
+
+test {
+    systemProperties "geb.build.reportsDir": "$reportsDir/geb"
 }

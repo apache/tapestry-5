@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.test.TapestryTestConstants;
+import org.apache.tapestry5.test.TapestryRunnerConstants;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -29,7 +29,7 @@ public class PageTesterContext implements Context
 
     public PageTesterContext(String contextRoot)
     {
-        this.contextRoot = new File(TapestryTestConstants.MODULE_BASE_DIR, contextRoot);
+        this.contextRoot = new File(TapestryRunnerConstants.MODULE_BASE_DIR, contextRoot);
     }
 
     public String getInitParameter(String name)

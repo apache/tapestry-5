@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 package org.apache.tapestry5.test;
 
 /**
- * Used as a wrapper around code that runs a web server as part of a {@link SeleniumTestCase}, so that
+ * Used as a wrapper around code that runs a web server, so that
  * the server may be shut down at the end of the test.
- * 
+ *
  * @since 5.3
  */
 public interface ServletContainerRunner

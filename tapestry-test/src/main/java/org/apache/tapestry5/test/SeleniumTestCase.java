@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2009, 2010, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -188,7 +188,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final SeleniumServer seleniumServer = new SeleniumServer();
 
-        File ffProfileTemplate = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
+        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
 
         if (ffProfileTemplate.isDirectory())
         {

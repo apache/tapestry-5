@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.test.TapestryTestConstants;
+import org.apache.tapestry5.test.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -800,7 +800,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test(dataProvider = "doctype_token_added_correctly_data")
     public void doctype_added_correctly(String fileName, String name, String publicId, String systemId) throws Exception
     {
-        System.setProperty("user.dir", TapestryTestConstants.MODULE_BASE_DIR_PATH);
+        System.setProperty("user.dir", TapestryRunnerConstants.MODULE_BASE_DIR_PATH);
 
         List<TemplateToken> tokens = tokens(fileName);
         DTDToken t0 = get(tokens, 0);

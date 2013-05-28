@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,38 +14,22 @@
 
 package org.apache.tapestry5.test;
 
-import java.io.File;
-import java.lang.reflect.Method;
-
+import com.thoughtworks.selenium.CommandProcessor;
+import com.thoughtworks.selenium.Selenium;
 import org.testng.ITestContext;
 import org.testng.xml.XmlTest;
 
-import com.thoughtworks.selenium.CommandProcessor;
-import com.thoughtworks.selenium.Selenium;
+import java.lang.reflect.Method;
 
+/**
+ * Defins {@link ITestContext} attributes meaninful to Tapestry for controlling application startup and shutdown.
+ */
 public class TapestryTestConstants
 {
-    /**
-     * The current working directory (i.e., property "user.dir").
-     */
-    public static final String CURRENT_DIR_PATH = System.getProperty("user.dir");
-
-    /**
-     * The Surefire plugin sets basedir but DOES NOT change the current working directory. When
-     * building across modules, basedir changes for each module, but user.dir does not. This value should be used when
-     * referencing local files. Outside of surefire, the "basedir" property will not be set, and the current working
-     * directory will be the default.
-     */
-    public static final String MODULE_BASE_DIR_PATH = System.getProperty("basedir", CURRENT_DIR_PATH);
-
-    /**
-     * {@link #MODULE_BASE_DIR_PATH} as a file.
-     */
-    public static final File MODULE_BASE_DIR = new File(MODULE_BASE_DIR_PATH);
 
     /**
      * {@link ITestContext} attribute holding an instance of {@link Selenium}.
-     * 
+     *
      * @see SeleniumTestCase#testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)
      * @since 5.2.0
      */
@@ -53,7 +37,7 @@ public class TapestryTestConstants
 
     /**
      * {@link ITestContext} attribute holding an instance of {@link ErrorReporter}.
-     * 
+     *
      * @see SeleniumTestCase#testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)
      * @since 5.2.0
      */
@@ -62,7 +46,7 @@ public class TapestryTestConstants
     /**
      * {@link ITestContext} attribute holding an instance of {@link ErrorReporter}, used
      * to shutdown Selenium and the Web Server at the end of the test.
-     * 
+     *
      * @since 5.2.2
      */
     public static final String SHUTDOWN_ATTRIBUTE = "tapestry.shutdown";
@@ -71,13 +55,14 @@ public class TapestryTestConstants
      * The {@link ITestContext} attribute holding an instance of {@link CommandProcessor}, with
      * enhanced exception reporting control. This allows tests that wish to, to bypass the {@link Selenium} interface
      * and execute commands directly on the Selenium RC server.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String COMMAND_PROCESSOR_ATTRIBUTE = "tapestry.command-processor";
 
     /**
      * {@link ITestContext} attribute holding the application's base URL.
+     *
      * @since 5.2.0
      */
     public static final String BASE_URL_ATTRIBUTE = "tapestry.base-url";
@@ -116,6 +101,7 @@ public class TapestryTestConstants
 
     /**
      * {@link XmlTest} parameter holding the servlet container to run for the integration tests.
+     *
      * @since 5.3
      */
     public static final String SERVLET_CONTAINER_PARAMETER = "tapestry.servlet-container";

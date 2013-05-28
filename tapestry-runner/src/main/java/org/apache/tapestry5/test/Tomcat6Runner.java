@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class Tomcat6Runner implements ServletContainerRunner
         tomcatServer.addConnector(http);
 
         // SSL support
-        final File keystoreFile = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
+        final File keystoreFile = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
 
         if (keystoreFile.exists())
         {
@@ -134,7 +134,7 @@ public class Tomcat6Runner implements ServletContainerRunner
      * 
      * @param moduleLocalPath
      * @return expanded path
-     * @see TapestryTestConstants#MODULE_BASE_DIR
+     * @see TapestryRunnerConstants#MODULE_BASE_DIR
      */
     protected String expand(String moduleLocalPath)
     {
@@ -144,7 +144,7 @@ public class Tomcat6Runner implements ServletContainerRunner
         if (path.isAbsolute() && path.isDirectory())
             return moduleLocalPath;
 
-        return new File(TapestryTestConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
+        return new File(TapestryRunnerConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
     }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2009, 2011, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.test.TapestryTestConstants;
+import org.apache.tapestry5.test.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -63,7 +63,7 @@ public class AssetTests extends TapestryCoreTestCase
 
         byte[] downloaded = readContent(url);
 
-        File local = new File(TapestryTestConstants.MODULE_BASE_DIR, localPath);
+        File local = new File(TapestryRunnerConstants.MODULE_BASE_DIR, localPath);
 
         byte[] actual = readContent(local.toURL());
 

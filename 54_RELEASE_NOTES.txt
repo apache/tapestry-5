@@ -73,6 +73,8 @@ and to Geb (which is a vastly improved wrapper around Selenium, and works nicely
 
 The useful RandomDataSource class has been extracted into a new module, tapestry-test-data.
 
+The code for launching an instance of Jetty or Tomcat has been extracted to a new module, tapestry-runner.
+
 # Breaking Changes:
 
 ## tapestry-yuicompressor replaced with tapestry-wro4j
@@ -257,3 +259,8 @@ approach, as proper practices is to avoid cases where separate packages import c
 
 To resolve this, new `modules` packages have been created, and module classes have been moved there. Since module
 classes are typically not used directly by end-user code, this is not expected to be a disruptive change.
+
+## tapestry-test and TapestryTestConstants
+
+Several constants defined in org.apache.tapestry5.test.TapestryTestConstants have moved to a new class,
+org.apache.tapestry5.test.TapestryRunnerConstants in the new tapestry-runner module.
