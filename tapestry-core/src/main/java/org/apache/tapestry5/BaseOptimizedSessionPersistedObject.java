@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -27,8 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * @since 5.1.1.0
  */
-public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSessionPersistedObject
+public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSessionPersistedObject, Serializable
 {
+    private static final long serialVersionUID = 172352928643322125L;
+
     private transient AtomicBoolean dirty = new AtomicBoolean(false);
 
     public final boolean checkAndResetDirtyMarker()

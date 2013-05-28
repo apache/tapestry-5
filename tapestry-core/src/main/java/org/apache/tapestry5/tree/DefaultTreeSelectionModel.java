@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import java.util.Set;
  */
 public class DefaultTreeSelectionModel<T> extends BaseOptimizedSessionPersistedObject implements TreeSelectionModel<T>
 {
+    private static final long serialVersionUID = -2568582442906389898L;
+
     private final Set<String> selectedIds = CollectionFactory.newSet();
 
     public boolean isSelected(TreeNode<T> node)

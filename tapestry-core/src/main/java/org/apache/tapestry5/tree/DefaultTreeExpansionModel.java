@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.tree;
 
-import java.util.Set;
-
 import org.apache.tapestry5.BaseOptimizedSessionPersistedObject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import java.util.Set;
 
 /**
  * Manages a Set of String {@link TreeNode} ids.
@@ -28,6 +28,8 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  */
 public class DefaultTreeExpansionModel<T> extends BaseOptimizedSessionPersistedObject implements TreeExpansionModel<T>
 {
+    private static final long serialVersionUID = -2776835739067510365L;
+
     private final Set<String> expandedIds = CollectionFactory.newSet();
 
     public boolean isExpanded(TreeNode<T> node)
