@@ -364,7 +364,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
       return this
 
     # Returns the text of the element (and its children).
-    text: -> @element.text()
+    text: -> @$.text()
 
   # Wrapper around the `jqXHR` object
   class ResponseWrapper
