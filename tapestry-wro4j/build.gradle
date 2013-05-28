@@ -5,11 +5,20 @@ dependencies {
     compile "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}", {
         exclude group: "org.codehaus.gmaven.runtime"
         exclude group: "com.github.lltyk"
+        // Due to conflict:
+        exclude group: "org.slf4j"
     }
 
     testCompile project(":tapestry-runner")
     testCompile "org.gebish:geb-spock:${versions.geb}"
     testCompile "org.spockframework:spock-core:${versions.spock}"
+
+    compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+        exclude group: "org.eclipse.jetty"
+    }
+    compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+        exclude group: "org.eclipse.jetty"
+    }
 }
 
 jar.manifest {
@@ -18,5 +27,7 @@ jar.manifest {
 
 
 test {
+    useJUnit()
+
     systemProperties "geb.build.reportsDir": "$reportsDir/geb"
 }

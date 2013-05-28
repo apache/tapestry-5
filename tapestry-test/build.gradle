@@ -5,8 +5,12 @@ dependencies {
   compile project(":tapestry-test-data")
   compile project(":tapestry-runner")
 
-  compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}"
-  compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}"
+  compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+      exclude group: "org.eclipse.jetty"
+  }
+  compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+      exclude group: "org.eclipse.jetty"
+  }
 
   compile "org.testng:testng:${versions.testng}"
   compile "org.easymock:easymock:${versions.easymock}"

@@ -9,11 +9,7 @@ apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
 project.ext.versions = [
-    // Remember that when generating a release, this should be incremented. Also don"t forget to
-    // tag the release in Subversion.
-    // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
-    // during a release
-    jetty: "7.0.0.v20091005",
+    jetty: "7.6.11.v20130520",
     tomcat: "6.0.30",
     testng: "6.5.2",
     easymock: "3.0",
@@ -24,11 +20,16 @@ project.ext.versions = [
     slf4j: "1.7.2",
     wro4j: "1.6.3",
     geb: "0.9.0",
-    selenium: "2.26.0"
+    selenium: "2.33.0"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
 project.version = tapestryVersion()
+
+// Remember that when generating a release, this should be incremented. Also don"t forget to
+// tag the release in Subversion.
+// Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
+// during a release
 
 def tapestryVersion() {
 
