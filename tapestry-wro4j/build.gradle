@@ -13,10 +13,10 @@ dependencies {
     testCompile "org.gebish:geb-spock:${versions.geb}"
     testCompile "org.spockframework:spock-core:${versions.spock}"
 
-    compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+    testCompile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
-    compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+    testCompile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
 }
