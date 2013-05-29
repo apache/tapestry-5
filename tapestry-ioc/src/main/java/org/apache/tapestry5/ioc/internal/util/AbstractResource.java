@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -56,7 +57,9 @@ public abstract class AbstractResource extends LockSupport implements Resource
     protected AbstractResource(String path)
     {
         assert path != null;
-        this.path = path;
+
+        // Normalize paths to NOT start with a leading slash
+        this.path = path.startsWith("/") ? path.substring(1) : path;
     }
 
     public final String getPath()
@@ -81,27 +84,32 @@ public abstract class AbstractResource extends LockSupport implements Resource
     public final Resource forFile(String relativePath)
     {
         assert relativePath != null;
-        StringBuilder builder = new StringBuilder(getFolder());
+
+        List<String> terms = CollectionFactory.newList();
+
+        for (String term : getFolder().split("/"))
+        {
+            terms.add(term);
+        }
 
         for (String term : relativePath.split("/"))
         {
             // This will occur if the relative path contains sequential slashes
 
-            if (term.equals(""))
+            if (term.equals("") || term.equals("."))
+            {
                 continue;
-
-            if (term.equals("."))
-                continue;
+            }
 
             if (term.equals(".."))
             {
-                int slashx = builder.lastIndexOf("/");
+                if (terms.isEmpty())
+                {
+                    throw new IllegalStateException(String.format("Relative path '%s' for %s would go above root.", relativePath, this));
+                }
 
-                // TODO: slashx < 0 (i.e., no slash)
+                terms.remove(terms.size() - 1);
 
-                // Trim path to content before the slash
-
-                builder.setLength(slashx);
                 continue;
             }
 
@@ -110,13 +118,19 @@ public abstract class AbstractResource extends LockSupport implements Resource
             // name of a folder, since a Resource should be a file within
             // a folder.
 
-            if (builder.length() > 0)
-                builder.append("/");
-
-            builder.append(term);
+            terms.add(term);
         }
 
-        return createResource(builder.toString());
+        StringBuilder path = new StringBuilder(100);
+        String sep = "";
+
+        for (String term : terms)
+        {
+            path.append(sep).append(term);
+            sep = "/";
+        }
+
+        return createResource(path.toString());
     }
 
     public final Resource forLocale(Locale locale)
