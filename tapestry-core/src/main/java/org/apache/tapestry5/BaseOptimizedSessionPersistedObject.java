@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,6 +34,10 @@ public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSe
     private static final long serialVersionUID = 172352928643322125L;
 
     private transient AtomicBoolean dirty = new AtomicBoolean(false);
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        dirty = new AtomicBoolean(false);
+    }
 
     public final boolean checkAndResetDirtyMarker()
     {
