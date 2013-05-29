@@ -264,3 +264,7 @@ classes are typically not used directly by end-user code, this is not expected t
 
 Several constants defined in org.apache.tapestry5.test.TapestryTestConstants have moved to a new class,
 org.apache.tapestry5.test.TapestryRunnerConstants in the new tapestry-runner module.
+
+## AbstractValidator base class
+
+The constructor for AbstractValidator has changed to include an instance of JavaScriptSupport.
