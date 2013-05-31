@@ -279,7 +279,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
     visible: ->
-      @$.is(":visible")
+      @$.css("display") isnt "hidden"
 
     # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
     #
@@ -331,7 +331,7 @@ define ["_", "./utils", "jquery"], (_, utils, $) ->
         @$.val newValue
 
       return current
-      
+
     # Returns true if a checkbox is checked
     checked: ->
       return @$.is(':checked')
