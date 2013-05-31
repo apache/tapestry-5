@@ -16,11 +16,13 @@ package org.apache.tapestry5.wro4j.modules;
 
 import com.github.sommeri.less4j.core.parser.AntlrException;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.wro4j.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ObjectRenderer;
@@ -82,12 +84,15 @@ public class WRO4JModule
     }
 
     @Contribute(StreamableResourceSource.class)
-    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory)
+    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory,
+                                        @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                        boolean productionMode)
     {
         configuration.add("coffee",
-                factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript"));
+                factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript", !productionMode));
 
-        configuration.add("less", factory.createCompiler("text/css", "LessCompiler", "Less", "CSS"));
+        // We'll have to see how imports work in a Less file before we can get into whether we can enable development-mode caching.
+        configuration.add("less", factory.createCompiler("text/css", "LessCompiler", "Less", "CSS", false));
     }
 
     @Contribute(ResourceMinimizer.class)

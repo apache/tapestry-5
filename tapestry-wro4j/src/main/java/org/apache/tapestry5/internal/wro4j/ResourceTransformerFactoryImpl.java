@@ -14,17 +14,23 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.wro4j.services.ResourceProcessor;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import org.slf4j.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.zip.Adler32;
 
 public class ResourceTransformerFactoryImpl implements ResourceTransformerFactory
 {
@@ -43,10 +49,82 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         this.tracker = tracker;
     }
 
-    public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName)
-    {
-        final ResourceProcessor compiler = source.getProcessor(processorName);
 
+    static class Compiled
+    {
+        /**
+         * Checksum of the raw source file.
+         */
+        final long checksum;
+
+        private final BytestreamCache bytestreamCache;
+
+
+        Compiled(long checksum, InputStream stream) throws IOException
+        {
+            this.checksum = checksum;
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            TapestryInternalUtils.copy(stream, bos);
+
+            stream.close();
+            bos.close();
+
+            this.bytestreamCache = new BytestreamCache(bos);
+        }
+
+        InputStream openStream()
+        {
+            return bytestreamCache.openStream();
+        }
+    }
+
+    private long toChecksum(Resource resource) throws IOException
+    {
+        Adler32 checksum = new Adler32();
+
+        byte[] buffer = new byte[1024];
+
+        InputStream is = null;
+
+        try
+        {
+            is = resource.openStream();
+
+            while (true)
+            {
+                int length = is.read(buffer);
+
+                if (length < 0)
+                {
+                    break;
+                }
+
+                checksum.update(buffer, 0, length);
+            }
+
+            // Reduces it down to just 32 bits which we express in hex.'
+            return checksum.getValue();
+        } finally
+        {
+            is.close();
+        }
+    }
+
+    public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName, boolean enableCache)
+    {
+        // This does the real work:
+        ResourceProcessor resourceProcessor = source.getProcessor(processorName);
+
+        // And this adapts it to the API.
+        final ResourceTransformer coreCompiler = createCoreCompiler(contentType, sourceName, targetName, resourceProcessor);
+
+        return enableCache ? wrapWithCaching(coreCompiler, targetName) : coreCompiler;
+    }
+
+    private ResourceTransformer createCoreCompiler(final String contentType, final String sourceName, final String targetName, final ResourceProcessor resourceProcessor)
+    {
         return new ResourceTransformer()
         {
             public String getTransformedContentType()
@@ -64,7 +142,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                     {
                         final long startTime = System.nanoTime();
 
-                        InputStream result = compiler.process(description,
+                        InputStream result = resourceProcessor.process(description,
                                 source.toURL().toString(),
                                 source.openStream(), contentType);
 
@@ -77,6 +155,50 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                         return result;
                     }
                 });
+            }
+        };
+    }
+
+    /**
+     * Caching is not needed in production, because caching of streamable resources occurs at a higher level
+     * (possibly after sources have been aggregated and minimized and gzipped). However, in development, it is
+     * very important to avoid costly CoffeeScript compilation (or similar operations); Tapestry's caching is
+     * somewhat primitive: a change to *any* resource in a given domain results in the cache of all of those resources
+     * being discarded.
+     */
+    private ResourceTransformer wrapWithCaching(final ResourceTransformer core, final String targetName)
+    {
+        return new ResourceTransformer()
+        {
+            final Map<Resource, Compiled> cache = CollectionFactory.newConcurrentMap();
+
+            public String getTransformedContentType()
+            {
+                return core.getTransformedContentType();
+            }
+
+            public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
+            {
+                long checksum = toChecksum(source);
+
+                Compiled compiled = cache.get(source);
+
+                if (compiled != null && compiled.checksum == checksum)
+                {
+                    logger.info(String.format("Resource %s is unchanged; serving compiled %s content from cache",
+                            source, targetName));
+
+                    return compiled.openStream();
+                }
+
+                InputStream is = core.transform(source, dependencies);
+
+                // There's probably a race condition here if the source changes as we are compiling it.
+                compiled = new Compiled(checksum, is);
+
+                cache.put(source, compiled);
+
+                return compiled.openStream();
             }
         };
     }

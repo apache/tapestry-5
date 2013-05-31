@@ -19,8 +19,8 @@ import org.apache.tapestry5.services.assets.ResourceTransformer;
 /**
  * Creates ResourceTransformer around a named {@link org.apache.tapestry5.wro4j.services.ResourceProcessor}.
  *
- * @since 5.4
  * @see org.apache.tapestry5.services.assets.StreamableResourceSource
+ * @since 5.4
  */
 public interface ResourceTransformerFactory
 {
@@ -36,8 +36,10 @@ public interface ResourceTransformerFactory
      *         for debugging: source name, e.g., "CoffeeScript"
      * @param targetName
      *         for debugging: target name, e.g., "JavaScript"
+     * @param enableCache
+     *         if true, the transformer will cache results (this is only used in development mode)
      * @return transformer
      * @see org.apache.tapestry5.wro4j.services.ResourceProcessorSource
      */
-    ResourceTransformer createCompiler(String contentType, String processorName, String sourceName, String targetName);
+    ResourceTransformer createCompiler(String contentType, String processorName, String sourceName, String targetName, boolean enableCache);
 }
