@@ -4,7 +4,7 @@ import org.apache.tapestry5.annotations.Import
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.services.ComponentClassResolver
 
-@Import(module = "bootstrap")
+@Import(stack="core", module = "bootstrap")
 class Layout {
 
     @Inject
