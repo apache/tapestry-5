@@ -62,7 +62,7 @@ public interface ComponentClassResolver
     boolean isPageName(String pageName);
 
     /**
-     * Returns a list of all page names, in sorted order.
+     * Returns a list of all page names, in sorted order. These are the "canonical" page names.
      */
     List<String> getPageNames();
 
