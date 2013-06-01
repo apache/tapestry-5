@@ -1,24 +1,7 @@
-<html>
-<head>
-    <title>WRO4J Tests</title>
-</head>
-
-    <div class="navbar navbar-inverse">
-        <div class="navbar-inner">
-            <div class="container">
-
-            <a class="brand" href="/">WRO4J Module Tests</a>
-        </div>
-    </div>
-</div>
-
-<div class="container">
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <p>This page is used to demonstrate the integration of WRO4J.</p>
 
-
     <div class="alert alert-success" id="banner"/>
 
-</div>
-
-</html>
+</t:layout>
