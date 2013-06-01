@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.wro4j.modules;
 
+import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.core.parser.AntlrException;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
@@ -110,31 +111,31 @@ public class WRO4JModule
      */
     @Contribute(ObjectRenderer.class)
     @Primary
-    public static void provideLessErrorRenderers(MappedConfiguration<Class, ObjectRenderer> configuration)
+    public static void provideLessCompilerProblemRenderer(MappedConfiguration<Class, ObjectRenderer> configuration)
     {
-        configuration.add(AntlrException.class, new ObjectRenderer<AntlrException>()
+        configuration.add(LessCompiler.Problem.class, new ObjectRenderer<LessCompiler.Problem>()
         {
-            public void render(AntlrException e, MarkupWriter writer)
+            public void render(LessCompiler.Problem problem, MarkupWriter writer)
             {
                 List<String> strings = CollectionFactory.newList();
 
-                if (InternalUtils.isNonBlank(e.getMessage()))
+                if (InternalUtils.isNonBlank(problem.getMessage()))
                 {
-                    strings.add(e.getMessage());
+                    strings.add(problem.getMessage());
                 }
 
                 // Inside WRO4J we see that the LessSource is a StringSource with no useful toString(), so
                 // it is omitted. We may need to create our own processors, stripping away a couple of layers of
                 // WRO4J to get proper exception reporting!
 
-                if (e.getLine() > 0)
+                if (problem.getLine() > 0)
                 {
-                    strings.add("line " + e.getLine());
+                    strings.add("line " + problem.getLine());
                 }
 
-                if (e.getCharacter() > 0)
+                if (problem.getCharacter() > 0)
                 {
-                    strings.add("position " + e.getCharacter());
+                    strings.add("position " + problem.getCharacter());
                 }
 
                 writer.write(InternalUtils.join(strings, " - "));
