@@ -31,7 +31,6 @@ import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
-import ro.isdc.wro.extensions.processor.css.Less4jProcessor;
 import ro.isdc.wro.extensions.processor.js.GoogleClosureCompressorProcessor;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
 import ro.isdc.wro.extensions.processor.support.coffeescript.CoffeeScript;
@@ -61,7 +60,6 @@ public class WRO4JModule
      * <dt>JavaScriptMinimizer</dt>
      * <dd>{@link GoogleClosureCompressorProcessor} configured for simple optimizations. Advanced optimizations assume that all code is loaded
      * in a single bundle, not a given for Tapestry.</dd>
-     * <dt>LessCompiler</dt> <dd>Compiles Less source files into CSS.</dd>
      * </dl>
      */
     @Contribute(ResourceProcessorSource.class)
@@ -81,7 +79,6 @@ public class WRO4JModule
 
         configuration.addInstance("CSSMinimizer", CssCompressorProcessor.class);
         configuration.add("JavaScriptMinimizer", new GoogleClosureCompressorProcessor());
-        configuration.addInstance("LessCompiler", Less4jProcessor.class);
     }
 
     @Contribute(StreamableResourceSource.class)
@@ -92,8 +89,8 @@ public class WRO4JModule
         configuration.add("coffee",
                 factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript", !productionMode));
 
-        // We'll have to see how imports work in a Less file before we can get into whether we can enable development-mode caching.
-        configuration.add("less", factory.createCompiler("text/css", "LessCompiler", "Less", "CSS", false));
+        // Had to create our own wrapper around Less4J to handle @imports correctly.
+        configuration.addInstance("less", LessResourceTransformer.class);
     }
 
     @Contribute(ResourceMinimizer.class)

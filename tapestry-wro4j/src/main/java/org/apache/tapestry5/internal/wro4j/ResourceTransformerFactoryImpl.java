@@ -34,8 +34,6 @@ import java.util.zip.Adler32;
 
 public class ResourceTransformerFactoryImpl implements ResourceTransformerFactory
 {
-    private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
-
     private final Logger logger;
 
     private final ResourceProcessorSource source;
@@ -150,7 +148,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
                         logger.info(String.format("Compiled %s to %s in %.2f ms",
                                 source, targetName,
-                                ((double) elapsedTime) * NANOS_TO_MILLIS));
+                                ResourceTransformUtils.nanosToMillis(elapsedTime)));
 
                         return result;
                     }
