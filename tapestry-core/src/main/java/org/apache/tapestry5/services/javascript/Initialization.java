@@ -24,8 +24,8 @@ public interface Initialization
 {
 
     /**
-     * Specifies the function to invoke.  If not invoked, then the module is expected to export
-     * just a single function.
+     * Specifies the function to invoke.  If this method is not invoked, then the module is expected to export
+     * just a single function (which may, or may not, take {@linkplain #with(Object...) parameters}).
      *
      * @param functionName
      *         name of a function exported by the module.
@@ -35,6 +35,8 @@ public interface Initialization
 
     /**
      * Changes the initialization priority of the initialization from its default, {@link InitializationPriority#NORMAL}.
+     * <p/>
+     * Note: it is possible that this method may be removed before release 5.4 is final.
      *
      * @param priority
      *         new priority
@@ -43,7 +45,7 @@ public interface Initialization
     Initialization priority(InitializationPriority priority);
 
     /**
-     * Specifies the arguments to be passed to the function. Normally, just a single {@link org.apache.tapestry5.json.JSONObject}
+     * Specifies the arguments to be passed to the function. Often, just a single {@link org.apache.tapestry5.json.JSONObject}
      * is passed. When multiple Initializations exist with the same function name (or no function name), and no arguments,
      * they are coalesced into a single Initialization: it is assumed that an initialization with no parameters needs to
      * only be invoked once.
