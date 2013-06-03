@@ -15,7 +15,7 @@
 # ## t5/beanvalidator/validation
 #
 # Supports extra validations related to the beanvalidator module.
-define ["_", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validation"],
+define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validation"],
   (_, dom, events, utils) ->
 
     rangeValue = (element, attribute, defaultValue) ->
@@ -53,7 +53,7 @@ define ["_", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validati
     dom.onDocument events.field.optional, "[data-optionality=prohibited]", (event, memo) ->
 
       unless utils.isBlank memo.value
-        memo.error = (this.attribute "data-prohibited-message") or "PROHIBITED"
+        memo.error = (@attribute "data-prohibited-message") or "PROHIBITED"
         return false
 
       return true

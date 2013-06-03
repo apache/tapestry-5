@@ -15,7 +15,7 @@
 # ## t5/core/console
 #
 # A wrapper around the native console, when it exists.
-define ["./dom", "./builder", "_"], (dom, builder, _) ->
+define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
   nativeConsole = {}
   floatingConsole = null
 

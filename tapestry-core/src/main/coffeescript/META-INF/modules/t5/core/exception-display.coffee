@@ -20,7 +20,7 @@ define ["./dom"],
   (dom) ->
 
     dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
-      checked = this.element.checked
+      checked = @element.checked
 
       for traceList in dom.body().find "ul.t-stack-trace"
         traceList[if checked then "addClass" else "removeClass"] "t-filtered"

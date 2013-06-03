@@ -16,7 +16,7 @@
 #
 # Support for the core/Alerts components.
 #
-define ["./dom", "./console", "./messages", "./builder", "./ajax", "_"],
+define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"],
   (dom, console, messages, builder, ajax, _) ->
 
     severityToClass =

@@ -49,7 +49,7 @@
 # and
 #
 #     { on: { click: -> ... }}
-define ["_", "./dom", "./utils"], (_, dom, utils) ->
+define ["underscore", "./dom", "./utils"], (_, dom, utils) ->
   # _internal_: creates a single DOM element and CSS class attribute
   createElement = (elementDescription) ->
     # TODO: Support #id for setting the id of an element, maybe others, such as ?name for the name of an input element.

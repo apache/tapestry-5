@@ -15,7 +15,7 @@
 ## t5/core/utils
 #
 # A few handy functions.
-define ["_"], (_) ->
+define ["underscore"], (_) ->
 
   trim = (input) ->
     if String.prototype.trim

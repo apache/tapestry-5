@@ -15,7 +15,7 @@
 
 # ## t5/core/form-fragment
 #
-define ["_", "./dom", "./events", "./forms"],
+define ["underscore", "./dom", "./events", "./forms"],
   (_, dom, events) ->
 
     SELECTOR = "[data-component-type='core/FormFragment']"
@@ -25,7 +25,7 @@ define ["_", "./dom", "./events", "./forms"],
     # to enabled/disable their hidden field.
     dom.onDocument events.form.prepareForSubmit, "form", (event) ->
 
-      fragments = this.find SELECTOR
+      fragments = @find SELECTOR
 
       _.each fragments, (frag) ->
 
@@ -45,7 +45,7 @@ define ["_", "./dom", "./events", "./forms"],
 
         this[if makeVisible then "show" else "hide"]()
 
-        this.trigger events.element[if makeVisible then "didShow" else "didHide"]
+        @trigger events.element[if makeVisible then "didShow" else "didHide"]
 
         return false
 

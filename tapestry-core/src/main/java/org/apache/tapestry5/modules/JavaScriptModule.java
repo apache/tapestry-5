@@ -236,7 +236,7 @@ public class JavaScriptModule
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
                                         Resource bootstrap)
     {
-        configuration.add("_", new JavaScriptModuleConfiguration(underscore).exports("_"));
+        configuration.add("underscore", new JavaScriptModuleConfiguration(underscore).exports("_"));
         // Hacking around https://github.com/jrburke/requirejs/issues/534
         configuration.add("jquery-library", new JavaScriptModuleConfiguration(jQuery));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));

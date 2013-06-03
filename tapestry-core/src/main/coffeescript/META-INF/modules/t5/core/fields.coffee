@@ -16,7 +16,7 @@
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
+define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
   (_, events, dom, builder, utils) ->
 
     ensureFieldId = (field) ->
@@ -102,15 +102,15 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       # are generally configured so that they do not submit a value to the server
       # when not visible ... this is what the core/FormFragment component is responsible
       # for.
-      return unless this.deepVisible()
+      return unless @deepVisible()
 
       failure = false
 
       fieldValue =
-        if (this.attribute "data-value-mode") is "options"
+        if (@attribute "data-value-mode") is "options"
           collectOptionValues this
         else
-          this.value()
+          @value()
 
       memo = value: fieldValue
 
@@ -121,15 +121,15 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
 
           if _.isString memo.error
 
-            this.trigger events.field.showValidationError, { message: memo.error }
+            @trigger events.field.showValidationError, { message: memo.error }
 
-      this.trigger events.field.optional, memo
+      @trigger events.field.optional, memo
 
       postEventTrigger()
 
       unless failure or (utils.isBlank memo.value)
 
-        this.trigger events.field.translate, memo
+        @trigger events.field.translate, memo
 
         postEventTrigger()
 
@@ -137,14 +137,14 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
             if _.isUndefined memo.translated
               memo.translated = memo.value
 
-            this.trigger events.field.validate, memo
+            @trigger events.field.validate, memo
 
             postEventTrigger()
 
       if failure
         formMemo.error = true
       else
-        this.trigger events.field.clearValidationError
+        @trigger events.field.clearValidationError
 
       return
 
@@ -154,7 +154,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
       if block
         block.hide().update("")
 
-      group = this.findParent ".control-group"
+      group = @findParent ".control-group"
 
       group and group.removeClass "error"
 
@@ -168,7 +168,7 @@ define ["_", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       block.show().update(memo.message)
 
-      group = this.findParent ".control-group"
+      group = @findParent ".control-group"
 
       group and group.addClass "error"
 

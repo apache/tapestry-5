@@ -51,7 +51,7 @@ require ["t5/core/dom"], (dom) ->
 
     container.on "x:click", "a.btn-primary", ->
 
-      strictEqual this.element, primary.element, "this should be the wrapper for element that was matched"
+      strictEqual @element, primary.element, "this should be the wrapper for element that was matched"
 
       return false
 

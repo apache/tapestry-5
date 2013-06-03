@@ -16,7 +16,7 @@
 #
 # Support for Tapestry's built-in set of translators and validators.
 #
-define ["_", "./dom", "./events", "./utils", "./messages", "./fields"],
+define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
   (_, dom, events, utils, messages) ->
 
     REGEXP_META = "t5:regular-expression"
@@ -99,7 +99,7 @@ define ["_", "./dom", "./events", "./utils", "./messages", "./fields"],
     dom.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
 
       if utils.isBlank memo.value
-        memo.error =  (this.attribute "data-required-message") or "REQUIRED"
+        memo.error =  (@attribute "data-required-message") or "REQUIRED"
 
     dom.onDocument events.field.translate, "[data-translation=numeric]", (event, memo) ->
       translate this, memo, false
@@ -108,43 +108,43 @@ define ["_", "./dom", "./events", "./utils", "./messages", "./fields"],
       translate this, memo, true
 
     dom.onDocument events.field.validate, "[data-validate-min-length]", (event, memo) ->
-      min = parseInt this.attribute "data-validate-min-length"
+      min = parseInt @attribute "data-validate-min-length"
 
       if memo.translated.length < min
-        memo.error = (this.attribute "data-min-length-message") or "TOO SHORT"
+        memo.error = (@attribute "data-min-length-message") or "TOO SHORT"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
-      max = parseInt this.attribute "data-validate-max-length"
+      max = parseInt @attribute "data-validate-max-length"
 
       if memo.translated.length > max
-        memo.error = (this.attribute "data-max-length-message") or "TOO LONG"
+        memo.error = (@attribute "data-max-length-message") or "TOO LONG"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
-      max = parseInt this.attribute "data-validate-max"
+      max = parseInt @attribute "data-validate-max"
 
       if memo.translated > max
-        memo.error = (this.attribute "data-max-message") or "TOO LARGE"
+        memo.error = (@attribute "data-max-message") or "TOO LARGE"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
-      min = parseInt this.attribute "data-validate-min"
+      min = parseInt @attribute "data-validate-min"
 
       if memo.translated < min
-        memo.error = (this.attribute "data-min-message") or "TOO SMALL"
+        memo.error = (@attribute "data-min-message") or "TOO SMALL"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
 
       # Cache the compiled regular expression.
-      re = this.meta REGEXP_META
+      re = @meta REGEXP_META
       unless re
-        re = new RegExp(this.attribute "data-validate-regexp")
-        this.meta REGEXP_META, re
+        re = new RegExp(@attribute "data-validate-regexp")
+        @meta REGEXP_META, re
 
       unless re.test memo.translated
-        memo.error = (this.attribute "data-regexp-message") or "INVALID"
+        memo.error = (@attribute "data-regexp-message") or "INVALID"
         return false
 
     # Export the number parser, just to be nice (and to support some testing).

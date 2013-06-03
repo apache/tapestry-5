@@ -25,7 +25,7 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
 
-      afl = this.findParent AFL_SELECTOR
+      afl = @findParent AFL_SELECTOR
 
       unless afl
         console.error "Enclosing element for AjaxFormLoop remove row link not found."
@@ -35,12 +35,12 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
       ajax url,
         parameters:
-          "t:rowvalue": this.attribute "data-afl-row-value"
+          "t:rowvalue": @attribute "data-afl-row-value"
         success: =>
           # The server has removed the row from persistent storage, lets
           # do the same on the UI.
 
-          fragment = this.findParent "[data-container-type='#{FRAGMENT_TYPE}']"
+          fragment = @findParent "[data-container-type='#{FRAGMENT_TYPE}']"
 
           # TODO: Fire some before & after events, to allow for animation.
 
@@ -52,9 +52,9 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]", ->
 
-      afl = this.findParent AFL_SELECTOR
+      afl = @findParent AFL_SELECTOR
 
-      insertionPoint = this.findParent "[data-afl-behavior=insert-before]"
+      insertionPoint = @findParent "[data-afl-behavior=insert-before]"
 
       url = afl.attribute "data-inject-row-url"
 

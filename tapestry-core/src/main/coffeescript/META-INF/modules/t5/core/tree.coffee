@@ -75,13 +75,13 @@ define ["./dom", "./ajax", "./zone"],
 
       # First case is dynamically loaded due to user action; second case
       # is rendered with overall page due to server-side expansion model.
-      loaded = (this.meta LOADED) or (this.hasClass EXPANDED)
+      loaded = (@meta LOADED) or (@hasClass EXPANDED)
 
-      if (not loaded) and (not this.hasClass "t-empty-node")
+      if (not loaded) and (not @hasClass "t-empty-node")
         loadChildren this
         return false
 
-      unless this.hasClass "t-leaf-node"
+      unless @hasClass "t-leaf-node"
         toggle this
         return false
 
@@ -89,15 +89,15 @@ define ["./dom", "./ajax", "./zone"],
 
     toggleSelection = ->
 
-      selected = this.hasClass SELECTED
+      selected = @hasClass SELECTED
 
-      node = this.findParent("li").findFirst("[#{NODE_ID}]")
+      node = @findParent("li").findFirst("[#{NODE_ID}]")
 
       if selected
-        this.removeClass SELECTED
+        @removeClass SELECTED
         send node, "deselect"
       else
-        this.addClass SELECTED
+        @addClass SELECTED
         send node, "select"
 
       return false

@@ -25,13 +25,13 @@ define ["./dom", "./events", "./console"],
 
     dom.onDocument "[data-inplace-grid-links] a", ->
 
-      zone = this.findParent "[data-container-type=zone]"
+      zone = @findParent "[data-container-type=zone]"
 
       unless zone
         console.error "Unable to find containing zone for live update of grid."
         return false
 
-      zone.trigger events.zone.refresh, url: this.attribute "href"
+      zone.trigger events.zone.refresh, url: @attribute "href"
 
       return false
 

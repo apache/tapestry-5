@@ -31,7 +31,7 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 #
 # Changes to this library should be coordinated with the Prototype version.
-define ["_", "./utils", "jquery"], (_, utils, $) ->
+define ["underscore", "./utils", "jquery"], (_, utils, $) ->
 
 
   # Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This

@@ -16,7 +16,7 @@
 #
 # Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["./dom", "./builder", "_"],
+define ["./dom", "./builder", "underscore"],
   (dom, builder, _) ->
     container = null
     iframe = null

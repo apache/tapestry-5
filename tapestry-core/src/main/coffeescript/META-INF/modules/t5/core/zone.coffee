@@ -22,7 +22,7 @@
 #
 # Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
 # to a core/Zone server-side component.
-define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
+define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
   (dom, events, ajax, console, forms, _) ->
 
@@ -54,7 +54,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
       zone = findZone this
 
       if zone
-        zone.trigger events.zone.refresh,  url: this.attribute "href"
+        zone.trigger events.zone.refresh,  url: @attribute "href"
 
       return false
 
@@ -66,14 +66,14 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
         formParameters = forms.gatherParameters this
 
         zone.trigger events.zone.refresh,
-          url: (this.attribute "action")
+          url: (@attribute "action")
           parameters: formParameters
 
       return false
 
     dom.onDocument events.zone.update, (event) ->
 
-      this.trigger events.zone.willUpdate
+      @trigger events.zone.willUpdate
 
       content = event.memo.content
 
@@ -84,21 +84,21 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "_"],
       # Note that currently, the willUpdate and didUpdate events are triggered even when the zone is not actually
       # updated. That may be a bug.
       unless content is undefined
-        this.update content
+        @update content
 
-      this.trigger events.zone.didUpdate
+      @trigger events.zone.didUpdate
 
     dom.onDocument events.zone.refresh, (event) ->
 
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      attr = this.attribute "data-zone-parameters"
+      attr = @attribute "data-zone-parameters"
 
       parameters = attr and JSON.parse attr
 
       ajax event.memo.url,
-        parameters: _.extend { "t:zoneid": this.element.id }, parameters, event.memo.parameters
+        parameters: _.extend { "t:zoneid": @element.id }, parameters, event.memo.parameters
         success: (response) =>
-          this.trigger events.zone.update, content: response.json?.content
+          @trigger events.zone.update, content: response.json?.content
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
     # performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.

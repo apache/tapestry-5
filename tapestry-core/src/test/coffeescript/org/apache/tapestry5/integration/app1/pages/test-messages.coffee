@@ -1,4 +1,4 @@
-require ["t5/core/messages", "_"], (messages, _) ->
+require ["t5/core/messages", "underscore"], (messages, _) ->
 
   module "t5/core/messages"
 

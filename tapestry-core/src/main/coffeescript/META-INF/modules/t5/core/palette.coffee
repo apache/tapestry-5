@@ -15,7 +15,7 @@
 # ## t5/core/palette
 #
 # Support for the `core/Palette` component.
-define ["./dom", "_"],
+define ["./dom", "underscore"],
   (dom, _) ->
     class PaletteController
 

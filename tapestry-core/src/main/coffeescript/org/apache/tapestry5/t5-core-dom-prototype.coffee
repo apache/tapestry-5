@@ -31,7 +31,7 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 #
 # Changes to this library should be coordinated with the jQuery version.
-define ["_", "./utils", "prototype"], (_, utils) ->
+define ["underscore", "./utils", "prototype"], (_, utils) ->
 
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534

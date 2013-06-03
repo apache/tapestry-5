@@ -16,7 +16,7 @@
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["./events", "./dom", "./builder", "_"],
+define ["./events", "./dom", "./builder", "underscore"],
   (events, dom, builder, _) ->
 
     # Meta-data name that indicates the next submission should skip validation (typically, because
@@ -99,20 +99,20 @@ define ["./events", "./dom", "./builder", "_"],
 
     defaultValidateAndSubmit = ->
 
-      if ((this.attribute "data-validate") is "submit") and
-         (not this.meta SKIP_VALIDATION)
+      if ((@attribute "data-validate") is "submit") and
+         (not @meta SKIP_VALIDATION)
 
-        this.meta SKIP_VALIDATION, null
+        @meta SKIP_VALIDATION, null
 
         memo = error: false
 
-        for field in this.find "[data-validation]"
+        for field in @find "[data-validation]"
           field.trigger events.field.inputValidation, memo
 
         # Only do form validation if all individual field validation
         # was successful.
         unless memo.error
-          this.trigger events.form.validate, memo
+          @trigger events.form.validate, memo
 
         if memo.error
           clearSubmittingHidden this
@@ -123,7 +123,7 @@ define ["./events", "./dom", "./builder", "_"],
       # FormFragment, or similar, to make their hidden field enabled or disabled to match
       # their UI's visible/hidden status. This is assumed to work or throw an exception; there
       # is no memo.
-      this.trigger events.form.prepareForSubmit
+      @trigger events.form.prepareForSubmit
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       # Possibly, the document event handler provided by the t5/core/zone module will intercept form submission if this
@@ -136,13 +136,13 @@ define ["./events", "./dom", "./builder", "_"],
     # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
     # information about which control triggered the submit gets lost.
     dom.onDocument "click", "input[type=submit], input[type=image]", ->
-      setSubmittingHidden (dom this.element.form), this
+      setSubmittingHidden (dom @element.form), this
       return
 
     # Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
     # Update the hidden field, but also cancel the default behavior for the click.
     dom.onDocument "click", "a[data-submit-mode]", ->
-      form = this.findParent "form"
+      form = @findParent "form"
 
       unless form
         console.error "Submitting link element not contained inside a form element."

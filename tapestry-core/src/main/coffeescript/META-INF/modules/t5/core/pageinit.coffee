@@ -20,7 +20,7 @@
 # The module name may also indicate the function exported by the module, as a suffix following a colon:
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define ["_", "./console", "./dom", "./events"],
+define ["underscore", "./console", "./dom", "./events"],
   (_, console, dom, events) ->
     pathPrefix = null
 

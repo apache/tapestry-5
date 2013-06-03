@@ -20,7 +20,7 @@
 # It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
 # `t5/core/exceptionframe` module to display a server-side processing exception.
-define ["./pageinit", "./dom", "./exceptionframe", "./console", "_"],
+define ["./pageinit", "./dom", "./exceptionframe", "./console", "underscore"],
   (pageinit, dom, exceptionframe, console, _) ->
     (url, options) ->
       newOptions = _.extend {}, options,

@@ -16,7 +16,7 @@
 #
 # Provides support for the `core/DateField` component.
 define ["./dom", "./events", "./messages", "./builder", "./ajax",
-  "_", "./fields"],
+  "underscore", "./fields"],
   (dom, events, messages, builder, ajax, _) ->
 
 
