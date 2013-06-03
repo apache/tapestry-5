@@ -19,15 +19,19 @@ import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.LessSource;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
 import org.apache.commons.io.IOUtils;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.slf4j.Logger;
 
 import java.io.*;
+import java.util.Map;
 
 /**
  * Direct wrapper around the LessCompiler, so that Less source files may use {@code @import}, which isn't
@@ -41,10 +45,35 @@ public class LessResourceTransformer implements ResourceTransformer
 
     private final Logger logger;
 
-    public LessResourceTransformer(OperationTracker tracker, Logger logger)
+    private final boolean cacheEnabled;
+
+    private final Map<Resource, Cached> cache = CollectionFactory.newConcurrentMap();
+
+    static class Cached
+    {
+        final BytestreamCache compiled;
+
+        final ContentChangeTracker tracker;
+
+        Cached(BytestreamCache compiled, ContentChangeTracker tracker)
+        {
+            this.compiled = compiled;
+            this.tracker = tracker;
+        }
+
+        InputStream openStream() throws IOException
+        {
+            return compiled.openStream();
+        }
+    }
+
+
+    public LessResourceTransformer(OperationTracker tracker, Logger logger, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.tracker = tracker;
         this.logger = logger;
+
+        cacheEnabled = !productionMode;
     }
 
     public String getTransformedContentType()
@@ -105,43 +134,70 @@ public class LessResourceTransformer implements ResourceTransformer
 
     public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
     {
-        return tracker.perform(String.format("Compiling %s from Less to CSS", source), new IOOperation<InputStream>()
+        if (cacheEnabled)
         {
-            public InputStream perform() throws IOException
+            Cached cached = cache.get(source);
+
+            if (cached != null && !cached.tracker.changes())
+            {
+                logger.info(String.format("Resource %s (and any dependencies) are unchanged; serving compiled Less content from cache",
+                        source));
+
+                return cached.openStream();
+            }
+
+            ContentChangeTracker tracker1 = new ContentChangeTracker();
+            tracker1.addDependency(source);
+
+            BytestreamCache compiled = invokeLessCompiler(source, new ResourceDependenciesSplitter(dependencies, tracker1));
+
+            cached = new Cached(compiled, tracker1);
+
+            cache.put(source, cached);
+
+            return cached.openStream();
+        } else
+        {
+
+            BytestreamCache compiled = invokeLessCompiler(source, dependencies);
+
+            return compiled.openStream();
+        }
+    }
+
+    private BytestreamCache invokeLessCompiler(final Resource source, final ResourceDependencies dependencies) throws IOException
+    {
+
+        return tracker.perform(String.format("Compiling %s from Less to CSS", source), new IOOperation<BytestreamCache>()
+        {
+            public BytestreamCache perform() throws IOException
             {
                 long start = System.nanoTime();
 
-                InputStream result = compile(source, dependencies);
+                try
+                {
+                    LessSource lessSource = new ResourceLessSource(source, dependencies);
 
-                long complete = System.nanoTime();
+                    LessCompiler.CompilationResult compilationResult = compiler.compile(lessSource);
 
-                logger.info(String.format("Compiled %s to Less in %.2f ms",
-                        source, ResourceTransformUtils.nanosToMillis(complete - start)));
+                    BytestreamCache result = new BytestreamCache(compilationResult.getCss().getBytes("utf-8"));
 
-                return result;
+                    logger.info(String.format("Compiled %s to Less in %.2f ms",
+                            source, ResourceTransformUtils.nanosToMillis(System.nanoTime() - start)));
+
+                    // Currently, ignoring any warnings.
+
+                    return result;
+
+                } catch (Less4jException ex)
+                {
+                    throw new IOException(ex);
+                } catch (UnsupportedEncodingException ex)
+                {
+                    throw new IOException(ex);
+                }
+
             }
         });
-    }
-
-    private InputStream compile(Resource source, ResourceDependencies dependencies) throws IOException
-    {
-        try
-        {
-            LessSource lessSource = new ResourceLessSource(source, dependencies);
-
-            LessCompiler.CompilationResult result = compiler.compile(lessSource);
-
-            // Currently, ignoring any warnings.
-
-            BytestreamCache cache = new BytestreamCache(result.getCss().getBytes("utf-8"));
-
-            return cache.openStream();
-        } catch (Less4jException ex)
-        {
-            throw new IOException(ex);
-        } catch (UnsupportedEncodingException ex)
-        {
-            throw new IOException(ex);
-        }
     }
 }

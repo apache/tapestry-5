@@ -2,12 +2,17 @@ package t5.wro4j.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.StackExtension;
+import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.apache.tapestry5.wro4j.modules.WRO4JModule;
 
 @SubModule(WRO4JModule.class)
@@ -26,5 +31,14 @@ public class AppModule
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:bootstrap");
+    }
+
+    @Contribute(JavaScriptStack.class)
+    @Core
+    public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
+    {
+        configuration.override("bootstrap.css",
+                new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/css/bootstrap.less"), "before:tapestry.css");
     }
 }

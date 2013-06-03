@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import org.apache.tapestry5.ioc.Resource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.Adler32;
+
 /**
  * @since 5.4
  */
@@ -24,5 +30,37 @@ public class ResourceTransformUtils
     public static double nanosToMillis(long nanos)
     {
         return ((double) nanos) * NANOS_TO_MILLIS;
+    }
+
+    public static long toChecksum(Resource resource) throws IOException
+    {
+        Adler32 checksum = new Adler32();
+
+        byte[] buffer = new byte[1024];
+
+        InputStream is = null;
+
+        try
+        {
+            is = resource.openStream();
+
+            while (true)
+            {
+                int length = is.read(buffer);
+
+                if (length < 0)
+                {
+                    break;
+                }
+
+                checksum.update(buffer, 0, length);
+            }
+
+            // Reduces it down to just 32 bits which we express in hex.'
+            return checksum.getValue();
+        } finally
+        {
+            is.close();
+        }
     }
 }

@@ -30,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.zip.Adler32;
 
 public class ResourceTransformerFactoryImpl implements ResourceTransformerFactory
 {
@@ -75,38 +74,6 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         InputStream openStream()
         {
             return bytestreamCache.openStream();
-        }
-    }
-
-    private long toChecksum(Resource resource) throws IOException
-    {
-        Adler32 checksum = new Adler32();
-
-        byte[] buffer = new byte[1024];
-
-        InputStream is = null;
-
-        try
-        {
-            is = resource.openStream();
-
-            while (true)
-            {
-                int length = is.read(buffer);
-
-                if (length < 0)
-                {
-                    break;
-                }
-
-                checksum.update(buffer, 0, length);
-            }
-
-            // Reduces it down to just 32 bits which we express in hex.'
-            return checksum.getValue();
-        } finally
-        {
-            is.close();
         }
     }
 
@@ -177,7 +144,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
             {
-                long checksum = toChecksum(source);
+                long checksum = ResourceTransformUtils.toChecksum(source);
 
                 Compiled compiled = cache.get(source);
 
