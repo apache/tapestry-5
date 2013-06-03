@@ -32,7 +32,6 @@ public class DashboardModule
     public static void defaultTabs(OrderedConfiguration<DashboardTab> configuration)
     {
         configuration.add("Pages", new DashboardTab("Pages", "core/PageCatalog"));
-        configuration.add("Metrics", new DashboardTab("Metrics", "core/AppMetrics"));
         configuration.add("Services", new DashboardTab("Services", "core/ServiceStatus"));
     }
 }
