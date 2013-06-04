@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
-import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * A close relative of {@link org.apache.tapestry5.corelib.components.ActionLink} except in two ways.
@@ -41,9 +40,6 @@ public class EventLink extends AbstractComponentEventLink
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String event;
-
-    @Inject
-    private ComponentResources resources;
 
     String defaultEvent()
     {

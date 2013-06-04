@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007-2013The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public abstract class AbstractLink implements ClientElement
     private Map<String, ?> parameters;
 
     @Inject
-    private ComponentResources resources;
+    protected ComponentResources resources;
 
     @Inject
     private JavaScriptSupport jsSupport;
@@ -116,7 +116,14 @@ public abstract class AbstractLink implements ClientElement
 
        for(Map.Entry<String,?> entry : parameters.entrySet())
        {
-           link.addParameterValue(entry.getKey(), entry.getValue());
+           String name = entry.getKey();
+
+           // Per TAP5-2126, we want to override any prior value (typically, set from an ActivationRequestParameter)
+           // with the new value.
+
+           link.removeParameter(name);
+
+           link.addParameterValue(name, entry.getValue());
        }
     }
 
