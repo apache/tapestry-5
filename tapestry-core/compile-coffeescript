@@ -6,7 +6,7 @@
 # Doe NOT compile the test scripts.
 
 inputDir=src/main/coffeescript
-outputDir=build/generated-sources/compiled-coffeescript
+outputDir=src/main/generated/compiled-coffeescript
 
 # Because all of these are AMD modules, they don't need a hygenic function wrapper,
 # so we can use --bare
