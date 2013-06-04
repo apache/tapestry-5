@@ -18,7 +18,7 @@
 // * `T5` namespace, including `extend`, `define`, and `initializers`, `extendInitializers`, and `_` properties
 //
 // * `Tapestry` namespace: just the `Initializer` property, as an alias of `T5.initializers`
-require(["_"], function(_) {
+require(["underscore"], function(_) {
     var T5, Tapestry;
     T5 = {
         _: _,
