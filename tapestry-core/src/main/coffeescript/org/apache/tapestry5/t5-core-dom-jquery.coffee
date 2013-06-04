@@ -402,6 +402,7 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
       url: url
       type: options.method?.toUpperCase() or "POST"
       contentType: options.contentType
+      traditional: true
       data: options.parameters
       # jQuery doesn't have the equivalent of Protoype's onException
       error: (jqXHR, textStatus, errorThrown) ->
