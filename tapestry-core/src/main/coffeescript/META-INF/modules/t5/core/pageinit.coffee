@@ -122,7 +122,7 @@ define ["underscore", "./console", "./dom", "./events"],
             # be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
             # Note that later Ajax requests do not change this attribute, so their timing continues to be tricky.
 
-            (dom document.documentElement).attribute "data-page-initialized", "true"
+            dom.body().attribute "data-page-initialized", "true"
 
     exports = _.extend loadLibrariesAndInitialize,
       # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
