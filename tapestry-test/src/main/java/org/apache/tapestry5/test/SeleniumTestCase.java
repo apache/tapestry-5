@@ -1511,7 +1511,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         for (int i = 0; i < 10; i++)
         {
-            if (isElementPresent("css=html[data-page-initialized]"))
+            if (isElementPresent("css=body[data-page-initialized]"))
             {
                 return;
             }
