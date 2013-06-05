@@ -118,7 +118,8 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
       container.append element
 
       if data['transient']
-        _.delay removeAlert, exports.TRANSIENT_DURATION, container, element
+        outerContainer = container.findParent '[data-container-type=alerts]'
+        _.delay removeAlert, exports.TRANSIENT_DURATION, outerContainer, element
 
     alert.TRANSIENT_DURATION = 5000
 

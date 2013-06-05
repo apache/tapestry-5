@@ -59,6 +59,32 @@ class AlertsTests extends TapestryCoreTestCase {
     }
 
     @Test
+    void remove_alert_container_with_last_transient_alert() {
+        openLinks "Alerts Demo", "Reset Alerts Storage"
+
+        select "id=severity", "Warn"
+        select "id=duration", "Transient"
+        type "id=message", "trad warn transient"
+
+        clickAndWait "//input[@value='Traditional Update']"
+
+        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+
+        assertTextPresent "trad warn transient"
+
+        // dismiss the first alert that indicates the submission type
+
+        click "css=$CONTAINER :contains('Traditional form submission') button.close"
+
+        // wait for the transient alert to be automatically removed
+        sleep 5000
+
+        // Check that the alert container is now empty
+
+        assertText "css=$CONTAINER", ""
+    }
+
+    @Test
     void ajax_update_and_remove() {
         openLinks "Alerts Demo", "Reset Alerts Storage"
 
