@@ -31,8 +31,7 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 #
 # Changes to this library should be coordinated with the Prototype version.
-define ["underscore", "./utils", "jquery"], (_, utils, $) ->
-
+define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
   # Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
   # primarily exists to validate the value, and to "unpack" an ElementWrapper into a DOM element.
@@ -123,11 +122,15 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     hide: ->
       @$.hide()
 
+      triggerReflow()
+
       return this
 
     # Displays the wrapped element if hidden.
     show: ->
       @$.show()
+
+      triggerReflow()
 
       return this
 
@@ -135,6 +138,8 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     remove: ->
       # jQuery's remove() will remove event handlers which we don't want.
       @$.detach()
+
+      triggerReflow()
 
       return this
 
@@ -189,17 +194,23 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
       if content
         @$.append (convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     append: (content) ->
       @$.append (convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     prepend: (content) ->
       @$.prepend (convertContent content)
+
+      triggerReflow()
 
       return this
 
@@ -208,12 +219,16 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     insertBefore: (content) ->
       @$.before (convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
     # this ElementWrapper's element.
     insertAfter: (content) ->
       @$.after (convertContent content)
+
+      triggerReflow()
 
       return this
 
@@ -222,7 +237,9 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
     fadeIn: (duration, callback) ->
-      @$.fadeIn duration * 1000, callback
+      @$.fadeIn duration * 1000, ->
+        triggerReflow()
+        callback and callback()
 
       return this
 
@@ -232,7 +249,9 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
     fadeOut: (duration, callback) ->
-      @$.fadeOut duration * 1000, callback
+      @$.fadeOut duration * 1000, ->
+        triggerReflow()
+        callback and callback()
 
       return this
 
@@ -437,6 +456,7 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
 
     return exports
 
+  triggerReflow = _.debounce (-> $(document).trigger events.document.reflow), 250
 
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
@@ -461,6 +481,8 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
 
     # Escape's HTML markup in the string.
     escapeHTML: _.escape
+
+    triggerReflow: triggerReflow
 
     ajaxRequest: ajaxRequest
 
@@ -492,3 +514,7 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
     body: -> wrapElement document.body
+
+  $(window).on "resize", exports.triggerReflow
+
+  return exports

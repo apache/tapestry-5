@@ -31,7 +31,7 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 #
 # Changes to this library should be coordinated with the jQuery version.
-define ["underscore", "./utils", "prototype"], (_, utils) ->
+define ["underscore", "./utils", "./events", "prototype"], (_, utils, events) ->
 
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
@@ -77,6 +77,7 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
         styles[styleName] = finalValue
         element.setStyle styles
         window.clearInterval timeoutID
+        triggerReflow()
         callbacks.oncomplete and callbacks.oncomplete()
 
       # TODO: Add an easein/easeout function
@@ -164,17 +165,23 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
     hide: ->
       @element.hide()
 
+      triggerReflow()
+
       return this
 
     # Displays the wrapped element if hidden.
     show: ->
       @element.show()
 
+      triggerReflow()
+
       return this
 
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
       @element.remove()
+
+      triggerReflow()
 
       return this
 
@@ -227,17 +234,23 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
     update: (content) ->
       @element.update (content and convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     append: (content) ->
       @element.insert bottom: (convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     prepend: (content) ->
       @element.insert top: (convertContent content)
+
+      triggerReflow()
 
       return this
 
@@ -246,12 +259,16 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
     insertBefore: (content) ->
       @element.insert before: (convertContent content)
 
+      triggerReflow()
+
       return this
 
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
     # this ElementWrapper's element.
     insertAfter: (content) ->
       @element.insert after: (convertContent content)
+
+      triggerReflow()
 
       return this
 
@@ -508,7 +525,6 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
 
     return exports
 
-
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
   #
@@ -526,11 +542,15 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
     # Prototype API (especially with respect to events).
     new ElementWrapper element
 
+  triggerReflow = _.debounce (-> $(document).fire events.document.reflow), 250
+
   _.extend exports,
     wrap: wrapElement
 
     # Escape's HTML markup in the string.
     escapeHTML: (str) -> str.escapeHTML()
+
+    triggerReflow: triggerReflow
 
     ajaxRequest: ajaxRequest
 
@@ -564,3 +584,7 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
     body: -> wrapElement document.body
+
+  Event.observe window, "resize", triggerReflow
+
+  return exports
