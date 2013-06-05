@@ -168,6 +168,14 @@ public class ResourceStreamerImpl implements ResourceStreamer
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
         }
 
+        // This is really for modules, which can not have a content hash code in the URL; therefore, we want
+        // the browser to re-validate the resources on each new page render; because of the ETags, that will
+        // mostly result in quick SC_NOT_MODIFIED responses.
+        if (options.contains(Options.OMIT_EXPIRATION))
+        {
+            response.setHeader("Cache-Control", "max-age=0, must-revalidate");
+        }
+
         response.setContentLength(streamable.getSize());
 
         if (streamable.getCompression() == CompressionStatus.COMPRESSED)
