@@ -306,6 +306,15 @@ define ["underscore", "./utils", "prototype"], (_, utils) ->
 
       new ElementWrapper parent
 
+    # Returns this ElementWrapper if it matches the selector; otherwise, returns the first container element (as an ElementWrapper)
+    # that matches the selector. Returns null if no container element matches.
+    closest: (selector) ->
+
+      if @element.match selector
+        return this
+
+      return @findParent selector
+
     # Returns an ElementWrapper for this element's immediate containing element.
     # Returns null if this element has no parent (either because this element is the document object, or
     # because this element is not yet attached to the DOM).

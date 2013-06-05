@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012, 2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ define
     # Triggered (by the standard handler) just before the content in a Zone will be updated.
     willUpdate: "t5:zone:will-update"
 
-    # Triggered (by the standard hanndler) just after the content in a Zone has updated. If the zone was not visible, it
+    # Triggered (by the standard handler) just after the content in a Zone has updated. If the zone was not visible, it
     # is made visible after its content is changed, and before this event is triggered. Some number of other components that
     # also perform Ajax updates of the page also trigger this event.
     #
@@ -137,7 +137,7 @@ define
     # (see `t5/core/datefield` module).
     didUpdate: "t5:zone:did-update"
 
-    # Triggered on a zone element, the default handler will peform an Ajax request and, when the response is available,
+    # Triggered on (or within) a zone element, the default handler will peform an Ajax request and, when the response is available,
     # update the zone (via `events.zone.update`). The request should provide a partial page render response. If the
     # response includes a `content` key, its value will be the markup to replace the zone element's body.
     #

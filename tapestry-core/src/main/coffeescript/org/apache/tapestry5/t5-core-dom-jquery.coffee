@@ -266,6 +266,17 @@ define ["underscore", "./utils", "jquery"], (_, utils, $) ->
 
       new ElementWrapper parents.eq(0)
 
+    # Returns this ElementWrapper if it matches the selector; otherwise, returns the first container element (as an ElementWrapper)
+    # that matches the selector. Returns null if no container element matches.
+    closest: (selector) ->
+
+      match = @$.closest selector
+
+      switch
+        when match.length is 0 then return null
+        when match[0] is @element then return this
+        else return new ElementWrapper match
+
     # Returns an ElementWrapper for this element's containing element.
     # Returns null if this element has no parent (either because this element is the document object, or
     # because this element is not yet attached to the DOM).

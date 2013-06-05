@@ -90,15 +90,19 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
     dom.onDocument events.zone.refresh, (event) ->
 
+      # This even may be triggered on an element inside the zone, rather than on the zone itself. Scan upwards
+      # to find the actual zone.
+      zone = @closest "[data-container-type=zone]"
+
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      attr = @attribute "data-zone-parameters"
+      attr = zone.attribute "data-zone-parameters"
 
       parameters = attr and JSON.parse attr
 
       ajax event.memo.url,
-        parameters: _.extend { "t:zoneid": @element.id }, parameters, event.memo.parameters
+        parameters: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
         success: (response) =>
-          @trigger events.zone.update, content: response.json?.content
+          zone.trigger events.zone.update, content: response.json?.content
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
     # performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.
@@ -116,5 +120,5 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
         zone.trigger events.zone.refresh, { url }
 
-    # Most of this module is document-level event handlers, but there's also some exports.
+    # Most of this module is document-level event handlers, but there's also some exports:
     return { deferredZoneUpdate, findZone }
