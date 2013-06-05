@@ -348,8 +348,6 @@ define ["underscore", "./utils", "./events", "prototype"], (_, utils, events) ->
       @element.visible()
 
     # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
-    #
-    # Note that in Tapestry 5.3, the search would stop at the nearest form element, not the document body.
     deepVisible: ->
       cursor = this
       while cursor

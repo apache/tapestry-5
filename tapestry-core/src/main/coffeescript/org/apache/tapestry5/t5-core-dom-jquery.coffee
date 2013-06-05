@@ -309,11 +309,9 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
     visible: ->
-      @$.css("display") isnt "hidden"
+      @$.css("display") isnt "none"
 
     # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
-    #
-    # Note that in Tapestry 5.3, the search would stop at the nearest form element, not the document body.
     deepVisible: ->
       cursor = this
       while cursor
