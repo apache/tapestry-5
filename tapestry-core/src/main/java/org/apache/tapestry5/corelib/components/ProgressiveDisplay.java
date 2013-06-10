@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ public class ProgressiveDisplay
         String clientId = jsSupport.allocateClientId(resources);
         String elementName = resources.getElementName("div");
 
-        writer.element(elementName, "id", clientId);
+        writer.element(elementName, "id", clientId, "data-container-type", "zone");
         resources.renderInformalParameters(writer);
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
