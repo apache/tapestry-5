@@ -98,11 +98,10 @@ define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
 
     dom.onDocument events.field.inputValidation, (event, formMemo) ->
 
-      # When not visible to the user, ignore the input validation. Components
-      # are generally configured so that they do not submit a value to the server
-      # when not visible ... this is what the core/FormFragment component is responsible
-      # for.
-      return unless @deepVisible()
+      # Fields that are disbled, or not visible to the user are not subject to
+      # validation. Typically, a field will only be invisible due to the
+      # core/FormFragment component.
+      return if @element.disabled or (not @deepVisible())
 
       failure = false
 
