@@ -130,6 +130,8 @@ define
     # * selectedValues - list of selected values (if change is allowed)
     # * reorder - if true, then the event represents changing the ordrer of the selections only
     # * cancel - function to invoke to prevent the change to the Palette from occurring
+    # * defer - like cancel, but returns a no-arguments function that will perform the update at a later date (e.g.,
+    #   after a confirmation panel)
     willChange: "t5:palette:willChange"
     # Event triggered after the selection has changed. The memo object has one property:
     # * selectedValues - list of selected values

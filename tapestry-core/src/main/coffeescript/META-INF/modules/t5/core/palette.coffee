@@ -136,7 +136,7 @@ define ["./dom", "underscore", "./events"],
 
         # The element before the first selected element is the pivot; all the selected elements will
         # move before the pivot. If there is no pivot, the elements are shifted to the front of the list.
-        firstMoverIndex= _.first(movers).index
+        firstMoverIndex = _.first(movers).index
         pivot = options[firstMoverIndex - 1]
 
         options = _.reject options, isSelected
@@ -178,15 +178,8 @@ define ["./dom", "underscore", "./events"],
 
         canceled = false
 
-        memo =
-          selectedValues: _.pluck options, "value"
-          reorder: true
-          cancel: -> canceled = true
 
-        @selected.trigger events.palette.willChange, memo
-
-        unless canceled
-
+        doUpdate = =>
           @deleteOptions @selected
 
           for o in options
@@ -195,6 +188,18 @@ define ["./dom", "underscore", "./events"],
           @selected.trigger events.palette.didChange, memo
 
           @updateAfterChange()
+
+        memo =
+          selectedValues: _.pluck options, "value"
+          reorder: true
+          cancel: -> canceled = true
+          defer: ->
+            canceled = true
+            return doUpdate
+
+        @selected.trigger events.palette.willChange, memo
+
+        doUpdate() unless canceled
 
       # Deletes all options from a select (an ElementWrapper), prior to new options being populated in.
       deleteOptions: (select) ->
@@ -223,32 +228,37 @@ define ["./dom", "underscore", "./events"],
 
         canceled = false
 
+        doUpdate = =>
+          for i in [(from.element.length - 1)..0] by -1
+            if from.element.options[i].selected
+              from.element.remove i
+
+          # A bit ugly: update the to select by removing all, then adding back in.
+
+          for i in [(to.element.length - 1)..0] by -1
+            to.element.options[i].selected = false
+            to.element.remove i
+
+          for o in toOptions
+            to.element.add o, null
+
+          @selected.trigger events.palette.didChange, memo
+
+          @updateAfterChange()
+
         memo =
           selectedValues: _.pluck selectedOptions, "value"
           reorder: false
           cancel: -> canceled = true
+          defer: ->
+            canceled = true
+            return doUpdate
 
         @selected.trigger events.palette.willChange, memo
 
-        return if canceled
+        doUpdate() unless canceled
 
         # Remove the movers (the selected from elements):
-        for i in [(from.element.length - 1)..0] by -1
-          if from.element.options[i].selected
-            from.element.remove i
-
-        # A bit ugly: update the to select by removing all, then adding back in.
-
-        for i in [(to.element.length - 1)..0] by -1
-          to.element.options[i].selected = false
-          to.element.remove i
-
-        for o in toOptions
-          to.element.add o, null
-
-        @selected.trigger events.palette.didChange, memo
-
-        @updateAfterChange()
 
 
       insertOption: (options, option, atEnd) ->
