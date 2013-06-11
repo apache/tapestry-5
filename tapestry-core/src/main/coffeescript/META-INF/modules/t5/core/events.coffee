@@ -124,6 +124,17 @@ define
     # * If the field's container has class "input-append" or "input-prepend", then the block is inserted after the container
     showValidationError: "t5:field:show-validation-error"
 
+  # Events triggered by the Palette component.
+  palette:
+    # Event triggered when the selection is about to change. The memo object has these properties:
+    # * selectedValues - list of selected values (if change is allowed)
+    # * reorder - if true, then the event represents changing the ordrer of the selections only
+    # * cancel - function to invoke to prevent the change to the Palette from occurring
+    willChange: "t5:palette:willChange"
+    # Event triggered after the selection has changed. The memo object has one property:
+    # * selectedValues - list of selected values
+    didChange: "t5:palette:didChange"
+
   # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
   # to correctly support dynamic updates from the server via an Ajax request, and a standard response
   # (the partial page render reponse). More details are available in the `t5/core/zone` module.

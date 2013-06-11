@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import org.testng.annotations.Test;
 public class PaletteTests extends TapestryCoreTestCase
 {
 
-    public static final String AVAILABLE_OPTIONS = "css=.t-palette-available select";
+    public static final String AVAILABLE_OPTIONS = "css=.palette-available select";
 
-    public static final String SELECTED_OPTIONS = "css=.t-palette-selected select";
+    public static final String SELECTED_OPTIONS = "css=.palette-selected select";
 
-    public static final String SELECT_BUTTON = "css=.t-palette [data-action=select]";
+    public static final String SELECT_BUTTON = "css=.palette [data-action=select]";
 
-    public static final String DESELECT_BUTTON = "css=.t-palette [data-action=deselect]";
+    public static final String DESELECT_BUTTON = "css=.palette [data-action=deselect]";
 
-    public static final String MOVE_UP_BUTTON = "css=.t-palette [data-action=move-up]";
+    public static final String MOVE_UP_BUTTON = "css=.palette [data-action=move-up]";
 
-    public static final String MOVE_DOWN_BUTTON = "css=.t-palette [data-action=move-down]";
+    public static final String MOVE_DOWN_BUTTON = "css=.palette [data-action=move-down]";
 
     @Test
     public void palette_component()
@@ -43,18 +43,22 @@ public class PaletteTests extends TapestryCoreTestCase
 
         waitForPageInitialized();
 
-        assertText("css=.t-palette-available .t-palette-title",
+        assertText("css=.palette-available .palette-title",
                 "Languages Offered");
-        assertText("css=.t-palette-selected .t-palette-title",
+        assertText("css=.palette-selected .palette-title",
                 "Selected Languages");
 
         addSelection(AVAILABLE_OPTIONS, "label=Haskell");
         addSelection(AVAILABLE_OPTIONS, "label=Javascript");
         click(SELECT_BUTTON);
 
+        // What a listener on the events.palette.willChange event would see in memo.selectdValues:
+        assertText("id=event-selection", "[\"HASKELL\",\"JAVASCRIPT\"]");
+
+
         clickAndWait(SUBMIT);
 
-        assertTextPresent("Selected Languages: [HASKELL, JAVASCRIPT]");
+        assertText("id=selected-languages", "[HASKELL, JAVASCRIPT]");
 
         waitForPageInitialized();
 
@@ -75,7 +79,7 @@ public class PaletteTests extends TapestryCoreTestCase
 
         clickAndWait(SUBMIT);
 
-        assertTextPresent("[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
+        assertText("id=selected-languages", "[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
 
         check("reorder");
 
@@ -97,7 +101,7 @@ public class PaletteTests extends TapestryCoreTestCase
 
         clickAndWait(SUBMIT);
 
-        assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
+        assertText("id=selected-languages", "[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
 
     /**

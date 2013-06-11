@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
 # ## t5/core/palette
 #
 # Support for the `core/Palette` component.
-define ["./dom", "underscore"],
-  (dom, _) ->
+define ["./dom", "underscore", "./events"],
+  (dom, _, events) ->
+
+    isSelected = (option) -> option.selected
+
     class PaletteController
 
       constructor: (id) ->
         @selected = (dom id)
-        @container = @selected.findParent ".t-palette"
-        @available = @container.findFirst ".t-palette-available select"
+        @container = @selected.findParent ".palette"
+        @available = @container.findFirst ".palette-available select"
         @hidden = @container.findFirst "input[type=hidden]"
 
         @select = @container.findFirst "[data-action=select]"
@@ -69,6 +72,8 @@ define ["./dom", "underscore"],
         for option in movers
           @selected.element.add option
 
+      # Invoked after any change to the selections list to update the hidden field as well as the
+      # buttons' state.
       updateAfterChange: ->
         @updateHidden()
         @updateButtons()
@@ -107,6 +112,8 @@ define ["./dom", "underscore"],
             @doMoveDown()
             return false
 
+      # Invoked whenever the selections in either list changes or after an updates; figures out which buttons
+      # should be enabled and which disabled.
       updateButtons: ->
         @select.element.disabled = @available.element.selectedIndex < 0
 
@@ -123,78 +130,139 @@ define ["./dom", "underscore"],
       doDeselect: -> @transferOptions @selected, @available, false
 
       doMoveUp: ->
-        e = @selected.element
-        pos = e.selectedIndex - 1
-        movers = @removeSelectedOptions @selected
-        before = e.options[if pos < 0 then 0 else pos]
+        options = _.toArray @selected.element.options
 
-        @reorderOptions movers, before
+        movers = _.filter options, isSelected
+
+        # The element before the first selected element is the pivot; all the selected elements will
+        # move before the pivot. If there is no pivot, the elements are shifted to the front of the list.
+        firstMoverIndex= _.first(movers).index
+        pivot = options[firstMoverIndex - 1]
+
+        options = _.reject options, isSelected
+
+        splicePos = if pivot then _.indexOf options, pivot else 0
+
+        movers.reverse()
+
+        for o in movers
+          options.splice splicePos, 0, o
+
+        @reorderSelected options
+
 
       doMoveDown: ->
-        e = @selected.element
-        lastSelected = _.chain(e.options).toArray().reverse().find((o) -> o.selected).value()
+        options = _.toArray @selected.element.options
 
-        lastPos = lastSelected.index
-        before = e.options[lastPos + 2]
+        movers = _.filter options, isSelected
 
-        movers = @removeSelectedOptions @selected
+        # The element after the last selected element is the pivot; all the selected elements will
+        # move after the pivot. If there is no pivot, the elements are shifted to the end of the list.
+        lastMoverIndex = _.last(movers).index
+        pivot = options[lastMoverIndex + 1]
 
-        @reorderOptions movers, before
+        options = _.reject options, isSelected
 
-      reorderOptions: (movers, before) ->
-        for mover in movers
-          @addOption @selected, mover, before
-        @updateAfterChange()
+        splicePos = if pivot then _.indexOf(options, pivot) + 1 else options.length
 
+        movers.reverse()
+
+        for o in movers
+          options.splice splicePos, 0, o
+
+        @reorderSelected options
+
+      # Reorders the selected options to the provided list of options; handles triggering the willUpdate and
+      # didUpdate events.
+      reorderSelected: (options) ->
+
+        canceled = false
+
+        memo =
+          selectedValues: _.pluck options, "value"
+          reorder: true
+          cancel: -> canceled = true
+
+        @selected.trigger events.palette.willChange, memo
+
+        unless canceled
+
+          @deleteOptions @selected
+
+          for o in options
+            @selected.element.add o, null
+
+          @selected.trigger events.palette.didChange, memo
+
+          @updateAfterChange()
+
+      # Deletes all options from a select (an ElementWrapper), prior to new options being populated in.
+      deleteOptions: (select) ->
+
+        e = select.element
+
+        for i in [(e.length - 1)..0] by -1
+          e.remove i
+
+      # Moves options between the available and selected lists, including event notifiations before and after.
       transferOptions: (from, to, atEnd) ->
+
         if from.element.selectedIndex is -1
           return
 
-        _(to.element.options).each (o) -> o.selected = false
+        # This could be done in a single pass, but:
+        movers = _.filter from.element.options, isSelected
+        fromOptions = _.reject from.element.options, isSelected
 
-        movers = @removeSelectedOptions from
+        toOptions = _.toArray to.element.options
 
-        @moveOptions movers, to, atEnd
+        for o in movers
+          @insertOption toOptions, o, atEnd
 
-      removeSelectedOptions: (select) ->
-        movers = []
-        e = select.element
-        options = e.options
+        selectedOptions = if to is @selected then toOptions else fromOptions
 
-        for i in [(e.length - 1)..(e.selectedIndex)] by -1
-          o = options[i]
-          if o.selected
-            e.remove i
-            movers.unshift o
+        canceled = false
 
-        return movers
+        memo =
+          selectedValues: _.pluck selectedOptions, "value"
+          reorder: false
+          cancel: -> canceled = true
 
-      moveOptions: (movers, to, atEnd) ->
-        _.each movers, (o) =>
-          @moveOption o, to, atEnd
+        @selected.trigger events.palette.willChange, memo
+
+        return if canceled
+
+        # Remove the movers (the selected from elements):
+        for i in [(from.element.length - 1)..0] by -1
+          if from.element.options[i].selected
+            from.element.remove i
+
+        # A bit ugly: update the to select by removing all, then adding back in.
+
+        for i in [(to.element.length - 1)..0] by -1
+          to.element.options[i].selected = false
+          to.element.remove i
+
+        for o in toOptions
+          to.element.add o, null
+
+        @selected.trigger events.palette.didChange, memo
 
         @updateAfterChange()
 
-      moveOption: (option, to, atEnd) ->
-        before = null
+
+      insertOption: (options, option, atEnd) ->
 
         unless atEnd
           optionOrder = @valueToOrderIndex[option.value]
-          candidate = _.find to.element.options, (o) => @valueToOrderIndex[o.value] > optionOrder
-          if candidate
-            before = candidate
+          before = _.find options, (o) => @valueToOrderIndex[o.value] > optionOrder
 
-        @addOption to, option, before
+        if before
+          i = _.indexOf options, before
+          options.splice i, 0, option
+        else
+          options.push option
 
-      addOption: (to, option, before) ->
-        try
-          to.element.add option, before
-        catch ex
-          if before is null
-            # IE throws an exception about type mismatch; here's the fix:
-            to.add option
-          else
-            to.add option, before.index
 
       indexOfLastSelection: (select) ->
         e = select.element
@@ -221,8 +289,5 @@ define ["./dom", "underscore"],
         _(options[last..]).all (o) -> o.selected
 
 
-    initialize = (id) ->
-      new PaletteController(id)
-
-    # Export just the initialize function
-    return initialize
+    # Export just the initializer function
+    (id) -> new PaletteController(id)

@@ -268,3 +268,10 @@ org.apache.tapestry5.test.TapestryRunnerConstants in the new tapestry-runner mod
 ## AbstractValidator base class
 
 The constructor for AbstractValidator has changed to include an instance of JavaScriptSupport.
+
+## CSS Changes
+
+Where Tapestry-specific CSS still exists (in support of the Palette component and the Tree component), the "t-" prefix
+has been removed. This may affect applications that overrode the Tapestry CSS rules to adapt Tapestry to the application
+look and feel.
+

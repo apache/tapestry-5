@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import java.util.Collection;
  * <p/>
  * <pre>
  * &lt;style&gt;
- * DIV.t-palette SELECT { width: 300px; }
+ *   DIV.palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
  * <p/>
@@ -59,6 +59,10 @@ import java.util.Collection;
  * <p/>
  * For an alternative component that can be used for similar purposes, see
  * {@link Checklist}.
+ * <p>Starting in 5.4, the selected parameter may be any kind of collection, but is typically a List if the Palette is configured for re-ordering,
+ * and a Set if order does not matter (though it is common to use a List in the latter case as well). Also, starting in 5.4,
+ * the Palette is compatible with the {@link org.apache.tapestry5.validator.Required} validator (on both client and server-side), and
+ * triggers new events that allows the application to veto a proposed changed to the selection (see the {@code t5/core/events} module).
  *
  * @tapestrydoc
  * @see Form

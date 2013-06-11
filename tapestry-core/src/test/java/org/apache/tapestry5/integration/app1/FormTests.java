@@ -471,13 +471,13 @@ public class FormTests extends TapestryCoreTestCase
 
                         "//input[@id='datefield']",
 
-                        "//div[@class='t-palette']//input[@type='hidden']",
+                        "//div[@class='palette']//input[@type='hidden']",
 
-                        "//div[@class='t-palette-available']//select",
+                        "//div[@class='palette-available']//select",
 
-                        "//div[@class='t-palette-selected']//select",
+                        "//div[@class='palette-selected']//select",
 
-                        "//div[@class='t-palette-controls']//button",
+                        "//div[@class='palette-controls']//button",
 
                         "//input[@id='submit_0']"};
 

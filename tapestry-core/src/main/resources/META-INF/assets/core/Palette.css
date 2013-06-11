@@ -1,13 +1,13 @@
-DIV.t-palette {
+DIV.palette {
     display: inline;
 }
 
-DIV.t-palette SELECT {
+DIV.palette SELECT {
     margin-bottom: 2px;
     width: 200px;
 }
 
-DIV.t-palette-title {
+DIV.palette-title {
     color: white;
     background-color: black;
     text-align: center;
@@ -17,28 +17,28 @@ DIV.t-palette-title {
     width: 200px;
 }
 
-DIV.t-palette-available {
+DIV.palette-available {
     float: left;
 }
 
-DIV.t-palette-controls {
+DIV.palette-controls {
     margin: 5px 5px;
     float: left;
 }
 
-DIV.t-palette-controls > DIV {
+DIV.palette-controls > DIV {
     margin-top: 5px;
 }
 
-DIV.t-palette-controls > DIV:first-child {
+DIV.palette-controls > DIV:first-child {
     margin-top: 0;
 }
 
-DIV.t-palette-selected {
+DIV.palette-selected {
     float: left;
     clear: right;
 }
 
-DIV.t-palette-spacer {
+DIV.palette-spacer {
     clear: left;
 }

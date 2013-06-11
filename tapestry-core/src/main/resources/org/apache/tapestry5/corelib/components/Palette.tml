@@ -1,9 +1,9 @@
-<div class="t-palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<div class="palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
     <t:remove>Contains the array of option ids for selected elements:</t:remove>
     <input type="hidden" name="${controlName}" value="${initialJSON}" disabled="${disabledValue}"/>
 
-    <div class="t-palette-available">
-        <div class="t-palette-title">
+    <div class="palette-available">
+        <div class="palette-title">
             <t:delegate to="availableLabel"/>
         </div>
         <select multiple="multiple" size="${size}" disabled="${disabledValue}">
@@ -15,7 +15,7 @@
         </select>
     </div>
 
-    <div class="t-palette-controls">
+    <div class="palette-controls">
         <div>
             <button data-action="select" class="btn" disabled="${disabledValue}">
                 <img src="${select}" alt="${message:core-palette-select-label}"/>
@@ -39,12 +39,12 @@
             </div>
         </t:if>
     </div>
-    <div class="t-palette-selected">
-        <div class="t-palette-title">
+    <div class="palette-selected">
+        <div class="palette-title">
             <t:delegate to="selectedLabel"/>
         </div>
         <t:remove>
-            data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all options, selected or not.
+            data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all options, selected or not.  This is used by validation logic.
         </t:remove>
         <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" data-value-mode="options" t:mixins="rendernotification">
             <t:remove>Starts empty, populated on the client side.</t:remove>
