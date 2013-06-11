@@ -176,22 +176,29 @@ define ["./dom", "underscore", "./events"],
       # didUpdate events.
       reorderSelected: (options) ->
 
-        canceled = false
+        @performUpdate true, options, =>
 
-
-        doUpdate = =>
           @deleteOptions @selected
 
           for o in options
             @selected.element.add o, null
 
-          @selected.trigger events.palette.didChange, memo
+      # Performs the update, which includes the willChange and didChange events.
+      performUpdate: (isReorder, selectedOptions, updateCallback) ->
+
+        canceled = false
+        selectedValues = _.pluck selectedOptions, "value"
+
+        doUpdate = =>
+          updateCallback()
+
+          @selected.trigger events.palette.didChange, { selectedValues }
 
           @updateAfterChange()
 
         memo =
-          selectedValues: _.pluck options, "value"
-          reorder: true
+          selectedValues: selectedValues
+          reorder: isReorder
           cancel: -> canceled = true
           defer: ->
             canceled = true
@@ -226,9 +233,7 @@ define ["./dom", "underscore", "./events"],
 
         selectedOptions = if to is @selected then toOptions else fromOptions
 
-        canceled = false
-
-        doUpdate = =>
+        @performUpdate false, selectedOptions, =>
           for i in [(from.element.length - 1)..0] by -1
             if from.element.options[i].selected
               from.element.remove i
@@ -241,25 +246,6 @@ define ["./dom", "underscore", "./events"],
 
           for o in toOptions
             to.element.add o, null
-
-          @selected.trigger events.palette.didChange, memo
-
-          @updateAfterChange()
-
-        memo =
-          selectedValues: _.pluck selectedOptions, "value"
-          reorder: false
-          cancel: -> canceled = true
-          defer: ->
-            canceled = true
-            return doUpdate
-
-        @selected.trigger events.palette.willChange, memo
-
-        doUpdate() unless canceled
-
-        # Remove the movers (the selected from elements):
-
 
       insertOption: (options, option, atEnd) ->
 
