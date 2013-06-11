@@ -184,21 +184,20 @@ define ["./dom", "underscore", "./events"],
             @selected.element.add o, null
 
       # Performs the update, which includes the willChange and didChange events.
-      performUpdate: (isReorder, selectedOptions, updateCallback) ->
+      performUpdate: (reorder, selectedOptions, updateCallback) ->
 
         canceled = false
-        selectedValues = _.pluck selectedOptions, "value"
 
         doUpdate = =>
           updateCallback()
 
-          @selected.trigger events.palette.didChange, { selectedValues }
+          @selected.trigger events.palette.didChange, { selectedOptions, reorder }
 
           @updateAfterChange()
 
         memo =
-          selectedValues: selectedValues
-          reorder: isReorder
+          selectedOptions: selectedOptions
+          reorder: reorder
           cancel: -> canceled = true
           defer: ->
             canceled = true

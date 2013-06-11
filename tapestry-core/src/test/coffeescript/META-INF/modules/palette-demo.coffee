@@ -1,5 +1,9 @@
-define ["t5/core/dom", "t5/core/events"],
-  (dom, events) ->
+define ["t5/core/dom", "t5/core/events", "underscore"],
+  (dom, events, _) ->
 
     dom.onDocument events.palette.willChange, (event, memo) ->
-      (dom "event-selection").update JSON.stringify memo.selectedValues
+
+      values = _.map memo.selectedOptions, (o) -> o.value
+
+      (dom "event-selection").update JSON.stringify values
+      (dom "event-reorder").update memo.reorder.toString()

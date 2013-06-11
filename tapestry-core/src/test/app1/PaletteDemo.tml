@@ -44,6 +44,8 @@
     <dd id="selected-languages">${languages}</dd>
     <dt>Selected Values</dt>
     <dd id="event-selection"/>
+    <dt>Reorder</dt>
+    <dd id="event-reorder"></dd>
 </dl>
 
 </html>

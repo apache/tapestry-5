@@ -126,15 +126,19 @@ define
 
   # Events triggered by the Palette component.
   palette:
-    # Event triggered when the selection is about to change. The memo object has these properties:
-    # * selectedValues - list of selected values (if change is allowed)
-    # * reorder - if true, then the event represents changing the ordrer of the selections only
-    # * cancel - function to invoke to prevent the change to the Palette from occurring
-    # * defer - like cancel, but returns a no-arguments function that will perform the update at a later date (e.g.,
+    # Event triggered when the selection is about to change.
+    #
+    # * memo.selectedOptions - array of selected options (e.g., HTMLOptionElement) representing which options
+    #   will be selected in the Palette, should the change be allowed.
+    # * memo.reorder - if true, then the event represents changing the order of the selections only
+    # * memo.cancel - function to invoke to prevent the change to the Palette from occurring
+    # * memo.defer - like cancel, but returns a no-arguments function that will perform the update at a later date (e.g.,
     #   after a confirmation panel)
     willChange: "t5:palette:willChange"
-    # Event triggered after the selection has changed. The memo object has one property:
-    # * selectedValues - list of selected values
+    # Event triggered after the Palette selection has changed.
+    #
+    # * memo.selectedOptions - array of selected options (e.g., HTMLOptionElement)
+    # * memo.reorder - if true, the event represents a change in the order of selections only
     didChange: "t5:palette:didChange"
 
   # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
@@ -148,12 +152,12 @@ define
     # content.
     update: "t5:zone:update"
 
-    # Triggered (by the standard handler) just before the content in a Zone will be updated.
+    # Triggered (by the standard `events.zone.update` event handler) just before the content in a Zone will be updated.
     willUpdate: "t5:zone:will-update"
 
-    # Triggered (by the standard handler) just after the content in a Zone has updated. If the zone was not visible, it
-    # is made visible after its content is changed, and before this event is triggered. Some number of other components that
-    # also perform Ajax updates of the page also trigger this event.
+    # Triggered (by the standard `events.zone.update` event handle) just after the content in a Zone has updated.
+    # If the zone was not visible, it is made visible after its content is changed, and before this event is triggered.
+    # Some number of other components that also perform Ajax updates of the page also trigger this event.
     #
     # Certain components bind this event to scan new additions to the page to see if certain structures exist and
     # create client-side support in the form of controllers and event handlers. DateField is one such example
