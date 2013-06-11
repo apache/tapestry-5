@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.testng.annotations.Test;
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
-    public static final String AVAILABLE_OPTIONS = "css=.t-palette-available select";
+    public static final String AVAILABLE_OPTIONS = "css=.palette-available select";
 
-    public static final String SELECT_BUTTON = "css=.t-palette [data-action=select]";
+    public static final String SELECT_BUTTON = "css=.palette [data-action=select]";
 
     @Test
     public void form_validation() throws Exception
