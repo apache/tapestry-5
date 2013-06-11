@@ -18,23 +18,23 @@
     <div class="palette-controls">
         <div>
             <button data-action="select" class="btn" disabled="${disabledValue}">
-                <img src="${select}" alt="${message:core-palette-select-label}"/>
+                <i class="icon-arrow-right"/>
             </button>
         </div>
         <div>
             <button data-action="deselect" class="btn" disabled="${disabledValue}">
-                <img src="${deselect}" alt="${message:core-palette-deselect-label}"/>
+                <i class="icon-arrow-left"/>
             </button>
         </div>
         <t:if test="reorder">
             <div>
                 <button data-action="move-up" class="btn" disabled="${disabledValue}">
-                    <img src="${moveUp}" alt="${message:core-palette-up-label}"/>
+                    <i class="icon-arrow-up"/>
                 </button>
             </div>
             <div>
                 <button data-action="move-down" class="btn" disabled="${disabledValue}">
-                    <img src="${moveDown}" alt="${message:core-palette-down-label}"/>
+                    <i class="icon-arrow-down"/>
                 </button>
             </div>
         </t:if>

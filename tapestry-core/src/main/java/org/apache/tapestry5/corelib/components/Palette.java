@@ -23,6 +23,7 @@ import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 import java.util.Collection;
 
@@ -74,8 +75,7 @@ public class Palette extends AbstractField
     /**
      * The image to use for the deselect button (the default is a left pointing arrow).
      */
-    @Parameter(value = "asset:deselect.png")
-    @Property(write = false)
+    @Parameter
     private Asset deselect;
 
     /**
@@ -112,22 +112,19 @@ public class Palette extends AbstractField
     /**
      * The image to use for the move down button (the default is a downward pointing arrow).
      */
-    @Parameter(value = "asset:move_down.png")
-    @Property(write = false)
+    @Parameter
     private Asset moveDown;
 
     /**
      * The image to use for the move up button (the default is an upward pointing arrow).
      */
-    @Parameter(value = "asset:move_up.png")
-    @Property(write = false)
+    @Parameter
     private Asset moveUp;
 
     /**
      * The image to use for the select button (the default is a right pointing arrow).
      */
-    @Parameter(value = "asset:select.png")
-    @Property(write = false)
+    @Parameter
     private Asset select;
 
     /**
@@ -171,6 +168,13 @@ public class Palette extends AbstractField
     @Inject
     @Symbol(SymbolConstants.COMPACT_JSON)
     private boolean compactJSON;
+
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
+    void pageLoaded() {
+        deprecationWarning.ignoredComponentParameters(resources, "select", "moveUp", "moveDown", "deselect");
+    }
 
 
     public final Renderable mainRenderer = new Renderable()
