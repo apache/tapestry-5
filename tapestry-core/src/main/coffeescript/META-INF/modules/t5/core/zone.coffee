@@ -59,7 +59,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       zone = findZone element
 
       if zone
-        zone.trigger events.zone.refresh,  url: @attribute "href"
+        zone.trigger events.zone.refresh,  url: element.attribute "href"
 
       return false
 
