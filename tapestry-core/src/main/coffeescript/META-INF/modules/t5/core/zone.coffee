@@ -38,20 +38,25 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
         zone = element.findParent "[data-container-type=zone]"
 
         if zone is null
-          console.error "Unable to locate containing zone for #{element}."
+          throw new Error "Unable to locate containing zone for #{element}."
 
         return zone
 
       zone = dom zoneId
 
       if zone is null
-        console.error "Unable to locate zone '#{zoneId}'."
+        throw new Error "Unable to locate zone '#{zoneId}'."
 
       return zone
 
     dom.onDocument "click", "a[data-update-zone]", ->
 
-      zone = findZone this
+      element = @closest "[data-update-zone]"
+
+      unless element
+        throw new Error "Could not locate containing element with data-update-zone attribute."
+
+      zone = findZone element
 
       if zone
         zone.trigger events.zone.refresh,  url: @attribute "href"
