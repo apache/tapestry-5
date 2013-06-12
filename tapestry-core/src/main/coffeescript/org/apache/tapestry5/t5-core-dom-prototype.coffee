@@ -161,7 +161,12 @@ define ["underscore", "./utils", "./events", "prototype"], (_, utils, events) ->
   # Passed the DOM Element
     constructor: (@element) ->
 
-      # Hides the wrapped element, setting its display to 'none'.
+    toString: ->
+      markup = @element.outerHTML
+
+      "ElementWrapper[#{markup.substring 0, (markup.indexOf ">") + 1}]"
+
+    # Hides the wrapped element, setting its display to 'none'.
     hide: ->
       @element.hide()
 

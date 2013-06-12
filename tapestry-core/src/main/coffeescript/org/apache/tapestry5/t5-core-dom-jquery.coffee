@@ -118,6 +118,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Some coders would use some JavaScript cleverness to automate more of the mapping from the ElementWrapper API
     # to the jQuery API, but that eliminates a chance to write some very necessary documentation.
 
+    toString: ->
+      markup = @element.outerHTML
+
+      "ElementWrapper[#{markup.substring 0, (markup.indexOf ">") + 1}]"
+
     # Hides the wrapped element, setting its display to 'none'.
     hide: ->
       @$.hide()
