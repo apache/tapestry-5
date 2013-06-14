@@ -182,6 +182,16 @@ define ["underscore", "./utils", "./events", "prototype"], (_, utils, events) ->
 
       return this
 
+    # Gets or sets a CSS property.
+    css: (name, value) ->
+
+      if arguments.length is 1
+        return @element.getStyle name
+
+      @element.setStyle name: value
+
+      return this
+
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
       @element.remove()

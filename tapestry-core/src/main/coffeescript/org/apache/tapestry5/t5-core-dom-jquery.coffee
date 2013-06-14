@@ -139,6 +139,17 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
       return this
 
+    # Gets or sets a CSS property. jQuery provides a lot of mapping of names to canonical names.
+    css: (name, value) ->
+
+      if arguments.length is 1
+        return @$.css name
+
+      @$.css name, value
+
+      return this
+
+
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
       # jQuery's remove() will remove event handlers which we don't want.
