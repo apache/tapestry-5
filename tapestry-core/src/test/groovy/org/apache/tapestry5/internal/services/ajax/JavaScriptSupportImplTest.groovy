@@ -1,5 +1,4 @@
-package org.apache.tapestry5.internal.services.ajax;
-
+package org.apache.tapestry5.internal.services.ajax
 
 import org.apache.tapestry5.Asset
 import org.apache.tapestry5.ComponentResources
@@ -8,8 +7,8 @@ import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathCons
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
 import org.apache.tapestry5.ioc.util.IdAllocator
 import org.apache.tapestry5.json.JSONArray
-import org.testng.annotations.Test
 import org.apache.tapestry5.services.javascript.*
+import org.testng.annotations.Test
 
 class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
@@ -122,7 +121,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         expect(stackSource.getStack("mystack")).andReturn(mystack).atLeastOnce()
 
         expect(mystack.stacks).andReturn([])
-
+        expect(mystack.modules).andReturn([])
         expect(mystack.javaScriptLibraries).andReturn([library1, library2])
 
         expect(pathConstructor.constructPathsForJavaScriptStack("mystack")).andReturn(["stacks/mystack.js"])
@@ -163,7 +162,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         expect(stackSource.getStack("custom")).andReturn(stack)
         expect(pathConstructor.constructPathsForJavaScriptStack("custom")).andReturn(["stack.js"])
         expect(stack.stylesheets).andReturn([stylesheetLink])
-
+        expect(stack.modules).andReturn([])
         expect(stack.initialization).andReturn "customInit();"
 
         expect(stack.stacks).andReturn([])
@@ -188,6 +187,42 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
     }
 
     @Test
+    void import_stack_with_modules() {
+        DocumentLinker linker = mockDocumentLinker()
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource()
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
+        JavaScriptStack mystack = mockJavaScriptStack()
+
+        expect(stackSource.getStack("mystack")).andReturn(mystack).atLeastOnce()
+
+        expect(mystack.stacks).andReturn([])
+        expect(mystack.modules).andReturn(["foo/bar", "gnip/gnop"])
+
+        expect(pathConstructor.constructPathsForJavaScriptStack("mystack")).andReturn(["stacks/mystack.js"])
+
+        expect(mystack.stylesheets).andReturn([])
+
+        expect(mystack.initialization).andReturn null
+
+        linker.addLibrary("stacks/mystack.js")
+        linker.addInitialization(InitializationPriority.NORMAL, "foo/bar", null, null)
+        linker.addInitialization(InitializationPriority.NORMAL, "gnip/gnop", null, null)
+
+        replay()
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor)
+
+        jss.importStack("mystack")
+
+
+
+        jss.commit()
+
+        verify()
+
+    }
+
+    @Test
     void import_stack_with_dependencies() {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
@@ -208,11 +243,13 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(pathConstructor.constructPathsForJavaScriptStack("parent")).andReturn(["parent.js"])
         expect(parent.stylesheets).andReturn([parentStylesheetLink])
+        expect(parent.modules).andReturn([])
 
         expect(parent.initialization).andReturn("parentInit();")
 
         expect(pathConstructor.constructPathsForJavaScriptStack("child")).andReturn(["child.js"])
         expect(child.stylesheets).andReturn([childStylesheetLink])
+        expect(child.modules).andReturn([])
 
         expect(child.getInitialization()).andReturn("childInit();")
 

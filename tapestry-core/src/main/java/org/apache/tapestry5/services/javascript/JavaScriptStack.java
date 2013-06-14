@@ -64,6 +64,14 @@ public interface JavaScriptStack
     List<StylesheetLink> getStylesheets();
 
     /**
+     * Returns a list of modules to {@link JavaScriptSupport#require(String) require} with the stack.
+     *
+     * @since 5.4
+     * @see ModuleManager
+     */
+    List<String> getModules();
+
+    /**
      * Returns static JavaScript initialization for the stack. This block of JavaScript code will be added to the
      * page that imports the stack. The code executes outside of any other function (i.e., the code is not deferred
      * until the DOM is loaded). As with the other methods, if localization is a factor, the result of this method

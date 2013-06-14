@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,6 +53,12 @@ public enum StackExtensionType
      * @see org.apache.tapestry5.services.javascript.JavaScriptStack#getStylesheets()
      */
     STYLESHEET,
+
+    /**
+     * A module to load with the stack.
+     * @since 5.4
+     */
+    MODULE,
 
     /**
      * Extra JavaScript initialization (rarely used). No symbol expansion takes place.

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,6 +63,21 @@ class ExtensibleJavaScriptStackTest extends TapestryTestCase {
 
         assert stack.stacks == ["stacka", "stackb"]
         assert stack.javaScriptLibraries.empty
+
+        verify()
+    }
+
+    @Test
+    void contributed_modules() {
+
+        replay()
+
+        ExtensibleJavaScriptStack stack = new ExtensibleJavaScriptStack(null, [
+            new StackExtension(StackExtensionType.MODULE, "t5/core/dom"),
+            new StackExtension(StackExtensionType.MODULE, "magic"),
+        ])
+
+        assert stack.getModules() == ["t5/core/dom", "magic"]
 
         verify()
 

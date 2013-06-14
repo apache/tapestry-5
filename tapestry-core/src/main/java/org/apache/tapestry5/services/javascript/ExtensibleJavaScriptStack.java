@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
     private final List<StylesheetLink> stylesheets;
 
     private final List<String> stacks;
+
+    private final List<String> modules;
 
     private final String initialization;
 
@@ -104,6 +106,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
 
         stacks = extensions.filter(by(StackExtensionType.STACK)).map(extractValue).toList();
 
+        modules = extensions.filter(by(StackExtensionType.MODULE)).map(extractValue).toList();
+
         stylesheets = extensions.filter(by(StackExtensionType.STYLESHEET)).map(extractValue).map(stringToAsset)
                 .map(assetToStylesheetLink).toList();
 
@@ -133,4 +137,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         return initialization;
     }
 
+    public List<String> getModules()
+    {
+        return modules;
+    }
 }
