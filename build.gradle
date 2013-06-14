@@ -204,6 +204,7 @@ subprojects {
     }
 
     artifacts {
+        archives sourcesJar
         meta sourcesJar
     }
 
