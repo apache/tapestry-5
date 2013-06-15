@@ -192,6 +192,11 @@ define ["underscore", "./utils", "./events", "prototype"], (_, utils, events) ->
 
       return this
 
+    # Returns the offset of the object relative to the document. The returned object has
+    # keys `top`' and `left`'.
+    offset: ->
+      @element.viewportOffset()
+
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
       @element.remove()

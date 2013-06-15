@@ -149,6 +149,10 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
       return this
 
+    # Returns the offset of the object relative to the document. The returned object has
+    # keys `top`' and `left`'.
+    offset: ->
+      @$.offset()
 
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
