@@ -15,8 +15,6 @@ configurations {
     antlr3
 }
 
-sourceSets.main.java.srcDir antlrOutput
-
 dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
@@ -59,15 +57,20 @@ task compileCoffeeScript(type: CompileCoffeeScript) {
     outputDir "${mainGeneratedDir}/compiled-coffeescript"
 }
 
+task compileProcessedCoffeescript(type: CompileCoffeeScript) {
+    srcDir "src/main/preprocessed-coffeescript"
+    outputDir "${mainGeneratedDir}/compiled-processed-coffeescript"
+}
+
 task compileTestCoffeeScript(type: CompileCoffeeScript) {
     srcDir "src/test/coffeescript"
     outputDir "${testGeneratedDir}/compiled-coffeescript"
 }
 
-
 sourceSets {
     main {
         output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
+        output.dir(compileProcessedCoffeescript.outputDir, builtBy: compileProcessedCoffeescript)
         output.dir(antlrOutput, builtBy: generateGrammarSource)
     }
     test {

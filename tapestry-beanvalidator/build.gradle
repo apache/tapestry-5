@@ -12,23 +12,12 @@ dependencies {
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "build/compiled-coffeescript"
+    outputDir "src/main/generated/compiled-coffeescript"
 }
 
-processResources {
-    from compileCoffeeScript
-}
-
-idea.module {
-    sourceDirs += compileCoffeeScript.srcDir
-    sourceDirs += compileCoffeeScript.outputDir
-
-    // Hack the IML so that "build" is not excluded; necessary because several directories under build
-    // are added as source, resources, or test folders.
-    iml.whenMerged { module ->
-        module.excludeFolders.removeAll {
-            it.canonicalUrl.endsWith "/build"
-        }
+sourceSets {
+    main {
+        output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
     }
 }
 
