@@ -13,11 +13,10 @@
 # limitations under the License.
 
 
-# ## t5/core/dom (jQuery)
+# ## t5/core/dom
 #
 # This is the abstraction layer that allows the majority of components to operate without caring whether the
-# underlying infrastructure framework is Prototype, jQuery, or something else.  This implementation is specific
-# to jQuery, but Tapestry can be adapted to any infrastructure framework by re-implementing this module.
+# underlying infrastructure framework is Prototype, jQuery, or something else.
 #
 # The abstraction layer has a number of disadvantages:
 #
@@ -29,9 +28,82 @@
 # It is quite concievable that some components will require direct access to the infrastructure framework, especially
 # those that are wrappers around third party libraries or plugins; however many simple components may need no more than
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
-#
-# Changes to this library should be coordinated with the Prototype version.
-define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
+
+define ["underscore", "./utils", "./events"
+#if prototype
+  , "prototype"
+#elseif jquery
+  , "jquery"
+#endif
+  ],
+(_, utils, events
+#if jquery
+  , $
+#endif
+  ) ->
+
+#if prototype
+  # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
+  # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
+  $ = window.$
+
+  # Fires a native event; something that Prototype does not normally do.
+  # Returns true if the event completed normally, false if it was canceled.
+  fireNativeEvent = (element, eventName) ->
+    if document.createEventObject
+      # IE support:
+      event = document.createEventObject()
+      return element.fireEvent "on#{eventName}", event
+
+    # Everyone else:
+    event = document.createEvent "HTMLEvents"
+    event.initEvent eventName, true, true
+    element.dispatchEvent event
+    return not event.defaultPrevented
+
+  # Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
+  animate = (element, styleName, initialValue, finalValue, duration, callbacks) ->
+    styles = {}
+    range = finalValue - initialValue
+    initialTime = Date.now()
+    first = true
+    animator = ->
+      elapsed = Date.now() - initialTime
+      if elapsed >= duration
+        styles[styleName] = finalValue
+        element.setStyle styles
+        window.clearInterval timeoutID
+        triggerReflow()
+        callbacks.oncomplete and callbacks.oncomplete()
+
+      # TODO: Add an easein/easeout function
+
+      newValue = initial + range * (elapsed / duration)
+
+      element.setStyle styles
+
+      if first
+        callbacks.onstart and callbacks.onstart()
+        first = false
+
+    timeoutID = window.setInterval animator
+
+    styles[styleName] = initialValue
+    element.setStyle styles
+
+  # converts a selector to an array of DOM elements
+  parseSelectorToElements = (selector) ->
+    if _.isString selector
+      return $$ selector
+
+    # Array is assumed to be array of DOM elements
+    if _.isArray selector
+      return selector
+
+    # Assume its a single DOM element
+
+    [selector]
+#endif
 
   # Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
   # primarily exists to validate the value, and to "unpack" an ElementWrapper into a DOM element.
@@ -43,7 +115,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
       return content
 
     if content instanceof ElementWrapper
+#if jquery
       return content.$
+#elseif prototype
+      return content.element
+#endif
 
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
 
@@ -59,10 +135,15 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
   #  or a key name for others.
   class EventWrapper
 
+#if jquery
     constructor: (event, memo) ->
       @nativeEvent = event
       @memo = memo
-
+#elseif prototype
+    constructor: (event) ->
+      @nativeEvent = event
+      @memo = event.memo
+#endif
       # This is to satisfy YUICompressor which doesn't seem to like 'char', even
       # though it doesn't appear to be a reserved word.
       this[name] = event[name] for name in ["type", "char", "key"]
@@ -70,9 +151,14 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Stops the event which prevents further propagation of the DOM event,
     # as well as DOM event bubbling.
     stop: ->
+#if jquery
       @nativeEvent.stopImmediatePropagation()
       @nativeEvent.preventDefault()
+#elseif prototype
+      @nativeEvent.stop()
+#endif
 
+#if jquery
   # Interface between the dom's event model, and jQuery's.
   #
   # * jqueryObject - jQuery wrapper around one or more DOM elements
@@ -105,15 +191,55 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     jqueryObject.on eventNames, match, wrapped
 
     return
+#elseif prototype
+  # Interface between the dom's event model, and Prototype's.
+  #
+  # * elements - array of DOM elements (or the document object)
+  # * eventNames - array of event names
+  # * match - selector to match bubbled elements, or null
+  # * handler - event handler function to invoke; it will be passed an `EventWrapper` instance as the first parameter,
+  #   and the memo as the second parameter. `this` will be the `ElementWrapper` for the matched element.
+  #
+  # Event handlers may return false to stop event propogation; this prevents an event from bubbling up, and
+  # prevents any browser default behavior from triggering.  This is often easier than accepting the `EventWrapper`
+  # object as the first parameter and invoking `stop()`.
 
-  # Wraps a DOM element and jQuery object, providing some common behaviors.
+  onevent = (elements, eventNames, match, handler) ->
+      throw new Error "No event handler was provided." unless handler?
+
+      wrapped = (prototypeEvent) ->
+        # Set `this` to be the matched ElementWrapper, rather than the element on which the event is observed
+        # (which is often further up the hierarchy).
+        elementWrapper = new ElementWrapper prototypeEvent.findElement()
+        eventWrapper = new EventWrapper prototypeEvent
+
+        result = handler.call elementWrapper, eventWrapper, eventWrapper.memo
+
+        # If an event handler returns exactly false, then stop the event.
+        if result is false
+          prototypeEvent.stop()
+
+        return
+
+      for element in elements
+        for eventName in eventNames
+          Event.on element, eventName, match, wrapped
+
+      return
+#endif
+
+  # Wraps a DOM element, providing some common behaviors.
   # Exposes the DOM element as property `element`.
   class ElementWrapper
 
-  # Passed the DOM Element
+#if jquery
+    # Passed the jQuery object
     constructor: (query) ->
       @$ = query
       @element = query[0]
+#elseif prototype
+    constructor: (@element) ->
+#endif
 
     # Some coders would use some JavaScript cleverness to automate more of the mapping from the ElementWrapper API
     # to the jQuery API, but that eliminates a chance to write some very necessary documentation.
@@ -125,7 +251,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
     # Hides the wrapped element, setting its display to 'none'.
     hide: ->
+#if jquery
       @$.hide()
+#elseif prototype
+      @element.hide()
+#endif
 
       triggerReflow()
 
@@ -133,8 +263,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
     # Displays the wrapped element if hidden.
     show: ->
+#if jquery
       @$.show()
-
+#elseif prototype
+      @element.show()
+#endif
       triggerReflow()
 
       return this
@@ -143,21 +276,36 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     css: (name, value) ->
 
       if arguments.length is 1
+#if jquery
         return @$.css name
+#elseif prototype
+        return @element.getStyle name
+#endif
 
+#if jquery
       @$.css name, value
+#elseif prototype
+      @element.setStyle name: value
+#endif
 
       return this
 
     # Returns the offset of the object relative to the document. The returned object has
     # keys `top`' and `left`'.
     offset: ->
+#if jquery
       @$.offset()
+#elseif prototype
+      @element.viewportOffset()
+#endif
 
     # Removes the wrapped element from the DOM.  It can later be re-attached.
     remove: ->
-      # jQuery's remove() will remove event handlers which we don't want.
+#if jquery
       @$.detach()
+#elseif prototype
+      @element.remove()
+#endif
 
       triggerReflow()
 
@@ -175,44 +323,75 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     attribute: (name, value) ->
 
       if _.isObject name
+#if jquery
         @$.attr name
+#elseif prototype
+        for name, value of name
+          @element.writeAttribute name, value
+#endif
         return this
 
+#if jquery
       current = @$.attr name
       if arguments.length > 1
         @$.attr name, value
+#elseif prototype
+      current = @element.readAttribute name
+      if arguments.length > 1
+        @element.writeAttribute name, value
+#endif
 
       return current
 
     # Moves the cursor to the field.
     focus: ->
+#if jquery
       @$.focus()
+#elseif prototype
+      @element.focus()
+#endif
 
       return this
 
     # Returns true if the element has the indicated class name, false otherwise.
     hasClass: (name) ->
+#if jquery
       @$.hasClass name
+#elseif prototype
+      @element.hasClassName name
+#endif
 
     # Removes the class name from the element.
     removeClass: (name) ->
+#if jquery
       @$.removeClass name
+#elseif prototype
+      @element.removeClassName name
+#endif
 
       return this
 
     # Adds the class name to the element.
     addClass: (name) ->
+#if jquery
       @$.addClass name
+#elseif prototype
+      @element.addClassName name
+#endif
 
       return this
 
     # Updates this element with new content, replacing any old content. The new content may be HTML text, or a DOM
     # element, or an ElementWrapper, or null (to remove the body of the element).
     update: (content) ->
+#if jquery
       @$.empty()
 
       if content
         @$.append (convertContent content)
+#elseif prototype
+      @element.update (content and convertContent content)
+#endif
 
       triggerReflow()
 
@@ -220,7 +399,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
     # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     append: (content) ->
+#if jquery
       @$.append (convertContent content)
+#elseif prototype
+      @element.insert bottom: (convertContent content)
+#endif
 
       triggerReflow()
 
@@ -228,7 +411,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
     # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     prepend: (content) ->
+#if jquery
       @$.prepend (convertContent content)
+#elseif prototype
+      @element.insert top: (convertContent content)
+#endif
 
       triggerReflow()
 
@@ -237,7 +424,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately before
     # this ElementWrapper's element.
     insertBefore: (content) ->
+#if jquery
       @$.before (convertContent content)
+#elseif prototype
+      @element.insert before: (convertContent content)
+#endif
 
       triggerReflow()
 
@@ -246,7 +437,11 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
     # this ElementWrapper's element.
     insertAfter: (content) ->
+#if jquery
       @$.after (convertContent content)
+#elseif prototype
+      @element.insert after: (convertContent content)
+#endif
 
       triggerReflow()
 
@@ -257,9 +452,15 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
     fadeIn: (duration, callback) ->
+#if jquery
       @$.fadeIn duration * 1000, ->
         triggerReflow()
         callback and callback()
+#elseif prototype
+      animate @element, "opacity", 0, 1, duration * 1000,
+        onstart: => @element.show()
+        oncomplete: callback
+#endif
 
       return this
 
@@ -269,67 +470,109 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
     fadeOut: (duration, callback) ->
+#if jquery
       @$.fadeOut duration * 1000, ->
         triggerReflow()
         callback and callback()
+#elseif prototype
+      animate @element, "opacity", 1, 0, duration * 1000,
+        oncomplete: callback
+#endif
 
       return this
 
     # Finds the first child element that matches the CSS selector, wrapped as an ElementWrapper.
     # Returns null if not found.
     findFirst: (selector) ->
+#if jquery
       match = @$.find selector
 
       if match.length
         # At least one element was matched, just keep the first
         new ElementWrapper match.first()
+#elseif prototype
+      match = @element.down selector
+
+      # Prototype returns undefined if not found, we want to return null.
+      if match
+        new ElementWrapper match
+#endif
       else
         return null
 
     # Finds _all_ child elements matching the CSS selector, returning them
     # as an array of ElementWrappers.
     find: (selector) ->
+#if jquery
       matches = @$.find selector
 
       return [] if matches.length is 0
 
       for i in [0..(matches.length - 1)]
         new ElementWrapper matches.eq i
+#elseif prototype
+      matches = @element.select selector
+
+      _.map matches, (e) -> new ElementWrapper e
+#endif
 
     # Find the first container element that matches the selector (wrapped as an ElementWrapper),
     # or returns null.
     findParent: (selector) ->
+#if jquery
       parents = @$.parents selector
 
       return null unless parents.length
 
       new ElementWrapper parents.eq(0)
+#elseif prototype
+      parent = @element.up selector
+
+      return null unless parent
+
+      new ElementWrapper parent
+#endif
 
     # Returns this ElementWrapper if it matches the selector; otherwise, returns the first container element (as an ElementWrapper)
     # that matches the selector. Returns null if no container element matches.
     closest: (selector) ->
-
+#if jquery
       match = @$.closest selector
 
       switch
         when match.length is 0 then return null
         when match[0] is @element then return this
         else return new ElementWrapper match
+#elseif prototype
+      if @element.match selector
+        return this
+
+      return @findParent selector
+#endif
 
     # Returns an ElementWrapper for this element's containing element.
     # Returns null if this element has no parent (either because this element is the document object, or
     # because this element is not yet attached to the DOM).
     parent: ->
+#if jquery
       parent = @$.parent()
 
       return null unless parent.length
+#elseif prototype
+      parent = @element.parentNode
 
+      return null unless parent
+#endif
       new ElementWrapper parent
 
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
     visible: ->
+#if jquery
       @$.css("display") isnt "none"
+#elseif prototype
+      @element.visible()
+#endif
 
     # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
     deepVisible: ->
@@ -359,12 +602,25 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
       unless (_.isNull memo) or (_.isObject memo) or (_.isUndefined memo)
         throw new Error "Event memo may be null or an object, but not a simple type."
 
+#if jquery
       jqEvent = $.Event eventName
 
       @$.trigger jqEvent, memo
 
       # Not sure if this is sufficient to ensure that event was cancelled:
       return jqEvent.isImmediatePropagationStopped()
+#elseif prototype
+      if (eventName.indexOf ':') > 0
+        # Custom event is supported directly by Prototype:
+        event = @element.fire eventName, memo
+        return not event.defaultPrevented
+
+      # Native events take some extra work:
+      if memo
+        throw new Error "Memo must be null when triggering a native event"
+
+      fireNativeEvent @element, eventName
+#endif
 
     # With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
     # `<textarea>`). With one parameter, updates the field's value, and returns the previous value. The underlying
@@ -373,16 +629,22 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     #
     # * newValue - (optional) new value for field
     value: (newValue) ->
+#if jquery
       current = @$.val()
 
       if arguments.length > 0
         @$.val newValue
+#elseif prototype
+      current = @element.getValue()
 
+      if arguments.length > 0
+        @element.setValue newValue
+#endif
       return current
 
     # Returns true if a checkbox is checked
     checked: ->
-      return @$.is(':checked')
+      @element.checked
 
     # Stores or retrieves meta-data on the element. With one parameter, the current value for the name
     # is returned (or undefined). With two parameters, the meta-data is updated and the previous value returned.
@@ -392,11 +654,17 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # * name - name of meta-data value to store or retrieve
     # * value - (optional) new value for meta-data
     meta: (name, value) ->
+#if jquery
       current = @$.data name
 
       if arguments.length > 1
         @$.data name, value
+#elseif prototype
+      current = @element.retrieve name
 
+      if arguments.length > 1
+        @element.store name, value
+#endif
       return current
 
     # Adds an event handler for one or more events.
@@ -412,8 +680,14 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
       return this
 
     # Returns the text of the element (and its children).
-    text: -> @$.text()
+    text: ->
+#if jquery
+      @$.text()
+#elseif prototype
+      @element.textContent or @element.innerText
+#endif
 
+#if jquery
   # Wrapper around the `jqXHR` object
   class ResponseWrapper
 
@@ -427,6 +701,22 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # Retrieves a response header by name
     header: (name) ->
       @jqxhr.getResponseHeader name
+#elseif prototype
+  # Wrapper around the Prototype `Ajax.Response` object
+  class ResponseWrapper
+
+    constructor: (@res) ->
+
+      @status = res.status
+      @statusText = res.statusText
+      @json = res.responseJSON
+      @text = res.responseText
+
+    # Retrieves a response header by name
+    header: (name) ->
+      @res.getHeader name
+#endif
+
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
@@ -444,8 +734,9 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
   # * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
   #   Passed the exception. Default will generate an exception message and throw an `Error`.
   #   Note: not really supported under jQuery, a hold-over from Prototype.
+  # Returns the module's exports
   ajaxRequest = (url, options = {}) ->
-
+#if jquery
     $.ajax
       url: url
       type: options.method?.toUpperCase() or "POST"
@@ -471,10 +762,57 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
 
         options.success and options.success(new ResponseWrapper jqXHR, data)
         return
+#elseif prototype
+    finalOptions =
+      method: options.method or "post"
+      contentType: options.contentType or "application/x-www-form-urlencoded"
+      parameters: options.parameters or {}
+      onException: (ajaxRequest, exception) ->
+        if options.exception
+          options.exception exception
+        else
+          throw exception
+
+        return
+
+      onFailure: (response) ->
+        message = "Request to #{url} failed with status #{response.getStatus()}"
+        text = response.getStatusText()
+        if not _.isEmpty text
+          message += " -- #{text}"
+        message += "."
+
+        if options.failure
+          options.failure (new ResponseWrapper response), message
+        else
+          throw new Error message
+
+        return
+
+      onSuccess: (response) ->
+
+        # Prototype treats status == 0 as success, even though it may
+        # indicate that the server didn't respond.
+        if (not response.getStatus()) or (not response.request.success())
+          finalOptions.onFailure(new ResponseWrapper response)
+          return
+
+        # Tapestry 5.3 includes lots more exception catching ... that just got in the way
+        # of identifying the source of problems.  That's been stripped out.
+        options.success and options.success(new ResponseWrapper response)
+        return
+
+    new Ajax.Request(url, finalOptions)
+#endif
 
     return exports
 
-  triggerReflow = _.debounce (-> $(document).trigger events.document.reflow), 250
+  triggerReflow =
+#if jquery
+    _.debounce (-> $(document).trigger events.document.reflow), 250
+#elseif prototype
+    _.debounce (-> $(document).fire events.document.reflow), 250
+#endif
 
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
@@ -484,15 +822,24 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
   # Returns the ElementWrapper, or null if no element with the id exists
   exports = wrapElement = (element) ->
     if _.isString element
+#if jquery
       element = document.getElementById element
+#elseif prototype
+      element = $ element
+#endif
       return null unless element
-      return new ElementWrapper ($ element)
     else
       throw new Error "Attempt to wrap a null DOM element" unless element
 
+#if jquery
     # Assume the object is a DOM element, document or window; something that is compatible with the
     # jQuery API (especially with respect to events).
     new ElementWrapper ($ element)
+#elseif prototype
+    # Assume the object is a DOM element, document or window; something that is compatible with the
+    # Prototype API (especially with respect to events).
+    new ElementWrapper element
+#endif
 
   _.extend exports,
     wrap: wrapElement
@@ -520,7 +867,13 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
         handler = match
         match = null
 
-      onevent ($ selector), events, match, handler
+#if jquery
+      elements = $ selector
+#elseif prototype
+      elements = parseSelectorToElements selector
+      events = utils.split events
+#endif
+      onevent elements, events, match, handler
       return
 
     # onDocument() is used to add an event handler to the document object; this is used
@@ -533,6 +886,10 @@ define ["underscore", "./utils", "jquery", "./events"], (_, utils, $, events) ->
     # it is always safe to get the body.
     body: -> wrapElement document.body
 
+#if jquery
   $(window).on "resize", exports.triggerReflow
+#elseif prototype
+  Event.observe window, "resize", triggerReflow
+#endif
 
   return exports

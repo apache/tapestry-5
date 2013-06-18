@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,27 +29,27 @@
 # presence of the `%` character.  In addition, any message key that begins with "private-" is
 # assumed to contain sensitive data (such as database URLs or passwords) and will not be
 # exposed to the client.
-do ->
-  # In the unexpected case that the data-locale attribute is missing, assume English
-  locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-  define ["./messages/#{locale}", "underscore", "./console"],
-    (messages, _, console) ->
+# In the unexpected case that the data-locale attribute is missing, assume English
+locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-      # Returns the application message catalog message for the given key. Returns
-      # a placeholder if the key is not found.
-      get = (key) ->
-        value = messages[key]
+define ["./messages/#{locale}", "underscore", "./console"],
+  (messages, _, console) ->
 
-        if value
-          return value
-        else
-          console.error "No value for message catalog key '#{key}' exists."
-          return "[[Missing Key: '#{key}']]"
+    # Returns the application message catalog message for the given key. Returns
+    # a placeholder if the key is not found.
+    get = (key) ->
+      value = messages[key]
 
-      # Returns all keys that are defined by the underlying catalog, in no specific order.
-      get.keys = -> _.keys messages
+      if value
+        return value
+      else
+        console.error "No value for message catalog key '#{key}' exists."
+        return "[[Missing Key: '#{key}']]"
+
+    # Returns all keys that are defined by the underlying catalog, in no specific order.
+    get.keys = -> _.keys messages
 
 
-      # Export get as the main function.
-      return get
+    # Export get as the main function.
+    return get

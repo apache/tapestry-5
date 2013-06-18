@@ -26,7 +26,7 @@ dependencies {
 
     // Transitive will bring in the unwanted string template library as well
     compile "org.antlr:antlr-runtime:3.3", {
-        exclude group:"org.antlr", module:"stringtemplate"
+        exclude group: "org.antlr", module: "stringtemplate"
     }
 
     // Antlr3 tool path used with the antlr3 task
@@ -53,12 +53,16 @@ task generateGrammarSource(type: JavaExec) {
     }
 }
 
+task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
+}
+
 task compileCoffeeScript(type: CompileCoffeeScript) {
     outputDir "${mainGeneratedDir}/compiled-coffeescript"
 }
 
 task compileProcessedCoffeescript(type: CompileCoffeeScript) {
-    srcDir "src/main/preprocessed-coffeescript"
+    dependsOn preprocessCoffeeScript
+    srcDir preprocessCoffeeScript.outputDir
     outputDir "${mainGeneratedDir}/compiled-processed-coffeescript"
 }
 
@@ -72,6 +76,9 @@ sourceSets {
         output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
         output.dir(compileProcessedCoffeescript.outputDir, builtBy: compileProcessedCoffeescript)
         output.dir(antlrOutput, builtBy: generateGrammarSource)
+        java {
+            srcDir antlrOutput
+        }
     }
     test {
         output.dir(compileTestCoffeeScript.outputDir, builtBy: compileTestCoffeeScript)

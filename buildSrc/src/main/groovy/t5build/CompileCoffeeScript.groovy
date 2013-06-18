@@ -6,15 +6,6 @@ import ro.isdc.wro.extensions.processor.support.coffeescript.*
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 
-class CustomizedProcessor extends RhinoCoffeeScriptProcessor {
-
-    protected CoffeeScript newCoffeeScript() {
-        CoffeeScript engine = new CoffeeScript()
-        engine.options = ["bare"]
-        return engine
-    }
-}
-
 class CompileCoffeeScript extends DefaultTask {
 
     {
@@ -44,7 +35,7 @@ class CompileCoffeeScript extends DefaultTask {
             include '**/*.coffee'
         }
 
-        def processor = new CustomizedProcessor()
+        def processor = new RhinoCoffeeScriptProcessor()
 
         tree.visit { visit ->
             if (visit.directory) return
