@@ -1,21 +1,17 @@
-UL.t-stack-trace LI {
+UL.stack-trace LI {
     font-size: small;
 }
 
-LI.t-usercode-frame {
+LI.usercode-frame {
     font-weight: bold;
     color: blue;
 }
 
-LI.t-omitted-frame {
+LI.omitted-frame {
     color: gray;
     list-style: square;
 }
 
-UL.t-filtered LI.t-omitted-frame {
+UL.filtered LI.omitted-frame {
     display: none;
-}
-
-DT:after {
-    content: ":";
 }

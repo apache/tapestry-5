@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ define ["./dom"],
     dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
       checked = @element.checked
 
-      for traceList in dom.body.find "ul.t-stack-trace"
-        traceList[if checked then "addClass" else "removeClass"] "t-filtered"
+      for traceList in dom.body.find "ul.stack-trace"
+        traceList[if checked then "addClass" else "removeClass"] "filtered"
 
       return
 

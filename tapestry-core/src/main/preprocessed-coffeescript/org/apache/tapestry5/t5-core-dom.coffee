@@ -78,7 +78,8 @@ define ["underscore", "./utils", "./events"
 
       # TODO: Add an easein/easeout function
 
-      newValue = initial + range * (elapsed / duration)
+      newValue = initialValue + range * (elapsed / duration)
+      styles[styleName] = newValue
 
       element.setStyle styles
 

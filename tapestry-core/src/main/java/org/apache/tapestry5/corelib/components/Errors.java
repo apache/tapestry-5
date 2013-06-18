@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.CSSClassConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 
 import java.util.List;
@@ -25,13 +25,14 @@ import java.util.List;
 /**
  * Standard validation error presenter. Must be enclosed by a
  * {@link org.apache.tapestry5.corelib.components.Form} component. If errors are present, renders a
- * div element around a banner message and around an unnumbered list of
+ * {@code <div>} element around a banner message and around an unnumbered list of
  * error messages. Renders nothing if the {@link org.apache.tapestry5.ValidationTracker} shows no
  * errors.
- * 
- * @see Form
+ *
  * @tapestrydoc
+ * @see Form
  */
+@Import(module = "bootstrap")
 public class Errors
 {
     /**
@@ -43,10 +44,10 @@ public class Errors
     private String banner;
 
     /**
-     * The CSS class for the div element rendered by the component. The default value is "t-error".
+     * The CSS class for the div element rendered by the component. The default value is "alert alert-error alert-block".
      */
     @Parameter(name = "class")
-    private String className = CSSClassConstants.ERROR;
+    private String className = "alert alert-error";
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)
@@ -58,35 +59,34 @@ public class Errors
             throw new RuntimeException("The Errors component must be enclosed by a Form component.");
 
         if (!tracker.getHasErrors())
+        {
             return;
+        }
 
         writer.element("div", "class", className);
+        writer.element("button",
+                "class", "close",
+                "data-dismiss", "alert");
+        writer.writeRaw("&times;");
+        writer.end();
 
-        // Inner div for the banner text
-        writer.element("div", "class", "t-banner");
-        writer.write(banner);
+        writer.element("h4");
+        writer.writeRaw(banner);
         writer.end();
 
         List<String> errors = tracker.getErrors();
 
-        if (!errors.isEmpty())
+        writer.element("ul");
+
+        for (String message : errors)
         {
-            // Only write out the <UL> if it will contain <LI> elements. An empty <UL> is not
-            // valid XHTML.
-
-            writer.element("ul");
-
-            for (String message : errors)
-            {
-                writer.element("li");
-                writer.write(message);
-                writer.end();
-            }
-
-            writer.end(); // ul
+            writer.element("li");
+            writer.write(message);
+            writer.end();
         }
 
-        writer.end(); // div
+        writer.end(); // ul
 
+        writer.end(); // div
     }
 }

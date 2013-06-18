@@ -30,7 +30,7 @@
                 </div>
                 <h4>Stack trace:</h4>
             </div>
-            <ul class="t-stack-trace t-filtered">
+            <ul class="stack-trace filtered">
                 <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
                     ${frame}
                 </li>

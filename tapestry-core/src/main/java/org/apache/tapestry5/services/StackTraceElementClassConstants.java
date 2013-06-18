@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ public class StackTraceElementClassConstants
     /**
      * An omitted frame, because it is not interesting (such as a dynamically generated proxy). Usually invisible.
      */
-    public static final String OMITTED = "t-omitted-frame";
+    public static final String OMITTED = "omitted-frame";
 
     /**
      * Part of the application's code base, and therefore highlighted.
      */
-    public static final String USER_CODE = "t-usercode-frame";
+    public static final String USER_CODE = "usercode-frame";
 }

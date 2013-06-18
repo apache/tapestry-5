@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2012 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class CSSClassConstants
      * @deprecated Deprecated in 5.4 with no replacement; decoration of fields with validation errors
      *             has moved to the client.
      */
-    public static final String ERROR = "t-error";
+    public static final String ERROR = "error";
 
     /**
      * CSS class name for individual validation errors.

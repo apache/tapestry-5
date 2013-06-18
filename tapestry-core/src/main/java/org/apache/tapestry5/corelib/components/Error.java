@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.Parameter;
@@ -29,6 +25,8 @@ import org.apache.tapestry5.dom.Element;
  * 
  * @since 5.2.0
  * @tapestrydoc
+ * @deprecated Deprecated in 5.4 with no replacement; the significant changes in 5.4 ensure that validation errors
+ * on re-rendered forms appear with the controls.
  */
 public class Error
 {

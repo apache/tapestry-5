@@ -37,10 +37,12 @@ define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
   # console as needed.
   display = (className, message) ->
     unless floatingConsole
-      floatingConsole = builder ".t-console"
+      floatingConsole = builder ".tapestry-console"
       dom.body.prepend floatingConsole
 
-    div = builder ".t-console-entry.#{className}", (_.escape message)
+    div = builder ".entry>.#{className}",
+      ["button.close", "&times;"],
+      (_.escape message)
 
     floatingConsole.append div.hide().fadeIn FADE_DURATION
 
@@ -59,6 +61,7 @@ define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
   level = (className, consolefn) ->
     (message) ->
       # consolefn may be null if there's no console; under IE it may be non-null, but not a function.
+
       unless consolefn
         # Display it floating. If there's a real problem, such as a failed Ajax request, then the
         # client-side code should be alerting the user in some other way, and not rely on them
@@ -85,13 +88,13 @@ define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
   exports.debug =
     if exports.debugEnabled
       # If native console available, go for it.  IE doesn't have debug, so we use log instead.
-      level "t-debug", (nativeConsole.debug or nativeConsole.log)
+      level "alert", (nativeConsole.debug or nativeConsole.log)
     else
       ->
 
-  exports.info = level "t-info", nativeConsole.info
-  exports.warn = level "t-warn", nativeConsole.warn
-  exports.error = level "t-err", nativeConsole.error
+  exports.info = level "alert.alert-info", nativeConsole.info
+  exports.warn = level "alert", nativeConsole.warn
+  exports.error = level "alert.alert-error", nativeConsole.error
 
   # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
   # if some other module imports this one and modifies that property.
