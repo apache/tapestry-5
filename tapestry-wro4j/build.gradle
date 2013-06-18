@@ -3,10 +3,19 @@ description = "Integration with WRO4J to perform runtime CoffeeScript compilatio
 dependencies {
     compile project(":tapestry-core")
     compile "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}", {
-        exclude group: "org.codehaus.gmaven.runtime"
-        exclude group: "com.github.lltyk"
+        exclude group: "org.codehaus.gmaven.runtime", module: "gmaven-runtime-1.7"
+        exclude group: "com.github.lltyk", module: "dojo-shrinksafe"
+        exclude group: "org.springframework", module: "spring-web"
+        exclude group: "me.n4u.sass", module: "sass-gems"
+        exclude group: "nz.co.edmi", module: "bourbon-gem-jar"
+        exclude group: "org.webjars", module: "jshint"
+        exclude group: "org.webjars", module: "less"
+        exclude group: "org.webjars", module: "emberjs"
+        exclude group: "org.webjars", module: "handlebars"
+        exclude group: "org.webjars", module: "jslint"
+        exclude group: "org.webjars", module: "json2"
         // Due to conflict:
-        exclude group: "org.slf4j"
+        exclude group: "org.slf4j", module: "slf4j-api"
     }
 
     testCompile project(":tapestry-runner")

@@ -27,7 +27,9 @@ dependencies {
     compile "commons-codec:commons-codec:1.5"
 
     // Transitive will bring in the unwanted string template library as well
-    compile "org.antlr:antlr-runtime:3.3", { transitive = false }
+    compile "org.antlr:antlr-runtime:3.3", {
+        exclude group:"org.antlr", module:"stringtemplate"
+    }
 
     // Antlr3 tool path used with the antlr3 task
     antlr3 "org.antlr:antlr:3.3"
