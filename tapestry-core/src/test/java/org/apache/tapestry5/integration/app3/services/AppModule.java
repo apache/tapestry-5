@@ -21,6 +21,8 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
@@ -34,21 +36,30 @@ public class AppModule
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
-        
+
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+    }
+
+    @Contribute(Compatibility.class)
+    public static void disableBackwardsCompatibleFeatures(MappedConfiguration<Trait, Boolean> configuration)
+    {
+        configuration.add(Trait.INITIALIZERS, false);
+        configuration.add(Trait.SCRIPTACULOUS, false);
     }
 
     @Contribute(ClientWhitelist.class)
     public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
     {
-       configuration.add("TestAnalyzer", new WhitelistAnalyzer()
-       {
+        configuration.add("TestAnalyzer", new WhitelistAnalyzer()
+        {
 
-           public boolean isRequestOnWhitelist(Request request)
-           {
-               return true;
-           }
-       }, "before:*");
+            public boolean isRequestOnWhitelist(Request request)
+            {
+                return true;
+            }
+        }, "before:*");
     }
-    
+
 }
