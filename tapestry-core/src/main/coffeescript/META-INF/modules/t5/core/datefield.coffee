@@ -155,7 +155,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
 
     # Initialization:
 
-    scan dom.body()
+    scan dom.body
 
     # And scan any newly added content:
 

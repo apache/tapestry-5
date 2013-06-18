@@ -881,7 +881,7 @@ define ["underscore", "./utils", "./events"
     # Returns a wrapped version of the document.body element. Because all Tapestry JavaScript occurs
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
-    body: -> wrapElement document.body
+    body: wrapElement document.body
 
 #if jquery
   $(window).on "resize", exports.triggerReflow

@@ -38,7 +38,7 @@ define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
   display = (className, message) ->
     unless floatingConsole
       floatingConsole = builder ".t-console"
-      dom.body().prepend floatingConsole
+      dom.body.prepend floatingConsole
 
     div = builder ".t-console-entry.#{className}", (_.escape message)
 

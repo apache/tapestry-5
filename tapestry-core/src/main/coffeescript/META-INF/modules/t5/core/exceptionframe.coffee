@@ -41,7 +41,7 @@ define ["./dom", "./builder", "underscore"],
         ["iframe"],
         ["div > button.pull-right.btn.btn-primary", "Close"]
 
-      dom.body().append container.hide()
+      dom.body.append container.hide()
 
       iframe = (container.findFirst "iframe").element
 

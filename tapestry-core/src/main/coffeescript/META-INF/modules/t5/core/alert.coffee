@@ -78,7 +78,7 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
         return false
 
     findInnerContainer = ->
-      outer = dom.body().findFirst "[data-container-type=alerts]"
+      outer = dom.body.findFirst "[data-container-type=alerts]"
 
       unless outer
         console.error "Unable to locate alert container element to present an alert."
