@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry5.services.BeanBlockContribution;
-import org.apache.tapestry5.services.BeanBlockOverrideSource;
-import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.*;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 public class BeanBlockSourceImplTest extends InternalBaseTestCase
 {
@@ -37,8 +36,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
         Block block = mockBlock();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
-        BeanBlockContribution contribution = new BeanBlockContribution("mydata", "MyPage",
-                                                                       "mydisplay", false);
+        BeanBlockContribution contribution = new DisplayBlockContribution("mydata", "MyPage", "mydisplay");
         Collection<BeanBlockContribution> configuration = newList(contribution);
 
         train_get(cache, "MyPage", page);
@@ -148,8 +146,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
         Block block = mockBlock();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
-        BeanBlockContribution contribution = new BeanBlockContribution("mydata", "MyPage",
-                                                                       "mydisplay", true);
+        BeanBlockContribution contribution = new EditBlockContribution("mydata", "MyPage", "mydisplay");
         Collection<BeanBlockContribution> configuration = newList(contribution);
 
         train_get(cache, "MyPage", page);

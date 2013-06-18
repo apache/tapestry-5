@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
 public class AppModule
 {
-    public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration)
+    public static void contributeBeanBlockOverrideSource(Configuration<Object> configuration)
     {
-        configuration.add(new BeanBlockContribution("boolean", "PropertyDisplayBlockOverrides", "boolean", false));
+        configuration.add(new DisplayBlockContribution("boolean", "PropertyDisplayBlockOverrides", "boolean"));
     }
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)

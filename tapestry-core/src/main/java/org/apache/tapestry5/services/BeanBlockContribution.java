@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,12 +31,7 @@ public class BeanBlockContribution
 
     private final boolean edit;
 
-    /**
-     * @deprecated Use {@link DisplayBlockContribution#DisplayBlockContribution(String, String, String)} or
-     *             {@link EditBlockContribution#EditBlockContribution(String, String, String)} instead. To be
-     *             removed after Tapestry 5.2.
-     */
-    public BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)
+    protected BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)
     {
         assert InternalUtils.isNonBlank(dataType);
         assert InternalUtils.isNonBlank(pageName);
