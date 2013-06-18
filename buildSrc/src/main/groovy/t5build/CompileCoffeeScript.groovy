@@ -6,7 +6,7 @@ import ro.isdc.wro.extensions.processor.support.coffeescript.*
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 
-class CustomizedProcessor extends CoffeeScriptProcessor {
+class CustomizedProcessor extends RhinoCoffeeScriptProcessor {
 
     protected CoffeeScript newCoffeeScript() {
         CoffeeScript engine = new CoffeeScript()
