@@ -36,7 +36,7 @@
 # * Strings: literal markup text
 # * Array: a nested element definition
 #
-# Literal text is NOT escaped. You should be careful to use `t5/core/dom:escapeHTML` if the body contains
+# Literal text is NOT escaped. You should be careful to use Underscore's `escape()` if the body contains
 # any potential markup that should be escaped; alternately, it may be easier to use embedded markup in the body
 # than to use an element definition.
 #

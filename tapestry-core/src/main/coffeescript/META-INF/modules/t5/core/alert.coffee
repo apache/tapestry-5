@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
 
       className = severityToClass[data.severity] or "alert"
 
-      content = if data.markup then data.message else dom.escapeHTML data.message
+      content = if data.markup then data.message else _.escape data.message
 
       # Note that `data-dismiss=alert` is purposely excluded
       # - we want to handle closes w/ notifications to the server if not transient

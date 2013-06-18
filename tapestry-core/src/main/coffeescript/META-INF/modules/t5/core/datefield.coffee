@@ -102,7 +102,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
               @showPopup()
               return
 
-            @fieldError (dom.escapeHTML reply.error)
+            @fieldError (_.escape reply.error)
             @hidePopup()
             return
 

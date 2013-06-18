@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
       floatingConsole = builder ".t-console"
       dom.body().prepend floatingConsole
 
-    div = builder ".t-console-entry.#{className}", (dom.escapeHTML message)
+    div = builder ".t-console-entry.#{className}", (_.escape message)
 
     floatingConsole.append div.hide().fadeIn FADE_DURATION
 

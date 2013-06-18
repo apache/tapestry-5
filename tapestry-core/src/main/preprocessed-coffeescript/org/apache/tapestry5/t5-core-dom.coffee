@@ -844,9 +844,6 @@ define ["underscore", "./utils", "./events"
   _.extend exports,
     wrap: wrapElement
 
-    # Escape's HTML markup in the string.
-    escapeHTML: _.escape
-
     triggerReflow: triggerReflow
 
     ajaxRequest: ajaxRequest
