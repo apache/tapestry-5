@@ -6,8 +6,9 @@ description = "Central module for Tapestry, containing all core services and com
 
 project.ext {
     antlrSource = "src/main/antlr"
-    generatedDir = "src/main/generated"
-    antlrOutput = "$generatedDir/antlr"
+    mainGeneratedDir = "src/main/generated"
+    testGeneratedDir = "src/test/generated"
+    antlrOutput = "$mainGeneratedDir/antlr"
 }
 
 configurations {
@@ -53,12 +54,12 @@ task generateGrammarSource(type: JavaExec) {
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "${generatedDir}/compiled-coffeescript"
+    outputDir "${mainGeneratedDir}/compiled-coffeescript"
 }
 
 task compileTestCoffeeScript(type: CompileCoffeeScript) {
     srcDir "src/test/coffeescript"
-    outputDir "${generatedDir}/compiled-test-coffeescript"
+    outputDir "${testGeneratedDir}/compiled-coffeescript"
 }
 
 
@@ -72,7 +73,7 @@ sourceSets {
     }
 }
 
-clean.delete generatedDir
+clean.delete mainGeneratedDir, testGeneratedDir
 
 compileJava {
     dependsOn generateGrammarSource

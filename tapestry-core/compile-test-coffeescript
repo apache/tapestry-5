@@ -6,6 +6,6 @@
 # Doe NOT compile the test scripts.
 
 inputDir=src/test/coffeescript
-outputDir=src/main/generated/compiled-test-coffeescript
+outputDir=src/test/generated/compiled-coffeescript
 
 coffee --watch --bare --output $outputDir $inputDir
