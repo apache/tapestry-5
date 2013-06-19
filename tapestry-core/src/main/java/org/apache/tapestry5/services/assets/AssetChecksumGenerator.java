@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.Resource;
 import java.io.IOException;
 
 /**
- * Generates a checksum of an arbitrary {@link org.apache.tapestry5.Resource} or {@link StreamableResource} which can be incorporated into
+ * Generates a checksum of an arbitrary {@link org.apache.tapestry5.ioc.Resource} or {@link StreamableResource} which can be incorporated into
  * the {@linkplain org.apache.tapestry5.Asset#toClientURL() client URL} of an Asset.
  *
  * @since 5.4

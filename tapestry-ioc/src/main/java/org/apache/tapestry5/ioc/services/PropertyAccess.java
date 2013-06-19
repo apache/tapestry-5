@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 The Apache Software Foundation
+// Copyright 2006, 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public interface PropertyAccess
 
     /**
      * Returns the annotation of a given property for the specified type if such an annotation is present, else null.
-     * A convenience over invoking {@link #getAdapter(Object)}.{@link #ClassPropertyAdapter.getPropertyAdapter(String)}.{@link #PropertyAdapter.getAnnotation(Class)}
+     * A convenience over invoking {@link #getAdapter(Object)}.{@link ClassPropertyAdapter#getPropertyAdapter(String)}.{@link PropertyAdapter#getAnnotation(Class)}
      *
      * @param instance     the object to read a value from
      * @param propertyName the name of the property to read (case is ignored)

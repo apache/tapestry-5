@@ -229,7 +229,6 @@ public class GridColumns
      * Returns null or "true", depending on whether the Grid is rendering for in-place updates or not ("true"
      * means in-place updates). The affects whether the data-inplace-grid-links attribute will be rendered or not.
      *
-     * @return
      */
     public String getInplaceGridLinks()
     {

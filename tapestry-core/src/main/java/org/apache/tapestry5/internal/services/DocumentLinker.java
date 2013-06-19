@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
  * Responsible for injecting script and style links into the &lt;head&gt; and &lt;body&gt; element of the rendered HTML
  * document.
  *
- * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List
+ * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List, java.util.List)
  * @since 5.4
  */
 public interface DocumentLinker

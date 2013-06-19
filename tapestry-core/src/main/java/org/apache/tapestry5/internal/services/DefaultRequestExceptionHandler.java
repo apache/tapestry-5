@@ -50,7 +50,7 @@ import java.util.Map.Entry;
  * error page. Exception context is formed either from the name of Exception (e.g. SmtpNotRespondingException -> ServiceFailure mapping
  * would render a page with URL /servicefailure/smtpnotresponding) or they can implement {@link ContextAwareException} interface.
  *
- * If no configured exception type is found, the default exception page {@link SymbolConstants.EXCEPTION_REPORT_PAGE} is rendered.
+ * If no configured exception type is found, the default exception page {@link SymbolConstants#EXCEPTION_REPORT_PAGE} is rendered.
  * This fallback exception page must implement the {@link ExceptionReporter} interface.
  */
 public class DefaultRequestExceptionHandler implements RequestExceptionHandler

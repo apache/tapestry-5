@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -442,7 +442,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * @param baseClassName class from which the transformed class extends
      * @param classNode     node for the class
      * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
-     * @return
      * @throws ClassNotFoundException
      */
     private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode, boolean proxy)
