@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -189,7 +189,9 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
     private void writerParameter(ParameterDescription pd, Writer writer) throws IOException
     {
 
-        element(writer, "td", pd.name);
+        writer.write("<td><strong>");
+        writer.write(pd.name);
+        writer.write("</strong></td>");
 
         element(writer, "td", addWordBreaks(shortenClassName(pd.type)));
 
