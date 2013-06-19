@@ -23,8 +23,8 @@ define ["./dom", "./ajax", "./zone"],
 
     LOADING = "tree-children-loading"
     LOADED = "tree-children-loaded"
-    EXPANDED = "t-tree-expanded"
-    SELECTED = "t-selected-leaf-node"
+    EXPANDED = "tree-expanded"
+    SELECTED = "selected-leaf-node"
 
     send = (node, action, success) ->
       container = node.findParent TREE
@@ -43,15 +43,15 @@ define ["./dom", "./ajax", "./zone"],
 
       node.meta LOADING, true
 
-      node.addClass "t-empty-node"
-      node.update "<span class='t-tree-ajax-wait'/>"
+      node.addClass "empty-node"
+      node.update "<span class='tree-ajax-wait'/>"
 
       send node, "expand", (response) ->
         # Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
         # icon instead of a "+" icon)
-        node.update("").addClass(EXPANDED).removeClass("t-empty-node")
+        node.update("").addClass(EXPANDED).removeClass("empty-node")
 
-        label = node.findParent("li").findFirst(".t-tree-label")
+        label = node.findParent("li").findFirst(".tree-label")
 
         label.insertAfter response.json.content
 
@@ -81,7 +81,7 @@ define ["./dom", "./ajax", "./zone"],
         loadChildren this
         return false
 
-      unless @hasClass "t-leaf-node"
+      unless @hasClass "leaf-node"
         toggle this
         return false
 
@@ -105,7 +105,7 @@ define ["./dom", "./ajax", "./zone"],
     dom.onDocument "click", SELECTOR, clickHandler
 
     dom.onDocument "click",
-      "#{TREE}[data-tree-node-selection-enabled] LI.t-leaf-node > .t-tree-label",
+      "#{TREE}[data-tree-node-selection-enabled] LI.leaf-node > .tree-label",
       toggleSelection
 
 

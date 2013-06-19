@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class Tree
 
     /**
      * Allows the container to specify additional CSS class names for the outer DIV element. The outer DIV
-     * always has the class name "t-tree-container"; the additional class names are typically used to apply
+     * always has the class name "tree-container"; the additional class names are typically used to apply
      * a specific size and width to the component.
      */
     @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL)
@@ -86,7 +86,7 @@ public class Tree
      * Used to control the Tree's selections. When this parameter is bound, then the client-side Tree
      * will track what is selected or not selected, and communicate this (via Ajax requests) up to
      * the server, where it will be recorded into the model. On the client-side, the Tree component will
-     * add or remove the {@code t-selected-leaf-node-label} CSS class from {@code span.t-tree-label}
+     * add or remove the {@code selected-leaf-node-label} CSS class from {@code span.tree-label}
      * for the node.
      */
     @Parameter
@@ -129,7 +129,7 @@ public class Tree
     {
         public void render(MarkupWriter writer, RenderQueue queue)
         {
-            writer.element("span", "class", "t-tree-label");
+            writer.element("span", "class", "tree-label");
         }
     };
 
@@ -137,7 +137,7 @@ public class Tree
     {
         public void render(MarkupWriter writer, RenderQueue queue)
         {
-            writer.getElement().attribute("class", "t-selected-leaf-node");
+            writer.getElement().attribute("class", "selected-leaf-node");
         }
     };
 
@@ -149,7 +149,7 @@ public class Tree
      * @param node
      *         to render
      * @param isLast
-     *         if true, add "t-last" attribute to the LI element
+     *         if true, add "last" attribute to the LI element
      * @return command to render the node
      */
     private RenderCommand toRenderCommand(final TreeNode node, final boolean isLast)
@@ -170,19 +170,19 @@ public class Tree
 
                 if (isLast)
                 {
-                    writer.attributes("class", "t-last");
+                    writer.attributes("class", "last");
                 }
 
                 if (isLeaf)
                 {
-                    writer.getElement().attribute("class", "t-leaf-node");
+                    writer.getElement().attribute("class", "leaf-node");
                 }
 
-                Element e = writer.element("span", "class", "t-tree-icon");
+                Element e = writer.element("span", "class", "tree-icon");
 
                 if (!isLeaf && !node.getHasChildren())
                 {
-                    e.addClassName("t-empty-node");
+                    e.addClassName("empty-node");
                 }
 
                 boolean hasChildren = !isLeaf && node.getHasChildren();
@@ -193,10 +193,10 @@ public class Tree
                 if (expanded)
                 {
                     // Inform the client side, so it doesn't try to fetch it a second time.
-                    e.addClassName("t-tree-expanded");
+                    e.addClassName("tree-expanded");
                 }
 
-                writer.end(); // span.t-tree-icon
+                writer.end(); // span.tree-icon
 
                 // From here on in, we're pushing things onto the queue. Remember that
                 // execution order is reversed from order commands are pushed.
@@ -256,7 +256,7 @@ public class Tree
 
     public String getContainerClass()
     {
-        return className == null ? "t-tree-container" : "t-tree-container " + className;
+        return className == null ? "tree-container" : "tree-container " + className;
     }
 
     public Link getTreeActionLink()

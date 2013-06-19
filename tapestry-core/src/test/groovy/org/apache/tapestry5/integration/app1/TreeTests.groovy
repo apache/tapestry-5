@@ -22,16 +22,12 @@ class TreeTests extends TapestryCoreTestCase
     @Test
     void basics()
     {
-        openBaseURL()
-
-        clickAndWait "link=Tree Component Demo"
-
-        clickAndWait "link=Clear Expansions"
+        openLinks "Tree Component Demo", "Clear Expansions"
 
         waitForPageInitialized()
 
         //Click on Games
-        click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
+        click "//div[@class='tree-container test-hook']/ul/li[2]/span[@class='tree-icon']"
 
         sleep 25 // See if that helps with the intermittent test suite failures on the CI server
 
@@ -40,7 +36,7 @@ class TreeTests extends TapestryCoreTestCase
         assertTextPresent "Board Games"
 
         //Click on Board Games
-        click "//div[@class='t-tree-container test-hook']/ul/li[2]/ul/li/span[@class='t-tree-icon']"
+        click "//div[@class='tree-container test-hook']/ul/li[2]/ul/li/span[@class='tree-icon']"
 
         //Assert the leafs are displayed
         waitForAjaxRequestsToComplete PAGE_LOAD_TIMEOUT
@@ -53,31 +49,26 @@ class TreeTests extends TapestryCoreTestCase
     @Test
     void select_node()
     {
-
-        openBaseURL()
-
-        clickAndWait "link=Tree Component Selection Demo"
-
-        clickAndWait "link=Clear All"
+        openLinks "Tree Component Selection Demo", "Clear All"
 
         waitForPageInitialized()
 
-        click "//span[@class='t-tree-icon']"
+        click "//span[@class='tree-icon']"
 
-        waitForCSSSelectedElementToAppear "li.t-leaf-node > span"
+        waitForCSSSelectedElementToAppear "li.leaf-node > span"
 
         assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
 
         // Click the first selectable node, probably Oscar
 
-        click "css=[data-tree-node-selection-enabled] li.t-leaf-node > span.t-tree-label"
+        click "css=[data-tree-node-selection-enabled] li.leaf-node > span.tree-label"
 
-        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node"
+        waitForCSSSelectedElementToAppear "span.selected-leaf-node"
 
         clickAndWait "link=Redraw"
 
         // Make sure it is still there after a redraw
 
-        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node"
+        waitForCSSSelectedElementToAppear "span.selected-leaf-node"
     }
 }
