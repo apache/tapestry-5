@@ -275,3 +275,6 @@ Where Tapestry-specific CSS still exists (in support of the Palette component an
 has been removed. This may affect applications that overrode the Tapestry CSS rules to adapt Tapestry to the application
 look and feel.
 
+The Grid component no longer emits CSS class names, instead it renders data attributes into Grid headers, rows, and cells,
+such as `data-grid-row=first`, `data-grid-property=title`, etc. These attributes may still be referenced using CSS rules
+where desired.

@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
 
 package org.apache.tapestry5.integration.symbolparam.components
 
+import org.apache.tapestry5.annotations.Import
 import org.apache.tapestry5.annotations.Property
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.services.Request
 import org.apache.tapestry5.services.Session
 
+@Import(stack="core")
 class Layout {
 
     @Inject

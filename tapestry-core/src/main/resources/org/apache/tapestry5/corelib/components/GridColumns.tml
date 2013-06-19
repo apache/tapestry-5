@@ -1,16 +1,15 @@
-<thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
-    <tr data-inplace-grid-links="${inplaceGridLinks}">
-        <th t:type="Loop" source="columnNames" value="columnName" formstate="none" class="prop:headerClass"
-            index="index">
-            <t:delegate to="blockForColumn"/>
-            <t:block id="standardHeader">
-                <a t:id="sort" rel="nofollow">${columnModel.label}</a>
-                <t:if test="columnModel.sortable">
-                    <a t:id="sort2" rel="nofollow">
-                        <img src="${icon}" class="t-sort-icon" alt="${iconLabel}"/>
-                    </a>
+<thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xml:space="default">
+<tr data-inplace-grid-links="${inplaceGridLinks}">
+    <th t:id="loop" t:type="Loop" source="columnNames" value="columnName" formstate="none"
+        index="index" t:mixins="rendernotification">
+        <t:delegate to="blockForColumn"/>
+        <t:block id="standardHeader">
+            <a t:id="sort" rel="nofollow">${columnModel.label}
+                <t:if test="! sortDisabled">
+                    <img src="${icon}" class="pull-right" title="${iconLabel}"/>
                 </t:if>
-            </t:block>
-        </th>
-    </tr>
+            </a>
+        </t:block>
+    </th>
+</tr>
 </thead>

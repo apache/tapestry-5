@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
-import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridModel;
 import org.apache.tapestry5.grid.GridSortModel;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.Request;
 
 import java.util.List;
@@ -70,9 +67,8 @@ public class GridColumns
     // Use the CSS, Luke!
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass",
-                    "zone=inherit:zone"})
-    private EventLink sort, sort2;
+            parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "zone=inherit:zone"})
+    private EventLink sort;
 
     @Inject
     @Path("${" + ComponentParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET + "}")
@@ -123,21 +119,6 @@ public class GridColumns
         return !columnModel.isSortable();
     }
 
-    public String getSortLinkClass()
-    {
-        switch (getSortForColumn())
-        {
-            case ASCENDING:
-                return GridConstants.SORT_ASCENDING_CLASS;
-
-            case DESCENDING:
-                return GridConstants.SORT_DESCENDING_CLASS;
-
-            default:
-                return null;
-        }
-    }
-
     private ColumnSort getSortForColumn()
     {
         GridSortModel sortModel = gridModel.getSortModel();
@@ -147,21 +128,30 @@ public class GridColumns
         return sortModel.getColumnSort(columnId);
     }
 
-    public String getHeaderClass()
-    {
-        List<String> classes = CollectionFactory.newList();
+    void onBeginRenderFromLoop(MarkupWriter writer) {
 
-        if (!lean) classes.add(columnModel.getId());
+        if (!lean) {
+            writer.attributes("data-grid-property", columnModel.getId());
+        }
 
-        String sort = getSortLinkClass();
+        switch (getSortForColumn())
+        {
+            case ASCENDING:
+                writer.attributes("data-grid-column-sort", "ascending");
+                break;
 
-        if (sort != null) classes.add(sort);
+            case DESCENDING:
+                writer.attributes("data-grid-column-sort", "descending");
+            default:
+        }
 
-        if (index == 0) classes.add(GridConstants.FIRST_CLASS);
+        if (index == 0) {
+            writer.attributes("data-grid-column", "first");
+        }
 
-        if (index == lastColumnIndex) classes.add(GridConstants.LAST_CLASS);
-
-        return TapestryInternalUtils.toClassAttributeValue(classes);
+        if (index == lastColumnIndex) {
+            writer.attributes("data-grid-column", "last");
+        }
     }
 
     public boolean isActiveSortColumn()

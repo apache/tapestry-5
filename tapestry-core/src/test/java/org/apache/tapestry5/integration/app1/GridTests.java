@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,16 @@ import org.testng.annotations.Test;
  */
 public class GridTests extends TapestryCoreTestCase
 {
+
+    private static final String RESET = "Reset the Grid";
+
     /**
      * Basic Grid rendering, with a column render override. Also tests sorting.
      */
     @Test
     public void basic_grid()
     {
-        openLinks("Grid Demo", "reset the Grid");
+        openLinks("Grid Demo", RESET);
 
         // "Sort Rating" via the header cell override (TAPESTRY-2081)
 
@@ -77,9 +80,9 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        assertAttributeValueEndsWith("//img[@class='t-sort-icon']/@src", "/sort-asc.png");
+        assertAttributeValueEndsWith("//th/a/img/@src", "/sort-asc.png");
 
-        assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
+        assertAttribute("//th/a/img/@title", "[Asc]");
 
         clickAndWait("link=1");
 
@@ -87,10 +90,10 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        assertAttributeValueEndsWith("//img[@class='t-sort-icon']/@src", "/sort-desc.png");
-        assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
+        assertAttributeValueEndsWith("//th/a/img/@src", "/sort-desc.png");
+        assertAttribute("//th/a/img/@title", "[Desc]");
 
-        clickAndWait("link=reset the Grid");
+        clickAndWait("link=" + RESET);
 
         // Back to where we started.
 
@@ -317,7 +320,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void rel_nofollow_present_in_sort_links()
     {
-        openLinks("Grid Demo", "reset the Grid");
+        openLinks("Grid Demo", RESET);
 
         assertAttribute("//a[contains(@href,'columns:sort')]/@rel", "nofollow");
     }

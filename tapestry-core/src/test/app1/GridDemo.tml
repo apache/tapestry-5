@@ -11,8 +11,8 @@
         </t:parameter>
     </table>
 
-    <p>
-        [<t:actionlink t:id="reset">reset the Grid</t:actionlink>]
-    </p>
+    <div>
+        <t:actionlink t:id="reset" class="btn">Reset the Grid</t:actionlink>
+    </div>
 
 </html>

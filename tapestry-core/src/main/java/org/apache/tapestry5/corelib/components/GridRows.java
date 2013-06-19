@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,17 +28,15 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.PropertyModel;
-import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.GridModel;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.FormSupport;
 
 import java.util.List;
@@ -57,10 +55,10 @@ import java.util.List;
  * parameter), or use an entity type for the "row" parameter for which
  * Tapestry can provide a ValueEncoder automatically. This will allow Tapestry
  * to use a unique ID for each row that doesn't change when rows are reordered.
- * 
+ *
  * @tapestrydoc
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class GridRows
 {
     private int startRow;
@@ -221,49 +219,51 @@ public class GridRows
     @Property(write = false)
     private PropertyModel columnModel;
 
-    public String getRowClass()
+    void onBeginRenderFromRow(MarkupWriter writer)
     {
-        List<String> classes = CollectionFactory.newList();
+
+        if (dataRowIndex == startRow)
+        {
+            writer.attributes("data-grid-row", "first");
+        }
+
+        if (dataRowIndex == endRow)
+        {
+            writer.attributes("data-grid-row", "last");
+        }
 
         // Not a cached parameter, so careful to only access it once.
 
         String rc = rowClass;
 
-        if (rc != null) classes.add(rc);
-
-        if (dataRowIndex == startRow) classes.add(GridConstants.FIRST_CLASS);
-
-        if (dataRowIndex == endRow) classes.add(GridConstants.LAST_CLASS);
-
-        return TapestryInternalUtils.toClassAttributeValue(classes);
+        if (rc != null)
+        {
+            writer.attributes("class", rc);
+        }
     }
 
-    public String getCellClass()
+    void onBeginRenderFromColumn(MarkupWriter writer)
     {
-        List<String> classes = CollectionFactory.newList();
 
         String id = gridModel.getDataModel().get(propertyName).getId();
 
         if (!lean)
         {
-            classes.add(id);
-
-            switch (gridModel.getSortModel().getColumnSort(id))
-            {
-                case ASCENDING:
-                    classes.add(GridConstants.SORT_ASCENDING_CLASS);
-                    break;
-
-                case DESCENDING:
-                    classes.add(GridConstants.SORT_DESCENDING_CLASS);
-                    break;
-
-                default:
-            }
+            writer.attributes("data-grid-property", id);
         }
 
+        switch (gridModel.getSortModel().getColumnSort(id))
+        {
+            case ASCENDING:
+                writer.attributes("data-grid-column-sort", "ascending");
+                break;
 
-        return TapestryInternalUtils.toClassAttributeValue(classes);
+            case DESCENDING:
+                writer.attributes("data-grid-column-sort", "descending");
+                break;
+
+            default:
+        }
     }
 
     void setupRender()

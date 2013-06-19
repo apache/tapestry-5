@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,10 +29,9 @@ class GridSymbolDemoTests extends TapestryCoreTestCase
 
         clickAndWait "link=4"
 
-        // Using the XPath selectors was a bit flakey, so maybe css is better.
-        assertText("css=tr.t-first td.me", "6");
-        assertText("css=tr.t-first td.odd", "false");
-        assertText("css=tr.t-last td.me", "7");
-        assertText("css=tr.t-first td.odd", "false");
+        assertText("css=tr[data-grid-row=first] td[data-grid-property=me]", "6");
+        assertText("css=tr[data-grid-row=first] td[data-grid-property=odd]", "false");
+        assertText("css=tr[data-grid-row=last] td[data-grid-property=me]", "7");
+        assertText("css=tr[data-grid-row=last] td[data-grid-property=odd]", "true");
     }
 }
