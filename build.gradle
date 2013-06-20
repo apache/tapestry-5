@@ -258,8 +258,10 @@ subprojects.each { project.evaluationDependsOn(it.name) }
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
-
 task aggregateJavadoc(type: Javadoc) {
+
+    if ( !checkJDK() )
+        throw new StopActionException("Update your JDK to fix VU#225657")
 
     dependsOn configurations.javadoc
     group "Documentation"
@@ -267,13 +269,16 @@ task aggregateJavadoc(type: Javadoc) {
     description "Build the aggregated JavaDocs for all modules"
     maxMemory "512m"
     destinationDir file("$buildDir/documentation/javadocs")
+
+    def tapestryStylesheet = isJDK7() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
+
     configure(options) {
         splitIndex true
         linkSource true
-        stylesheetFile file("src/javadoc/stylesheet.css")
+        stylesheetFile tapestryStylesheet
         windowTitle "Tapestry API Documentation"
         docTitle "Tapestry JavaDoc ($project.version)"
-        bottom 'Copyright &copy; 2003-2012 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
+        bottom 'Copyright &copy; 2003-2013 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
         use = true // 'use' seems to be a reserved word for the DSL
         links "http://download.oracle.com/javase/6/docs/api/"
         links "http://download.oracle.com/javaee/6/api/"
@@ -484,4 +489,23 @@ boolean isSnapshot() {
 
 boolean isWindows() {
     System.properties['os.name'].toLowerCase().contains('windows')
+}
+
+boolean isJDK7() {
+    System.properties['java.version'].startsWith("1.7.")
+}
+
+// Check JDK version to prevent VU#225657 see:
+// http://www.oracle.com/technetwork/topics/security/javacpujun2013-1899847.html
+// http://www.kb.cert.org/vuls/id/225657
+boolean checkJDK() {
+    def jdkVersion = System.properties['java.version']
+    def minor = Integer.valueOf(jdkVersion.substring(jdkVersion.indexOf("_")+1))
+
+    if (jdkVersion.startsWith("1.7")) {
+        minor > 21
+    }
+    else { // JDK 6 and 5 require the same minor version
+        minor > 45
+    }
 }
