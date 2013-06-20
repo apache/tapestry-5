@@ -500,7 +500,12 @@ boolean isJDK7() {
 // http://www.kb.cert.org/vuls/id/225657
 boolean checkJDK() {
     def jdkVersion = System.properties['java.version']
-    def minor = Integer.valueOf(jdkVersion.substring(jdkVersion.indexOf("_")+1))
+    def match = jdkVersion =~ /_(\d+)/
+
+    if (! match.find())
+      throw new IllegalStateException("""Could not parse minor version number out of "#{jdkVersion}".""")
+
+    def minor = match[0][1].toInteger()
 
     if (jdkVersion.startsWith("1.7")) {
         minor > 21
