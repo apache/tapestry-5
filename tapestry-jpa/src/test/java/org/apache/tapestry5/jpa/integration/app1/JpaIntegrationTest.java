@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -140,11 +140,11 @@ public class JpaIntegrationTest extends SeleniumTestCase
 
         clickAndWait("link=First Name");
 
-        assertText("//td[@class='firstName t-sort-column-ascending']", "Joe_1");
+        assertText("//td[@data-grid-column-sort='ascending']", "Joe_1");
 
         clickAndWait("link=First Name");
 
-        assertText("//td[@class='firstName t-sort-column-descending']", "Joe_9");
+        assertText("//td[@data-grid-column-sort='descending']", "Joe_9");
     }
 
     public void commit_after_on_component_methods()

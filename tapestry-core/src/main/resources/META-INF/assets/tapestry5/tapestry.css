@@ -12,3 +12,18 @@ input.ajax-wait {
     background-repeat: no-repeat;
     background-position: center right;
 }
+
+th[data-grid-column-sort] a {
+    padding-right: 20px;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-image: url(../core/sortable.png);
+}
+
+th[data-grid-column-sort=ascending] a {
+    background-image: url(../core/sort-asc.png);
+}
+
+th[data-grid-column-sort=descending] a {
+    background-image: url(../core/sort-desc.png);
+}

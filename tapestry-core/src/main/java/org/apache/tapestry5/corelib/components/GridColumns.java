@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
@@ -63,24 +66,10 @@ public class GridColumns
     @Parameter
     private String zone;
 
-    // TODO: Two EventLinks just to suppress the space between the text and the icon is not very modern.
-    // Use the CSS, Luke!
     @SuppressWarnings("unused")
     @Component(
             parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "zone=inherit:zone"})
     private EventLink sort;
-
-    @Inject
-    @Path("${" + ComponentParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET + "}")
-    private Asset ascendingAsset;
-
-    @Inject
-    @Path("${" + ComponentParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET + "}")
-    private Asset descendingAsset;
-
-    @Inject
-    @Path("${" + ComponentParameterConstants.GRIDCOLUMNS_SORTABLE_ASSET + "}")
-    private Asset sortableAsset;
 
     @Inject
     private Messages messages;
@@ -133,16 +122,18 @@ public class GridColumns
         if (!lean) {
             writer.attributes("data-grid-property", columnModel.getId());
         }
-
-        switch (getSortForColumn())
-        {
-            case ASCENDING:
-                writer.attributes("data-grid-column-sort", "ascending");
-                break;
-
-            case DESCENDING:
-                writer.attributes("data-grid-column-sort", "descending");
-            default:
+        if(!isSortDisabled()){
+            switch (getSortForColumn())
+            {
+                case ASCENDING:
+                    writer.attributes("data-grid-column-sort", "ascending");
+                    break;
+  
+                case DESCENDING:
+                    writer.attributes("data-grid-column-sort", "descending");
+                default:
+                    writer.attributes("data-grid-column-sort", "sortable");
+            }
         }
 
         if (index == 0) {
@@ -175,34 +166,6 @@ public class GridColumns
         return true;
     }
 
-
-    public Asset getIcon()
-    {
-        switch (getSortForColumn())
-        {
-            case ASCENDING:
-                return ascendingAsset;
-
-            case DESCENDING:
-                return descendingAsset;
-
-            default:
-                return sortableAsset;
-        }
-    }
-
-    public String getIconLabel()
-    {
-        switch (getSortForColumn())
-        {
-            case ASCENDING:
-                return messages.get("core-ascending");
-            case DESCENDING:
-                return messages.get("core-descending");
-            default:
-                return messages.get("core-sortable");
-        }
-    }
 
     public List<String> getColumnNames()
     {

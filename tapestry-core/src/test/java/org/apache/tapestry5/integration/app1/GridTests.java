@@ -80,9 +80,7 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        assertAttributeValueEndsWith("//th/a/img/@src", "/sort-asc.png");
-
-        assertAttribute("//th/a/img/@title", "[Asc]");
+        assertAttribute("//th/@data-grid-column-sort", "ascending");
 
         clickAndWait("link=1");
 
@@ -90,22 +88,13 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        assertAttributeValueEndsWith("//th/a/img/@src", "/sort-desc.png");
-        assertAttribute("//th/a/img/@title", "[Desc]");
+        assertAttribute("//th/@data-grid-column-sort", "descending");
 
         clickAndWait("link=" + RESET);
 
         // Back to where we started.
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
-    }
-
-    private void assertAttributeValueEndsWith(String attributeLocator, String suffix)
-    {
-        String value = getAttribute(attributeLocator);
-
-        assertTrue(value.endsWith(suffix), String.format("Value for attribute %s (%s) should end with '%s'.", 
-                attributeLocator, value, suffix));
     }
 
     @Test

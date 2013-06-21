@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,12 +31,16 @@ public class GridConstants
     /**
      * Marks the column that is currently sorted for sort ascending.  May be applied to a &lt;th&gt; (in the
      * &lt;thead&gt; or a &lt;td&gt; in the &lt;tbody&gt;).
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String SORT_ASCENDING_CLASS = "t-sort-column-ascending";
 
     /**
      * Marks the column that is currently sorted for sort descending.  May be applied to a &lt;th&gt; (in the
      * &lt;thead&gt; or a &lt;td&gt; in the &lt;tbody&gt;).
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
 
     public static final String SORT_DESCENDING_CLASS = "t-sort-column-descending";
@@ -70,16 +74,22 @@ public class GridConstants
 
     /**
      * Default {@link org.apache.tapestry5.Asset} for ascending columns sort
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String COLUMNS_ASCENDING = "sort-asc.png";
 
     /**
      * Default {@link org.apache.tapestry5.Asset} for ascending columns sort
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String COLUMNS_DESCENDING = "sort-desc.png";
 
     /**
      * Default {@link org.apache.tapestry5.Asset} for sortable columns
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String COLUMNS_SORTABLE = "sortable.png";
 }

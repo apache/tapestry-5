@@ -4,11 +4,7 @@
         index="index" t:mixins="rendernotification">
         <t:delegate to="blockForColumn"/>
         <t:block id="standardHeader">
-            <a t:id="sort" rel="nofollow">${columnModel.label}
-                <t:if test="! sortDisabled">
-                    <img src="${icon}" class="pull-right" title="${iconLabel}"/>
-                </t:if>
-            </a>
+            <a t:id="sort" rel="nofollow">${columnModel.label}</a>
         </t:block>
     </th>
 </tr>

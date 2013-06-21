@@ -138,11 +138,11 @@ public class TapestryHibernateIntegrationTests extends SeleniumTestCase
 
         clickAndWait("link=First Name");
 
-        assertText("//td[@class='firstName t-sort-column-ascending']", "Joe_1");
+        assertText("//td[@data-grid-column-sort='ascending']", "Joe_1");
 
         clickAndWait("link=First Name");
 
-        assertText("//td[@class='firstName t-sort-column-descending']", "Joe_9");
+        assertText("//td[@data-grid-column-sort='descending']", "Joe_9");
     }
 
     public void hibernate_statistics()
