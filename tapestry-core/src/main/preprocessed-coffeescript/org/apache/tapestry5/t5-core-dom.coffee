@@ -29,18 +29,13 @@
 # those that are wrappers around third party libraries or plugins; however many simple components may need no more than
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 
-define ["underscore", "./utils", "./events"
 #if prototype
-  , "prototype"
+define ["underscore", "./utils", "./events", "prototype"],
+(_, utils, events) ->
 #elseif jquery
-  , "jquery"
+define ["underscore", "./utils", "./events", "jquery"],
+(_, utils, events, $) ->
 #endif
-  ],
-(_, utils, events
-#if jquery
-  , $
-#endif
-  ) ->
 
 #if prototype
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
