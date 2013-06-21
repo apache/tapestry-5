@@ -323,7 +323,7 @@ task coffeeScriptDocs(type: Exec) {
 
     def outputDir = file("$buildDir/documentation/coffeescript")
 
-    // Note: this currently does not include the 
+    // Note: this currently does not include the results of preprocessing the t5/core/dom.coffee file
 
     def sources = files()
 
