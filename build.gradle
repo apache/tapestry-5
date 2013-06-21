@@ -323,14 +323,19 @@ task coffeeScriptDocs(type: Exec) {
 
     def outputDir = file("$buildDir/documentation/coffeescript")
 
-    def sources = subprojects*.fileTree("src/main", {
-        include "**/*.coffee"
-    })*.files.flatten()
+    // Note: this currently does not include the 
+
+    def sources = files()
+
+    subprojects.each { sub ->
+      // When I figure out how to get the preprocessed CoffeeScript included, this can change to src/main/coffeescript
+      sources += sub.fileTree("src/main", { include "**/*.coffee" })
+    }
 
     // Needs to be installed via "npm install -g docco"
     executable isWindows() ? "docco.cmd" : "docco"
     args "--output", outputDir
-    args sources
+    args sources.files.sort({ a,b -> a.name.compareTo b.name })
 
     inputs.files sources
     outputs.dir outputDir
@@ -385,6 +390,11 @@ task zippedJavadoc(type: Zip) {
 
     from file("src/docroot-template"), {
         filter ReplaceTokens, tokens: [version: project.version]
+        include "*.html"
+    }
+
+    from file("src/docroot-template"), {
+        exclude "*.html"
     }
 
     into "apidocs", { from aggregateJavadoc.outputs.files }

@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## t5/beanvalidator/validation
+# ## t5/beanvalidator/beanvalidator-validation
+#
+# The awkward name is to accomidate the "docco" documentation tool; it doesn't understand
+# having the same named file in multiple folders. See https://github.com/jashkenas/docco/issues/201.
 #
 # Supports extra validations related to the beanvalidator module.
 define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/validation"],
@@ -29,7 +32,7 @@ define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core
       # A select that is used as part of a palette is different; the validation attributes
       # are attached to the selected (right side) <select>, and anything there counts as part
       # of the selection.
-      if e.findParent ".t-palette"
+      if e.findParent ".palette"
         e.element.options.length
       else
         # An ordinary <select> may have multiple options (the clumsy control-click way)

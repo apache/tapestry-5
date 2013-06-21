@@ -41,6 +41,9 @@ import java.util.Map;
  */
 public class BeanValidatorModule
 {
+
+    private static final String MODULE_NAME = "t5/beanvalidator/beanvalidator-validation";
+
     public static void bind(final ServiceBinder binder)
     {
         binder.bind(FieldValidatorDefaultSource.class, BeanFieldValidatorDefaultSource.class).withSimpleId();
@@ -132,7 +135,7 @@ public class BeanValidatorModule
         {
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/beanvalidator/validation");
+                javaScriptSupport.require(MODULE_NAME);
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-optionality", "prohibited",
@@ -144,7 +147,7 @@ public class BeanValidatorModule
         {
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                javaScriptSupport.require(MODULE_NAME);
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-validate-regexp", attributes.get("regexp"),
@@ -156,7 +159,7 @@ public class BeanValidatorModule
         {
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/beanvalidator/validation");
+                javaScriptSupport.require(MODULE_NAME);
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-range-message", message);
