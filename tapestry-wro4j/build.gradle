@@ -38,5 +38,5 @@ jar.manifest {
 test {
     useJUnit()
 
-    systemProperties "geb.build.reportsDir": "$reportsDir/geb"
+    systemProperties "geb.build.reportsDir": "$reporting.baseDir/geb"
 }
