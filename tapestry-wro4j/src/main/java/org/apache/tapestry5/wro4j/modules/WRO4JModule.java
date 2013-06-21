@@ -33,7 +33,6 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import ro.isdc.wro.extensions.processor.js.GoogleClosureCompressorProcessor;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
-import ro.isdc.wro.extensions.processor.support.coffeescript.CoffeeScript;
 import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 import ro.isdc.wro.model.resource.processor.impl.css.CssCompressorProcessor;
 
@@ -65,18 +64,7 @@ public class WRO4JModule
     @Contribute(ResourceProcessorSource.class)
     public static void provideDefaultProcessors(MappedConfiguration<String, ResourcePreProcessor> configuration)
     {
-        configuration.add("CoffeeScriptCompiler",
-                new RhinoCoffeeScriptProcessor()
-                {
-                    @Override
-                    protected CoffeeScript newCoffeeScript()
-                    {
-                        return new CoffeeScript().setOptions("bare");
-                    }
-                }
-        );
-
-
+        configuration.addInstance("CoffeeScriptCompiler", NodeOrRhinoCoffeeScriptCompiler.class);
         configuration.addInstance("CSSMinimizer", CssCompressorProcessor.class);
         configuration.add("JavaScriptMinimizer", new GoogleClosureCompressorProcessor());
     }
