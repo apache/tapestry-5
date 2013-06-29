@@ -66,9 +66,9 @@ DIV[data-tree-node-selection-enabled] LI.leaf-node > .tree-label.selected-leaf-n
     background-position: -64px -16px;
 }
 
-SPAN.tree-icon-empty-node {
+SPAN.tree-icon.empty-node {
     cursor: default;
-    background-position: -64px 0px !important;
+    background-position: -32px 0px;
 }
 
 SPAN.tree-expanded {

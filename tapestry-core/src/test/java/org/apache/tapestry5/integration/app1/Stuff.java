@@ -90,6 +90,10 @@ public class Stuff
         }
 
         ROOT.addChild(numbers);
+
+        ROOT.addChild(new Stuff("Empty"));
+        // Special case: appears as a folder, even with no children:
+        ROOT.addChild(new Stuff("Empty Folder"));
     }
 
     public static TreeModel<Stuff> createTreeModel()

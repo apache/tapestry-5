@@ -58,6 +58,8 @@ define ["./dom", "./ajax", "./zone"],
         node.meta LOADING, false
         node.meta LOADED, true
 
+    # toggles a folder in the tree between expanded and collapsed (once data for the folder
+    # has been loaded).
     toggle = (node) ->
       sublist = node.findParent("li").findFirst("ul")
 
@@ -71,19 +73,18 @@ define ["./dom", "./ajax", "./zone"],
       sublist.show()
       send node, "markExpanded"
 
+    # The handler is triggered on the `<span data-node-id=''>` directly inside the `<li>`.
     clickHandler = ->
 
-      # First case is dynamically loaded due to user action; second case
-      # is rendered with overall page due to server-side expansion model.
-      loaded = (@meta LOADED) or (@hasClass EXPANDED)
-
-      if (not loaded) and (not @hasClass "t-empty-node")
-        loadChildren this
+      # Ignore clicks on leaf nodes, and on folders that are known to be empty.
+      if (@parent().hasClass "leaf-node") or (@hasClass "empty-node")
         return false
 
-      unless @hasClass "leaf-node"
+      # If not already loaded then fire off the Ajax request to load the content.
+      if (@meta LOADED) or (@hasClass EXPANDED)
         toggle this
-        return false
+      else
+        loadChildren this
 
       return false
 

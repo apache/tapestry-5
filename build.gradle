@@ -34,7 +34,7 @@ project.version = tapestryVersion()
 def tapestryVersion() {
 
     def major = "5.4"
-    def minor = "-alpha-10  "
+    def minor = "-alpha-10"
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
     // When building normally, or for a release, no suffix is desired.
@@ -96,7 +96,9 @@ allprojects {
         project {
             // Leave at 1.5 to make sure that IDEA doesn't break the build for non-IDEA users by inserting
             // @Override on implementations all over the place.
-            jdkName = "1.5"
+            languageLevel = "1.5"
+            // But this is what most (all?) of the devs are actually using:
+            jdkName = "1.7"
         }
     }
 
@@ -320,6 +322,7 @@ task aggregateJavadoc(type: Javadoc) {
 task coffeeScriptDocs(type: Exec) {
     group "Documentation"
     description "Build docco documentation for all CoffeeScript sources"
+    dependsOn project(":tapestry-core").tasks.preprocessCoffeeScript
 
     def outputDir = file("$buildDir/documentation/coffeescript")
 
@@ -328,16 +331,19 @@ task coffeeScriptDocs(type: Exec) {
     def sources = files()
 
     subprojects.each { sub ->
-      // When I figure out how to get the preprocessed CoffeeScript included, this can change to src/main/coffeescript
-      sources += sub.fileTree("src/main", { include "**/*.coffee" })
+      sources += sub.fileTree("src/main/coffeescript", { include "**/*.coffee" })
     }
+
+    sources += project(":tapestry-core").tasks.preprocessCoffeeScript.outputs.files.asFileTree
+
+    logger.error "sources=$sources"
 
     // Needs to be installed via "npm install -g docco"
     executable isWindows() ? "docco.cmd" : "docco"
     args "--output", outputDir
     args sources.files.sort({ a,b -> a.name.compareTo b.name })
 
-    inputs.files sources
+    inputs.files { sources }
     outputs.dir outputDir
 }
 
@@ -348,8 +354,7 @@ dependencies {
 }
 
 task continuousIntegration {
-    // Temporarily removed aggregateJavadoc as there's an issue w.r.t JDK on the CI server
-    dependsOn subprojects.build, subprojects.uploadPublished
+    dependsOn subprojects.build, aggregateJavadoc, subprojects.uploadPublished
     description "Task executed on Jenkins CI server after SVN commits"
 }
 

@@ -22,6 +22,13 @@ public class StuffTreeModelAdapter implements TreeModelAdapter<Stuff>
 {
     public boolean isLeaf(Stuff value)
     {
+        // Special case:
+
+        if (value.name.equals("Empty Folder"))
+        {
+            return false;
+        }
+
         return !hasChildren(value);
     }
 
