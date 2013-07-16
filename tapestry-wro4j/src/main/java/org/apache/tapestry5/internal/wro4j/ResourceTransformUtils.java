@@ -32,7 +32,7 @@ public class ResourceTransformUtils
         return ((double) nanos) * NANOS_TO_MILLIS;
     }
 
-    public static long toChecksum(Resource resource) throws IOException
+    public static long toChecksum(Resource resource)
     {
         Adler32 checksum = new Adler32();
 
@@ -56,11 +56,13 @@ public class ResourceTransformUtils
                 checksum.update(buffer, 0, length);
             }
 
+            is.close();
+
             // Reduces it down to just 32 bits which we express in hex.'
             return checksum.getValue();
-        } finally
+        } catch (IOException ex)
         {
-            is.close();
+            throw new RuntimeException(ex);
         }
     }
 }

@@ -17,19 +17,20 @@ package org.apache.tapestry5.wro4j.modules;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.core.parser.AntlrException;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.wro4j.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.ObjectRenderer;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.wro4j.WRO4JSymbols;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import ro.isdc.wro.extensions.processor.js.GoogleClosureCompressorProcessor;
 import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
@@ -51,6 +52,13 @@ public class WRO4JModule
         binder.bind(ResourceTransformerFactory.class, ResourceTransformerFactoryImpl.class);
     }
 
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void setupDefaultCacheDirectory(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(WRO4JSymbols.CACHE_DIR, "${java.io.tmpdir}");
+    }
+
     /**
      * Configures the default set of processors.
      * <dl>
@@ -70,15 +78,16 @@ public class WRO4JModule
     }
 
     @Contribute(StreamableResourceSource.class)
-    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory,
-                                        @Symbol(SymbolConstants.PRODUCTION_MODE)
-                                        boolean productionMode)
+    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory)
     {
-        configuration.add("coffee",
-                factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript", !productionMode));
+        // contribution ids are file extensions:
 
-        // Had to create our own wrapper around Less4J to handle @imports correctly.
-        configuration.addInstance("less", LessResourceTransformer.class);
+        configuration.add("coffee",
+                factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript", CacheMode.SINGLE_FILE));
+
+        configuration.add("less",
+                factory.createCompiler("text/css", "Less", "CSS", new LessResourceTransformer(),
+                        CacheMode.MULTIPLE_FILE));
     }
 
     @Contribute(ResourceMinimizer.class)

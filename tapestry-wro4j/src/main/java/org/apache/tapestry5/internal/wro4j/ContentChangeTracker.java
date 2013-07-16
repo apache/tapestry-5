@@ -32,16 +32,9 @@ public class ContentChangeTracker implements ResourceDependencies
 
     public void addDependency(Resource dependency)
     {
-        try
-        {
-            long checksum = ResourceTransformUtils.toChecksum(dependency);
+        long checksum = ResourceTransformUtils.toChecksum(dependency);
 
-            checksums.put(dependency, checksum);
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        checksums.put(dependency, checksum);
     }
 
     /**
@@ -49,7 +42,7 @@ public class ContentChangeTracker implements ResourceDependencies
      *
      * @return true if a change has occurred
      */
-    public boolean changes() throws IOException
+    public boolean dirty() throws IOException
     {
         for (Map.Entry<Resource, Long> e : checksums.entrySet())
         {

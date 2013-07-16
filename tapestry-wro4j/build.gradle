@@ -38,5 +38,7 @@ jar.manifest {
 test {
     useJUnit()
 
-    systemProperties "geb.build.reportsDir": "$reporting.baseDir/geb"
+    systemProperties("geb.build.reportsDir": "$reporting.baseDir/geb",
+        "tapestry.compiled-asset-cache-dir": "$buildDir/compiled-asset-cache",
+        "tapestry.production-mode": "false")
 }

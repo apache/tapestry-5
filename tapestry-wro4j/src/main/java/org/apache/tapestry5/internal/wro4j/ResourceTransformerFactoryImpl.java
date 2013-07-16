@@ -14,21 +14,23 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
+import org.apache.tapestry5.wro4j.WRO4JSymbols;
 import org.apache.tapestry5.wro4j.services.ResourceProcessor;
 import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Map;
 
 public class ResourceTransformerFactoryImpl implements ResourceTransformerFactory
@@ -39,28 +41,46 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
     private final OperationTracker tracker;
 
-    public ResourceTransformerFactoryImpl(Logger logger, ResourceProcessorSource source, OperationTracker tracker)
+    private final boolean productionMode;
+
+    private final File cacheDir;
+
+    public ResourceTransformerFactoryImpl(Logger logger, ResourceProcessorSource source, OperationTracker tracker,
+                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                          boolean productionMode,
+                                          @Symbol(WRO4JSymbols.CACHE_DIR)
+                                          String cacheDir)
     {
         this.logger = logger;
         this.source = source;
         this.tracker = tracker;
+        this.productionMode = productionMode;
+
+        this.cacheDir = new File(cacheDir);
+
+        if (!productionMode)
+        {
+            logger.info(String.format("Using %s to store compiled assets (development mode only).", cacheDir));
+        }
     }
 
-
-    static class Compiled
+    @PostInjection
+    public void createCacheDir()
     {
-        /**
-         * Checksum of the raw source file.
-         */
-        final long checksum;
+        cacheDir.mkdirs();
+    }
 
-        private final BytestreamCache bytestreamCache;
+    static class Compiled extends ContentChangeTracker
+    {
+        private BytestreamCache bytestreamCache;
 
-
-        Compiled(long checksum, InputStream stream) throws IOException
+        Compiled(Resource root)
         {
-            this.checksum = checksum;
+            addDependency(root);
+        }
 
+        void store(InputStream stream) throws IOException
+        {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             TapestryInternalUtils.copy(stream, bos);
@@ -77,15 +97,46 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         }
     }
 
-    public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName, boolean enableCache)
+
+    public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName, CacheMode cacheMode)
     {
         // This does the real work:
         ResourceProcessor resourceProcessor = source.getProcessor(processorName);
 
         // And this adapts it to the API.
-        final ResourceTransformer coreCompiler = createCoreCompiler(contentType, sourceName, targetName, resourceProcessor);
+        ResourceTransformer coreCompiler = createCoreCompiler(contentType, sourceName, targetName, resourceProcessor);
 
-        return enableCache ? wrapWithCaching(coreCompiler, targetName) : coreCompiler;
+        return createCompiler(contentType, sourceName, targetName, coreCompiler, cacheMode);
+
+    }
+
+    public ResourceTransformer createCompiler(String contentType, String sourceName, String targetName, ResourceTransformer transformer, CacheMode cacheMode)
+    {
+        ResourceTransformer trackingCompiler = wrapWithTracking(sourceName, targetName, transformer);
+
+        if (productionMode)
+        {
+            return trackingCompiler;
+        }
+
+        ResourceTransformer timingCompiler = wrapWithTiming(targetName, trackingCompiler);
+
+        switch (cacheMode)
+        {
+            case NONE:
+
+                return timingCompiler;
+
+            case SINGLE_FILE:
+
+                return wrapWithFileSystemCaching(timingCompiler, targetName);
+
+            case MULTIPLE_FILE:
+
+                return wrapWithInMemoryCaching(timingCompiler, targetName);
+        }
+
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private ResourceTransformer createCoreCompiler(final String contentType, final String sourceName, final String targetName, final ResourceProcessor resourceProcessor)
@@ -101,25 +152,62 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
             {
                 final String description = String.format("Compiling %s from %s to %s", source, sourceName, targetName);
 
+                InputStream result = resourceProcessor.process(description,
+                        source.toURL().toString(),
+                        source.openStream(), contentType);
+
+                return result;
+
+            }
+        };
+    }
+
+    private ResourceTransformer wrapWithTracking(final String sourceName, final String targetName, final ResourceTransformer core)
+    {
+        return new ResourceTransformer()
+        {
+            public String getTransformedContentType()
+            {
+                return core.getTransformedContentType();
+            }
+
+            public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
+            {
+                final String description = String.format("Compiling %s from %s to %s", source, sourceName, targetName);
+
                 return tracker.perform(description, new IOOperation<InputStream>()
                 {
                     public InputStream perform() throws IOException
                     {
-                        final long startTime = System.nanoTime();
-
-                        InputStream result = resourceProcessor.process(description,
-                                source.toURL().toString(),
-                                source.openStream(), contentType);
-
-                        final long elapsedTime = System.nanoTime() - startTime;
-
-                        logger.info(String.format("Compiled %s to %s in %.2f ms",
-                                source, targetName,
-                                ResourceTransformUtils.nanosToMillis(elapsedTime)));
-
-                        return result;
+                        return core.transform(source, dependencies);
                     }
                 });
+            }
+        };
+    }
+
+    private ResourceTransformer wrapWithTiming(final String targetName, final ResourceTransformer coreCompiler)
+    {
+        return new ResourceTransformer()
+        {
+            public String getTransformedContentType()
+            {
+                return coreCompiler.getTransformedContentType();
+            }
+
+            public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
+            {
+                final long startTime = System.nanoTime();
+
+                InputStream result = coreCompiler.transform(source, dependencies);
+
+                final long elapsedTime = System.nanoTime() - startTime;
+
+                logger.info(String.format("Compiled %s to %s in %.2f ms",
+                        source, targetName,
+                        ResourceTransformUtils.nanosToMillis(elapsedTime)));
+
+                return result;
             }
         };
     }
@@ -131,7 +219,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
      * somewhat primitive: a change to *any* resource in a given domain results in the cache of all of those resources
      * being discarded.
      */
-    private ResourceTransformer wrapWithCaching(final ResourceTransformer core, final String targetName)
+    private ResourceTransformer wrapWithInMemoryCaching(final ResourceTransformer core, final String targetName)
     {
         return new ResourceTransformer()
         {
@@ -144,27 +232,76 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
             {
-                long checksum = ResourceTransformUtils.toChecksum(source);
-
                 Compiled compiled = cache.get(source);
 
-                if (compiled != null && compiled.checksum == checksum)
+                if (compiled != null && !compiled.dirty())
                 {
-                    logger.info(String.format("Resource %s is unchanged; serving compiled %s content from cache",
+                    logger.info(String.format("Resource %s and dependencies are unchanged; serving compiled %s content from in-memory cache",
                             source, targetName));
 
                     return compiled.openStream();
                 }
 
-                InputStream is = core.transform(source, dependencies);
+                compiled = new Compiled(source);
 
-                // There's probably a race condition here if the source changes as we are compiling it.
-                compiled = new Compiled(checksum, is);
+                InputStream is = core.transform(source, new ResourceDependenciesSplitter(dependencies, compiled));
+
+                compiled.store(is);
 
                 cache.put(source, compiled);
 
                 return compiled.openStream();
             }
         };
+    }
+
+    private ResourceTransformer wrapWithFileSystemCaching(final ResourceTransformer core, final String targetName)
+    {
+        return new ResourceTransformer()
+        {
+            public String getTransformedContentType()
+            {
+                return core.getTransformedContentType();
+            }
+
+            public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
+            {
+                long checksum = ResourceTransformUtils.toChecksum(source);
+
+                String fileName = Long.toHexString(checksum) + "-" + source.getFile();
+
+                File cacheFile = new File(cacheDir, fileName);
+
+                if (cacheFile.exists())
+                {
+                    logger.debug(String.format("Serving up compiled %s content for %s from file system cache", targetName, source));
+
+                    return new BufferedInputStream(new FileInputStream(cacheFile));
+                }
+
+                InputStream compiled = core.transform(source, dependencies);
+
+                // We need the InputStream twice; once to return, and once to write out to the cache file for later.
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                TapestryInternalUtils.copy(compiled, bos);
+
+                BytestreamCache cache = new BytestreamCache(bos);
+
+                writeToCacheFile(cacheFile, cache.openStream());
+
+                return cache.openStream();
+            }
+        };
+    }
+
+    private void writeToCacheFile(File file, InputStream stream) throws IOException
+    {
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+
+        TapestryInternalUtils.copy(stream, outputStream);
+
+        outputStream.close();
     }
 }
