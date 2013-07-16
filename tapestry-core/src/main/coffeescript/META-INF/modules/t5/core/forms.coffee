@@ -82,6 +82,11 @@ define ["./events", "./dom", "./builder", "underscore"],
 
           name = field.element.name
 
+          # Many modern UIs create name-less elements on the fly (e.g., Backbone); these may be mixed
+          # in with normal elements managed by Tapestry but should be ignored (not sent to the server in a POST
+          # or Ajax update).
+          return if name is ""
+
           existing = result[name]
 
           if _.isArray existing
