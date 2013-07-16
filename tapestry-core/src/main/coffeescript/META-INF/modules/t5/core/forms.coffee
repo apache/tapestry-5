@@ -99,31 +99,44 @@ define ["./events", "./dom", "./builder", "underscore"],
 
     defaultValidateAndSubmit = ->
 
-      if ((@attribute "data-validate") is "submit") and
-         (not @meta SKIP_VALIDATION)
+      where = -> "processing form submission"
 
-        @meta SKIP_VALIDATION, null
+      try
 
-        memo = error: false
+        if ((@attribute "data-validate") is "submit") and
+           (not @meta SKIP_VALIDATION)
 
-        for field in @find "[data-validation]"
-          field.trigger events.field.inputValidation, memo
+          @meta SKIP_VALIDATION, null
 
-        # Only do form validation if all individual field validation
-        # was successful.
-        unless memo.error
-          @trigger events.form.validate, memo
+          memo = error: false
 
-        if memo.error
-          clearSubmittingHidden this
-          # Cancel the original submit event when there's an error
-          return false
+          for field in @find "[data-validation]"
+            where = -> "triggering #{events.field.inputValidation} event on #{field.toString()}"
+            field.trigger events.field.inputValidation, memo
 
-      # Allow certain types of elements to do last-moment set up. Basically, this is for
-      # FormFragment, or similar, to make their hidden field enabled or disabled to match
-      # their UI's visible/hidden status. This is assumed to work or throw an exception; there
-      # is no memo.
-      @trigger events.form.prepareForSubmit
+          # Only do form validation if all individual field validation
+          # was successful.
+          unless memo.error
+            where = -> "trigging cross-form validation event"
+            @trigger events.form.validate, memo
+
+          if memo.error
+            clearSubmittingHidden this
+            # Cancel the original submit event when there's an error
+            return false
+
+        # Allow certain types of elements to do last-moment set up. Basically, this is for
+        # FormFragment, or similar, to make their hidden field enabled or disabled to match
+        # their UI's visible/hidden status. This is assumed to work or throw an exception; there
+        # is no memo.
+        where = -> "triggering #{events.form.prepareForSubmit} event (after validation)"
+
+        @trigger events.form.prepareForSubmit
+
+      catch error
+        console.error "Form validiation/submit error `#{error.toString()}', in form #{this.toString()}, #{where()}"
+        console.error error
+        return false
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       # Possibly, the document event handler provided by the t5/core/zone module will intercept form submission if this
