@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * <p/>
  * This is the service interface for the FactoryDefaults and ApplicationDefaults services; each of these takes a
  * configuration mapping symbols to their values.
+ *
+ * @see FactoryDefaults
+ * @see ApplicationDefaults
  */
 @UsesMappedConfiguration(String.class)
 public interface SymbolProvider
