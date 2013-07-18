@@ -16,8 +16,8 @@
 #
 # Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
 # core/RemoveRowLink).
-define ["./dom", "./events", "./console", "./ajax", "./builder"],
-  (dom, events, console, ajax, builder) ->
+define ["./dom", "./events", "./console", "./ajax"],
+  (dom, events, console, ajax) ->
 
     # "afl" is short for "AjaxFormLoop".
     AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']"
@@ -60,15 +60,17 @@ define ["./dom", "./events", "./console", "./ajax", "./builder"],
 
       ajax url,
         success: (response) =>
-          content = response.json?.content
+          content = response.json?.content or ""
 
           # Create a new element with the same type (usually "div") and class as this element.
           # It will contain the new content.
-          newElement = builder insertionPoint.element.tagName,
-              class: insertionPoint.element.className,
-              "data-container-type": FRAGMENT_TYPE
 
-          newElement.update content
+          newElement = """
+              <#{insertionPoint.element.tagName} class="#{insertionPoint.element.className}"
+                data-container-type="#{FRAGMENT_TYPE}">
+                #{content}
+                </#{insertionPoint.element.tagName}>
+              """
 
           insertionPoint.insertBefore newElement
 

@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## t5/core/exceptionframe
+# ## t5/core/exception-frame
 #
 # Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["./dom", "./builder", "underscore"],
-  (dom, builder, _) ->
+define ["./dom", "underscore"],
+  (dom, _) ->
     container = null
     iframe = null
     iframeDocument = null
@@ -37,11 +37,17 @@ define ["./dom", "./builder", "underscore"],
     create = ->
       return if container
 
-      container = builder ".exception-container",
-        ["iframe"],
-        ["div>button.pull-right.btn.btn-primary",
-         ["i.icon-remove.icon-white"],
-         "Close"]
+      container = dom.create
+        class: "exception-container"
+        """
+          <iframe> </iframe>
+          <div>
+            <button class="pull-right btn btn-primary">
+              <i class="icon-remove icon-white"></i>
+              Close
+            </button>
+          </div>
+        """
 
       dom.body.append container.hide()
 

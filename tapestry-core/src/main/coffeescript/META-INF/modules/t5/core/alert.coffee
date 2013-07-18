@@ -16,8 +16,8 @@
 #
 # Support for the core/Alerts components.
 #
-define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"],
-  (dom, console, messages, builder, ajax, _) ->
+define ["./dom", "./console", "./messages", "./ajax", "underscore"],
+  (dom, console, messages, ajax, _) ->
 
     severityToClass =
       success: "alert alert-success"
@@ -33,7 +33,6 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
         container.update null
 
     dismissAll = (container) ->
-      console.debug "dismiss all"
 
       alerts = container.find "[data-alert-id]"
 
@@ -45,7 +44,6 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
         success: -> container.update null
 
     dismissOne = (container, button) ->
-      console.debug "dismiss single"
 
       alert = button.parent()
 
@@ -61,19 +59,23 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
 
     setupUI = (container) ->
 
-      clickHandler = ->
+      container.update """
+         <div class="well">
+          <div data-container-type="inner"></div>
+          <div class="row-fluid">
+            <button class="btn btn-mini pull-right" data-action="dismiss-all">
+              <strong>&times;</strong>
+              #{messages "core-dismiss-label"}
+            </button>
+          </div>
+         </div>
+         """
+
+      container.on "click", "[data-action=dismiss-all]", ->
         dismissAll container
         return false
 
-      container.update builder ".well",
-        ["div", "data-container-type": "inner"],
-        [".row-fluid > button.btn.btn-mini.pull-right",
-            onclick: clickHandler
-            ["strong", "\u00d7 "],
-            messages "core-dismiss-label"
-        ]
-
-      container.on "click button.close", ->
+      container.on "click", "button.close", ->
         dismissOne container, this
         return false
 
@@ -108,12 +110,14 @@ define ["./dom", "./console", "./messages", "./builder", "./ajax", "underscore"]
       # Note that `data-dismiss=alert` is purposely excluded
       # - we want to handle closes w/ notifications to the server if not transient
       # - we don't want to rely on bootstrap.js, as that will drag jQuery into the application
-      element = builder "div", class: className,
-        ["button.close", "\u00d7"]
-        content
 
-      if data.id
-        element.attribute "data-alert-id", data.id
+      element = dom.create "div",
+        "data-alert-id": data.id
+        class: className
+        """
+          <button class="close">&times;</button>
+          #{content}
+        """
 
       container.append element
 

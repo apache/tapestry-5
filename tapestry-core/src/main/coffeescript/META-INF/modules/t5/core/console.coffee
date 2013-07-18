@@ -15,87 +15,93 @@
 # ## t5/core/console
 #
 # A wrapper around the native console, when it exists.
-define ["./dom", "./builder", "underscore"], (dom, builder, _) ->
-  nativeConsole = {}
-  floatingConsole = null
+define ["./dom", "underscore"],
+  (dom, _) ->
+    nativeConsole = {}
+    floatingConsole = null
 
-  FADE_DURATION = 0.25
+    FADE_DURATION = 0.25
 
-  # module exports are mutable; someone else could
-  # require this module to change the default DURATION
-  exports =
-  # Default duration for floating console is 10 seconds.
-    DURATION: 10
+    # module exports are mutable; someone else could
+    # require this module to change the default DURATION
+    exports =
+    # Default duration for floating console is 10 seconds.
+      DURATION: 10
 
-  try
-    # FireFox will throw an exception if you even access the console object and it does
-    # not exist. Wow!
-    nativeConsole = console
-  catch e
+    try
+      # FireFox will throw an exception if you even access the console object and it does
+      # not exist. Wow!
+      nativeConsole = console
+    catch e
 
-  # _internal_: displays the message inside the floating console, creating the floating
-  # console as needed.
-  display = (className, message) ->
-    unless floatingConsole
-      floatingConsole = builder ".tapestry-console"
-      dom.body.prepend floatingConsole
+    # _internal_: displays the message inside the floating console, creating the floating
+    # console as needed.
+    display = (className, message) ->
+      unless floatingConsole
+        floatingConsole = dom.create class: "tapestry-console"
+        dom.body.prepend floatingConsole
 
-    div = builder ".entry>.#{className}",
-      ["button.close", "&times;"],
-      (_.escape message)
+      div = dom.create
+        class: "entry"
+        """
+          <div class="#{className}">
+            <button class="close">&times;</button>
+            #{_.escape message}
+          </div>
+        """
 
-    floatingConsole.append div.hide().fadeIn FADE_DURATION
+      floatingConsole.append div.hide().fadeIn FADE_DURATION
 
-    removed = false
+      removed = false
 
-    runFadeout = ->
-      div.fadeOut FADE_DURATION, ->
-        div.remove() unless removed
+      runFadeout = ->
+        div.fadeOut FADE_DURATION, ->
+          div.remove() unless removed
 
-    window.setTimeout runFadeout, exports.DURATION * 1000
+      window.setTimeout runFadeout, exports.DURATION * 1000
 
-    div.on "click", ->
-      div.remove()
-      removed = true
+      div.on "click", ->
+        div.remove()
+        removed = true
 
-  level = (className, consolefn) ->
-    (message) ->
-      # consolefn may be null if there's no console; under IE it may be non-null, but not a function.
+    level = (className, consolefn) ->
+      (message) ->
+        # consolefn may be null if there's no console; under IE it may be non-null, but not a function.
 
-      unless consolefn
-        # Display it floating. If there's a real problem, such as a failed Ajax request, then the
-        # client-side code should be alerting the user in some other way, and not rely on them
-        # being able to see the logged console output.
-        display className, message
+        unless consolefn
+          # Display it floating. If there's a real problem, such as a failed Ajax request, then the
+          # client-side code should be alerting the user in some other way, and not rely on them
+          # being able to see the logged console output.
+          display className, message
+          return
+
+        if _.isFunction consolefn
+          # Use the available native console, calling it like an instance method
+          consolefn.call console, message
+        else
+          # And IE just has to be different. The properties of console are callable, like functions,
+          # but aren't proper functions that work with `call()` either.
+          consolefn message
+
         return
 
-      if _.isFunction consolefn
-        # Use the available native console, calling it like an instance method
-        consolefn.call console, message
+
+    # Determine whether debug is enabled by checking for the necessary attribute (which is missing
+    # in production mode).
+    exports.debugEnabled = (document.documentElement.getAttribute "data-debug-enabled")?
+
+    # When debugging is not enabled, then the debug function becomes a no-op.
+    exports.debug =
+      if exports.debugEnabled
+        # If native console available, go for it.  IE doesn't have debug, so we use log instead.
+        level "alert", (nativeConsole.debug or nativeConsole.log)
       else
-        # And IE just has to be different. The properties of console are callable, like functions,
-        # but aren't proper functions that work with `call()` either.
-        consolefn message
+        ->
 
-      return
+    exports.info = level "alert.alert-info", nativeConsole.info
+    exports.warn = level "alert", nativeConsole.warn
+    exports.error = level "alert.alert-error", nativeConsole.error
 
-
-  # Determine whether debug is enabled by checking for the necessary attribute (which is missing
-  # in production mode).
-  exports.debugEnabled = (document.documentElement.getAttribute "data-debug-enabled")?
-
-  # When debugging is not enabled, then the debug function becomes a no-op.
-  exports.debug =
-    if exports.debugEnabled
-      # If native console available, go for it.  IE doesn't have debug, so we use log instead.
-      level "alert", (nativeConsole.debug or nativeConsole.log)
-    else
-      ->
-
-  exports.info = level "alert.alert-info", nativeConsole.info
-  exports.warn = level "alert", nativeConsole.warn
-  exports.error = level "alert.alert-error", nativeConsole.error
-
-  # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
-  # if some other module imports this one and modifies that property.
-  return exports
+    # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
+    # if some other module imports this one and modifies that property.
+    return exports

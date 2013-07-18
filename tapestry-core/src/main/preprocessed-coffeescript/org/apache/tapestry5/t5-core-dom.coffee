@@ -322,8 +322,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 #if jquery
         @$.attr name
 #elseif prototype
-        for name, value of name
-          @element.writeAttribute name, value
+        for attributeName, value of name
+          @attribute attributeName, value
 #endif
         return this
 
@@ -334,7 +334,10 @@ define ["underscore", "./utils", "./events", "jquery"],
 #elseif prototype
       current = @element.readAttribute name
       if arguments.length > 1
-        @element.writeAttribute name, value
+        # Treat undefined and null the same; Prototype does something slightly odd,
+        # treating undefined as a special case where the attribute value matches
+        # the attribute name.
+        @element.writeAttribute name, if value is undefined then null else value
 #endif
 
       return current
@@ -837,8 +840,36 @@ define ["underscore", "./utils", "./events", "jquery"],
     new ElementWrapper element
 #endif
 
+  # Creates a new element, detached from the DOM.
+  #
+  # * elementName - (string) name of element to create, if ommitted, then "div"
+  # * attributes - (object) attributes to apply to the created element (may be omitted)
+  # * body - (string) content for the new element, may be omitted for no body
+  createElement = (elementName, attributes, body) ->
+
+    if _.isObject elementName
+      body = attributes
+      attributes = elementName
+      elementName = null
+
+    if _.isString attributes
+      body = attributes
+      attributes = null
+
+    element = wrapElement document.createElement (elementName or "div")
+
+    if attributes
+      element.attribute attributes
+
+    if body
+      element.update body
+
+    return element
+
   _.extend exports,
     wrap: wrapElement
+
+    create: createElement
 
     triggerReflow: triggerReflow
 

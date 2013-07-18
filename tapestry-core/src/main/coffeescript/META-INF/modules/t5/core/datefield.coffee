@@ -15,9 +15,8 @@
 # ## t5/core/datefield
 #
 # Provides support for the `core/DateField` component.
-define ["./dom", "./events", "./messages", "./builder", "./ajax",
-  "underscore", "./fields"],
-  (dom, events, messages, builder, ajax, _) ->
+define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
+  (dom, events, messages, ajax, _) ->
 
 
     # Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
@@ -115,8 +114,7 @@ define ["./dom", "./events", "./messages", "./builder", "./ajax",
       createPopup: ->
         @datePicker = new DatePicker()
         @datePicker.setFirstWeekDay datePickerFirstDay
-        @popup = builder "div.t-datefield-popup"
-        @popup.append dom @datePicker.create()
+        @popup = dom.create().append @datePicker.create()
         @container.append @popup
 
         @datePicker.onselect = _.bind @onSelect, this

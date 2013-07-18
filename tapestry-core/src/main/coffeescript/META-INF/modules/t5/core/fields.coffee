@@ -16,8 +16,8 @@
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
-  (_, events, dom, builder, utils) ->
+define ["underscore", "./events", "./dom", "./utils", "./forms"],
+  (_, events, dom, utils) ->
 
     ensureFieldId = (field) ->
       fieldId = field.attribute "id"
@@ -76,7 +76,9 @@ define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       container = field.parent()
 
-      block = builder "p.help-block", "data-error-block-for": fieldId
+      block = dom.create "p",
+        class: "help-block"
+        "data-error-block-for": fieldId
 
       # The .input-append and .input-prepend are used to attach buttons or markers to the field.
       # In which case, the block can go
@@ -86,10 +88,6 @@ define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
         field.insertAfter block
 
       return block
-
-    # This may be removed soon:
-    showValidationError = (id, message) ->
-      dom.wrap(id).trigger events.field.showValidationError, { message }
 
     collectOptionValues = (wrapper) ->
       _.pluck wrapper.element.options, "value"
@@ -171,4 +169,4 @@ define ["underscore", "./events", "./dom", "./builder", "./utils", "./forms"],
 
       group and group.addClass "error"
 
-    exports = {findHelpBlock, createHelpBlock, showValidationError}
+    exports = {findHelpBlock, createHelpBlock}

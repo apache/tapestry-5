@@ -16,8 +16,8 @@
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["./events", "./dom", "./builder", "underscore"],
-  (events, dom, builder, _) ->
+define ["./events", "./dom", "underscore"],
+  (events, dom, _) ->
 
     # Meta-data name that indicates the next submission should skip validation (typically, because
     # the form was submitted by a "cancel" button).
@@ -44,7 +44,7 @@ define ["./events", "./dom", "./builder", "underscore"],
 
       unless hidden
         firstHidden = form.findFirst "input[type=hidden]"
-        hidden = builder "input", type:"hidden", name:"t:submit"
+        hidden = dom.create "input", type: "hidden", name: "t:submit"
         firstHidden.insertBefore hidden
 
       # TODO: Research why we need id and name and get rid of one if possible.
