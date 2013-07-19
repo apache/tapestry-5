@@ -39,6 +39,6 @@ DIV.palette-selected {
     clear: right;
 }
 
-DIV.palette-spacer {
+DIV.palette > .help-block {
     clear: left;
 }

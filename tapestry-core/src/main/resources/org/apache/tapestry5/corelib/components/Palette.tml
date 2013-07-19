@@ -50,6 +50,5 @@
             <t:remove>Starts empty, populated on the client side.</t:remove>
         </select>
     </div>
-    <div class="t-palette-spacer"/>
     <p class="help-block" data-error-block-for="${clientId}"/>
 </div>
