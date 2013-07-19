@@ -60,14 +60,12 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
     setupUI = (container) ->
 
       container.update """
-         <div class="well">
           <div data-container-type="inner"></div>
           <div class="row-fluid">
             <button class="btn btn-mini pull-right" data-action="dismiss-all">
               <strong>&times;</strong>
               #{messages "core-dismiss-label"}
             </button>
-          </div>
          </div>
          """
 
