@@ -89,6 +89,9 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       return block
 
+    showValidationError = (id, message) ->
+      dom.wrap(id).trigger events.field.showValidationError, { message }
+
     collectOptionValues = (wrapper) ->
       _.pluck wrapper.element.options, "value"
 
@@ -169,4 +172,4 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       group and group.addClass "error"
 
-    exports = {findHelpBlock, createHelpBlock}
+    exports = {findHelpBlock, createHelpBlock, showValidationError}
