@@ -1,7 +1,21 @@
+//  Copyright 2011, 2013 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+
 package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -62,9 +76,9 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                callback.run(javaScriptSupport);
-
                 renderer.renderMarkup(writer, reply);
+
+                callback.run(javaScriptSupport);
             }
         });
 
@@ -79,9 +93,9 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                callback.run();
-
                 renderer.renderMarkup(writer, reply);
+
+                callback.run();
             }
         });
 
@@ -89,11 +103,31 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         return this;
     }
 
-    public AjaxResponseRenderer addFilter(PartialMarkupRendererFilter filter)
+    private boolean isRedirect(JSONObject reply)
+    {
+
+        return reply.has(InternalConstants.PARTIAL_KEY) &&
+                reply.in(InternalConstants.PARTIAL_KEY).has("redirectURL");
+    }
+
+    public AjaxResponseRenderer addFilter(final PartialMarkupRendererFilter filter)
     {
         assert filter != null;
 
-        queue.addPartialMarkupRendererFilter(filter);
+        queue.addPartialMarkupRendererFilter(new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer delete)
+            {
+                if (isRedirect(reply))
+                {
+                    // Bypass the callback.
+                    delete.renderMarkup(writer, reply);
+                    return;
+                }
+
+                filter.renderMarkup(writer, reply, delete);
+            }
+        });
 
         return this;
     }
@@ -106,9 +140,9 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                callback.run(reply);
-
                 renderer.renderMarkup(writer, reply);
+
+                callback.run(reply);
             }
         });
 
