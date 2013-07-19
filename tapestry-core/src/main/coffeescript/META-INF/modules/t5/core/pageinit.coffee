@@ -96,6 +96,9 @@ define ["underscore", "./console", "./dom", "./events"],
 
         fn = if functionName? then moduleLib[functionName] else moduleLib
 
+        unless fn?
+          throw new Error "Could not locate function `#{qualifiedName}'."
+
         if console.debugEnabled
           argsString = _.map(initArguments, JSON.stringify).join(", ")
           console.debug "Invoking #{qualifiedName}(#{argsString})"
