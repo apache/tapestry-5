@@ -57,10 +57,14 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
         parameters: { id }
         success: -> removeAlert container, alert
 
-    setupUI = (container) ->
+    setupUI = (outer) ->
 
-      container.update """
-          <div data-container-type="inner"></div>
+      outer.update """
+        <div data-container-type="inner"></div>
+      """
+
+      if (outer.attribute "data-show-dismiss-all") is "true"
+        outer.append """
           <div class="row-fluid">
             <button class="btn btn-mini pull-right" data-action="dismiss-all">
               <strong>&times;</strong>
@@ -69,12 +73,12 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
          </div>
          """
 
-      container.on "click", "[data-action=dismiss-all]", ->
-        dismissAll container
+      outer.on "click", "[data-action=dismiss-all]", ->
+        dismissAll outer
         return false
 
-      container.on "click", "button.close", ->
-        dismissOne container, this
+      outer.on "click", "button.close", ->
+        dismissOne outer, this
         return false
 
     findInnerContainer = ->

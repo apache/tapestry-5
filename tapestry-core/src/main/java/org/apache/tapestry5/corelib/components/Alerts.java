@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,6 +49,15 @@ public class Alerts extends BaseClientElement
     @Parameter(value = "message:core-dismiss-label", defaultPrefix = BindingConstants.LITERAL)
     private String dismissText;
 
+
+    /**
+     * If set to true, then the "dismiss all" button will not be rendered on the client.
+     *
+     * @since 5.4
+     */
+    @Parameter(value = "message:core-alerts-show-dismiss-all", defaultPrefix = BindingConstants.LITERAL)
+    private boolean showDismissAll;
+
     @SessionState(create = false)
     private AlertStorage storage;
 
@@ -66,6 +75,7 @@ public class Alerts extends BaseClientElement
 
         storeElement(writer.element("div",
                 "data-container-type", "alerts",
+                "data-show-dismiss-all", showDismissAll,
                 "data-dismiss-url", dismissLink));
 
         resources.renderInformalParameters(writer);
