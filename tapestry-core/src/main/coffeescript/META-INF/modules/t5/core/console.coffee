@@ -17,15 +17,18 @@
 # A wrapper around the native console, when it exists.
 define ["./dom", "underscore"],
   (dom, _) ->
+
     nativeConsole = {}
     floatingConsole = null
+
+    forceFloating = (dom.body.attribute "data-floating-console") == "true"
 
     FADE_DURATION = 0.25
 
     # module exports are mutable; someone else could
     # require this module to change the default DURATION
     exports =
-    # Default duration for floating console is 10 seconds.
+    # Default duration for floating console in seconds.
       DURATION: 10
 
     try
@@ -38,42 +41,59 @@ define ["./dom", "underscore"],
     # console as needed.
     display = (className, message) ->
       unless floatingConsole
-        floatingConsole = dom.create class: "tapestry-console"
+        floatingConsole = dom.create
+          class: "tapestry-console",
+          """
+            <div class="console-backdrop"></div>
+            <div data-content="alerts"></div>
+            <button class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+            """
+
         dom.body.prepend floatingConsole
 
+        floatingConsole.on "click", ".btn-mini", ->
+          floatingConsole.hide().findFirst("[data-content=alerts]").update ""
+
       div = dom.create
-        class: "entry"
+        class: "alert #{className}"
         """
-          <div class="#{className}">
-            <button class="close">&times;</button>
-            #{_.escape message}
-          </div>
+          <button class="close">&times;</button>
+          #{_.escape message}
         """
 
-      floatingConsole.append div.hide().fadeIn FADE_DURATION
+      floatingConsole.show().findFirst("[data-content=alerts]").append div.hide().fadeIn FADE_DURATION
 
+      animating = false
       removed = false
 
       runFadeout = ->
+        return if animating
+
+        animating = true
+
         div.fadeOut FADE_DURATION, ->
           div.remove() unless removed
 
+          # Hide the console after the last one is removed.
+          unless floatingConsole.findFirst(".alert")
+            floatingConsole.hide()
+
       window.setTimeout runFadeout, exports.DURATION * 1000
 
-      div.on "click", ->
-        div.remove()
-        removed = true
+      div.on "click", -> runFadeout()
 
     level = (className, consolefn) ->
       (message) ->
         # consolefn may be null if there's no console; under IE it may be non-null, but not a function.
+        # For some testing, it is nice to force the floating console to always display.
 
-        unless consolefn
+        if forceFloating or (not consolefn)
           # Display it floating. If there's a real problem, such as a failed Ajax request, then the
           # client-side code should be alerting the user in some other way, and not rely on them
           # being able to see the logged console output.
           display className, message
-          return
+
+          return unless forceFloating
 
         if _.isFunction consolefn
           # Use the available native console, calling it like an instance method
@@ -94,13 +114,17 @@ define ["./dom", "underscore"],
     exports.debug =
       if exports.debugEnabled
         # If native console available, go for it.  IE doesn't have debug, so we use log instead.
-        level "alert", (nativeConsole.debug or nativeConsole.log)
+        level "", (nativeConsole.debug or nativeConsole.log)
       else
         ->
 
-    exports.info = level "alert.alert-info", nativeConsole.info
-    exports.warn = level "alert", nativeConsole.warn
-    exports.error = level "alert.alert-error", nativeConsole.error
+    exports.info = level "alert-info", nativeConsole.info
+    exports.warn = level "", nativeConsole.warn
+    exports.error = level "alert-error", nativeConsole.error
+
+    # This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
+    # and/or Selenium, it is very useful to present debugging data right on the page.
+    window.t5console = exports
 
     # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
     # if some other module imports this one and modifies that property.

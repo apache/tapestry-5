@@ -3,7 +3,7 @@
 <head>
     <title>Tapestry Integration Test Application</title>
 </head>
-<body>
+<body data-floating-console="true">
 
 
 <div class="navbar navbar-inverse navbar-fixed-top">

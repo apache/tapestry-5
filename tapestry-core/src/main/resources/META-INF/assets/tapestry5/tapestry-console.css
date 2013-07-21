@@ -1,18 +1,27 @@
 /* The console is used to show debugging messages. */
-DIV.tapestry-console {
+.tapestry-console {
     position: fixed;
-    z-index: 1;
-    top: 2px;
-    left: 2px;
+    z-index: 2000;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    border-radius: 4px;
+    padding: 5px;
 }
 
-DIV.tapestry-console > DIV.entry {
-    font-weight: bold;
-    padding: 0px 2px;
+.tapestry-console > .console-backdrop {
+    position: absolute;
+    background-color: black;
+    opacity: .5;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+}
+
+/** Unlike a normal alert, a console message can be dismissed by a click anywhere. */
+.tapestry-console .alert{
     cursor: pointer;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     margin-bottom: 5px;
-    padding-left: 22px;
 }
