@@ -37,12 +37,15 @@ define ["underscore", "./utils", "./events", "jquery"],
 (_, utils, events, $) ->
 #endif
 
+  # By default, many DOM-manipulating functions here will trigger a periodic reflow event (this is to allow
+  # adjustment of elements with absolute positioning, such as a Bootstrap Popover). However, this can be
+  # temporarily disabled.
+  reflowEventsEnabled = true
+
 #if prototype
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
   $ = window.$
-
-  reflowEventsEnabled = true
 
   # Fires a native event; something that Prototype does not normally do.
   # Returns true if the event completed normally, false if it was canceled.
