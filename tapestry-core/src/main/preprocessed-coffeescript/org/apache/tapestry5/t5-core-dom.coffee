@@ -641,7 +641,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 #endif
       return current
 
-    # Returns true if a checkbox is checked
+    # Returns true if element is a checkbox and is checked
     checked: ->
       @element.checked
 

@@ -20,6 +20,11 @@
     z-index: -1;
 }
 
+.tapestry-console > .alert-container {
+    max-height: 300px;
+    overflow-x: auto;
+}
+
 /** Unlike a normal alert, a console message can be dismissed by a click anywhere. */
 .tapestry-console .alert{
     cursor: pointer;

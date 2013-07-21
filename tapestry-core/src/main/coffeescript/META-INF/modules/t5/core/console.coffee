@@ -20,6 +20,7 @@ define ["./dom", "underscore"],
 
     nativeConsole = {}
     floatingConsole = null
+    alertContainer = null
 
     forceFloating = (dom.body.attribute "data-floating-console") == "true"
 
@@ -45,14 +46,17 @@ define ["./dom", "underscore"],
           class: "tapestry-console",
           """
             <div class="console-backdrop"></div>
-            <div data-content="alerts"></div>
+            <div class="alert-container"></div>
             <button class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
             """
 
         dom.body.prepend floatingConsole
 
+        alertContainer = floatingConsole.findFirst ".alert-container"
+
         floatingConsole.on "click", ".btn-mini", ->
-          floatingConsole.hide().findFirst("[data-content=alerts]").update ""
+          floatingConsole.hide()
+          alertContainer.update ""
 
       div = dom.create
         class: "alert #{className}"
@@ -61,7 +65,11 @@ define ["./dom", "underscore"],
           #{_.escape message}
         """
 
-      floatingConsole.show().findFirst("[data-content=alerts]").append div.hide().fadeIn FADE_DURATION
+      floatingConsole.show()
+      alertContainer.append div.hide().fadeIn FADE_DURATION
+
+      # A slightly clumsy way to ensure that the container is scrolled to the bottom.
+      _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
 
       animating = false
       removed = false
