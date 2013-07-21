@@ -42,6 +42,8 @@ define ["underscore", "./utils", "./events", "jquery"],
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
   $ = window.$
 
+  reflowEventsEnabled = true
+
   # Fires a native event; something that Prototype does not normally do.
   # Returns true if the event completed normally, false if it was canceled.
   fireNativeEvent = (element, eventName) ->
@@ -68,7 +70,6 @@ define ["underscore", "./utils", "./events", "jquery"],
         styles[styleName] = finalValue
         element.setStyle styles
         window.clearInterval timeoutID
-        triggerReflow()
         callbacks.oncomplete and callbacks.oncomplete()
 
       # TODO: Add an easein/easeout function
@@ -453,7 +454,6 @@ define ["underscore", "./utils", "./events", "jquery"],
     fadeIn: (duration, callback) ->
 #if jquery
       @$.fadeIn duration * 1000, ->
-        triggerReflow()
         callback and callback()
 #elseif prototype
       animate @element, "opacity", 0, 1, duration * 1000,
@@ -471,7 +471,6 @@ define ["underscore", "./utils", "./events", "jquery"],
     fadeOut: (duration, callback) ->
 #if jquery
       @$.fadeOut duration * 1000, ->
-        triggerReflow()
         callback and callback()
 #elseif prototype
       animate @element, "opacity", 1, 0, duration * 1000,
@@ -806,7 +805,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     return exports
 
-  triggerReflow =
+  triggerReflow = ->
+    return unless reflowEventsEnabled
 #if jquery
     _.debounce (-> $(document).trigger events.document.reflow), 250
 #elseif prototype
@@ -874,6 +874,20 @@ define ["underscore", "./utils", "./events", "jquery"],
     triggerReflow: triggerReflow
 
     ajaxRequest: ajaxRequest
+
+    # Executes a block (provided as a function of no parameters) with automatic reflow events
+    # disabled. This is useful when the executed code will not affect the layout of the page in a way
+    # that can affect absolutely positioned elements.
+    withReflowEventsDisabled: (fn) ->
+
+      try
+        stored = reflowEventsEnabled
+
+        reflowEventsEnabled = false
+
+        fn()
+      finally
+        reflowEventsEnabled = stored
 
     # Used to add an event handler to an element (possibly from elements below it in the hierarch).
     #
