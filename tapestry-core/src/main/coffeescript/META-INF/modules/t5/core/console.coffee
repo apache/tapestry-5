@@ -41,54 +41,58 @@ define ["./dom", "underscore"],
     # _internal_: displays the message inside the floating console, creating the floating
     # console as needed.
     display = (className, message) ->
-      unless floatingConsole
-        floatingConsole = dom.create
-          class: "tapestry-console",
-          """
-            <div class="console-backdrop"></div>
-            <div class="alert-container"></div>
-            <button class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+
+      dom.withReflowEventsDisabled ->
+
+        unless floatingConsole
+          floatingConsole = dom.create
+            class: "tapestry-console",
             """
+              <div class="console-backdrop"></div>
+              <div class="alert-container"></div>
+              <button class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+              """
 
-        dom.body.prepend floatingConsole
+          dom.body.prepend floatingConsole
 
-        alertContainer = floatingConsole.findFirst ".alert-container"
+          alertContainer = floatingConsole.findFirst ".alert-container"
 
-        floatingConsole.on "click", ".btn-mini", ->
-          floatingConsole.hide()
-          alertContainer.update ""
-
-      div = dom.create
-        class: "alert #{className}"
-        """
-          <button class="close">&times;</button>
-          #{_.escape message}
-        """
-
-      floatingConsole.show()
-      alertContainer.append div.hide().fadeIn FADE_DURATION
-
-      # A slightly clumsy way to ensure that the container is scrolled to the bottom.
-      _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
-
-      animating = false
-      removed = false
-
-      runFadeout = ->
-        return if animating
-
-        animating = true
-
-        div.fadeOut FADE_DURATION, ->
-          div.remove() unless removed
-
-          # Hide the console after the last one is removed.
-          unless floatingConsole.findFirst(".alert")
+          floatingConsole.on "click", ".btn-mini", ->
             floatingConsole.hide()
+            alertContainer.update ""
 
-      window.setTimeout runFadeout, exports.DURATION * 1000
+        div = dom.create
+          class: "alert #{className}"
+          """
+            <button class="close">&times;</button>
+            #{_.escape message}
+          """
 
-      div.on "click", -> runFadeout()
+        floatingConsole.show()
+        alertContainer.append div.hide().fadeIn FADE_DURATION
+
+        # A slightly clumsy way to ensure that the container is scrolled to the bottom.
+        _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
+
+        animating = false
+        removed = false
+
+        runFadeout = ->
+          return if animating
+
+          animating = true
+
+          div.fadeOut FADE_DURATION, ->
+            dom.withReflowEventsDisabled ->
+              div.remove() unless removed
+
+              # Hide the console after the last one is removed.
+              unless floatingConsole.findFirst(".alert")
+                floatingConsole.hide()
+
+        window.setTimeout runFadeout, exports.DURATION * 1000
+
+        div.on "click", -> runFadeout()
 
     level = (className, consolefn) ->
       (message) ->
