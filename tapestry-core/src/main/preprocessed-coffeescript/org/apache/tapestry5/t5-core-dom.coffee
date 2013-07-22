@@ -507,7 +507,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 #if jquery
       children = @$.children()
 
-      for i in [0...matches.length]
+      for i in [0...children.length]
         new ElementWrapper children.eq i
 
 #elseif prototype
