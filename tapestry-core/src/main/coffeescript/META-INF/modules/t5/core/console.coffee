@@ -50,16 +50,36 @@ define ["./dom", "underscore"],
             """
               <div class="console-backdrop"></div>
               <div class="alert-container"></div>
-              <button class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+              <button data-action="clear" class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+              <button data-action="enable" class="btn btn-mini" disabled="true"><i class="icon-play"></i> Enable Console</button>
+              <button data-action="disable" class="btn btn-mini"><i class="icon-pause"></i> Disable Console</button>
               """
 
           dom.body.prepend floatingConsole
 
           alertContainer = floatingConsole.findFirst ".alert-container"
 
-          floatingConsole.on "click", ".btn-mini", ->
+          floatingConsole.on "click", "[data-action=clear]", ->
             floatingConsole.hide()
             alertContainer.update ""
+
+          floatingConsole.on "click", "[data-action=disable]", ->
+
+            @attribute "disabled", true
+            floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
+
+            alertContainer.hide()
+
+            return false
+
+          floatingConsole.on "click", "[data-action=enable]", ->
+
+            @attribute "disabled", true
+            floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
+
+            alertContainer.show()
+
+            return false
 
         div = dom.create
           class: "alert #{className}"
@@ -75,7 +95,6 @@ define ["./dom", "underscore"],
         _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
 
         animating = false
-        removed = false
 
         runFadeout = ->
           return if animating
@@ -84,7 +103,8 @@ define ["./dom", "underscore"],
 
           div.fadeOut FADE_DURATION, ->
             dom.withReflowEventsDisabled ->
-              div.remove() unless removed
+              # Remove if not already removed
+              div.remove() if div.parent()
 
               # Hide the console after the last one is removed.
               unless floatingConsole.findFirst(".alert")
