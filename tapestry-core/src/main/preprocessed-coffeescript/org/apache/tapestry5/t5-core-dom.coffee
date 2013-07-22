@@ -61,36 +61,6 @@ define ["underscore", "./utils", "./events", "jquery"],
     element.dispatchEvent event
     return not event.defaultPrevented
 
-  # Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
-  animate = (element, styleName, initialValue, finalValue, duration, callbacks) ->
-    styles = {}
-    range = finalValue - initialValue
-    initialTime = Date.now()
-    first = true
-    animator = ->
-      elapsed = Date.now() - initialTime
-      if elapsed >= duration
-        styles[styleName] = finalValue
-        element.setStyle styles
-        window.clearInterval timeoutID
-        callbacks.oncomplete and callbacks.oncomplete()
-
-      # TODO: Add an easein/easeout function
-
-      newValue = initialValue + range * (elapsed / duration)
-      styles[styleName] = newValue
-
-      element.setStyle styles
-
-      if first
-        callbacks.onstart and callbacks.onstart()
-        first = false
-
-    timeoutID = window.setInterval animator
-
-    styles[styleName] = initialValue
-    element.setStyle styles
-
   # converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
     if _.isString selector
@@ -447,38 +417,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 #endif
 
       triggerReflow()
-
-      return this
-
-    # Runs an animation to fade-in the element over the specified duration.
-    #
-    # * duration - animation duration time, in seconds
-    # * callback - function invoked after the animation is complete
-    fadeIn: (duration, callback) ->
-#if jquery
-      @$.fadeIn duration * 1000, ->
-        callback and callback()
-#elseif prototype
-      animate @element, "opacity", 0, 1, duration * 1000,
-        onstart: => @element.show()
-        oncomplete: callback
-#endif
-
-      return this
-
-    # Runs an animation to fade out an element over the specified duration. The element should already
-    # be visible and fully opaque.
-    #
-    # * duration - animation duration time, in seconds
-    # * callback - function invoked after the animation is complete
-    fadeOut: (duration, callback) ->
-#if jquery
-      @$.fadeOut duration * 1000, ->
-        callback and callback()
-#elseif prototype
-      animate @element, "opacity", 1, 0, duration * 1000,
-        oncomplete: callback
-#endif
 
       return this
 
