@@ -20,7 +20,23 @@ define ["./dom", "underscore"],
 
     nativeConsole = {}
     floatingConsole = null
-    alertContainer = null
+    messages = null
+
+    noFilter = -> true
+
+    filter = noFilter
+
+    updateFilter = (text) ->
+      if text is ""
+        filter = noFilter
+        return
+
+      text = text.toLowerCase()
+
+      filter = (e) ->
+        e.element.innerText.toLowerCase().indexOf(text) >= 0
+
+      return
 
     forceFloating = (dom.body.attribute "data-floating-console") == "true"
 
@@ -41,25 +57,28 @@ define ["./dom", "underscore"],
             class: "tapestry-console",
             """
               <div class="message-container"></div>
-              <button data-action="clear" class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
-              <button data-action="enable" class="btn btn-mini" disabled="true"><i class="icon-play"></i> Enable Console</button>
-              <button data-action="disable" class="btn btn-mini"><i class="icon-pause"></i> Disable Console</button>
+              <div class="row-fluid">
+                <button data-action="clear" class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
+                <button data-action="enable" class="btn btn-mini" disabled="true"><i class="icon-play"></i> Enable Console</button>
+                <button data-action="disable" class="btn btn-mini"><i class="icon-pause"></i> Disable Console</button>
+                <input class="search-query input-xlarge" size="40" placeholder="Filter console content">
+              </div>
               """
 
           dom.body.prepend floatingConsole
 
-          alertContainer = floatingConsole.findFirst ".message-container"
+          messages = floatingConsole.findFirst ".message-container"
 
           floatingConsole.on "click", "[data-action=clear]", ->
             floatingConsole.hide()
-            alertContainer.update ""
+            messages.update ""
 
           floatingConsole.on "click", "[data-action=disable]", ->
 
             @attribute "disabled", true
             floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
 
-            alertContainer.hide()
+            messages.hide()
 
             return false
 
@@ -68,19 +87,36 @@ define ["./dom", "underscore"],
             @attribute "disabled", true
             floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
 
-            alertContainer.show()
+            messages.show()
 
             return false
 
-        alertContainer.append """
-          <div class="#{className}">#{_.escape message}</div>
-          """
+          floatingConsole.on "change keyup", ".search-query", ->
+            updateFilter @value()
 
-        # Make sure the console is visible, even if disabled.
+            for e in messages.children()
+              visible = filter e
+
+              e[if visible then "show" else "hide"]()
+
+            return false
+
+        div = dom.create
+          class: className,
+          _.escape message
+
+          # Should really filter on original message, not escaped.
+
+        unless filter div
+          div.hide()
+
+        messages.append div
+
+        # Make sure the console is visible, even if disabled (and even if the new content is hidden).
         floatingConsole.show()
 
         # A slightly clumsy way to ensure that the container is scrolled to the bottom.
-        _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
+        _.delay -> messages.element.scrollTop = messages.element.scrollHeight
 
     level = (className, consolefn) ->
       (message) ->
