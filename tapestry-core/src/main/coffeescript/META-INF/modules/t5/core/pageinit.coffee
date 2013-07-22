@@ -172,10 +172,15 @@ define ["underscore", "./console", "./dom", "./events"],
         console.debug "Evaluating: #{js}"
         eval js
 
+      # Triggers the focus event on the field, if the field exist. Focus occurs delayed 1/8th of a
+      # second, which helps ensure that other initializions on the page are in place.
+      #
+      # * fieldId - element id of field to focus on
       focus: (fieldId) ->
         field = dom fieldId
 
-        field && field.focus()
+        if field
+          _.delay (-> field.focus()), 125
 
       # Passed the response from an Ajax request, when the request is successful.
       # This is used for any request that attaches partial-page-render data to the main JSON object
