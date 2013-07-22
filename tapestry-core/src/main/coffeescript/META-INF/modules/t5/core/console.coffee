@@ -24,14 +24,6 @@ define ["./dom", "underscore"],
 
     forceFloating = (dom.body.attribute "data-floating-console") == "true"
 
-    FADE_DURATION = 0.25
-
-    # module exports are mutable; someone else could
-    # require this module to change the default DURATION
-    exports =
-    # Default duration for floating console in seconds.
-      DURATION: 10
-
     try
       # FireFox will throw an exception if you even access the console object and it does
       # not exist. Wow!
@@ -48,8 +40,7 @@ define ["./dom", "underscore"],
           floatingConsole = dom.create
             class: "tapestry-console",
             """
-              <div class="console-backdrop"></div>
-              <div class="alert-container"></div>
+              <div class="message-container"></div>
               <button data-action="clear" class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
               <button data-action="enable" class="btn btn-mini" disabled="true"><i class="icon-play"></i> Enable Console</button>
               <button data-action="disable" class="btn btn-mini"><i class="icon-pause"></i> Disable Console</button>
@@ -57,7 +48,7 @@ define ["./dom", "underscore"],
 
           dom.body.prepend floatingConsole
 
-          alertContainer = floatingConsole.findFirst ".alert-container"
+          alertContainer = floatingConsole.findFirst ".message-container"
 
           floatingConsole.on "click", "[data-action=clear]", ->
             floatingConsole.hide()
@@ -81,38 +72,15 @@ define ["./dom", "underscore"],
 
             return false
 
-        div = dom.create
-          class: "alert #{className}"
-          """
-            <button class="close">&times;</button>
-            #{_.escape message}
+        alertContainer.append """
+          <div class="#{className}">#{_.escape message}</div>
           """
 
+        # Make sure the console is visible, even if disabled.
         floatingConsole.show()
-        alertContainer.append div.hide().fadeIn FADE_DURATION
 
         # A slightly clumsy way to ensure that the container is scrolled to the bottom.
         _.delay -> alertContainer.element.scrollTop = alertContainer.element.scrollHeight
-
-        animating = false
-
-        runFadeout = ->
-          return if animating
-
-          animating = true
-
-          div.fadeOut FADE_DURATION, ->
-            dom.withReflowEventsDisabled ->
-              # Remove if not already removed
-              div.remove() if div.parent()
-
-              # Hide the console after the last one is removed.
-              unless floatingConsole.findFirst(".alert")
-                floatingConsole.hide()
-
-        window.setTimeout runFadeout, exports.DURATION * 1000
-
-        div.on "click", -> runFadeout()
 
     level = (className, consolefn) ->
       (message) ->
@@ -137,22 +105,22 @@ define ["./dom", "underscore"],
 
         return
 
+    exports =
+      info: level "info", nativeConsole.info
+      warn: level "warn", nativeConsole.warn
+      error: level "error", nativeConsole.error
 
-    # Determine whether debug is enabled by checking for the necessary attribute (which is missing
-    # in production mode).
-    exports.debugEnabled = (document.documentElement.getAttribute "data-debug-enabled")?
+      # Determine whether debug is enabled by checking for the necessary attribute (which is missing
+      # in production mode).
+      debugEnabled: (document.documentElement.getAttribute "data-debug-enabled")?
 
     # When debugging is not enabled, then the debug function becomes a no-op.
     exports.debug =
       if exports.debugEnabled
         # If native console available, go for it.  IE doesn't have debug, so we use log instead.
-        level "", (nativeConsole.debug or nativeConsole.log)
+        level "debug", (nativeConsole.debug or nativeConsole.log)
       else
         ->
-
-    exports.info = level "alert-info", nativeConsole.info
-    exports.warn = level "", nativeConsole.warn
-    exports.error = level "alert-error", nativeConsole.error
 
     # This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
     # and/or Selenium, it is very useful to present debugging data right on the page.
