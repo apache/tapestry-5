@@ -445,14 +445,12 @@ define ["underscore", "./utils", "./events", "jquery"],
 #if jquery
       matches = @$.find selector
 
-      return [] if matches.length is 0
-
-      for i in [0..(matches.length - 1)]
+      for i in [0...matches.length]
         new ElementWrapper matches.eq i
 #elseif prototype
       matches = @element.select selector
 
-      _.map matches, (e) -> new ElementWrapper e
+      new ElementWrapper(e) for e in matches
 #endif
 
     # Find the first container element that matches the selector (wrapped as an ElementWrapper),
@@ -503,6 +501,18 @@ define ["underscore", "./utils", "./events", "jquery"],
       return null unless parent
 #endif
       new ElementWrapper parent
+
+    # Returns an array of all the immediate child elements of this element, as ElementWrappers.
+    children: ->
+#if jquery
+      children = @$.children()
+
+      for i in [0...matches.length]
+        new ElementWrapper children.eq i
+
+#elseif prototype
+      new ElementWrapper(e) for e in @element.childElements()
+#endif
 
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
