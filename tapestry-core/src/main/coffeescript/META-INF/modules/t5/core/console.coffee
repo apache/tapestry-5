@@ -126,6 +126,20 @@ define ["./dom", "underscore"],
     # and/or Selenium, it is very useful to present debugging data right on the page.
     window.t5console = exports
 
+    requirejs.onError = (err) ->
+
+      message = "RequireJS error: #{err.requireType}"
+
+      if err.message
+        message += """: #{err.message}"""
+
+      if err.requireType
+        message += """, modules #{err.requireModules.join(", ")}"""
+
+
+      exports.error message
+
+
     # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
     # if some other module imports this one and modifies that property.
     return exports
