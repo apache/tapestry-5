@@ -387,7 +387,7 @@ task zippedSources(type: Zip) {
     exclude "**/test-output/**"  // Left around by TestNG sometimes
 }
 
-task zippedJavadoc(type: Zip) {
+task zippedApidoc(type: Zip) {
     dependsOn aggregateJavadoc
     description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
     group "Release artifact"
@@ -395,7 +395,7 @@ task zippedJavadoc(type: Zip) {
     destinationDir buildDir
     baseName "apache-tapestry"
     version project.version
-    classifier "javadocs"
+    classifier "apidocs"
 
     from file("src/docroot-template"), {
         filter ReplaceTokens, tokens: [version: project.version]
@@ -456,7 +456,8 @@ if (canDeploy) {
 
 
     artifacts {
-        archives zippedJavadoc, zippedSources, zippedBinaries
+    artifacts {
+        archives zippedApidoc, zippedSources, zippedBinaries
     }
 
     configurations {
