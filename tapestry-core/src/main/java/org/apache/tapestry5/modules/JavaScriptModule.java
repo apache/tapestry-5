@@ -221,7 +221,7 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModules(MappedConfiguration<String, Object> configuration,
-                                        @Path("${tapestry.asset.root}/underscore_1_4_4.js")
+                                        @Path("${tapestry.asset.root}/underscore-1.5.1.js")
                                         Resource underscore,
 
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
