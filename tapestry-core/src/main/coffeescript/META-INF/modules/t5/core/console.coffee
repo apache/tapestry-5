@@ -33,8 +33,7 @@ define ["./dom", "underscore"],
 
       text = text.toLowerCase()
 
-      filter = (e) ->
-        e.element.innerText.toLowerCase().indexOf(text) >= 0
+      filter = (e) -> e.text().toLowerCase().indexOf(text) >= 0
 
       return
 
