@@ -456,7 +456,6 @@ if (canDeploy) {
 
 
     artifacts {
-    artifacts {
         archives zippedApidoc, zippedSources, zippedBinaries
     }
 
