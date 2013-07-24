@@ -32,4 +32,17 @@ class MiscTests extends TapestryCoreTestCase {
 
         // Using Geb, we could do a lot more. Sigh.
     }
+
+    // TAP5-2045
+    @Test
+    void label_class_override()
+    {
+        openLinks "Override Label Class Demo"
+
+        assertSourcePresent "<label for=\"firstName\" class=\"control-label\">First Name</label>",
+                            "<label for=\"lastName\" class=\"dummyClassName\">Last Name</label>"
+
+    }
+
+
 }

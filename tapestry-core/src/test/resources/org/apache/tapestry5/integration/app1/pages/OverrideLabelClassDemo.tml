@@ -1,0 +1,18 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Override Label Class</h1>
+
+    <p>
+        Demonstrates how to override the default class for a label by simply supplying a class attribute. 
+    </p>
+
+    <t:form>
+       <t:label for="firstName"/>
+       <t:textfield t:id="firstName"/>
+       
+       <t:label for="lastName" class="dummyClassName"/>
+       <t:textfield t:id="lastName"/>
+      
+    </t:form>
+
+</html>

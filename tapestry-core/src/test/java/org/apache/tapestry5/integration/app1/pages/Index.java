@@ -516,6 +516,8 @@ public class Index
 
                     new Item("OverrideFieldFocusDemo", "OverrideFieldFocus Demo", "Setting the focus in a form to a specific field"),
 
+                    new Item("OverrideLabelClassDemo", "Override Label Class Demo", "Setting class attribute on Label component"),
+
                     new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field")
             );
 

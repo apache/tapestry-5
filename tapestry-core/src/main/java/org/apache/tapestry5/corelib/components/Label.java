@@ -24,8 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * Generates a &lt;label&gt; element for a particular field. It writes the CSS class "control-label", unless
- * an informal parameter writes a class attribute.
+ * Generates a &lt;label&gt; element for a particular field. It writes the CSS class "control-label".
  * <p/>
  * A Label will render its body, if it has one. However, in most cases it will not have a body, and will render its
  * {@linkplain org.apache.tapestry5.Field#getLabel() field's label} as it's body. Remember, however, that it is the
@@ -61,15 +60,22 @@ public class Label
 
     private Element labelElement;
 
+    /**
+     * CSS class name(s) for the Label.
+     *
+     * @since 5.4
+     */
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "control-label")
+    private String className;
+
+
     boolean beginRender(MarkupWriter writer)
     {
         decorator.beforeLabel(field);
 
-        labelElement = writer.element("label");
+        labelElement = writer.element("label", "class", className);
 
         resources.renderInformalParameters(writer);
-
-        writer.attributes("class", "control-label");
 
         // Since we don't know if the field has rendered yet, we need to defer writing the for and id
         // attributes until we know the field has rendered (and set its clientId property). That's

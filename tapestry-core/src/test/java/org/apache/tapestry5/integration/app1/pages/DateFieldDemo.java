@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.corelib.components.DateField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 
@@ -28,41 +28,24 @@ import java.util.Locale;
 public class DateFieldDemo
 {
     @Persist
+    @Property
+    @Validate("required")
     private Date birthday;
 
     @Persist
+    @Property
+    @Validate("required")
     private Date asteroidImpact;
 
     @Inject
     private PersistentLocale persistentLocale;
 
-    @Validate("required")
-    public Date getBirthday()
-    {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday)
-    {
-        this.birthday = birthday;
-    }
 
     public DateFormat getDateFormat()
     {
-        DateField df;
         return new SimpleDateFormat("MM/dd/yyyy");
     }
 
-    @Validate("required")
-    public Date getAsteroidImpact()
-    {
-        return asteroidImpact;
-    }
-
-    public void setAsteroidImpact(Date asteroidImpact)
-    {
-        this.asteroidImpact = asteroidImpact;
-    }
 
     void onActionFromClear()
     {
@@ -70,7 +53,13 @@ public class DateFieldDemo
         asteroidImpact = null;
     }
 
-    void onActionFromEnglish() { persistentLocale.set(Locale.ENGLISH); }
+    void onActionFromEnglish()
+    {
+        persistentLocale.set(Locale.ENGLISH);
+    }
 
-    void onActionFromFrench() { persistentLocale.set(Locale.FRENCH); }
+    void onActionFromFrench()
+    {
+        persistentLocale.set(Locale.FRENCH);
+    }
 }
