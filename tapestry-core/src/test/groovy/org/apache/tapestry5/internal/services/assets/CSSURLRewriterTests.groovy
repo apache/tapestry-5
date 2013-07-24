@@ -57,7 +57,6 @@ body {
 
     }
 
-
     // See TAP5-2106
     @Test
     void query_parameters_in_relative_url_are_maintained() {
@@ -151,6 +150,44 @@ body {
         def rewriter = new CSSURLRewriter(null, null, null, null)
 
         assertNull rewriter.replaceURLs(input, null)
+    }
+
+    @Test
+    void multiple_urls_per_line() {
+
+        def input = '''
+body {
+  src: url('font/fontawesome-webfont.eot?#iefix&v=3.1.0') format('embedded-opentype'), url('font/fontawesome-webfont.woff?v=3.1.0') format('woff'), url('font/fontawesome-webfont.ttf?v=3.1.0') format('truetype'), url('font/fontawesome-webfont.svg#fontawesomeregular?v=3.1.0') format('svg');
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+
+        ["fontawesome-webfont.eot", "fontawesome-webfont.woff", "fontawesome-webfont.ttf", "fontawesome-webfont.svg"].each { name ->
+
+            def asset = newMock Asset
+
+            expect(
+                assetSource.getAsset(resource, "font/$name", null)
+            ).andReturn asset
+
+            expect(asset.toClientURL()).andReturn "/ctx/font/$name".toString()
+        }
+
+        replay()
+
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+
+        def output = rewriter.replaceURLs input, resource
+
+        assertEquals output, '''
+body {
+  src: url("/ctx/font/fontawesome-webfont.eot?#iefix&v=3.1.0") format('embedded-opentype'), url("/ctx/font/fontawesome-webfont.woff?v=3.1.0") format('woff'), url("/ctx/font/fontawesome-webfont.ttf?v=3.1.0") format('truetype'), url("/ctx/font/fontawesome-webfont.svg#fontawesomeregular?v=3.1.0") format('svg');
+}
+'''
+        verify()
     }
 
 

@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
  * CSS file will change (which would ordinarily break relative URLs), and for changing the relative directories of
  * the CSS file and the image assets it may refer to (useful for incorporating a hash of the resource's content into
  * the exposed URL).
- *
- * <p>
+ * <p/>
+ * <p/>
  * One potential problem with URL rewriting is the way that URLs for referenced resources are generated; we are
  * somewhat banking on the fact that referenced resources are non-compressable images.
  *
@@ -45,7 +45,16 @@ public class CSSURLRewriter extends DelegatingSRS
     // Group 1 is the optional single or double quote (note the use of backtracking to match it)
     // Group 2 is the text inside the quotes, or inside the parens if no quotes
     // Group 3 is any query parmameters (see issue TAP5-2106)
-    private final Pattern urlPattern = Pattern.compile("url\\(\\s*(['\"]?)(.+?)(\\?.*)?\\1\\s*\\)", Pattern.MULTILINE);
+    private final Pattern urlPattern = Pattern.compile(
+            "url" +
+                    "\\(" +                 // opening paren
+                    "\\s*" +
+                    "(['\"]?)" +            // group 1: optional single or double quote
+                    "(.+?)" +               // group 2: the main part of the URL, up to the first '#' or '?'
+                    "([\\#\\?].*?)?" +      // group 3: Optional '#' or '?' to end of string
+                    "\\1" +                 // optional closing single/double quote
+                    "\\s*" +
+                    "\\)");                 // matching close paren
 
     // Does it start with a '/' or what looks like a scheme ("http:")?
     private final Pattern completeURLPattern = Pattern.compile("^[#/]|(\\p{Alpha}\\w*:)");
@@ -132,7 +141,8 @@ public class CSSURLRewriter extends DelegatingSRS
             {
                 String queryParameters = matcher.group(3);
 
-                if (queryParameters != null) {
+                if (queryParameters != null)
+                {
                     url = url + queryParameters;
                 }
 
@@ -147,7 +157,8 @@ public class CSSURLRewriter extends DelegatingSRS
             String assetURL = asset.toClientURL();
 
             String queryParameters = matcher.group(3);
-            if (queryParameters != null) {
+            if (queryParameters != null)
+            {
                 assetURL += queryParameters;
             }
 
