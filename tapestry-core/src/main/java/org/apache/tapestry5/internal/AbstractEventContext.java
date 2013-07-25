@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ import org.apache.tapestry5.EventContext;
 
 public abstract class AbstractEventContext implements EventContext
 {
-    private String[] values;
-
     public String[] toStrings()
     {
         int count = getCount();
@@ -37,21 +35,18 @@ public abstract class AbstractEventContext implements EventContext
     @Override
     public String toString()
     {
-        StringBuilder builder = new StringBuilder("EventContext:");
+        StringBuilder builder = new StringBuilder("<EventContext");
 
-        if (values == null)
-            return builder.append(" null").toString();
+        String[] values = toStrings();
+
+        String sep = ": ";
 
         for (int i = 0; i < values.length; i++)
         {
-            if (i == 0)
-                builder.append(" ");
-            else
-                builder.append(",");
-
-            builder.append(values[i]);
+            builder.append(sep).append(values[i]);
+            sep = ", ";
         }
 
-        return builder.toString();
+        return builder.append(">").toString();
     }
 }
