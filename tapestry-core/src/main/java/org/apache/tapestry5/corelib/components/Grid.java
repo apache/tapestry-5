@@ -60,7 +60,7 @@ import java.util.List;
  * @see Loop
  */
 @SupportsInformalParameters
-public class Grid implements GridModel
+public class Grid implements GridModel, ClientElement
 {
     /**
      * The source of data for the Grid to display. This will usually be a List or array but can also be an explicit
@@ -596,5 +596,10 @@ public class Grid implements GridModel
         this.zone = "^";
 
         componentEventResultProcessor.processResultValue(this);
+    }
+
+    public String getClientId()
+    {
+        return table.getClientId();
     }
 }
