@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
 
 /**
  * Annotation placed on a field to indicate that it is, in fact, a component parameter. Parameters may be optional or
@@ -64,8 +65,9 @@ public @interface Parameter
     boolean cache() default true;
 
     /**
-     * The default value for the parameter if not bound (and not the empty string). This is a binding expression,
-     * typically the name of a property of the component to bind.
+     * The default value for the parameter if not bound. This is a binding expression,
+     * typically the name of a property of the component to bind. The default value for this attribute
+     * is the empty string, indicating that there is no default default binding.
      */
     String value() default "";
 
