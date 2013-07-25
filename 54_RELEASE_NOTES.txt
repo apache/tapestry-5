@@ -246,6 +246,12 @@ until the end of the request. A new configuration symbol can be used to turn thi
 
 The interface for AssetPathConstructor was changed incompatibly, to allow for individual asset checksums.
 
+## Link and LinkSecurity
+
+The enum type LinkSecurity was an internal class in 5.3 despite being used in methods of the public Link interface.
+It has been moved to package org.apache.tapestry5; this represents a minor incompatible change to the Link interface
+(which is rarely, if ever, implemented outside of the framework).
+
 ## StreamableResource Extended
 
 StreamableResource has been modified, adding a new `getChecksum()` method; this interface is rarely, if ever,

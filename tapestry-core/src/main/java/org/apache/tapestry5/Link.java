@@ -15,7 +15,7 @@
 package org.apache.tapestry5;
 
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.tapestry5.internal.services.LinkSecurity;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Request;
@@ -152,6 +152,7 @@ public interface Link
      * @param newSecurity new security value, not null, typically {@link LinkSecurity#FORCE_SECURE} or {@link LinkSecurity#FORCE_INSECURE}
      * @since 5.3
      */
+    @IncompatibleChange(release = "5.4", details = "LinkSecurity class moved from internal package to org.apache.tapestry5.")
     void setSecurity(LinkSecurity newSecurity);
 
     /**
@@ -159,6 +160,7 @@ public interface Link
      *
      * @since 5.3
      */
+    @IncompatibleChange(release = "5.4", details = "LinkSecurity class moved from internal package to org.apache.tapestry5.")
     LinkSecurity getSecurity();
 
     /**
