@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ public class PropertyDisplayBlocks
     @Inject
     private Locale locale;
 
-    private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-
     public String getConvertedEnumValue()
     {
         Enum value = (Enum) context.getPropertyValue();
@@ -52,18 +50,15 @@ public class PropertyDisplayBlocks
 
     public DateFormat getDateFormat()
     {
-        return dateFormat;
+        return DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
     }
-    
-    public Date getCalendarDate() 
+
+    public Date getCalendarDate()
     {
         Calendar calendar = (Calendar) context.getPropertyValue();
-        
-        if(calendar == null)
-            return null;
-        
-        return calendar.getTime();
-     }
+
+        return calendar == null ? null : calendar.getTime();
+    }
 
 
     public PropertyOutputContext getContext()
