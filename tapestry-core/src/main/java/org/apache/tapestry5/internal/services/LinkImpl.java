@@ -80,14 +80,18 @@ public class LinkImpl implements Link
         parameters.put(parameterName, Arrays.asList(value));
     }
 
-    public void addParameter(String parameterName, String value)
+    public Link addParameter(String parameterName, String value)
     {
         assert InternalUtils.isNonBlank(parameterName);
 
         if (parameters == null)
+        {
             parameters = new TreeMap<String, List<String>>();
+        }
 
         InternalUtils.addToMapList(parameters, parameterName, value == null ? "" : value);
+
+        return this;
     }
 
     public String getBasePath()
@@ -95,11 +99,16 @@ public class LinkImpl implements Link
         return basePath;
     }
 
-    public void removeParameter(String parameterName)
+    public Link removeParameter(String parameterName)
     {
         assert InternalUtils.isNonBlank(parameterName);
+
         if (parameters != null)
+        {
             parameters.remove(parameterName);
+        }
+
+        return this;
     }
 
     public String getAnchor()
@@ -118,9 +127,11 @@ public class LinkImpl implements Link
         return values != null && !values.isEmpty() ? values.get(0) : null;
     }
 
-    public void setAnchor(String anchor)
+    public Link setAnchor(String anchor)
     {
         this.anchor = anchor;
+
+        return this;
     }
 
     public String toAbsoluteURI()

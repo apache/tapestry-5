@@ -44,10 +44,10 @@ public interface Link
     /**
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
-     *
+     * <p/>
      * <p>Use this method only when you are sure the parameter has only one value. If the parameter might have more than
      * one value, use {@link #getParameterValues}.
-     *
+     * <p/>
      * <p>If you use this method with a multivalued parameter, the value returned is equal to the first value in the
      * array returned by <code>getParameterValues</code>.
      *
@@ -59,10 +59,14 @@ public interface Link
      * Adds a parameter value. The value will be added, as is, to the URL. In many cases, the value should be URL
      * encoded via {@link URLCodec}.
      *
-     * @param parameterName the name of the parameter to store
-     * @param value         the value to store, a null or blank value is allowed (as of Tapestry 5.3)
+     * @param parameterName
+     *         the name of the parameter to store
+     * @param value
+     *         the value to store, a null or blank value is allowed (as of Tapestry 5.3)
+     * @return this Link, to support method chaining
      */
-    void addParameter(String parameterName, String value);
+    @IncompatibleChange(release = "5.4", details = "changed from void to Link")
+    Link addParameter(String parameterName, String value);
 
     /**
      * Adds a parameter value as a value object; the value object is converted to a string via
@@ -77,9 +81,11 @@ public interface Link
      * Removes a parameter value, which is occasionally useful when transforming a parameter into a portion of
      * the path.
      *
+     * @return this Link, to support method chaining
      * @since 5.2.0
      */
-    void removeParameter(String parameterName);
+    @IncompatibleChange(release = "5.4", details = "changed from void to Link")
+    Link removeParameter(String parameterName);
 
     /**
      * Returns the completely unadorned base path. Other methods (such as {@link #toURI()}), may append
@@ -93,6 +99,7 @@ public interface Link
      * Creates a copy of this link that has the same parameters, anchor, and other attributes, but a different
      * {@linkplain #getBasePath() base path}.
      *
+     * @return a new Link instance
      * @since 5.2.0
      */
     Link copyWithBasePath(String basePath);
@@ -120,9 +127,12 @@ public interface Link
     /**
      * Sets the link anchor. Null and empty anchors will be ignored when building the link URI.
      *
-     * @param anchor the link anchor
+     * @param anchor
+     *         the link anchor
+     * @return this Link, to support method chaining
      */
-    void setAnchor(String anchor);
+    @IncompatibleChange(release = "5.4", details = "changed from void to Link")
+    Link setAnchor(String anchor);
 
     /**
      * Returns the absolute URL, which includes the scheme, hostname and possibly port (as per
@@ -149,7 +159,8 @@ public interface Link
      * Changes the link's security, which can be useful to force a link to be either secure or insecure
      * when normally it might not be.
      *
-     * @param newSecurity new security value, not null, typically {@link LinkSecurity#FORCE_SECURE} or {@link LinkSecurity#FORCE_INSECURE}
+     * @param newSecurity
+     *         new security value, not null, typically {@link LinkSecurity#FORCE_SECURE} or {@link LinkSecurity#FORCE_INSECURE}
      * @since 5.3
      */
     @IncompatibleChange(release = "5.4", details = "LinkSecurity class moved from internal package to org.apache.tapestry5.")
