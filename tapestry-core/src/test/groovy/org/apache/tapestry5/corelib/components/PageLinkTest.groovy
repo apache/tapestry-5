@@ -24,7 +24,7 @@ class PageLinkTest extends TapestryTestCase {
         expect(resources.isBound("parameters")).andReturn true
 
         // TAP5-2126:
-        link.removeParameter("foo")
+        expect(link.removeParameter("foo")).andReturn link
 
         expect(link.addParameterValue("foo", "bar")).andReturn link
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.Request;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 
 public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 {
@@ -137,7 +138,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
         String pageName = "Foo";
         String componentId = "bar.baz";
 
-        link.addParameter(eq(ClientPersistentFieldStorageImpl.PARAMETER_NAME), isA(String.class));
+        expect(link.addParameter(eq(ClientPersistentFieldStorageImpl.PARAMETER_NAME), isA(String.class))).andReturn(link);
 
         replay();
 
