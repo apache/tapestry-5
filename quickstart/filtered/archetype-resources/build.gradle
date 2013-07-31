@@ -4,13 +4,15 @@ apply plugin: "war"
 apply plugin: "java"
 apply plugin: "jetty"
 
-sourceCompatibility = "1.5"
-targetCompatibility = "1.5"
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
 
 group = "${groupId}"
 version = "${version}"
 
 repositories {
+    mavenLocal()
+
     mavenCentral()
 
     // All things JBoss/Hibernate
@@ -50,11 +52,11 @@ dependencies {
     // Include the Log4j implementation for the SLF4J logging framework
     runtime "org.slf4j:slf4j-log4j12:@slf4jReleaseVersion@"
 
-    // This adds automatic compression of JavaScript and CSS in production mode:
-    compile "org.apache.tapestry:tapestry-yuicompressor:@tapestryReleaseVersion@"
-
     // Uncomment this to add support for file uploads:
     // compile "org.apache.tapestry:tapestry-upload:@tapestryReleaseVersion@"
+
+    // Uncomment this to add support resource minification and runtime compilation:
+    // compile "org.apache.tapestry:tapestry-wro4j:@tapestryReleaseVersion@"
 
     provided "javax.servlet:servlet-api:@servletApiReleaseVersion@"
 }
@@ -72,6 +74,10 @@ test {
     jvmArgs("-XX:MaxPermSize=256M")
 
     enableAssertions = true
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
 }
 
 // TODO: Configure execution mode for jettyRun task
