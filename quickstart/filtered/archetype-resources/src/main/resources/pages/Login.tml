@@ -1,0 +1,16 @@
+<html t:type="layout" title="${artifactId} com.example"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+      xmlns:p="tapestry:parameter">
+
+<div class="row">
+    <div class="span4 offset3">
+        <t:form t:id="login" class="form-signin">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <t:textfield t:id="email" value="emailValue" class="input-block-level" validate="required" placeholder="Email address" />
+            <t:passwordfield t:id="password" value="passwordValue" class="input-block-level" validate="required" placeholder="Password" />
+            <t:submit class="btn btn-large btn-primary" value="Sign in" />
+        </t:form>
+    </div>
+</div>
+
+</html>
