@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app
-        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
     <display-name>${artifactId} Tapestry 5 Application</display-name>
     <context-param>
-        <!-- The only significant configuration for Tapestry 5, this informs Tapestry
-of where to look for pages, components and mixins. -->
+        <!--
+        The only significant configuration for Tapestry 5, this informs Tapestry
+        of where to look for pages, components and mixins.
+        -->
         <param-name>tapestry.app-package</param-name>
         <param-value>${package}</param-value>
     </context-param>
+
     <!--
     Specify some additional Modules for two different execution
     modes: development and qa.
@@ -27,18 +31,24 @@ of where to look for pages, components and mixins. -->
             ${package}.services.QaModule
         </param-value>
     </context-param>
+
+
+    <!-- Filter configuration -->
     <filter>
         <filter-name>app</filter-name>
         <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
     </filter>
+
     <filter-mapping>
         <filter-name>app</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-    
-    <welcome-file-list>
-        <welcome-file>index</welcome-file>
-    </welcome-file-list>
-    
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error404</location>
+    </error-page>
+
 </web-app>
-      
