@@ -40,6 +40,7 @@ public class AppModule
     	// number), but may be further overriden by DevelopmentModule or QaModule 
     	// by adding the same key in the contributeApplicationDefaults method.
         configuration.override(SymbolConstants.APPLICATION_VERSION, "${version}");
+		configuration.override(SymbolConstants.PRODUCTION_MODE, false);
     }
 
     public static void contributeApplicationDefaults(
@@ -53,6 +54,26 @@ public class AppModule
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
     }
 
+	/**
+	 * Use annotation or method naming convention: <code>contributeApplicationDefaults</code>
+	 */
+	@Contribute(SymbolProvider.class)
+	@ApplicationDefaults
+	public static void setupEnvironment(MappedConfiguration<String, Object> configuration)
+	{
+		configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+		configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:mybootstrap");
+		configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
+	}
+
+	// This will override the bundled bootstrap version and will compile it at runtime
+	@Contribute(JavaScriptStack.class)
+	@Core
+	public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
+	{
+		configuration.override("bootstrap.css",
+				new StackExtension(StackExtensionType.STYLESHEET, "context:mybootstrap/css/bootstrap.css"), "before:tapestry.css");
+	}
 
     /**
      * This is a service definition, the service will be named "TimingFilter". The interface,
