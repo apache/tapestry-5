@@ -38,6 +38,9 @@ configurations {
 sourceSets {
     main {
         compileClasspath += configurations.provided
+        // To give the same path as IDEA has
+        // output.resourcesDir = 'build/production/${artifactId}'
+        // output.classesDir = 'build/production/${artifactId}'
     }
     test {
         compileClasspath += configurations.provided
@@ -49,14 +52,18 @@ dependencies {
 
     compile "org.apache.tapestry:tapestry-core:@tapestryReleaseVersion@"
 
-    // Include the Log4j implementation for the SLF4J logging framework
-    runtime "org.slf4j:slf4j-log4j12:@slf4jReleaseVersion@"
-
     // Uncomment this to add support for file uploads:
     // compile "org.apache.tapestry:tapestry-upload:@tapestryReleaseVersion@"
 
     // Uncomment this to add support resource minification and runtime compilation:
     // compile "org.apache.tapestry:tapestry-wro4j:@tapestryReleaseVersion@"
+
+    // Log implementation choose one:
+    // Log4j 1.x
+    runtime "log4j:log4j:1.2.17"
+    runtime "org.slf4j:slf4j-log4j12:@slf4jReleaseVersion@"
+    // Logback
+    // runtime "ch.qos.logback:logback-classic:1.0.13"
 
     provided "javax.servlet:servlet-api:@servletApiReleaseVersion@"
 }
