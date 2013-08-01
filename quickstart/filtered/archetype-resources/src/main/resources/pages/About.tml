@@ -2,6 +2,22 @@
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
       xmlns:p="tapestry:parameter">
 
-    <p>About ${artifactId} application ...</p>
+    <div class="row">
+        <div class="span12">
+            <p>About ${artifactId} application ...</p>
+        </div>
+    </div>
+
+    <t:if test="learn">
+        <div class="row">
+            <div class="span12">
+                <p>
+                    To learn more go to
+                    <a href="http://tapestry.apache.org">Tapestry home</a>
+                    and start typing...
+                </p>
+            </div>
+        </div>
+    </t:if>
 
 </html>
