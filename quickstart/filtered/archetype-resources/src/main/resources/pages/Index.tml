@@ -21,8 +21,6 @@
         <p><t:actionlink t:id="learnmore" class="btn btn-primary btn-large">Learn more &raquo;</t:actionlink></p>
     </div>
 
-    <t:alerts />
-
     <!-- Example row of columns -->
     <div class="row">
         <div class="span4">
