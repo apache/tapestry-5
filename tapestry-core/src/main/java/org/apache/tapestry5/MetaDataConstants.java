@@ -43,4 +43,11 @@ public class MetaDataConstants
      * @since 5.3
      */
     public static final String WHITELIST_ONLY_PAGE = "tapestry.white-list-only-page";
+
+	/**
+	 * Meta data key applied to pages that may only be accessed with a exact activation context.
+	 *
+	 * @since 5.4
+	 */
+	public static final String UNKNOWN_ACTIVATION_CONTEXT_CHECK = "tapestry.unknwon-activation-context-check";
 }
