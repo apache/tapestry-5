@@ -45,6 +45,7 @@ import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
+import org.apache.tapestry5.internal.services.meta.UnknownActivationContextExtractor;
 import org.apache.tapestry5.internal.services.security.ClientWhitelistImpl;
 import org.apache.tapestry5.internal.services.security.LocalhostOnly;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
@@ -2084,6 +2085,10 @@ public final class TapestryModule
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_2_3_2");
 
         configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
+
+		// TAP5-2070 keep the old behavior, defaults to false
+		configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
+
     }
 
     /**
@@ -2464,6 +2469,7 @@ public final class TapestryModule
         configuration.add(Secure.class, new FixedExtractor(MetaDataConstants.SECURE_PAGE));
         configuration.addInstance(ContentType.class, ContentTypeExtractor.class);
         configuration.add(WhitelistAccessOnly.class, new FixedExtractor(MetaDataConstants.WHITELIST_ONLY_PAGE));
+		configuration.addInstance(UnknownActivationContextCheck.class, UnknownActivationContextExtractor.class);
     }
 
     /**

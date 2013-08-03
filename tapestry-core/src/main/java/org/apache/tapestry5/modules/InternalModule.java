@@ -69,6 +69,7 @@ public class InternalModule
         binder.bind(InternalComponentInvalidationEventHub.class);
         binder.bind(PageSource.class, PageSourceImpl.class);
         binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();
+		binder.bind(UnknownActivationContextHandler.class, UnknownActivationContextHandlerImpl.class);
     }
 
     public static CookieSource buildCookieSource(final RequestGlobals requestGlobals)
