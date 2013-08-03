@@ -148,11 +148,13 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 
     private final Logger logger;
 
+	private final MetaDataLocator metaDataLocator;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
                           StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-                          SymbolSource symbolSource, Logger logger)
+                          SymbolSource symbolSource, Logger logger, MetaDataLocator metaDataLocator)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -166,6 +168,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.request = request;
         this.symbolSource = symbolSource;
         this.logger = logger;
+		this.metaDataLocator = metaDataLocator;
     }
 
     @PostInjection
@@ -263,7 +266,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
                 ComponentPageElementResources resources = resourcesSource.get(selector);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, tracker, request, symbolSource);
+                        componentClassResolver, instantiator, resources, tracker, request, symbolSource, metaDataLocator);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).

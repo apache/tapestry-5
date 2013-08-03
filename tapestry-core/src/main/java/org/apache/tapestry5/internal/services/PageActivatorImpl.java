@@ -16,14 +16,31 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.internal.EmptyEventContext;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.HttpError;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.slf4j.Logger;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class PageActivatorImpl implements PageActivator
 {
+	private final Logger logger;
+
+	private final MetaDataLocator metaDataLocator;
+
+	private final UnknownActivationContextHandler unknownActivationContextHandler;
+
+	public PageActivatorImpl(Logger logger, MetaDataLocator metaDataLocator,
+							 UnknownActivationContextHandler unknownActivationContextHandler)
+	{
+		this.logger = logger;
+		this.metaDataLocator = metaDataLocator;
+		this.unknownActivationContextHandler = unknownActivationContextHandler;
+	}
 
     @SuppressWarnings("unchecked")
     public boolean activatePage(ComponentResources pageResources, EventContext activationContext,
@@ -31,7 +48,18 @@ public class PageActivatorImpl implements PageActivator
     {
         TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(resultProcessor);
 
-        pageResources.triggerContextEvent(EventConstants.ACTIVATE, activationContext, callback);
+		boolean handled = pageResources.triggerContextEvent(EventConstants.ACTIVATE, activationContext, callback);
+
+		boolean checkUnknown = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
+														pageResources, Boolean.class);
+
+		if ( !handled && activationContext.getCount() > 0 && checkUnknown &&
+			!pageResources.getComponentModel().handleActivationEventContext())
+		{
+			logger.info("Page {} required an exact activation context, let's handle this", pageResources.getPageName());
+			unknownActivationContextHandler.handleUnknownContext(pageResources, activationContext);
+			return true;
+		}
 
         if (callback.isAborted())
         {

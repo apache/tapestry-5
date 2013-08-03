@@ -39,6 +39,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.*;
+import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
@@ -508,8 +509,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     // should be okay since it's a shadow service object
     private final Request request;
     private final SymbolSource symbolSource;
+	private final MetaDataLocator metaDataLocator;
+
     private final boolean productionMode;
     private final boolean componentTracingEnabled;
+	private final boolean exactParameterCountMatch;
 
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
@@ -543,7 +547,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
                              String elementName, Instantiator instantiator, Location location,
-                             ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+                             ComponentPageElementResources elementResources, Request request,
+							 SymbolSource symbolSource, MetaDataLocator metaDataLocator)
     {
         super(location);
 
@@ -556,13 +561,17 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.elementResources = elementResources;
         this.request = request;
         this.symbolSource = symbolSource;
+		this.metaDataLocator = metaDataLocator;
 
         // evaluate this once because it gets referenced a lot during rendering
         this.productionMode = "true".equals(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
         this.componentTracingEnabled = "true".equals(symbolSource
                 .valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
 
-        ComponentResources containerResources = container == null ? null : container.getComponentResources();
+		this.exactParameterCountMatch = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
+																page.getName(), Boolean.class);
+
+		ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
         coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.elementResources,
                 completeId, nestedId, instantiator, false);
@@ -586,9 +595,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * Constructor for the root component of a page.
      */
     public ComponentPageElementImpl(Page page, Instantiator instantiator,
-                                    ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+                                    ComponentPageElementResources elementResources, Request request,
+									SymbolSource symbolSource, MetaDataLocator metaDataLocator)
     {
-        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources, request, symbolSource);
+		this(page, null, null, null, page.getName(), null, instantiator, null, elementResources,
+				request, symbolSource, metaDataLocator);
     }
 
     private void initializeRenderPhases()
@@ -646,9 +657,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                          Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
-                elementName, instantiator, location, elementResources, request, symbolSource);
+                elementName, instantiator, location, elementResources, request, symbolSource, metaDataLocator);
 
-        addEmbeddedElement(child);
+		addEmbeddedElement(child);
 
         return child;
     }
@@ -1109,7 +1120,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 Logger logger = component.getEventLogger();
 
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
-                        elementResources, logger);
+                        elementResources, exactParameterCountMatch, coreResources.getComponentModel(), logger);
 
                 logger.debug(TapestryMarkers.EVENT_DISPATCH, "Dispatch event: {}", event);
 

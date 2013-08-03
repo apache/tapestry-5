@@ -93,7 +93,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                                           @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
                                           String pageName,
 
-                                          Request request, Response response, ComponentClassResolver componentClassResolver, LinkSource linkSource, ServiceResources serviceResources, Map<Class, Object> configuration)
+                                          Request request, Response response, ComponentClassResolver componentClassResolver,
+										  LinkSource linkSource, ServiceResources serviceResources, Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;

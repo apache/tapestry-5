@@ -32,6 +32,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
@@ -60,6 +61,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final SymbolSource symbolSource;
 
+	private final MetaDataLocator metaDataLocator;
+
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
@@ -67,7 +70,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                   ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
                                   Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker,
-                                  Request request, SymbolSource symbolSource)
+                                  Request request, SymbolSource symbolSource, MetaDataLocator metaDataLocator)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -77,6 +80,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.tracker = tracker;
         this.request = request;
         this.symbolSource = symbolSource;
+		this.metaDataLocator = metaDataLocator;
     }
 
     public ComponentPageElement assembleRootComponent(final Page page)
@@ -103,7 +107,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             pageAssembly.weight++;
 
             ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources,
-                    request, symbolSource);
+                    request, symbolSource, metaDataLocator);
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 
