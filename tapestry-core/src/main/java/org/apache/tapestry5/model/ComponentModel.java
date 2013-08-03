@@ -211,4 +211,15 @@ public interface ComponentModel
      * @since 5.2.0
      */
     String[] getOrderForMixin(String mixinClassName);
+
+	/**
+	 * Relevant for pages only, indicates that the component handle the {@link org.apache.tapestry5.EventConstants.ACTIVATE}
+	 * events with a catch all rules
+	 *
+	 * @since 5.4
+	 * @see {@link MutableComponentModel.doHandleActivationEventContext()}
+	 * @return <code>true</code> in case the page implement a catch all rules for the activate event context,
+	 * <code>false</code> otherwise
+	 */
+	boolean handleActivationEventContext();
 }

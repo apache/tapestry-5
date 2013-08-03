@@ -120,4 +120,17 @@ public interface MutableComponentModel extends ComponentModel
      * @since 5.1.0.0
      */
     void addEventHandler(String eventType);
+
+	/**
+	 * Relevant for pages only, identifies that the component handle {@link org.apache.tapestry5.EventConstants.ACTIVATE}
+	 * events supporting one of the three special case for catch all rules:
+	 * <ul>
+	 *     <li><code>{@link java.lang.Object}[]</code></li>
+	 *     <li><code>{@link java.util.List}</code></li>
+	 *     <li><code>{@link org.apache.tapestry5.EventContext}</code></li>
+	 * </ul>
+	 *
+	 * @since 5.4
+	 */
+	void doHandleActivationEventContext();
 }
