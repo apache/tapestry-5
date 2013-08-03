@@ -62,7 +62,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, false, mockComponentModel(), logger);
 
         assertTrue(event.matches("eventType", "someId", 0));
         assertFalse(event.matches("foo", "someId", 0));
@@ -88,7 +88,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, false, mockComponentModel(), logger);
 
         event.storeResult(result);
 
@@ -111,7 +111,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, false, mockComponentModel(), logger);
 
         assertTrue(event.matches("EVENTTYPE", "someid", 0));
 
@@ -131,7 +131,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, false, mockComponentModel(), logger);
 
         assertTrue(event.matches("eventType", "someId", 0));
 
@@ -153,7 +153,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, false, mockComponentModel(), logger);
 
         assertTrue(event.matches("eventtype", "SOMEID", 0));
 
@@ -178,7 +178,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, false, mockComponentModel(), logger);
 
         assertSame(event.coerceContext(0, "java.lang.Integer"), value);
 
@@ -199,7 +199,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, false, mockComponentModel(), logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -234,7 +234,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, false, mockComponentModel(), logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -273,7 +273,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, false, mockComponentModel(), logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -302,7 +302,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, false, mockComponentModel(), logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -324,7 +324,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, false, mockComponentModel(), logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -355,7 +355,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, false, mockComponentModel(), logger);
 
         event.setMethodDescription("foo.Bar.baz()");
         event.storeResult(result);

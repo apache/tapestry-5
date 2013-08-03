@@ -518,7 +518,9 @@ public class Index
 
                     new Item("OverrideLabelClassDemo", "Override Label Class Demo", "Setting class attribute on Label component"),
 
-                    new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field")
+                    new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field"),
+
+					new Item("UnknownAtcivationContext", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context")
             );
 
     static
