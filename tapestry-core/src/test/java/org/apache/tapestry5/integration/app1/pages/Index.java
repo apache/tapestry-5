@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,12 +40,14 @@ public class Index
         public final String pageName;
         public final String label;
         public final String description;
+		public final Object[] context;
 
-        public Item(String pageName, String label, String description)
+        public Item(String pageName, String label, String description, Object... context)
         {
             this.pageName = pageName;
             this.label = label;
             this.description = description;
+			this.context = context;
         }
 
         public int compareTo(Item o)
@@ -520,7 +522,11 @@ public class Index
 
                     new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field"),
 
-					new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context")
+					new Item("KnownActivationContextDemo", "Known Activation Context Demo", "Page is displayed normally if called without context (TAP5-2070)",
+							"Exact"),
+
+					new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
+							"Unwanted", "context")
             );
 
     static
