@@ -31,7 +31,7 @@ define ["./dom", "./ajax", "./zone"],
       url = container.attribute "data-tree-action-url"
 
       ajax url,
-        parameters:
+        data:
           "t:action": action
           "t:nodeid": node.attribute NODE_ID
         success: success

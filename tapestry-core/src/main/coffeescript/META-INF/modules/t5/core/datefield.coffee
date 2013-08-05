@@ -82,7 +82,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
         @field.addClass "ajax-wait"
 
         ajax (@container.attribute "data-parse-url"),
-          parameters:
+          data:
             input: value
           onerror: (message) =>
             @field.removeClass "ajax-wait"
@@ -132,7 +132,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
 
 
         ajax (@container.attribute "data-format-url"),
-          parameters:
+          data:
             input: date.getTime()
           failure: (response, message) =>
             @field.removeClass "ajax-wait"

@@ -34,7 +34,7 @@ define ["./dom", "./events", "./console", "./ajax"],
       url = afl.attribute "data-remove-row-url"
 
       ajax url,
-        parameters:
+        data:
           "t:rowvalue": @attribute "data-afl-row-value"
         success: =>
           # The server has removed the row from persistent storage, lets

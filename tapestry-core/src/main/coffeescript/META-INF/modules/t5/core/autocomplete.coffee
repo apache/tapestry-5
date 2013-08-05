@@ -22,7 +22,7 @@ define ["./dom", "./ajax", "jquery", "bootstrap"],
       $field.addClass "ajax-wait"
 
       ajax url,
-        parameters:
+        data:
           "t:input": query
         success: (response) ->
           $field.removeClass "ajax-wait"

@@ -105,7 +105,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       parameters = attr and JSON.parse attr
 
       ajax event.memo.url,
-        parameters: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
+        data: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
         success: (response) =>
           zone.trigger events.zone.update, content: response.json?.content
 

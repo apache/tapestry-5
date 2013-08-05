@@ -14,7 +14,7 @@
 
 # ## t5/core/exception-frame
 #
-# Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
+# Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
 define ["./dom", "underscore"],
   (dom, _) ->

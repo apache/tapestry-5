@@ -55,7 +55,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
         return
 
       ajax (getURL container),
-        parameters: { id }
+        data: { id }
         success: -> removeAlert container, alert
 
     setupUI = (outer) ->

@@ -17,6 +17,17 @@
 # Exports a single function, that invokes `t5/core/dom:ajaxRequest()` with the provided `url` and a modified version of the
 # `options`.
 #
+# * options.method - "post", "get", etc., default: "post".
+# * options.contentType - request content, defaults to "application/x-www-form-urlencoded"
+# * options.data - optional, additional key/value pairs (for the default content type)
+# * options.success - handler to invoke on success. Passed the ResponseWrapper object.
+#   Default does nothing.
+# * options.failure - handler to invoke on failure (server responds with a non-2xx code).
+#   Passed the response. Default will throw the exception
+# * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
+#   Passed the exception. Default will generate an exception message and throw an `Error`.
+#   Note: not really supported under jQuery, a hold-over from Prototype.
+#
 # It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
 # `t5/core/exception-frame` module to display a server-side processing exception.
