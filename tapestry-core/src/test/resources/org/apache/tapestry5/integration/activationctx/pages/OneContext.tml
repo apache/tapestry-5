@@ -1,0 +1,7 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+  <p>
+    You are able to see me only with one parameter in the activation context
+  </p>
+  
+</t:layout>

@@ -1,0 +1,39 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <ul>
+        <li>
+            <t:pagelink page="nocontext">No context correct</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="nocontext" context="literal:one">No context error</t:pagelink>
+        </li>
+
+
+        <li>
+            <t:pagelink page="onecontext">One context without</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="onecontext" context="literal:one">One context correct</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="onecontext" context="twoValues">One context error</t:pagelink>
+        </li>
+
+
+        <li>
+            <t:pagelink page="twocontext">Two context without</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="twocontext" context="literal:one">Two context error</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="twocontext" context="twoValues">Two context correct</t:pagelink>
+        </li>
+    </ul>
+
+</t:layout>
