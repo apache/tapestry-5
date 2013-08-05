@@ -32,7 +32,7 @@
 
     <ul>
         <li t:type="loop" source="itemsForKey()" value="item">
-            <t:pagelink page="prop:item.pageName">${item.label}</t:pagelink>
+            <t:pagelink page="prop:item.pageName" context="item.context">${item.label}</t:pagelink>
             -- ${item.description}
         </li>
     </ul>
