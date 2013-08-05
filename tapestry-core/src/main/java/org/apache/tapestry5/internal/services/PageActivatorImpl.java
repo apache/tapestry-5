@@ -53,8 +53,7 @@ public class PageActivatorImpl implements PageActivator
 		boolean checkUnknown = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
 														pageResources, Boolean.class);
 
-		if ( !handled && activationContext.getCount() > 0 && checkUnknown &&
-			!pageResources.getComponentModel().handleActivationEventContext())
+		if ( !handled && checkUnknown && !pageResources.getComponentModel().handleActivationEventContext())
 		{
 			logger.info("Page {} required an exact activation context, let's handle this", pageResources.getPageName());
 			unknownActivationContextHandler.handleUnknownContext(pageResources, activationContext);
