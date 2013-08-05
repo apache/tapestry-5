@@ -102,4 +102,19 @@
             <package name="org.apache.tapestry5.integration.pagetester"/>
         </packages>
     </test>
+
+    <test name="Activation Context Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/activationctx"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.activationctx"/>
+        </packages>
+    </test>
+
+    <test name="Activation Context Tests 2 old behavior" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/activationctx2"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.activationctx2"/>
+        </packages>
+    </test>
+
 </suite>
