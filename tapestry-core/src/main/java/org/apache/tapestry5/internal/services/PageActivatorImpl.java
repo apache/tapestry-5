@@ -50,10 +50,14 @@ public class PageActivatorImpl implements PageActivator
 
 		boolean handled = pageResources.triggerContextEvent(EventConstants.ACTIVATE, activationContext, callback);
 
+		boolean acceptEmpty = !pageResources.getComponentModel().handlesEvent(EventConstants.ACTIVATE) &&
+								activationContext.getCount() == 0;
+
 		boolean checkUnknown = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
 														pageResources, Boolean.class);
 
-		if ( !handled && checkUnknown && !pageResources.getComponentModel().handleActivationEventContext())
+		if ( !handled && !acceptEmpty && checkUnknown &&
+				!pageResources.getComponentModel().handleActivationEventContext())
 		{
 			logger.info("Page {} required an exact activation context, let's handle this", pageResources.getPageName());
 			unknownActivationContextHandler.handleUnknownContext(pageResources, activationContext);
