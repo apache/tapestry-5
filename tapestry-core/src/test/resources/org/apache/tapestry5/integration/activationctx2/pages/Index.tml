@@ -1,0 +1,26 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <ul>
+        <li>
+            <t:pagelink page="contextchecked">Context checked correct</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="contextchecked" context="literal:error">Context checked error</t:pagelink>
+        </li>
+
+
+        <li>
+            <t:pagelink page="contextunchecked">Context unchecked without</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="contextunchecked" context="literal:one">Context unchecked with one</t:pagelink>
+        </li>
+
+        <li>
+            <t:pagelink page="contextunchecked" context="twoValues">Context unchecked with two</t:pagelink>
+        </li>
+    </ul>
+
+</t:layout>
