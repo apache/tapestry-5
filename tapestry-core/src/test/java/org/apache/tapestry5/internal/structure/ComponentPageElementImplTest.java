@@ -3,6 +3,7 @@ package org.apache.tapestry5.internal.structure;
 import static org.apache.tapestry5.SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED;
 import static org.apache.tapestry5.SymbolConstants.PRODUCTION_MODE;
 
+import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.services.SymbolSource;
@@ -28,7 +29,7 @@ public class ComponentPageElementImplTest extends TestBase {
 		getMocksControl().resetToNice();
 
 		expect(instantiator.getModel()).andReturn(model).anyTimes();
-		
+
 		// off by default
 		expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
 		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("false");
@@ -49,6 +50,10 @@ public class ComponentPageElementImplTest extends TestBase {
 		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("true");
 		expect(request.getParameter("t:component-trace")).andReturn("false");
 
+		expect(page.getName()).andReturn("pageName").anyTimes();
+		expect(locator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, "pageName", Boolean.class))
+				.andReturn(false).anyTimes();
+
 		replay();
 		ComponentPageElementImpl c;	// need to create every time because of changing symbols
 		
@@ -57,10 +62,10 @@ public class ComponentPageElementImplTest extends TestBase {
 		
 		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
 		assertTrue(c.isRenderTracingEnabled());
-		
+
 		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
 		assertTrue(c.isRenderTracingEnabled());
-		
+
 		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
 		assertFalse(c.isRenderTracingEnabled());
 	}
