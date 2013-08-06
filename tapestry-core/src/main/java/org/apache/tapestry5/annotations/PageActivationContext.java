@@ -28,8 +28,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * In order to use this annotation you must contribute a {@link org.apache.tapestry5.ValueEncoder} for the class of the
  * annotated property.
  * <p/>
- * You should not use this annotation within a class that already has an onActivate() or onPassivate() method; doing so
- * will result in a runtime exception.
+ * You should not use this annotation more than once per page class; doing it will result in a runtime exception.
  */
 @Target(FIELD)
 @Documented
