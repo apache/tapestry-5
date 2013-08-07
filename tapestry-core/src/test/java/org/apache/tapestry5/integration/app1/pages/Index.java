@@ -318,7 +318,8 @@ public class Index
                     new Item("pagelinkcontext", "PageLink Context Demo",
                             "passing explicit context in a page render link"),
 
-                    new Item("pagecontextinform", "Page Context in Form", "passivate/activate page context in Form"),
+                    new Item("pagecontextinform", "Page Context in Form", "passivate/activate page context in Form",
+							"betty", "wilma", "context with spaces", "context/with/slashes"),
 
                     new Item("ValidBeanEditorDemo", "Client Validation Demo", "BeanEditor with validation enabled"),
 

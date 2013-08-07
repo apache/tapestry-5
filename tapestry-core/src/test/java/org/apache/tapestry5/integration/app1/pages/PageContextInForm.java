@@ -27,14 +27,7 @@ public class PageContextInForm
 
     Object[] onPassivate()
     {
-        if (activationContext != null)
-        {
-            return activationContext;
-        }
-        else
-        {
-            return new Object[] { "betty", "wilma", "context with spaces", "context/with/slashes" };
-        }
+		return activationContext;
     }
 
     public Object[] getActivationContext()
