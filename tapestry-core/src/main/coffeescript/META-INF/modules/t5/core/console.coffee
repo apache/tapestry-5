@@ -169,8 +169,9 @@ define ["./dom", "underscore"],
         message += """: #{err.message}"""
 
       if err.requireType
-        message += """, modules #{err.requireModules.join(", ")}"""
-
+        modules = err.requireModules
+        if modules and modules.length > 0
+          message += """, modules #{modules.join(", ")}"""
 
       exports.error message
 
