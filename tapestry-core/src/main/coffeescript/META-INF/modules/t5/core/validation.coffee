@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## t5/core/translator
+# ## t5/core/validation
 #
 # Support for Tapestry's built-in set of translators and validators.
 #
