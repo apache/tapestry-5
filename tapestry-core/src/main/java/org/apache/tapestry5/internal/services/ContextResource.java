@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ public class ContextResource extends AbstractResource
         try
         {
             acquireReadLock();
+
             if (!urlResolved)
             {
                 resolveURL();
@@ -104,7 +105,11 @@ public class ContextResource extends AbstractResource
                 try
                 {
                     url = file.toURI().toURL();
+
+                    validateURL(url);
+
                     urlResolved = true;
+
                     return;
                 } catch (MalformedURLException ex)
                 {
@@ -116,7 +121,11 @@ public class ContextResource extends AbstractResource
             // URL we get ... but reloading won't work.
 
             url = context.getResource(contextPath);
+
+            validateURL(url);
+
             urlResolved = true;
+
 
         } finally
         {

@@ -18,8 +18,10 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +70,11 @@ public abstract class AbstractResource extends LockSupport implements Resource
     }
 
     public final String getFile()
+    {
+        return extractFile(path);
+    }
+
+    private static String extractFile(String path)
     {
         int slashx = path.lastIndexOf('/');
 
@@ -264,7 +271,9 @@ public abstract class AbstractResource extends LockSupport implements Resource
         URL url = toURL();
 
         if (url == null)
+        {
             return null;
+        }
 
         return new BufferedInputStream(url.openStream());
     }
@@ -273,4 +282,68 @@ public abstract class AbstractResource extends LockSupport implements Resource
      * Factory method provided by subclasses.
      */
     protected abstract Resource newResource(String path);
+
+    /**
+     * Validates that the URL is correct; at this time, a correct URL is one of:
+     * <ul><li>null</li>
+     * <li>a non-file: URL</li>
+     * <li>a file: URL where the case of the file matches the corresponding path element</li>
+     * </ul>
+     * See <a href="https://issues.apache.org/jira/browse/TAP5-1007">TAP5-1007</a>
+     *
+     * @param url
+     *         to validate
+     * @since 5.4
+     */
+    protected void validateURL(URL url)
+    {
+        if (url == null)
+        {
+            return;
+        }
+
+        // Don't have to be concerned with the  ClasspathURLConverter since this is intended as a
+        // runtime check during development; it's about ensuring that what works in development on
+        // a case-insensitive file system will work in production on the classpath (or other case sensitive
+        // file system).
+
+        if (!url.getProtocol().equals("file"))
+        {
+            return;
+        }
+
+        File file = toFile(url);
+
+        String expectedFileName = null;
+
+        try
+        {
+            expectedFileName = extractFile(file.getCanonicalPath());
+        } catch (IOException e)
+        {
+            return;
+        }
+
+        String actualFileName = getFile();
+
+        if (actualFileName.equals(expectedFileName))
+        {
+            return;
+        }
+
+        throw new IllegalStateException(String.format("Resource %s does not match the case of the actual file name, '%s'.",
+                this, expectedFileName));
+
+    }
+
+    private File toFile(URL url)
+    {
+        try
+        {
+            return new File(url.toURI());
+        } catch (URISyntaxException ex)
+        {
+            return new File(url.getPath());
+        }
+    }
 }

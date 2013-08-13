@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -35,6 +37,8 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
     private final Resource rootResource = new ClasspathResource("/");
 
+    private final OperationTracker tracker = new QuietOperationTracker();
+
     @Test
     public void relative_asset()
     {
@@ -52,7 +56,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         // First try creates it:
 
@@ -82,7 +86,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         // First try creates it:
 
@@ -112,7 +116,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(null, configuration, symbolSource, null);
+        AssetSource source = new AssetSourceImpl(null, configuration, symbolSource, null, tracker);
 
         // First try creates it:
 
@@ -142,7 +146,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         assertSame(source.getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties"), asset);
 
@@ -167,7 +171,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         assertSame(source.getAsset(baseResource,
                 "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK), asset);
@@ -189,7 +193,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         try
         {
@@ -214,7 +218,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null, null, tracker);
 
         try
         {

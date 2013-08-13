@@ -24,6 +24,20 @@ class ClasspathResourceSpec extends Specification {
         content(r) == RESOURCE_TXT_CONTENT
     }
 
+    def "case-mismatch on file name is detected"() {
+        def r = new ClasspathResource("$FOLDER/Resource.Txt")
+
+        when:
+
+        r.toURL()
+
+        then:
+
+        IllegalStateException e = thrown()
+
+        e.message == "Resource classpath:org/apache/tapestry5/ioc/internal/util/Resource.Txt does not match the case of the actual file name, 'resource.txt'."
+    }
+
     def "expand path from root resource yields same URL as full path"() {
         def r = new ClasspathResource("").forFile(PATH)
 

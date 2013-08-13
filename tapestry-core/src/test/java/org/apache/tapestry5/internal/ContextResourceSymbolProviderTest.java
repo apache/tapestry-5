@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ public class ContextResourceSymbolProviderTest extends InternalBaseTestCase
 {
     private static final String CONTENT = "homer=simpson\r\nmonty=burns";
 
-    private static final String PATH = "bar/foo.properties";
-
     @Test
     public void access() throws Exception
     {
@@ -36,11 +34,11 @@ public class ContextResourceSymbolProviderTest extends InternalBaseTestCase
 
         Context context = mockContext();
 
-        expect(context.getRealFile("/" + PATH)).andReturn(f);
+        expect(context.getRealFile("/bar/" + f.getName())).andReturn(f);
 
         replay();
 
-        ContextResourceSymbolProvider provider = new ContextResourceSymbolProvider(context, PATH);
+        ContextResourceSymbolProvider provider = new ContextResourceSymbolProvider(context, "bar/" + f.getName());
 
         /* test general access */
         assertEquals(provider.valueForSymbol("homer"), "simpson");
@@ -64,7 +62,5 @@ public class ContextResourceSymbolProviderTest extends InternalBaseTestCase
         fos.write(CONTENT.getBytes());
 
         fos.close();
-
-        fos = null;
     }
 }

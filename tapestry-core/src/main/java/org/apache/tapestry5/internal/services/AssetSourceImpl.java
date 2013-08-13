@@ -19,6 +19,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -54,13 +56,16 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
     private final AtomicBoolean firstWarning = new AtomicBoolean(true);
 
+    private final OperationTracker tracker;
+
     public AssetSourceImpl(ThreadLocale threadLocale,
 
-                           Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger)
+                           Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker)
     {
         this.threadLocale = threadLocale;
         this.symbolSource = symbolSource;
         this.logger = logger;
+        this.tracker = tracker;
 
         Map<Class, AssetFactory> byResourceClass = CollectionFactory.newMap();
 
@@ -80,7 +85,8 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
     }
 
     @PostInjection
-    public void clearCacheWhenResourcesChange(ResourceChangeTracker tracker) {
+    public void clearCacheWhenResourcesChange(ResourceChangeTracker tracker)
+    {
         tracker.clearOnInvalidation(cache);
     }
 
@@ -114,79 +120,88 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
         return getUnlocalizedAsset(symbolSource.expandSymbols(path));
     }
 
-    public Asset getComponentAsset(ComponentResources resources, String path)
+    public Asset getComponentAsset(final ComponentResources resources, final String path)
     {
-            assert resources != null;
+        assert resources != null;
 
         assert InternalUtils.isNonBlank(path);
 
-        // First, expand symbols:
+        return tracker.invoke(String.format("Resolving '%s' for component %s", path, resources.getCompleteId()
+        ),
+                new Invokable<Asset>()
+                {
+                    public Asset invoke()
+                    {
+                        // First, expand symbols:
 
-        String expanded = symbolSource.expandSymbols(path);
+                        String expanded = symbolSource.expandSymbols(path);
 
-        int dotx = expanded.indexOf(':');
+                        int dotx = expanded.indexOf(':');
 
-        // We special case the hell out of 'classpath:' so that we can provide warnings today (5.4) and
-        // blow up in a useful fashion tomorrow (5.5).
+                        // We special case the hell out of 'classpath:' so that we can provide warnings today (5.4) and
+                        // blow up in a useful fashion tomorrow (5.5).
 
-        if (dotx > 0 && !expanded.substring(0, dotx).equalsIgnoreCase(AssetConstants.CLASSPATH))
-        {
-            return getAssetInLocale(resources.getBaseResource(), expanded, resources.getLocale());
-        }
+                        if (dotx > 0 && !expanded.substring(0, dotx).equalsIgnoreCase(AssetConstants.CLASSPATH))
+                        {
+                            return getAssetInLocale(resources.getBaseResource(), expanded, resources.getLocale());
+                        }
 
-        // No prefix, so implicitly classpath:, or explicitly classpath:
+                        // No prefix, so implicitly classpath:, or explicitly classpath:
 
-        String restOfPath = expanded.substring(dotx + 1);
+                        String restOfPath = expanded.substring(dotx + 1);
 
-        // This is tricky, because a relative path (including "../") is ok in 5.3, since its just somewhere
-        // else on the classpath (though you can "stray" out of the "safe" zone).  In 5.4, under /META-INF/assets/
-        // it's possible to "stray" out beyond the safe zone more easily, into parts of the classpath that can't be
-        // represented in the URL.
+                        // This is tricky, because a relative path (including "../") is ok in 5.3, since its just somewhere
+                        // else on the classpath (though you can "stray" out of the "safe" zone).  In 5.4, under /META-INF/assets/
+                        // it's possible to "stray" out beyond the safe zone more easily, into parts of the classpath that can't be
+                        // represented in the URL.
 
+                        // Ends with trailing slash:
+                        String metaRoot = "META-INF/assets/" + toPathPrefix(resources.getComponentModel().getLibraryName());
 
-        // Ends with trailing slash:
-        String metaRoot = "META-INF/assets/" + toPathPrefix(resources.getComponentModel().getLibraryName());
+                        String metaPath = metaRoot + (restOfPath.startsWith("/")
+                                ? restOfPath.substring(1)
+                                : restOfPath);
 
-        String metaPath = metaRoot + (restOfPath.startsWith("/")
-                ? restOfPath.substring(1)
-                : restOfPath);
+                        // Based on the path, metaResource is where it should exist in a 5.4 and beyond world ... unless the expanded
+                        // path was a bit too full of ../ sequences, in which case the expanded path is not valid and we adjust the
+                        // error we write.
 
-        // Based on the path, metaResource is where it should exist in a 5.4 and beyond world ... unless the expanded
-        // path was a bit too full of ../ sequences, in which case the expanded path is not valid and we adjust the
-        // error we write.
+                        Resource metaResource = findLocalizedResource(null, metaPath, resources.getLocale());
 
-        Resource metaResource = findLocalizedResource(null, metaPath, resources.getLocale());
+                        Asset result = getComponentAsset(resources, expanded, metaResource);
 
-        Asset result = getComponentAsset(resources, expanded, metaResource);
+                        // This is the best way to tell if the result is an asset for a Classpath resource.
 
-        // This is the best way to tell if the result is an asset for a Classpath resource.
+                        Resource resultResource = result.getResource();
 
-        Resource resultResource = result.getResource();
+                        if (!resultResource.equals(metaResource))
+                        {
+                            if (firstWarning.getAndSet(false))
+                            {
+                                logger.error("Packaging of classpath assets has changed in release 5.4; " +
+                                        "Assets should no longer be on the main classpath, " +
+                                        "but should be moved to 'META-INF/assets/' or a sub-folder. Future releases of Tapestry may " +
+                                        "no longer support assets on the main classpath.");
+                            }
 
-        if (!resultResource.equals(metaResource))
-        {
-            if (firstWarning.getAndSet(false))
-            {
-                logger.error("Packaging of classpath assets has changed in release 5.4; " +
-                        "Assets should no longer be on the main classpath, " +
-                        "but should be moved to 'META-INF/assets/' or a sub-folder. Future releases of Tapestry may " +
-                        "no longer support assets on the main classpath.");
-            }
+                            if (metaResource.getFolder().startsWith(metaRoot))
+                            {
+                                logger.error(String.format("Classpath asset '/%s' should be moved to folder '/%s/'.",
+                                        resultResource.getPath(),
+                                        metaResource.getFolder()));
+                            } else
+                            {
+                                logger.error(String.format("Classpath asset '/%s' should be moved under folder '/%s', and the relative path adjusted.",
+                                        resultResource.getPath(),
+                                        metaRoot));
+                            }
+                        }
 
-            if (metaResource.getFolder().startsWith(metaRoot))
-            {
-                logger.error(String.format("Classpath asset '/%s' should be moved to folder '/%s/'.",
-                        resultResource.getPath(),
-                        metaResource.getFolder()));
-            } else
-            {
-                logger.error(String.format("Classpath asset '/%s' should be moved under folder '/%s', and the relative path adjusted.",
-                        resultResource.getPath(),
-                        metaRoot));
-            }
-        }
+                        return result;
+                    }
+                }
 
-        return result;
+        );
     }
 
     private Asset getComponentAsset(ComponentResources resources, String expandedPath, Resource metaResource)

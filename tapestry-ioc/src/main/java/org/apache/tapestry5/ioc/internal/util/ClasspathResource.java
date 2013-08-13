@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,12 +77,17 @@ public final class ClasspathResource extends AbstractResource
             if (!urlResolved)
             {
                 url = classLoader.getResource(getPath());
+
+                validateURL(url);
+
                 urlResolved = true;
             }
         } finally
         {
             downgradeWriteLockToReadLock();
         }
+
+
     }
 
     @Override

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,18 +27,18 @@ public class ContextResourceTest extends InternalBaseTestCase
     @Test
     public void get_url_no_real_file() throws Exception
     {
-        String path = "/foo/Bar.txt";
+        String path = "/foo/ContextResourceTest.class";
         URL url = getClass().getResource("ContextResourceTest.class");
 
         Context context = mockContext();
 
         expect(context.getRealFile(path)).andReturn(null);
 
-        expect(context.getResource("/foo/Bar.txt")).andReturn(url);
+        expect(context.getResource("/foo/ContextResourceTest.class")).andReturn(url);
 
         replay();
 
-        Resource r = new ContextResource(context, "foo/Bar.txt");
+        Resource r = new ContextResource(context, "foo/ContextResourceTest.class");
 
         assertSame(r.toURL(), url);
 
@@ -50,7 +50,7 @@ public class ContextResourceTest extends InternalBaseTestCase
     {
         File f = File.createTempFile("Bar", ".txt");
 
-        String path = "/foo/Bar.txt";
+        String path = "/foo/" + f.getName();
 
         Context context = mockContext();
 
@@ -58,7 +58,7 @@ public class ContextResourceTest extends InternalBaseTestCase
 
         replay();
 
-        Resource r = new ContextResource(context, "foo/Bar.txt");
+        Resource r = new ContextResource(context, "foo/" + f.getName());
 
         assertEquals(r.toURL(), f.toURL());
 
