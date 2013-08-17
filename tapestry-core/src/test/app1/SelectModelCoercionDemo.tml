@@ -1,0 +1,20 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+	<t:form clientValidation="NONE">
+		<p>
+			<t:errors />
+		</p>
+		<p>
+			<t:select t:id="track" model="tracks" />
+
+		</p>
+
+		<p>
+			<t:submit value="literal:Submit" />
+		</p>
+	</t:form>
+	
+	<t:if test="track">
+		<p> Selected track: ${track.title}, ${track.album}</p>
+	</t:if>
+
+</t:border>

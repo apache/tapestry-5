@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -286,6 +286,16 @@ public class AppModule
     public static void protectPropertiesFiles(Configuration<String> configuration)
     {
         configuration.add("properties");
+    }
+    
+    public void contributeValueLabelProvider(MappedConfiguration<Class, ValueLabelProvider> configuration)
+    {
+        configuration.add(Track.class, new ValueLabelProvider<Track>() {
+
+			public String getLabel(Track value) {
+				return value.getTitle();
+			}
+		}); 
     }
 
     @Contribute(ComponentClassResolver.class)

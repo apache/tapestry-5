@@ -1048,6 +1048,30 @@ public class FormTests extends TapestryCoreTestCase
     }
 
     @Test
+    public void create_select_model_from_objects() throws Exception
+    {
+    	openLinks("SelectModel from objects");
+    	
+    	select("track", "label=The Calling");
+    	
+    	clickAndWait(SUBMIT);
+    	
+    	assertTextPresent("Selected track: The Calling, Synaesthetic");
+    }
+    
+    @Test
+    public void create_select_model_coercion() throws Exception
+    {
+    	openLinks("SelectModel coercion");
+    	
+    	select("track", "label=The Calling");
+    	
+    	clickAndWait(SUBMIT);
+    	
+    	assertTextPresent("Selected track: The Calling, Synaesthetic");
+    }
+    
+    @Test
     public void validation_macro() throws Exception
     {
         openLinks("Validator Macro Demo");

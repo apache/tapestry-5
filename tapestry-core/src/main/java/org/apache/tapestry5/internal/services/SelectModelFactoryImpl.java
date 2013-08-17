@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,51 +13,56 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.ValueLabelProvider;
+
+import java.util.List;
 
 public class SelectModelFactoryImpl implements SelectModelFactory
 {
     private final PropertyAccess propertyAccess;
+
     private final ValueEncoderSource valueEncoderSource;
 
-    public SelectModelFactoryImpl(final PropertyAccess propertyAccess,
-            final ValueEncoderSource valueEncoderSource)
+    private final ValueLabelProvider<Object> valueLabelProvider;
+
+    public SelectModelFactoryImpl(PropertyAccess propertyAccess, ValueEncoderSource valueEncoderSource, ValueLabelProvider<Object> valueLabelProvider)
     {
-        super();
         this.propertyAccess = propertyAccess;
         this.valueEncoderSource = valueEncoderSource;
+        this.valueLabelProvider = valueLabelProvider;
     }
 
-    @SuppressWarnings("unchecked")
-    public SelectModel create(final List<?> objects, final String labelProperty)
+
+    public SelectModel create(List<?> objects, String labelProperty)
+    {
+        PropertyValueLabelProvider propertyValueLabelProvider = new PropertyValueLabelProvider(
+                valueEncoderSource, propertyAccess, labelProperty);
+
+        return createSelectModel(objects, propertyValueLabelProvider);
+    }
+
+    public SelectModel create(List<?> objects)
+    {
+        return createSelectModel(objects, valueLabelProvider);
+    }
+
+    private SelectModel createSelectModel(List<?> objects, ValueLabelProvider<Object> labelProvider)
     {
         final List<OptionModel> options = CollectionFactory.newList();
 
-        for (final Object object : objects)
+        for (Object object : objects)
         {
-            final ClassPropertyAdapter classPropertyAdapter = this.propertyAccess
-                    .getAdapter(object);
+            String label = labelProvider.getLabel(object);
 
-            final PropertyAdapter propertyAdapter = classPropertyAdapter.getPropertyAdapter(labelProperty);
-
-            final ValueEncoder encoder = this.valueEncoderSource.getValueEncoder(propertyAdapter.getType());
-
-            final Object label = propertyAdapter.get(object);
-
-            options.add(new OptionModelImpl(encoder.toClient(label), object));
-
+            options.add(new OptionModelImpl(label, object));
         }
 
         return new SelectModelImpl(null, options);

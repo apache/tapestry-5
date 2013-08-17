@@ -921,8 +921,7 @@ public final class TapestryModule
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
 
-                                             @Builtin
-                                             TypeCoercer coercer,
+                                             final ObjectLocator objectLocator,
 
                                              @Builtin
                                              final ThreadLocale threadLocale,
@@ -980,10 +979,19 @@ public final class TapestryModule
 
         configuration.add(CoercionTuple.create(List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {
+            private SelectModelFactory selectModelFactory;
+
             @SuppressWarnings("unchecked")
             public SelectModel coerce(List input)
             {
-                return TapestryInternalUtils.toSelectModel(input);
+                // This doesn't look thread safe, but it is because its a one-time transition from null
+                // to another value, and a race condition is harmless.
+                if (selectModelFactory == null)
+                {
+                    selectModelFactory = objectLocator.getService(SelectModelFactory.class);
+                }
+
+                return selectModelFactory.create(input);
             }
         }));
 
@@ -2086,8 +2094,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
 
-		// TAP5-2070 keep the old behavior, defaults to false
-		configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
+        // TAP5-2070 keep the old behavior, defaults to false
+        configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
 
     }
 
@@ -2469,7 +2477,7 @@ public final class TapestryModule
         configuration.add(Secure.class, new FixedExtractor(MetaDataConstants.SECURE_PAGE));
         configuration.addInstance(ContentType.class, ContentTypeExtractor.class);
         configuration.add(WhitelistAccessOnly.class, new FixedExtractor(MetaDataConstants.WHITELIST_ONLY_PAGE));
-		configuration.addInstance(UnknownActivationContextCheck.class, UnknownActivationContextExtractor.class);
+        configuration.addInstance(UnknownActivationContextCheck.class, UnknownActivationContextExtractor.class);
     }
 
     /**
@@ -2592,5 +2600,23 @@ public final class TapestryModule
                 proxyFactory.clearCache();
             }
         });
+    }
+
+    /**
+     * @since 5.4
+     */
+    @Contribute(ValueLabelProvider.class)
+    public void defaultValueLabelProviders(MappedConfiguration<Class, ValueLabelProvider> configuration)
+    {
+        configuration.addInstance(Object.class, DefaultValueLabelProvider.class);
+        configuration.addInstance(Enum.class, EnumValueLabelProvider.class);
+    }
+
+    /**
+     * @since 5.4
+     */
+    public ValueLabelProvider<?> buildValueLabelProvider(Map<Class, ValueLabelProvider> configuration)
+    {
+        return strategyBuilder.build(ValueLabelProvider.class, configuration);
     }
 }

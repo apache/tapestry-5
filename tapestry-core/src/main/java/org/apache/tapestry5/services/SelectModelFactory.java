@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010-2013  The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 // limitations under the License.
 package org.apache.tapestry5.services;
 
-import java.util.List;
-
 import org.apache.tapestry5.SelectModel;
+
+import java.util.List;
 
 /**
  * Used to create an {@link org.apache.tapestry5.SelectModel}.
@@ -23,7 +23,7 @@ import org.apache.tapestry5.SelectModel;
  * @since 5.2.0
  */
 public interface SelectModelFactory
-{   
+{
     /**
      * Creates a {@link org.apache.tapestry5.SelectModel} from a list of objects of the same type and a label property name.
      * The returned model creates for every object in the list a selectable option and relies on existing 
@@ -34,4 +34,17 @@ public interface SelectModelFactory
      * @return the model
      */
     public SelectModel create(List<?> objects, String labelProperty);
+
+    /**
+     * Creates a {@link org.apache.tapestry5.SelectModel} from a list of objects of the same type.
+     * 
+     * The returned model creates for every object in the list a selectable option and relies on existing 
+     * {@link org.apache.tapestry5.ValueEncoder} for the object type.
+     * 
+     * @param objects objects to create model from
+     * @return the model
+     * 
+     * @since 5.4
+     */
+    public SelectModel create(List<?> objects);
 }

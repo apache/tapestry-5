@@ -489,6 +489,12 @@ public class Index
 
                     new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name",
                             "Creating a SelectModel from a list of objects and a label property name"),
+                            
+                    new Item("SelectModelFromObjectsDemo", "SelectModel from objects",
+                            "Creating a SelectModel from a list of objects"),
+                            
+                    new Item("SelectModelCoercionDemo", "SelectModel coercion",
+                            "Creating a SelectModel from a list of objects using coercion"),
 
                     new Item("DecoratePageRenderLinkDemo", "Decorate Page Render Link Demo",
                             "Decorating page render links"),
