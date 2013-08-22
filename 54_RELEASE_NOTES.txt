@@ -65,6 +65,10 @@ Less into CSS, and for minimizing CSS and JavaScript. All processing takes place
 This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
 inside a Twitter Bootstrap form.
 
+## Glyphicon Component
+
+This new component renders a `<span>` tag for a Bootstrap 3 Glyphicon.
+
 ## tapestry-test deprecated
 
 The tapestry-test module contains base classes used when writing TestNG, Selenium, and EasyMock tests.
