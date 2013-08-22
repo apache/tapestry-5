@@ -1,33 +1,31 @@
 <div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <t:block id="text">
-        <t:label for="textField"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="textField"/>
             <input t:id="textField"/>
         </div>
     </t:block>
 
     <t:block id="number">
-        <t:label for="numberField"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="numberField"/>
             <input t:id="numberField" class="t-number"/>
         </div>
     </t:block>
 
 
     <t:block id="enum">
-
-        <t:label for="select"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="select"/>
             <input t:id="select"/>
         </div>
-
     </t:block>
 
     <t:block id="boolean">
 
-        <div class="controls">
-            <label class="checkbox">
+        <div class="checkbox">
+            <label>
                 <input t:id="checkboxField"/>
                 ${context.label}
             </label>
@@ -37,8 +35,8 @@
 
     <t:block id="date">
 
-        <t:label for="dateField"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="dateField"/>
             <input t:id="dateField"/>
         </div>
 
@@ -46,8 +44,8 @@
 
     <t:block id="calendar">
 
-        <t:label for="calendarField"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="calendarField"/>
             <input t:id="calendarField"/>
         </div>
 
@@ -55,16 +53,16 @@
 
     <t:block id="password">
 
-        <t:label for="passwordField"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="passwordField"/>
             <input t:id="passwordField"/>
         </div>
 
     </t:block>
 
     <t:block id="longtext">
-        <t:label for="textarea"/>
-        <div class="controls">
+        <div class="form-group">
+            <t:label for="textarea"/>
             <textarea t:id="textarea"/>
         </div>
     </t:block>

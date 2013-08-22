@@ -24,8 +24,7 @@ import org.apache.tapestry5.services.Request;
  * Here's a component with a template, including a t:body element. Really should rename this to "Layout" as that's the
  * T5 naming.
  */
-@Import(stylesheet =
-        {"context:css/app.css"})
+@Import(stylesheet = "context:css/app.css", module = "bootstrap-collapse")
 public class Border
 {
     @Inject

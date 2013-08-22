@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,32 +84,36 @@ public class Checklist extends AbstractField
     @Property
     private List<Renderable> availableOptions;
 
-    private final class RenderRadio implements Renderable
+    private final class RenderCheckbox implements Renderable
     {
         private final OptionModel model;
 
-        private RenderRadio(final OptionModel model)
+        private RenderCheckbox(final OptionModel model)
         {
             this.model = model;
         }
 
         public void render(MarkupWriter writer)
         {
-            final String clientId = javaScriptSupport.allocateClientId(resources);
-
             final String clientValue = encoder.toClient(model.getValue());
 
-            final Element checkbox = writer.element("input", "type", "checkbox", "id", clientId, "name", getControlName(), "value", clientValue);
+            writer.element("label");
+
+            final Element checkbox = writer.element("input",
+                    "type", "checkbox",
+                    "name", getControlName(),
+                    "value", clientValue);
 
             if (getSelected().contains(model.getValue()))
             {
                 checkbox.attribute("checked", "checked");
             }
-            writer.end();
 
-            writer.element("label", "for", clientId);
             writer.write(model.getLabel());
             writer.end();
+
+            writer.end();
+
         }
     }
 
@@ -125,7 +129,7 @@ public class Checklist extends AbstractField
 
             public void option(final OptionModel optionModel)
             {
-                availableOptions.add(new RenderRadio(optionModel));
+                availableOptions.add(new RenderCheckbox(optionModel));
             }
 
             public void endOptionGroup(final OptionGroupModel groupModel)
@@ -203,6 +207,14 @@ public class Checklist extends AbstractField
     public boolean isRequired()
     {
         return validate.isRequired();
+    }
+
+    void beginRender(MarkupWriter writer) {
+        writer.element("div", "class", "checkbox");
+    }
+
+    void afterRender(MarkupWriter writer) {
+        writer.end();
     }
 }
 

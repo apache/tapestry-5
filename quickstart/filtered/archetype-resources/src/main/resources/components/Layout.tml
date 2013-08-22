@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-      xmlns:p="tapestry:parameter">
+        >
 <head>
     <meta charset="utf-8" />
     <title>${D}{title}</title>
@@ -29,9 +29,9 @@
 <body>
 
 <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
+    <div class="navbar-header">
         <div class="container">
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <button type="button" class="btn navbar-btn" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>

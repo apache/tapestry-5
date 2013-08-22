@@ -13,8 +13,8 @@
     </p>
 </t:if>
 
-<div class="pagination">
-    <ul>
+<div>
+    <ul class="pagination">
         <t:loop source="alphaKeyItems.keySet()" value="key">
             <li>
                 <a href="#ix_${key}">${key}</a>

@@ -9,13 +9,11 @@
 
         <t:parameter name="firstName">
             <t:label for="firstName"/>
-            <div class="controls">
-                <div class="input-append">
-                    <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
-                    <span class="add-on">FN</span>
-                </div>
-                <p class="help-block">First name is required.</p>
+            <div class="input-group">
+                <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
+                <span class="input-group-addon">FN</span>
             </div>
+            <p class="help-block">First name is required.</p>
         </t:parameter>
 
     </form>
@@ -32,11 +30,11 @@
         forms.
     </p>
 
-    <p>
-        <t:form t:id="search">
+    <t:form t:id="search">
+        <div class="form-group">
             <t:label for="searchTerm"/>
             <t:textfield t:id="searchTerm"/>
-            <input type="submit"/>
-        </t:form>
-    </p>
+        </div>
+        <input class="btn btn-primary" type="submit"/>
+    </t:form>
 </t:border>

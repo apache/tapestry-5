@@ -1,4 +1,4 @@
-// Copyright (c) 2013. The Apache Software Foundation
+// Copyright 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,11 +41,9 @@ public class ControlGroup
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("div", "class", "control-group");
-        label = writer.element("label", "class", "control-label");
+        writer.element("div", "class", "form-group");
+        label = writer.element("label");
         writer.end();
-        writer.element("div", "class", "controls");
-
         fillInLabelAttributes();
     }
 
@@ -58,7 +56,6 @@ public class ControlGroup
 
     void afterRender(MarkupWriter writer)
     {
-        writer.end(); // div.controls
-        writer.end(); // div.control-group
+        writer.end(); // div.form-group
     }
 }

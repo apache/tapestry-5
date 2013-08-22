@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -179,7 +179,10 @@ public class Select extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("select", "name", getControlName(), "id", getClientId());
+        writer.element("select",
+                "name", getControlName(),
+                "id", getClientId(),
+                "class", "form-control");
 
         putPropertyNameIntoBeanValidationContext("value");
 

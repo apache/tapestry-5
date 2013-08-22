@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,11 +48,8 @@ public class Checkbox extends AbstractField
         boolean checked = asSubmitted != null ? Boolean.parseBoolean(asSubmitted) : value;
 
         writer.element("input", "type", "checkbox",
-
                 "name", getControlName(),
-
                 "id", getClientId(),
-
                 "checked", checked ? "checked" : null);
 
         resources.renderInformalParameters(writer);

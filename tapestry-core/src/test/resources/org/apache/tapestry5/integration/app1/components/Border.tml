@@ -6,13 +6,13 @@
 <body data-floating-console="true">
 
 
-<div class="navbar navbar-inverse navbar-static-top">
-    <div class="navbar-inner">
+<div class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="navbar-header">
         <div class="container">
 
-            <t:pagelink t:id="back" class="brand" page="Index">Tapestry Integration Test Application</t:pagelink>
+            <t:pagelink t:id="back" class="navbar-brand" page="Index">Tapestry Integration Test Application</t:pagelink>
 
-            <ul class="nav">
+            <ul class="nav navbar-nav">
                 <li class="navbar-text">
                     <p>
                         Page: <span id="activePageName">${componentResources.pageName}</span>,

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -210,14 +210,14 @@ public class DateField extends AbstractField
 
         if (!hideTextField)
         {
-            writer.attributes("class", "input-append");
+            writer.attributes("class", "input-group");
         }
 
         writer.element("input",
 
                 "type", hideTextField ? "hidden" : "text",
 
-                "class", "input-small",
+                "class", "form-control",
 
                 "name", getControlName(),
 
@@ -237,14 +237,27 @@ public class DateField extends AbstractField
 
         decorateInsideField();
 
-        writer.end();
+        writer.end();   // input
+
+        if (!hideTextField)
+        {
+            writer.element("span", "class", "input-group-btn");
+        }
 
         writer.element("button",
+                "type", "button",
                 "class", "btn",
                 "alt", "[Show]");
-        writer.element("i", "class", "icon-calendar");
-        writer.end();
-        writer.end();
+
+        writer.element("span", "class", "glyphicon glyphicon-calendar");
+        writer.end(); // span
+
+        writer.end(); // button
+
+        if (!hideTextField)
+        {
+            writer.end();        // span.input-group-btn
+        }
 
         writer.end(); // outer div
     }

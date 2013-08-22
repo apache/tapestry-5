@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RadioContainer;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
@@ -35,7 +31,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * If the value parameter is not bound, then the default value is a property of the container component whose name
  * matches the Radio component's id.
- * 
+ *
  * @tapestrydoc
  * @see RadioGroup
  * @see Form
@@ -132,7 +128,12 @@ public class Radio implements Field
         clientId = jsSupport.allocateClientId(resources);
         controlName = container.getControlName();
 
-        writer.element("input", "type", "radio", "id", clientId, "name", controlName, "value", value);
+        writer.element("input",
+                "type", "radio",
+                "id", clientId,
+                "name", controlName,
+                "class", "form-control",
+                "value", value);
 
         if (container.isSelected(this.value))
             writer.attributes("checked", "checked");

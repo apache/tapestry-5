@@ -98,7 +98,7 @@ public class JavaScriptModule
         }
 
         add(configuration, StackExtensionType.STYLESHEET,
-                "${tapestry.bootstrap-root}/css/bootstrap.css",
+                "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css",
 
                 ROOT + "/tapestry.css",
 
@@ -233,15 +233,29 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/jquery-1.9.1.js")
                                         Resource jQuery,
 
-                                        @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
-                                        Resource bootstrap)
+                                        @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/transition.js")
+                                        Resource transition)
     {
         configuration.add("underscore", new JavaScriptModuleConfiguration(underscore).exports("_"));
         // Hacking around https://github.com/jrburke/requirejs/issues/534
         configuration.add("jquery-library", new JavaScriptModuleConfiguration(jQuery));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
         configuration.add("prototype", new JavaScriptModuleConfiguration(prototype));
-        configuration.add("bootstrap", new JavaScriptModuleConfiguration(bootstrap).dependsOn("jquery"));
+
+        configuration.add("bootstrap-transition", new JavaScriptModuleConfiguration(transition).dependsOn("jquery"));
+
+        for (String name : new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
+                "scrollspy", "tab", "tooltip"})
+        {
+
+            Resource lib = transition.forFile(name + ".js");
+
+            configuration.add("bootstrap-" + name, new JavaScriptModuleConfiguration(lib).dependsOn("bootstrap-transition"));
+        }
+
+        Resource popover = transition.forFile("popover.js");
+
+        configuration.add("bootstrap-popover", new JavaScriptModuleConfiguration(popover).dependsOn("bootstrap-tooltip"));
     }
 
     @Contribute(SymbolProvider.class)

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * <p/>
  * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
- * 
- * @see org.apache.tapestry5.corelib.components.TextOutput
+ *
  * @tapestrydoc
+ * @see org.apache.tapestry5.corelib.components.TextOutput
  * @see TextField
  * @see Form
  */
@@ -39,11 +39,13 @@ public class TextArea extends AbstractTextField
     {
         writer.element("textarea",
 
-        "name", getControlName(),
+                "name", getControlName(),
 
-        "id", getClientId(),
+                "class", "form-control",
 
-        "cols", getWidth());
+                "id", getClientId(),
+
+                "cols", getWidth());
 
         // Save until needed in after()
 

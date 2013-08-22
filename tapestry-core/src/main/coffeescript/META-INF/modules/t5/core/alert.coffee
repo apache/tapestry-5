@@ -20,10 +20,10 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
   (dom, console, messages, ajax, _) ->
 
     severityToClass =
-      info: "alert alert-info"
-      success: "alert alert-success"
-      warn: "alert alert-warning"
-      error: "alert alert-error"
+      info: "alert-info"
+      success: "alert-success"
+      warn: "alert-warning"
+      error: "alert-error"
 
     getURL = (container) -> container.attribute "data-dismiss-url"
 
@@ -66,7 +66,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
 
       if (outer.attribute "data-show-dismiss-all") is "true"
         outer.append """
-          <div class="row-fluid">
+          <div class="row">
             <button class="btn btn-mini pull-right" data-action="dismiss-all">
               <strong>&times;</strong>
               #{messages "core-dismiss-label"}
@@ -116,10 +116,10 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
       # Also, the <span> tag makes it easier to pull out just the content when doing tests.
       element = dom.create "div",
         "data-alert-id": data.id
-        class: className
+        class: "alert alert-dismissable " + className
         """
-          <button class="close">&times;</button>
-          <span>#{content}</span>
+          <button type="button" class="close">&times;</button>
+          #{content}
         """
 
       container.append element

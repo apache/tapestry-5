@@ -32,7 +32,7 @@ import java.util.List;
  * @tapestrydoc
  * @see Form
  */
-@Import(module = "bootstrap")
+@Import(module = "bootstrap-alert")
 public class Errors
 {
     /**
@@ -63,8 +63,9 @@ public class Errors
             return;
         }
 
-        writer.element("div", "class", className);
+        writer.element("div", "class", "alert-dismissable " + className);
         writer.element("button",
+                "type", "button",
                 "class", "close",
                 "data-dismiss", "alert");
         writer.writeRaw("&times;");

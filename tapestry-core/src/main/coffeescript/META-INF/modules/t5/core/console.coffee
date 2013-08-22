@@ -15,8 +15,8 @@
 # ## t5/core/console
 #
 # A wrapper around the native console, when it exists.
-define ["./dom", "underscore"],
-  (dom, _) ->
+define ["./dom", "underscore", "./bootstrap"],
+  (dom, _, { glyph }) ->
 
     nativeConsole = {}
     floatingConsole = null
@@ -56,11 +56,15 @@ define ["./dom", "underscore"],
             class: "tapestry-console",
             """
               <div class="message-container"></div>
-              <div class="row-fluid">
-                <button data-action="clear" class="btn btn-mini"><i class="icon-remove"></i> Clear Console</button>
-                <button data-action="enable" class="btn btn-mini" disabled="true"><i class="icon-play"></i> Enable Console</button>
-                <button data-action="disable" class="btn btn-mini"><i class="icon-pause"></i> Disable Console</button>
-                <input class="search-query input-xlarge" size="40" placeholder="Filter console content">
+              <div class="row">
+                <div class="btn-group-sm col-lg-5">
+                  <button data-action="clear" class="btn btn-mini">#{glyph "remove"} Clear Console</button>
+                  <button data-action="enable" class="btn btn-mini" disabled="true">#{glyph "play"}</i> Enable Console</button>
+                  <button data-action="disable" class="btn btn-mini">#{glyph "pause"} Disable Console</button>
+                </div>
+                <div class="col-lg-6">
+                  <input class="form-control input-xlarge" size="40" placeholder="Filter console content">
+                </div>
               </div>
               """
 
@@ -163,13 +167,13 @@ define ["./dom", "underscore"],
 
     requirejs.onError = (err) ->
 
-      message = "RequireJS error: #{err.requireType}"
+      message = "RequireJS error: #{err?.requireType or 'unknown'}"
 
       if err.message
         message += """: #{err.message}"""
 
       if err.requireType
-        modules = err.requireModules
+        modules = err?.requireModules
         if modules and modules.length > 0
           message += """, modules #{modules.join(", ")}"""
 

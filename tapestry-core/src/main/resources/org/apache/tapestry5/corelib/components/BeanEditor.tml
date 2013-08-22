@@ -1,7 +1,5 @@
 <t:loop xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
         source="model.propertyNames" formState="ITERATION"
         value="propertyName">
-    <div class="control-group">
-        <t:propertyEditor property="propertyName" object="object" model="model" overrides="overrides"/>
-    </div>
+    <t:propertyEditor property="propertyName" object="object" model="model" overrides="overrides"/>
 </t:loop>
