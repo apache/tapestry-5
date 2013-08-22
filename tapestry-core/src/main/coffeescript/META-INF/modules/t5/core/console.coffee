@@ -39,6 +39,13 @@ define ["./dom", "underscore", "./bootstrap"],
 
     forceFloating = (dom.body.attribute "data-floating-console") == "true"
 
+    button = (action, icon, label, disabled = false) -> """
+        <button data-action="#{action}" class="btn btn-default btn-mini">
+          #{glyph icon} #{label}
+        </button>
+      """
+
+
     try
       # FireFox will throw an exception if you even access the console object and it does
       # not exist. Wow!
@@ -57,12 +64,12 @@ define ["./dom", "underscore", "./bootstrap"],
             """
               <div class="message-container"></div>
               <div class="row">
-                <div class="btn-group-sm col-lg-5">
-                  <button data-action="clear" class="btn btn-mini">#{glyph "remove"} Clear Console</button>
-                  <button data-action="enable" class="btn btn-mini" disabled="true">#{glyph "play"}</i> Enable Console</button>
-                  <button data-action="disable" class="btn btn-mini">#{glyph "pause"} Disable Console</button>
+                <div class="btn-group btn-group-sm col-md-4">
+                  #{button "clear", "remove", "Clear Console"}
+                  #{button "enable", "play", "Enable Console"}
+                  #{button "disable", "pause", "Disable Console"}
                 </div>
-                <div class="col-lg-6">
+                <div class="col-md-8">
                   <input class="form-control input-xlarge" size="40" placeholder="Filter console content">
                 </div>
               </div>
@@ -71,6 +78,8 @@ define ["./dom", "underscore", "./bootstrap"],
           dom.body.prepend floatingConsole
 
           messages = floatingConsole.findFirst ".message-container"
+
+          floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
 
           floatingConsole.on "click", "[data-action=clear]", ->
             floatingConsole.hide()
@@ -94,7 +103,7 @@ define ["./dom", "underscore", "./bootstrap"],
 
             return false
 
-          floatingConsole.on "change keyup", ".search-query", ->
+          floatingConsole.on "change keyup", "input", ->
             updateFilter @value()
 
             for e in messages.children()
