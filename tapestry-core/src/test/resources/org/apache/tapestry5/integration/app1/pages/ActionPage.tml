@@ -1,12 +1,12 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <p> Choose a number from 1 to 10: </p>
 
-    <p>
+        <div class="btn-group">
         <t:count  end="10" value="index">
-            <a t:id="choose" t:type="ActionLink" context="index" class="linkClass">${index}</a>
+            <a t:id="choose" t:type="ActionLink" context="index" class="btn btn-default">${index}</a>
         </t:count>
-    </p>
+        </div>
 
     <t:if test="value">
         <p> <strong>You chose: ${value}</strong>.</p>
