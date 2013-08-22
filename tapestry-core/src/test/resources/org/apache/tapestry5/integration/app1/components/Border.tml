@@ -50,7 +50,7 @@
         <t:renderobject object="request"/>
 
         <p class="well">
-            &copy; 2008-2012
+            &copy; 2008-2013
             <a href="http://apache.org/">Apache Software Foundation</a>
         </p>
     </div>
