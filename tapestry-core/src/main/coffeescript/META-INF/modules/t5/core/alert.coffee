@@ -66,12 +66,12 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
 
       if (outer.attribute "data-show-dismiss-all") is "true"
         outer.append """
-          <div class="row">
-            <button class="btn btn-mini pull-right" data-action="dismiss-all">
+         <div class="btn-group-xs pull-right">
+            <button class="btn btn-mini btn-default" data-action="dismiss-all">
               <strong>&times;</strong>
               #{messages "core-dismiss-label"}
             </button>
-         </div>
+          </div>
          """
 
       outer.on "click", "[data-action=dismiss-all]", ->
