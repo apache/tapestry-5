@@ -4,28 +4,32 @@
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-
-            <ul class="nav">
-                <li class="navbar-text">
-                    <h4>Application Exception</h4>
+    <div class="container">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li>
+                    <h4 class="navbar-text">Application Exception</h4>
                 </li>
                 <li class="divider-vertical"/>
-                <li class="navbar-text">
-                    Tapestry Version: ${tapestryVersion}
+                <li>
+                    <p class="navbar-text">
+                        Tapestry Version: ${tapestryVersion}
+                    </p>
                 </li>
                 <li class="divider-vertical"/>
-                <li class="navbar-text">
-                    Application Version: ${applicationVersion}
+                <li>
+                    <p class="navbar-text">
+                        Application Version: ${applicationVersion}
+                    </p>
                 </li>
             </ul>
         </div>
     </div>
 </div>
-<div class="container-fluid">
 
-    <div class="alert alert-error">
+<div class="container">
+
+    <div class="alert alert-danger">
         <h2>An exception has occurred processing this request.</h2>
 
         <p>${rootException.message}</p>
