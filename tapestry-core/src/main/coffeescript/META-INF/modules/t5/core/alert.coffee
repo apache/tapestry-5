@@ -16,8 +16,8 @@
 #
 # Support for the core/Alerts components.
 #
-define ["./dom", "./console", "./messages", "./ajax", "underscore"],
-  (dom, console, messages, ajax, _) ->
+define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap"],
+  (dom, console, messages, ajax, _, {glyph}) ->
 
     severityToClass =
       info: "alert-info"
@@ -68,7 +68,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
         outer.append """
          <div class="btn-group-xs pull-right">
             <button class="btn btn-mini btn-default" data-action="dismiss-all">
-              <strong>&times;</strong>
+              #{glyph "remove"}
               #{messages "core-dismiss-label"}
             </button>
           </div>
