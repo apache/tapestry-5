@@ -70,7 +70,7 @@ define ["./dom", "underscore", "./bootstrap"],
                   #{button "disable", "pause", "Disable Console"}
                 </div>
                 <div class="col-md-8">
-                  <input class="form-control input-xlarge" size="40" placeholder="Filter console content">
+                  <input class="form-control" size="40" placeholder="Filter console content">
                 </div>
               </div>
               """
