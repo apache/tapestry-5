@@ -22,7 +22,7 @@ define [],
       # Generates the CSS class name for an icon.
       #
       # * name - of icon, e.g., "arrow-left"
-      glyph: (name) -> """<span class="glyphicon glyphicon-#{name}"/>"""
+      glyph: (name) -> """<span class="glyphicon glyphicon-#{name}"></span>"""
 
     return exports
 
