@@ -15,28 +15,20 @@
         </select>
     </div>
 
-    <div class="palette-controls">
-        <div>
-            <button data-action="select" class="btn" disabled="${disabledValue}">
-                <i class="icon-arrow-right"/>
-            </button>
-        </div>
-        <div>
-            <button data-action="deselect" class="btn" disabled="${disabledValue}">
-                <i class="icon-arrow-left"/>
-            </button>
-        </div>
+    <div class="btn-group-vertical palette-controls">
+        <button data-action="select" class="btn btn-default" disabled="${disabledValue}">
+            <t:glyphicon name="arrow-right"/>
+        </button>
+        <button data-action="deselect" class="btn btn-default" disabled="${disabledValue}">
+            <t:glyphicon name="arrow-left"/>
+        </button>
         <t:if test="reorder">
-            <div>
-                <button data-action="move-up" class="btn" disabled="${disabledValue}">
-                    <i class="icon-arrow-up"/>
-                </button>
-            </div>
-            <div>
-                <button data-action="move-down" class="btn" disabled="${disabledValue}">
-                    <i class="icon-arrow-down"/>
-                </button>
-            </div>
+            <button data-action="move-up" class="btn btn-default" disabled="${disabledValue}">
+                <t:glyphicon name="arrow-up"/>
+            </button>
+            <button data-action="move-down" class="btn btn-default" disabled="${disabledValue}">
+                <t:glyphicon name="arrow-down"/>
+            </button>
         </t:if>
     </div>
     <div class="palette-selected">
@@ -44,9 +36,11 @@
             <t:delegate to="selectedLabel"/>
         </div>
         <t:remove>
-            data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all options, selected or not.  This is used by validation logic.
+            data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all
+            options, selected or not. This is used by validation logic.
         </t:remove>
-        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" data-value-mode="options" t:mixins="rendernotification">
+        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}"
+                disabled="${disabledValue}" data-value-mode="options" t:mixins="rendernotification">
             <t:remove>Starts empty, populated on the client side.</t:remove>
         </select>
     </div>
