@@ -5,10 +5,9 @@
 </head>
 <body data-floating-console="true">
 
-
 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-    <div class="navbar-header">
-        <div class="container">
+    <div class="container">
+        <div class="navbar-header">
 
             <t:pagelink t:id="back" class="navbar-brand" page="Index">Tapestry Integration Test Application</t:pagelink>
 
