@@ -23,7 +23,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore"],
       info: "alert-info"
       success: "alert-success"
       warn: "alert-warning"
-      error: "alert-error"
+      error: "alert-danger"
 
     getURL = (container) -> container.attribute "data-dismiss-url"
 
