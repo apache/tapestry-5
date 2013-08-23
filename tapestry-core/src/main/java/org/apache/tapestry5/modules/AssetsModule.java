@@ -156,6 +156,8 @@ public class AssetsModule
      * <dd>image/svg+xml</dd>
      * <dt>swf</dt>
      * <dd>application/x-shockwave-flash</dd>
+     * <dt>woff</dt>
+     * <dd>application/font-woff</dd>
      * </dl>
      */
     @Contribute(ContentTypeAnalyzer.class)
@@ -169,6 +171,7 @@ public class AssetsModule
         configuration.add("png", "image/png");
         configuration.add("swf", "application/x-shockwave-flash");
         configuration.add("svg", "image/svg+xml");
+        configuration.add("woff", "application/font-woff");
     }
 
     /**
@@ -178,6 +181,7 @@ public class AssetsModule
      * <li>image/gif</li>
      * <li>image/png</li>
      * <li>application/x-shockwave-flash</li>
+     * <li>application/font-woff</li>
      * </ul>
      */
     @Contribute(CompressionAnalyzer.class)
@@ -187,6 +191,7 @@ public class AssetsModule
         configuration.add("image/gif", false);
         configuration.add("image/png", false);
         configuration.add("application/x-shockwave-flash", false);
+        configuration.add("application/font-woff", false);
     }
 
     @Marker(ContextProvider.class)
