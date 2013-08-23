@@ -15,27 +15,43 @@
 ## t5/core/utils
 #
 # A few handy functions.
-define ["underscore"], (_) ->
+define ["underscore"],
 
-  trim = (input) ->
-    if String.prototype.trim
-      input.trim()
-    else
-      input.replace(/^\s+/, '').replace(/\s+$/, '')
+  (_) ->
 
-  exports =
-    startsWith: (string, pattern) -> (string.lastIndexOf pattern) is 0
-    # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
-    trim: trim
-    # Determines if the input is a blank string, or null, or an empty array.
-    isBlank: (input) ->
+    trim = (input) ->
+      if String.prototype.trim
+        input.trim()
+      else
+        input.replace(/^\s+/, '').replace(/\s+$/, '')
 
-        return true if input is null
+    # Extends a URL, adding parameters and values from the params object. The values must already
+    # be URI encoded.
+    extendURL = (url, params) ->
 
-        if _.isArray input
-          return input.length is 0
+      sep = if url.indexOf("?") >= 0 then "&" else "?"
 
-        return (exports.trim input).length is 0
+      for name, value of params
+        url = url + sep + name + "=" + value
+        sep = "&"
 
-    # Splits the input string into words separated by whitespace
-    split: (str) -> _(str.split " ").reject((s) -> s is "")
+      return url
+
+    exports =
+      trim: trim
+      extendURL: extendURL
+
+      startsWith: (string, pattern) -> (string.lastIndexOf pattern) is 0
+      # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
+      # Determines if the input is a blank string, or null, or an empty array.
+      isBlank: (input) ->
+
+          return true if input is null
+
+          if _.isArray input
+            return input.length is 0
+
+          return (exports.trim input).length is 0
+
+      # Splits the input string into words separated by whitespace
+      split: (str) -> _(str.split " ").reject((s) -> s is "")
