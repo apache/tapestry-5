@@ -12,27 +12,28 @@
 
             <t:loop source="departments" value="loopValue">
 
-                <div class="control-group">
-                    <div class="controls">
-                        <label class="radio">
-                            <t:radio t:id="radio" value="loopValue"/>
-                            ${label}
-                        </label>
-                    </div>
+                <div class="radio">
+                    <label>
+                        <t:radio t:id="radio" value="loopValue"/>
+                        ${label}
+                    </label>
                 </div>
 
             </t:loop>
         </div>
+
     </t:radiogroup>
 
     <t:radiogroup t:id="position">
         <div class="well">
-            <div class="control-group">
-                <label class="radio">
+            <div class="radio-inline">
+                <label>
                     <t:radio t:id="radio1" value="literal:TEMP"/>
                     Temp
                 </label>
-                <label class="radio">
+                </div>
+            <div class="radio-inline">
+                <label>
                     <t:radio t:id="radio2" value="literal:LIFER"/>
                     Lifer
                 </label>
@@ -40,9 +41,8 @@
         </div>
     </t:radiogroup>
 
-    <div class="form-actions">
-        <input type="submit" value="Update"/>
-    </div>
+    <input class="btn btn-primary" type="submit" value="Update"/>
+    <t:actionlink class="btn btn-default" t:id="reset">reset</t:actionlink>
 </t:form>
 
 
@@ -56,8 +56,5 @@
     Selected position: ${position}
 </t:if>
 
-<p>
-    <t:actionlink t:id="reset">reset</t:actionlink>
-</p>
 
 </html>
