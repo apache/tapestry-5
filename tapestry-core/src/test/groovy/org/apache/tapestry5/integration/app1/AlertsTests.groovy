@@ -100,7 +100,7 @@ class AlertsTests extends TapestryCoreTestCase {
 
         assertTextPresent "ajax error until"
 
-        click "css=$CONTAINER .btn.btn-mini"
+        click "css=$CONTAINER [data-action='dismiss-all']"
 
         // Check that the alert container is now empty
 
