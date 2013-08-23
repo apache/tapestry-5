@@ -220,7 +220,7 @@ public class FormTests extends TapestryCoreTestCase
 
         waitForPageInitialized();
 
-        click("css=.x-birthday i.icon-calendar");
+        click("css=.x-birthday .btn");
 
         sleep(AJAX_WAIT_TIME);
 
@@ -477,8 +477,6 @@ public class FormTests extends TapestryCoreTestCase
 
                         "//div[@class='palette-selected']//select",
 
-                        "//div[@class='palette-controls']//button",
-
                         "//input[@id='submit_0']"};
 
         for (String path : paths)
@@ -487,6 +485,8 @@ public class FormTests extends TapestryCoreTestCase
 
             assertAttribute(locator, "disabled");
         }
+
+        assertAttribute("css=div.palette .btn@disabled", "disabled");
     }
 
     /**

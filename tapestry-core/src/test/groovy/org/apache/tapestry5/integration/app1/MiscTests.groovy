@@ -25,10 +25,10 @@ class MiscTests extends TapestryCoreTestCase {
     }
 
     @Test
-    void FieldGroup_mixin() {
+    void FormGroup_mixin() {
         openLinks "Autocomplete Mixin Demo"
 
-        assertText "css=div.field-group > label", "Title"
+        assertText "css=div.form-group > label", "Title"
 
         // Using Geb, we could do a lot more. Sigh.
     }

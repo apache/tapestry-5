@@ -1,25 +1,26 @@
 <html t:type="Border"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+      xmlns:p="tapestry:parameter">
 
-    <h1>BeanEditor Override Demo</h1>
+<h1>BeanEditor Override Demo</h1>
 
-    <p>Demonstrates that the BeanEditor properly supports overrides of its property editors.</p>
+<p>Demonstrates that the BeanEditor properly supports overrides of its property editors.</p>
 
-    <form t:id="form">
-        <t:errors/>
+<form t:id="form">
+    <t:errors/>
 
-        <div class="t-beaneditor">
-            <div t:id="editor">
-                <t:parameter name="firstName">
-                    <t:label for="firstName"/>
-                    <t:textfield t:id="firstName" value="registrationData.firstName"/>
-                    [FirstName Property Editor Override]
-                </t:parameter>
-            </div>
+    <div class="t-beaneditor">
+        <div t:id="editor">
+            <p:firstName>
+                <t:label for="firstName"/>
+                <t:textfield t:id="firstName" value="registrationData.firstName"/>
+                [FirstName Property Editor Override]
+            </p:firstName>
         </div>
+    </div>
 
-        <input type="submit" value="Register" class="btn btn-primary"/>
-        <t:actionlink t:id="clear" class="btn btn-default">Clear Data</t:actionlink>
-    </form>
+    <input type="submit" value="Register" class="btn btn-primary"/>
+    <t:actionlink t:id="clear" class="btn btn-default">Clear Data</t:actionlink>
+</form>
 
 </html>

@@ -12,9 +12,8 @@
     <t:form class="well">
         <t:errors/>
 
-        <t:select t:id="carMaker" validate="required" t:mixins="fieldgroup"
+        <t:select t:id="carMaker" validate="required" t:mixins="formgroup"
                   model="makeModel" zone="modelZone" encoder="makeEncoder"/>
-
 
         <t:zone t:id="modelZone">
             <t:if test="carMaker">
@@ -24,7 +23,7 @@
 
         <t:block id="modelBlock">
             <t:select t:id="carModel" model="availableModels" validate="required" blankOption="always"
-                      t:mixins="fieldgroup"/>
+                      t:mixins="formgroup"/>
         </t:block>
 
         <div class="form-actions">

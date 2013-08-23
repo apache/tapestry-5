@@ -6,32 +6,25 @@
 <t:form>
     <t:errors/>
 
-    <div class="control-group x-birthday">
+    <div class="field-group x-birthday">
         <t:label for="birthday"/>
-        <div class="controls">
-            <t:datefield format="d MMM yyyy" hidetextfield="true" t:id="birthday"/>
-        </div>
+        <t:datefield format="d MMM yyyy" hidetextfield="true" t:id="birthday"/>
     </div>
 
-    <div class="control-group x-impact">
+    <div class="field-group x-impact">
         <t:label for="asteroidImpact"/>
-        <div class="controls">
-            <t:datefield t:id="asteroidImpact"/>
-        </div>
+        <t:datefield t:id="asteroidImpact"/>
     </div>
 
-
-    <div class="form-actions">
-        <input type="submit" value="Go" class="btn btn-primary"/>
-    </div>
+    <input type="submit" value="Go" class="btn btn-primary"/>
 
 </t:form>
 
-<div class="btn-toolbar btn-group">
+<div class="btn-group">
 
-    <t:actionlink class="btn" t:id="clear">clear</t:actionlink>
-    <t:actionlink class="btn" t:id="english">english</t:actionlink>
-    <t:actionlink class="btn" t:id="french">french</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="clear">clear</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="english">english</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="french">french</t:actionlink>
 
 </div>
 
