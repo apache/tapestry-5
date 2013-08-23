@@ -66,8 +66,8 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
 
       if (outer.attribute "data-show-dismiss-all") is "true"
         outer.append """
-         <div class="btn-group-xs pull-right">
-            <button class="btn btn-mini btn-default" data-action="dismiss-all">
+         <div class="pull-right">
+            <button class="btn btn-xs btn-default" data-action="dismiss-all">
               #{glyph "remove"}
               #{messages "core-dismiss-label"}
             </button>
