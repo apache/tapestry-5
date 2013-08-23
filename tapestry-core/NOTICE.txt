@@ -24,8 +24,12 @@ to take your pick!).
 http://requirejs.org/
 
 This product includes Bootstrap, distributed under the Apache Software License 2.0
-https://github.com/twitter/bootstrap
+http://twbs.github.io/bootstrap/
 
 This product includes jQuery, distributed under the MIT License:
 http://jquery.org/
+
+This product includes Twitter Typeahead.js, distributed under the MIT License.
+https://github.com/twitter/typeahead.js
+
 
