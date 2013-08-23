@@ -28,7 +28,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       return fieldId
 
-    # Finds a `p.help-block` used for presenting errors for the provided field.
+    # Finds a `.help-block` used for presenting errors for the provided field.
     # Returns the found block as an ElementWrapper. May modify attributes of the field
     # or the block to make future
     #
@@ -48,22 +48,15 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
         fieldId = ensureFieldId field
 
       # Not found by id, but see if an empty placeholder was provided within
-      # the same .controls or .control-group.
+      # the same .control-group.
 
-      group = field.findParent ".controls, .control-group"
+      group = field.findParent ".form-group"
 
       return null unless group
 
       block = group.findFirst "[data-presentation=error]"
 
       if block
-
-        unless fieldId
-          # Assign a unique (hopefully!) client id for the field, which will be
-          # used to link the field and the label together.
-          fieldId = _.uniqueId "field"
-          field.attribute "id", fieldId
-
         block.attribute "data-error-block-for", fieldId
 
       return block
@@ -80,9 +73,9 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
         class: "help-block"
         "data-error-block-for": fieldId
 
-      # The .input-append and .input-prepend are used to attach buttons or markers to the field.
-      # In which case, the block can go
-      if container.hasClass("input-append") or container.hasClass("input-prepend")
+      # The .input-group selectors are used to attach buttons or markers to the field.
+      # In which case, the help block can go after the group instead.
+      if container.hasClass("input-group")
         container.insertAfter block
       else
         field.insertAfter block
@@ -154,9 +147,9 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       if block
         block.hide().update("")
 
-      group = @findParent ".control-group"
+      group = @findParent ".form-group"
 
-      group and group.removeClass "error"
+      group and group.removeClass "has-error"
 
       return
 
@@ -168,8 +161,8 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       block.show().update(memo.message)
 
-      group = @findParent ".control-group"
+      group = @findParent ".form-group"
 
-      group and group.addClass "error"
+      group and group.addClass "has-error"
 
     exports = {findHelpBlock, createHelpBlock, showValidationError}

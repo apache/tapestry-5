@@ -110,8 +110,8 @@ define
     # The rules for locating the help block:
     #
     # * Search for element with attribute `data-error-block-for` set to the field's `id` attribute
-    # * If not found, find the enclosing .controls or .control-group element
-    # * Search enclosing element for an element with attribute `data-presentation="error"`
+    # * If not found, find the enclosing .form-group element
+    # * Search the form group for an element with attribute `data-presentation="error"`
     # * Otherwise, it is not found (but may be created dynamically)
     # * If found, set the `data-error-block-for` attribute to the field's `id` (assigning a unique id to the field
     #   if not already present)
@@ -121,7 +121,7 @@ define
     # * The element is created as `p.help-block` with `data-error-block-for` attribute set to the
     #   field's id.  The field will be assigned an id if necesary.
     # * Normally, the block is inserted after the field
-    # * If the field's container has class "input-append" or "input-prepend", then the block is inserted after the container
+    # * If the field's immediate container has class "input-group", then the block is inserted after the container
     showValidationError: "t5:field:show-validation-error"
 
   # Events triggered by the Palette component.
