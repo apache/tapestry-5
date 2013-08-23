@@ -6,38 +6,49 @@
 
 <t:form>
 
-    <t:textfield t:id="textfield" value="stringValue" disabled="true"/>
-    <t:passwordfield t:id="passwordfield" value="stringValue" disabled="true"/>
-    <t:textarea t:id="textarea" value="stringValue" disabled="true"/>
-    <t:checkbox t:id="checkbox" value="flag" disabled="true"/>
-    <t:select t:id="select" value="stringValue" disabled="true" model="literal:Up,Down,Strange,Charm,Bottom,Top"/>
+    <t:textfield t:id="textfield" value="stringValue" t:mixins="formgroup" disabled="true"/>
+    <t:passwordfield t:id="passwordfield" value="stringValue" t:mixins="formgroup" disabled="true"/>
+    <t:textarea t:id="textarea" value="stringValue" t:mixins="formgroup" disabled="true"/>
+
+    <div class="checkbox">
+        <label>
+            <t:checkbox t:id="checkbox" value="flag" disabled="true"/>
+            Disabled Checkbox
+        </label>
+    </div>
+
+    <t:select t:id="select" value="stringValue" disabled="true" t:mixins="formgroup"
+              model="literal:Up,Down,Strange,Charm,Bottom,Top"/>
 
     <t:radiogroup t:id="group1" value="stringValue" disabled="true">
-        <label>
-            <t:radio t:id="radio1" value="literal:Right"/>
-            Disabled Radio #1
-        </label>
+        <div class="radio">
+
+            <label>
+                <t:radio t:id="radio1" value="literal:Right"/>
+                Disabled Radio #1
+            </label>
+        </div>
     </t:radiogroup>
 
     <br/>
 
     <t:radiogroup t:id="group2" value="stringValue">
-        <label>
-            <t:radio t:id="radio2" disabled="true" value="literal:Left"/>
-            Disabled Radio #2
-        </label>
+        <div class="radio">
+
+            <label>
+                <t:radio t:id="radio2" disabled="true" value="literal:Left"/>
+                Disabled Radio #2
+            </label>
+        </div>
     </t:radiogroup>
 
-    <br/>
 
-    <t:datefield t:id="datefield" value="date" disabled="true"/>
+    <t:datefield t:id="datefield" value="date" disabled="true" t:mixins="formgroup"/>
 
-    <br/>
 
     <t:palette t:id="palette" selected="values" disabled="true" encoder="encoder"
                model="literal:Fred,Barney,Wilma,Betty"/>
 
-    <br/>
 
     <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
     <input class="btn btn-default" type="submit" value="Continue"/>
