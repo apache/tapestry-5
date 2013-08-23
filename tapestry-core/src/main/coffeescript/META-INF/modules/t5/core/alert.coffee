@@ -119,8 +119,8 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
         class: "alert alert-dismissable " + className
         """
           <button type="button" class="close">&times;</button>
-          #{content}
-        """
+          <span>#{content}</span>
+          """
 
       container.append element
 
