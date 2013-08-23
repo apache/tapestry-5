@@ -132,7 +132,6 @@ public class Radio implements Field
                 "type", "radio",
                 "id", clientId,
                 "name", controlName,
-                "class", "form-control",
                 "value", value);
 
         if (container.isSelected(this.value))
