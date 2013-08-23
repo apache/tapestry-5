@@ -15,28 +15,17 @@
 # ## t5/core/autocomplete
 #
 # Support for the core/Autocomplete Tapestry mixin.
-define ["./dom", "./ajax", "jquery", "bootstrap"],
-  (dom, ajax, $) ->
-
-    doLookup = ($field, url, query, process) ->
-      $field.addClass "ajax-wait"
-
-      ajax url,
-        data:
-          "t:input": query
-        success: (response) ->
-          $field.removeClass "ajax-wait"
-
-          process response.json.matches
+define ["./dom", "./ajax", "jquery", "./utils", "./typeahead"],
+  (dom, ajax, $, {extendURL}) ->
 
     init = (spec) ->
       $field = $ document.getElementById spec.id
 
       $field.typeahead
         minLength: spec.minChars
-        source: (query, process) ->
-          doLookup $field, spec.url, query, process
-          return
-
+        remote:
+          url: spec.url
+          replace: (uri, query) -> extendURL uri, "t:input": query
+          filter: (response) -> response.matches
 
     exports = init

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,20 +28,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter
- * control.
- * <p/>
- * The mixin renders an (initially invisible) progress indicator after the field (it will also be after the error icon
- * most fields render). The progress indicator is made visible during the request to the server. The mixin then renders
- * a &lt;div&gt; that will be filled in on the client side with dynamically obtained selections.
- * <p/>
- * Multiple selection on the client is enabled by binding the tokens parameter (however, the mixin doesn't help split
- * multiple selections up on the server, that is still your code's responsibility).
+ * A mixin for a text field that allows for autocompletion of text fields. This is based on
+ * Twttter <a href="http://twitter.github.io/typeahead.js/">typeahead.js</a> version 0.9.3.
  * <p/>
  * The container is responsible for providing an event handler for event "providecompletions". The context will be the
  * partial input string sent from the client. The return value should be an array or list of completions, in
- * presentation order. I.e.
- * <p/>
+ * presentation order. e.g.
  * <p/>
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
@@ -110,6 +102,7 @@ public class Autocomplete
         writer.attributes("autocomplete", "off");
     }
 
+    @Import(stylesheet="Autocomplete.css")
     void afterRender()
     {
         Link link = resources.createEventLink(EVENT_NAME);

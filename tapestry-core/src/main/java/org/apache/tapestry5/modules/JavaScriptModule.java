@@ -233,6 +233,9 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/jquery-1.9.1.js")
                                         Resource jQuery,
 
+                                        @Path("${tapestry.asset.root}/typeahead-0.9.3.js")
+                                        Resource typeahead,
+
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/transition.js")
                                         Resource transition)
     {
@@ -256,6 +259,9 @@ public class JavaScriptModule
         Resource popover = transition.forFile("popover.js");
 
         configuration.add("bootstrap-popover", new JavaScriptModuleConfiguration(popover).dependsOn("bootstrap-tooltip"));
+
+        configuration.add("t5/core/typeahead", new JavaScriptModuleConfiguration(typeahead).dependsOn("jquery"));
+
     }
 
     @Contribute(SymbolProvider.class)
