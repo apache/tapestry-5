@@ -1,47 +1,49 @@
 <html t:type="Border"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
 
-    <h1>Disabled Fields Demo</h1>
+<h1>Disabled Fields Demo</h1>
 
-    <t:form>
+<t:form>
 
-        <t:textfield t:id="textfield" value="stringValue" disabled="true"/>
-        <br/>
-        <t:passwordfield t:id="passwordfield" value="stringValue" disabled="true"/>
-        <br/>
-        <t:textarea t:id="textarea" value="stringValue" disabled="true"/>
-        <br/>
-        <t:checkbox t:id="checkbox" value="flag" disabled="true"/>
-        <br/>
-        <t:select t:id="select" value="stringValue" disabled="true" model="literal:Up,Down,Strange,Charm,Bottom,Top"/>
-        <br/>
-        <t:radiogroup t:id="group1" value="stringValue" disabled="true">
+    <t:textfield t:id="textfield" value="stringValue" disabled="true"/>
+    <t:passwordfield t:id="passwordfield" value="stringValue" disabled="true"/>
+    <t:textarea t:id="textarea" value="stringValue" disabled="true"/>
+    <t:checkbox t:id="checkbox" value="flag" disabled="true"/>
+    <t:select t:id="select" value="stringValue" disabled="true" model="literal:Up,Down,Strange,Charm,Bottom,Top"/>
+
+    <t:radiogroup t:id="group1" value="stringValue" disabled="true">
+        <label>
             <t:radio t:id="radio1" value="literal:Right"/>
-        </t:radiogroup>
+            Disabled Radio #1
+        </label>
+    </t:radiogroup>
 
-        <br/>
+    <br/>
 
-        <t:radiogroup t:id="group2" value="stringValue">
+    <t:radiogroup t:id="group2" value="stringValue">
+        <label>
             <t:radio t:id="radio2" disabled="true" value="literal:Left"/>
-        </t:radiogroup>
+            Disabled Radio #2
+        </label>
+    </t:radiogroup>
 
-        <br/>
+    <br/>
 
-        <t:datefield t:id="datefield" value="date" disabled="true"/>
+    <t:datefield t:id="datefield" value="date" disabled="true"/>
 
-        <br/>
+    <br/>
 
-        <t:palette t:id="palette" selected="values" disabled="true" encoder="encoder"
-                   model="literal:Fred,Barney,Wilma,Betty"/>
+    <t:palette t:id="palette" selected="values" disabled="true" encoder="encoder"
+               model="literal:Fred,Barney,Wilma,Betty"/>
 
-        <br/>
+    <br/>
 
-        <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
-        <input type="submit" value="Continue"/>
-    </t:form>
+    <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
+    <input class="btn btn-default" type="submit" value="Continue"/>
+</t:form>
 
-    <p>
-        Submit id: ${submit.clientId}
-    </p>
+<p>
+    Submit id: ${submit.clientId}
+</p>
 </html>

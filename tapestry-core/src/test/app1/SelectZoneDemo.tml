@@ -1,4 +1,4 @@
-<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <div class="well">
         <dl class="dl-horizontal">
@@ -12,7 +12,7 @@
     <t:form class="well">
         <t:errors/>
 
-        <t:select t:id="carMaker" validate="required" t:mixins="controlgroup"
+        <t:select t:id="carMaker" validate="required" t:mixins="fieldgroup"
                   model="makeModel" zone="modelZone" encoder="makeEncoder"/>
 
 
@@ -24,7 +24,7 @@
 
         <t:block id="modelBlock">
             <t:select t:id="carModel" model="availableModels" validate="required" blankOption="always"
-                      t:mixins="controlgroup"/>
+                      t:mixins="fieldgroup"/>
         </t:block>
 
         <div class="form-actions">

@@ -60,7 +60,7 @@ is to allow for the checksum embedded into each URL, which breaks relative refer
 Tapestry 5.4 introduces a new module, tapestry-wro4j, that provides support for compiling CoffeeScript into JavaScript,
 Less into CSS, and for minimizing CSS and JavaScript. All processing takes place at runtime.
 
-## ControlGroup Mixin
+## FieldGroup Mixin
 
 This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
 inside a Twitter Bootstrap form.
