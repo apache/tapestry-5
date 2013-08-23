@@ -114,8 +114,8 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
       createPopup: ->
         @datePicker = new DatePicker()
         @datePicker.setFirstWeekDay datePickerFirstDay
-        @popup = dom.create().append @datePicker.create()
-        @container.append @popup
+        @popup = dom.create("div", { class: "datefield-popup"}).append @datePicker.create()
+        @container.insertAfter @popup
 
         @datePicker.onselect = _.bind @onSelect, this
 

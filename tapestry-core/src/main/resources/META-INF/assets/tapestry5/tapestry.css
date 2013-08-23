@@ -1,9 +1,3 @@
-div.t-datefield-popup {
-    position: absolute;
-    z-index: 1000;
-    margin-top: 2px;
-}
-
 /* Applied to an input element to provide feedback that something is waiting on an Ajax request:
    examples include server-side validation, or autocompletion. An Ajax "throbber" is displayed
    on the right side of the field. */
@@ -27,3 +21,12 @@ th[data-grid-column-sort=ascending] a {
 th[data-grid-column-sort=descending] a {
     background-image: url(../core/sort-desc.png);
 }
+
+/* Some support for the built-in DateField component. */
+
+div.datefield-popup {
+    position: absolute;
+    z-index: 1000;
+    margin-top: 2px;
+}
+
