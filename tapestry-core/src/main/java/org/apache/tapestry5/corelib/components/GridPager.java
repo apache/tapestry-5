@@ -85,14 +85,12 @@ public class GridPager
 
         if (maxPages < 2) return;
 
-        writer.element("div", "class", "pagination");
+        writer.element("ul", "class", "pagination");
 
         if (zone != null)
         {
             writer.attributes("data-inplace-grid-links", true);
         }
-
-        writer.element("ul");
 
         lastIndex = 0;
 
@@ -121,8 +119,7 @@ public class GridPager
         for (int i = maxPages - 1; i <= maxPages; i++)
             writePageLink(writer, i);
 
-        writer.end();
-        writer.end();
+        writer.end();    // ul
     }
 
     private void writePageLink(MarkupWriter writer, int pageIndex)
