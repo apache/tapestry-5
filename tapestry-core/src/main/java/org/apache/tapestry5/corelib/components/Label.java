@@ -60,20 +60,11 @@ public class Label
 
     private Element labelElement;
 
-    /**
-     * CSS class name(s) for the Label.
-     *
-     * @since 5.4
-     */
-    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "control-label")
-    private String className;
-
-
     boolean beginRender(MarkupWriter writer)
     {
         decorator.beforeLabel(field);
 
-        labelElement = writer.element("label", "class", className);
+        labelElement = writer.element("label");
 
         resources.renderInformalParameters(writer);
 
