@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.Parameter;
  * Renders a {@code <span>} tag with the CSS class to select a <a href="http://getbootstrap.com/components/#glyphicons">Bootstrap Glyphicon</a>.
  *
  * @since 5.4
+ * @tapestrydoc
  */
 public class Glyphicon
 {
