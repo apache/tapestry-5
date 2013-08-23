@@ -46,14 +46,13 @@
 
 <t:block id="voteForm">
     <t:form class="form-horizontal well" t:id="vote" zone="^">
-        <div class="control-group">
-            <label class="control-label">Vote:</label>
-            <div class="controls">
-                <div class="btn-group">
-=                    <input type="submit" name="abstain" value="Abstain" class="btn"/>
-                    <t:submit t:id="voteYes" value="Yes"/>
-                    <t:submit t:id="voteNo" value="No"/>
-                </div>
+        <div class="form-group">
+            <label>Vote:</label>
+
+            <div class="btn-group">
+                <input class="btn btn-default" type="submit" name="abstain" value="Abstain"/>
+                <t:submit t:id="voteYes" value="Yes"/>
+                <t:submit class="btn btn-warning" t:id="voteNo" value="No"/>
             </div>
         </div>
     </t:form>
@@ -64,47 +63,31 @@
 </t:block>
 
 
-<ul>
-    <li t:type="loop" source="names" value="name">
-        <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="fail" zone="output">Failure on the server side</t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="redirect" zone="output">Perform a redirect to another page
-        </t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="secureRedirect" zone="output">Perform secure redirect to another page
-        </t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
-    </li>
-    <li>
-        <t:actionLink t:id="updateZoneWithEmptyBody" zone="output">Update zone with empty body</t:actionLink>
-    </li>
-    <li>
-        <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
-            failure
-        </t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="badZone" zone="output">
-            MultiZone update with unknown id
-        </t:actionlink>
-    </li>
-    <li>
-        <t:actionlink t:id="nonZoneUpdate" zone="output">
-            MultiZone update with id of non-Zone
-            element
-        </t:actionlink>
-    </li>
-</ul>
+<div class="btn-group-vertical btn-group-sm">
+    <t:loop source="names" value="name">
+        <t:actionlink class="btn btn-default" t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
+    </t:loop>
+
+    <t:actionlink class="btn btn-default" t:id="JSON" zone="output">Direct JSON response</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="fail" zone="output">Failure on the server side</t:actionlink>
+    <t:actionlink t:id="redirect" zone="output" class="btn btn-default">Perform a redirect to another page
+    </t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="secureRedirect" zone="output">Perform secure redirect to another page
+    </t:actionlink>
+    <t:actionlink t:id="blankUpdate" class="btn btn-default" zone="output">Blank the zone</t:actionlink>
+    <t:actionLink t:id="updateZoneWithEmptyBody" zone="output" class="btn btn-default">Update zone with empty body
+    </t:actionLink>
+    <t:actionlink class="btn btn-default" t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
+        failure
+    </t:actionlink>
+    <t:actionlink t:id="badZone" zone="output" class="btn btn-default">
+        MultiZone update with unknown id
+    </t:actionlink>
+    <t:actionlink t:id="nonZoneUpdate" zone="output" class="btn btn-default">
+        MultiZone update with id of non-Zone
+        element
+    </t:actionlink>
+</div>
 
 <div id="notAZone"/>
 
