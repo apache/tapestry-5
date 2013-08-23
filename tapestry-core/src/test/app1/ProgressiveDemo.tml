@@ -1,7 +1,7 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-          xmlns:p="tapestry:parameter">
+        >
 
-    <t:actionlink t:id="refresh">refresh</t:actionlink>
+    <t:actionlink class="btn btn-primary" t:id="refresh"><t:glyphicon name="refresh"/> refresh</t:actionlink>
 
     <t:progressiveDisplay t:id="disp1">
         <p id="content1">
