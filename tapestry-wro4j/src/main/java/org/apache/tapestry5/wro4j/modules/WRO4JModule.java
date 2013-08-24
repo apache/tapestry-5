@@ -20,6 +20,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.wro4j.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -72,18 +73,20 @@ public class WRO4JModule
     @Contribute(ResourceProcessorSource.class)
     public static void provideDefaultProcessors(MappedConfiguration<String, ResourcePreProcessor> configuration)
     {
-        configuration.addInstance("CoffeeScriptCompiler", NodeOrRhinoCoffeeScriptCompiler.class);
         configuration.addInstance("CSSMinimizer", CssCompressorProcessor.class);
         configuration.add("JavaScriptMinimizer", new GoogleClosureCompressorProcessor());
     }
 
     @Contribute(StreamableResourceSource.class)
-    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory)
+    public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory,
+                                        @Autobuild CoffeeScriptCompiler coffeeScriptCompiler)
     {
         // contribution ids are file extensions:
 
         configuration.add("coffee",
-                factory.createCompiler("text/javascript", "CoffeeScriptCompiler", "CoffeeScript", "JavaScript", CacheMode.SINGLE_FILE));
+                factory.createCompiler("text/javascript", "CoffeeScript", "JavaScript",
+                        coffeeScriptCompiler,
+                        CacheMode.SINGLE_FILE));
 
         configuration.add("less",
                 factory.createCompiler("text/css", "Less", "CSS", new LessResourceTransformer(),

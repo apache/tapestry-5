@@ -1,10 +1,10 @@
 package t5.wro4j.tests
 
-import geb.spock.GebSpec
+import geb.spock.GebReportingSpec
 import org.apache.tapestry5.test.Jetty7Runner
 import spock.lang.Shared
 
-class Wro4jSpec extends GebSpec {
+class Wro4jSpec extends GebReportingSpec {
 
     @Shared
     def runner;
@@ -42,6 +42,11 @@ class Wro4jSpec extends GebSpec {
         go()
 
         waitFor { !$("body[data-page-initialized]").empty }
+
+        // Because the CoffeeScript may already be pre-compiled, it can outrace the Less compilation.
+        // For some reason, the navbar is invisible (at least to Selenium) until the CSS loads.
+
+        waitFor { $(".navbar .dropdown-toggle").visible() }
 
         $(".navbar .dropdown-toggle").click()
 

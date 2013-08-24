@@ -3,16 +3,22 @@
     <title>WRO4J Tests: ${componentResources.pageName}</title>
 </head>
 
-<div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="/">WRO4J Module Tests</a>
-            <ul class="nav">
-                <li><p class="navbar-text">${componentResources.pageName}</p></li>
-            </ul>
-            <ul class="pull-right nav">
-                <li class="divider-vertical"/>
+<nav class="navbar xnavbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+
+                <li>
+                    <a class="navbar-brand" href="/">WRO4J Module Tests</a>
+
+                </li>
+
+                <li class="navbar-text">
+                    <p>${componentResources.pageName}</p>
+
+                </li>
                 <li class="dropdown">
+
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         Pages <b class="caret"/>
                     </a>
@@ -25,7 +31,7 @@
             </ul>
         </div>
     </div>
-</div>
+</nav>
 
 <div class="container">
 

@@ -92,7 +92,6 @@ public class LessResourceTransformer implements ResourceTransformer
 
     public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
     {
-
         BytestreamCache compiled = invokeLessCompiler(source, dependencies);
 
         return compiled.openStream();

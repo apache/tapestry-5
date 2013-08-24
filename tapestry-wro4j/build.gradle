@@ -2,6 +2,10 @@ description = "Integration with WRO4J to perform runtime CoffeeScript compilatio
 
 dependencies {
     compile project(":tapestry-core")
+    compile "com.github.sommeri:less4j:1.1.1"
+    compile "com.google.javascript:closure-compiler:v20130722"
+    compile "org.mozilla:rhino:1.7R4"
+
     compile "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}", {
         exclude group: "org.codehaus.gmaven.runtime", module: "gmaven-runtime-1.7"
         exclude group: "com.github.lltyk", module: "dojo-shrinksafe"
