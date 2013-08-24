@@ -34,12 +34,13 @@ class MiscTests extends TapestryCoreTestCase {
     }
 
     // TAP5-2045
+    // No longer such a big deal, as Label no longer has a formal "class" parameter
     @Test
     void label_class_override()
     {
         openLinks "Override Label Class Demo"
 
-        assertSourcePresent "<label for=\"firstName\" class=\"control-label\">First Name</label>",
+        assertSourcePresent "<label for=\"firstName\">First Name</label>",
                             "<label for=\"lastName\" class=\"dummyClassName\">Last Name</label>"
 
     }
