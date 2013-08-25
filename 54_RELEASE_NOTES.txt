@@ -57,8 +57,9 @@ asset URLs are distinct.
 Tapestry 5.4 now re-writes CSS files, expanding any `url()` references in them into fully qualify URLs; this
 is to allow for the checksum embedded into each URL, which breaks relative references.
 
-Tapestry 5.4 introduces a new module, tapestry-wro4j, that provides support for compiling CoffeeScript into JavaScript,
-Less into CSS, and for minimizing CSS and JavaScript. All processing takes place at runtime.
+Tapestry 5.4 introduces a new module, tapestry-webresources, which provides support for compiling
+CoffeeScript into JavaScript, Less into CSS, and for minimizing CSS and JavaScript.
+All processing takes place at runtime.
 
 ## FieldGroup Mixin
 
@@ -81,24 +82,19 @@ The code for launching an instance of Jetty or Tomcat has been extracted to a ne
 
 # Breaking Changes:
 
-## tapestry-yuicompressor replaced with tapestry-wro4j
+## tapestry-yuicompressor replaced with tapestry-webresources
 
-The tapestry-yuicompressor module has been removed and superseded by tapestry-wro4j. WRO4J (Web Resource
-Optimizer for Java) is a Apache-licensed project that provides support for CoffeeScript support, Less and
-SASS processing, and various forms of JavaScript and CSS minimization. The new tapestry-wro4j module enables
-a base set of these.
+The tapestry-yuicompressor module has been removed and superseded by tapestry-webresources.
 
-With tapestry-wro4j in place, you can write your client-side code in CoffeeScript (with the ".coffee" file
+With tapestry-webresources in place, you can write your client-side code in CoffeeScript (with the ".coffee" file
 extension) and Tapestry will take care of converting it, at runtime, to JavaScript.
 
-The WRO4J support is separate and optional, as it is not an Apache Software Foundation project, and it has a
-large number of dependencies needed to run the various processors (some of which are written in Ruby and require JRuby,
-for example).
+This support is separate and optional, as it is adds several large dependencies.
 
-By default, tapestry-wro4j enables:
+By default, tapestry-webresources enables:
 - compilation of CoffeeScript to JavaScript (using Java's Rhino JavaScript engine)
 - compilation of Less to CSS
-- minification of CSS using Andy Robert's csscompressor
+- minification of CSS using YUICompressor's CSS minimizer
 - minification of JavaScript using the Google Closure compiler (in simple optimizations mode)
 
 ## RenderSupport Removed
@@ -155,6 +151,11 @@ On the client side, the "floating console" is now only used in cases where a nat
 should not be used to present information to ordinary users (Bootstrap provides Alerts for that purpose), but is only
 intended for use in development.
 
+The floating console has also been extended with an improved UI and the ability to filter the content shown.
+
+In development and testing it can be desirable to have the floating console always visible; in that case, add the attribute
+`data-floating-console="true"` to the `<body>` element.
+
 ## Form.clientValidation parameter
 
 Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
@@ -175,10 +176,10 @@ However, once initial page initialization has occurred, the attribute `data-page
 is set to "true". In many cases, automated tests should be updated to wait for this attribute to be set after loading
 a new page.
 
-## Twitter Bootstrap
+## Bootstrap 3
 
-Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the
-file "default.css" automatically included in rendered pages). The Tapestry CSS has been largely eliminated; instead
+Tapestry now includes a default copy of Bootstrap 3, in addition to its own default set of CSS rules.
+The Tapestry CSS from prior releases has been largely eliminated; instead
 components now refer to standard Bootstrap CSS classes.
 
 The Bootstrap CSS is now only present if the `core` JavaScript stack is imported. You may need to change your application's
@@ -186,14 +187,14 @@ layout component to do so explicitly, by adding `@Import(stack="core")` to the c
 
 ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
 implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
-to the client, and expects and leverages the Twitter Bootstrap CSS.
+to the client, and expects and leverages the Bootstrap CSS.
 
 Fields that require validation messages to be displayed fire events, and the default handlers show and update
 help blocks that appear (by default) beneath the fields. To get the full effect, you should enclose your fields inside
-.control-group elements, as described in the Bootstrap documentation:
+.form-group elements, as described in the Bootstrap documentation:
 http://twitter.github.com/bootstrap/base-css.html#forms
 
-You may also use the new ControlGroup mixin for most fields.
+You may also use the new FormGroup mixin for most fields.
 
 ## BeanEditor / BeanEditForm
 
@@ -220,9 +221,9 @@ need to provide a "prepare" event handler to initialize the property before it i
 
 ## Autocomplete Mixin
 
-The Autocomplete mixin has been rewritten to use Bootstrap; this implies it will also force jQuery onto the page,
-to support the Bootstrap JavaScript library. In addition, Bootstrap's typeahead component does not support multiple
-tokens, so this behavior has been removed.
+The Autocomplete mixin has been rewritten to use Twitter typeahead.js; this implies it will also force jQuery onto the page,
+to support the  typeahead.js library. In addition, typeahead.js does not support multiple
+tokens, so this behavior (available in prior releases) has been removed.
 
 ## RenderNotification Mixin
 
@@ -263,8 +264,8 @@ used or implemented by application code.
 
 ## MutableComponentModel Extended
 
-MutableComponentModel has been modified, adding a new ` doHandleActivationEventContext()' method to help check
-activation context exactness; this interface is rarely, if ever, used or implemented by application code
+MutableComponentModel has been modified, adding a new `doHandleActivationEventContext()' method to help check
+activation context exactness; this interface is rarely, if ever, used or implemented by application code.
 
 ## Module classes moved to new modules
 
@@ -291,5 +292,5 @@ has been removed. This may affect applications that overrode the Tapestry CSS ru
 look and feel.
 
 The Grid component no longer emits CSS class names, instead it renders data attributes into Grid headers, rows, and cells,
-such as `data-grid-row=first`, `data-grid-property=title`, etc. These attributes may still be referenced using CSS rules
+such as `data-grid-row="first"`, `data-grid-property="title"`, etc. These attributes may still be referenced using CSS rules
 where desired.
