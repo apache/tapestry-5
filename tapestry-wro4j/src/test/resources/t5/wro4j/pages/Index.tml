@@ -1,7 +1,0 @@
-<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
-
-    <p>This page is used to demonstrate the integration of WRO4J.</p>
-
-    <div class="alert alert-success" id="banner"/>
-
-</t:layout>

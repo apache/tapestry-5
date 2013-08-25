@@ -3,4 +3,4 @@ include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapest
 include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
 include "tapestry-javadoc", "quickstart", "tapestry-clojure", "tapestry-mongodb"
 include "tapestry-test-data", 'tapestry-internal-test'
-include "tapestry-wro4j", "tapestry-runner"
+include "tapestry-webresources", "tapestry-runner"
