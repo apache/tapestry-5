@@ -14,30 +14,45 @@
 
 package org.apache.tapestry5.internal.wro4j;
 
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.wro4j.services.ResourceProcessor;
-import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
+/**
+ * A wrapper around YUI Compressor. This module does not have a dependency on YUICompressor;
+ * isntead a local copy of the YUICompressor CSS minimizer is kept (because the reset of YUICompressor
+ * is painful to mix due to how it attempts to patch Rhino).
+ */
 public class CSSMinimizer extends AbstractMinimizer
 {
-    private final ResourceProcessor processor;
-
-    public CSSMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, ResourceProcessorSource processorSource)
+    public CSSMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator)
     {
         super(logger, tracker, checksumGenerator, "text/css");
-
-        processor = processorSource.getProcessor("CSSMinimizer");
     }
 
     @Override
     protected InputStream doMinimize(StreamableResource resource) throws IOException
     {
-        return processor.process("Minimizing " + resource, resource.getDescription(), resource.openStream(), "text/css");
+        StringWriter writer = new StringWriter(1000);
+        Reader reader = new InputStreamReader(resource.openStream());
+
+        try
+        {
+            new CssCompressor(reader).compress(writer, -1);
+
+            writer.flush();
+
+            return IOUtils.toInputStream(writer.getBuffer());
+        } finally
+        {
+            InternalUtils.close(reader);
+            InternalUtils.close(writer);
+        }
     }
 }

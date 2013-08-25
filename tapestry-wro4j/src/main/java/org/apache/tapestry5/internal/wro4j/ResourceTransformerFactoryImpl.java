@@ -26,8 +26,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.wro4j.WRO4JSymbols;
-import org.apache.tapestry5.wro4j.services.ResourceProcessor;
-import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -37,22 +35,19 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 {
     private final Logger logger;
 
-    private final ResourceProcessorSource source;
-
     private final OperationTracker tracker;
 
     private final boolean productionMode;
 
     private final File cacheDir;
 
-    public ResourceTransformerFactoryImpl(Logger logger, ResourceProcessorSource source, OperationTracker tracker,
+    public ResourceTransformerFactoryImpl(Logger logger, OperationTracker tracker,
                                           @Symbol(SymbolConstants.PRODUCTION_MODE)
                                           boolean productionMode,
                                           @Symbol(WRO4JSymbols.CACHE_DIR)
                                           String cacheDir)
     {
         this.logger = logger;
-        this.source = source;
         this.tracker = tracker;
         this.productionMode = productionMode;
 
@@ -98,18 +93,6 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
     }
 
 
-    public ResourceTransformer createCompiler(final String contentType, String processorName, final String sourceName, final String targetName, CacheMode cacheMode)
-    {
-        // This does the real work:
-        ResourceProcessor resourceProcessor = source.getProcessor(processorName);
-
-        // And this adapts it to the API.
-        ResourceTransformer coreCompiler = createCoreCompiler(contentType, sourceName, targetName, resourceProcessor);
-
-        return createCompiler(contentType, sourceName, targetName, coreCompiler, cacheMode);
-
-    }
-
     public ResourceTransformer createCompiler(String contentType, String sourceName, String targetName, ResourceTransformer transformer, CacheMode cacheMode)
     {
         ResourceTransformer trackingCompiler = wrapWithTracking(sourceName, targetName, transformer);
@@ -134,32 +117,11 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
             case MULTIPLE_FILE:
 
                 return wrapWithInMemoryCaching(timingCompiler, targetName);
+
+            default:
+
+                throw new IllegalStateException();
         }
-
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    private ResourceTransformer createCoreCompiler(final String contentType, final String sourceName, final String targetName, final ResourceProcessor resourceProcessor)
-    {
-        return new ResourceTransformer()
-        {
-            public String getTransformedContentType()
-            {
-                return contentType;
-            }
-
-            public InputStream transform(final Resource source, ResourceDependencies dependencies) throws IOException
-            {
-                final String description = String.format("Compiling %s from %s to %s", source, sourceName, targetName);
-
-                InputStream result = resourceProcessor.process(description,
-                        source.toURL().toString(),
-                        source.openStream(), contentType);
-
-                return result;
-
-            }
-        };
     }
 
     private ResourceTransformer wrapWithTracking(final String sourceName, final String targetName, final ResourceTransformer core)

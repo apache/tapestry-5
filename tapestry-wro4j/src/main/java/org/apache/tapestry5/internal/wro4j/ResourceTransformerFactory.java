@@ -26,24 +26,6 @@ public interface ResourceTransformerFactory
 {
 
     /**
-     * Constructs a compiler around a named processor.
-     *
-     * @param contentType
-     *         transformed content type, e.g., "text/javascript"
-     * @param processorName
-     *         name of processor to do work
-     * @param sourceName
-     *         for debugging: source name, e.g., "CoffeeScript"
-     * @param targetName
-     *         for debugging: target name, e.g., "JavaScript"
-     * @param cacheMode
-     *         Indicates if and how the compiled content should be cached (in development mode only)
-     * @return transformer
-     * @see org.apache.tapestry5.wro4j.services.ResourceProcessorSource
-     */
-    ResourceTransformer createCompiler(String contentType, String processorName, String sourceName, String targetName, CacheMode cacheMode);
-
-    /**
      * Constructs a compiler around a another ResourceTransformer implementation. In development mode, the wrapped version
      * will handle caching, as well as logging output of timing for the real implementation.
      *

@@ -32,16 +32,17 @@ import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.wro4j.WRO4JSymbols;
-import org.apache.tapestry5.wro4j.services.ResourceProcessorSource;
-import ro.isdc.wro.extensions.processor.js.GoogleClosureCompressorProcessor;
-import ro.isdc.wro.extensions.processor.js.RhinoCoffeeScriptProcessor;
-import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
-import ro.isdc.wro.model.resource.processor.impl.css.CssCompressorProcessor;
 
 import java.util.List;
 
 /**
- * Configures use of various WRO4J processors.
+ * Configures use of various transformers and mimimizers to support:
+ * <ul>
+ * <li>Less to CSS</li>
+ * <li>CoffeeScript to JavaScript</li>
+ * <li>CSS minimization via YUI Compressor</li>
+ * <li>JavaScript minimization via Google Closure</li>
+ * </ul>
  *
  * @since 5.4
  */
@@ -49,7 +50,6 @@ public class WRO4JModule
 {
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(ResourceProcessorSource.class, ResourceProcessorSourceImpl.class);
         binder.bind(ResourceTransformerFactory.class, ResourceTransformerFactoryImpl.class);
     }
 
@@ -60,22 +60,6 @@ public class WRO4JModule
         configuration.add(WRO4JSymbols.CACHE_DIR, "${java.io.tmpdir}");
     }
 
-    /**
-     * Configures the default set of processors.
-     * <dl>
-     * <dt>CoffeeScriptCompiler</dt> <dd>{@link RhinoCoffeeScriptProcessor}, configured as with --bare</dd>
-     * <dt>CSSMinimizer</dt> <dd>{@link CssCompressorProcessor} (see <a href="https://github.com/andyroberts/csscompressor">csscompressor on GitHub</a></dd>
-     * <dt>JavaScriptMinimizer</dt>
-     * <dd>{@link GoogleClosureCompressorProcessor} configured for simple optimizations. Advanced optimizations assume that all code is loaded
-     * in a single bundle, not a given for Tapestry.</dd>
-     * </dl>
-     */
-    @Contribute(ResourceProcessorSource.class)
-    public static void provideDefaultProcessors(MappedConfiguration<String, ResourcePreProcessor> configuration)
-    {
-        configuration.addInstance("CSSMinimizer", CssCompressorProcessor.class);
-        configuration.add("JavaScriptMinimizer", new GoogleClosureCompressorProcessor());
-    }
 
     @Contribute(StreamableResourceSource.class)
     public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory,
@@ -98,7 +82,7 @@ public class WRO4JModule
     public static void setupDefaultResourceMinimizers(MappedConfiguration<String, ResourceMinimizer> configuration)
     {
         configuration.addInstance("text/css", CSSMinimizer.class);
-        configuration.addInstance("text/javascript", JavaScriptMinimizer.class);
+        configuration.addInstance("text/javascript", GoogleClosureMinimizer.class);
     }
 
     /**
