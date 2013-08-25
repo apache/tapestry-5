@@ -1,0 +1,32 @@
+description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more."
+
+dependencies {
+    compile project(":tapestry-core")
+    compile "com.github.sommeri:less4j:1.1.1"
+    compile "com.google.javascript:closure-compiler:v20130722"
+    compile "org.mozilla:rhino:1.7R4"
+
+    testCompile project(":tapestry-runner")
+    testCompile "org.gebish:geb-spock:${versions.geb}"
+    testCompile "org.spockframework:spock-core:${versions.spock}"
+
+    testCompile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+        exclude group: "org.eclipse.jetty"
+    }
+    testCompile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+        exclude group: "org.eclipse.jetty"
+    }
+}
+
+jar.manifest {
+    attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
+}
+
+
+test {
+    useJUnit()
+
+    systemProperties("geb.build.reportsDir": "$reporting.baseDir/geb",
+        "tapestry.compiled-asset-cache-dir": "$buildDir/compiled-asset-cache",
+        "tapestry.production-mode": "false")
+}

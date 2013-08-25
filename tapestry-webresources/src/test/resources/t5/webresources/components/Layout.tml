@@ -1,0 +1,42 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head>
+    <title>WebResources Tests: ${componentResources.pageName}</title>
+</head>
+
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+
+                <li>
+                    <a class="navbar-brand" href="/">WebResources Tests</a>
+
+                </li>
+
+                <li class="navbar-text">
+                    <p>${componentResources.pageName}</p>
+
+                </li>
+                <li class="dropdown">
+
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Pages <b class="caret"/>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li t:type="loop" source="pageNames" value="name">
+                            <t:pagelink page="prop:name">${name}</t:pagelink>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <t:body/>
+
+</div>
+
+</html>
