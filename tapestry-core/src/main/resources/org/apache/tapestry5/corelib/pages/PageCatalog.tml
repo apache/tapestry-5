@@ -28,51 +28,71 @@
 
 
     <div class="btn-group">
-        <t:actionlink t:id="forceLoad" zone="pages" class="btn">Load all pages</t:actionlink>
+        <t:actionlink t:id="forceLoad" zone="pages" class="btn btn-default">Load all pages</t:actionlink>
         <t:if test="! productionMode">
-            <t:actionlink t:id="clearCache" zone="pages" class="btn">Clear the cache</t:actionlink>
-            <t:actionlink t:id="reloadClasses" zone="pages" class="btn">Reload component classes</t:actionlink>
+            <t:actionlink t:id="clearCache" zone="pages" class="btn btn-default">Clear the cache</t:actionlink>
+            <t:actionlink t:id="reloadClasses" zone="pages" class="btn btn-default">Reload component classes
+            </t:actionlink>
         </t:if>
-        <t:actionlink t:id="runGC" zone="pages" class="btn">Run the GC</t:actionlink>
+        <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
     </div>
 
 
-    <ul class="nav nav-pills nav-stacked">
-        <li>
-        </li>
-    </ul>
+    <div class="panel panel-default vert-offset">
+        <div class="panel-heading">Load single page</div>
+        <div class="panel-body">
+            <t:form t:id="singlePageLoad" zone="pages" class="form-inline">
 
-    <t:form t:id="singlePageLoad" zone="pages" class="form-inline">
+                <div class="form-group">
 
-        <t:label for="pageName">Load single page:</t:label>
-        <t:select t:id="pageName" model="pageNames"/>
+                    <t:label for="pageName" class="sr-only">Load single page</t:label>
+                    <t:select t:id="pageName" model="pageNames" class="col-md-5"/>
 
-        <input type="submit" value="Load Page" class="btn btn-primary"/>
+                </div>
 
-    </t:form>
+                <input type="submit" value="Load Page" class="btn btn-primary"/>
 
-    <dl class="dl-horizontal">
-        <dt>Defined Pages</dt>
-        <dd>Number of page classes.</dd>
-        <dt>Pages in Cache</dt>
-        <dd>Number of page instances currently loaded. This may include the same page class for different selectors.
-        </dd>
-        <dt>Unique Page Names</dt>
-        <dd>Number of pages loaded, ignoring selectors.</dd>
-        <dt>Selector</dt>
-        <dd>The locale (plus application-specific other information) for which the page was assembled. A new instance of
-            a Page will be created for each new selector,
-            as needed.
-        </dd>
-        <dt>Assembly Time</dt>
-        <dd>Time to assemble a complete instance of a page, including all sub-components, and all bindings and other
-            connections
-            between them.
-        </dd>
-        <dt>Component Count</dt>
-        <dd>Number of components on the page, including the root component.</dd>
-        <dt>Weight</dt>
-        <dd>Arbitrary number that includes number of components and mixins, template tokens, and other factors.</dd>
-    </dl>
+            </t:form>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Key</h3></div>
+        <div class="panel-body">
+
+            <dl class="dl-horizontal">
+                <dt>Defined Pages</dt>
+                <dd>Number of page classes.</dd>
+                <dt>Pages in Cache</dt>
+                <dd>Number of page instances currently loaded. This may include the same page class for different
+                    selectors.
+                </dd>
+                <dt>Unique Page Names</dt>
+                <dd>Number of pages loaded, ignoring selectors.</dd>
+                <dt>Selector</dt>
+                <dd>The locale (plus application-specific other information) for which the page was assembled. A new
+                    instance of
+                    a Page will be created for each new selector,
+                    as needed.
+                </dd>
+                <dt>Assembly Time</dt>
+                <dd>Time to assemble a complete instance of a page, including all sub-components, and all bindings and
+                    other
+                    connections
+                    between them.
+                </dd>
+                <dt>Component Count</dt>
+                <dd>Number of components on the page, including the root component.</dd>
+                <dt>Weight</dt>
+                <dd>Arbitrary number that includes number of components and mixins, template tokens, and other
+                    factors.
+                </dd>
+                <dt>Attach Count</dt>
+                <dd>Number of times the page has been attached to a request.</dd>
+            </dl>
+        </div>
+    </div>
 
 </t:block>

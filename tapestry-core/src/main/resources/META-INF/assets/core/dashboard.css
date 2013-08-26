@@ -1,7 +1,11 @@
 body {
-    padding-top: 40px;
+    padding-top: 55px;
 }
 
-.brand sub {
+.navbar-brand sub {
     font-size: x-small;
+}
+
+.vert-offset {
+    margin-top: 5px;
 }
