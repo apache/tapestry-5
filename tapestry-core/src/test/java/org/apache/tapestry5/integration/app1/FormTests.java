@@ -858,6 +858,9 @@ public class FormTests extends TapestryCoreTestCase
         assertTextPresent("Result: 10.14159");
 
         type("name", "Betty");
+
+        waitForPageInitialized();
+
         clickAndWait("link=Barney");
 
         assertText("name-value", "Betty");
