@@ -46,7 +46,7 @@ class WebResourcesSpec extends GebReportingSpec {
         // Because the CoffeeScript may already be pre-compiled, it can outrace the Less compilation.
         // For some reason, the navbar is invisible (at least to Selenium) until the CSS loads.
 
-        waitFor { $(".navbar .dropdown-toggle").visible() }
+        // waitFor { $(".navbar .dropdown-toggle").visible() }
 
         $(".navbar .dropdown-toggle").click()
 
