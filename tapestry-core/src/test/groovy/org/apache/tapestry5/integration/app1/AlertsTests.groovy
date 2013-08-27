@@ -100,6 +100,8 @@ class AlertsTests extends TapestryCoreTestCase {
 
         click "css=$CONTAINER [data-action='dismiss-all']"
 
+        sleep 100
+
         // Check that the alert container is now empty
 
         assertText "css=$CONTAINER", ""
