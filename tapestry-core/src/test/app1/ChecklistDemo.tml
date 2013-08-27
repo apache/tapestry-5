@@ -1,20 +1,13 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-	<t:form clientValidation="none">
-		<p>
-			<t:errors />
-		</p>
-		<p>
-			<t:label for="selected" />
-			:
-			<t:checklist t:id="selected" validate="required" model="literal:Red,Green,Blue" encoder="encoder" label="Color"/>
+    <t:form clientValidation="none">
+        <t:errors/>
 
-		</p>
+        <t:checklist t:id="selected" validate="required" model="literal:Red,Green,Blue"
+                     encoder="encoder" label="Color"/>
 
-		<p>
-			<t:submit value="literal:Submit" />
-		</p>
-	</t:form>
+        <t:submit class="btn btn-primary" value="literal:Submit"/>
+    </t:form>
 
-	<p>Selected colors: ${sorted}</p>
+    <p>Selected colors: ${sorted}</p>
 
 </t:border>

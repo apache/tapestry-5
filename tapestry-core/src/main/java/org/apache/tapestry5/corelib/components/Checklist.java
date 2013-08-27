@@ -210,7 +210,7 @@ public class Checklist extends AbstractField
     }
 
     void beginRender(MarkupWriter writer) {
-        writer.element("div", "class", "checkbox");
+        writer.element("div", "id", getClientId());
     }
 
     void afterRender(MarkupWriter writer) {
