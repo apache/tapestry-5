@@ -15,13 +15,11 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
-@ContentType("text/xml")
 public class DynamicDemo
 {
     @Property
