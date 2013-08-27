@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ public class ZoneRefreshTest extends TapestryCoreTestCase
     {
         openBaseURL();
 
-        waitForPageInitialized();
-
         clickAndWait("link=Zone Refresh With Event Handler Returning Void");
 
         sleep(AJAX_WAIT_TIME);
@@ -39,8 +37,6 @@ public class ZoneRefreshTest extends TapestryCoreTestCase
     public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
     {
         openBaseURL();
-
-        waitForPageInitialized();
 
         clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
 

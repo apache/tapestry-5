@@ -33,8 +33,6 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     {
         openLinks "t5app/", "show index page alert"
 
-        waitForPageInitialized()
-
         assertTextPresent "index page alert"
     }
 

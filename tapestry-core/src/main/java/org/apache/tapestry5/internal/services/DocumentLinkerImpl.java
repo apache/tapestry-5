@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,6 +130,18 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void addScriptElements(Element root)
     {
+        String rootElementName = root.getName();
+
+        Element body = rootElementName.equals("html") ? findOrCreateElement(root, "body", false) : null;
+
+        // Write the data-page-initialized attribute in for all pages; it will be "true" when the page has no
+        // initializations (which is somewhat rare in Tapestry). When the page has initializations, it will be set to
+        // "true" once those initializations all run.
+        if (body != null)
+        {
+            body.attribute("data-page-initialized", Boolean.toString(!hasScriptsOrInitializations));
+        }
+
         if (!hasScriptsOrInitializations)
         {
             return;
@@ -139,14 +151,12 @@ public class DocumentLinkerImpl implements DocumentLinker
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
         // use stylesheets?
 
-        String rootElementName = root.getName();
-
         if (!rootElementName.equals("html"))
             throw new RuntimeException(String.format("The root element of the rendered document was <%s>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.", rootElementName));
 
         // TAPESTRY-2364
 
-        addScriptsToEndOfBody(findOrCreateElement(root, "body", false));
+        addScriptsToEndOfBody(body);
     }
 
     /**

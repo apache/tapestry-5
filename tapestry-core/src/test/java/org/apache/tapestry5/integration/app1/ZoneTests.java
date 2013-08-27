@@ -34,8 +34,6 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Select Zone Demo");
 
-        waitForPageInitialized();
-
         select("carMaker", "Bmw");
 
         sleep(AJAX_WAIT_TIME);
@@ -49,8 +47,6 @@ public class ZoneTests extends TapestryCoreTestCase
         select(selectLocator, "7 Series");
 
         clickAndWait(SUBMIT);
-
-        waitForPageInitialized();
 
         assertTextPresent("Car Maker: BMW");
 
@@ -73,8 +69,6 @@ public class ZoneTests extends TapestryCoreTestCase
     public void zone_updates()
     {
         openLinks("Zone Demo");
-
-        waitForPageInitialized();
 
         assertTextPresent("No name has been selected.");
 
@@ -107,8 +101,6 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_multiple_zones_at_once()
     {
         openLinks("Multiple Zone Update Demo");
-
-        waitForPageInitialized();
 
         String now = getText("now");
 
@@ -167,8 +159,6 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
-        waitForPageInitialized();
-
         assertText("zone-update-message", "");
 
         click("link=Direct JSON response");
@@ -187,8 +177,6 @@ public class ZoneTests extends TapestryCoreTestCase
     public void link_submit_inside_form_that_updates_a_zone()
     {
         openLinks("LinkSubmit inside Zone");
-
-        waitForPageInitialized();
 
         String now = getText("now");
 
@@ -227,8 +215,6 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone/Form Update Demo");
 
-        waitForPageInitialized();
-
         click("link=Update the form");
 
         waitForElementToAppear("updated");
@@ -247,8 +233,6 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_to_zone_inside_form()
     {
         openLinks("MultiZone Update inside a Form");
-
-        waitForPageInitialized();
 
         select("selectValue1", "3 pre ajax");
 
@@ -310,11 +294,7 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
-        waitForPageInitialized();
-
         click("link=Select \"CSS Injection\"");
-
-        waitForPageInitialized();
 
         // First check that the update arrived
 
@@ -336,8 +316,6 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_zone_with_empty_body()
     {
         openLinks("Zone Demo");
-
-        waitForPageInitialized();
 
         assertText("zone-update-message", "");
 

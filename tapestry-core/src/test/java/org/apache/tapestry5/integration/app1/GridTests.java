@@ -250,8 +250,6 @@ public class GridTests extends TapestryCoreTestCase
     {
         openLinks("In-Place Grid Demo");
 
-        waitForPageInitialized();
-
         String timestamp = getText("lastupdate");
 
         click("link=2");

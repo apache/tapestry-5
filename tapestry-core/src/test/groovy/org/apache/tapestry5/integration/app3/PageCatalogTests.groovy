@@ -11,8 +11,6 @@ class PageCatalogTests extends TapestryCoreTestCase
     {
         open("${baseURL}t5dashboard/pages")
 
-        waitForPageInitialized()
-
         click "link=Clear the cache"
 
         sleep 1000

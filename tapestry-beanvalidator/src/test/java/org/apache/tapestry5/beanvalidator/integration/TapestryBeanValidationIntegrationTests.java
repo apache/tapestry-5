@@ -34,8 +34,6 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         clickAndWait(SUBMIT);
 
-        // waitForPageInitialized();
-
         assertTextPresent("Login Name may not be null");
         assertTextPresent("Secret Password may not be null");
         assertTextPresent("Programming Languages size must be between 2 and 3");
@@ -116,8 +114,6 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     {
         openLinks("Client Validation Demo");
 
-        waitForPageInitialized();
-
         //@NotNull
         click(SUBMIT);
 
@@ -165,8 +161,6 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         assertTextPresent("Languages size must be between 2 and 3");
 
-        waitForPageInitialized();
-
         assertTextPresent("Null Value must be null");
     }
 
@@ -175,8 +169,6 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     public void form_client_validation() throws Exception
     {
         openLinks("Form Client Validation Demo");
-
-        waitForPageInitialized();
 
         click(SUBMIT);
 

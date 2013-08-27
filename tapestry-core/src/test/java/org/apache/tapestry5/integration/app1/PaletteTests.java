@@ -41,8 +41,6 @@ public class PaletteTests extends TapestryCoreTestCase
     {
         openLinks("Palette Demo", "Reset Page State");
 
-        waitForPageInitialized();
-
         assertText("css=.palette-available .palette-title",
                 "Languages Offered");
         assertText("css=.palette-selected .palette-title",
@@ -59,8 +57,6 @@ public class PaletteTests extends TapestryCoreTestCase
         clickAndWait(SUBMIT);
 
         assertText("id=selected-languages", "[HASKELL, JAVASCRIPT]");
-
-        waitForPageInitialized();
 
         addSelection(SELECTED_OPTIONS, "label=Javascript");
 
@@ -84,8 +80,6 @@ public class PaletteTests extends TapestryCoreTestCase
         check("reorder");
 
         clickAndWait(SUBMIT);
-
-        waitForPageInitialized();
 
         addSelection(SELECTED_OPTIONS, "label=Ruby");
 
@@ -129,8 +123,6 @@ public class PaletteTests extends TapestryCoreTestCase
     public void palette_component_client_validation()
     {
         openLinks("Palette Demo", "Reset Page State");
-
-        waitForPageInitialized();
 
         click(SUBMIT);
 

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
 package org.apache.tapestry5.integration.app1
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase
+import org.apache.tapestry5.test.TapestryTestConfiguration
 import org.testng.annotations.Test
 
-class TreeTests extends TapestryCoreTestCase
-{
-    @Test
-    void basics()
-    {
-        openLinks "Tree Component Demo", "Clear Expansions"
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
+class TreeTests extends TapestryCoreTestCase {
 
-        waitForPageInitialized()
+    @Test
+    void basics() {
+        openLinks "Tree Component Demo", "Clear Expansions"
 
         //Click on Games
         click "//div[@class='tree-container test-hook']/ul/li[2]/span[@class='tree-icon']"
@@ -38,7 +37,7 @@ class TreeTests extends TapestryCoreTestCase
         //Click on Board Games
         click "//div[@class='tree-container test-hook']/ul/li[2]/ul/li/span[@class='tree-icon']"
 
-        //Assert the leafs are displayed
+        //Assert that the leafs are displayed
         waitForAjaxRequestsToComplete PAGE_LOAD_TIMEOUT
 
         clickAndWait "link=Redraw"
@@ -47,15 +46,16 @@ class TreeTests extends TapestryCoreTestCase
     }
 
     @Test
-    void select_node()
-    {
+    void select_node() {
         openLinks "Tree Component Selection Demo", "Clear All"
 
-        waitForPageInitialized()
+        click "css=.tree-container span.tree-icon"
 
-        click "//span[@class='tree-icon']"
+        // Need a short sleep
+        sleep 250
 
-        waitForCSSSelectedElementToAppear "li.leaf-node > span"
+        // Since there's no simple way to build the CSS select we need.
+        // waitForCSSSelectedElementToAppear "li.leaf-node > span"
 
         assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
 

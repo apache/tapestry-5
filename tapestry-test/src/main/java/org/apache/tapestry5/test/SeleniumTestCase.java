@@ -1137,9 +1137,39 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         selenium.waitForFrameToLoad(frameAddress, timeout);
     }
 
+    /**
+     * Waits for page  to load, then waits for initialization to finish, which is recognized by the {@code data-page-initialized} attribute
+     * being set to true on the body element. Polls at increasing intervals.
+     */
     public void waitForPageToLoad(String timeout)
     {
         selenium.waitForPageToLoad(timeout);
+
+        // In a limited number of cases, a "page" is an container error page or raw HTML content
+        // that does not include the body element and data-page-initialized element. In those cases,
+        // there will never be page initialization in the Tapestry sense and we return immediately.
+
+        if (!isElementPresent("css=body[data-page-initialized]")) { return; }
+
+        int totalTime = 0;
+        int sleepTime = 20;
+
+        while (true) {
+            if (isElementPresent("css=body[data-page-initialized='true']"))
+            {
+                return;
+            }
+
+            if (totalTime > 10000) {
+                reportAndThrowAssertionError("Page did not finish initializing.");
+            }
+
+            sleep(sleepTime);
+
+            totalTime += sleepTime;
+
+            sleepTime *= 2;
+        }
     }
 
     public void waitForPopUp(String windowID, String timeout)
@@ -1501,24 +1531,4 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         return selenium.getCssCount(str);
     }
 
-    /**
-     * Waits for page initialization to finish, which is recognized by the {@code data-page-initialized} attribute
-     * being added to the HTML element. Polls at 20ms intervals for 200ms.
-     *
-     * @since 5.4
-     */
-    protected final void waitForPageInitialized()
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            if (isElementPresent("css=body[data-page-initialized]"))
-            {
-                return;
-            }
-
-            sleep(20);
-        }
-
-        reportAndThrowAssertionError("Page did not finish initializing.");
-    }
 }

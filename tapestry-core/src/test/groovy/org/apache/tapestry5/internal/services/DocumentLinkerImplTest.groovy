@@ -108,7 +108,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -129,7 +129,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><head><meta content="Apache Tapestry Framework (version 1.2.3)" name="generator"/></head><body><p>Ready to be marked with generator meta.</p></body></html>
+<html><head><meta content="Apache Tapestry Framework (version 1.2.3)" name="generator"/></head><body data-page-initialized="true"><p>Ready to be marked with generator meta.</p></body></html>
 '''
     }
 
@@ -168,7 +168,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><head><link type="text/css" rel="stylesheet" href="foo.css"/><link media="print" type="text/css" rel="stylesheet" href="bar/baz.css"/></head><body><p>Ready to be updated with styles.</p></body></html>
+<html><head><link type="text/css" rel="stylesheet" href="foo.css"/><link media="print" type="text/css" rel="stylesheet" href="bar/baz.css"/></head><body data-page-initialized="true"><p>Ready to be updated with styles.</p></body></html>
 '''
     }
 
@@ -187,7 +187,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><head><!-- existing head --><link type="text/css" rel="stylesheet" href="foo.css"/></head><body>body content</body></html>
+<html><head><!-- existing head --><link type="text/css" rel="stylesheet" href="foo.css"/></head><body data-page-initialized="true">body content</body></html>
 '''
     }
 
@@ -208,7 +208,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -235,7 +235,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><notbody><p>Ready to be updated with scripts.</p></notbody><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -261,7 +261,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/><script></script></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -286,7 +286,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 <!--[if IE]>
 <link type="text/css" rel="stylesheet" href="just_ie.css"/>
 <![endif]-->
-</head></html>
+</head><body data-page-initialized="true"></body></html>
 '''
     }
 
@@ -304,7 +304,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet t-ajax-insertion-point" href="insertion-point.css"/></head></html>
+<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet t-ajax-insertion-point" href="insertion-point.css"/></head><body data-page-initialized="true"></body></html>
 '''
     }
 
@@ -331,7 +331,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -359,7 +359,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()

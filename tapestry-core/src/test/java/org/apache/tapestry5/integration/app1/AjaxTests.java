@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,6 @@ public class AjaxTests extends TapestryCoreTestCase
     {
         openLinks("Form Fragment Demo", "Clear Errors");
 
-        waitForPageInitialized();
-
         type("name", "Fred");
 
         // Put a value into the sub field, then hide it ...
@@ -54,8 +52,6 @@ public class AjaxTests extends TapestryCoreTestCase
 
         clickAndWait("link=Back");
         clickAndWait("link=Clear Errors");
-
-        waitForPageInitialized();
 
         click("subscribeToEmail");
         click("on");
@@ -89,8 +85,6 @@ public class AjaxTests extends TapestryCoreTestCase
     public void nested_form_fragment()
     {
         openLinks("Nested Form Fragment Demo");
-
-        waitForPageInitialized();
 
         assertTrue(isVisible("outertext1"));
         assertTrue(isVisible("innertext1"));
@@ -193,8 +187,6 @@ public class AjaxTests extends TapestryCoreTestCase
     {
         openLinks("FormInjector Demo");
 
-        waitForPageInitialized();
-
         assertText("sum", "0.0");
 
         click("link=Add another value");
@@ -204,8 +196,6 @@ public class AjaxTests extends TapestryCoreTestCase
         type("//input[@type='text'][1]", "5.1");
 
         clickAndWait(SUBMIT);
-
-        waitForPageInitialized();
 
         assertText("sum", "5.1");
 
@@ -240,8 +230,6 @@ public class AjaxTests extends TapestryCoreTestCase
     public void progressive_display()
     {
         openLinks("ProgressiveDisplay Demo");
-
-        waitForPageInitialized();
 
         waitForElementToAppear("content1");
         assertText("content1", "Progressive Display content #1.");

@@ -10,8 +10,6 @@ class CanceledEventTests extends TapestryCoreTestCase
     {
         openLinks "Canceled Event Demo"
 
-        waitForPageInitialized()
-
         clickAndWait SUBMIT
 
         assertFirstAlert "Form was canceled."
@@ -21,8 +19,6 @@ class CanceledEventTests extends TapestryCoreTestCase
     void cancel_link()
     {
         openLinks "Canceled Event Demo"
-
-        waitForPageInitialized()
 
         clickAndWait "link=Cancel Form"
 

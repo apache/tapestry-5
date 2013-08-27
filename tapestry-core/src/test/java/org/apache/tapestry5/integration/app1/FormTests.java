@@ -81,8 +81,6 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait(SUBMIT);
 
-        waitForPageInitialized();
-
         assertTextPresent("You must provide a value for Email.");
         // is an overridden validation error message:
         assertTextPresent("Please provide a detailed description of the incident.");
@@ -93,8 +91,6 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait(SUBMIT);
 
-        waitForPageInitialized();
-
         assertTextPresent("[false]");
         assertTextPresent("You must provide an integer value for Hours.");
 
@@ -103,8 +99,6 @@ public class FormTests extends TapestryCoreTestCase
         type("hours", " 19 ");
         click("//input[@id='urgent']");
         clickAndWait(SUBMIT);
-
-        waitForPageInitialized();
 
         assertTextPresent("[foo@bar.baz]");
         assertTextPresent("[Show me the money!]");
@@ -118,8 +112,6 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("Client Validation Demo");
 
         clickAndWait("link=Reset Page State");
-
-        waitForPageInitialized();
 
         // Notice: click, not click and wait.
 
@@ -152,8 +144,6 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait("link=Clear Data");
 
-        waitForPageInitialized();
-
         clickAndWait("//input[@value='Cancel']");
 
         assertText("message", "Form was cancelled.");
@@ -174,8 +164,6 @@ public class FormTests extends TapestryCoreTestCase
     public void regexp_validator()
     {
         openLinks("Regexp Demo");
-
-        waitForPageInitialized();
 
         String update = SUBMIT;
 
@@ -203,8 +191,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("DateField Demo", "Reset Page State", "english");
 
-        waitForPageInitialized();
-
         type("birthday", "24 dec 1966");
         type("asteroidImpact", "05/28/2046");
 
@@ -218,8 +204,6 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait("link=french");
 
-        waitForPageInitialized();
-
         click("css=.x-birthday .btn");
 
         sleep(AJAX_WAIT_TIME);
@@ -232,8 +216,6 @@ public class FormTests extends TapestryCoreTestCase
     public void xss_datefield()
     {
         openLinks("DateField Demo", "Reset Page State", "english");
-
-        waitForPageInitialized();
 
         type("asteroidImpact", "<script>alert('T5 is great'); </script>");
 
@@ -249,8 +231,6 @@ public class FormTests extends TapestryCoreTestCase
     public void datefield_select_newmonth_samedate()
     {
         openLinks("DateField Demo", "Reset Page State", "english");
-
-        waitForPageInitialized();
 
         //start with a known date...
         type("asteroidImpact", "05/28/2035");
@@ -341,8 +321,6 @@ public class FormTests extends TapestryCoreTestCase
     public void datefield_clickoutside_closes()
     {
         openLinks("DateField Demo", "Reset Page State", "english");
-
-        waitForPageInitialized();
 
         type("asteroidImpact", "05/28/2046");
 
@@ -595,8 +573,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Client Format Validation");
 
-        waitForPageInitialized();
-
         type("amount", "abc");
         type("quantity", "abc");
 
@@ -703,8 +679,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit Without Validator Demo");
 
-        waitForPageInitialized();
-
         type("searchField", "Anders Haraldsson");
 
         clickAndWait("//a[@id='searchLink']");
@@ -719,8 +693,6 @@ public class FormTests extends TapestryCoreTestCase
     public void client_side_numeric_validation()
     {
         openLinks("Client-Side Numeric Validation", "Reset Page State", "Setup Values");
-
-        waitForPageInitialized();
 
         assertText("outputLongValue", "1000");
         assertText("outputDoubleValue", "1234.67");
@@ -760,8 +732,6 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait("link=Setup Values");
 
-        waitForPageInitialized();
-
         type("longValue", "4000.");
         click(SUBMIT);
 
@@ -778,8 +748,6 @@ public class FormTests extends TapestryCoreTestCase
     public void client_validation_for_numeric_fields_that_are_not_required()
     {
         openLinks("Form Zone Demo");
-
-        waitForPageInitialized();
 
         type("longValue", "alpha");
 
@@ -811,8 +779,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Validation Constraints From Messages");
 
-        waitForPageInitialized();
-
         click(SUBMIT);
 
         assertTextPresent("You must provide a value for Name.");
@@ -841,8 +807,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit Demo");
 
-        waitForPageInitialized();
-
         waitForElementToAppear("fred");
 
         click("//a[@id='fred']");
@@ -858,8 +822,6 @@ public class FormTests extends TapestryCoreTestCase
         assertTextPresent("Result: 10.14159");
 
         type("name", "Betty");
-
-        waitForPageInitialized();
 
         clickAndWait("link=Barney");
 
@@ -998,8 +960,6 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Cancel Demo");
 
-        waitForPageInitialized();
-
         clickAndWait("//input[@value='Cancel Form']");
 
         assertText("message", "Form was canceled.");
@@ -1009,8 +969,6 @@ public class FormTests extends TapestryCoreTestCase
     public void use_of_cancel_mode_with_submitlink()
     {
         openLinks("Cancel Demo");
-
-        waitForPageInitialized();
 
         clickAndWait("link=Cancel Form");
 
@@ -1023,8 +981,6 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("Select Demo");
 
         clickAndWait(SUBMIT);
-
-        waitForPageInitialized();
 
         assertTextPresent("You must provide a value for Color.");
 
