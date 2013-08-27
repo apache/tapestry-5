@@ -105,13 +105,12 @@ define ["underscore", "./console", "./dom", "./events"],
 
         fn.apply null, initArguments
 
-
         tracker()
 
-    # Loads all specified libraries in order (this includes other the core stack, other stacks, and
+    # Loads all specified libraries in order (this includes the core stack, other stacks, and
     # any free-standing libraries). It then executes the initializations. Once all initializations have
     # completed (which is usually an asynchronous operation, as initializations may require the loading
-    # of further modules), then the `data-page-initialized` attribute of the root HTML element is set to
+    # of further modules), then the `data-page-initialized` attribute of the `<body>` element is set to
     # 'true'.
     #
     # This is the main export of the module; other functions are attached as properties.
