@@ -1,5 +1,6 @@
 package ioc.specs
 
+import org.apache.commons.lang3.SystemUtils
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource
 import spock.lang.Specification
 
@@ -24,7 +25,11 @@ class ClasspathResourceSpec extends Specification {
         content(r) == RESOURCE_TXT_CONTENT
     }
 
-    def "case-mismatch on file name is detected"() {
+    def "case-mismatch on file name is detected on case insensitive OS"() {
+
+        if (!SystemUtils.IS_OS_WINDOWS)
+            return
+
         def r = new ClasspathResource("$FOLDER/Resource.Txt")
 
         when:
