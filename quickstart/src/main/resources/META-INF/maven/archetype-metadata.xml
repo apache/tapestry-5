@@ -19,6 +19,9 @@
                 <exclude>*.ico</exclude>
                 <exclude>**/*.jpg</exclude>
                 <exclude>**/*.gif</exclude>
+                <exclude>**/*.png</exclude>
+                <exclude>**/*.js</exclude>
+                <exclude>**/*.css</exclude>
             </excludes>
         </fileSet>
 
@@ -30,6 +33,9 @@
                 <include>*.ico</include>
                 <include>**/*.jpg</include>
                 <include>**/*.gif</include>
+                <include>**/*.png</include>
+                <include>**/*.js</include>
+                <include>**/*.css</include>
             </includes>
         </fileSet>
 

@@ -6,11 +6,14 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.ioc.services.ApplicationDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.StackExtension;
+import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.slf4j.Logger;
 
 /**
@@ -62,10 +65,11 @@ public class AppModule
 	public static void setupEnvironment(MappedConfiguration<String, Object> configuration)
 	{
 		configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
-		configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:mybootstrap");
+//		configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:mybootstrap");
 		configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
 	}
 
+	/*
 	// This will override the bundled bootstrap version and will compile it at runtime
 	@Contribute(JavaScriptStack.class)
 	@Core
@@ -74,6 +78,7 @@ public class AppModule
 		configuration.override("bootstrap.css",
 				new StackExtension(StackExtensionType.STYLESHEET, "context:mybootstrap/css/bootstrap.css"), "before:tapestry.css");
 	}
+	*/
 
     /**
      * This is a service definition, the service will be named "TimingFilter". The interface,
