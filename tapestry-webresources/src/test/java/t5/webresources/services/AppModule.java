@@ -12,6 +12,7 @@ import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.StackExtension;
+import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.apache.tapestry5.webresources.modules.WebResourcesModule;
 
 @SubModule(WebResourcesModule.class)
@@ -30,21 +31,14 @@ public class AppModule
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
-
-        // Temporarily comment out due to problems with Less4J & Bootstrap 3
-        // see https://github.com/SomMeri/less4j/issues/160
-
-        // configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:bootstrap");
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:bootstrap");
     }
 
     @Contribute(JavaScriptStack.class)
     @Core
     public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
     {
-        // Temporarily comment out due to problems with Less4J & Bootstrap 3
-        // see https://github.com/SomMeri/less4j/issues/160
-
-        //        configuration.override("bootstrap.css",
-        //                new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/less/bootstrap.less"), "before:tapestry.css");
+		configuration.override("bootstrap.css",
+				new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/less/bootstrap.less"), "before:tapestry.css");
     }
 }
