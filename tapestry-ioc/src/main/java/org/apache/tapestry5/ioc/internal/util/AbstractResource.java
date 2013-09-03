@@ -318,7 +318,10 @@ public abstract class AbstractResource extends LockSupport implements Resource
 
         try
         {
-            expectedFileName = extractFile(file.getCanonicalPath());
+            // On Windows, the canonical path uses backslash ('\') for the separator; an easy hack
+            // is to convert the platform file separator to match sane operating systems (which use a foward slash).
+            String sep = System.getProperty("file.separator");
+            expectedFileName = extractFile(file.getCanonicalPath().replace(sep, "/"));
         } catch (IOException e)
         {
             return;
