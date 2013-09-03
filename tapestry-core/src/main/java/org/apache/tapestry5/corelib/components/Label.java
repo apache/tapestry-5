@@ -64,7 +64,7 @@ public class Label
     {
         decorator.beforeLabel(field);
 
-        labelElement = writer.element("label");
+        labelElement = writer.element("label", "class", "control-label");
 
         resources.renderInformalParameters(writer);
 

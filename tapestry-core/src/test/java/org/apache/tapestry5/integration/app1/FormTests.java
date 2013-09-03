@@ -16,6 +16,7 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import java.util.Date;
 /**
  * Tests for the {@link Form} component as well as many form control components.
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 public class FormTests extends TapestryCoreTestCase
 {
 
@@ -508,10 +510,10 @@ public class FormTests extends TapestryCoreTestCase
         // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label for=\"value\">Value</label>[After label for Value]",
+                "[Before label for Value]<label for=\"value\" class=\"control-label\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label for=\"requiredValue\" class=\"control-label\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]", "[After field Required Value (required)]");
     }
 

@@ -40,8 +40,8 @@ class MiscTests extends TapestryCoreTestCase {
     {
         openLinks "Override Label Class Demo"
 
-        assertSourcePresent "<label for=\"firstName\">First Name</label>",
-                            "<label for=\"lastName\" class=\"dummyClassName\">Last Name</label>"
+        assertSourcePresent "<label for=\"firstName\" class=\"control-label\">First Name</label>",
+                            "<label for=\"lastName\" class=\"control-label dummyClassName\">Last Name</label>"
 
     }
 
