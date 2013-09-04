@@ -2,16 +2,12 @@
    examples include server-side validation, or autocompletion. An Ajax "throbber" is displayed
    on the right side of the field. */
 input.ajax-wait {
-    background-image: url(ajax-loader.gif);
-    background-repeat: no-repeat;
-    background-position: center right;
+    background: url(ajax-loader.gif) no-repeat center right;
 }
 
 th[data-grid-column-sort] a {
     padding-right: 20px;
-    background-position: right;
-    background-repeat: no-repeat;
-    background-image: url(../core/sortable.png);
+    background: url(../core/sortable.png) no-repeat right;
 }
 
 th[data-grid-column-sort=ascending] a {
