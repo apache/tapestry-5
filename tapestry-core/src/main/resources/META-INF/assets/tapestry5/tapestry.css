@@ -30,3 +30,8 @@ div.datefield-popup.well {
     margin-top: 2px;
 }
 
+/* Numeric fields should have their content right-aligned. */
+.numeric {
+    text-align: right;
+}
+

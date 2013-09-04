@@ -5,7 +5,7 @@
     </t:block>
 
     <t:block id="number">
-        <input t:id="numberField" t:mixins="formgroup" class="t-number"/>
+        <input t:id="numberField" t:mixins="formgroup" class="numeric"/>
     </t:block>
 
 
