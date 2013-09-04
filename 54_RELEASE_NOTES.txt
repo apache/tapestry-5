@@ -192,7 +192,7 @@ to the client, and expects and leverages the Bootstrap CSS.
 Fields that require validation messages to be displayed fire events, and the default handlers show and update
 help blocks that appear (by default) beneath the fields. To get the full effect, you should enclose your fields inside
 .form-group elements, as described in the Bootstrap documentation:
-http://twitter.github.com/bootstrap/base-css.html#forms
+http://getbootstrap.com/css/#forms
 
 You may also use the new FormGroup mixin for most fields.
 
