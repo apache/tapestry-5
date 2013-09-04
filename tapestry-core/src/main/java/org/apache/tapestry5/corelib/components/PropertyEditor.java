@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -140,6 +140,9 @@ public class PropertyEditor
     @Environmental
     private FormSupport formSupport;
 
+    @Inject
+    private Heartbeat heartbeat;
+
     private PropertyModel propertyModel;
 
     BeanBlockSource defaultBeanBlockSource()
@@ -217,6 +220,8 @@ public class PropertyEditor
         {
         	beanValidationContext.setCurrentProperty(propertyName);
         }
+
+        heartbeat.begin();
     }
 
     /**
@@ -225,6 +230,8 @@ public class PropertyEditor
      */
     void cleanupEnvironment()
     {
+        heartbeat.end();
+
         environment.pop(PropertyEditContext.class);
     }
 

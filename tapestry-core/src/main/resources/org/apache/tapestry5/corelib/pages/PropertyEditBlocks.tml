@@ -1,25 +1,16 @@
-<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <t:block id="text">
-        <div class="form-group">
-            <t:label for="textField"/>
-            <input t:id="textField"/>
-        </div>
+        <input t:mixins="formgroup" t:id="textField"/>
     </t:block>
 
     <t:block id="number">
-        <div class="form-group">
-            <t:label for="numberField"/>
-            <input t:id="numberField" class="t-number"/>
-        </div>
+        <input t:id="numberField" t:mixins="formgroup" class="t-number"/>
     </t:block>
 
 
     <t:block id="enum">
-        <div class="form-group">
-            <t:label for="select"/>
-            <input t:id="select"/>
-        </div>
+        <input t:id="select" t:mixins="formgroup"/>
     </t:block>
 
     <t:block id="boolean">
@@ -30,40 +21,23 @@
                 ${context.label}
             </label>
         </div>
-
     </t:block>
 
     <t:block id="date">
-
-        <div class="form-group">
-            <t:label for="dateField"/>
-            <input t:id="dateField"/>
-        </div>
-
+        <input t:id="dateField" t:mixins="formgroup"/>
     </t:block>
 
     <t:block id="calendar">
-
-        <div class="form-group">
-            <t:label for="calendarField"/>
-            <input t:id="calendarField"/>
-        </div>
-
+        <input t:id="calendarField" t:mixins="formgroup"/>
     </t:block>
 
     <t:block id="password">
 
-        <div class="form-group">
-            <t:label for="passwordField"/>
-            <input t:id="passwordField"/>
-        </div>
+        <input t:id="passwordField" t:mixins="formgroup"/>
 
     </t:block>
 
     <t:block id="longtext">
-        <div class="form-group">
-            <t:label for="textarea"/>
-            <textarea t:id="textarea"/>
-        </div>
+        <textarea t:id="textarea" t:mixins="formgroup"/>
     </t:block>
 </div>
