@@ -246,7 +246,7 @@ public class DateField extends AbstractField
 
         writer.element("button",
                 "type", "button",
-                "class", "btn",
+                "class", "btn btn-default",
                 "alt", "[Show]");
 
         writer.element("span", "class", "glyphicon glyphicon-calendar");

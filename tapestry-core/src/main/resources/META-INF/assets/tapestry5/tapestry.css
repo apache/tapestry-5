@@ -24,7 +24,7 @@ th[data-grid-column-sort=descending] a {
 
 /* Some support for the built-in DateField component. */
 
-div.datefield-popup {
+div.datefield-popup.well {
     position: absolute;
     z-index: 1000;
     margin-top: 2px;

@@ -1,8 +1,5 @@
 .datePicker {
-    border: 1px solid WindowText;
-    background: Window;
-    width: 170px;
-    padding: 0px;
+    width: 180px;
     cursor: default;
     -moz-user-focus: normal;
 }
@@ -11,7 +8,6 @@
     font: smallcaption;
     font: small-caption;
     text-align: center;
-    color: WindowText;
     cursor: default;
     font-weight: normal !important;
     -moz-user-select: none;
@@ -23,7 +19,6 @@
 }
 
 .datePicker .header {
-    background: Window;
     padding: 3px;
     border-bottom: 1px solid WindowText;
 }
@@ -90,35 +85,10 @@
     width: 100%;
 }
 
-.datePicker button {
-    border-width: 1px;
-    font: Caption;
-    font-weight: normal !important;
-    display: block;
-}
-
-.datePicker button.btn {
-    font-size: x-small;
-}
-
-.datePicker .previousButton {
-    background: buttonface url("../images/arrow.left.png") no-repeat center center;
-}
-
-.datePicker .nextButton {
-    background: buttonface url("../images/arrow.right.png") no-repeat center center;
-}
-
-.datePicker .previousButton,
-.datePicker .nextButton {
-    width: 14px;
-    height: 14px;
-}
-
 .datePicker .labelPopup {
     position: absolute;
     min-width: 130px;
-    background: Window;
+    background: white;
     border: 1px solid WindowText;
     padding: 1px;
 }
@@ -126,7 +96,7 @@
 .datePicker .labelPopup a {
     width: 100%;
     display: block;
-    color: WindowText;
+    color: inherit;
     text-decoration: none;
     white-space: nowrap;
 }

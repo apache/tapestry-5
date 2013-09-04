@@ -49,6 +49,7 @@
 |            | onselect when clicking "today" (and/or "none")                 |
 | 2012-11-11 | Minor changes to integrate into a page with Twitter Bootstrap, |
 |            | and to support localizing the Today/None buttons.              |
+| 2013-08-29 | More changes to adapt to Bootstrap 3 style                     |
 |-----------------------------------------------------------------------------|
 | Created 2001-10-?? | All changes are in the log above. | Updated 2006-05-28 |
 \----------------------------------------------------------------------------*/
@@ -141,8 +142,11 @@ DatePicker.prototype.create = function (doc)
 
     var td = doc.createElement("td");
     this._previousMonth = doc.createElement("button");
-    this._previousMonth.className = "previousButton";
+    this._previousMonth.className = "btn btn-default btn-xs previousButton";
     this._previousMonth.setAttribute("type", "button");
+    var icon = doc.createElement("span");
+    icon.className = "glyphicon glyphicon-chevron-left";
+    this._previousMonth.appendChild(icon);
     td.appendChild(this._previousMonth);
     tr.appendChild(td);
 
@@ -162,8 +166,12 @@ DatePicker.prototype.create = function (doc)
 
     td = doc.createElement("td");
     this._nextMonth = doc.createElement("button");
-    this._nextMonth.className = "nextButton";
+    this._nextMonth.className = "btn btn-default btn-xs nextButton";
     this._nextMonth.setAttribute("type", "button");
+    icon = doc.createElement("span");
+    icon.className = "glyphicon glyphicon-chevron-right";
+    this._nextMonth.appendChild(icon);
+
     td.appendChild(this._nextMonth);
     tr.appendChild(td);
 
@@ -191,7 +199,7 @@ DatePicker.prototype.create = function (doc)
 
     td = doc.createElement("td");
     this._todayButton = doc.createElement("button");
-    this._todayButton.className = "btn";
+    this._todayButton.className = "btn btn-default btn-xs";
     this._todayButton.setAttribute("type", "button");
     this._todayButton.appendChild(doc.createTextNode(DatePicker.TODAY));
     td.appendChild(this._todayButton);
@@ -204,7 +212,7 @@ DatePicker.prototype.create = function (doc)
 
     td = doc.createElement("td");
     this._noneButton = doc.createElement("button");
-    this._noneButton.className = "btn";
+    this._noneButton.className = "btn btn-default btn-xs";
     this._noneButton.setAttribute("type", "button");
     this._noneButton.appendChild(doc.createTextNode(DatePicker.NONE));
     td.appendChild(this._noneButton);
