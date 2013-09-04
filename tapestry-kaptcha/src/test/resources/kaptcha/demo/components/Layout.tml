@@ -1,23 +1,17 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
-  <head>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head>
     <title>${componentResources.pageName}</title>
-  </head>
+</head>
+<body>
+<div class="container">
 
-  <body>
     <h1>${componentResources.pageName}</h1>
 
     <t:body/>
 
-    <hr/>
+    <t:pagelink class="btn btn-default" page="index">index</t:pagelink>
 
-    <p>
-      [
-      <t:pagelink page="index">index</t:pagelink>
-      ] |
-      [
-      <t:pagelink page="${componentResources.pageName}">refresh</t:pagelink>
-      ]
-    </p>
-
-  </body>
+    <t:pagelink class="btn btn-default" page="${componentResources.pageName}">refresh</t:pagelink>
+</div>
+</body>
 </html>

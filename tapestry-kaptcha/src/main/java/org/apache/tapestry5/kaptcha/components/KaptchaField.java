@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ import org.apache.tapestry5.services.FieldValidatorSource;
 
 /**
  * Field paired with a {@link KaptchaImage} to ensure that the user has provided
- * the correct value.
+ * the correct value. Renders a class attribute of "form-control", which can be extended
+ * via the class informal attribute.
  *
  * @since 5.3
  * @tapestrydoc
@@ -92,6 +93,8 @@ public class KaptchaField extends AbstractField
                 "type", visible ? "text" : "password",
 
                 "id", getClientId(),
+
+                "class", "form-control",
 
                 "name", getControlName(),
 

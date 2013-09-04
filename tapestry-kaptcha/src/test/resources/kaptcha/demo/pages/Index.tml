@@ -1,15 +1,9 @@
-<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
 
     <h1>tapestry-kaptcha Demos</h1>
 
-    <ul>
-        <li>
-            <t:pagelink page="kaptchaDemo">Kaptcha Demo</t:pagelink>
-        </li>
-        <li>
-            <t:pagelink page="kaptchabeaneditformdemo">Kaptcha BeanEditForm Demo</t:pagelink>
-        </li>
-    </ul>
+            <t:pagelink class="btn btn-default" page="kaptchaDemo">Kaptcha Demo</t:pagelink>
+            <t:pagelink class="btn btn-default" page="kaptchabeaneditformdemo">Kaptcha BeanEditForm Demo</t:pagelink>
 
 </t:layout>
