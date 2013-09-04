@@ -37,7 +37,9 @@ define ["./dom", "underscore", "./bootstrap"],
 
       return
 
-    forceFloating = (dom.body.attribute "data-floating-console") == "true"
+    consoleAttribute = dom.body.attribute "data-floating-console"
+
+    forceFloating = consoleAttribute?
 
     button = (action, icon, label, disabled = false) -> """
         <button data-action="#{action}" class="btn btn-default btn-mini">
@@ -76,6 +78,13 @@ define ["./dom", "underscore", "./bootstrap"],
               """
 
           dom.body.prepend floatingConsole
+
+          # Basically, any non-blank value will enable the floating console. In addition, the special
+          # value "invisible" will enable it but then hide it ... this is useful in tests, since
+          # the console output is captured in the markup, but the visible console can have unwanted interactions
+          # (such as obscuring elements that make them unclickable).
+          if consoleAttribute is "invisible"
+            floatingConsole.hide()
 
           messages = floatingConsole.findFirst ".message-container"
 
@@ -123,9 +132,6 @@ define ["./dom", "underscore", "./bootstrap"],
           div.hide()
 
         messages.append div
-
-        # Make sure the console is visible, even if disabled (and even if the new content is hidden).
-        floatingConsole.show()
 
         # A slightly clumsy way to ensure that the container is scrolled to the bottom.
         _.delay -> messages.element.scrollTop = messages.element.scrollHeight
