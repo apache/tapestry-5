@@ -10,7 +10,7 @@
         </div>
         <t:if test="cancel">
             <div class="btn-group">
-                <t:submit t:id="cancel" mode="cancel" class="btn" value="message:core-cancel-label"/>
+                <t:submit t:id="cancel" mode="cancel" class="btn btn-default" value="message:core-cancel-label"/>
             </div>
         </t:if>
     </div>
