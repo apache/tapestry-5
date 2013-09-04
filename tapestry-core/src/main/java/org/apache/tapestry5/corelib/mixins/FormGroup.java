@@ -25,9 +25,7 @@ import org.apache.tapestry5.dom.Element;
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer layers of markup to correctly
  * render text fields, selects, and textareas using Bootstrap:
- * an outer {@code <div class="field-group">}, a {@code <label>}, and a
- * {@code <div class="controls">} around the field itself. This control is not appropriate
- * for radio buttons or check boxes, as those want to have the label element directly around the control.
+ * an outer {@code <div class="field-group">} containing a {@code <label class="control-label">} and the field itself.
  * As with the {@link org.apache.tapestry5.corelib.components.Label} component, the {@code for} attribute is set (after the field itself
  * renders).
  * <p/>

@@ -5,39 +5,27 @@
 
 <t:form clientValidation="none" class="form-horizontal">
     <t:errors/>
-    <div class="control-group">
+    <div class="form-group">
         <t:label for="email">This isn't used</t:label>
-        <div class="controls">
-            <input t:type="TextField" t:id="email"
-                   value="incident.email" size="50" t:validate="required"/>
-        </div>
+        <input t:type="TextField" t:id="email"
+               value="incident.email" size="50" t:validate="required"/>
     </div>
-    <div class="control-group">
+    <div class="form-group">
         <t:label for="message"/>
-        <div class="controls">
-            <textarea t:type="TextArea" t:id="message"
-                      t:label="Incident Message" value="incident.message" cols="50" rows="10"> You can put text
-                here, but it isn't used. </textarea>
-
-        </div>
+        <textarea t:type="TextArea" t:id="message"
+                  t:label="Incident Message" value="incident.message" cols="50" rows="10"> You can put text
+            here, but it isn't used. </textarea>
     </div>
-    <div class="control-group">
-        <div class="controls">
-            <input t:type="Checkbox" t:id="urgent" value="incident.urgent"/>
-            <t:label for="urgent"/>
-        </div>
+    <div class="form-group">
+        <input t:type="Checkbox" t:id="urgent" value="incident.urgent"/>
+        <t:label for="urgent"/>
     </div>
-    <div class="control-group">
+    <div class="form-group">
         <t:label for="hours"/>
-        <div class="controls">
-            <input t:type="TextField" t:id="hours"
-                   value="incident.hours" size="10" t:validate="required"/>
-
-        </div>
+        <input t:type="TextField" t:id="hours"
+               value="incident.hours" size="10" t:validate="required"/>
     </div>
-    <div class="form-actions">
-        <input type="submit" class="btn btn-primary"/>
-    </div>
+    <input type="submit" class="btn btn-primary"/>
 </t:form>
 
 

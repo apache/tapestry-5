@@ -32,7 +32,7 @@ import java.util.List;
  * @tapestrydoc
  * @see Form
  */
-@Import(module = "bootstrap-alert")
+@Import(module = "bootstrap/alert")
 public class Errors
 {
     /**
@@ -47,7 +47,7 @@ public class Errors
      * The CSS class for the div element rendered by the component. The default value is "alert alert-error alert-block".
      */
     @Parameter(name = "class")
-    private String className = "alert alert-error";
+    private String className = "alert alert-danger";
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)

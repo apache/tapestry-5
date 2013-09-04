@@ -8,24 +8,22 @@
          encoder="doubleItemEncoder" context="demoContextValue">
 
         <t:submitnotifier>
-            <div class="control-group">
-                <div class="controls">
-                    <div class="input-append">
-                        <t:textfield t:id="value" value="item.value"/>
-                        <t:removerowlink class="btn btn-warning addon">remove</t:removerowlink>
+            <div class="form-group">
+                <div class="input-group">
+                    <t:textfield t:id="value" value="item.value"/>
+                    <div class="input-group-addon">
+                        <t:removerowlink class="btn btn-warning btn-xs">remove</t:removerowlink>
                     </div>
                 </div>
             </div>
         </t:submitnotifier>
 
         <t:parameter name="addRow">
-            <t:addrowlink class="btn btn-mini">Add another value</t:addrowlink>
+            <t:addrowlink class="btn btn-default btn-xs">Add another value</t:addrowlink>
         </t:parameter>
     </div>
 
-    <div class="form-actions">
-        <input type="submit" class="btn btn-primary" value="Sum up the values"/>
-    </div>
+    <input type="submit" class="btn btn-primary" value="Sum up the values"/>
 
 </t:form>
 

@@ -48,7 +48,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
         fieldId = ensureFieldId field
 
       # Not found by id, but see if an empty placeholder was provided within
-      # the same .control-group.
+      # the same .form-group.
 
       group = field.findParent ".form-group"
 

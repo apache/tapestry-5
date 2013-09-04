@@ -1,5 +1,6 @@
 DIV.palette {
-    display: inline;
+    display: inline-block;
+    vertical-align: text-top;
 }
 
 DIV.palette SELECT {

@@ -245,7 +245,7 @@ public class JavaScriptModule
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
         configuration.add("prototype", new JavaScriptModuleConfiguration(prototype));
 
-        configuration.add("bootstrap-transition", new JavaScriptModuleConfiguration(transition).dependsOn("jquery"));
+        configuration.add("bootstrap/transition", new JavaScriptModuleConfiguration(transition).dependsOn("jquery"));
 
         for (String name : new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
                 "scrollspy", "tab", "tooltip"})
@@ -253,12 +253,12 @@ public class JavaScriptModule
 
             Resource lib = transition.forFile(name + ".js");
 
-            configuration.add("bootstrap-" + name, new JavaScriptModuleConfiguration(lib).dependsOn("bootstrap-transition"));
+            configuration.add("bootstrap/" + name, new JavaScriptModuleConfiguration(lib).dependsOn("bootstrap/transition"));
         }
 
         Resource popover = transition.forFile("popover.js");
 
-        configuration.add("bootstrap-popover", new JavaScriptModuleConfiguration(popover).dependsOn("bootstrap-tooltip"));
+        configuration.add("bootstrap/popover", new JavaScriptModuleConfiguration(popover).dependsOn("bootstrap/tooltip"));
 
         configuration.add("t5/core/typeahead", new JavaScriptModuleConfiguration(typeahead).dependsOn("jquery"));
 

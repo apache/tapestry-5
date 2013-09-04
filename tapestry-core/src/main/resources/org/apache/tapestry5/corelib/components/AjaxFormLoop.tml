@@ -15,9 +15,10 @@
     </t:block>
 
     <t:block id="defaultAddRow">
-        <div class="controls">
-            <t:addrowlink class="btn"><i class="icon-plus-sign"/> Add row</t:addrowlink>
-        </div>
+        <t:addrowlink class="btn btn-default btn-sm">
+            <t:glyphicon name="plus-sign"/>
+            Add row
+        </t:addrowlink>
     </t:block>
 
     <t:block id="ajaxResponse">

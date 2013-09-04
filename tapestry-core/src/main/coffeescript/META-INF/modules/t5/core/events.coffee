@@ -99,13 +99,13 @@ define
 
     # Clears and hides the element used to display validation error messages. There is no memo for
     # this event. The p.help-block for the field is located (if it exists) and empties and hidden.
-    # The containing .control-group element (if it exists) has its "error" class name removed.
+    # The containing .form-group element (if it exists) has its "has-error" class name removed.
     clearValidationError: "t5:field:clear-validation-error"
 
     # Presents a validation error for a field. The event memo should have a `message` key; the message to present
     # (as a string, or even as a detached DOM element). The help block for the field will be located or created,
-    # made visible, and have its content updated to `memo.message`.  If a containing element has the class ".control-group",
-    # then the class "error" will be added.
+    # made visible, and have its content updated to `memo.message`.  If a containing element has the class ".form-group",
+    # then the class "has-error" will be added.
     #
     # The rules for locating the help block:
     #
@@ -120,7 +120,7 @@ define
     #
     # * The element is created as `p.help-block` with `data-error-block-for` attribute set to the
     #   field's id.  The field will be assigned an id if necesary.
-    # * Normally, the block is inserted after the field
+    # * Normally, the block is inserted immediately after the field
     # * If the field's immediate container has class "input-group", then the block is inserted after the container
     showValidationError: "t5:field:show-validation-error"
 

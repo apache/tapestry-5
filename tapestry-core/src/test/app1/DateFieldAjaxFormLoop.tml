@@ -5,18 +5,16 @@
 <t:form class="form-horizontal">
 
     <div t:type="ajaxformloop" t:id="loop" source="dateHolders" value="current" encoder="dateHolderEncoder"
-         class="control-group">
+         class="form-group">
 
-        <div class="controls">
-            <t:datefield value="current.date"/>
-            <t:removerowlink class="btn btn-warning btn-mini"><i class="icon-minus-sign"/> Remove</t:removerowlink>
-        </div>
-
+        <t:datefield value="current.date"/>
+        <t:removerowlink class="btn btn-warning btn-mini">
+            <t:glyphicon name="minus-sign"/>
+            Remove
+        </t:removerowlink>
     </div>
 
-    <div class="form-actions">
-        <input type="submit" value="Go" class="btn btn-primary"/>
-    </div>
+    <input type="submit" value="Go" class="btn btn-primary"/>
 </t:form>
 
 

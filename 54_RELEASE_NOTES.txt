@@ -196,21 +196,25 @@ http://getbootstrap.com/css/#forms
 
 You may also use the new FormGroup mixin for most fields.
 
+Bootstrap's JavaScript has been broken into multiple "shimmed" JavaScript modules; e.g., "bootstrap/modal" to
+enable the JavaScript to support Bootstrap's modal dialogs. These modules do not export any value, but they
+do establish dependencies: to Bootstrap's "transition" module to enable animations, and ultimately to "jquery".
+
 ## Form element components
 
 TextField, PasswordField, TextArea, and Select now render the CSS class attribute "form-control"; you may add additional
-CSS class names with the `class` informal parameter.  Generally, you will want to add Bootstrap `col-md-x` class names
-to control the size of the element (otherwise it will stretch to 100% of the available width).
+CSS class names with the `class` informal parameter.  Generally, you will want to add an enclosing element with
+`col-md-x` CSS class control the size of the element (otherwise it will stretch to 100% of the available width).
 
 ## LabelComponent
 
-The Label component now renders the CSS class attribute as "control-label"; additional CSS class names may be provided
-using the `class` informal parameter.
+The Label component now renders the CSS class attribute as "control-label"; you may add additional CSS class names
+with the `class` informal parameter.
 
 ## BeanEditor / BeanEditForm
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
-div.control-group, which is provided around the editor for each property.
+div.form-group, which is provided around the editor for each property.
 
 ## ClientBehaviorSupport
 
