@@ -16,6 +16,8 @@ package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.dom.Element;
@@ -37,18 +39,26 @@ import org.apache.tapestry5.dom.Element;
  */
 public class FormGroup
 {
-
     @InjectContainer
     private Field field;
 
     private Element label;
 
+    @Environmental
+    private ValidationDecorator decorator;
+
     void beginRender(MarkupWriter writer)
     {
         writer.element("div", "class", "form-group");
-        label = writer.element("label");
+
+        decorator.beforeLabel(field);
+
+        label = writer.element("label", "class", "control-label");
         writer.end();
+
         fillInLabelAttributes();
+
+        decorator.afterLabel(field);
     }
 
     @HeartbeatDeferred
