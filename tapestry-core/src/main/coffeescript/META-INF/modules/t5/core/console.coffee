@@ -39,7 +39,7 @@ define ["./dom", "underscore", "./bootstrap"],
 
     consoleAttribute = dom.body.attribute "data-floating-console"
 
-    forceFloating = consoleAttribute?
+    forceFloating = (consoleAttribute is "enabled") or (consoleAttribute is "invisible")
 
     button = (action, icon, label, disabled = false) -> """
         <button data-action="#{action}" class="btn btn-default btn-mini">

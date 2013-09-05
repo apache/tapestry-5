@@ -154,7 +154,9 @@ intended for use in development.
 The floating console has also been extended with an improved UI and the ability to filter the content shown.
 
 In development and testing it can be desirable to have the floating console always visible; in that case, add the attribute
-`data-floating-console="true"` to the `<body>` element.
+`data-floating-console="enabled"` to the `<body>` element.  However, the floating console can sometimes obscure page
+content and interfere with tests; `data-floating-console="invisible"` will enable the console, but keep it hidden; the
+messages written to the console will be visible in the page source.
 
 ## Form.clientValidation parameter
 
