@@ -59,6 +59,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("SingleErrorDemo", "Single Error", "Using Error component to customize where the errors for a field will be displayed."),
+
                     new Item("JavaScriptTests", "JavaScript Tests", "Client-side tests using Mocha and Chai"),
 
                     new Item("ModuleInitDemo", "Module-based Initialization Demo", "Invoke a module function to perform page initialization"),

@@ -13,21 +13,26 @@
 // limitations under the License.
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * Presents validation errors of a single field. Must be enclosed by a
- * {@link org.apache.tapestry5.corelib.components.Form} component.
- * 
- * @since 5.2.0
+ * Provides a client-side element to contain validation errors; this renders as a {@code <p class="help-block">}.
+ * Must be enclosed by a
+ * {@link org.apache.tapestry5.corelib.components.Form} component and assumes the field and the Error component
+ * are enclosed by a {@code <div class="form-group">}.
+ *
  * @tapestrydoc
- * @deprecated Deprecated in 5.4 with no replacement; the significant changes in 5.4 ensure that validation errors
- * on re-rendered forms appear with the controls.
+ * @since 5.2.0
  */
+@SupportsInformalParameters
 public class Error
 {
     /**
@@ -36,41 +41,25 @@ public class Error
     @Parameter(name = "for", required = true, allowNull = false, defaultPrefix = BindingConstants.COMPONENT)
     private Field field;
 
-    /**
-     * The CSS class for the div element rendered by the component. The default value is "t-error-single".
-     */
-    @Parameter(name = "class")
-    private String className = CSSClassConstants.ERROR_SINGLE;
+    @Inject
+    private ComponentResources resources;
 
-    @Environmental(false)
-    private ValidationTracker tracker;
-
-    void beginRender(final MarkupWriter writer)
+    boolean beginRender(final MarkupWriter writer)
     {
-        if (tracker == null)
-            throw new RuntimeException("The Error component must be enclosed by a Form component.");
+        Element element = writer.element("p", "class", "help-block");
 
-        Element element = writer.element("div");
+        resources.renderInformalParameters(writer);
 
         updateElement(element);
 
         writer.end();
+
+        return false;
     }
 
     @HeartbeatDeferred
     private void updateElement(final Element element)
     {
-        final String error = tracker.getError(field);
-
-        if (error == null)
-        {
-            element.remove();
-        }
-        else
-        {
-            element.forceAttributes("class", className);
-            element.text(error);
-        }
+        element.attribute("data-error-block-for", field.getClientId());
     }
-
 }

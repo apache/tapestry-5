@@ -213,6 +213,15 @@ CSS class names with the `class` informal parameter.  Generally, you will want t
 The Label component now renders the CSS class attribute as "control-label"; you may add additional CSS class names
 with the `class` informal parameter.
 
+## Error Component
+
+When Tapestry must present a validation exception, it will often dynamically create the `<p class="help-block">`
+needed to display the message; it does a reasonable job of positioning the new element just after the field, or
+just after the `.input-group` containing the field. The Error component can be used to explicitly place this element.
+
+Also, note that part of the styling of the element is predicated on containment inside a `.form-group` (which may have
+the `has-error` selector added or removed).
+
 ## BeanEditor / BeanEditForm
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
