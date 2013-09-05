@@ -27,6 +27,9 @@
                     <t:pagelink page="prop:componentResources.pageName">Refresh Page</t:pagelink>
                 </li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <t:devtool navbar="true"/>
+            </ul>
         </div>
     </div>
 </div>
@@ -37,6 +40,8 @@
 </t:remove>
 <div class="container">
     <div class="main">
+
+        <t:devtool class="pull-right"/>
 
         <t:remove>alert-class is for the AlertsTest.check_informal_parameters test</t:remove>
         <t:alerts class="alert-class"/>

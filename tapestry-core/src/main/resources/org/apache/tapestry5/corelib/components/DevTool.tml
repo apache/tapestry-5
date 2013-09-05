@@ -1,0 +1,35 @@
+<div t:id="devmodezone" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+    <a href="#" class="${triggerClass}" data-toggle="dropdown" title="Dev Tools">
+        <t:glyphicon name="cog"/>
+        <span class="caret"/>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="dropdown-header">Developer Options</li>
+        <li class="dropdown-header">
+            ${componentResources.page.componentResources.componentModel.componentClassName}
+        </li>
+        <li class="divider"></li>
+        <li>
+            <t:actionlink zone="^" t:id="reset">Reset Page State</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink zone="^" t:id="kill">Kill Session</t:actionlink>
+        </li>
+        <li>
+            <t:pagelink page="prop:componentResources.pageName">Re-render
+                page <strong>${componentResources.pageName}</strong></t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:componentResources.pageName"
+                        parameters="{ 't:component-trace': true }">
+                Re-render page w/ rendering comments
+            </t:pagelink>
+        </li>
+        <li class="divider"/>
+        <li>
+            <t:pagelink target="_new" page="t5dashboard">Go to T5 Dashboard
+                <t:glyphicon name="new-window"/>
+            </t:pagelink>
+        </li>
+    </ul>
+</div>
