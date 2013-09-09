@@ -14,13 +14,16 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Standard validation error presenter. Must be enclosed by a
@@ -44,10 +47,10 @@ public class Errors
     private String banner;
 
     /**
-     * The CSS class for the div element rendered by the component. The default value is "alert alert-error alert-block".
+     * The CSS class for the div element rendered by the component.
      */
-    @Parameter(name = "class")
-    private String className = "alert alert-danger";
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "alert alert-danger")
+    private String className;
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)
@@ -62,6 +65,9 @@ public class Errors
         {
             return;
         }
+
+
+        Set<String> previousErrors = CollectionFactory.newSet();
 
         writer.element("div", "class", "alert-dismissable " + className);
         writer.element("button",
@@ -81,9 +87,16 @@ public class Errors
 
         for (String message : errors)
         {
+            if (previousErrors.contains(message))
+            {
+                continue;
+            }
+
             writer.element("li");
             writer.write(message);
             writer.end();
+
+            previousErrors.add(message);
         }
 
         writer.end(); // ul
