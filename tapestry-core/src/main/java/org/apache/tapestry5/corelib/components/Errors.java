@@ -56,14 +56,14 @@ public class Errors
     @Environmental(false)
     private ValidationTracker tracker;
 
-    void beginRender(MarkupWriter writer)
+    boolean beginRender(MarkupWriter writer)
     {
         if (tracker == null)
             throw new RuntimeException("The Errors component must be enclosed by a Form component.");
 
         if (!tracker.getHasErrors())
         {
-            return;
+            return false;
         }
 
 
@@ -102,5 +102,7 @@ public class Errors
         writer.end(); // ul
 
         writer.end(); // div
+
+        return false;
     }
 }
