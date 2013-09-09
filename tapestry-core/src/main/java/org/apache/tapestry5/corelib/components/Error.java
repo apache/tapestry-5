@@ -46,7 +46,8 @@ public class Error
 
     boolean beginRender(final MarkupWriter writer)
     {
-        Element element = writer.element("p", "class", "help-block");
+        // Initially invisible; will be shown on client if an error exists.
+        Element element = writer.element("p", "class", "help-block invisible");
 
         resources.renderInformalParameters(writer);
 

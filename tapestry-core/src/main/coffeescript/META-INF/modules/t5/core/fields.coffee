@@ -1,4 +1,4 @@
-# Copyright 2012 The Apache Software Foundation
+# Copyright 2012-2013 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -146,6 +146,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       if block
         block.hide().update("")
+        block.parent().removeClass "has-error"
 
       group = @findParent ".form-group"
 
@@ -159,10 +160,18 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       unless block
         block = exports.createHelpBlock this
 
-      block.show().update(memo.message)
+      block.removeClass("invisible").show().update(memo.message)
+      # Add "has-error" to the help-block's immediate container; this assist with some layout issues
+      # where the help block can't be under the same .form-group element as the field (more common
+      # with a horizontal form layout).
+      block.parent().addClass("has-error")
 
       group = @findParent ".form-group"
 
-      group and group.addClass "has-error"
+      container = group or @parent().closest(":not(.input-group)")
+
+      container.addClass "has-error"
+
+      return
 
     exports = {findHelpBlock, createHelpBlock, showValidationError}

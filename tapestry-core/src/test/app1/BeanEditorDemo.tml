@@ -8,12 +8,15 @@
     <form t:id="registrationData" submitlabel="Register" cancel="true">
 
         <t:parameter name="firstName">
-            <t:label for="firstName"/>
-            <div class="input-group">
-                <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
-                <span class="input-group-addon">FN</span>
+            <div class="form-group">
+
+                <t:label for="firstName"/>
+                <div class="input-group">
+                    <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
+                    <span class="input-group-addon">FN</span>
+                </div>
+                <p class="help-block">First name is required.</p>
             </div>
-            <p class="help-block">First name is required.</p>
         </t:parameter>
 
     </form>

@@ -22,6 +22,17 @@
     </div>
 
     <div class="form-group">
+        <t:label for="email"/>
+        <t:textfield t:id="email" validate="required"/>
+    </div>
+
+    <p>Outside of the .form-group</p>
+
+    <div class="form-group">
+        <t:error for="email"/>
+    </div>
+
+    <div class="form-group">
         <input class="btn btn-primary" type="submit"/>
     </div>
 </t:form>

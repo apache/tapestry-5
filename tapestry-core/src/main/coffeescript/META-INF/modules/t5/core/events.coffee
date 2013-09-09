@@ -105,7 +105,9 @@ define
     # Presents a validation error for a field. The event memo should have a `message` key; the message to present
     # (as a string, or even as a detached DOM element). The help block for the field will be located or created,
     # made visible, and have its content updated to `memo.message`.  If a containing element has the class ".form-group",
-    # then the class "has-error" will be added.
+    # then the class "has-error" will be added; otherwise, the immediately containing element will have class "has-error"
+    # added. The latter handles the case where, for layout reasons, the error container can not be inside the same
+    # .form-group as the form control (this often happens when constructing horizontal forms).
     #
     # The rules for locating the help block:
     #

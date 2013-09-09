@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 
-public class SingleErrorDemo 
+public class SingleErrorDemo
 {
-	@Persist
-	@Property
-	private String username;
-	
-	@Persist
-	@Property
-	private String password;
+    @Persist
+    @Property
+    private String username, password, email;
 }
