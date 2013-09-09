@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -133,6 +134,16 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
         }
 
         return result;
+    }
+
+    public List<String> getUnassociatedErrors()
+    {
+        if (extraErrors == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(extraErrors);
     }
 
     public boolean getHasErrors()

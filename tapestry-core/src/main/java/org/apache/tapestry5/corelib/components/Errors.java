@@ -47,6 +47,16 @@ public class Errors
     private String banner;
 
     /**
+     * If true, then only errors global to the form (unassociated with any specific field) are
+     * presented. By default all errors (associated with fields, or not) are presented; with unassoicated
+     * errors presented first.
+     *
+     * @since 5.4
+     */
+    @Parameter
+    private boolean globalOnly;
+
+    /**
      * The CSS class for the div element rendered by the component.
      */
     @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "alert alert-danger")
@@ -66,6 +76,13 @@ public class Errors
             return false;
         }
 
+        List<String> errors =
+                globalOnly ? tracker.getUnassociatedErrors() : tracker.getErrors();
+
+        if (errors.isEmpty())
+        {
+            return false;
+        }
 
         Set<String> previousErrors = CollectionFactory.newSet();
 
@@ -80,8 +97,6 @@ public class Errors
         writer.element("h4");
         writer.writeRaw(banner);
         writer.end();
-
-        List<String> errors = tracker.getErrors();
 
         writer.element("ul");
 

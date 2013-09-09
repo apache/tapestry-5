@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -104,6 +104,26 @@ public class ValidationTrackerImplTest extends TapestryTestCase
 
         tracker.recordError(field, "two");
         assertEquals(tracker.getError(field), "two");
+
+        verify();
+    }
+
+    @Test
+    public void unsassoicated_errors_listed_first() {
+
+        ValidationTracker tracker = new ValidationTrackerImpl();
+
+        Field field = newFieldWithControlName("field");
+
+        replay();
+
+        tracker.recordError(field, "one");
+
+        tracker.recordError("two");
+
+        assertEquals(tracker.getErrors(), Arrays.asList("two", "one"));
+
+        assertEquals(tracker.getUnassociatedErrors(), Arrays.asList("two"));
 
         verify();
     }

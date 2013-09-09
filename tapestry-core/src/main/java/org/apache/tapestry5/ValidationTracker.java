@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,8 +39,10 @@ public interface ValidationTracker
      * Called by a field to record the exact input from the user, prior to any validation. If the form is redisplayed
      * (to present errors), the input value will be sent back to the user for correction.
      *
-     * @param field the field recording the input
-     * @param input the value obtained from the forms submission
+     * @param field
+     *         the field recording the input
+     * @param input
+     *         the value obtained from the forms submission
      */
     void recordInput(Field field, String input);
 
@@ -90,6 +92,13 @@ public interface ValidationTracker
      * except that unassociated errors (unassociated with any field) are listed first.
      */
     List<String> getErrors();
+
+    /**
+     * Returns just the errors that are not associated with any fields.
+     *
+     * @since 5.4
+     */
+    List<String> getUnassociatedErrors();
 
     /**
      * Clears all information stored by the tracker.
