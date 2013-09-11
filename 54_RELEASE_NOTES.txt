@@ -70,6 +70,23 @@ inside a Twitter Bootstrap form.
 
 This new component renders a `<span>` tag for a Bootstrap 3 Glyphicon.
 
+## DevTool Component
+
+A component that can be added to your application-specific Layout to provide some useful support when in development
+mode (but disabled in production mode):
+- Identifies the current page's class name and logical name
+- Re-render the current page
+- Re-render the current page with component rendering comments
+- Reset the current page's persistent state
+- Kill (invalidate) any HttpSession
+- Open the T5 Dashboard in a new window
+- Reload component classes
+
+## T5Dashboard Page
+
+The T5 Dashboard is a new page the consolidates Tapestry 5.4's PageCatalog and ServiceStatus pages.
+The page is itself extensible, allowing libraries or applications to add their own tabs.
+
 ## tapestry-test deprecated
 
 The tapestry-test module contains base classes used when writing TestNG, Selenium, and EasyMock tests.
