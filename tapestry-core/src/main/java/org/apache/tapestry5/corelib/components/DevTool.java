@@ -21,6 +21,8 @@ import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
@@ -58,6 +60,7 @@ public class DevTool
     private String className;
 
 
+    @Property
     @Inject
     @Symbol(SymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
@@ -80,6 +83,9 @@ public class DevTool
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private ComponentInstantiatorSource componentInstantiatorSource;
 
     public String getZoneElement()
     {
@@ -141,6 +147,21 @@ public class DevTool
                 alertManager.info("Server-side session invalidated.");
             }
         }
+
+        return devmodezone.getBody();
+    }
+
+    Object onActionFromReload()
+    {
+        if (productionMode)
+        {
+            alertManager.error("Forcing a class reload is only allowed when executing in development mode.");
+            return null;
+        }
+
+        componentInstantiatorSource.forceComponentInvalidation();
+
+        alertManager.info("Forced a component class reload.");
 
         return devmodezone.getBody();
     }

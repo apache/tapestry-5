@@ -26,6 +26,11 @@
             </t:pagelink>
         </li>
         <li class="divider"/>
+        <t:if test="!productionMode">
+            <li>
+                <t:actionlink zone="^" t:id="reload">Reload Component Classes</t:actionlink>
+            </li>
+        </t:if>
         <li>
             <t:pagelink target="_new" page="t5dashboard">Go to T5 Dashboard
                 <t:glyphicon name="new-window"/>
