@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 // Disabled these tests because they are time sensitive and cause build failures.
-public class ZoneRefreshTest extends TapestryCoreTestCase
+public class ZoneRefreshTest extends App1TestCase
 {
 
     @Test(enabled = false)

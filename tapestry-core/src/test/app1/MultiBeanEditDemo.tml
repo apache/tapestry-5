@@ -7,19 +7,13 @@
 
     <t:errors />
 
-    <div class="t-beaneditor">
-
       <!--  Demonstrate default object binding from component id -->
       <t:beaneditor t:id="credentials" />
       <t:beaneditor t:id="rolePath" />
 
-      <div class="t-beaneditor-row">
+      <div class="row">
         <input type="submit" value="Set Access" />
       </div>
-
-
-    </div>
-
 
   </form>
 

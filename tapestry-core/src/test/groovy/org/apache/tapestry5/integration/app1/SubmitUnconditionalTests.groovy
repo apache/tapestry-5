@@ -1,10 +1,8 @@
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
-
-class SubmitUnconditionalTests extends TapestryCoreTestCase {
+class SubmitUnconditionalTests extends App1TestCase {
 
     @Test
     void submit_with_unconditional_mode() {

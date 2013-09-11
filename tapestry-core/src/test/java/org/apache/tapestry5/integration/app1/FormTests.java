@@ -15,8 +15,6 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
-import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 import java.text.SimpleDateFormat;
@@ -25,8 +23,7 @@ import java.util.Date;
 /**
  * Tests for the {@link Form} component as well as many form control components.
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/app1")
-public class FormTests extends TapestryCoreTestCase
+public class FormTests extends App1TestCase
 {
 
     @Test
@@ -42,12 +39,12 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Page Context in Form");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
         assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
 
         clickAndWait(SUBMIT);
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
         assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
     }
 

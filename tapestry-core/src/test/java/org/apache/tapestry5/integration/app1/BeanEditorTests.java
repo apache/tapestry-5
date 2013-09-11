@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.testng.annotations.Test;
 
@@ -24,7 +23,7 @@ import org.testng.annotations.Test;
  * Tests for the {@link BeanEditor} component, often embedded inside
  * a {@link BeanEditForm} component.
  */
-public class BeanEditorTests extends TapestryCoreTestCase
+public class BeanEditorTests extends App1TestCase
 {
     /**
      * Tests the bean editor. Along the way, tests a bunch about validation,
@@ -109,7 +108,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
         type("path", "/var/www");
         clickAndWait("//input[@value='Set Access']");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
+        assertTextSeries("//ul[@id='results']//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
                 "Path: [/var/www]", "Role: [GRANT]");
     }
 

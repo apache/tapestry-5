@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
  * @since 5.3
  */
-class ParameterTests extends TapestryCoreTestCase
+class ParameterTests extends App1TestCase
 {
 
     /**

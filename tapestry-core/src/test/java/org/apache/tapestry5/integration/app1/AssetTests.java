@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2013 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
@@ -26,7 +25,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
-public class AssetTests extends TapestryCoreTestCase
+public class AssetTests extends App1TestCase
 {
     @DataProvider
     private Object[][] asset_data()

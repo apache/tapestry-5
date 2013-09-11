@@ -1,9 +1,8 @@
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.test.SeleniumTestCase
 import org.testng.annotations.Test
 
-class PageLoadErrorTests extends SeleniumTestCase
+class PageLoadErrorTests extends App1TestCase
 {
 
     @Test

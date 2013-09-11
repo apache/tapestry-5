@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 /**
  * Tests for various Ajax related components, mixins and behaviors.
  */
-public class AjaxTests extends TapestryCoreTestCase
+public class AjaxTests extends App1TestCase
 {
     @Test
     public void autocomplete_mixin()

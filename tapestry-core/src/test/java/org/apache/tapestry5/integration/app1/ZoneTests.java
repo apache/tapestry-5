@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,12 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
-import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * Tests related to the {@link Zone} component.
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/app1")
-public class ZoneTests extends TapestryCoreTestCase
+public class ZoneTests extends App1TestCase
 {
     /**
      * TAP5-138

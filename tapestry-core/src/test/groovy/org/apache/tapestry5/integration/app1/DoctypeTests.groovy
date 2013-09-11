@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.app1;
+package org.apache.tapestry5.integration.app1
 
-
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
  * Tests for the {@link org.apache.tapestry5.corelib.components.Doctype} component.
  */
-class DoctypeTests extends TapestryCoreTestCase
+class DoctypeTests extends App1TestCase
 {
     @Test
     void doctype_overridden_via_component()

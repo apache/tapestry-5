@@ -15,13 +15,12 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Palette;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 /**
  * Tests for the {@link Palette} component.
  */
-public class PaletteTests extends TapestryCoreTestCase
+public class PaletteTests extends App1TestCase
 {
 
     public static final String AVAILABLE_OPTIONS = "css=.palette-available select";

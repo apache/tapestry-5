@@ -3,7 +3,7 @@
 
   <h1>MultiBean Edit Demo</h1>
 
-  <ul>
+  <ul id="results">
     <li>First Name: [${credentials.firstName}]</li>
     <li>Last Name: [${credentials.lastName}]</li>
     <li>Path: [${rolePath.path}]</li>

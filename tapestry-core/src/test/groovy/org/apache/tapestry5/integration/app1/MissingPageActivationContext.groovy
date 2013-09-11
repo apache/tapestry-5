@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
-import org.testng.annotations.Test;
+import org.testng.annotations.Test
 
-class MissingPageActivationContext extends TapestryCoreTestCase
+class MissingPageActivationContext extends App1TestCase
 {
     @Test
     void page_activation_context_omitted_from_url() {

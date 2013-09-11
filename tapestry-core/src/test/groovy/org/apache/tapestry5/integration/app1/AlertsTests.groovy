@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.app1;
+package org.apache.tapestry5.integration.app1
 
-
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
@@ -23,7 +21,7 @@ import org.testng.annotations.Test
  *
  * @since 5.3
  */
-class AlertsTests extends TapestryCoreTestCase {
+class AlertsTests extends App1TestCase {
 
     def CONTAINER = "[data-container-type=alerts]"
 

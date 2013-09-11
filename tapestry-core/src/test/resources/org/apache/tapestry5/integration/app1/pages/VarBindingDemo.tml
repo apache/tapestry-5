@@ -11,8 +11,11 @@
     <p>
         Counting from 1 to 3:
     </p>
+    <div id="results">
+
     <ul>
         <li t:type="loop" source="1..3" value="var:index">${var:index}</li>
     </ul>
+    </div>
 
 </html>

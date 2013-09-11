@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 /**
  * Tests for various kinds of failure conditions. Generally, what's being tested is that the exception
  * is being reported correctly.
  */
-public class FailureTests extends TapestryCoreTestCase
+public class FailureTests extends App1TestCase
 {
     /**
      * With lt;span t:id="foo"/&gt; in the template, there should be an @Component

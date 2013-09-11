@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
  * Integration test to veryfiy {@link com.gargoylesoftware.htmlunit.javascript.host.FormField}
  * and {@link org.apache.tapestry5.corelib.mixins.OverrideFieldfocus} mixin.
  */
-class FormFieldFocusTest extends TapestryCoreTestCase
+class FormFieldFocusTest extends App1TestCase
 {
     @Test
     void form_field_focus_mixin()

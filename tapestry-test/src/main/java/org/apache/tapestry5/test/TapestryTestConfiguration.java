@@ -1,4 +1,4 @@
-//  Copyright 2011, 2012 The Apache Software Foundation
+//  Copyright 2011-2013 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.test;
 
-import org.apache.tapestry5.test.SeleniumTestCase;
-
 import java.lang.annotation.*;
 
 /**
@@ -30,6 +28,7 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
 public @interface TapestryTestConfiguration
 {

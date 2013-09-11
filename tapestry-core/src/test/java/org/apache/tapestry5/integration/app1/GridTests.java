@@ -15,15 +15,12 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Grid;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
-import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * Tests for the {@link Grid} component.
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/app1")
-public class GridTests extends TapestryCoreTestCase
+public class GridTests extends App1TestCase
 {
 
     private static final String RESET = "Reset the Grid";

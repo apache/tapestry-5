@@ -1,9 +1,8 @@
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
-class CanceledEventTests extends TapestryCoreTestCase
+class CanceledEventTests extends App1TestCase
 {
     @Test
     void cancel_button()

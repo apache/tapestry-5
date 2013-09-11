@@ -15,11 +15,10 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
-import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
 import org.testng.annotations.Test;
 
-public class CoreBehaviorsTests extends TapestryCoreTestCase
+public class CoreBehaviorsTests extends App1TestCase
 {
 
     @Test
@@ -382,13 +381,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=kick target");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
         assertTextPresent("No component context.");
 
         clickAndWait("link=go");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
-        assertTextSeries("//div[@class='main']//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@id='results']//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
     }
 
     @Test
@@ -398,7 +397,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=kick target");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
 
         clickAndWait("link=Target base, no context");
 
@@ -416,25 +415,25 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=literal context");
 
-        assertText("//div[@class='main']//li[1]", "literal context");
+        assertText("//div[@id='results']//li[1]", "literal context");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=computed context");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "fred", "7", "true");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "fred", "7", "true");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=unsafe characters");
 
-        assertText("//div[@class='main']//li[1]", "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+        assertText("//div[@id='results']//li[1]", "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=japanese kanji");
 
-        assertText("//div[@class='main']//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
+        assertText("//div[@id='results']//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
 
         // TAPESTRY-2221
 
@@ -442,7 +441,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=Null in context");
 
-        assertText("//div[@class='main']//li[1]", "NULL");
+        assertText("//div[@id='results']//li[1]", "NULL");
     }
 
     private void openLinkParameterTest()
@@ -750,7 +749,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Var Binding Demo");
 
-        assertTextSeries("//div[@class='main']//li[%d]", 1, "1", "2", "3");
+        assertTextSeries("//div[@id='results']//li[%d]", 1, "1", "2", "3");
     }
 
     /**
