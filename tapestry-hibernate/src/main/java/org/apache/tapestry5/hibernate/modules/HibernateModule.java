@@ -190,6 +190,6 @@ public class HibernateModule
     @Contribute(DashboardManager.class)
     public static void provideHibernateDashboardTab(OrderedConfiguration<DashboardTab> configuration)
     {
-        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "core/HibernateStatistics"));
+        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "core/HibernateStatistics"), "after:Services");
     }
 }
