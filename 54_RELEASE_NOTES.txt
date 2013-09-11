@@ -61,10 +61,10 @@ Tapestry 5.4 introduces a new module, tapestry-webresources, which provides supp
 CoffeeScript into JavaScript, Less into CSS, and for minimizing CSS and JavaScript.
 All processing takes place at runtime.
 
-## FieldGroup Mixin
+## FormGroup Mixin
 
-This new mixin for Field components adds the outer <div> and <label> elements for a Field to layout correctly
-inside a Twitter Bootstrap form.
+This new mixin for Field components adds the outer `<div class="form-group">` and `<label>` elements for a Field
+to layout correctly inside a Twitter Bootstrap form.
 
 ## Glyphicon Component
 
