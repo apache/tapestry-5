@@ -19,8 +19,10 @@
                 ${page.selector.toShortString()}
             </p:selectorCell>
             <p:empty>
-                <p><em>There are no pages in the page cache. This can only occur immediately after reloading all
-                    component classes or clearing the cache.</em></p>
+                <p>
+                    <em>There are no pages in the page cache. This can only occur immediately after clearing the cache.
+                    </em>
+                </p>
             </p:empty>
         </t:grid>
 
@@ -30,8 +32,7 @@
     <div class="btn-group">
         <t:actionlink t:id="forceLoad" zone="pages" class="btn btn-default">Load all pages</t:actionlink>
         <t:if test="! productionMode">
-            <t:actionlink t:id="clearCache" zone="pages" class="btn btn-default">Clear the cache</t:actionlink>
-            <t:actionlink t:id="reloadClasses" zone="pages" class="btn btn-default">Reload component classes
+            <t:actionlink t:id="clearCaches" zone="pages" class="btn btn-default">Clear Caches
             </t:actionlink>
         </t:if>
         <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
@@ -59,7 +60,8 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Key</h3></div>
+            <h3 class="panel-title">Key</h3>
+        </div>
         <div class="panel-body">
 
             <dl class="dl-horizontal">

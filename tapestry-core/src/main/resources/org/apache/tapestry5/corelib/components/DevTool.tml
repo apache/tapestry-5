@@ -28,7 +28,7 @@
         <li class="divider"/>
         <t:if test="!productionMode">
             <li>
-                <t:actionlink zone="^" t:id="reload">Reload Component Classes</t:actionlink>
+                <t:actionlink zone="^" t:id="reload">Reload All Pages</t:actionlink>
             </li>
         </t:if>
         <li>

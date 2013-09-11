@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,21 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.services.PageActivationContextCollector;
+import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ExceptionReporter;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
+import org.apache.tapestry5.services.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -72,12 +76,60 @@ public class ExceptionReport implements ExceptionReporter
     @Property
     private String propertyName;
 
+    @Property
+    private String failurePage;
+
+    @Inject
+    private RequestGlobals requestGlobals;
+
+    @Inject
+    private AlertManager alertManager;
+
+    @Inject
+    private PageActivationContextCollector pageActivationContextCollector;
+
+    @Inject
+    private PageRenderLinkSource linkSource;
+
+    @Inject
+    private BaseURLSource baseURLSource;
+
+    @Inject
+    private ReloadHelper reloadHelper;
+
+    @Property
+    private String rootURL;
+
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
     public void reportException(Throwable exception)
     {
         rootException = exception;
+
+        failurePage = request.isXHR() ? null : requestGlobals.getActivePageName();
+
+        rootURL = baseURLSource.getBaseURL(request.isSecure());
     }
+
+    public Object[] getReloadContext()
+    {
+        return pageActivationContextCollector.collectPageActivationContext(failurePage);
+    }
+
+    Object onActionFromReloadFirst(EventContext reloadContext)
+    {
+        reloadHelper.forceReload();
+
+        return linkSource.createPageRenderLinkWithContext(request.getParameter("loadPage"), reloadContext);
+    }
+
+    Object onActionFromReloadRoot() throws MalformedURLException
+    {
+        reloadHelper.forceReload();
+
+        return new URL(baseURLSource.getBaseURL(request.isSecure()));
+    }
+
 
     public boolean getHasSession()
     {

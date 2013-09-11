@@ -25,8 +25,8 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.*;
 import org.apache.tapestry5.internal.PageCatalogTotals;
-import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
+import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -88,7 +88,7 @@ public class PageCatalog
     private OperationTracker operationTracker;
 
     @Inject
-    private ComponentInstantiatorSource componentInstantiatorSource;
+    private ReloadHelper reloadHelper;
 
     @Inject
     private BeanModelSource beanModelSource;
@@ -154,23 +154,6 @@ public class PageCatalog
     public Collection<Page> getPages()
     {
         return pageSource.getAllPages();
-    }
-
-    Object onActionFromReloadClasses()
-    {
-        if (productionMode)
-        {
-            alertManager.error("Forcing a class reload is only allowed when executing in development mode.");
-            return null;
-        }
-
-        pageName = null;
-
-        componentInstantiatorSource.forceComponentInvalidation();
-
-        alertManager.info("Forced a component class reload.");
-
-        return pagesZone.getBody();
     }
 
     Object onSuccessFromSinglePageLoad()
@@ -281,19 +264,11 @@ public class PageCatalog
         return pagesZone.getBody();
     }
 
-    Object onActionFromClearCache()
+    Object onActionFromClearCaches()
     {
-        if (productionMode)
-        {
-            alertManager.error("Clearing the cache is only allowed in development mode.");
-            return null;
-        }
-
-        pageSource.clearCache();
+        reloadHelper.forceReload();
 
         failures = null;
-
-        alertManager.info("Page cache cleared.");
 
         return pagesZone.getBody();
     }

@@ -1,79 +1,116 @@
 <html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
-<head>
-    <title>Application Exception</title>
-</head>
-<body>
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <ul class="nav navbar-nav">
-                <li>
-                    <h4 class="navbar-text">Application Exception</h4>
-                </li>
-                <li class="divider-vertical"/>
-                <li>
-                    <p class="navbar-text">
-                        Tapestry Version: ${tapestryVersion}
-                    </p>
-                </li>
-                <li class="divider-vertical"/>
-                <li>
-                    <p class="navbar-text">
-                        Application Version: ${applicationVersion}
-                    </p>
-                </li>
-            </ul>
+    <head>
+        <title>Application Exception</title>
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <h4 class="navbar-text">Application Exception</h4>
+                        </li>
+                        <li class="divider-vertical"/>
+                        <li>
+                            <p class="navbar-text">
+                                Tapestry Version: ${tapestryVersion}
+                            </p>
+                        </li>
+                        <li class="divider-vertical"/>
+                        <li>
+                            <p class="navbar-text">
+                                Application Version: ${applicationVersion}
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="container">
+        <div class="container">
 
-    <div class="alert alert-danger">
-        <h2>An exception has occurred processing this request.</h2>
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h2 class="panel-title">An exception has occurred processing this request.</h2>
+                </div>
+                <div class="panel-body">
+                    ${rootException.message}
+                </div>
+                <t:if test="! productionMode">
 
-        <p>${rootException.message}</p>
-    </div>
+                    <div class="panel-footer">
 
-    <t:if test="! productionMode">
+                        <div class="btn-toolbar col-md-12">
 
-        <t:exceptiondisplay exception="rootException"/>
+                            <t:if test="failurePage">
+                                <t:pagelink page="prop:failurePage" class="btn btn-default">Go to page
+                                    <strong>${failurePage}</strong>
+                                </t:pagelink>
+                                <t:actionlink t:id="reloadFirst" parameters="{'loadPage': failurePage}"
+                                              context="reloadContext" class="btn btn-default">Go to page
+                                    <strong>${failurePage}</strong>
+                                    (with reload)
+                                </t:actionlink>
+                            </t:if>
+                            <a href="/" class="btn btn-default">Go to
+                                <strong>${rootURL}</strong>
+                            </a>
+                            <t:actionLink t:id="reloadRoot" class="btn btn-default">
+                                Go to
+                                <strong>${rootURL}</strong>
+                                (with reload)
+                            </t:actionLink>
+                        </div>
+                    </div>
+                </t:if>
+            </div>
 
-        <h3>Request</h3>
-        <t:renderobject object="request"/>
+            <t:if test="! productionMode">
 
-        <t:if test="hasSession">
-            <h2>Session</h2>
-            <dl>
-                <t:loop source="session.attributeNames" value="attributeName">
-                    <dt>${attributeName}</dt>
-                    <dd>
-                        <t:renderobject object="attributeValue"/>
-                    </dd>
-                </t:loop>
-            </dl>
-        </t:if>
+                <p class="help-text col-md-12"><strong>with reload</strong>: Force a reload of component
+                    classes. This is
+                    often
+                    necessary
+                    after fixing a class that previously failed to compile due to errors.
+                </p>
 
-        <h3>System Properties</h3>
-        <dl>
-            <t:loop source="systemProperties" value="propertyName">
-                <dt>${propertyName}</dt>
-                <dd>
-                    <t:if test="! complexProperty">
-                        ${propertyValue}
-                        <p:else>
-                            <ul>
-                                <li t:type="loop" source="complexPropertyValue" value="var:path">
-                                    ${var:path}
-                                </li>
-                            </ul>
-                        </p:else>
-                    </t:if>
-                </dd>
-            </t:loop>
-        </dl>
-    </t:if>
-</div>
-</body>
+                <t:exceptiondisplay exception="rootException"/>
+
+                <h3>Request</h3>
+                <t:renderobject object="request"/>
+
+                <t:if test="hasSession">
+                    <h2>Session</h2>
+                    <dl>
+                        <t:loop source="session.attributeNames" value="attributeName">
+                            <dt>${attributeName}</dt>
+                            <dd>
+                                <t:renderobject object="attributeValue"/>
+                            </dd>
+                        </t:loop>
+                    </dl>
+                </t:if>
+
+                <h3>System Properties</h3>
+                <dl>
+                    <t:loop source="systemProperties" value="propertyName">
+                        <dt>${propertyName}</dt>
+                        <dd>
+                            <t:if test="! complexProperty">
+                                ${propertyValue}
+                                <p:else>
+                                    <ul>
+                                        <li t:type="loop" source="complexPropertyValue" value="var:path">
+                                            ${var:path}
+                                        </li>
+                                    </ul>
+                                </p:else>
+                            </t:if>
+                        </dd>
+                    </t:loop>
+                </dl>
+            </t:if>
+        </div>
+    </body>
 
 </html>

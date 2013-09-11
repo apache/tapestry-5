@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
@@ -40,6 +35,11 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -99,15 +99,15 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     };
 
     public ComponentTemplateSourceImpl(@Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-            ClasspathURLConverter classpathURLConverter)
+                                       @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                       boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
+                                       ClasspathURLConverter classpathURLConverter)
     {
         this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter));
     }
 
     ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-            URLChangeTracker tracker)
+                                URLChangeTracker tracker)
     {
         super(productionMode);
 
@@ -120,6 +120,18 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     public void registerAsUpdateListener(UpdateListenerHub hub)
     {
         hub.addUpdateListener(this);
+    }
+
+    @PostInjection
+    public void setupReload(ReloadHelper helper)
+    {
+        helper.addReloadCallback(new Runnable()
+        {
+            public void run()
+            {
+                invalidate();
+            }
+        });
     }
 
     public ComponentTemplate getTemplate(ComponentModel componentModel, ComponentResourceSelector selector)
@@ -206,11 +218,16 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     {
         if (tracker.containsChanges())
         {
-            tracker.clear();
-            templateResources.clear();
-            templates.clear();
-            fireInvalidationEvent();
+            invalidate();
         }
+    }
+
+    private void invalidate()
+    {
+        tracker.clear();
+        templateResources.clear();
+        templates.clear();
+        fireInvalidationEvent();
     }
 
     public InvalidationEventHub getInvalidationEventHub()

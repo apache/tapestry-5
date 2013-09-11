@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,28 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
 public class InternalComponentInvalidationEventHubImpl extends InvalidationEventHubImpl implements
         InternalComponentInvalidationEventHub
 {
     public InternalComponentInvalidationEventHubImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode)
+                                                     boolean productionMode)
     {
         super(productionMode);
+    }
+
+    @PostInjection
+    public void setupReload(ReloadHelper helper)
+    {
+        helper.addReloadCallback(new Runnable()
+        {
+            public void run()
+            {
+                fireInvalidationEvent();
+            }
+        });
     }
 
     public void classInControlledPackageHasChanged()

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,14 +83,19 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     {
         if (tracker != null && tracker.containsChanges())
         {
-            messagesByBundleIdAndSelector.clear();
-            cookedProperties.clear();
-            rawProperties.clear();
-
-            tracker.clear();
-
-            fireInvalidationEvent();
+            invalidate();
         }
+    }
+
+    public void invalidate()
+    {
+        messagesByBundleIdAndSelector.clear();
+        cookedProperties.clear();
+        rawProperties.clear();
+
+        tracker.clear();
+
+        fireInvalidationEvent();
     }
 
     public Messages getMessages(MessagesBundle bundle, ComponentResourceSelector selector)

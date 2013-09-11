@@ -22,7 +22,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
+import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
@@ -32,6 +32,16 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * Renders a dropdown menu of useful options when developing. By default, the DevTool is disabled (invisible)
  * during production.
+ * <p/>
+ * The DevTool provides the following options:
+ * <ul>
+ * <li>Reset the page state, discarding any persistent page properties</li>
+ * <li>Kill the HttpSession (discarding any server-side state)</li>
+ * <li>Re-render the page (useful after changing the page or template)</li>
+ * <li>Re-render the page with rendering comments</li>
+ * <li>Reload all pages and components: classes, messages, templates</li>
+ * <li>Open the T5 Dashboard page in a new window</li>
+ * </ul>
  * <p/>
  * Note that due to conflicts between Prototype and jQuery, the dev tool is hidden after selecting an item from the menu.
  *
@@ -85,7 +95,7 @@ public class DevTool
     private ComponentResources resources;
 
     @Inject
-    private ComponentInstantiatorSource componentInstantiatorSource;
+    private ReloadHelper reloadHelper;
 
     public String getZoneElement()
     {
@@ -153,15 +163,7 @@ public class DevTool
 
     Object onActionFromReload()
     {
-        if (productionMode)
-        {
-            alertManager.error("Forcing a class reload is only allowed when executing in development mode.");
-            return null;
-        }
-
-        componentInstantiatorSource.forceComponentInvalidation();
-
-        alertManager.info("Forced a component class reload.");
+        reloadHelper.forceReload();
 
         return devmodezone.getBody();
     }

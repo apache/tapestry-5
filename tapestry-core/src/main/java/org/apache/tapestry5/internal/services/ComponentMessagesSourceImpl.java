@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
@@ -35,9 +29,13 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
-    private final MessagesSource messagesSource;
+    private final MessagesSourceImpl messagesSource;
 
     private final MessagesBundle appCatalogBundle;
 
@@ -72,25 +70,37 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
     }
 
     public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
-            ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter)
+                                       boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
+                                       ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter)
     {
         this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter));
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
-            ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
+                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
     {
         this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
-            ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
+                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
     {
         messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
                 parser);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
+    }
+
+    @PostInjection
+    public void setupReload(ReloadHelper reloadHelper)
+    {
+        reloadHelper.addReloadCallback(new Runnable()
+        {
+            public void run()
+            {
+                messagesSource.invalidate();
+            }
+        });
     }
 
     public void checkForUpdates()
