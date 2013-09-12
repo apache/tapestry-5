@@ -36,7 +36,7 @@
                 <div class="panel-body">
                     ${rootException.message}
                 </div>
-                <t:if test="! productionMode">
+                <t:if test="showActions">
 
                     <div class="panel-footer">
 
@@ -67,12 +67,15 @@
 
             <t:if test="! productionMode">
 
-                <p class="help-text col-md-12"><strong>with reload</strong>: Force a reload of component
-                    classes. This is
-                    often
-                    necessary
-                    after fixing a class that previously failed to compile due to errors.
-                </p>
+                <t:if test="showActions">
+
+                    <p class="help-text col-md-12"><strong>with reload</strong>: Force a reload of component
+                        classes. This is
+                        often
+                        necessary
+                        after fixing a class that previously failed to compile due to errors.
+                    </p>
+                </t:if>
 
                 <t:exceptiondisplay exception="rootException"/>
 

@@ -20,6 +20,7 @@ import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageActivationContextCollector;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -102,11 +103,17 @@ public class ExceptionReport implements ExceptionReporter
 
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
+    public boolean isShowActions() {
+        return failurePage != null && ! request.isXHR();
+    }
+
     public void reportException(Throwable exception)
     {
         rootException = exception;
 
-        failurePage = request.isXHR() ? null : requestGlobals.getActivePageName();
+        failurePage = (request.getAttribute(InternalConstants.ACTIVE_PAGE_LOADED) == null)
+                ? null
+                : requestGlobals.getActivePageName();
 
         rootURL = baseURLSource.getBaseURL(request.isSecure());
     }

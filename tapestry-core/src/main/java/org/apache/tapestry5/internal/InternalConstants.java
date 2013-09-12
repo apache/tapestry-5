@@ -68,7 +68,7 @@ public final class InternalConstants
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
 
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
-    
+
     /**
      * As above but to store the name of the page. Necessary for determining the correct
      * {@link MarkupModel} for the response.
@@ -169,4 +169,15 @@ public final class InternalConstants
      * @since 5.4
      */
     public static final String PARTIAL_KEY = "_tapestry";
+
+    /**
+     * Request attribute, set to true once the active page (as identified in the incoming
+     * component event or page render request) has been successfully loaded. This is very important
+     * to the {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page, which can possibly
+     * fail (resulting in a servlet container 500 response) if the page can't be loaded (because
+     * if the page can't be loaded, then a link to the page can't be created).
+     *
+     * @since 5.4
+     */
+    public static final String ACTIVE_PAGE_LOADED = "tapestry.active-page-loaded";
 }

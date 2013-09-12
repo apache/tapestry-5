@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -22,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -41,13 +43,16 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
 
     private final PageSource pageSource;
 
+    private final RequestGlobals requestGlobals;
+
     private final Map<String, Page> cache = CollectionFactory.newMap();
 
-    public RequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource)
+    public RequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource, RequestGlobals requestGlobals)
     {
         this.logger = logger;
         this.resolver = resolver;
         this.pageSource = pageSource;
+        this.requestGlobals = requestGlobals;
     }
 
     @PostInjection
@@ -90,6 +95,12 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
             }
 
             cache.put(canonical, page);
+        }
+
+        // A bit of a hack but whatever.
+        if (canonical.equals(requestGlobals.getActivePageName()))
+        {
+            requestGlobals.getRequest().setAttribute(InternalConstants.ACTIVE_PAGE_LOADED, true);
         }
 
         return page;
