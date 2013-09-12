@@ -16,10 +16,7 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -46,6 +43,7 @@ import java.util.Set;
  * Lists out the currently loaded pages, using a {@link org.apache.tapestry5.corelib.components.Grid}.
  * Provides an option to force all pages to be loaded. In development mode, includes an option to clear the page cache.
  */
+@UnknownActivationContextCheck(false)
 @WhitelistAccessOnly
 public class PageCatalog
 {

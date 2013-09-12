@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.annotations.Cached;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
@@ -35,6 +32,7 @@ import java.util.List;
  * <p/>
  * TODO: Add filters to control which services are displayed
  */
+@UnknownActivationContextCheck(false)
 @WhitelistAccessOnly
 public class ServiceStatus
 {

@@ -20,6 +20,7 @@ import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageActivationContextCollector;
 import org.apache.tapestry5.internal.services.ReloadHelper;
@@ -39,6 +40,7 @@ import java.util.regex.Pattern;
  *
  * @see org.apache.tapestry5.corelib.components.ExceptionDisplay
  */
+@UnknownActivationContextCheck(false)
 @ContentType("text/html")
 @Import(stack = "core", stylesheet = "ExceptionReport.css")
 public class ExceptionReport implements ExceptionReporter

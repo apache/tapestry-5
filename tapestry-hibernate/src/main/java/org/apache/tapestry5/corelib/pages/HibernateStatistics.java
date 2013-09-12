@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -30,6 +31,7 @@ import java.util.Collection;
  *
  * @since 5.1.0.2
  */
+@UnknownActivationContextCheck(false)
 @WhitelistAccessOnly
 public class HibernateStatistics
 {

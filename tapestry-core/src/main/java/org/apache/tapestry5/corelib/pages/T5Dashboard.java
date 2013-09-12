@@ -16,10 +16,7 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.annotations.ContentType;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
@@ -28,6 +25,7 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
  * @see org.apache.tapestry5.services.dashboard.DashboardManager
  * @since 5.4
  */
+@UnknownActivationContextCheck(false)
 @WhitelistAccessOnly
 @ContentType("text/html")
 @Import(stack = "core", stylesheet = "dashboard.css")
