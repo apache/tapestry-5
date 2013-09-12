@@ -74,6 +74,7 @@ import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
@@ -1710,6 +1711,8 @@ public final class TapestryModule
      * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (via {@link ValidationDecoratorFactory#newInstance(org.apache.tapestry5.MarkupWriter)})</dd>
      * <dt>PageNameMeta (since 5.4)</dt>
      * <dd>Renders a {@code <meta/>} tag describing the active page name (development mode only)</dd>
+     * <dt>ImportCoreStack (since 5.4) </dt>
+     * <dd>Imports to "core" stack (necessary to get the Bootstrap CSS, if nothing else).</dd>
      * </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
@@ -1790,10 +1793,21 @@ public final class TapestryModule
             }
         };
 
+        MarkupRendererFilter importCoreStack = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                renderer.renderMarkup(writer);
+
+                environment.peekRequired(JavaScriptSupport.class).importStack(InternalConstants.CORE_STACK_NAME);
+            }
+        };
+
         configuration.add("DocumentLinker", documentLinker);
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
+        configuration.add("ImportCoreStack", importCoreStack);
 
         if (productionMode)
         {

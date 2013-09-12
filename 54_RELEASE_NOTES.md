@@ -206,8 +206,8 @@ Tapestry now includes a default copy of Bootstrap 3, in addition to its own defa
 The Tapestry CSS from prior releases has been largely eliminated; instead
 components now refer to standard Bootstrap CSS classes.
 
-The Bootstrap CSS is now only present if the `core` JavaScript stack is imported. You may need to change your application's
-layout component to do so explicitly, by adding `@Import(stack="core")` to the class.
+Tapestry now automatically imports the "core" stack for all pages (in previously releases, the "core" stack
+was only imported if the page made use of JavaScript). Because of this, the Boostrap CSS will always be available.
 
 ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
 implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
@@ -226,7 +226,7 @@ do establish dependencies: to Bootstrap's "transition" module to enable animatio
 
 ## Form element components
 
-TextField, PasswordField, TextArea, and Select now render the CSS class attribute "form-control"; you may add additional
+TextField, PasswordField, TextArea, and Select now render the CSS class attribute `form-control`; you may add additional
 CSS class names with the `class` informal parameter.  Generally, you will want to add an enclosing element with
 `col-md-x` CSS class control the size of the element (otherwise it will stretch to 100% of the available width).
 
@@ -237,7 +237,7 @@ with the `class` informal parameter.
 
 ## Error Component
 
-When Tapestry must present a validation exception, it will often dynamically create the `<p class="help-block">`
+When Tapestry must present a validation exception, it will often dynamically create the `p.help-block`
 needed to display the message; it does a reasonable job of positioning the new element just after the field, or
 just after the `.input-group` containing the field. The Error component can be used to explicitly place this element.
 
@@ -254,13 +254,11 @@ div.form-group, which is provided around the editor for each property.
 This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
 still exists, but the methods do nothing, and the service and interface will be removed in 5.5.
 
-## JavaScriptSupport
+## JavaScriptSupport    Extended
 
-In prior releases, adding _any_ JavaScript to the application would implicitly import the `core` JavaScript stack.
-This no longer occurs; in most cases, the core stack is provided automatically by other components.
-
-You may want to consider adding `@Import(stack="core")` to your applications' main layout component, especially
-if you want to leverage the built-in Twitter Bootstrap CSS, which is provided as part of the core stack.
+New methods have been added to allow JavaScript modules to be "required" into the page; it is possible to invoke
+the exported function of a module with JSON-compatible parameters; a module may also export multiple names functions that
+can be invoked.
 
 ## Palette Component
 
@@ -315,7 +313,7 @@ used or implemented by application code.
 MutableComponentModel has been modified, adding a new `doHandleActivationEventContext()' method to help check
 activation context exactness; this interface is rarely, if ever, used or implemented by application code.
 
-## Module classes moved to new modules
+## IoC Module classes moved to new packages
 
 Traditionally, Tapestry IoC Module classes have lived in the same package as the service interfaces they define, and
 at the same time reference implementation classes in a separate (usually internal) package. This is not a desirable
