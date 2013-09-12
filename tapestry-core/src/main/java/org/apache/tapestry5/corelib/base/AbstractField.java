@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -269,8 +269,13 @@ public abstract class AbstractField implements Field
         return false;
     }
 
+    // This is set to true for some unit test.
+    private boolean beanValidationDisabled = false;
+
     protected void putPropertyNameIntoBeanValidationContext(String parameterName)
     {
+        if (beanValidationDisabled) { return; }
+
         String propertyName = ((InternalComponentResources) resources).getPropertyName(parameterName);
 
         BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
@@ -287,6 +292,8 @@ public abstract class AbstractField implements Field
 
     protected void removePropertyNameFromBeanValidationContext()
     {
+        if (beanValidationDisabled) { return; }
+
         BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
 
         if (beanValidationContext == null)

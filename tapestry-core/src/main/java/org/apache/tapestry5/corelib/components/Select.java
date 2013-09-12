@@ -29,6 +29,9 @@ import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. Any validation
  * decorations will go around the entire &lt;select&gt; element.
@@ -74,7 +77,16 @@ public class Select extends AbstractField
     @Parameter
     private ValueEncoder encoder;
 
-    // Maybe this should default to property "<componentId>Model"?
+    /**
+     * If true (the default), then the submitted value must be present in the {@link SelectModel}, or a
+     * validation errors occurs. If false, then the Tapestry 5.3 (and earlier) behavior is allowed. The insecure
+     * behavior could theoretically allow a selection to be made that was not presented to the user.
+     *
+     * @since 5.4
+     */
+    @Parameter(value = "true")
+    private boolean secure;
+
     /**
      * The model used to identify the option groups and options to be presented to the user. This can be generated
      * automatically for Enum types.
@@ -155,7 +167,19 @@ public class Select extends AbstractField
 
         tracker.recordInput(this, submittedValue);
 
-        Object selectedValue = toValue(submittedValue);
+        Object selectedValue;
+
+        try
+        {
+            selectedValue = toValue(submittedValue);
+        } catch (ValidationException ex)
+        {
+            // Really, this will just be the logic related to the new (in 5.4) secure
+            // parameter:
+
+            tracker.recordError(this, ex.getMessage());
+            return;
+        }
 
         putPropertyNameIntoBeanValidationContext("value");
 
@@ -209,7 +233,7 @@ public class Select extends AbstractField
     }
 
     Object onChange(@RequestParameter(value = "t:selectvalue", allowBlank = true)
-                    final String selectValue)
+                    final String selectValue) throws ValidationException
     {
         final Object newValue = toValue(selectValue);
 
@@ -223,9 +247,74 @@ public class Select extends AbstractField
         return callback.getResult();
     }
 
-    protected Object toValue(String submittedValue)
+    protected Object toValue(String submittedValue) throws ValidationException
     {
-        return InternalUtils.isBlank(submittedValue) ? null : this.encoder.toValue(submittedValue);
+        if (InternalUtils.isBlank(submittedValue))
+        {
+            return null;
+        }
+
+        if (!secure)
+        {
+            return encoder.toValue(submittedValue);
+        }
+
+        return findValueInModel(submittedValue);
+    }
+
+    private Object findValueInModel(String submittedValue) throws ValidationException
+    {
+
+        Object asSubmitted = encoder.toValue(submittedValue);
+
+        // The visitor would be nice if it had the option to abort the visit
+        // early.
+
+        if (findInOptions(model.getOptions(), asSubmitted))
+        {
+            return asSubmitted;
+        }
+
+        if (model.getOptionGroups() != null)
+        {
+            for (OptionGroupModel og : model.getOptionGroups())
+            {
+                if (findInOptions(og.getOptions(), submittedValue))
+                {
+                    return asSubmitted;
+                }
+            }
+        }
+
+        throw new ValidationException("Selected option is not listed in the model.");
+    }
+
+    private boolean findInOptions(List<OptionModel> options, Object asSubmitted)
+    {
+        if (options == null)
+        {
+            return false;
+        }
+
+        for (OptionModel om : options)
+        {
+            if (om.getValue().equals(asSubmitted))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static <T> List<T> orEmpty(List<T> list)
+    {
+        if (list == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return list;
     }
 
     @SuppressWarnings("unchecked")

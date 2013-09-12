@@ -118,6 +118,11 @@ By default, tapestry-webresources enables:
 
 The RenderSupport interface, which was deprecated in Tapestry 5.2, has been removed entirely.
 
+## Select Component
+
+The Select component has a new parameter, secure, which defaults to true. When secure, the submitted
+value must be listed somewhere in the SelectModel.
+
 ## FormFragment Component
 
 The FormFragment component's visibleBound parameter is no longer supported; it was used to make a decision about how

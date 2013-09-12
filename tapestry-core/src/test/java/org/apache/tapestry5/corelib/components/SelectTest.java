@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,12 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.util.EnumSelectModel;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;
@@ -371,6 +376,88 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("option_group_attributes.txt"));
+
+        verify();
+    }
+
+    enum Platform
+    {
+        WINDOWS, MAC, LINUX;
+    }
+
+    @Test
+    public void submitted_option_found_when_secure() throws ValidationException
+    {
+
+        ValueEncoder<Platform> encoder = getService(ValueEncoderSource.class).getValueEncoder(Platform.class);
+
+        ValidationTracker tracker = mockValidationTracker();
+        Request request = mockRequest();
+        Messages messages = mockMessages();
+        FieldValidationSupport fvs = mockFieldValidationSupport();
+
+        expect(request.getParameter("xyz")).andReturn("MAC");
+
+        expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
+
+        Select select = new Select();
+
+        tracker.recordInput(select, "MAC");
+
+        fvs.validate(Platform.MAC, null, null);
+
+        replay();
+
+        SelectModel model = new EnumSelectModel(Platform.class, messages);
+
+        set(select, "encoder", encoder);
+        set(select, "model", model);
+        set(select, "request", request);
+        set(select, "secure", true);
+        set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
+        set(select, "tracker", tracker);
+        set(select, "fieldValidationSupport", fvs);
+
+        select.processSubmission("xyz");
+
+        verify();
+
+        assertEquals(get(select, "value"), Platform.MAC);
+    }
+
+    @Test
+    public void submitted_option_not_found_when_secure() throws ValidationException
+    {
+
+        ValueEncoder<Platform> encoder = getService(ValueEncoderSource.class).getValueEncoder(Platform.class);
+
+        ValidationTracker tracker = mockValidationTracker();
+        Request request = mockRequest();
+        Messages messages = mockMessages();
+        FieldValidationSupport fvs = mockFieldValidationSupport();
+
+        expect(request.getParameter("xyz")).andReturn("MAC");
+
+        expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
+
+        Select select = new Select();
+
+        tracker.recordInput(select, "MAC");
+
+        tracker.recordError(EasyMock.eq(select), EasyMock.contains("option is not listed"));
+
+        replay();
+
+        SelectModel model = new EnumSelectModel(Platform.class, messages, new Platform[]{Platform.WINDOWS, Platform.LINUX});
+
+        set(select, "encoder", encoder);
+        set(select, "model", model);
+        set(select, "request", request);
+        set(select, "secure", true);
+        set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
+        set(select, "tracker", tracker);
+
+        select.processSubmission("xyz");
 
         verify();
     }
