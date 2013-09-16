@@ -16,9 +16,7 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -151,6 +149,8 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option groups).
+     *
+     * See TAP5-2184 for why this ends up causing some trouble!
      */
     public static SelectModel toSelectModel(String input)
     {
