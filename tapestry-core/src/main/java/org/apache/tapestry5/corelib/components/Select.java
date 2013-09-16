@@ -296,11 +296,27 @@ public class Select extends AbstractField
             return false;
         }
 
+        // See TAP5-2184: Sometimes the SelectModel option values are Strings even though the
+        // submitted value (decoded by the ValueEncoder) are another type (e.g., numeric). In that case,
+        // pass each OptionModel value through the ValueEncoder for a comparison.
+        boolean alsoCompareDecodedModelValue = !(asSubmitted instanceof String);
+
         for (OptionModel om : options)
         {
-            if (om.getValue().equals(asSubmitted))
+            Object modelValue = om.getValue();
+            if (modelValue.equals(asSubmitted))
             {
                 return true;
+            }
+
+            if (alsoCompareDecodedModelValue && (modelValue instanceof String))
+            {
+                Object decodedModelValue = encoder.toValue(modelValue.toString());
+
+                if (decodedModelValue.equals(asSubmitted))
+                {
+                    return true;
+                }
             }
         }
 

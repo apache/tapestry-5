@@ -26,6 +26,7 @@ import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.util.EnumSelectModel;
@@ -434,7 +435,6 @@ public class SelectTest extends InternalBaseTestCase
         ValidationTracker tracker = mockValidationTracker();
         Request request = mockRequest();
         Messages messages = mockMessages();
-        FieldValidationSupport fvs = mockFieldValidationSupport();
 
         expect(request.getParameter("xyz")).andReturn("MAC");
 
@@ -460,6 +460,49 @@ public class SelectTest extends InternalBaseTestCase
         select.processSubmission("xyz");
 
         verify();
+    }
+
+    /** This a test for TAP5-2184 */
+    @Test
+    public void submitted_option_matches_against_value_encoded_option_model_value() throws ValidationException {
+        ValueEncoder<Integer> encoder = getService(ValueEncoderSource.class).getValueEncoder(Integer.class);
+
+        ValidationTracker tracker = mockValidationTracker();
+        Request request = mockRequest();
+        Messages messages = mockMessages();
+        FieldValidationSupport fvs = mockFieldValidationSupport();
+
+        expect(request.getParameter("xyz")).andReturn("5");
+
+        expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
+
+        Select select = new Select();
+
+        tracker.recordInput(select, "5");
+
+        fvs.validate(5, null, null);
+
+        replay();
+
+        // TAP5-2184 is triggered by the automatic String->SelectModel coercion, because the OptionModel
+        // values are Strings even if the desired property type is not (Integer, here). Select has a little
+        // hack to run the model values through the ValueEncoder for comparison.
+        SelectModel model = getService(TypeCoercer.class).coerce("1,5,10,20", SelectModel.class);
+
+        set(select, "encoder", encoder);
+        set(select, "model", model);
+        set(select, "request", request);
+        set(select, "secure", true);
+        set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
+        set(select, "tracker", tracker);
+        set(select, "fieldValidationSupport", fvs);
+
+        select.processSubmission("xyz");
+
+        verify();
+
+        assertEquals(get(select, "value"), 5);
+
     }
 
 }

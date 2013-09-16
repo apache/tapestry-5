@@ -942,6 +942,8 @@ public final class TapestryModule
                     }
                 }));
 
+
+        // See TAP5-2184 for why this causes some trouble!
         configuration.add(CoercionTuple.create(String.class, SelectModel.class, new Coercion<String, SelectModel>()
         {
             public SelectModel coerce(String input)
