@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
@@ -28,6 +29,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * Must be enclosed by a
  * {@link org.apache.tapestry5.corelib.components.Form} component and assumes the field and the Error component
  * are enclosed by a {@code <div class="form-group">}.
+ * <p/>
+ * It is acceptable to include multiple Errors components for a single field; this is sometimes necessary
+ * when creating a responsive layout - which should probably ensure that only one of the Errors is
+ * visible at any time.
+ * <p/>
+ * Errors is optional, and Tapestry's client-side logic will do a reasonable job of placing a help block
+ * dynamically when a validation error must be presented; this component is intended for use when the default logic
+ * doesn't place the help block in the right spot.
  *
  * @tapestrydoc
  * @since 5.2.0
@@ -51,6 +60,7 @@ public class Error
 
         resources.renderInformalParameters(writer);
 
+        // Wait until the end of the heartbeat to ensure the Field has had a chance to render.
         updateElement(element);
 
         writer.end();
@@ -61,6 +71,7 @@ public class Error
     @HeartbeatDeferred
     private void updateElement(final Element element)
     {
+        // The field may add an id attribute because of this call.
         element.attribute("data-error-block-for", field.getClientId());
     }
 }

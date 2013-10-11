@@ -28,23 +28,26 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       return fieldId
 
-    # Finds a `.help-block` used for presenting errors for the provided field.
-    # Returns the found block as an ElementWrapper. May modify attributes of the field
-    # or the block to make future
+    # Finds any `.help-block` used for presenting errors for the provided field.
+    # Returns the found block(s) as an array of ElementWrapper. Returns null
+    # if no blocks can be found.
+    #
+    # Normally, you would expect just a single help block for a field, but in some cases,
+    # such as to support responsive layout, there will be multiple help blocks for a single field.
     #
     # * field - element wrapper for the field
-    findHelpBlock = (field) ->
+    findHelpBlocks = (field) ->
       fieldId = field.attribute "id"
 
       # When the field has an id (the normal case!), search the body for
-      # the matching help block.
+      # the matching help blocks.
       if fieldId
-        block = dom.body.findFirst "[data-error-block-for='#{fieldId}']"
+        blocks = dom.body.find "[data-error-block-for='#{fieldId}']"
 
-        return block if block
+        return blocks if blocks.length > 0
       else
         # Assign a unique (hopefully!) client id for the field, which will be
-        # used to link the field and the label together.
+        # used to link the field and the new help-block together.
         fieldId = ensureFieldId field
 
       # Not found by id, but see if an empty placeholder was provided within
@@ -54,12 +57,17 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       return null unless group
 
+      # This happens less often, now that the Errors component ensures (at render time)
+      # a fieldId and a data-error-block-for element. Even so, sometimes a template
+      # will just contain a div.help-block[data-presentation=error]
       block = group.findFirst "[data-presentation=error]"
 
       if block
         block.attribute "data-error-block-for", fieldId
+        return [block]
 
-      return block
+      # Not found, so perhaps it will be created dynamically.
+      return null
 
     createHelpBlock = (field) ->
       fieldId = ensureFieldId field
@@ -142,9 +150,9 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       return
 
     dom.onDocument events.field.clearValidationError, ->
-      block = exports.findHelpBlock this
+      blocks = exports.findHelpBlocks this
 
-      if block
+      for block in blocks or []
         block.hide().update("")
         block.parent().removeClass "has-error"
 
@@ -155,16 +163,17 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       return
 
     dom.onDocument events.field.showValidationError, (event, memo) ->
-      block = exports.findHelpBlock this
+      blocks = exports.findHelpBlocks this
 
-      unless block
-        block = exports.createHelpBlock this
+      unless blocks
+        blocks = [exports.createHelpBlock this]
 
-      block.removeClass("invisible").show().update(memo.message)
-      # Add "has-error" to the help-block's immediate container; this assist with some layout issues
-      # where the help block can't be under the same .form-group element as the field (more common
-      # with a horizontal form layout).
-      block.parent().addClass("has-error")
+      for block in blocks
+        block.removeClass("invisible").show().update(memo.message)
+        # Add "has-error" to the help-block's immediate container; this assist with some layout issues
+        # where the help block can't be under the same .form-group element as the field (more common
+        # with a horizontal form layout).
+        block.parent().addClass("has-error")
 
       group = @findParent ".form-group"
 
@@ -174,4 +183,4 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       return
 
-    exports = {findHelpBlock, createHelpBlock, showValidationError}
+    exports = {findHelpBlocks, createHelpBlock, showValidationError}
