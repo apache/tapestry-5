@@ -37,11 +37,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 (_, utils, events, $) ->
 #endif
 
-  # By default, many DOM-manipulating functions here will trigger a periodic reflow event (this is to allow
-  # adjustment of elements with absolute positioning, such as a Bootstrap Popover). However, this can be
-  # temporarily disabled.
-  reflowEventsEnabled = true
-
 #if prototype
   # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
   # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
@@ -227,8 +222,6 @@ define ["underscore", "./utils", "./events", "jquery"],
       @element.hide()
 #endif
 
-      triggerReflow()
-
       return this
 
     # Displays the wrapped element if hidden.
@@ -238,7 +231,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 #elseif prototype
       @element.show()
 #endif
-      triggerReflow()
 
       return this
 
@@ -276,8 +268,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 #elseif prototype
       @element.remove()
 #endif
-
-      triggerReflow()
 
       return this
 
@@ -366,8 +356,6 @@ define ["underscore", "./utils", "./events", "jquery"],
       @element.update (content and convertContent content)
 #endif
 
-      triggerReflow()
-
       return this
 
     # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
@@ -378,8 +366,6 @@ define ["underscore", "./utils", "./events", "jquery"],
       @element.insert bottom: (convertContent content)
 #endif
 
-      triggerReflow()
-
       return this
 
     # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
@@ -389,8 +375,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 #elseif prototype
       @element.insert top: (convertContent content)
 #endif
-
-      triggerReflow()
 
       return this
 
@@ -403,8 +387,6 @@ define ["underscore", "./utils", "./events", "jquery"],
       @element.insert before: (convertContent content)
 #endif
 
-      triggerReflow()
-
       return this
 
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
@@ -415,8 +397,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 #elseif prototype
       @element.insert after: (convertContent content)
 #endif
-
-      triggerReflow()
 
       return this
 
@@ -756,14 +736,6 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     return exports
 
-  triggerReflow = ->
-    return unless reflowEventsEnabled
-#if jquery
-    _.debounce (-> $(document).trigger events.document.reflow), 250
-#elseif prototype
-    _.debounce (-> $(document).fire events.document.reflow), 250
-#endif
-
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
   #
@@ -822,23 +794,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     create: createElement
 
-    triggerReflow: triggerReflow
-
     ajaxRequest: ajaxRequest
-
-    # Executes a block (provided as a function of no parameters) with automatic reflow events
-    # disabled. This is useful when the executed code will not affect the layout of the page in a way
-    # that can affect absolutely positioned elements.
-    withReflowEventsDisabled: (fn) ->
-
-      try
-        stored = reflowEventsEnabled
-
-        reflowEventsEnabled = false
-
-        fn()
-      finally
-        reflowEventsEnabled = stored
 
     # Used to add an event handler to an element (possibly from elements below it in the hierarch).
     #
@@ -874,11 +830,5 @@ define ["underscore", "./utils", "./events", "jquery"],
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
     body: wrapElement document.body
-
-#if jquery
-  $(window).on "resize", exports.triggerReflow
-#elseif prototype
-  Event.observe window, "resize", triggerReflow
-#endif
 
   return exports

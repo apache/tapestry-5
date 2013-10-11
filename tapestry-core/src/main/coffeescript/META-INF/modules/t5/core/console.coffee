@@ -58,69 +58,67 @@ define ["./dom", "underscore", "./bootstrap"],
     # console as needed.
     display = (className, message) ->
 
-      dom.withReflowEventsDisabled ->
-
-        unless floatingConsole
-          floatingConsole = dom.create
-            class: "tapestry-console",
-            """
-              <div class="message-container"></div>
-              <div class="row">
-                <div class="btn-group btn-group-sm col-md-4">
-                  #{button "clear", "remove", "Clear Console"}
-                  #{button "enable", "play", "Enable Console"}
-                  #{button "disable", "pause", "Disable Console"}
-                </div>
-                <div class="col-md-8">
-                  <input class="form-control" size="40" placeholder="Filter console content">
-                </div>
+      unless floatingConsole
+        floatingConsole = dom.create
+          class: "tapestry-console",
+          """
+            <div class="message-container"></div>
+            <div class="row">
+              <div class="btn-group btn-group-sm col-md-4">
+                #{button "clear", "remove", "Clear Console"}
+                #{button "enable", "play", "Enable Console"}
+                #{button "disable", "pause", "Disable Console"}
               </div>
-              """
+              <div class="col-md-8">
+                <input class="form-control" size="40" placeholder="Filter console content">
+              </div>
+            </div>
+            """
 
-          dom.body.prepend floatingConsole
+        dom.body.prepend floatingConsole
 
-          # Basically, any non-blank value will enable the floating console. In addition, the special
-          # value "invisible" will enable it but then hide it ... this is useful in tests, since
-          # the console output is captured in the markup, but the visible console can have unwanted interactions
-          # (such as obscuring elements that make them unclickable).
-          if consoleAttribute is "invisible"
-            floatingConsole.hide()
+        # Basically, any non-blank value will enable the floating console. In addition, the special
+        # value "invisible" will enable it but then hide it ... this is useful in tests, since
+        # the console output is captured in the markup, but the visible console can have unwanted interactions
+        # (such as obscuring elements that make them unclickable).
+        if consoleAttribute is "invisible"
+          floatingConsole.hide()
 
-          messages = floatingConsole.findFirst ".message-container"
+        messages = floatingConsole.findFirst ".message-container"
 
-          floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
+        floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
 
-          floatingConsole.on "click", "[data-action=clear]", ->
-            floatingConsole.hide()
-            messages.update ""
+        floatingConsole.on "click", "[data-action=clear]", ->
+          floatingConsole.hide()
+          messages.update ""
 
-          floatingConsole.on "click", "[data-action=disable]", ->
+        floatingConsole.on "click", "[data-action=disable]", ->
 
-            @attribute "disabled", true
-            floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
+          @attribute "disabled", true
+          floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
 
-            messages.hide()
+          messages.hide()
 
-            return false
+          return false
 
-          floatingConsole.on "click", "[data-action=enable]", ->
+        floatingConsole.on "click", "[data-action=enable]", ->
 
-            @attribute "disabled", true
-            floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
+          @attribute "disabled", true
+          floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
 
-            messages.show()
+          messages.show()
 
-            return false
+          return false
 
-          floatingConsole.on "change keyup", "input", ->
-            updateFilter @value()
+        floatingConsole.on "change keyup", "input", ->
+          updateFilter @value()
 
-            for e in messages.children()
-              visible = filter e
+          for e in messages.children()
+            visible = filter e
 
-              e[if visible then "show" else "hide"]()
+            e[if visible then "show" else "hide"]()
 
-            return false
+          return false
 
         div = dom.create
           class: className,
