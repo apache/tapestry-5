@@ -38,6 +38,28 @@ class JSONObjectSpec extends Specification {
         fullCopy.toCompactString() == /{"fred":"flintstone","barney":"rubble"}/
     }
 
+    def "copy all properties of JSONObject"() {
+        def master = new JSONObject("fred", "flintstone", "barney", "rubble")
+
+        when:
+
+        def fullCopy = master.copy()
+
+        then:
+
+        master == fullCopy
+
+        // And they are independent:
+
+        when:
+
+        master.put("wilma", "flintstone")
+
+        then:
+
+        master != fullCopy
+    }
+
     def "unknown keys when copying a JSONObject are ignored"() {
         def master = new JSONObject("fred", "flintstone", "barney", "rubble")
 

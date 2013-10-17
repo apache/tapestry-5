@@ -1,4 +1,4 @@
-// Copyright 2007, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -150,10 +150,23 @@ public final class JSONObject extends JSONCollection
     }
 
     /**
+     * Returns a new JSONObject that is a shallow copy of this JSONObject.
+     *
+     * @since 5.4
+     */
+    public JSONObject copy()
+    {
+        JSONObject dupe = new JSONObject();
+        dupe.properties.putAll(properties);
+
+        return dupe;
+    }
+
+    /**
      * Constructs a new JSONObject using a series of String keys and object values.
      * Object values sholuld be compatible with {@link #put(String, Object)}. Keys must be strings
      * (toString() will be invoked on each key).
-     *
+     * <p/>
      * Prior to release 5.4, keysAndValues was type String...; changing it to Object... makes
      * it much easier to initialize a JSONObject in a single statement, which is more readable.
      *
@@ -999,7 +1012,8 @@ public final class JSONObject extends JSONCollection
             throw new IllegalStateException(String.format("JSONObject[%s] is not a JSONObject.", quote(key)));
         }
 
-        if (nested == null) {
+        if (nested == null)
+        {
             nested = new JSONObject();
             properties.put(key, nested);
         }
