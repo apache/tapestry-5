@@ -133,7 +133,7 @@ public class Palette extends AbstractField
      * will be cleared. If unbound, defaults to a property of the container matching this component's id.
      * <p/>
      * Prior to Tapestry 5.4, this allowed null, and a list would be created when the form was submitted. Starting
-     * with 5.4, the selected list may not be null, and may not be a list (it may be, for example, a set).
+     * with 5.4, the selected list may not be null, and it need not be a list (it may be, for example, a set).
      */
     @Parameter(required = true, autoconnect = true, allowNull = false)
     private Collection<Object> selected;
