@@ -3,7 +3,7 @@
 # Starts coffee in --watch mode, so it will keep compiling files on change.
 # Expects coffee to be on the path.
 # Should be executed from the tapestry-core folder.
-# Doe NOT compile the test scripts.
+# Does NOT compile the test scripts.
 
 inputDir=src/main/coffeescript
 outputDir=src/main/generated/compiled-coffeescript
