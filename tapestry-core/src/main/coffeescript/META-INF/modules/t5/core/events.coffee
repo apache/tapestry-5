@@ -19,15 +19,6 @@
 # allow it without issue.
 define
 
-  # Events relating to the document as a whole, triggered on the document object, or elsewhere on the page.
-  document:
-    # Triggered when the page's content has changed and absolutely positioned elements may need to have their
-    # positions adjusted (an example of this is the Bootstrap Popover). Many of the methods on the `t5/core/dom:ElementWrapper`
-    # object automatically trigger this event, as does resizing the window. When that is insufficient, the `dom`
-    # module exports a `triggerReflow()` function. The firing of the event is "debounced" such that it will occur
-    # only every 250ms.
-    reflow: "t5:document:reflow"
-
   # Defines events related to the validation and submission of forms. See module `t5/core/forms` for further details.
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:

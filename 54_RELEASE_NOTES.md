@@ -97,6 +97,17 @@ The useful RandomDataSource class has been extracted into a new module, tapestry
 
 The code for launching an instance of Jetty or Tomcat has been extracted to a new module, tapestry-runner.
 
+## Select Component
+
+The Select component has a new parameter, secure, which defaults to true. When secure, the submitted
+value must be listed somewhere in the SelectModel.
+
+This means that, by default, all the SelectModels for a form must exist when forms is submitted, so you
+must 1) recreate the SelectModels when the form is submitted (i.e. in your onPrepare or onPrepareForSubmit
+method), or 2) persist the SelectModels (e.g. in the session with @Persist), or 3) set the secure
+parameter to false. Otherwise you'll get an error like "Parameter 'model' of component Xxx:yyy
+is bound to null. This parameter is not allowed to be null" when you submit your form.
+
 # Breaking Changes:
 
 ## tapestry-yuicompressor replaced with tapestry-webresources
@@ -117,11 +128,6 @@ By default, tapestry-webresources enables:
 ## RenderSupport Removed
 
 The RenderSupport interface, which was deprecated in Tapestry 5.2, has been removed entirely.
-
-## Select Component
-
-The Select component has a new parameter, secure, which defaults to true. When secure, the submitted
-value must be listed somewhere in the SelectModel.
 
 ## FormFragment Component
 
