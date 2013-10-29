@@ -29,6 +29,8 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -309,7 +311,13 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
-        for (String dependentStackname : stack.getStacks())
+        // TAP5-2197: the stacks are added in reverse order because now this method
+        // adds a stack's stylesheets in the head of the stylesheets array, not in the
+        // end, avoiding the TAP5-2197 bug.
+        final List<String> reversedStacks = new ArrayList<String>(stack.getStacks());
+        Collections.reverse(reversedStacks);
+        
+        for (String dependentStackname : reversedStacks)
         {
             addAssetsFromStack(dependentStackname);
         }
@@ -321,7 +329,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             linker.addLibrary(libraryURL);
         }
 
-        stylesheetLinks.addAll(stack.getStylesheets());
+        // TAP5-2197: to avoid @Import'ed stylesheets to appear after the core ones,
+        // the latter ones are now always added in the head of stylesheetLinks, not the tail.
+        stylesheetLinks.addAll(0, stack.getStylesheets());
 
         for (String moduleName : stack.getModules())
         {

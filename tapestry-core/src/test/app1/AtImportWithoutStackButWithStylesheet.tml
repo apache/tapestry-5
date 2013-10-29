@@ -1,0 +1,5 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<p>
+		Testing <a href="https://issues.apache.org/jira/browse/TAP5-2197">TAP5-2197</a>
+	</p>
+</html>

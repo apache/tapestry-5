@@ -412,5 +412,14 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String SESSION_LOCKING_ENABLED = "tapestry.session-locking-enabled";
+    
+    /**
+     * If true (the default), then Tapestry will automatically include the "core" stack in all
+     * pages.
+     * 
+     * @since 5.4
+     * @see https://issues.apache.org/jira/browse/TAP5-2169
+     */
+    public static final String INCLUDE_CORE_STACK = "tapestry.include-core-stack";
 
 }

@@ -1729,6 +1729,9 @@ public final class TapestryModule
 
                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          boolean productionMode,
+                                         
+                                         @Symbol(SymbolConstants.INCLUDE_CORE_STACK)
+                                         final boolean includeCoreStack,
 
                                          final ValidationDecoratorFactory validationDecoratorFactory)
     {
@@ -1809,7 +1812,10 @@ public final class TapestryModule
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
-        configuration.add("ImportCoreStack", importCoreStack);
+        
+        if (includeCoreStack) {
+            configuration.add("ImportCoreStack", importCoreStack);
+        }
 
         if (productionMode)
         {
@@ -2112,6 +2118,9 @@ public final class TapestryModule
 
         // TAP5-2070 keep the old behavior, defaults to false
         configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
+        
+        // TAP5-2197
+        configuration.add(SymbolConstants.INCLUDE_CORE_STACK, true);
 
     }
 
