@@ -101,7 +101,7 @@ public class Grid implements GridModel, ClientElement
     private Object row;
 
     /**
-     * Optional output parmeter used to identify the index of the column being rendered.
+     * Optional output parameter used to identify the index of the column being rendered.
      */
     @Parameter
     private int columnIndex;
@@ -131,7 +131,7 @@ public class Grid implements GridModel, ClientElement
     private GridSortModel sortModel;
 
     /**
-     * A comma-seperated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Cells for added columns will be blank unless a cell override is provided. This parameter is only used
      * when a default model is created automatically.
      */
@@ -195,8 +195,8 @@ public class Grid implements GridModel, ClientElement
     private boolean inPlace;
 
     /**
-     * The name of the psuedo-zone that encloses the Grid. Starting in 5.4, this is always either
-     * null or "^" and is not really used the way it was in 5.3; instead it triggerers the addition
+     * The name of the pseudo-zone that encloses the Grid. Starting in 5.4, this is always either
+     * null or "^" and is not really used the way it was in 5.3; instead it triggers the addition
      * of a {@code data-inplace-grid-links} attribute in a div surrounding any links related to
      * sorting or pagination. The rest is sorted out on the client. See module {@code core/grid}.
      */
