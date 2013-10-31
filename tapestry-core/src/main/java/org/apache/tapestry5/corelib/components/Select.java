@@ -206,7 +206,7 @@ public class Select extends AbstractField
         writer.element("select",
                 "name", getControlName(),
                 "id", getClientId(),
-                "class", "form-control");
+                "class", cssClass);
 
         putPropertyNameIntoBeanValidationContext("value");
 

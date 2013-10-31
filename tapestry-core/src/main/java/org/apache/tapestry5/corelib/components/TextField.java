@@ -48,7 +48,7 @@ public class TextField extends AbstractTextField
 
                        "name", getControlName(),
 
-                    "class", "form-control",
+                       "class", cssClass,
 
                        "id", getClientId(),
 

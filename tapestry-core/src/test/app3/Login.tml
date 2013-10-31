@@ -19,6 +19,9 @@
             <li>
                 <t:pagelink page="consoledemo">Console demo</t:pagelink>
             </li>
+            <li>
+                <t:pagelink page="BeanEditorWithOverridenCssClassesDemo">BeanEditor with overriden CSS classes demo</t:pagelink>
+            </li>
         </ul>
 
     </body>

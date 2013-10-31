@@ -21,6 +21,7 @@ import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
@@ -64,6 +65,10 @@ public abstract class AbstractField implements Field
 
     @Inject
     protected Environment environment;
+    
+    @Inject
+    @Symbol(SymbolConstants.FORM_FIELD_CSS_CLASS)
+    protected String cssClass;
 
     static class Setup implements ComponentAction<AbstractField>, Serializable
     {

@@ -17,12 +17,15 @@ package org.apache.tapestry5.integration.app1;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * Tests for the {@link BeanEditor} component, often embedded inside
  * a {@link BeanEditForm} component.
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/app1", browserStartCommand = "*googlechrome")
+@Test
 public class BeanEditorTests extends App1TestCase
 {
     /**
@@ -219,4 +222,21 @@ public class BeanEditorTests extends App1TestCase
 
         assertTextPresent("Name: abcdef", "Age: 10");
     }
+    
+    /** TAP5-2182 */
+    public void bean_editor_default_markup() {
+
+        final String formGroupLocator = "//form[@id='form']/div[@class='form-group'][2]";
+        final String wrapperCssLocator = formGroupLocator + "/@class";
+        final String labelCssLocator = formGroupLocator + "/label/@class";
+        final String inputCssLocator = formGroupLocator + "/input/@class";
+        
+        openLinks("BeanEditor Demo");
+        
+        assertEquals("form-group", getAttribute(wrapperCssLocator));
+        assertEquals("control-label", getAttribute(labelCssLocator));
+        assertEquals("form-control", getAttribute(inputCssLocator));
+        
+    }
+    
 }

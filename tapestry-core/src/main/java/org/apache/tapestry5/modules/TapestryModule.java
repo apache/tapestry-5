@@ -2121,6 +2121,13 @@ public final class TapestryModule
         
         // TAP5-2197
         configuration.add(SymbolConstants.INCLUDE_CORE_STACK, true);
+        
+        // TAP5-2182
+        configuration.add(SymbolConstants.FORM_GROUP_WRAPPER_CSS_CLASS, "form-group");
+        configuration.add(SymbolConstants.FORM_GROUP_LABEL_CSS_CLASS, "control-label");
+        configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME, "");
+        configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, "");
+        configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "form-control");
 
     }
 

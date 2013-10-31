@@ -217,7 +217,7 @@ public class DateField extends AbstractField
 
                 "type", hideTextField ? "hidden" : "text",
 
-                "class", "form-control",
+                "class", cssClass,
 
                 "name", getControlName(),
 

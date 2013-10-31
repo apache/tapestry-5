@@ -41,7 +41,7 @@ public class TextArea extends AbstractTextField
 
                 "name", getControlName(),
 
-                "class", "form-control",
+                "class", cssClass,
 
                 "id", getClientId(),
 

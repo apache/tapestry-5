@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>BeanDisplay Global Override Demo</title>
+    </head>
+    <body>
+    	<t:form class="form-horizontal">
+        	<t:beaneditor object="this"/>
+        </t:form>
+    </body>
+</html>

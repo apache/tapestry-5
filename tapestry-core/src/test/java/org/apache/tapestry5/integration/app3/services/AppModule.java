@@ -28,6 +28,16 @@ import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
 public class AppModule
 {
+    public static final String FORM_GROUP_LABEL_CSS_CLASS_VALUE = "control-label col-sm-2";
+    
+    public static final String FORM_GROUP_WRAPPER_CSS_CLASS_VALUE = "something form-group";
+    
+    public static final String FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME_VALUE = "div";
+    
+    public static final String FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS_VALUE = "col-sm-10";
+    
+    public static final String FORM_FIELD_CSS_CLASS_VALUE = "form-control control-form";
+
     public static void contributeBeanBlockOverrideSource(Configuration<Object> configuration)
     {
         configuration.add(new DisplayBlockContribution("boolean", "PropertyDisplayBlockOverrides", "boolean"));
@@ -40,6 +50,13 @@ public class AppModule
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
 
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+        
+        configuration.add(SymbolConstants.FORM_GROUP_LABEL_CSS_CLASS, FORM_GROUP_LABEL_CSS_CLASS_VALUE);
+        configuration.add(SymbolConstants.FORM_GROUP_WRAPPER_CSS_CLASS, FORM_GROUP_WRAPPER_CSS_CLASS_VALUE);
+        configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME, FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME_VALUE);
+        configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS_VALUE);
+        configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, FORM_FIELD_CSS_CLASS_VALUE);
+        
     }
 
     @Contribute(Compatibility.class)

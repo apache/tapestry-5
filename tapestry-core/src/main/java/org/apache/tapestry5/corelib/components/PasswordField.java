@@ -40,7 +40,7 @@ public class PasswordField extends AbstractTextField
 
                        "type", "password",
 
-                        "class", "form-control",
+                        "class", cssClass,
 
                        "name", getControlName(),
 
