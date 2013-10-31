@@ -20,7 +20,7 @@ import org.testng.annotations.Test
 /**
  * Tests for https://issues.apache.org/jira/browse/TAP5-2197.
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/app1", browserStartCommand = "*googlechrome")
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 class StylesheetPlacementTests extends GroovyTapestryCoreTestCase
 {
 
