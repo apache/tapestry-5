@@ -34,6 +34,12 @@ public class TestEntity
     @Size(min = 3, max = 6)
     private String stringSizeValue;
 
+    @Size(min = 3)
+    private String stringMinLength;
+    
+    @Size(max = 6)
+    private String stringMaxLength;
+
     @Size(min = 2, max = 3)
     private Collection<String> collectionSizeValue = new ArrayList<String>();
 
@@ -97,4 +103,21 @@ public class TestEntity
     {
         this.collectionSizeValue = collectionSizeValue;
     }
+
+    public String getStringMinLength() {
+        return stringMinLength;
+    }
+
+    public void setStringMinLength(String stringMinLength) {
+        this.stringMinLength = stringMinLength;
+    }
+
+    public String getStringMaxLength() {
+        return stringMaxLength;
+    }
+
+    public void setStringMaxLength(String stringMaxLength) {
+        this.stringMaxLength = stringMaxLength;
+    }
+    
 }

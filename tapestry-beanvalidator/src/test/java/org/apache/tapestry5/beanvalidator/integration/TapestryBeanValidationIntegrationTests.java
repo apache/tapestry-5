@@ -18,7 +18,7 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp", browserStartCommand = "*googlechrome")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
     public static final String AVAILABLE_OPTIONS = "css=.palette-available select";
@@ -140,11 +140,26 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         type("maxValue", "100");
         type("nullValue", "igor");
 
+        //@Size(min,max)
         type("stringSizeValue", "a");
 
         click(SUBMIT);
 
         assertTextPresent("String Size Value size must be between 3 and 6");
+        
+        //@Size(min) TAP5-2158
+        type("stringMinLength", "a");
+
+        click(SUBMIT);
+
+        assertTextPresent("String Min Length size must be between 3 and " + Integer.MAX_VALUE);
+        
+        //@Size(max) TAP5-2158
+        type("stringMaxLength", "aaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        click(SUBMIT);
+
+        assertTextPresent("String Max Length size must be between 0 and 6");
 
         click(SUBMIT);
 
