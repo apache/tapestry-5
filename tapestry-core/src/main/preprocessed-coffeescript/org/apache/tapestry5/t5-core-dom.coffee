@@ -295,6 +295,8 @@ define ["underscore", "./utils", "./events", "jquery"],
       current = @$.attr name
       if arguments.length > 1
         @$.attr name, value
+      if _.isUndefined current
+        current = null
 #elseif prototype
       current = @element.readAttribute name
       if arguments.length > 1
