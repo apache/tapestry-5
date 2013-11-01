@@ -152,14 +152,30 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertTextPresent("String Min Length size must be between 3 and " + Integer.MAX_VALUE);
+        final String stringMinLengthErrorMessage = "String Min Length size must be between 3 and " + Integer.MAX_VALUE;
+        
+		assertTextPresent(stringMinLengthErrorMessage);
+        
+        type("stringMinLength", "aaaaaa");
+
+        click(SUBMIT);
+        
+        assertFalse(isTextPresent(stringMinLengthErrorMessage));
         
         //@Size(max) TAP5-2158
         type("stringMaxLength", "aaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         click(SUBMIT);
 
-        assertTextPresent("String Max Length size must be between 0 and 6");
+        final String stringMaxLengthErrorMessage = "String Max Length size must be between 0 and 6";
+        
+		assertTextPresent(stringMaxLengthErrorMessage);
+
+        type("stringMaxLength", "aaaaa");
+
+        click(SUBMIT);
+
+        assertFalse(isTextPresent(stringMaxLengthErrorMessage));
 
         click(SUBMIT);
 
