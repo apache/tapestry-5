@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum instance name and
- * the provides message catalog: <ul> <li>As key <em>ClassName</em>.<em>name</em> if present. The class name excludes
+ * the provided message catalog: <ul> <li>As key <em>ClassName</em>.<em>name</em> if present. The class name excludes
  * the package portion. Ex: "ElementType.LOCAL_VARIABLE" <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".
  * <li>As a user-presentable version of the name, i.e., "Local Variable". </ul>
  */
@@ -64,7 +64,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
     }
 
     /**
-     * Returns the option groupos created in the constructor.
+     * Returns the option groups created in the constructor.
      */
     public List<OptionModel> getOptions()
     {
