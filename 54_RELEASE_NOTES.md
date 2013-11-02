@@ -99,18 +99,14 @@ The code for launching an instance of Jetty or Tomcat has been extracted to a ne
 
 ## Select Component
 
-The Select component has a new parameter, secure, which defaults to true. When secure, the submitted
-value must be listed somewhere in the SelectModel.
-
-This means that, by default, all the SelectModels for a form must exist when forms is submitted, so you
-must 1) recreate the SelectModels when the form is submitted (i.e. in your onPrepare or onPrepareForSubmit
-method), or 2) persist the SelectModels (e.g. in the session with @Persist), or 3) set the secure
-parameter to false. Otherwise you'll get an error like "Parameter 'model' of component Xxx:yyy
-is bound to null. This parameter is not allowed to be null" when you submit your form.
+The Select component has a new "secure" parameter which can be "always", "never" or "auto".
+When "always", the submitted value must be listed somewhere in the SelectModel. When "never",
+this check is not performed. When "auto" (the default), the check is performed only if the
+SelectModel exists (is non-null) at the time of the submission.
 
 # Breaking Changes:
 
-## tapestry-yuicompressor replaced with tapestry-webresources
+## tapestry-yuicompressor is replaced by tapestry-webresources
 
 The tapestry-yuicompressor module has been removed and superseded by tapestry-webresources.
 
