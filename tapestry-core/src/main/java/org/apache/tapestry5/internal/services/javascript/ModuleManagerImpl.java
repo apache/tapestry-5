@@ -14,9 +14,7 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
@@ -43,10 +41,6 @@ public class ModuleManagerImpl implements ModuleManager
 
     private final ResponseCompressionAnalyzer compressionAnalyzer;
 
-    private final Asset requireJS;
-
-    private final Map<String, JavaScriptModuleConfiguration> configuration;
-
     private final Messages globalMessages;
 
     private final boolean compactJSON;
@@ -60,14 +54,12 @@ public class ModuleManagerImpl implements ModuleManager
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
-    private final boolean devMode;
+    private final JSONObject baseConfig;
 
     private final AssetPathConstructor assetPathConstructor;
 
     public ModuleManagerImpl(ResponseCompressionAnalyzer compressionAnalyzer,
                              AssetSource assetSource,
-                             @Path("${" + SymbolConstants.REQUIRE_JS + "}")
-                             Asset requireJS,
                              Map<String, JavaScriptModuleConfiguration> configuration,
                              Messages globalMessages,
                              StreamableResourceSource streamableResourceSource,
@@ -78,25 +70,29 @@ public class ModuleManagerImpl implements ModuleManager
                              AssetPathConstructor assetPathConstructor)
     {
         this.compressionAnalyzer = compressionAnalyzer;
-        this.requireJS = requireJS;
-        this.configuration = configuration;
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
         this.assetPathConstructor = assetPathConstructor;
-
-        this.devMode = !productionMode;
 
         classpathRoot = assetSource.resourceForPath("");
         extensions = CollectionFactory.newSet("js");
 
         extensions.addAll(streamableResourceSource.fileExtensionsForContentType("text/javascript"));
+
+        baseConfig = buildBaseConfig(configuration, !productionMode);
     }
 
     private String buildRequireJSConfig()
     {
-        String baseURL = getBaseURL();
+        // This is the part that can vary from one request to another, based on the capabilities of the client.
+        JSONObject config =  baseConfig.copy().put("baseUrl", getBaseURL());
 
-        JSONObject config = new JSONObject("baseUrl", baseURL);
+        return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
+    }
+
+    private JSONObject buildBaseConfig(Map<String, JavaScriptModuleConfiguration> configuration, boolean devMode)
+    {
+        JSONObject config = new JSONObject();
 
         // In DevMode, wait up to five minutes for a script, as the developer may be using the debugger.
         if (devMode)
@@ -119,8 +115,7 @@ public class ModuleManagerImpl implements ModuleManager
                 addModuleToConfig(config, name, module);
             }
         }
-
-        return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
+        return config;
     }
 
     private String getBaseURL()
@@ -173,8 +168,6 @@ public class ModuleManagerImpl implements ModuleManager
 
     public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits)
     {
-        body.element("script", "src", requireJS.toClientURL());
-
         Element element = body.element("script", "type", "text/javascript");
 
         // Build it each time because we don't know if the client supports GZip or not, and

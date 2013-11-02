@@ -198,6 +198,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert parameter != null;
         assert InternalUtils.isNonBlank(functionName);
 
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+
         require("t5/core/init").priority(priority).with(functionName, parameter);
     }
 
@@ -220,6 +222,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert priority != null;
         assert InternalUtils.isNonBlank(format);
+
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
 
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
@@ -256,6 +260,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public JavaScriptSupport importJavaScriptLibrary(String libraryURL)
     {
+
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
 
         String stackName = findStackForLibrary(libraryURL);
 
@@ -322,23 +328,26 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             addAssetsFromStack(dependentStackname);
         }
 
+        addedStacks.put(stackName, true);
+
+        boolean addAsCoreLibrary = stackName.equals(InternalConstants.CORE_STACK_NAME);
+
         List<String> libraryURLs = stackPathConstructor.constructPathsForJavaScriptStack(stackName);
 
         for (String libraryURL : libraryURLs)
         {
-            linker.addLibrary(libraryURL);
+            if (addAsCoreLibrary)
+            {
+                linker.addCoreLibrary(libraryURL);
+            } else
+            {
+                linker.addLibrary(libraryURL);
+            }
         }
 
         // TAP5-2197: to avoid @Import'ed stylesheets to appear after the core ones,
         // the latter ones are now always added in the head of stylesheetLinks, not the tail.
         stylesheetLinks.addAll(0, stack.getStylesheets());
-
-        for (String moduleName : stack.getModules())
-        {
-            require(moduleName);
-        }
-
-        addedStacks.put(stackName, true);
 
         String initialization = stack.getInitialization();
 
@@ -376,6 +385,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(stackName);
 
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+
         addAssetsFromStack(stackName);
 
         return this;
@@ -399,10 +410,13 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(moduleName);
 
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+
         InitializationImpl init = new InitializationImpl(moduleName);
 
         inits.add(init);
 
         return init;
     }
+
 }

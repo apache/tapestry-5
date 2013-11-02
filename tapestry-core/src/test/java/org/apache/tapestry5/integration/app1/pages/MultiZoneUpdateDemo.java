@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.ajax.JavaScriptCallback;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -45,10 +42,6 @@ public class MultiZoneUpdateDemo
     @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
 
-    @Inject
-    @Path("MultiZoneUpdateDemo.js")
-    private Asset library;
-
     public Date getNow()
     {
         return new Date();
@@ -65,9 +58,7 @@ public class MultiZoneUpdateDemo
         {
             public void run(JavaScriptSupport javascriptSupport)
             {
-                javascriptSupport.importJavaScriptLibrary(library);
-                javascriptSupport.addInitializerCall("writeMessageTo", new JSONObject("id", "message", "message",
-                        "Updated"));
+                javascriptSupport.require("app/multi-zone-update").with("message", "Updated");
             }
         });
 

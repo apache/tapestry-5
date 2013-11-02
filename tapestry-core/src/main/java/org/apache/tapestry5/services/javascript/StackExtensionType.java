@@ -55,7 +55,15 @@ public enum StackExtensionType
     STYLESHEET,
 
     /**
-     * A module to load with the stack.
+     * A module to aggregate with the stack. The module's JavaScript is included after any libraries.
+     * In development mode (with aggregation disabled), the library will be included individually.
+     * Unlike the RequireJS {@code r.js} tool, this does not process
+     * dependencies and is based on a simple regular expression parser.
+     * <p/>
+     * Note that this only loads the module's <em>code</em> and defines the module as available;
+     * the module's function will not be invoked unless {@link JavaScriptSupport#require(String)} is invoked to establish
+     * a dependency.
+     *
      * @since 5.4
      */
     MODULE,

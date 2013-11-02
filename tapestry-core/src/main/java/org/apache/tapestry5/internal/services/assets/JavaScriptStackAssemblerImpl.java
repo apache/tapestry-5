@@ -14,26 +14,20 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.ModuleManager;
+
+import java.io.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 {
@@ -49,18 +43,20 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final AssetChecksumGenerator checksumGenerator;
 
+    private final ModuleManager moduleManager;
+
     private final Map<String, StreamableResource> cache = CollectionFactory.newCaseInsensitiveMap();
 
-    // TODO: Support for minimization
     // TODO: Support for aggregated CSS as well as aggregated JavaScript
 
-    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource, JavaScriptStackSource stackSource, AssetChecksumGenerator checksumGenerator)
+    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource, JavaScriptStackSource stackSource, AssetChecksumGenerator checksumGenerator, ModuleManager moduleManager)
     {
         this.threadLocale = threadLocale;
         this.resourceChangeTracker = resourceChangeTracker;
         this.streamableResourceSource = streamableResourceSource;
         this.stackSource = stackSource;
         this.checksumGenerator = checksumGenerator;
+        this.moduleManager = moduleManager;
 
         resourceChangeTracker.clearOnInvalidation(cache);
     }
@@ -102,31 +98,72 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
         JavaScriptStack stack = stackSource.getStack(stackName);
 
-        return assemble(locale.toString(), stackName, stack.getJavaScriptLibraries());
+        return assembleStreamableForStack(locale.toString(), stackName, stack.getJavaScriptLibraries(), stack.getModules());
+    }
+
+    interface StreamableReader
+    {
+        /**
+         * Reads the content of a StreamableResource as a UTF-8 string, and optionally transforms it in some way.
+         */
+        String read(StreamableResource resource) throws IOException;
+    }
+
+    static String getContent(StreamableResource resource) throws IOException
+    {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(resource.getSize());
+        resource.streamTo(bos);
+
+        return new String(bos.toByteArray(), "UTF-8");
     }
 
 
-    private StreamableResource assemble(String localeName, String stackName, List<Asset> libraries) throws IOException
+    final StreamableReader libraryReader = new StreamableReader()
     {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(stream, "UTF-8");
-        PrintWriter writer = new PrintWriter(osw, true);
-        long lastModified = 0;
-
-        StringBuilder description = new StringBuilder(String.format("'%s' JavaScript stack, for locale %s, resources=", stackName, localeName));
-        String sep = "";
-
-        JSONArray paths = new JSONArray();
-
-        for (Asset library : libraries)
+        public String read(StreamableResource resource) throws IOException
         {
-            String path = library.getResource().toString();
+            return getContent(resource);
+        }
+    };
 
-            paths.put(path);
+    private final static Pattern DEFINE = Pattern.compile("\\bdefine\\s*\\(");
 
-            writer.format("\n/* %s */;\n", path);
+    private class ModuleReader implements StreamableReader
+    {
+        final String moduleName;
 
-            Resource resource = library.getResource();
+        private ModuleReader(String moduleName)
+        {
+            this.moduleName = moduleName;
+        }
+
+        public String read(StreamableResource resource) throws IOException
+        {
+            String content = getContent(resource);
+
+            return DEFINE.matcher(content).replaceFirst("define(\"" + moduleName + "\",");
+        }
+    }
+
+
+    private class Assembly
+    {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2000);
+        final PrintWriter writer;
+        long lastModified = 0;
+        final StringBuilder description;
+        private String sep = "";
+
+        private Assembly(String description) throws UnsupportedEncodingException
+        {
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+
+            this.description = new StringBuilder(description);
+        }
+
+        void add(Resource resource, StreamableReader reader) throws IOException
+        {
+            writer.format("\n/* %s */;\n", resource.toString());
 
             description.append(sep).append(resource.toString());
             sep = ", ";
@@ -134,18 +171,45 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
             StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
                     StreamableResourceProcessing.FOR_AGGREGATION, resourceChangeTracker);
 
-            streamable.streamTo(stream);
+            writer.print(reader.read(streamable));
 
             lastModified = Math.max(lastModified, streamable.getLastModified());
         }
 
-        writer.close();
+        StreamableResource finish()
+        {
+            writer.close();
 
-        return new StreamableResourceImpl(
-                description.toString(),
-                JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
-                new BytestreamCache(stream), checksumGenerator);
+            return new StreamableResourceImpl(
+                    description.toString(),
+                    JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
+                    new BytestreamCache(outputStream), checksumGenerator);
+        }
     }
 
+    private StreamableResource assembleStreamableForStack(String localeName, String stackName, List<Asset> libraries, List<String> moduleNames) throws IOException
+    {
+        Assembly assembly = new Assembly(String.format("'%s' JavaScript stack, for locale %s, resources=", stackName, localeName));
 
+        for (Asset library : libraries)
+        {
+            Resource resource = library.getResource();
+
+            assembly.add(resource, libraryReader);
+        }
+
+        for (String moduleName : moduleNames)
+        {
+            Resource resource = moduleManager.findResourceForModule(moduleName);
+
+            if (resource == null)
+            {
+                throw new IllegalArgumentException(String.format("Could not identify a resource for module name '%s'.", moduleName));
+            }
+
+            assembly.add(resource, new ModuleReader(moduleName));
+        }
+
+        return assembly.finish();
+    }
 }

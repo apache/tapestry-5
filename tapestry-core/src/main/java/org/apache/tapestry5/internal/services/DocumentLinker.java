@@ -37,6 +37,14 @@ public interface DocumentLinker
     void addLibrary(String libraryURL);
 
     /**
+     * A special case used only for the libraries that are part of the core stack, which itself contains RequireJS
+     * and is used to bootstrap up to adding non-core libraries.
+     *
+     * @since 5.4
+     */
+    void addCoreLibrary(String libraryURL);
+
+    /**
      * Adds a link to load a CSS stylesheet.
      */
     void addStylesheetLink(StylesheetLink stylesheet);

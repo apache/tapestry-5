@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,11 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
+    public void addCoreLibrary(String libraryURL)
+    {
+        notImplemented("addCoreLibrary");
+    }
+
     public void addLibrary(String libraryURL)
     {
         libraryURLs.put(libraryURL);
@@ -46,10 +51,14 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         stylesheets.put(object);
     }
 
+    private void notImplemented(String methodName)
+    {
+        throw new UnsupportedOperationException(String.format("DocumentLinker.%s() is not implemented for partial page renders.", methodName));
+    }
+
     public void addScript(InitializationPriority priority, String script)
     {
-        throw new UnsupportedOperationException(
-                "DocumentLinker.addScript() is not implemented for partial page renders.");
+        notImplemented("addScript");
     }
 
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)

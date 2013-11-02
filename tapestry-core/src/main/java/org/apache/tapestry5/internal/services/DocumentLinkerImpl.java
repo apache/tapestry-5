@@ -27,6 +27,8 @@ import java.util.List;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
+    private final List<String> coreLibraryURLs = CollectionFactory.newList();
+
     private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
@@ -63,6 +65,13 @@ public class DocumentLinkerImpl implements DocumentLinker
         includedStylesheets.add(sheet);
     }
 
+
+    public void addCoreLibrary(String libraryURL)
+    {
+        coreLibraryURLs.add(libraryURL);
+
+        hasScriptsOrInitializations = true;
+    }
 
     public void addLibrary(String libraryURL)
     {
@@ -153,7 +162,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         // use stylesheets?
 
         if (!rootElementName.equals("html"))
+        {
             throw new RuntimeException(String.format("The root element of the rendered document was <%s>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.", rootElementName));
+        }
 
         // TAPESTRY-2364
 
@@ -196,6 +207,13 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addScriptsToEndOfBody(Element body)
     {
+        for (String url : coreLibraryURLs)
+        {
+            body.element("script",
+                    "type", "text/javascript",
+                    "src", url);
+        }
+
         // In prior releases of Tapestry, we've vacillated about where the <script> tags go
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
         // Eventually, (nearly) everything will be loaded as modules.

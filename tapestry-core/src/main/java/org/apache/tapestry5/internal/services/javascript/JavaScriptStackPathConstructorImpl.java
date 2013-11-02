@@ -58,8 +58,9 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
     public JavaScriptStackPathConstructorImpl(ThreadLocale threadLocale, AssetPathConstructor assetPathConstructor,
                                               JavaScriptStackSource javascriptStackSource,
                                               JavaScriptStackAssembler assembler,
-                                              ResponseCompressionAnalyzer compressionAnalyzer, @Symbol(SymbolConstants.COMBINE_SCRIPTS)
-    boolean combineScripts)
+                                              ResponseCompressionAnalyzer compressionAnalyzer,
+                                              @Symbol(SymbolConstants.COMBINE_SCRIPTS)
+                                              boolean combineScripts)
     {
         this.threadLocale = threadLocale;
         this.assetPathConstructor = assetPathConstructor;
@@ -75,9 +76,16 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
 
         List<Asset> assets = stack.getJavaScriptLibraries();
 
-        if (assets.size() > 1 && combineScripts)
+        // When combine scripts is true, we want to build the virtual aggregated JavaScript ... but only
+        // if there is more than one library asset, or any modules.
+        if (combineScripts)
         {
-            return combinedStackURL(stackName);
+            boolean needsVirtual = (assets.size() > 1) || (!stack.getModules().isEmpty());
+
+            if (needsVirtual)
+            {
+                return combinedStackURL(stackName);
+            }
         }
 
         return toPaths(assets);

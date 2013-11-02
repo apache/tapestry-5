@@ -77,10 +77,35 @@ public class JavaScriptModule
         configuration.add(InternalConstants.CORE_STACK_NAME, coreStack);
     }
 
+    private static final String[] bundledModules = new String[]{
+            "ajax", "dom", "events", "console", "exception-frame", "pageinit", "messages", "utils"
+    };
+
+    /**
+     * The core JavaScriptStack has a number of entries:
+     * <dl>
+     * <dt>requirejs</dt> <dd>The RequireJS AMD JavaScript library</dd>
+     * <dt>scriptaculous.js, effects.js</dt> <dd>Optional JavaScript libraries in compatibility mode (see {@link Trait#SCRIPTACULOUS})</dd>
+     * <dt>t53-compatibility.js</dt> <dd>Optional JavaScript library (see {@link Trait#INITIALIZERS})</dd>
+     * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
+     * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
+     * <dd>CSS files</dd>
+     * <dt>t5/core/ajax, dom, events, console, exception-frame, pageinit, messages, utils</dt>
+     * <dd>Additional JavaScript modules</dd>
+     * </dl>
+     * <p/>
+     * User modules may replace or extend this list.
+     */
     @Contribute(JavaScriptStack.class)
     @Core
-    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility, @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER) String provider)
+    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility,
+                                                @Symbol(SymbolConstants.REQUIRE_JS)
+                                                String requireJS,
+                                                @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                                                String provider)
     {
+        configuration.add("requirejs", new StackExtension(StackExtensionType.LIBRARY, requireJS));
+
         final String ROOT = "${tapestry.asset.root}";
 
         if (provider.equals("prototype") && compatibility.enabled(Trait.SCRIPTACULOUS))
@@ -95,6 +120,7 @@ public class JavaScriptModule
             add(configuration, StackExtensionType.LIBRARY,
                     ROOT + "/t53-compatibility.js"
             );
+            configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
         }
 
         add(configuration, StackExtensionType.STYLESHEET,
@@ -107,6 +133,12 @@ public class JavaScriptModule
                 ROOT + "/tapestry-console.css",
 
                 ROOT + "/tree.css");
+
+        for (String name : bundledModules)
+        {
+            String full = "t5/core/" + name;
+            configuration.add(full, new StackExtension(StackExtensionType.MODULE, full));
+        }
     }
 
     private static void add(OrderedConfiguration<StackExtension> configuration, StackExtensionType type, String... paths)
