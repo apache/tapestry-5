@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
+import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
@@ -39,7 +40,7 @@ import java.util.List;
  * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to convert between
  * server-side values and unique client-side strings. In some cases, a {@link ValueEncoder} can be generated automatically from
  * the type of the value parameter. The {@link ValueEncoderSource} service provides an encoder in these situations; it
- * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
+ * can be overridden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
  *
  * @tapestrydoc
@@ -78,14 +79,19 @@ public class Select extends AbstractField
     private ValueEncoder encoder;
 
     /**
-     * If true (the default), then the submitted value must be present in the {@link SelectModel}, or a
-     * validation errors occurs. If false, then the Tapestry 5.3 (and earlier) behavior is allowed. The insecure
-     * behavior could theoretically allow a selection to be made that was not presented to the user.
+     * Controls whether the submitted value is validated to be one of the values in
+     * the {@link SelectModel}. If "never", then no such validation is performed,
+     * theoretically allowing a selection to be made that was not presented to
+     * the user.  Note that an "always" value here requires the SelectModel to
+     * still exist (or be created again) when the form is submitted, whereas a
+     * "never" value does not.  Defaults to "auto", which causes the validation
+     * to occur only if the SelectModel is present (not null) when the form is
+     * submitted.
      *
      * @since 5.4
      */
-    @Parameter(value = "true")
-    private boolean secure;
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.VALIDATE_WITH_MODEL)
+    private SecureOption secure;
 
     /**
      * The model used to identify the option groups and options to be presented to the user. This can be generated
@@ -254,9 +260,18 @@ public class Select extends AbstractField
             return null;
         }
 
-        if (!secure)
+        // can we skip the check for the value being in the model?
+        if (secure == SecureOption.NEVER || (secure == SecureOption.AUTO && model == null))
         {
             return encoder.toValue(submittedValue);
+        }
+
+        // for entity types the SelectModel may be unintentionally null when the form is submitted
+        if (model == null)
+        {
+            throw new ValidationException("Model is null when validating submitted option." +
+                    " To fix: persist the SeletModel or recreate it upon form submission," +
+                    " or change the 'secure' parameter.");
         }
 
         return findValueInModel(submittedValue);

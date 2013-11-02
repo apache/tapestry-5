@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.*;
@@ -2081,7 +2082,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
 
-        // Grid component parameters defaults
+        // Grid component parameter defaults
         configuration.add(ComponentParameterConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
         configuration.add(ComponentParameterConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
         configuration.add(ComponentParameterConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
@@ -2091,12 +2092,15 @@ public final class TapestryModule
         configuration.add(ComponentParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);
         configuration.add(ComponentParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
 
-        // FormInjector component parameters defaults
+        // FormInjector component parameter defaults
         configuration.add(ComponentParameterConstants.FORMINJECTOR_INSERT_POSITION, "above");
         configuration.add(ComponentParameterConstants.FORMINJECTOR_SHOW_FUNCTION, "highlight");
 
-        // Palette component parameters defaults
+        // Palette component parameter defaults
         configuration.add(ComponentParameterConstants.PALETTE_ROWS_SIZE, 10);
+
+        // Defaults for components that use a SelectModel
+        configuration.add(ComponentParameterConstants.VALIDATE_WITH_MODEL, SecureOption.ALWAYS);
 
         // Zone component parameters defaults
         configuration.add(ComponentParameterConstants.ZONE_SHOW_METHOD, "show");

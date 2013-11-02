@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.data.BlankOption;
+import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
@@ -386,8 +387,77 @@ public class SelectTest extends InternalBaseTestCase
         WINDOWS, MAC, LINUX;
     }
 
+    /**
+     * TAP5-2204: When secure parameter is "always" there should be no
+     * validation error if the model is NOT null.
+     */
     @Test
-    public void submitted_option_found_when_secure() throws ValidationException
+    public void submitted_option_found_when_secure_always() throws ValidationException
+    {
+        checkSubmittedOption(true, SecureOption.ALWAYS, null);
+    }
+
+    /**
+     * TAP5-2204: When secure parameter is "always" there should be a
+     * validation error if the model is null.
+     */
+    @Test
+    public void submitted_option_not_found_when_secure_always() throws ValidationException
+    {
+        checkSubmittedOption(false, SecureOption.ALWAYS, "is null when validating");
+    }
+
+    /**
+     * TAP5-2204: When secure parameter is "never" there should be no
+     * validation error if the model is NOT null.
+     */
+    @Test
+    public void submitted_option_ok_when_secure_never() throws ValidationException
+    {
+        checkSubmittedOption(true, SecureOption.NEVER, null);
+    }
+
+    /**
+     * TAP5-2204: When secure parameter is "never" there should be no
+     * validation error if the model is null.
+     */
+    @Test
+    public void submitted_option_ok_when_secure_never_no_model() throws ValidationException
+    {
+        checkSubmittedOption(false, SecureOption.NEVER, null);
+    }
+
+    /**
+     * TAP5-2204: When secure parameter is "auto" there should be no
+     * validation error if the model is NOT null.
+     */
+    @Test
+    public void submitted_option_found_when_secure_auto() throws ValidationException
+    {
+        checkSubmittedOption(true, SecureOption.AUTO, null);
+    }
+
+    /**
+     * TAP5-2204: When secure parameter is "auto" there should be no
+     * validation error if the model is null.
+     */
+    @Test
+    public void submitted_option_ok_when_secure_auto() throws ValidationException
+    {
+        checkSubmittedOption(false, SecureOption.AUTO, null);
+    }
+
+    /**
+     * Utility for testing the "secure" option with various values and model
+     * states. This avoids a lot of redundant test setup code.
+     * 
+     * @param withModel whether there should be a model to test against
+     * @param secureOption which "secure" option to test
+     * @param expectedError the expected error message, nor null if no error
+     * @throws ValidationException
+     */
+    private void checkSubmittedOption(boolean withModel, SecureOption secureOption,
+            String expectedError) throws ValidationException
     {
 
         ValueEncoder<Platform> encoder = getService(ValueEncoderSource.class).getValueEncoder(Platform.class);
@@ -405,59 +475,38 @@ public class SelectTest extends InternalBaseTestCase
 
         tracker.recordInput(select, "MAC");
 
-        fvs.validate(Platform.MAC, null, null);
+        // when not failing we will expect to call the fvs.validate method
+        if (expectedError == null)
+        {
+            fvs.validate(Platform.MAC, null, null);
+        }
+        else
+        {
+            tracker.recordError(EasyMock.eq(select), EasyMock.contains(expectedError));
+        }
 
         replay();
-
-        SelectModel model = new EnumSelectModel(Platform.class, messages);
+        
+        SelectModel model = null;
+        if (withModel)
+        {
+            model = new EnumSelectModel(Platform.class, messages);
+        }
 
         set(select, "encoder", encoder);
         set(select, "model", model);
         set(select, "request", request);
-        set(select, "secure", true);
+        set(select, "secure", secureOption);
         set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
         set(select, "tracker", tracker);
         set(select, "fieldValidationSupport", fvs);
 
         select.processSubmission("xyz");
 
-        verify();
-
-        assertEquals(get(select, "value"), Platform.MAC);
-    }
-
-    @Test
-    public void submitted_option_not_found_when_secure() throws ValidationException
-    {
-
-        ValueEncoder<Platform> encoder = getService(ValueEncoderSource.class).getValueEncoder(Platform.class);
-
-        ValidationTracker tracker = mockValidationTracker();
-        Request request = mockRequest();
-        Messages messages = mockMessages();
-
-        expect(request.getParameter("xyz")).andReturn("MAC");
-
-        expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
-
-        Select select = new Select();
-
-        tracker.recordInput(select, "MAC");
-
-        tracker.recordError(EasyMock.eq(select), EasyMock.contains("option is not listed"));
-
-        replay();
-
-        SelectModel model = new EnumSelectModel(Platform.class, messages, new Platform[]{Platform.WINDOWS, Platform.LINUX});
-
-        set(select, "encoder", encoder);
-        set(select, "model", model);
-        set(select, "request", request);
-        set(select, "secure", true);
-        set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
-        set(select, "tracker", tracker);
-
-        select.processSubmission("xyz");
+        if (expectedError == null)
+        {
+            assertEquals(get(select, "value"), Platform.MAC);
+        }
 
         verify();
     }
@@ -492,7 +541,7 @@ public class SelectTest extends InternalBaseTestCase
         set(select, "encoder", encoder);
         set(select, "model", model);
         set(select, "request", request);
-        set(select, "secure", true);
+        set(select, "secure", SecureOption.ALWAYS);
         set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
         set(select, "tracker", tracker);
         set(select, "fieldValidationSupport", fvs);

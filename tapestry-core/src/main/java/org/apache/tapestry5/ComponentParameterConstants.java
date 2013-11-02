@@ -72,22 +72,31 @@ public class ComponentParameterConstants
 
     /**
      * The default position where to insert content into {@link org.apache.tapestry5.corelib.components.Form}.
-     * Default to "above".
+     * Defaults to "above".
      */
     public static final String FORMINJECTOR_INSERT_POSITION = "tapestry.components.forminjector_insert_position";
 
     /**
      * The default name for a JS function to use to show the injected content by
      * {@link org.apache.tapestry5.corelib.components.FormInjector}.
-     * Default to "highlight".
+     * Defaults to "highlight".
      */
     public static final String FORMINJECTOR_SHOW_FUNCTION = "tapestry.components.forminjector_show_function";
 
     /**
      * The default size of rows to display in a {@link org.apache.tapestry5.corelib.components.Palette}
-     * component. Default to 10.
+     * component. Defaults to 10.
      */
     public static final String PALETTE_ROWS_SIZE = "tapestry.components.palette_rows_size";
+
+    /**
+     * The default for whether components that use a SelectModel (e.g.
+     * {@link org.apache.tapestry5.corelib.components.Select}) enforce
+     * that the submitted value is one of the values in the SelectModel
+     * 
+     * @since 5.4
+     */
+    public static final String VALIDATE_WITH_MODEL = "tapestry.components.validate_with_model";
 
     /**
      * The default name of a JS function attached to Tapestry.ElementEffect object to use for the initial
