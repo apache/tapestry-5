@@ -371,7 +371,8 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         expect(mock.writeInitialization(isA(Element),
             eq(libraryURLs),
-            eq(inits))).andAnswer({
+            eq(inits),
+            eq([]))).andAnswer({
             def body = EasyMock.currentArguments[0]
 
             body.comment("MODULE-MANAGER-INITIALIZATION")
