@@ -2116,7 +2116,7 @@ public final class TapestryModule
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
 
-        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_3_0_0");
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap-3.0.1");
 
         configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
 

@@ -204,12 +204,12 @@ a new page.
 
 ## Bootstrap 3
 
-Tapestry now includes a default copy of Bootstrap 3, in addition to its own default set of CSS rules.
+Tapestry now includes a default copy of Bootstrap 3.0.1, in addition to its own default set of CSS rules.
 The Tapestry CSS from prior releases has been largely eliminated; instead
 components now refer to standard Bootstrap CSS classes.
 
 Tapestry now automatically imports the "core" stack for all pages (in previously releases, the "core" stack
-was only imported if the page made use of JavaScript). Because of this, the Boostrap CSS will always be available.
+was only imported if the page made use of JavaScript). Because of this, the Bootstrap CSS will always be available.
 
 ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
 implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
@@ -256,7 +256,7 @@ div.form-group, which is provided around the editor for each property.
 This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
 still exists, but the methods do nothing, and the service and interface will be removed in 5.5.
 
-## JavaScriptSupport    Extended
+## JavaScriptSupport Extended
 
 New methods have been added to allow JavaScript modules to be "required" into the page; it is possible to invoke
 the exported function of a module with JSON-compatible parameters; a module may also export multiple names functions that
