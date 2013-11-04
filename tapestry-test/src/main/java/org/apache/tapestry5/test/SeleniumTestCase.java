@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
  */
 public abstract class SeleniumTestCase extends Assert implements Selenium
 {
-    public final Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
+    public final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
 
     /**
      * 15 seconds
@@ -304,7 +304,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         if (r != null)
         {
-            System.err.println("Shutting down integration tests ...");
+            LOGGER.info("Shutting down integration test support ...");
             r.run();
         }
     }
@@ -398,6 +398,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @BeforeMethod
     public void indicateTestMethodName(Method testMethod)
     {
+        LOGGER.info("Executing " + testMethod);
+
         testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, testMethod);
 
         String className = testMethod.getDeclaringClass().getSimpleName();
