@@ -18,7 +18,6 @@ import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
-import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,7 +204,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
 
         CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost",
-                RemoteControlConfiguration.DEFAULT_PORT, browserStartCommand, baseURL);
+                seleniumServer.getPort(), browserStartCommand, baseURL);
 
         final ErrorReporterImpl errorReporter = new ErrorReporterImpl(httpCommandProcessor, testContext);
 
