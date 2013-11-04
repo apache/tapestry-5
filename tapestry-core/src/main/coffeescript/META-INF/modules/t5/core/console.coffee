@@ -31,9 +31,15 @@ define ["./dom", "underscore", "./bootstrap"],
         filter = noFilter
         return
 
-      text = text.toLowerCase()
+      words = text.toLowerCase().split /\s+/
 
-      filter = (e) -> e.text().toLowerCase().indexOf(text) >= 0
+      filter = (e) ->
+        content = e.text().toLowerCase()
+
+        for word in words
+          return false if content.indexOf(word) < 0
+
+        return true
 
       return
 
@@ -84,55 +90,55 @@ define ["./dom", "underscore", "./bootstrap"],
         if consoleAttribute is "invisible"
           floatingConsole.hide()
 
-        messages = floatingConsole.findFirst ".message-container"
+      messages = floatingConsole.findFirst ".message-container"
 
-        floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
+      floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
 
-        floatingConsole.on "click", "[data-action=clear]", ->
-          floatingConsole.hide()
-          messages.update ""
+      floatingConsole.on "click", "[data-action=clear]", ->
+        floatingConsole.hide()
+        messages.update ""
 
-        floatingConsole.on "click", "[data-action=disable]", ->
+      floatingConsole.on "click", "[data-action=disable]", ->
 
-          @attribute "disabled", true
-          floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
+        @attribute "disabled", true
+        floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
 
-          messages.hide()
+        messages.hide()
 
-          return false
+        return false
 
-        floatingConsole.on "click", "[data-action=enable]", ->
+      floatingConsole.on "click", "[data-action=enable]", ->
 
-          @attribute "disabled", true
-          floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
+        @attribute "disabled", true
+        floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
 
-          messages.show()
+        messages.show()
 
-          return false
+        return false
 
-        floatingConsole.on "change keyup", "input", ->
-          updateFilter @value()
+      floatingConsole.on "change keyup", "input", ->
+        updateFilter @value()
 
-          for e in messages.children()
-            visible = filter e
+        for e in messages.children()
+          visible = filter e
 
-            e[if visible then "show" else "hide"]()
+          e[if visible then "show" else "hide"]()
 
-          return false
+        return false
 
-        div = dom.create
-          class: className,
-          _.escape message
+      div = dom.create
+        class: className,
+        _.escape message
 
-          # Should really filter on original message, not escaped.
+        # Should really filter on original message, not escaped.
 
-        unless filter div
-          div.hide()
+      unless filter div
+        div.hide()
 
-        messages.append div
+      messages.append div
 
-        # A slightly clumsy way to ensure that the container is scrolled to the bottom.
-        _.delay -> messages.element.scrollTop = messages.element.scrollHeight
+      # A slightly clumsy way to ensure that the container is scrolled to the bottom.
+      _.delay -> messages.element.scrollTop = messages.element.scrollHeight
 
     level = (className, consolefn) ->
       (message) ->
