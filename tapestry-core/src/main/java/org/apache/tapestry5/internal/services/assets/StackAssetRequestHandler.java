@@ -23,6 +23,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -46,18 +47,21 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
     private final JavaScriptStackAssembler javaScriptStackAssembler;
 
+    private final JavaScriptStackSource stackSource;
     private final Request request;
 
     public StackAssetRequestHandler(Logger logger, LocalizationSetter localizationSetter,
                                     ResourceStreamer resourceStreamer,
                                     OperationTracker tracker,
-                                    JavaScriptStackAssembler javaScriptStackAssembler, Request request)
+                                    JavaScriptStackAssembler javaScriptStackAssembler,
+                                    JavaScriptStackSource stackSource, Request request)
     {
         this.logger = logger;
         this.localizationSetter = localizationSetter;
         this.resourceStreamer = resourceStreamer;
         this.tracker = tracker;
         this.javaScriptStackAssembler = javaScriptStackAssembler;
+        this.stackSource = stackSource;
         this.request = request;
     }
 
@@ -87,6 +91,13 @@ public class StackAssetRequestHandler implements AssetRequestHandler
         String checksum = matcher.group(1);
         String localeName = matcher.group(2);
         final String stackName = matcher.group(3);
+
+        if (stackSource.findStack(stackName) == null)
+        {
+            logger.warn(String.format("JavaScript stack '%s' not found.", stackName));
+            return false;
+        }
+
 
         // Yes, I have a big regret that the JavaScript stack stuff relies on this global, rather than
         // having it passed around properly.

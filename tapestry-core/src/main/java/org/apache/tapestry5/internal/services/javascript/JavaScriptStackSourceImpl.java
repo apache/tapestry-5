@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+
+import java.util.List;
+import java.util.Map;
 
 public class JavaScriptStackSourceImpl implements JavaScriptStackSource
 {
@@ -34,13 +34,20 @@ public class JavaScriptStackSourceImpl implements JavaScriptStackSource
 
     public JavaScriptStack getStack(String name)
     {
-        JavaScriptStack stack = configuration.get(name);
+        JavaScriptStack stack = findStack(name);
 
         if (stack == null)
+        {
             throw new UnknownValueException(String.format("No JavaScriptStack with name '%s'.", name),
                     new AvailableValues("Configured JavaScript stacks", configuration));
+        }
 
         return stack;
+    }
+
+    public JavaScriptStack findStack(String name)
+    {
+        return configuration.get(name);
     }
 
     public List<String> getStackNames()

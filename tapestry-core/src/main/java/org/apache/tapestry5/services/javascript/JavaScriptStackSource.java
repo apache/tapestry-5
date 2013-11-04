@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import java.util.List;
-
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
+import java.util.List;
+
 /**
  * Manages the available {@link JavaScriptStack}s, each of which has a unique name.
- * 
+ *
  * @since 5.2.0
  */
 @UsesMappedConfiguration(JavaScriptStack.class)
@@ -29,16 +29,24 @@ public interface JavaScriptStackSource
 {
     /**
      * Gets a stack by name (ignoring case).
-     * 
+     *
      * @return named stack
      * @throws UnknownValueException
-     *             if no such stack
+     *         if no such stack
      */
     JavaScriptStack getStack(String name);
 
     /**
+     * Gets a stack by name (ignoring case).
+     *
+     * @return named stack, or null if not found
+     * @since 5.4
+     */
+    JavaScriptStack findStack(String name);
+
+    /**
      * Returns the names of all stacks, in sorted order.
-     * 
+     *
      * @since 5.2.1
      */
     List<String> getStackNames();
