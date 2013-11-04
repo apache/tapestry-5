@@ -221,8 +221,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 try
                 {
+                    System.err.println("Shutting down selenium client ...");
+
                     selenium.stop();
+
+                    System.err.println("Shutting down selenium server ...");
+
                     seleniumServer.stop();
+
+                    System.err.println("Shutting web server ...");
+
                     stopWebServer.run();
 
                     // Output, at the end of the Test, any html capture or screen shots (this makes it much easier
@@ -272,6 +280,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         if (r != null)
         {
+            System.err.println("Shutting down integration tests ...");
             r.run();
         }
     }
