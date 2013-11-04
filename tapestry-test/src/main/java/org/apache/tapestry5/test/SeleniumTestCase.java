@@ -20,6 +20,8 @@ import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.*;
@@ -37,6 +39,8 @@ import java.lang.reflect.Method;
  */
 public abstract class SeleniumTestCase extends Assert implements Selenium
 {
+    public final Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
+
     /**
      * 15 seconds
      */
@@ -175,14 +179,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
 
-        System.err.println("Starting SeleniumTestCase:");
-        System.err.println("    currentDir: " + System.getProperty("user.dir"));
-        System.err.println("  webAppFolder: " + webAppFolder);
-        System.err.println("     container: " + container);
-        System.err.println("   contextPath: " + contextPath);
-        System.err.printf("         ports: %d / %d%n", port, sslPort);
-        System.err.println("  browserStart: " + browserStartCommand);
-        System.err.println("       baseURL: " + baseURL);
+        String sep = System.getProperty("line.separator");
+
+        LOGGER.info("Starting SeleniumTestCase:" + sep +
+                "    currentDir: " + System.getProperty("user.dir") + sep +
+                "  webAppFolder: " + webAppFolder + sep +
+                "     container: " + container + sep +
+                "   contextPath: " + contextPath + sep +
+                String.format("         ports: %d / %d", port, sslPort) + sep +
+                "  browserStart: " + browserStartCommand + sep +
+                "       baseURL: " + baseURL);
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
@@ -221,17 +227,35 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 try
                 {
-                    System.err.println("Shutting down selenium client ...");
+                    LOGGER.info("Shutting down selenium client ...");
 
-                    selenium.stop();
+                    try
+                    {
+                        selenium.stop();
+                    } catch (RuntimeException e)
+                    {
+                        LOGGER.error("Selenium client shutdown failure.", e);
+                    }
 
-                    System.err.println("Shutting down selenium server ...");
+                    LOGGER.info("Shutting down selenium server ...");
 
-                    seleniumServer.stop();
+                    try
+                    {
+                        seleniumServer.stop();
+                    } catch (RuntimeException e)
+                    {
+                        LOGGER.error("Selenium server shutdown failure.", e);
+                    }
 
-                    System.err.println("Shutting web server ...");
+                    LOGGER.info("Shutting web server ...");
 
-                    stopWebServer.run();
+                    try
+                    {
+                        stopWebServer.run();
+                    } catch (RuntimeException e)
+                    {
+                        LOGGER.error("Web server shutdown failure.", e);
+                    }
 
                     // Output, at the end of the Test, any html capture or screen shots (this makes it much easier
                     // to locate them at the end of the run; there's such a variance on where they end up based
@@ -1158,18 +1182,23 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         // that does not include the body element and data-page-initialized element. In those cases,
         // there will never be page initialization in the Tapestry sense and we return immediately.
 
-        if (!isElementPresent("css=body[data-page-initialized]")) { return; }
+        if (!isElementPresent("css=body[data-page-initialized]"))
+        {
+            return;
+        }
 
         int totalTime = 0;
         int sleepTime = 20;
 
-        while (true) {
+        while (true)
+        {
             if (isElementPresent("css=body[data-page-initialized='true']"))
             {
                 return;
             }
 
-            if (totalTime > 10000) {
+            if (totalTime > 10000)
+            {
                 reportAndThrowAssertionError("Page did not finish initializing.");
             }
 
