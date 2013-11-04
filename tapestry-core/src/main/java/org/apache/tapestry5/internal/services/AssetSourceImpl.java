@@ -186,12 +186,12 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
                             if (metaResource.getFolder().startsWith(metaRoot))
                             {
-                                logger.error(String.format("Classpath asset '/%s' should be moved to folder '/%s/'.",
+                                logger.warn(String.format("Classpath asset '/%s' should be moved to folder '/%s/'.",
                                         resultResource.getPath(),
                                         metaResource.getFolder()));
                             } else
                             {
-                                logger.error(String.format("Classpath asset '/%s' should be moved under folder '/%s', and the relative path adjusted.",
+                                logger.warn(String.format("Classpath asset '/%s' should be moved under folder '/%s', and the relative path adjusted.",
                                         resultResource.getPath(),
                                         metaRoot));
                             }
