@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,6 +124,32 @@ public class EnvironmentImplTest extends TapestryTestCase
             assertEquals(
                     ex.getMessage(),
                     "No object of type java.util.List is available from the Environment.");
+        }
+
+        verify();
+    }
+    
+    @Test
+    public void peek_required_does_not_list_previouly_available()
+    {
+        Environment e = new EnvironmentImpl();
+        Location l = mockLocation();
+
+        replay();
+
+        e.push(Location.class, l);
+        e.pop(Location.class);
+
+        try
+        {
+            e.peekRequired(Location.class);
+            unreachable();
+        } catch (UnknownValueException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "No object of type org.apache.tapestry5.ioc.Location is available from the Environment.");
+            assertFalse(ex.getAvailableValues().getValues().contains("org.apache.tapestry5.ioc.Location"));
         }
 
         verify();

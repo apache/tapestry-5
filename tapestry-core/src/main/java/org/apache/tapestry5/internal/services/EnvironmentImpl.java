@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
@@ -27,6 +28,7 @@ import org.apache.tapestry5.services.Environment;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).
@@ -87,11 +89,15 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
             throw new UnknownValueException(String.format("No object of type %s is available from the Environment.", type.getName()),
                     new AvailableValues("Environmentals",
-                            F.flow(typeToStack.keySet()).map(new Mapper<Class, String>()
+                            F.flow(typeToStack.entrySet()).remove(new Predicate<Entry<Class, LinkedList>>() {
+                              public boolean accept(Entry<Class, LinkedList> element) {
+                                return element.getValue().isEmpty();
+                              }
+                            }).map(new Mapper<Entry<Class, LinkedList>, String>()
                             {
-                                public String map(Class element)
+                                public String map(Entry<Class, LinkedList> element)
                                 {
-                                    return element.getName();
+                                    return element.getKey().getName();
                                 }
                             }).toList()));
         }
