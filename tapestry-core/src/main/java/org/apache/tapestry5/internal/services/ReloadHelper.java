@@ -22,7 +22,7 @@ package org.apache.tapestry5.internal.services;
 public interface ReloadHelper
 {
     /**
-     * Force a reload (if in production mode). Writes an {@link org.apache.tapestry5.alerts.AlertManager} alert message.
+     * Force a reload (if in development mode). Writes an {@link org.apache.tapestry5.alerts.AlertManager} alert message.
      */
     void forceReload();
 
