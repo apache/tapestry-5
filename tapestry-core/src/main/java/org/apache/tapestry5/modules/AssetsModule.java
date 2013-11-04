@@ -158,6 +158,8 @@ public class AssetsModule
      * <dd>application/x-shockwave-flash</dd>
      * <dt>woff</dt>
      * <dd>application/font-woff</dd>
+     * <dt>tff</dt> <dd>application/x-font-ttf</dd>
+     * <dt>eot</dt> <dd>application/vnd.ms-fontobject</dd>
      * </dl>
      */
     @Contribute(ContentTypeAnalyzer.class)
@@ -172,6 +174,8 @@ public class AssetsModule
         configuration.add("swf", "application/x-shockwave-flash");
         configuration.add("svg", "image/svg+xml");
         configuration.add("woff", "application/font-woff");
+        configuration.add("ttf", "application/x-font-ttf");
+        configuration.add("eot", "application/vnd.ms-fontobject");
     }
 
     /**
@@ -182,6 +186,8 @@ public class AssetsModule
      * <li>image/png</li>
      * <li>application/x-shockwave-flash</li>
      * <li>application/font-woff</li>
+     * <li>application/x-font-ttf</li>
+     * <li>application/vnd.ms-fontobject</li>
      * </ul>
      */
     @Contribute(CompressionAnalyzer.class)
@@ -192,6 +198,8 @@ public class AssetsModule
         configuration.add("image/png", false);
         configuration.add("application/x-shockwave-flash", false);
         configuration.add("application/font-woff", false);
+        configuration.add("application/x-font-ttf", false);
+        configuration.add("application/vnd.ms-fontobject", false);
     }
 
     @Marker(ContextProvider.class)
