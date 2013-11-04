@@ -22,7 +22,7 @@ define ["./dom"],
     dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
       checked = @element.checked
 
-      for traceList in dom.body.find "ul.stack-trace"
+      for traceList in dom.body.find ".stack-trace"
         traceList[if checked then "addClass" else "removeClass"] "filtered"
 
       return

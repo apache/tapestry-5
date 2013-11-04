@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2008-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,4 +89,45 @@ public class ExceptionDisplay
 
         return result;
     }
+
+    public Object getLineNumberForFrame()
+    {
+        if (frame.getLineNumber() < 1)
+        {
+            return "";
+        }
+
+        return frame.getLineNumber();
+    }
+
+    public String getFramePackageName()
+    {
+        return splitClass()[0];
+    }
+
+    public String getFrameClassName()
+    {
+        return splitClass()[1];
+    }
+
+    private String[] splitClass()
+    {
+        String name = frame.getClassName();
+
+        int dotx = name.lastIndexOf('.');
+
+        // For generated classes in root package:
+        if (dotx < 0)
+        {
+            return new String[]{"", name};
+        }
+
+        // For normal classes:
+
+        return new String[]{
+                name.substring(0, dotx),
+                name.substring(dotx)
+        };
+    }
 }
+

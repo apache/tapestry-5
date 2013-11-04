@@ -1,17 +1,33 @@
-UL.stack-trace LI {
+TABLE.stack-trace {
     font-size: small;
 }
 
-LI.usercode-frame {
+TABLE.stack-trace TR.usercode-frame {
     font-weight: bold;
     color: blue;
 }
 
-LI.omitted-frame {
+TABLE.stack-trace TR.omitted-frame {
     color: gray;
-    list-style: square;
 }
 
-UL.filtered LI.omitted-frame {
+TABLE.stack-trace.filtered TR.omitted-frame {
     display: none;
+}
+
+TABLE.stack-trace TD.class-name {
+    text-align: right;
+}
+
+TABLE.stack-trace .package-name {
+    font-size: xx-small;
+}
+
+TABLE.stack-trace TD.method-name {
+    font-weight: bold;
+}
+
+TABLE.stack-trace TD.file-name {
+    font-size: x-small;
+    text-align: right;
 }

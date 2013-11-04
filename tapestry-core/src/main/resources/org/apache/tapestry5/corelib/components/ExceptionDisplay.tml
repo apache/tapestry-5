@@ -5,7 +5,9 @@
             <h3>${info.className}</h3>
 
             <t:if test="info.message">
-                <p><strong>${info.message}</strong></p>
+                <p>
+                    <strong>${info.message}</strong>
+                </p>
             </t:if>
 
             <t:if test="info.propertyNames">
@@ -25,16 +27,22 @@
             <div>
                 <div class="pull-right">
                     <label class="checkbox">
-                        <input type="checkbox" data-behavior="stack-trace-filter-toggle" checked="true"/> Filter Frames?
+                        <input type="checkbox" data-behavior="stack-trace-filter-toggle" checked="true"/>
+                        Filter Frames?
                     </label>
                 </div>
                 <h4>Stack trace:</h4>
             </div>
-            <ul class="stack-trace filtered">
-                <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
-                    ${frame}
-                </li>
-            </ul>
+            <table class="stack-trace filtered table table-condensed table-hover table-striped">
+                <tr t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
+                    <td class="class-name" xml:space="preserve">
+                        <span class="package-name">${framePackageName}</span>${frameClassName}
+                    </td>
+                    <td class="method-name">${frame.methodName}()</td>
+                    <td class="file-name">${frame.fileName}</td>
+                    <td>${lineNumberForFrame}</td>
+                </tr>
+            </table>
         </t:if>
     </t:loop>
 </div>
