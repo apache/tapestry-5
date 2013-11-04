@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 import java.util.List;
@@ -59,6 +60,11 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     public void addScript(InitializationPriority priority, String script)
     {
         notImplemented("addScript");
+    }
+    
+    public void addModuleConfigurationCallback(ModuleConfigurationCallback callback)
+    {
+        notImplemented("moduleConfigurationCallback");
     }
 
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)

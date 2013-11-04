@@ -20,6 +20,7 @@ import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
@@ -32,6 +33,8 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
+    
+    private final List<ModuleConfigurationCallback> moduleConfigurationCallbacks = CollectionFactory.newList();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
@@ -218,7 +221,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
         // Eventually, (nearly) everything will be loaded as modules.
 
-        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits(), moduleConfigurationCallbacks);
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String otherExistingElement, String newElementName)
@@ -296,4 +299,11 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         container.pop();
     }
+
+    public void addModuleConfigurationCallback(ModuleConfigurationCallback callback)
+    {
+        assert callback != null;
+        moduleConfigurationCallbacks.add(callback);
+    }
+    
 }

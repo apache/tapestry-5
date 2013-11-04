@@ -19,6 +19,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
@@ -256,5 +257,14 @@ public interface JavaScriptSupport
      * @since 5.4
      */
     Initialization require(String moduleName);
+    
+    /**
+     * Adds a module configuration callback for this request.
+     * 
+     * @param callback a {@link ModuleConfigurationCallback}. It cannot be null.
+     * @see DocumentLinker#addModuleConfigurationCallback(ModuleConfigurationCallback)
+     * @since 5.4
+     */
+    void addModuleConfigurationCallback(ModuleConfigurationCallback callback);
 
 }

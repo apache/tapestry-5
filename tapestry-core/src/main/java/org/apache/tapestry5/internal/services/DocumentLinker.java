@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
@@ -48,6 +49,14 @@ public interface DocumentLinker
      * Adds a link to load a CSS stylesheet.
      */
     void addStylesheetLink(StylesheetLink stylesheet);
+    
+    /**
+     * Adds a module configuration callback for this request.
+     * 
+     * @param callback a {@link ModuleConfigurationCallback}. It cannot be null.
+     * @since 5.4
+     */
+    void addModuleConfigurationCallback(ModuleConfigurationCallback callback);
 
     /**
      * Adds JavaScript code. The code is collected into a single block that is injected just before the close body tag

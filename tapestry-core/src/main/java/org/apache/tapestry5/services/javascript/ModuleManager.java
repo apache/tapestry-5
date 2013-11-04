@@ -51,8 +51,11 @@ public interface ModuleManager
      *         (separated by a ':', e.g. "myapp/mymodule:myfunc").
      *         When there are no arguments, the qualified function name may be used; where there are arguments, the
      *         init must be a JSONArray.
+     * @param moduleConfigurationCallbacks a list of {@link ModuleConfigurationCallback}s. It
+     *         cannot be null. 
      */
-    void writeInitialization(Element body, List<String> libraryURLs, List<?> inits);
+    void writeInitialization(Element body, List<String> libraryURLs, List<?> inits,
+            List<ModuleConfigurationCallback> moduleConfigurationCallbacks);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

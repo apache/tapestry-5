@@ -535,7 +535,10 @@ public class Index
 							"Exact"),
 
 					new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
-							"Unwanted", "context")
+							"Unwanted", "context"),
+                    
+                    new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()")
+
             );
 
     static

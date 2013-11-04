@@ -30,6 +30,7 @@ import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.util.List;
@@ -82,10 +83,17 @@ public class ModuleManagerImpl implements ModuleManager
         baseConfig = buildBaseConfig(configuration, !productionMode);
     }
 
-    private String buildRequireJSConfig()
+    private String buildRequireJSConfig(List<ModuleConfigurationCallback> callbacks)
     {
         // This is the part that can vary from one request to another, based on the capabilities of the client.
         JSONObject config =  baseConfig.copy().put("baseUrl", getBaseURL());
+        
+        // TAP5-2196: allow changes to the configuration in a per-request basis.
+        for (ModuleConfigurationCallback callback : callbacks)
+        {
+            config = callback.configure(config);
+            assert config != null;
+        }
 
         return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
     }
@@ -166,14 +174,15 @@ public class ModuleManagerImpl implements ModuleManager
         tracker.clearOnInvalidation(cache);
     }
 
-    public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits)
+    public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits,
+            List<ModuleConfigurationCallback> callbacks)
     {
         Element element = body.element("script", "type", "text/javascript");
 
         // Build it each time because we don't know if the client supports GZip or not, and
         // (in development mode) URLs for some referenced assets could change (due to URLs
         // containing a checksum on the resource content).
-        element.raw(buildRequireJSConfig());
+        element.raw(buildRequireJSConfig(callbacks));
 
         StringBuilder content = new StringBuilder(1000);
 

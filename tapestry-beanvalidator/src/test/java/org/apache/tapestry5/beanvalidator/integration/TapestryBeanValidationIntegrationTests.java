@@ -18,7 +18,7 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp", browserStartCommand = "*googlechrome")
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
     public static final String AVAILABLE_OPTIONS = "css=.palette-available select";

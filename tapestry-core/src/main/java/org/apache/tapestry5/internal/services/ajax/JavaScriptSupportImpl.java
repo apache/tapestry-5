@@ -14,6 +14,13 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
@@ -27,14 +34,13 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.tapestry5.services.javascript.Initialization;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -239,6 +245,11 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void addScript(String format, Object... arguments)
     {
         addScript(InitializationPriority.NORMAL, format, arguments);
+    }
+    
+    public void addModuleConfigurationCallback(ModuleConfigurationCallback callback)
+    {
+        linker.addModuleConfigurationCallback(callback);
     }
 
     public String allocateClientId(ComponentResources resources)
