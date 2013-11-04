@@ -16,7 +16,8 @@ class WebResourcesSpec extends GebReportingSpec {
     }
 
     def cleanupSpec() {
-        runner.stop()
+        if (runner != null)
+            runner.stop()
     }
 
     def "CoffeeScript compilation"() {
