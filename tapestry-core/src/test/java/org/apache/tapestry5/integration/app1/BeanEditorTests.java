@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * Tests for the {@link BeanEditor} component, often embedded inside
  * a {@link BeanEditForm} component.
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/app1", browserStartCommand = "*googlechrome")
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 @Test
 public class BeanEditorTests extends App1TestCase
 {

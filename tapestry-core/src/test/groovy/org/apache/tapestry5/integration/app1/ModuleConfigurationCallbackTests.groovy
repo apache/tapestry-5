@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.test.TapestryTestConfiguration;
+import org.apache.tapestry5.test.TapestryTestConfiguration
 import org.testng.annotations.Test
 
-@TapestryTestConfiguration(webAppFolder = "src/test/app1", browserStartCommand="*googlechrome")
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 class ModuleConfigurationCallbackTests extends App1TestCase {
 
     @Test
