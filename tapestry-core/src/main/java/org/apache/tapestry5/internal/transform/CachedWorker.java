@@ -182,9 +182,10 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
                 invocation.proceed();
 
-                invocation.rethrow();
-
-                cache.set(invocation.getReturnValue());
+                if(!invocation.didThrowCheckedException())
+                {
+                    cache.set(invocation.getReturnValue());
+                }
             }
 
             private MethodResultCache getOrCreateCache(MethodInvocation invocation)
