@@ -133,7 +133,7 @@ public final class JSONObject extends JSONCollection
     /**
      * The map where the JSONObject's properties are kept.
      */
-    private final Map<String, Object> properties = new HashMap<String, Object>();
+    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     /**
      * It is sometimes more convenient and less ambiguous to have a <code>NULL</code> object than to use Java's

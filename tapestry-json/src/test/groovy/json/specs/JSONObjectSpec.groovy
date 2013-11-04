@@ -680,14 +680,14 @@ class JSONObjectSpec extends Specification {
   "outer" : {
     "inner" : "here"
   },
-  "otherwise" : "a quoted string",
-  "boolean" : true,
   "number" : 22.7,
   "array" : [
     1,
     2,
     3
-  ]
+  ],
+  "boolean" : true,
+  "otherwise" : "a quoted string"
 }'''
     }
 
@@ -809,7 +809,7 @@ class JSONObjectSpec extends Specification {
         then:
 
         result.is object
-        object.toCompactString() == /{"wilma":"flintstone","fred":"flintstone","barney":"rubble"}/
+        object.toCompactString() == /{"fred":"flintstone","barney":"rubble","wilma":"flintstone"}/
     }
 
     def "in() where the value is not JSONObject is an exception"() {
