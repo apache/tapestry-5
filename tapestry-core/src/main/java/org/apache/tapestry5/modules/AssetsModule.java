@@ -78,6 +78,11 @@ public class AssetsModule
 
         configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "asset");
         configuration.add(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX, "${tapestry.asset-path-prefix}.gz");
+
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap-3.0.2");
+        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require-2.1.8.js");
+
+        configuration.add("tapestry.asset.root", "classpath:META-INF/assets/tapestry5");
     }
 
     // The use of decorators is to allow third-parties to get their own extensions

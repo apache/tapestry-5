@@ -2039,8 +2039,6 @@ public final class TapestryModule
         // files deleted between scriptaculous releases to be accidentally left lying around).
         // There's also a ClasspathAliasManager contribution based on the path.
 
-        configuration.add("tapestry.asset.root", "classpath:META-INF/assets/tapestry5");
-
         configuration.add(SymbolConstants.SCRIPTACULOUS, "${tapestry.asset.root}/scriptaculous_1_9_0");
 
         // Likewise for WebFX DatePicker, currently version 1.0.6
@@ -2109,14 +2107,11 @@ public final class TapestryModule
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
-        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require-2.1.8.js");
         configuration.add(SymbolConstants.CONTEXT_PATH, "");
 
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
-
-        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap-3.0.1");
 
         configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
 
