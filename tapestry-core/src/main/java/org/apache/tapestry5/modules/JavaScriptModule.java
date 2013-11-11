@@ -87,6 +87,8 @@ public class JavaScriptModule
      * <dt>requirejs</dt> <dd>The RequireJS AMD JavaScript library</dd>
      * <dt>scriptaculous.js, effects.js</dt> <dd>Optional JavaScript libraries in compatibility mode (see {@link Trait#SCRIPTACULOUS})</dd>
      * <dt>t53-compatibility.js</dt> <dd>Optional JavaScript library (see {@link Trait#INITIALIZERS})</dd>
+     * <dt>underscore-library, underscore-module</dt>
+     * <dt>The Underscore JavaScript library, and the shim that allows underscore to be injected</dt>
      * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
      * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
      * <dd>CSS files</dd>
@@ -107,6 +109,7 @@ public class JavaScriptModule
                                                 String provider)
     {
         configuration.add("requirejs", new StackExtension(StackExtensionType.LIBRARY, requireJS));
+        configuration.add("underscore-library", new StackExtension(StackExtensionType.LIBRARY, "${tapestry.asset.root}/underscore-1.5.2.js"));
 
         final String ROOT = "${tapestry.asset.root}";
 
@@ -141,6 +144,8 @@ public class JavaScriptModule
             String full = "t5/core/" + name;
             configuration.add(full, new StackExtension(StackExtensionType.MODULE, full));
         }
+
+        configuration.add("underscore-module", new StackExtension(StackExtensionType.MODULE, "underscore"));
 
         if (provider.equals("jquery"))
         {
@@ -260,8 +265,8 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModules(MappedConfiguration<String, Object> configuration,
-                                        @Path("${tapestry.asset.root}/underscore-1.5.2.js")
-                                        Resource underscore,
+                                        @Path("${tapestry.asset.root}/underscore-shim.js")
+                                        Resource underscoreShim,
 
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
@@ -278,7 +283,8 @@ public class JavaScriptModule
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/transition.js")
                                         Resource transition)
     {
-        configuration.add("underscore", new JavaScriptModuleConfiguration(underscore).exports("_"));
+        // The underscore shim module allows Underscore to be injected
+        configuration.add("underscore", new JavaScriptModuleConfiguration(underscoreShim));
         // Hacking around https://github.com/jrburke/requirejs/issues/534
         configuration.add("jquery-library", new JavaScriptModuleConfiguration(jQuery));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
