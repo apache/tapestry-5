@@ -63,6 +63,10 @@ public enum StackExtensionType
      * Note that this only loads the module's <em>code</em> and defines the module as available;
      * the module's function will not be invoked unless {@link JavaScriptSupport#require(String)} is invoked to establish
      * a dependency.
+     * <p/>
+     * Note that at this time, {@linkplain JavaScriptModuleConfiguration#exports(String) shimmed modules} can not
+     * be aggregated into stacks properly; the shimmed module will be aggregated, but then will still be loaded via
+     * a subsequent HTTP request.
      *
      * @since 5.4
      */

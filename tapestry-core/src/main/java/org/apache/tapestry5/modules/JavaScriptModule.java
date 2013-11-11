@@ -90,8 +90,10 @@ public class JavaScriptModule
      * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
      * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
      * <dd>CSS files</dd>
-     * <dt>t5/core/ajax, dom, events, console, exception-frame, pageinit, messages, utils</dt>
+     * <dt>t5/core/[ajax, dom, events, console, exception-frame, pageinit, messages, utils]</dt>
      * <dd>Additional JavaScript modules</dd>
+     * <dt>jquery</dt>
+     * <dd>Added if the infrastructure provider is "jquery".</dd>
      * </dl>
      * <p/>
      * User modules may replace or extend this list.
@@ -138,6 +140,11 @@ public class JavaScriptModule
         {
             String full = "t5/core/" + name;
             configuration.add(full, new StackExtension(StackExtensionType.MODULE, full));
+        }
+
+        if (provider.equals("jquery"))
+        {
+            add(configuration, StackExtensionType.MODULE, "jquery");
         }
     }
 

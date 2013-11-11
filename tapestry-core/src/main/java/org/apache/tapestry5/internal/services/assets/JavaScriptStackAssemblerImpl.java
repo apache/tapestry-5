@@ -15,7 +15,9 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.*;
@@ -45,11 +47,19 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final ModuleManager moduleManager;
 
+    private final ResourceMinimizer resourceMinimizer;
+
+    private final boolean minificationEnabled;
+
     private final Map<String, StreamableResource> cache = CollectionFactory.newCaseInsensitiveMap();
 
     // TODO: Support for aggregated CSS as well as aggregated JavaScript
 
-    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource, JavaScriptStackSource stackSource, AssetChecksumGenerator checksumGenerator, ModuleManager moduleManager)
+    public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource,
+                                        JavaScriptStackSource stackSource, AssetChecksumGenerator checksumGenerator, ModuleManager moduleManager,
+                                        ResourceMinimizer resourceMinimizer,
+                                        @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+                                        boolean minificationEnabled)
     {
         this.threadLocale = threadLocale;
         this.resourceChangeTracker = resourceChangeTracker;
@@ -57,6 +67,8 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         this.stackSource = stackSource;
         this.checksumGenerator = checksumGenerator;
         this.moduleManager = moduleManager;
+        this.resourceMinimizer = resourceMinimizer;
+        this.minificationEnabled = minificationEnabled;
 
         resourceChangeTracker.clearOnInvalidation(cache);
     }
@@ -210,6 +222,13 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
             assembly.add(resource, new ModuleReader(moduleName));
         }
 
-        return assembly.finish();
+        StreamableResource streamable = assembly.finish();
+
+        if (minificationEnabled)
+        {
+            return resourceMinimizer.minimize(streamable);
+        }
+
+        return streamable;
     }
 }
