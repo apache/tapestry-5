@@ -6,7 +6,7 @@
         <div class="palette-title">
             <t:delegate to="availableLabel"/>
         </div>
-        <select multiple="multiple" size="${size}" disabled="${disabledValue}">
+        <select class="form-control" multiple="multiple" size="${size}" disabled="${disabledValue}">
             <t:remove>
                 All the options, in their "natural" order, are rendered here, then selected elements
                 are transferred to the other select.
@@ -39,7 +39,7 @@
             data-value=mode="options" is a bit of hack to inform the client side that the value for the field is all
             options, selected or not. This is used by validation logic.
         </t:remove>
-        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}"
+        <select class="form-control" t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}"
                 disabled="${disabledValue}" data-value-mode="options" t:mixins="rendernotification">
             <t:remove>Starts empty, populated on the client side.</t:remove>
         </select>
