@@ -726,7 +726,7 @@ class JSONObjectSpec extends Specification {
 
     def print(object, compact) {
 
-        withPrintWriter { pw -> object.print(pw, compact)}
+        withPrintWriter { pw -> object.print(pw, compact) }
     }
 
     def "prettyPrint() to PrintWriter"() {
@@ -861,6 +861,30 @@ class JSONObjectSpec extends Specification {
         object.getString("true") == "truthy"
         object.has "false"
         object.get("false").is false
+    }
+
+    private static copyViaSerialization(source) {
+
+        def bos = new ByteArrayOutputStream()
+
+        bos.withObjectOutputStream { it << source }
+
+        def bis = new ByteArrayInputStream(bos.toByteArray())
+
+        bis.withObjectInputStream { it.readObject() }
+    }
+
+    def "serialize and de-serialize"() {
+        when:
+
+        def source = new JSONObject("string", "a string", "null", JSONObject.NULL)
+
+        def copy = copyViaSerialization source
+
+        then:
+
+        source == copy
+
     }
 
 }

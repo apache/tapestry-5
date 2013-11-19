@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.json;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 /**
  * Base class for {@link JSONArray} and {@link JSONObject} that exists to organize the code
@@ -23,7 +24,7 @@ import java.io.PrintWriter;
  * 
  * @since 5.2.0
  */
-public abstract class JSONCollection
+public abstract class JSONCollection implements Serializable
 {
     /**
      * Converts this JSON collection into a parsable string representation.

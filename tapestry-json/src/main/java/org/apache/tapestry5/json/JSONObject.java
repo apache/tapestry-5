@@ -34,6 +34,8 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -98,7 +100,7 @@ public final class JSONObject extends JSONCollection
      * JSONObject.NULL is equivalent to the value that JavaScript calls null, whilst Java's null is equivalent to the
      * value that JavaScript calls undefined.
      */
-    private static final class Null implements JSONString
+    private static final class Null implements JSONString, Serializable
     {
         /**
          * A Null object is equal to the null value and to itself.
@@ -127,6 +129,12 @@ public final class JSONObject extends JSONCollection
         public String toJSONString()
         {
             return "null";
+        }
+
+        // Serialization magic: after de-serializing, it will be back to the singleton instance of NULL.
+        private Object readResolve() throws ObjectStreamException
+        {
+            return NULL;
         }
     }
 

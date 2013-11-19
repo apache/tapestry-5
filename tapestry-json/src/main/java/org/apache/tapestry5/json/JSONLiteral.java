@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.json;
 
+import java.io.Serializable;
+
 /**
  * A way of including some text (often, text that violates the normal JSON specification) as part of a JSON object or
  * array. This is used in a few places where data is nominally JSON but actually includes some non-conformant elements,
@@ -21,7 +23,7 @@ package org.apache.tapestry5.json;
  * 
  * @since 5.1.0.2
  */
-public class JSONLiteral implements JSONString
+public class JSONLiteral implements JSONString, Serializable
 {
     private final String text;
 

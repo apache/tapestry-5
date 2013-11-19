@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
 // limitations under the License.
 
 /**
- * Repackaged, improved (and tested) version of code originally from json.org
+ * Repackaged, improved (and tested) version of code originally from json.org.
+ * <p/>
+ * Starting in release 5.4, {@link org.apache.tapestry5.json.JSONObject} and {@link org.apache.tapestry5.json.JSONArray}
+ * are serializable.
  */
 package org.apache.tapestry5.json;
