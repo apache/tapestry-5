@@ -3,4 +3,4 @@ The Apache Software Foundation (http://www.apache.org/).
 
 This product makes use of the Kaptcha library, which is released under under
 the terms of the Apache Software License 2.0.
-http://code.google.com/p/kaptcha/
+https://github.com/axet/kaptcha
