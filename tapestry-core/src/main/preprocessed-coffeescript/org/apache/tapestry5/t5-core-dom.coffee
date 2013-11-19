@@ -620,6 +620,25 @@ define ["underscore", "./utils", "./events", "jquery"],
 
 #if jquery
   # Wrapper around the `jqXHR` object
+  class RequestWrapper
+
+    constructor: (@jqxhr) ->
+
+    # Abort a running ajax request
+    abort: -> @jqxhr.abort()
+#elseif prototype
+  # Wrapper around the Prototype `Ajax.Request` object
+  class RequestWrapper
+
+    constructor: (@req) ->
+
+    # Abort a running ajax request
+    abort: -> throw "Cannot abort Ajax request when using Prototype."
+#endif
+
+
+#if jquery
+  # Wrapper around the `jqXHR` object
   class ResponseWrapper
 
     constructor: (@jqxhr, data) ->
@@ -668,7 +687,7 @@ define ["underscore", "./utils", "./events", "jquery"],
   # Returns the module's exports
   ajaxRequest = (url, options = {}) ->
 #if jquery
-    $.ajax
+    jqxhr = $.ajax
       url: url
       type: options.method?.toUpperCase() or "POST"
       contentType: options.contentType
@@ -676,6 +695,7 @@ define ["underscore", "./utils", "./events", "jquery"],
       data: options.data
       # jQuery doesn't have the equivalent of Protoype's onException
       error: (jqXHR, textStatus, errorThrown) ->
+        return if textStatus is "abort"
         message = "Request to #{url} failed with status #{textStatus}"
         text = jqXHR.statusText
         if not _.isEmpty text
@@ -693,6 +713,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
         options.success and options.success(new ResponseWrapper jqXHR, data)
         return
+    new RequestWrapper jqxhr
 #elseif prototype
     finalOptions =
       method: options.method or "post"
@@ -733,10 +754,8 @@ define ["underscore", "./utils", "./events", "jquery"],
         options.success and options.success(new ResponseWrapper response)
         return
 
-    new Ajax.Request(url, finalOptions)
+    new RequestWrapper (new Ajax.Request url, finalOptions)
 #endif
-
-    return exports
 
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
