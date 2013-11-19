@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -139,7 +139,7 @@ public class Upload extends AbstractField
         // TAPESTRY-2453
         if (request.isXHR())
         {
-            javaScriptSupport.require("t5/core/injected-uploader").with(getClientId());
+            javaScriptSupport.require("t5/core/injected-upload").with(getClientId());
         }
     }
 

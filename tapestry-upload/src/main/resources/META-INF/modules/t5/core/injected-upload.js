@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ define(["./dom"],
         function (dom) {
 
             return function (elementId) {
-                var form = dom(elementId).findContainer("form");
+                var form = dom(elementId).closest("form");
 
                 if (form) {
-                    form.element.enctype = "multipart/form-data";
-                    form.element.encoding = "multipart/form-data";
+                    form.attribute("enctype", "multipart/form-data");
+                    form.attribute("encoding", "multipart/form-data");
                 }
             }
         });
