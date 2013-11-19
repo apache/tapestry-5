@@ -283,18 +283,18 @@ define ["underscore", "./utils", "./events", "jquery"],
     attribute: (name, value) ->
 
       if _.isObject name
-#if jquery
-        @$.attr name
-#elseif prototype
         for attributeName, value of name
           @attribute attributeName, value
-#endif
+
         return this
 
 #if jquery
       current = @$.attr name
       if arguments.length > 1
-        @$.attr name, value
+        if value is null
+          @$.removeAttr name
+        else
+          @$.attr name, value
       if _.isUndefined current
         current = null
 #elseif prototype
