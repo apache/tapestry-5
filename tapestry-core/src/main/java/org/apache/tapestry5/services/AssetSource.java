@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ public interface AssetSource
     Asset getUnlocalizedAsset(String path);
 
     /**
-     * As with {@link #getUnlocalizedAsset(String)}, but {@linkplain SymbolSource#expandSymbols(String) symbols
+     * As with {@link #getUnlocalizedAsset(String)}, but {@linkplain SymbolSource#expandSymbols(String) symbols}
      * in the path are expanded}.
      *
      * @since 5.2.0
