@@ -352,14 +352,6 @@ public class SymbolConstants
     public static final String COMPRESSED_ASSET_PATH_PREFIX = "tapestry.compressed-asset-path-prefix";
 
     /**
-     * The Asset path to the copy of Require JS to include in rendered pages. Any page that makes use of any JavaScript will
-     * automatically import this library (as well as the core JavaScript stack).
-     *
-     * @since 5.4
-     */
-    public static final String REQUIRE_JS = "tapestry.requirejs";
-
-    /**
      * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
      * This is either a blank string or a string that starts with a slash but does not end with one.
      *

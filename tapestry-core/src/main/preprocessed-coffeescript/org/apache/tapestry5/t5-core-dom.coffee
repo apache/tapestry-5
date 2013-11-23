@@ -30,7 +30,7 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 
 #if prototype
-define ["underscore", "./utils", "./events", "prototype"],
+define ["underscore", "./utils", "./events", "jquery"],
 (_, utils, events) ->
 #elseif jquery
 define ["underscore", "./utils", "./events", "jquery"],

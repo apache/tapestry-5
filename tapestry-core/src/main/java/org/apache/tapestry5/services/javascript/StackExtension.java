@@ -44,4 +44,25 @@ public class StackExtension
         return String.format("StackExtension[%s %s]", type.name(), value);
     }
 
+    /**
+     * Convenience for defining a LIBRARY.
+     *
+     * @since 5.4
+     */
+    public static StackExtension library(String path)
+    {
+        return new StackExtension(StackExtensionType.LIBRARY, path);
+    }
+
+    /**
+     * Convenience for defining a MODULE.
+     *
+     * @since 5.4
+     */
+    public static StackExtension module(String name)
+    {
+
+        return new StackExtension(StackExtensionType.MODULE, name);
+    }
+
 }

@@ -12,8 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Handles executing Underscore with no-conflict mode, and makes Underscore injectable as "underscore".
-// This is handy if you want to replace Underscore with something compatible, such as Lo-Dash.
-define(function () {
-    return _.noConflict();
-});
+// It is important, when using Prototype and jQuery together, to get jQuery into no-conflict mode as soon as possible.
+jQuery.noConflict();

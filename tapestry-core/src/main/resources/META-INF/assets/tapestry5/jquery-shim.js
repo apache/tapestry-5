@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-define(["jquery-library"], function () {
-    return $.noConflict();
+
+// Sets jQuery up for noConflict mode, and returns its value so that it can be imported
+// into other modules (as module name "jquery", usually assigned to variable '$').
+// This injection is useful for when jQuery is replaced with something compatible, such as Zepto.
+define([], function () {
+    return jQuery.noConflict();
 });

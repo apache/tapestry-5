@@ -90,6 +90,9 @@ public class JavaScriptModule
      * <dt>underscore-library, underscore-module</dt>
      * <dt>The Underscore JavaScript library, and the shim that allows underscore to be injected</dt>
      * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
+     * <dt>jquery-library</dt> <dd>The jQuery library</dd>
+     * <dt>jquery-noconflict</dt> <dd>Switches jQuery to no-conflic mode (only present when the infrastructure is "prototype").</dd>
+     * <dt>jquery</dt> <dd>A module shim that allows jQuery to be injected (and also switches jQuery to no-conflict mode)</dd>
      * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
      * <dd>CSS files</dd>
      * <dt>t5/core/[ajax, dom, events, console, exception-frame, pageinit, messages, utils]</dt>
@@ -102,31 +105,44 @@ public class JavaScriptModule
      */
     @Contribute(JavaScriptStack.class)
     @Core
-    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration, Compatibility compatibility,
-                                                @Symbol(SymbolConstants.REQUIRE_JS)
-                                                String requireJS,
+    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration,
+                                                Compatibility compatibility,
                                                 @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
                                                 String provider)
     {
-        configuration.add("requirejs", new StackExtension(StackExtensionType.LIBRARY, requireJS));
-        configuration.add("underscore-library", new StackExtension(StackExtensionType.LIBRARY, "${tapestry.asset.root}/underscore-1.5.2.js"));
 
         final String ROOT = "${tapestry.asset.root}";
 
-        if (provider.equals("prototype") && compatibility.enabled(Trait.SCRIPTACULOUS))
+        configuration.add("requirejs", StackExtension.library(ROOT + "/require-2.1.9.js"));
+        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.5.2.js"));
+
+        if (provider.equals("prototype"))
         {
-            add(configuration, StackExtensionType.LIBRARY,
-                    "${tapestry.scriptaculous}/scriptaculous.js",
-                    "${tapestry.scriptaculous}/effects.js");
+            final String SCRIPTY = "${tapestry.scriptaculous}";
+
+            add(configuration, StackExtensionType.LIBRARY, SCRIPTY + "/prototype.js");
+
+            if (compatibility.enabled(Trait.SCRIPTACULOUS))
+            {
+                add(configuration, StackExtensionType.LIBRARY,
+                        SCRIPTY + "/scriptaculous.js",
+                        SCRIPTY + "/effects.js");
+            }
         }
 
         if (compatibility.enabled(Trait.INITIALIZERS))
         {
-            add(configuration, StackExtensionType.LIBRARY,
-                    ROOT + "/t53-compatibility.js"
-            );
+            add(configuration, StackExtensionType.LIBRARY, ROOT + "/t53-compatibility.js");
             configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
         }
+
+        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery-1.9.1.js"));
+
+        if (provider.equals("prototype")) {
+            configuration.add("jquery-noconflict", StackExtension.library(ROOT + "/jquery-noconflict.js"));
+        }
+
+        add(configuration, StackExtensionType.MODULE, "jquery");
 
         add(configuration, StackExtensionType.STYLESHEET,
                 "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css",
@@ -145,12 +161,7 @@ public class JavaScriptModule
             configuration.add(full, new StackExtension(StackExtensionType.MODULE, full));
         }
 
-        configuration.add("underscore-module", new StackExtension(StackExtensionType.MODULE, "underscore"));
-
-        if (provider.equals("jquery"))
-        {
-            add(configuration, StackExtensionType.MODULE, "jquery");
-        }
+        configuration.add("underscore-module", StackExtension.module("underscore"));
     }
 
     private static void add(OrderedConfiguration<StackExtension> configuration, StackExtensionType type, String... paths)
@@ -271,12 +282,6 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
 
-                                        @Path("${tapestry.scriptaculous}/prototype.js")
-                                        Resource prototype,
-
-                                        @Path("${tapestry.asset.root}/jquery-1.9.1.js")
-                                        Resource jQuery,
-
                                         @Path("${tapestry.asset.root}/typeahead-0.9.3.js")
                                         Resource typeahead,
 
@@ -285,17 +290,13 @@ public class JavaScriptModule
     {
         // The underscore shim module allows Underscore to be injected
         configuration.add("underscore", new JavaScriptModuleConfiguration(underscoreShim));
-        // Hacking around https://github.com/jrburke/requirejs/issues/534
-        configuration.add("jquery-library", new JavaScriptModuleConfiguration(jQuery));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
-        configuration.add("prototype", new JavaScriptModuleConfiguration(prototype));
 
         configuration.add("bootstrap/transition", new JavaScriptModuleConfiguration(transition).dependsOn("jquery"));
 
         for (String name : new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
                 "scrollspy", "tab", "tooltip"})
         {
-
             Resource lib = transition.forFile(name + ".js");
 
             configuration.add("bootstrap/" + name, new JavaScriptModuleConfiguration(lib).dependsOn("bootstrap/transition"));
@@ -335,7 +336,7 @@ public class JavaScriptModule
             configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domJQuery));
         }
 
-        // If someone wants to support a different infastructure, they should set the provider symbol to some other value
+        // If someone wants to support a different infrastructure, they should set the provider symbol to some other value
         // and contribute their own version of the t5/core/dom module.
     }
 
