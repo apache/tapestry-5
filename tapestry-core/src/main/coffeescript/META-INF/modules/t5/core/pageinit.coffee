@@ -122,7 +122,8 @@ define ["underscore", "./console", "./dom", "./events"],
             # At this point, all libraries have been loaded, and all inits should have executed. Unless some of
             # the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
             # be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
-            # Note that later Ajax requests do not change this attribute, so their timing continues to be tricky.
+            # Later Ajax requests will cause the data-ajax-active attribute to switch between "true" and "false",
+            # so some test logic may need to be driven by that instead.
 
             dom.body.attr "data-page-initialized", "true"
 
