@@ -23,8 +23,8 @@ define(["./dom"],
                 var form = dom(elementId).closest("form");
 
                 if (form) {
-                    form.attribute("enctype", "multipart/form-data");
-                    form.attribute("encoding", "multipart/form-data");
+                    form.attr("enctype", "multipart/form-data");
+                    form.attr("encoding", "multipart/form-data");
                 }
             }
         });

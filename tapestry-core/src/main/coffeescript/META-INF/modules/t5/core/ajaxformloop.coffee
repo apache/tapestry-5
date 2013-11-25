@@ -31,11 +31,11 @@ define ["./dom", "./events", "./console", "./ajax"],
         console.error "Enclosing element for AjaxFormLoop remove row link not found."
         return false
 
-      url = afl.attribute "data-remove-row-url"
+      url = afl.attr "data-remove-row-url"
 
       ajax url,
         data:
-          "t:rowvalue": @attribute "data-afl-row-value"
+          "t:rowvalue": @attr "data-afl-row-value"
         success: =>
           # The server has removed the row from persistent storage, lets
           # do the same on the UI.
@@ -56,7 +56,7 @@ define ["./dom", "./events", "./console", "./ajax"],
 
       insertionPoint = @findParent "[data-afl-behavior=insert-before]"
 
-      url = afl.attribute "data-inject-row-url"
+      url = afl.attr "data-inject-row-url"
 
       ajax url,
         success: (response) =>

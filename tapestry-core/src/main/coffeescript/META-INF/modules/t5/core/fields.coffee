@@ -20,11 +20,11 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
   (_, events, dom, utils) ->
 
     ensureFieldId = (field) ->
-      fieldId = field.attribute "id"
+      fieldId = field.attr "id"
 
       unless fieldId
         fieldId = _.uniqueId "field"
-        field.attribute "id", fieldId
+        field.attr "id", fieldId
 
       return fieldId
 
@@ -37,7 +37,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
     #
     # * field - element wrapper for the field
     findHelpBlocks = (field) ->
-      fieldId = field.attribute "id"
+      fieldId = field.attr "id"
 
       # When the field has an id (the normal case!), search the body for
       # the matching help blocks.
@@ -63,7 +63,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       block = group.findFirst "[data-presentation=error]"
 
       if block
-        block.attribute "data-error-block-for", fieldId
+        block.attr "data-error-block-for", fieldId
         return [block]
 
       # Not found, so perhaps it will be created dynamically.
@@ -108,7 +108,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       failure = false
 
       fieldValue =
-        if (@attribute "data-value-mode") is "options"
+        if (@attr "data-value-mode") is "options"
           collectOptionValues this
         else
           @value()

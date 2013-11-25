@@ -25,7 +25,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
       warn: "alert-warning"
       error: "alert-danger"
 
-    getURL = (container) -> container.attribute "data-dismiss-url"
+    getURL = (container) -> container.attr "data-dismiss-url"
 
     removeAlert = (container, alert) ->
       alert.remove()
@@ -48,7 +48,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
 
       alert = button.parent()
 
-      id = alert.attribute "data-alert-id"
+      id = alert.attr "data-alert-id"
 
       unless id
         removeAlert container, alert
@@ -64,7 +64,7 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
         <div data-container-type="inner"></div>
       """
 
-      if (outer.attribute "data-show-dismiss-all") is "true"
+      if (outer.attr "data-show-dismiss-all") is "true"
         outer.append """
          <div class="pull-right">
             <button class="btn btn-xs btn-default" data-action="dismiss-all">

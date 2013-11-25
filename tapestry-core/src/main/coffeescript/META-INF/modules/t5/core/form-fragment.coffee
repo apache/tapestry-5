@@ -29,12 +29,12 @@ define ["underscore", "./dom", "./events", "./forms"],
 
       _.each fragments, (frag) ->
 
-        fragmentId = frag.attribute "id"
+        fragmentId = frag.attr "id"
 
         hidden = frag.findFirst "input[type=hidden][data-for-fragment='#{fragmentId}']"
 
         # If found (e.g., not alwaysSubmit), then enable/disable the field.
-        hidden && hidden.attribute "disabled", not frag.deepVisible()
+        hidden && hidden.attr "disabled", not frag.deepVisible()
 
     # Again, a DOM event to make the FormFragment visible or invisible; this is useful
     # because of the didShow/didHide events ... but we're really just seeing the evolution

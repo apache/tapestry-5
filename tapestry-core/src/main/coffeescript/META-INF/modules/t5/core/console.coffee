@@ -43,7 +43,7 @@ define ["./dom", "underscore", "./bootstrap"],
 
       return
 
-    consoleAttribute = dom.body.attribute "data-floating-console"
+    consoleAttribute = dom.body.attr "data-floating-console"
 
     forceFloating = (consoleAttribute is "enabled") or (consoleAttribute is "invisible")
 
@@ -92,7 +92,7 @@ define ["./dom", "underscore", "./bootstrap"],
 
       messages = floatingConsole.findFirst ".message-container"
 
-      floatingConsole.findFirst("[data-action=enable]").attribute "disabled", true
+      floatingConsole.findFirst("[data-action=enable]").attr "disabled", true
 
       floatingConsole.on "click", "[data-action=clear]", ->
         floatingConsole.hide()
@@ -100,8 +100,8 @@ define ["./dom", "underscore", "./bootstrap"],
 
       floatingConsole.on "click", "[data-action=disable]", ->
 
-        @attribute "disabled", true
-        floatingConsole.findFirst("[data-action=enable]").attribute "disabled", false
+        @attr "disabled", true
+        floatingConsole.findFirst("[data-action=enable]").attr "disabled", false
 
         messages.hide()
 
@@ -109,8 +109,8 @@ define ["./dom", "underscore", "./bootstrap"],
 
       floatingConsole.on "click", "[data-action=enable]", ->
 
-        @attribute "disabled", true
-        floatingConsole.findFirst("[data-action=disable]").attribute "disabled", false
+        @attr "disabled", true
+        floatingConsole.findFirst("[data-action=disable]").attr "disabled", false
 
         messages.show()
 

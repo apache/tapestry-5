@@ -93,13 +93,13 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
 
         memo.translated = result
       catch e
-        memo.error = (field.attribute "data-translation-message") or e.message or "ERROR"
+        memo.error = (field.attr "data-translation-message") or e.message or "ERROR"
         return false
 
     dom.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
 
       if utils.isBlank memo.value
-        memo.error =  (@attribute "data-required-message") or "REQUIRED"
+        memo.error =  (@attr "data-required-message") or "REQUIRED"
 
     dom.onDocument events.field.translate, "[data-translation=numeric]", (event, memo) ->
       translate this, memo, false
@@ -108,31 +108,31 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
       translate this, memo, true
 
     dom.onDocument events.field.validate, "[data-validate-min-length]", (event, memo) ->
-      min = parseInt @attribute "data-validate-min-length"
+      min = parseInt @attr "data-validate-min-length"
 
       if memo.translated.length < min
-        memo.error = (@attribute "data-min-length-message") or "TOO SHORT"
+        memo.error = (@attr "data-min-length-message") or "TOO SHORT"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
-      max = parseInt @attribute "data-validate-max-length"
+      max = parseInt @attr "data-validate-max-length"
 
       if memo.translated.length > max
-        memo.error = (@attribute "data-max-length-message") or "TOO LONG"
+        memo.error = (@attr "data-max-length-message") or "TOO LONG"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
-      max = parseInt @attribute "data-validate-max"
+      max = parseInt @attr "data-validate-max"
 
       if memo.translated > max
-        memo.error = (@attribute "data-max-message") or "TOO LARGE"
+        memo.error = (@attr "data-max-message") or "TOO LARGE"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
-      min = parseInt @attribute "data-validate-min"
+      min = parseInt @attr "data-validate-min"
 
       if memo.translated < min
-        memo.error = (@attribute "data-min-message") or "TOO SMALL"
+        memo.error = (@attr "data-min-message") or "TOO SMALL"
         return false
 
     dom.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
@@ -140,11 +140,11 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
       # Cache the compiled regular expression.
       re = @meta REGEXP_META
       unless re
-        re = new RegExp(@attribute "data-validate-regexp")
+        re = new RegExp(@attr "data-validate-regexp")
         @meta REGEXP_META, re
 
       unless re.test memo.translated
-        memo.error = (@attribute "data-regexp-message") or "INVALID"
+        memo.error = (@attr "data-regexp-message") or "INVALID"
         return false
 
     # Export the number parser, just to be nice (and to support some testing).

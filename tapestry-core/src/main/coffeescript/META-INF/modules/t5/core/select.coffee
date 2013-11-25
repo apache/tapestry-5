@@ -25,6 +25,6 @@ define ["./events", "./dom", "./zone"],
           containingZone = zone.findZone this
 
           containingZone and containingZone.trigger events.zone.refresh,
-            url: @attribute "data-update-url"
+            url: @attr "data-update-url"
             parameters:
               "t:selectvalue": @value()

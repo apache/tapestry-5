@@ -22,7 +22,7 @@ define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core
   (_, dom, events, utils) ->
 
     rangeValue = (element, attribute, defaultValue) ->
-      v = element.attribute attribute
+      v = element.attr attribute
       if v is null
         defaultValue
       else
@@ -48,7 +48,7 @@ define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core
         value = value.length
 
       unless min <= value <= max
-        memo.error = (element.attribute "data-range-message") or "RANGE ERROR"
+        memo.error = (element.attr "data-range-message") or "RANGE ERROR"
         return false
 
       return true
@@ -56,7 +56,7 @@ define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core
     dom.onDocument events.field.optional, "[data-optionality=prohibited]", (event, memo) ->
 
       unless utils.isBlank memo.value
-        memo.error = (@attribute "data-prohibited-message") or "PROHIBITED"
+        memo.error = (@attr "data-prohibited-message") or "PROHIBITED"
         return false
 
       return true

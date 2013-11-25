@@ -1470,7 +1470,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected void waitForCSSSelectedElementToAppear(String cssSelector)
     {
-        String condition = String.format("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
+        String condition = String.format("window.testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1493,7 +1493,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Waits for the element to be removed from the DOM.
-     *
+     * <p/>
      * <p/>
      * This implementation depends on window being extended with testSupport.isNotVisible().
      *
@@ -1571,7 +1571,20 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected final void waitForAjaxRequestsToComplete(String timeout)
     {
-        waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", timeout);
+        for (int i = 0; i < 5; i++)
+        {
+            if (i > 0)
+            {
+                sleep(100);
+            }
+
+            if (getAttribute("//body/@data-ajax-active").equals("false"))
+            {
+                return;
+            }
+        }
+
+        reportAndThrowAssertionError("Body 'data-ajax-active' attribute never reverted to 'false'.");
     }
 
     public Number getCssCount(String str)

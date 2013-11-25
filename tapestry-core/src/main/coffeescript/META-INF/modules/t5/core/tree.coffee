@@ -28,12 +28,12 @@ define ["./dom", "./ajax", "./zone"],
 
     send = (node, action, success) ->
       container = node.findParent TREE
-      url = container.attribute "data-tree-action-url"
+      url = container.attr "data-tree-action-url"
 
       ajax url,
         data:
           "t:action": action
-          "t:nodeid": node.attribute NODE_ID
+          "t:nodeid": node.attr NODE_ID
         success: success
 
     loadChildren = (node) ->

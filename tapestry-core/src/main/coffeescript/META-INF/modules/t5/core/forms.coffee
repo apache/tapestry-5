@@ -35,7 +35,7 @@ define ["./events", "./dom", "underscore"],
 
     setSubmittingHidden = (form, submitter) ->
 
-      mode = submitter.attribute "data-submit-mode"
+      mode = submitter.attr "data-submit-mode"
       isCancel = mode is "cancel"
       if mode and mode isnt "normal"
         form.meta SKIP_VALIDATION, true
@@ -65,7 +65,7 @@ define ["./events", "./dom", "underscore"],
       fields = form.find "input, select, textarea"
 
       _.each fields, (field) ->
-          return if field.attribute "disabled"
+          return if field.attr "disabled"
 
           type = field.element.type
 
@@ -108,7 +108,7 @@ define ["./events", "./dom", "underscore"],
 
       try
 
-        if ((@attribute "data-validate") is "submit") and
+        if ((@attr "data-validate") is "submit") and
            (not @meta SKIP_VALIDATION)
 
           @meta SKIP_VALIDATION, null

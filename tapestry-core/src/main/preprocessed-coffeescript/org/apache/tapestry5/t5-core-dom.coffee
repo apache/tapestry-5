@@ -280,11 +280,11 @@ define ["underscore", "./utils", "./events", "jquery"],
     #
     # * name - the attribute to read or update, or an object of keys and values
     # * value - (optional) the new value for the attribute
-    attribute: (name, value) ->
+    attr: (name, value) ->
 
       if _.isObject name
         for attributeName, value of name
-          @attribute attributeName, value
+          @attr attributeName, value
 
         return this
 
@@ -666,6 +666,18 @@ define ["underscore", "./utils", "./events", "jquery"],
       @res.getHeader name
 #endif
 
+  # Used to track how many active Ajax requests are currently in-process. This is incremented
+  # when an Ajax request is started, and decremented when an Ajax request completes or fails.
+  # The body attribute `data-ajax-active` is set to "true" or "false" whenever the
+  # count changes. This only applies to Ajax requests that are filtered through the t5/core/dom API;
+  # other libraries (including RequireJS) which bypass this API are not counted.
+
+  activeAjaxCount = 0
+
+  adjustAjaxCount = (delta) ->
+    activeAjaxCount += delta
+
+    exports.body.attr "data-ajax-active", (activeAjaxCount > 0)
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
@@ -694,6 +706,8 @@ define ["underscore", "./utils", "./events", "jquery"],
       data: options.data
       # jQuery doesn't have the equivalent of Protoype's onException
       error: (jqXHR, textStatus, errorThrown) ->
+        adjustAjaxCount -1
+
         return if textStatus is "abort"
         message = "Request to #{url} failed with status #{textStatus}"
         text = jqXHR.statusText
@@ -710,8 +724,13 @@ define ["underscore", "./utils", "./events", "jquery"],
 
       success: (data, textStatus, jqXHR) ->
 
+        adjustAjaxCount -1
+
         options.success and options.success(new ResponseWrapper jqXHR, data)
         return
+
+    adjustAjaxCount +1
+
     new RequestWrapper jqxhr
 #elseif prototype
     finalOptions =
@@ -719,6 +738,9 @@ define ["underscore", "./utils", "./events", "jquery"],
       contentType: options.contentType or "application/x-www-form-urlencoded"
       parameters: options.data
       onException: (ajaxRequest, exception) ->
+
+        adjustAjaxCount -1
+
         if options.exception
           options.exception exception
         else
@@ -727,6 +749,8 @@ define ["underscore", "./utils", "./events", "jquery"],
         return
 
       onFailure: (response) ->
+        adjustAjaxCount -1
+
         message = "Request to #{url} failed with status #{response.getStatus()}"
         text = response.getStatusText()
         if not _.isEmpty text
@@ -742,6 +766,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 
       onSuccess: (response) ->
 
+        adjustAjaxCount -1
+
         # Prototype treats status == 0 as success, even though it may
         # indicate that the server didn't respond.
         if (not response.getStatus()) or (not response.request.success())
@@ -752,6 +778,8 @@ define ["underscore", "./utils", "./events", "jquery"],
         # of identifying the source of problems.  That's been stripped out.
         options.success and options.success(new ResponseWrapper response)
         return
+
+    adjustAjaxCount +1
 
     new RequestWrapper (new Ajax.Request url, finalOptions)
 #endif
@@ -802,7 +830,7 @@ define ["underscore", "./utils", "./events", "jquery"],
     element = wrapElement document.createElement (elementName or "div")
 
     if attributes
-      element.attribute attributes
+      element.attr attributes
 
     if body
       element.update body

@@ -81,7 +81,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
 
         @field.addClass "ajax-wait"
 
-        ajax (@container.attribute "data-parse-url"),
+        ajax (@container.attr "data-parse-url"),
           data:
             input: value
           onerror: (message) =>
@@ -131,7 +131,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
         @field.addClass "ajax-wait"
 
 
-        ajax (@container.attribute "data-format-url"),
+        ajax (@container.attr "data-format-url"),
           data:
             input: date.getTime()
           failure: (response, message) =>
@@ -147,7 +147,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
     scan = (root) ->
       for container in root.find "[data-component-type='core/DateField']"
         # Hide it from later scans
-        container.attribute "data-component-type", null
+        container.attr "data-component-type", null
 
         new Controller(container)
 

@@ -32,7 +32,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
     #
     # * element - starting point for determining zone
     findZone = (element) ->
-      zoneId = element.attribute "data-update-zone"
+      zoneId = element.attr "data-update-zone"
 
       if zoneId is "^"
         zone = element.findParent "[data-container-type=zone]"
@@ -59,7 +59,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       zone = findZone element
 
       if zone
-        zone.trigger events.zone.refresh,  url: element.attribute "href"
+        zone.trigger events.zone.refresh,  url: element.attr "href"
 
       return false
 
@@ -71,7 +71,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
         formParameters = forms.gatherParameters this
 
         zone.trigger events.zone.refresh,
-          url: (@attribute "action")
+          url: (@attr "action")
           parameters: formParameters
 
       return false
@@ -100,7 +100,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       zone = @closest "[data-container-type=zone]"
 
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      attr = zone.attribute "data-zone-parameters"
+      attr = zone.attr "data-zone-parameters"
 
       parameters = attr and JSON.parse attr
 
