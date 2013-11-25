@@ -1470,7 +1470,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected void waitForCSSSelectedElementToAppear(String cssSelector)
     {
-        String condition = String.format("window.testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
+        String condition = String.format("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1486,7 +1486,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     protected final void waitForElementToAppear(String elementId)
     {
 
-        String condition = String.format("window.getElementById(\"%s\")", elementId);
+        String condition = String.format("selenium.browserbot.getCurrentWindow().document.getElementById(\"%s\")", elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1504,7 +1504,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected final void waitForElementToDisappear(String elementId)
     {
-        String condition = String.format("window.testSupport.doesNotExist(\"%s\")", elementId);
+        String condition = String.format("selenium.browserbot.getCurrentWindow().testSupport.doesNotExist(\"%s\")", elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }

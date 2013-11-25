@@ -241,16 +241,19 @@ public class FormTests extends App1TestCase
 
         //move to the next month.
         click("css=button.nextButton");
+
         //first, make sure that NOTHING shows as selected! The selected date is still 5/28/46
-        String selectedGoneCondition = "window.$$(\"td.selected\").size() == 0";
-        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        waitForSelectedToBeRemoved();
+
 
         //make sure it's still selected if we navigate back...
         click("css=button.previousButton");
         waitForCSSSelectedElementToAppear("td.selected");
 
         click("css=button.nextButton");
-        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        waitForSelectedToBeRemoved();
 
         click("xpath=//td[text()='28']");
         String pickerGoneSelector = "css=div.datePicker";
@@ -280,7 +283,8 @@ public class FormTests extends App1TestCase
 
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.nextButton");
-        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        waitForSelectedToBeRemoved();
 
         click("css=div.datePicker .footerTable button");
         waitForCSSSelectedElementToAppear("td.selected");
@@ -313,6 +317,11 @@ public class FormTests extends App1TestCase
 
         waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
+    }
+
+    private void waitForSelectedToBeRemoved()
+    {
+        waitForCondition("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount('td.selected') == 0", PAGE_LOAD_TIMEOUT);
     }
 
     // TAP4-1408
@@ -805,8 +814,6 @@ public class FormTests extends App1TestCase
     public void link_submit_component()
     {
         openLinks("LinkSubmit Demo");
-
-        waitForElementToAppear("fred");
 
         click("//a[@id='fred']");
 
