@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.tapestry5.services.Request;
  * Here's a component with a template, including a t:body element. Really should rename this to "Layout" as that's the
  * T5 naming.
  */
-@Import(stylesheet = "context:css/app.css", module = "bootstrap/collapse")
+@Import(stylesheet = "context:css/app.css", module = {"bootstrap/collapse", "app/test-support"})
 public class Border
 {
     @Inject

@@ -1458,14 +1458,19 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
      * (it is not assured that the element will be visible).
+     * <p/>
+     * This implementation only works if the application provides a function onto the
+     * window object:  "testSupport.findCSSMatchCount()" which accepts a CSS rule and returns the number
+     * of matching elements.
      *
-     * @param cssRule
+     * @param cssSelector
      *         used to locate the element
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no replacement
      */
-    protected void waitForCSSSelectedElementToAppear(String cssRule)
+    protected void waitForCSSSelectedElementToAppear(String cssSelector)
     {
-        String condition = String.format("window.$$ && window.$$(\"%s\").size() > 0", cssRule);
+        String condition = String.format("window.testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1481,7 +1486,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     protected final void waitForElementToAppear(String elementId)
     {
 
-        String condition = String.format("window.$(\"%s\")", elementId);
+        String condition = String.format("window.getElementById(\"%s\")", elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
@@ -1489,13 +1494,17 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits for the element to be removed from the DOM.
      *
+     * <p/>
+     * This implementation depends on window being extended with testSupport.isNotVisible().
+     *
      * @param elementId
      *         client-side id of element
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no replacement
      */
     protected final void waitForElementToDisappear(String elementId)
     {
-        String condition = String.format("window.$(\"%s\").hide()", elementId);
+        String condition = String.format("window.testSupport.doesNotExist(\"%s\")", elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
