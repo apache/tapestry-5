@@ -117,8 +117,8 @@ define ["underscore", "./utils", "./events", "jquery"],
     # as well as DOM event bubbling.
     stop: ->
 #if jquery
-      @nativeEvent.stopImmediatePropagation()
       @nativeEvent.preventDefault()
+      @nativeEvent.stopImmediatePropagation()
 #elseif prototype
       @nativeEvent.stop()
 #endif
@@ -538,8 +538,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
       @$.trigger jqEvent, memo
 
-      # Not sure if this is sufficient to ensure that event was cancelled:
-      return jqEvent.isImmediatePropagationStopped()
+      return not jqEvent.isImmediatePropagationStopped()
 #elseif prototype
       if (eventName.indexOf ':') > 0
         # Custom event is supported directly by Prototype:
