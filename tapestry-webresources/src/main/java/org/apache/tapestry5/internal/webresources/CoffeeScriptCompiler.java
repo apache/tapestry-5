@@ -5,6 +5,7 @@ import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.mozilla.javascript.NativeObject;
@@ -56,7 +57,17 @@ public class CoffeeScriptCompiler implements ResourceTransformer
 
     public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
     {
-        String content = IOUtils.toString(source.openStream(), UTF8);
+        InputStream is = null;
+        String content;
+
+        try
+        {
+            is = source.openStream();
+            content = IOUtils.toString(is, UTF8);
+        } finally
+        {
+            InternalUtils.close(is);
+        }
 
         RhinoExecutor executor = executorPool.get();
 
