@@ -147,6 +147,9 @@ public class AppModule
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
 
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "testing, testing, 1... 2... 3...");
+
+        // This is the emphasis of testing at this point.
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
