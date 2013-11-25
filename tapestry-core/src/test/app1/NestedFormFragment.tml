@@ -7,25 +7,15 @@
     <t:form>
         <t:formfragment t:id="outerhide" visible="true" class="well">
             <div id="outertext1">Outer Text -- nested in outerhide</div>
+            <label class="checkbox">
+                <t:checkbox t:id="innertrigger1" value="true" t:mixins="triggerfragment" fragment="innerhide"/>
+                Trigger hide/reveal of innerhide
+            </label>
             <t:formfragment t:id="innerhide" visible="true">
                 <div id="innertext1">Inner Text -- nested in innerhide</div>
-                <label class="checkbox">
-                    <t:checkbox t:id="innertrigger1" value="true" t:mixins="triggerfragment" fragment="innerhide"/>
-                    Trigger hide/reveal of innerhide
-                </label>
             </t:formfragment>
         </t:formfragment>
 
-        <t:formfragment t:id="outerremove" visible="true" class="well">
-            <div id="outertext2">Outer Text -- nested in outerremove</div>
-            <t:formfragment t:id="innerremove" visible="true">
-                <div id="innertext2">Inner Text -- nested in innerremove</div>
-                <label class="checkbox">
-                    <t:checkbox t:id="innertrigger2" value="true"/>
-                    Does nothing ... looks like this was not fully implemented.
-                </label>
-            </t:formfragment>
-        </t:formfragment>
 
     </t:form>
 </t:border>

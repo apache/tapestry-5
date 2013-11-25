@@ -88,16 +88,11 @@ public class AjaxTests extends App1TestCase
         assertTrue(isVisible("outertext1"));
         assertTrue(isVisible("innertext1"));
         assertTrue(isChecked("innertrigger1"));
+
         click("innertrigger1");
 
         assertTrue(isVisible("outertext1"));
-
-        //now make sure that hide_and_remove is properly handled, as well...
-        assertTrue(isVisible("outertext2"));
-        assertTrue(isVisible("innertext2"));
-
-        // Looks like at one time there was work to have a trigger that removed the fragment entirely,
-        // not just hide/reveal it, but that seems to have been lost.
+        assertFalse(isVisible("innertext1"));
     }
 
     /**
