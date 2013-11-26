@@ -1173,7 +1173,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Waits for page  to load, then waits for initialization to finish, which is recognized by the {@code data-page-initialized} attribute
-     * being set to true on the body element. Polls at increasing intervals.
+     * being set to true on the body element. Polls at increasing intervals, for up-to 30 seconds (that's extraordinarily long, but helps sometimes
+     * when manually debugging a page that doesn't have the floating console enabled)..
      */
     public void waitForPageToLoad(String timeout)
     {
@@ -1188,8 +1189,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             return;
         }
 
-        int totalTime = 0;
-        int sleepTime = 20;
+        final long pollingStartTime = System.currentTimeMillis();
+
+        long sleepTime = 20;
 
         while (true)
         {
@@ -1198,14 +1200,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                 return;
             }
 
-            if (totalTime > 10000)
+            if ((System.currentTimeMillis() - pollingStartTime) > 30000)
             {
-                reportAndThrowAssertionError("Page did not finish initializing.");
+                reportAndThrowAssertionError("Page did not finish initializing after 30 seconds.");
             }
 
             sleep(sleepTime);
-
-            totalTime += sleepTime;
 
             sleepTime *= 2;
         }
