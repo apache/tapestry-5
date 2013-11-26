@@ -106,7 +106,8 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
 
       return unless container
 
-      className = severityToClass[data.severity] or "alert"
+      # Map from severity name to a CSS class; using alert-info if no severity, or unknown severity
+      className = severityToClass[data.severity] or "alert-info"
 
       content = if data.markup then data.message else _.escape data.message
 
