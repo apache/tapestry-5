@@ -1,6 +1,5 @@
 package org.apache.tapestry5.internal.services;
 
-
 import org.apache.tapestry5.dom.Document
 import org.apache.tapestry5.dom.Element
 import org.apache.tapestry5.dom.XMLMarkupModel
@@ -93,7 +92,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageInitialization();")])
+        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageINIT();")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -102,13 +101,13 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.addLibrary("core.js")
         linker.addLibrary("foo.js")
         linker.addLibrary("bar/baz.js")
-        linker.addScript(InitializationPriority.NORMAL, "pageInitialization();")
+        linker.addScript(InitializationPriority.NORMAL, "pageINIT();")
 
         linker.updateDocument(document)
 
         check document, '''
 <?xml version="1.0"?>
-<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
@@ -208,7 +207,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><body data-page-initialized="false"><p>Ready to be updated with scripts.</p><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
@@ -235,7 +234,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><notbody><p>Ready to be updated with scripts.</p></notbody><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><notbody><p>Ready to be updated with scripts.</p></notbody><body data-page-initialized="false"><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
@@ -261,7 +260,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/><script></script></head><body data-page-initialized="false"><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
@@ -309,7 +308,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     }
 
     @Test
-    void module_based_initialization() throws Exception {
+    void module_based_INIT() throws Exception {
         Document document = new Document()
 
         Element head = document.newRootElement("html").element("head")
@@ -331,14 +330,14 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/></head><body data-page-initialized="false"><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
     }
 
     @Test
-    void module_initialization_with_no_parameters_coalesce() throws Exception {
+    void module_INIT_with_no_parameters_coalesce() throws Exception {
         Document document = new Document()
 
         Element head = document.newRootElement("html").element("head")
@@ -359,7 +358,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body data-page-initialized="false"><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+<html><head><meta/></head><body data-page-initialized="false"><!--MM-CONFIG--><!--MM-INIT--></body></html>
 '''
 
         verify()
@@ -369,14 +368,21 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         ModuleManager mock = newMock(ModuleManager);
 
-        expect(mock.writeInitialization(isA(Element),
-            eq(libraryURLs),
-            eq(inits),
+        expect(mock.writeConfiguration(isA(Element),
             eq([]))).andAnswer({
             def body = EasyMock.currentArguments[0]
 
-            body.comment("MODULE-MANAGER-INITIALIZATION")
+            body.comment("MM-CONFIG")
         } as IAnswer).once()
+
+        expect(mock.writeInitialization(isA(Element),
+            eq(libraryURLs),
+            eq(inits))).andAnswer({
+            def body = EasyMock.currentArguments[0];
+
+            body.comment("MM-INIT");
+        } as IAnswer).once()
+
 
         return mock;
     }

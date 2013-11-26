@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,34 +28,37 @@ import java.util.List;
  * This is primarily used to wrap non-AMD compliant libraries for use with RequireJS (via contributed {@link JavaScriptModuleConfiguration}s).
  *
  * @since 5.4
+ * @see ModuleConfigurationCallback
  */
 @UsesMappedConfiguration(JavaScriptModuleConfiguration.class)
 public interface ModuleManager
 {
     /**
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the configuration
-     * of the module system into the page, including the tag to load the RequireJS library, and the
-     * necessary initialization of the client-side {@code require} object, including
-     * (critically) its baseUrl property. In addition, a call to the client-side function {@code core/pageinit:loadScriptsAndInitialize}
-     * is constructed to load static scripts and perform page initializations.
+     * for the module system into the page.
+     *
+     * @param body
+     *         {@code <body>} element of the page, to which new {@code <script>} element(s) will be added.
+     * @param moduleConfigurationCallbacks
+     *         a list of {@link org.apache.tapestry5.services.javascript.ModuleConfigurationCallback}s, which
+     *         is used to customize the configuration before it is written.
+     */
+    void writeConfiguration(Element body,
+                            List<ModuleConfigurationCallback> moduleConfigurationCallbacks);
+
+    /**
+     * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the initializations
+     * (as per {@link JavaScriptSupport#require(String)} into the page; this occurs after the module infrastructure
+     * has been written into the page, along with the core libraries.
      *
      * @param body
      *         {@code <body>} element of the page, to which new {@code <script>} element(s) will be added.
      * @param libraryURLs
-     *         list of additional static JavaScript library URLs that must be loaded on the page, after the
-     *         coreLibraryURLs, and before an initializations
+     *         additional libraries that should be dynamically loaded before evaluating the inits
      * @param inits
-     *         initializations for the page, in the desired execution order. Each element consists of a
-     *         qualified function name, followed by parameters to pass to the function. A qualified function name
-     *         is either a module name, or a module name suffixed with the name of a function property exported by the module
-     *         (separated by a ':', e.g. "myapp/mymodule:myfunc").
-     *         When there are no arguments, the qualified function name may be used; where there are arguments, the
-     *         init must be a JSONArray.
-     * @param moduleConfigurationCallbacks a list of {@link ModuleConfigurationCallback}s. It
-     *         cannot be null. 
+     *         specify initialization on the page, based on loading modules, extacting functions from modules, and invoking those functions
      */
-    void writeInitialization(Element body, List<String> libraryURLs, List<?> inits,
-            List<ModuleConfigurationCallback> moduleConfigurationCallbacks);
+    void writeInitialization(Element body, List<String> libraryURLs, List<?> inits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.
@@ -68,4 +71,5 @@ public interface ModuleManager
      * @return corresponding resource, or null if not found
      */
     Resource findResourceForModule(String moduleName);
+
 }

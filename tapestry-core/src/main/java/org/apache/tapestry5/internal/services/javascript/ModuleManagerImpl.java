@@ -86,8 +86,8 @@ public class ModuleManagerImpl implements ModuleManager
     private String buildRequireJSConfig(List<ModuleConfigurationCallback> callbacks)
     {
         // This is the part that can vary from one request to another, based on the capabilities of the client.
-        JSONObject config =  baseConfig.copy().put("baseUrl", getBaseURL());
-        
+        JSONObject config = baseConfig.copy().put("baseUrl", getBaseURL());
+
         // TAP5-2196: allow changes to the configuration in a per-request basis.
         for (ModuleConfigurationCallback callback : callbacks)
         {
@@ -95,7 +95,8 @@ public class ModuleManagerImpl implements ModuleManager
             assert config != null;
         }
 
-        return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
+        // This part gets written out before any libraries are loaded (including RequireJS).
+        return String.format("var require = %s;\n", config.toString(compactJSON));
     }
 
     private JSONObject buildBaseConfig(Map<String, JavaScriptModuleConfiguration> configuration, boolean devMode)
@@ -174,8 +175,8 @@ public class ModuleManagerImpl implements ModuleManager
         tracker.clearOnInvalidation(cache);
     }
 
-    public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits,
-            List<ModuleConfigurationCallback> callbacks)
+    public void writeConfiguration(Element body,
+                                   List<ModuleConfigurationCallback> callbacks)
     {
         Element element = body.element("script", "type", "text/javascript");
 
@@ -183,14 +184,16 @@ public class ModuleManagerImpl implements ModuleManager
         // (in development mode) URLs for some referenced assets could change (due to URLs
         // containing a checksum on the resource content).
         element.raw(buildRequireJSConfig(callbacks));
+    }
 
-        StringBuilder content = new StringBuilder(1000);
+    public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits)
+    {
 
-        content.append(globalMessages.format("core-page-initialization-template",
+        Element element = body.element("script", "type", "text/javascript");
+
+        element.raw(globalMessages.format("core-page-initialization-template",
                 convert(libraryURLs),
                 convert(inits)));
-
-        element.raw(content.toString());
     }
 
     private String convert(List<?> input)

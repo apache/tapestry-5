@@ -210,6 +210,10 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addScriptsToEndOfBody(Element body)
     {
+        moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
+
+        // Write the core libraries, which includes RequireJS:
+
         for (String url : coreLibraryURLs)
         {
             body.element("script",
@@ -217,11 +221,9 @@ public class DocumentLinkerImpl implements DocumentLinker
                     "src", url);
         }
 
-        // In prior releases of Tapestry, we've vacillated about where the <script> tags go
-        // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
-        // Eventually, (nearly) everything will be loaded as modules.
+        // Write the initialization at this point.
 
-        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits(), moduleConfigurationCallbacks);
+        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String otherExistingElement, String newElementName)
