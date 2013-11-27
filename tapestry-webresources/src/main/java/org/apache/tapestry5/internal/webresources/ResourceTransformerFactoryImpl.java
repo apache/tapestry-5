@@ -210,6 +210,8 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
                 compiled.store(is);
 
+                is.close();
+
                 cache.put(source, compiled);
 
                 return compiled.openStream();
@@ -248,6 +250,8 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
                 TapestryInternalUtils.copy(compiled, bos);
+
+                compiled.close();
 
                 BytestreamCache cache = new BytestreamCache(bos);
 
