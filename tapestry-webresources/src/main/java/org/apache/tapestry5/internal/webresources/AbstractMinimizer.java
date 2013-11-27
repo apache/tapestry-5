@@ -68,6 +68,8 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
                 TapestryInternalUtils.copy(in, bos);
 
+                in.close();
+
                 return null;
             }
         });
