@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## t5/core/exception-report
+# ## t5/core/exception-display
 #
 # Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
 # filtering the stack trace.
