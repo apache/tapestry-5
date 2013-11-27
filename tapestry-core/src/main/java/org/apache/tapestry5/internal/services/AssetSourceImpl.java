@@ -170,6 +170,13 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
                         Asset result = getComponentAsset(resources, expanded, metaResource);
 
+                        if (result == null)
+                        {
+                            throw new RuntimeException(String.format("Unable to locate asset '%s' for component %s. It should be located at %s.",
+                                    path, resources.getCompleteId(),
+                                    metaPath));
+                        }
+
                         // This is the best way to tell if the result is an asset for a Classpath resource.
 
                         Resource resultResource = result.getResource();
@@ -219,7 +226,14 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
             return getAssetForResource(metaResource);
         }
 
-        return getAssetInLocale(resources.getBaseResource(), expandedPath, resources.getLocale());
+        Resource oldStyle = findLocalizedResource(resources.getBaseResource(), expandedPath, resources.getLocale());
+
+        if (oldStyle == null || !oldStyle.exists())
+        {
+            return null;
+        }
+
+        return getAssetForResource(oldStyle);
     }
 
     private String toPathPrefix(String libraryName)

@@ -42,5 +42,11 @@ class MiscTests extends App1TestCase {
 
     }
 
+    @Test
+    void missing_asset_reports_location_under_meta_inf() {
+        openLinks "Missing Asset Demo"
+
+        assertTextPresent "Unable to locate asset 'does-not-exist.txt' for component MissingAssetDemo. It should be located at META-INF/assets/does-not-exist.txt."
+    }
 
 }

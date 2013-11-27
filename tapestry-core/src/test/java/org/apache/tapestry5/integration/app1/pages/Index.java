@@ -58,6 +58,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+
+                    new Item("MissingAssetDemo", "Missing Asset Demo", "Error when injecting an asset that does not exist."),
+
                     new Item("ConfirmDemo", "Confirm Mixin Demo", "Confirm an action when clicking it."),
 
                     new Item("SingleErrorDemo", "Single Error", "Using Error component to customize where the errors for a field will be displayed."),
