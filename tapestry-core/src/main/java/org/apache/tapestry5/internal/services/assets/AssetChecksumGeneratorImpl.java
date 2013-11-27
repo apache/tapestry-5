@@ -14,17 +14,17 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.zip.Adler32;
-
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.zip.Adler32;
 
 public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 {
@@ -87,7 +87,7 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
                 checksum.update(buffer, 0, length);
             }
 
-            // Reduces it down to just 32 bits which we express in hex.'
+            // Reduces it down to just 32 bits which we express in hex.
             return Long.toHexString(checksum.getValue());
         } finally
         {
