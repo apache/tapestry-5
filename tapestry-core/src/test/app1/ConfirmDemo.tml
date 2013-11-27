@@ -1,0 +1,8 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Confirm Mixin Demo</h1>
+
+    <t:actionlink t:id="confirmed" class="btn btn-primary" t:mixins="confirm">Click This</t:actionlink>
+
+</html>
+
