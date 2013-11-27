@@ -24,7 +24,6 @@ class AssetPathConstructorImplTest extends TestBase {
         def r = newMock(StreamableResource)
 
         expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
-        expect(pc.constructClientPath("assets.gz", "")).andReturn("/assets.gz/")
 
         expect(r.compression).andReturn(CompressionStatus.COMPRESSED)
 
@@ -32,9 +31,9 @@ class AssetPathConstructorImplTest extends TestBase {
 
         replay()
 
-        def apc = new AssetPathConstructorImpl(null, null, false, "assets", "assets.gz", pc, pathConverter)
+        def apc = new AssetPathConstructorImpl(null, null, false, "assets", pc, pathConverter)
 
-        assert apc.constructAssetPath("virt", "extra.png", r) == "/assets.gz/virt/abc/extra.png"
+        assert apc.constructAssetPath("virt", "extra.png", r) == "/assets/virt/zabc/extra.png"
 
         verify()
     }
@@ -50,7 +49,6 @@ class AssetPathConstructorImplTest extends TestBase {
         def r = newMock(StreamableResource)
 
         expect(pc.constructClientPath("assets", "")).andReturn("/assets/")
-        expect(pc.constructClientPath("assets.gz", "")).andReturn("/assets.gz/")
 
         expect(request.secure).andReturn(false)
         expect(baseURLSource.getBaseURL(false)).andReturn("http://localhost:8080")
@@ -61,7 +59,7 @@ class AssetPathConstructorImplTest extends TestBase {
 
         replay()
 
-        def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", "assets.gz", pc, pathConverter)
+        def apc = new AssetPathConstructorImpl(request, baseURLSource, true, "assets", pc, pathConverter)
 
         assert apc.constructAssetPath("virt", "icon.gif", r) == "http://localhost:8080/assets/virt/abc/icon.gif"
 

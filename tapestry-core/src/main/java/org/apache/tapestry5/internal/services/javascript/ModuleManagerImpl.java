@@ -26,8 +26,8 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
@@ -57,7 +57,7 @@ public class ModuleManagerImpl implements ModuleManager
 
     private final JSONObject baseConfig;
 
-    private final AssetPathConstructor assetPathConstructor;
+    private final String basePath, compressedBasePath;
 
     public ModuleManagerImpl(ResponseCompressionAnalyzer compressionAnalyzer,
                              AssetSource assetSource,
@@ -68,12 +68,16 @@ public class ModuleManagerImpl implements ModuleManager
                              boolean compactJSON,
                              @Symbol(SymbolConstants.PRODUCTION_MODE)
                              boolean productionMode,
-                             AssetPathConstructor assetPathConstructor)
+                             @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
+                             String modulePathPrefix,
+                             PathConstructor pathConstructor)
     {
         this.compressionAnalyzer = compressionAnalyzer;
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
-        this.assetPathConstructor = assetPathConstructor;
+
+        basePath = pathConstructor.constructClientPath(modulePathPrefix);
+        compressedBasePath = pathConstructor.constructClientPath(modulePathPrefix + ".gz");
 
         classpathRoot = assetSource.resourceForPath("");
         extensions = CollectionFactory.newSet("js");
@@ -129,7 +133,7 @@ public class ModuleManagerImpl implements ModuleManager
 
     private String getBaseURL()
     {
-        return assetPathConstructor.constructAssetPath("module", compressionAnalyzer.isGZipSupported());
+        return compressionAnalyzer.isGZipSupported() ? compressedBasePath : basePath;
     }
 
     private void addModuleToConfig(JSONObject config, String name, JavaScriptModuleConfiguration module)

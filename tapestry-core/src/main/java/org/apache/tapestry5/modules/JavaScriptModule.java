@@ -19,22 +19,20 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.*;
 import org.apache.tapestry5.internal.util.MessageCatalogResource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.*;
@@ -138,7 +136,8 @@ public class JavaScriptModule
 
         configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery-1.9.1.js"));
 
-        if (provider.equals("prototype")) {
+        if (provider.equals("prototype"))
+        {
             configuration.add("jquery-noconflict", StackExtension.library(ROOT + "/jquery-noconflict.js"));
         }
 
@@ -187,10 +186,22 @@ public class JavaScriptModule
     }
 
     @Contribute(Dispatcher.class)
-    @AssetRequestDispatcher
-    public static void provideModuleHandler(MappedConfiguration<String, AssetRequestHandler> configuration)
+    @Primary
+    public static void setupModuleDispatchers(OrderedConfiguration<Dispatcher> configuration,
+                                              ModuleManager moduleManager,
+                                              OperationTracker tracker,
+                                              ResourceStreamer resourceStreamer,
+                                              PathConstructor pathConstructor,
+                                              @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
+                                              String modulePathPrefix)
     {
-        configuration.addInstance("module", ModuleAssetRequestHandler.class);
+        configuration.add("Modules",
+                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor, modulePathPrefix, false),
+                "after:Asset", "before:ComponentEvent");
+
+        configuration.add("ComnpressedModules",
+                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor, modulePathPrefix, true),
+                "after:Modules", "before:ComponentEvent");
     }
 
     /**
@@ -312,9 +323,10 @@ public class JavaScriptModule
 
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
-    public static void declareDefaultJavaScriptInfrastructureProvider(MappedConfiguration<String, Object> configuration)
+    public static void setupFactoryDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "prototype");
+        configuration.add(SymbolConstants.MODULE_PATH_PREFIX, "modules");
     }
 
     @Contribute(ModuleManager.class)

@@ -56,7 +56,7 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
         // Ony one image on page
         String assetURL = getAttribute("//img/@src")
 
-        assert assetURL.startsWith("/t5app/asset/")
+        assert assetURL.startsWith("/t5app/assets/")
 
         assertDownloadedAsset assetURL, "src/test/appfolder/images/t5-logo.png"
     }

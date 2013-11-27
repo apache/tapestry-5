@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * Responsible for streaming the contents of a resource to the client. This is sometimes a simple
- * {@link Resource} (often from the {@link org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler},
+ * {@link Resource} (often from the {@link org.apache.tapestry5.internal.services.javascript.ModuleDispatcher},
  * or more frequently an asset represented as a {@link StreamableResource} (via {@link AssetDispatcher}, {@link org.apache.tapestry5.services.assets.AssetRequestHandler},
  * and {@link StreamableResourceSource}). As of 5.4, the ResourceStreamer handles ETag support, as well as
  * validation of the checksum (provided in the URL).
@@ -66,7 +66,8 @@ public interface ResourceStreamer
     boolean streamResource(Resource resource, String providedChecksum, Set<Options> options) throws IOException;
 
     /**
-     * Streams a resource that has been assembled elsewhere.
+     * Streams a resource that has been assembled elsewhere.  The StreamableResource may reflect either a normal
+     * or a compressed stream, depending on the type of resource and the capabilities of the client.
      *
      * @param resource
      *         content to stream

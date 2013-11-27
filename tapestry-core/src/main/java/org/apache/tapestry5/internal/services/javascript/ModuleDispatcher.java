@@ -14,19 +14,20 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.Set;
-
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.ModuleManager;
+
+import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Handler contributed to {@link AssetDispatcher} with key "modules". It interprets the extra path as a module name,
@@ -35,7 +36,7 @@ import org.apache.tapestry5.services.javascript.ModuleManager;
  *
  * @see ModuleManager
  */
-public class ModuleAssetRequestHandler implements AssetRequestHandler
+public class ModuleDispatcher implements Dispatcher
 {
     private final ModuleManager moduleManager;
 
@@ -43,18 +44,37 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
 
     private final OperationTracker tracker;
 
+    private final String requestPrefix;
+
+    private final boolean compress;
+
     private final Set<ResourceStreamer.Options> omitExpiration = EnumSet.of(ResourceStreamer.Options.OMIT_EXPIRATION);
 
-    public ModuleAssetRequestHandler(ModuleManager moduleManager,
-                                     ResourceStreamer streamer,
-                                     OperationTracker tracker)
+    public ModuleDispatcher(ModuleManager moduleManager,
+                            ResourceStreamer streamer,
+                            OperationTracker tracker,
+                            PathConstructor pathConstructor,
+                            String prefix,
+                            boolean compress)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
+        this.compress = compress;
+
+        requestPrefix = pathConstructor.constructDispatchPath(compress ? prefix + ".gz" : prefix) + "/";
     }
 
-    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
+    public boolean dispatch(Request request, Response response) throws IOException
+    {
+        String path = request.getPath();
+
+        return path.startsWith(requestPrefix) &&
+                handleModuleRequest(path.substring(requestPrefix.length()));
+
+    }
+
+    private boolean handleModuleRequest(String extraPath) throws IOException
     {
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
         // to be a hierarchy of static JavaScript files here. In reality, we may be cross-compiling CoffeeScript to
@@ -75,7 +95,9 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
 
         final String moduleName = extraPath.substring(0, dotx);
 
-        return tracker.perform(String.format("Streaming module %s", extraPath), new IOOperation<Boolean>()
+        return tracker.perform(String.format("Streaming %s %s",
+                compress ? "compressed module" : "module",
+                moduleName), new IOOperation<Boolean>()
         {
             public Boolean perform() throws IOException
             {
@@ -83,7 +105,9 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
 
                 if (resource != null)
                 {
-                    return streamer.streamResource(resource, "", omitExpiration);
+                    // Slightly hacky way of informing the streamer whether to supply the
+                    // compressed or default stream. May need to iterate the API on this a bit.
+                    return streamer.streamResource(resource, compress ? "z" : "", omitExpiration);
                 }
 
                 return false;

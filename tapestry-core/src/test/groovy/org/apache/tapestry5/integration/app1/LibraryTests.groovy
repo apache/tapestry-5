@@ -19,7 +19,7 @@ class LibraryTests extends GroovyTapestryCoreTestCase
 
         String assetURL = getAttribute("//img[@id='t5logo']/@src")
 
-        def pattern = ~"/asset/lib/alpha/\\w+/pages/tapestry\\.png"
+        def pattern = ~"/assets/lib/alpha/\\w+/pages/tapestry\\.png"
 
         assert pattern.matcher(assetURL).matches()
 

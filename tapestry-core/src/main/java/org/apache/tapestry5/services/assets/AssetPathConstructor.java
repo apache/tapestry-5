@@ -48,19 +48,4 @@ public interface AssetPathConstructor
     @IncompatibleChange(release = "5.4", details = "resource parameter added, IOException may now be thrown")
     String constructAssetPath(String virtualFolder, String path, StreamableResource resource) throws IOException;
 
-    /**
-     * Generates a base URL for a virtual folder (this exists mostly for {@link org.apache.tapestry5.services.javascript.ModuleManager}
-     * and {@link org.apache.tapestry5.internal.services.javascript.ModuleAssetRequestHandler}). Uses much of the same logic
-     * as {@link #constructAssetPath(String, String, StreamableResource)}, including
-     * {@link org.apache.tapestry5.SymbolConstants#ASSET_URL_FULL_QUALIFIED} and the {@link org.apache.tapestry5.services.AssetPathConverter}.
-     *
-     * @param virtualFolder
-     *         folder that will be used to select a {@link }
-     * @param compressed
-     *         build a path that indicates GZip compression
-     * @return complete path
-     * @since 5.4
-     */
-    String constructAssetPath(String virtualFolder, boolean compressed);
-
 }

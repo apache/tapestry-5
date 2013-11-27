@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -48,13 +47,12 @@ public class StackAssetRequestHandler implements AssetRequestHandler
     private final JavaScriptStackAssembler javaScriptStackAssembler;
 
     private final JavaScriptStackSource stackSource;
-    private final Request request;
 
     public StackAssetRequestHandler(Logger logger, LocalizationSetter localizationSetter,
                                     ResourceStreamer resourceStreamer,
                                     OperationTracker tracker,
                                     JavaScriptStackAssembler javaScriptStackAssembler,
-                                    JavaScriptStackSource stackSource, Request request)
+                                    JavaScriptStackSource stackSource)
     {
         this.logger = logger;
         this.localizationSetter = localizationSetter;
@@ -62,7 +60,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler
         this.tracker = tracker;
         this.javaScriptStackAssembler = javaScriptStackAssembler;
         this.stackSource = stackSource;
-        this.request = request;
     }
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
@@ -92,6 +89,13 @@ public class StackAssetRequestHandler implements AssetRequestHandler
         String localeName = matcher.group(2);
         final String stackName = matcher.group(3);
 
+        final boolean compressed = checksum.startsWith("z");
+
+        if (compressed)
+        {
+            checksum = checksum.substring(1);
+        }
+
         if (stackSource.findStack(stackName) == null)
         {
             logger.warn(String.format("JavaScript stack '%s' not found.", stackName));
@@ -111,8 +115,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler
                         {
                             public StreamableResource perform() throws IOException
                             {
-                                boolean compressed =
-                                        (Boolean) request.getAttribute(TapestryConstants.COMPRESS_CONTENT);
 
                                 return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
 

@@ -46,15 +46,4 @@ public class TapestryConstants
      * @since 5.2.0
      */
     public static final String PAGE_LOOPBACK_PARAMETER_NAME = "t:lb";
-
-    /**
-     * {@link org.apache.tapestry5.services.Request} attribute set to true or false before an
-     * {@link org.apache.tapestry5.services.assets.AssetRequestHandler} is invoked. This information
-     * is used downstream, typically by {@link org.apache.tapestry5.internal.services.ResourceStreamer},
-     * to decide whether to obtain a normal, or compressed, {@link org.apache.tapestry5.services.assets.StreamableResource}.
-     *
-     * @since 5.4
-     */
-    public static final String COMPRESS_CONTENT = "tapestry.compress-content";
-
 }

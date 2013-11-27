@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.IOOperation;
@@ -85,8 +84,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return true;
         }
 
-        final boolean compress = (Boolean) request.getAttribute(TapestryConstants.COMPRESS_CONTENT);
-
+        final boolean compress = providedChecksum.startsWith("z");
 
         return tracker.perform(String.format("Streaming %s%s", resource, compress ? " (compressed)" : ""), new IOOperation<Boolean>()
         {
@@ -98,7 +96,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
                 StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
-                return streamResource(streamable, providedChecksum, options);
+                return streamResource(streamable, compress ? providedChecksum.substring(1) : providedChecksum, options);
             }
         });
     }
@@ -118,7 +116,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         long lastModified = streamable.getLastModified();
 
-        long ifModifiedSince = 0;
+        long ifModifiedSince;
 
         try
         {

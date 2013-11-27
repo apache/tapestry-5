@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2013 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 {
     private final Request request;
 
-    private final String uncompressedPrefix, compressedPrefix;
+    private final String prefix;
 
     private final BaseURLSource baseURLSource;
 
@@ -48,9 +48,6 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
                                     @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
                                     String uncompressedAssetPrefix,
 
-                                    @Symbol(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX)
-                                    String compressedAssetPrefix,
-
                                     PathConstructor pathConstructor,
 
                                     AssetPathConverter pathConverter)
@@ -61,37 +58,13 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         this.fullyQualified = fullyQualified;
         this.pathConverter = pathConverter;
 
-        uncompressedPrefix = pathConstructor.constructClientPath(uncompressedAssetPrefix, "");
-        compressedPrefix = pathConstructor.constructClientPath(compressedAssetPrefix, "");
+        prefix = pathConstructor.constructClientPath(uncompressedAssetPrefix, "");
     }
 
     public String constructAssetPath(String virtualFolder, String path, StreamableResource resource) throws IOException
     {
         assert InternalUtils.isNonBlank(path);
 
-        StringBuilder builder = create(resource.getCompression() == CompressionStatus.COMPRESSED, virtualFolder);
-        builder.append("/");
-
-        builder.append(resource.getChecksum());
-
-        builder.append('/');
-        builder.append(path);
-
-        return finish(builder);
-    }
-
-    public String constructAssetPath(String virtualFolder, boolean compressed)
-    {
-        return finish(create(compressed, virtualFolder));
-    }
-
-    private String finish(StringBuilder builder)
-    {
-        return pathConverter.convertAssetPath(builder.toString());
-    }
-
-    private StringBuilder create(boolean compress, String virtualFolder)
-    {
         assert InternalUtils.isNonBlank(virtualFolder);
 
         StringBuilder builder = new StringBuilder();
@@ -101,8 +74,22 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
             builder.append(baseURLSource.getBaseURL(request.isSecure()));
         }
 
-        builder.append(compress ? compressedPrefix : uncompressedPrefix);
+        builder.append(prefix);
+        builder.append(virtualFolder);
+        builder.append("/");
 
-        return builder.append(virtualFolder);
+        // The 'z' prefix indicates a compressed resource.
+
+        if (resource.getCompression() == CompressionStatus.COMPRESSED)
+        {
+            builder.append("z");
+        }
+
+        builder.append(resource.getChecksum());
+        builder.append('/');
+        builder.append(path);
+
+        return pathConverter.convertAssetPath(builder.toString());
     }
+
 }

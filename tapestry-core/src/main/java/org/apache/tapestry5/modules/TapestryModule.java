@@ -1627,8 +1627,6 @@ public final class TapestryModule
      * <dl>
      * <dt>RootPath</dt>
      * <dd>Renders the start page for the "/" request (outdated)</dd>
-     * <dt>Asset</dt>
-     * <dd>Provides access to assets (context, classpath and virtual) via {@link AssetDispatcher}</dd>
      * <dt>PageRender</dt>
      * <dd>Identifies the {@link org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto
      * {@link PageRenderRequestHandler}</dd>
@@ -1637,10 +1635,7 @@ public final class TapestryModule
      * {@link ComponentEventRequestHandler}</dd>
      * </dl>
      */
-    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
-
-                                                  @AssetRequestDispatcher
-                                                  Dispatcher assetDispatcher)
+    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration)
     {
         // Looks for the root path and renders the start page. This is
         // maintained for compatibility
@@ -1648,12 +1643,6 @@ public final class TapestryModule
         // page be used instead.
 
         configuration.addInstance("RootPath", RootPathDispatcher.class, "before:Asset");
-
-        // This goes first because an asset to be streamed may have an file
-        // extension, such as
-        // ".html", that will confuse the later dispatchers.
-
-        configuration.add("Asset", assetDispatcher, "before:ComponentEvent");
 
         configuration.addInstance("ComponentEvent", ComponentEventDispatcher.class, "before:PageRender");
 

@@ -76,8 +76,7 @@ public class AssetsModule
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, false);
 
-        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "asset");
-        configuration.add(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX, "${tapestry.asset-path-prefix}.gz");
+        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
 
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap-3.0.2");
 
@@ -308,5 +307,19 @@ public class AssetsModule
         configuration.add("ClientLocalization", new ClientLocalizationMessageResource());
         configuration.add("Core", assetSource.resourceForPath("org/apache/tapestry5/core.properties"));
         configuration.add("AppCatalog", applicationCatalog);
+    }
+
+    @Contribute(Dispatcher.class)
+    @Primary
+    public static void setupAssetDispatch(OrderedConfiguration<Dispatcher> configuration,
+                                          @AssetRequestDispatcher
+                                          Dispatcher assetDispatcher)
+    {
+
+        // This goes first because an asset to be streamed may have an file
+        // extension, such as
+        // ".html", that will confuse the later dispatchers.
+
+        configuration.add("Asset", assetDispatcher, "before:ComponentEvent");
     }
 }

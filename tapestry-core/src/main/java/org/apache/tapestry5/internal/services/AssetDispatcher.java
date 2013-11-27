@@ -14,27 +14,20 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.AssetRequestDispatcher;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.PathConstructor;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 /**
  * Recognizes requests where the path begins with "/asset/" (actually, as defined by the
@@ -60,40 +53,22 @@ public class AssetDispatcher implements Dispatcher
      */
     private final List<String> assetPaths = CollectionFactory.newList();
 
-    private final String uncompressedPathPrefix, compressedPathPrefix;
-
-    private AssetRequestHandler wrap(final boolean compress, final AssetRequestHandler handler)
-    {
-        return new AssetRequestHandler()
-        {
-            public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
-            {
-                request.setAttribute(TapestryConstants.COMPRESS_CONTENT, compress);
-
-                return handler.handleAssetRequest(request, response, extraPath);
-            }
-        };
-    }
+    private final String requestPathPrefix;
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
                            PathConstructor pathConstructor,
 
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                           String uncompressedPrefix,
-
-                           @Symbol(SymbolConstants.COMPRESSED_ASSET_PATH_PREFIX)
-                           String compressedPrefix)
+                           String assetPathPrefix)
     {
-        uncompressedPathPrefix = pathConstructor.constructDispatchPath(uncompressedPrefix, "");
-        compressedPathPrefix = pathConstructor.constructDispatchPath(compressedPrefix, "");
+        requestPathPrefix = pathConstructor.constructDispatchPath(assetPathPrefix, "");
 
         for (String path : configuration.keySet())
         {
             AssetRequestHandler handler = configuration.get(path);
 
-            addPath(uncompressedPathPrefix, path, wrap(false, handler));
-            addPath(compressedPathPrefix, path, wrap(true, handler));
+            addPath(requestPathPrefix, path, handler);
         }
 
         // Sort by descending length
@@ -124,12 +99,6 @@ public class AssetDispatcher implements Dispatcher
                 : prefix + path + "/";
     }
 
-    private boolean matchesEitherPrefix(String path)
-    {
-        return path.startsWith(compressedPathPrefix) ||
-                path.startsWith(uncompressedPathPrefix);
-    }
-
     public boolean dispatch(Request request, Response response) throws IOException
     {
         String path = request.getPath();
@@ -137,7 +106,7 @@ public class AssetDispatcher implements Dispatcher
         // Remember that the request path does not include the context path, so we can simply start
         // looking for the asset path prefix right off the bat.
 
-        if (!matchesEitherPrefix(path))
+        if (!path.startsWith(requestPathPrefix))
         {
             return false;
         }
