@@ -75,8 +75,11 @@ public class JavaScriptModule
         configuration.add(InternalConstants.CORE_STACK_NAME, coreStack);
     }
 
+    // These are automatically bundles with the core JavaScript stack; some applications may want to add a few
+    // additional ones, such as t5/core/zone.
     private static final String[] bundledModules = new String[]{
-            "ajax", "dom", "events", "console", "exception-frame", "pageinit", "messages", "utils"
+            "alert", "ajax", "bootstrap", "console", "dom", "events", "exception-frame", "fields", "forms",
+            "pageinit", "messages", "utils", "validation"
     };
 
     /**
@@ -89,11 +92,11 @@ public class JavaScriptModule
      * <dt>The Underscore JavaScript library, and the shim that allows underscore to be injected</dt>
      * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
      * <dt>jquery-library</dt> <dd>The jQuery library</dd>
-     * <dt>jquery-noconflict</dt> <dd>Switches jQuery to no-conflic mode (only present when the infrastructure is "prototype").</dd>
+     * <dt>jquery-noconflict</dt> <dd>Switches jQuery to no-conflict mode (only present when the infrastructure is "prototype").</dd>
      * <dt>jquery</dt> <dd>A module shim that allows jQuery to be injected (and also switches jQuery to no-conflict mode)</dd>
      * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
      * <dd>CSS files</dd>
-     * <dt>t5/core/[ajax, dom, events, console, exception-frame, pageinit, messages, utils]</dt>
+     * <dt>t5/core/[...]</dt>
      * <dd>Additional JavaScript modules</dd>
      * <dt>jquery</dt>
      * <dd>Added if the infrastructure provider is "jquery".</dd>
