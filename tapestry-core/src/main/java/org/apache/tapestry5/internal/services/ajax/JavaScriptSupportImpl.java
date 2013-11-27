@@ -14,13 +14,6 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
@@ -34,13 +27,9 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.Initialization;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
-import org.apache.tapestry5.services.javascript.StylesheetLink;
+import org.apache.tapestry5.services.javascript.*;
+
+import java.util.*;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -70,7 +59,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private String focusFieldId;
 
-    private Map<String, String> libraryURLToStackName;
+    private Map<String, String> libraryURLToStackName, moduleNameToStackName;
 
     class InitializationImpl implements Initialization
     {
@@ -246,7 +235,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         addScript(InitializationPriority.NORMAL, format, arguments);
     }
-    
+
     public void addModuleConfigurationCallback(ModuleConfigurationCallback callback)
     {
         linker.addModuleConfigurationCallback(callback);
@@ -301,6 +290,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return getLibraryURLToStackName().get(libraryURL);
     }
 
+
     private Map<String, String> getLibraryURLToStackName()
     {
         if (libraryURLToStackName == null)
@@ -319,6 +309,31 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return libraryURLToStackName;
     }
 
+    private String findStackForModule(String moduleName)
+    {
+        return getModuleNameToStackName().get(moduleName);
+    }
+
+    private Map<String, String> getModuleNameToStackName()
+    {
+
+        if (moduleNameToStackName == null)
+        {
+            moduleNameToStackName = CollectionFactory.newMap();
+
+            for (String stackName : javascriptStackSource.getStackNames())
+            {
+                for (String moduleName : javascriptStackSource.getStack(stackName).getModules())
+                {
+                    moduleNameToStackName.put(moduleName, stackName);
+                }
+            }
+        }
+
+        return moduleNameToStackName;
+    }
+
+
     private void addAssetsFromStack(String stackName)
     {
         if (addedStacks.containsKey(stackName))
@@ -333,7 +348,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         // end, avoiding the TAP5-2197 bug.
         final List<String> reversedStacks = new ArrayList<String>(stack.getStacks());
         Collections.reverse(reversedStacks);
-        
+
         for (String dependentStackname : reversedStacks)
         {
             addAssetsFromStack(dependentStackname);
@@ -422,6 +437,13 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert InternalUtils.isNonBlank(moduleName);
 
         addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+
+        String stackName = findStackForModule(moduleName);
+
+        if (stackName != null)
+        {
+            importStack(stackName);
+        }
 
         InitializationImpl init = new InitializationImpl(moduleName);
 

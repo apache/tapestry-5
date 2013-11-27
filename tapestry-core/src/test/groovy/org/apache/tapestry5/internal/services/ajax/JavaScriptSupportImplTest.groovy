@@ -40,13 +40,16 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
     @Test
     void partial_mode_add_script() {
         DocumentLinker linker = mockDocumentLinker()
+        def stackSource = mockJavaScriptStackSource()
+
+        train_for_just_core_stack stackSource
 
         linker.addInitialization(InitializationPriority.NORMAL, "t5/core/pageinit", "evalJavaScript",
             new JSONArray().put("doSomething();"))
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, null, null, new IdAllocator(), true)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, null, new IdAllocator(), true)
 
         jss.addScript("doSomething();")
 
@@ -157,6 +160,44 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         verify()
     }
+
+    @Test
+    void requireing_a_module_may_import_a_stack() {
+        DocumentLinker linker = mockDocumentLinker()
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource()
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
+
+        JavaScriptStack mystack = mockJavaScriptStack()
+
+        expect(stackSource.stackNames).andReturn(["mystack"])
+        expect(stackSource.getStack("mystack")).andReturn(mystack).atLeastOnce()
+
+        expect(mystack.modules).andReturn(["foo/bar"])
+
+        expect(mystack.stacks).andReturn([])
+
+        expect(pathConstructor.constructPathsForJavaScriptStack("mystack")).andReturn(["stacks/mystack.js"])
+
+        expect(mystack.stylesheets).andReturn([])
+
+        expect(mystack.initialization).andReturn null
+
+        linker.addLibrary("stacks/mystack.js")
+
+        linker.addInitialization(InitializationPriority.NORMAL, "foo/bar", null, null)
+
+        replay()
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true)
+
+        jss.require("foo/bar")
+
+        jss.commit()
+
+        verify()
+
+    }
+
 
     private void trainForNoStackNames(JavaScriptStackSource stackSource) {
         // This is slightly odd, as it would normally return "core" at a minimum, but we test for that separately.
@@ -288,6 +329,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
 
+        train_for_just_core_stack stackSource
+
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", "chuck")
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", "charley")
 
@@ -311,6 +354,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         JSONArray chuck = new JSONArray("chuck", "yeager")
         JSONArray buzz = new JSONArray("buzz", "aldrin")
+
+        train_for_just_core_stack stackSource
 
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", chuck)
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", buzz)
@@ -341,6 +386,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
 
+        train_for_just_core_stack stackSource
+
         train_init(linker, InitializationPriority.NORMAL, "setup", "chuck")
 
         replay()
@@ -354,6 +401,17 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         verify()
     }
 
+    def train_for_just_core_stack(stackSource) {
+        def coreStack = mockJavaScriptStack()
+
+        expect(stackSource.stackNames).andReturn(["core"])
+
+        expect(stackSource.getStack("core")).andReturn(coreStack)
+
+        expect(coreStack.modules).andReturn([])
+    }
+
+
     @Test
     void default_for_init_array_is_normal_priority() {
         DocumentLinker linker = mockDocumentLinker()
@@ -361,6 +419,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
 
         JSONArray chuck = new JSONArray("chuck", "yeager")
+
+        train_for_just_core_stack stackSource
 
         train_init(linker, InitializationPriority.NORMAL, "setup", chuck)
 

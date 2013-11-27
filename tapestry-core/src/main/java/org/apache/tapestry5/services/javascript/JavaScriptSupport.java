@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -250,6 +250,11 @@ public interface JavaScriptSupport
      * In some cases, a module exports no functions, but performs some initialization (typically, adding document-level
      * event handlers), in which case a call to require() is sufficient. In cases where the module, or a function
      * within the module, are invoked with no parameters, the calls will be collapsed into a single invocation.
+     * <p/>
+     * If the module is part of a {@linkplain org.apache.tapestry5.services.javascript.JavaScriptStack#getModules() JavaScript stack},
+     * then the stack will be imported; this is important when {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation is enabled},
+     * but also ensures that libraries in the stack are loaded before the module (for cases where the
+     * module has dependencies on libraries not wrapped as AMD modules).
      *
      * @param moduleName
      *         the name of the module to require
@@ -257,11 +262,12 @@ public interface JavaScriptSupport
      * @since 5.4
      */
     Initialization require(String moduleName);
-    
+
     /**
      * Adds a module configuration callback for this request.
-     * 
-     * @param callback a {@link ModuleConfigurationCallback}. It cannot be null.
+     *
+     * @param callback
+     *         a {@link ModuleConfigurationCallback}. It cannot be null.
      * @see DocumentLinker#addModuleConfigurationCallback(ModuleConfigurationCallback)
      * @since 5.4
      */
