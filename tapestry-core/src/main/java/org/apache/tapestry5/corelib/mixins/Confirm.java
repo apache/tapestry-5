@@ -35,9 +35,15 @@ import org.apache.tapestry5.annotations.Parameter;
 @Import(module = "t5/core/confirm-click")
 public class Confirm
 {
+    /**
+     * The message to present to the user in the body of the modal dialog.
+     */
     @Parameter(value = "message:default-confirm-message", defaultPrefix = BindingConstants.LITERAL)
     private String message;
 
+    /**
+     * The title for the modal dialog.
+     */
     @Parameter(value = "message:default-confirm-title", defaultPrefix = BindingConstants.LITERAL)
     private String title;
 
