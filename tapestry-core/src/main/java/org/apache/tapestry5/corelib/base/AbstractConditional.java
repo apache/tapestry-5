@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * Base class for {@link org.apache.tapestry5.corelib.components.If} and {@link org.apache.tapestry5.corelib.components.Unless}.
  * Will render its body or the block from its else parameter.  If it renders anything and it has an element name, then
  * it renders the element and its informal parameters.
+ *
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public abstract class AbstractConditional
@@ -56,11 +58,13 @@ public abstract class AbstractConditional
      */
     Object beginRender(MarkupWriter writer)
     {
-        Block toRender = test() ? resources.getBody() : elseBlock;
+        boolean enabled = test();
+
+        Block toRender = enabled ? resources.getBody() : elseBlock;
 
         String elementName = resources.getElementName();
 
-        renderTag = toRender != null && elementName != null;
+        renderTag = enabled && elementName != null;
 
         if (renderTag)
         {
@@ -73,17 +77,19 @@ public abstract class AbstractConditional
 
     /**
      * If {@link #test()} is true, then the body is rendered, otherwise not. The component does not have a template or
-     * do any other rendering besides its body.
+     * do any other rendering besides its body (and possibly an element around its body).
      */
     boolean beforeRenderBody()
     {
         return false;
     }
 
-    void afterRenderBody(MarkupWriter writer)
+    void afterRender(MarkupWriter writer)
     {
         if (renderTag)
+        {
             writer.end();
+        }
     }
 
 

@@ -59,6 +59,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("EmptyIfDemo", "Empty If Demo", "Ensure an empty If can still render."),
+
                     new Item("MissingAssetDemo", "Missing Asset Demo", "Error when injecting an asset that does not exist."),
 
                     new Item("ConfirmDemo", "Confirm Mixin Demo", "Confirm an action when clicking it."),

@@ -29,4 +29,17 @@ class BlockTests extends App1TestCase
 
         assertText "testtitle", "Component Inside Block"
     }
+
+    // Test for TAP5-2249
+    @Test
+    void empty_if_will_render_a_tag() {
+
+        openLinks "Empty If Demo", "Hide"
+
+        assertEquals 0, getCssCount(".header-seperator")
+
+        clickAndWait "link=Show"
+
+        assertEquals 1, getCssCount(".header-seperator")
+    }
 }

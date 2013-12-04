@@ -1,0 +1,20 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Empty If Demo</h1>
+
+    <style>
+    </style>
+
+
+    <div t:type="if" test="show" class="header-seperator"/>
+
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            <t:actionlink t:id="show" class="btn btn-default">Show</t:actionlink>
+            <t:actionlink t:id="hide" class="btn btn-default">Hide</t:actionlink>
+        </div>
+
+    </div>
+
+</html>
+
