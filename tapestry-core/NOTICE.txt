@@ -24,7 +24,7 @@ to take your pick!).
 http://requirejs.org/
 
 This product includes Bootstrap, distributed under the Apache Software License 2.0
-http://twbs.github.io/bootstrap/
+http://getbootstrap.com/
 
 This product includes jQuery, distributed under the MIT License:
 http://jquery.org/
