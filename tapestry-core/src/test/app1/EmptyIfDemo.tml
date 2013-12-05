@@ -2,10 +2,6 @@
 
     <h1>Empty If Demo</h1>
 
-    <style>
-    </style>
-
-
     <div t:type="if" test="show" class="header-seperator"/>
 
     <div class="btn-toolbar">
