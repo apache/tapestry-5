@@ -63,4 +63,13 @@ class MiscTests extends App1TestCase {
         assertNotEquals defaultFormat, customFormat
     }
 
+    @Test
+    void timeinterval_component() {
+        openLinks "TimeInterval Demo", "English"
+
+        assert getText("time-since-prev-render").endsWith(" ago")
+        assert getText("jacob-age").contains("years")
+        assert getText("jacob-vote").startsWith("in ")
+    }
+
 }

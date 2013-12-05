@@ -41,6 +41,7 @@ import java.util.Date;
  * zone.
  *
  * @tapestrydoc
+ * @see TimeInterval
  * @since 5.4
  */
 @SupportsInformalParameters

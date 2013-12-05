@@ -58,6 +58,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+
+                    new Item("TimeIntervalDemo", "TimeInterval Demo", "Interval component, based on Moment.js"),
+
                     new Item("LocalDateDemo", "LocalDate Demo", "LocalDate component, based on Moment.js"),
 
                     new Item("EmptyIfDemo", "Empty If Demo", "Ensure an empty If can still render."),

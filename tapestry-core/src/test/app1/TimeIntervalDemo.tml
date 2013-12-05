@@ -1,0 +1,26 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Interval Demo</h1>
+
+    <dl>
+        <dt>Current time</dt>
+        <dd t:type="localdate" value="now" format="HH:mm:ss"/>
+        <dt>Previous render</dt>
+        <dd>
+            <t:localdate value="previousRender" format="HH:mm:ss"/>
+            -
+            <t:timeinterval id="time-since-prev-render" end="previousRender"/>
+        </dd>
+        <dt>Jacob's Age</dt>
+        <dd id="jacob-age" t:type="timeinterval" start="jacobBirth" plain="true"></dd>
+        <dt>Jacob can Vote</dt>
+        <dd id="jacob-vote" t:type="timeinterval" end="jacobVote"/>
+    </dl>
+
+    <div class="btn-toolbar">
+        <t:actionlink t:id="english" class="btn btn-default">English</t:actionlink>
+        <t:actionlink t:id="french" class="btn btn-default">French</t:actionlink>
+    </div>
+
+</html>
+
