@@ -195,7 +195,7 @@ public class ModuleManagerImpl implements ModuleManager
 
         Element element = body.element("script", "type", "text/javascript");
 
-        element.raw(globalMessages.format("core-page-initialization-template",
+        element.raw(globalMessages.format("private-core-page-initialization-template",
                 convert(libraryURLs),
                 convert(inits)));
     }

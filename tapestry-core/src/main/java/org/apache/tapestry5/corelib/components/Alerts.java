@@ -49,13 +49,12 @@ public class Alerts extends BaseClientElement
     @Parameter(value = "message:core-dismiss-label", defaultPrefix = BindingConstants.LITERAL)
     private String dismissText;
 
-
     /**
      * If set to true, then the "dismiss all" button will not be rendered on the client.
      *
      * @since 5.4
      */
-    @Parameter(value = "message:core-alerts-show-dismiss-all", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(value = "message:private-core-alerts-show-dismiss-all", defaultPrefix = BindingConstants.LITERAL)
     private boolean showDismissAll;
 
     @SessionState(create = false)

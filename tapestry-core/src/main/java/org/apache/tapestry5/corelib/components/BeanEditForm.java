@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * Specifies the CSS class attribute for the form; the factory default is "well".
      */
     @Property
-    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "message:core-components.beaneditform.class")
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "message:private-core-components.beaneditform.class")
     private String className;
 
     @Component(parameters = "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
