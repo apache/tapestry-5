@@ -370,6 +370,7 @@ public final class TapestryModule
         binder.bind(StringInterner.class, StringInternerImpl.class);
         binder.bind(ValueEncoderSource.class, ValueEncoderSourceImpl.class);
         binder.bind(PathConstructor.class, PathConstructorImpl.class);
+        binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
     }
 
     // ========================================================================

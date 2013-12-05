@@ -21,12 +21,10 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.DateUtilities;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Used to present a date, formatted in the time zone of the client browser.
@@ -68,21 +66,19 @@ public class LocalDate
     @Environmental
     JavaScriptSupport javaScriptSupport;
 
-    private static TimeZone tz = TimeZone.getTimeZone("UTC");
+    @Inject
+    DateUtilities dateUtilities;
 
     boolean beginRender(MarkupWriter writer)
     {
         if (value != null)
         {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-            df.setTimeZone(tz);
-
             writer.element(resources.getElementName("span"),
                     "data-localdate-format", format);
 
             resources.renderInformalParameters(writer);
 
-            writer.write(df.format(value));
+            writer.write(dateUtilities.formatISO8601(value));
 
             writer.end();
 
