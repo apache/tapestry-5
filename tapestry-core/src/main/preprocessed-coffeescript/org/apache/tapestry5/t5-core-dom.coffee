@@ -784,6 +784,35 @@ define ["underscore", "./utils", "./events", "jquery"],
     new RequestWrapper (new Ajax.Request url, finalOptions)
 #endif
 
+  scanners = null
+
+  # Sets up a scanner callback; this is used to perfom one-time setup of elements
+  # that match a particular CSS selector. The callback is passed each element that
+  # matches the selector. The callback is expected to modify the element so that it does not
+  # match future selections caused by zone updates, typically by removing the CSS class or data- attribute
+  # referenced by the selector.
+  scanner = (selector, callback) ->
+    # Define a function that scans some root element (the body initially; later an updated Zone)
+    scan = (root) ->
+      callback el for el in root.find selector
+      return
+
+    # Do it once immediately:
+
+    scan exports.body
+
+    # Lazily set up a single event handler for running any added scanners.
+
+    if scanners is null
+      scanners = []
+      exports.body.on events.zone.didUpdate, ->
+        f this for f in scanners
+        return
+
+    scanners.push scan
+
+    return
+
   # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
   # properties.
   #
@@ -878,5 +907,7 @@ define ["underscore", "./utils", "./events", "jquery"],
     # inside a block at the end of the document, inside the `<body`> element, it is assumed that
     # it is always safe to get the body.
     body: wrapElement document.body
+
+    scanner: scanner
 
   return exports

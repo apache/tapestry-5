@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Local Date Demo</h1>
+
+    <p>The current time is:</p>
+
+    <div class="alert alert-info" t:type="localdate" id="local-date-default" value="now"/>
+
+    <p>
+        It is also
+        <t:localdate id="local-date-formatted" value="now" format="dddd, MMMM Do YYYY, h:mm:ss a">
+            Body of element is ignored.
+        </t:localdate>
+    </p>
+
+</html>
+
