@@ -32,4 +32,7 @@ http://jquery.org/
 This product includes Twitter Typeahead.js, distributed under the MIT License.
 https://github.com/twitter/typeahead.js
 
+This product includes Moment.js, distributed under the MIT License.
+https://github.com/moment/moment
+
 
