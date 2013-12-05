@@ -12,26 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ## t5/core/localdate
+# ## t5/core/moment
 #
-# Used with the LocalDate component to present a Date in a particular format, in the
-# browser's time zone.
+# A wrapper around Moment.js; this simply initializes Moment to
+# use the correct locale (as per the data-locale attribute of the document element).
+define ["moment"],
+(moment) ->
+  locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-define ["./dom", "./moment"],
-(dom, moment) ->
+  moment.lang(locale)
 
-  ATTR = "data-localdate-format"
-
-  dom.scanner "[#{ATTR}]", (el) ->
-    format = el.attr ATTR
-
-    isoString = el.text()
-
-    m = moment isoString
-
-    el.update m.format format
-
-    # A good scanner callback always removes itself from future scans.
-    el.attr ATTR, null
-
-    return
+  return moment

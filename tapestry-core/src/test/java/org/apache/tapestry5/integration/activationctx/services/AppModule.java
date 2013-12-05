@@ -24,7 +24,7 @@ public class AppModule
 {
 	public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
 	{
-		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
+		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr");
 		configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
 	}
 }

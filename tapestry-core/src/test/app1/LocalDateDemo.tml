@@ -13,5 +13,11 @@
         </t:localdate>
     </p>
 
+
+    <div class="btn-toolbar">
+        <t:actionlink t:id="english" class="btn btn-default">English</t:actionlink>
+        <t:actionlink t:id="french" class="btn btn-default">French</t:actionlink>
+    </div>
+
 </html>
 
