@@ -49,4 +49,18 @@ class MiscTests extends App1TestCase {
         assertTextPresent "Unable to locate asset 'does-not-exist.txt' for component MissingAssetDemo. It should be located at META-INF/assets/does-not-exist.txt."
     }
 
+    @Test
+    void local_date_formatting() {
+        openLinks "LocalDate Demo"
+
+        def defaultFormat = getText "local-date-default"
+        def customFormat = getText "local-date-formatted"
+
+        // Because there are so many variables: the date formatted, the locale and time zone of the
+        // server running the tests, etc., all we can really test for is that the
+        // client-side code successfully kicked in and formatted these differently.
+
+        assertNotEquals defaultFormat, customFormat
+    }
+
 }
