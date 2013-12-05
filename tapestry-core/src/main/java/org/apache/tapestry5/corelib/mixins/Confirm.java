@@ -38,13 +38,13 @@ public class Confirm
     /**
      * The message to present to the user in the body of the modal dialog.
      */
-    @Parameter(value = "message:default-confirm-message", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(value = "message:private-default-confirm-message", defaultPrefix = BindingConstants.LITERAL)
     private String message;
 
     /**
      * The title for the modal dialog.
      */
-    @Parameter(value = "message:default-confirm-title", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(value = "message:private-default-confirm-title", defaultPrefix = BindingConstants.LITERAL)
     private String title;
 
     void beginRender(MarkupWriter writer)
