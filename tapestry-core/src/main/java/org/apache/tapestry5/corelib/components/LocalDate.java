@@ -47,8 +47,8 @@ import java.util.Date;
 public class LocalDate
 {
     /**
-     * The format to use, as defined by <a href="">Moment.js</a>. The factory default
-     * is "lll", which is a short form of the month, day, year, hour, minute and am/pm,
+     * The format to use, as defined by <a href="http://momentjs.com/docs/#/displaying/format/">Moment.js</a>.
+     * The factory default is "lll", which is a short form of the month, day, year, hour, minute and am/pm,
      * e.g. "Sep 4 1986 8:30 PM".
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL, allowNull = false, value = "message:private-default-localdate-format")
