@@ -78,7 +78,7 @@ public class AssetsModule
 
         configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
 
-        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap-3.0.3");
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap");
 
         configuration.add("tapestry.asset.root", "classpath:META-INF/assets/tapestry5");
     }
