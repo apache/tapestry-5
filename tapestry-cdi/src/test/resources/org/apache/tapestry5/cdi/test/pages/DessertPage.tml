@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<p>${qualifier1}</p>
+<p>${qualifier2}</p>
+<p>${qualifier3}</p>
+<p>${qualifier4}</p>
+
+<p>${qualifier5}</p>
+
+</html>

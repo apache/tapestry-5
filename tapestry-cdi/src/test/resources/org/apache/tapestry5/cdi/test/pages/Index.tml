@@ -1,0 +1,22 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+    <p>${pojo}</p>
+    <p>${namedPojo}</p>
+
+    <p>Counter : ${counterService.count}</p>
+
+   
+    <t:dumbcomponent />
+    
+    <p>${messagecdi}</p>
+    <p>${messagetapestry}</p>
+    
+    <p>${statelessejb}</p>
+    
+    <p>${requestscopepojo}</p>
+
+    <p>${sessionscopepojo}</p>
+    
+    <p>${stereotype}</p>
+    
+
+</html>
