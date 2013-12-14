@@ -4,4 +4,3 @@ include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
 include "tapestry-javadoc", "quickstart", "tapestry-clojure", "tapestry-mongodb"
 include "tapestry-test-data", 'tapestry-internal-test'
 include "tapestry-webresources", "tapestry-runner"
-include "tapestry-cdi"

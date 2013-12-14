@@ -1,5 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
-    <p>${stereotypeBeanInfo}</p>
-    <p>${sameInstanceInfo}</p>
-    
-</html>
