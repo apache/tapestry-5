@@ -137,7 +137,7 @@ public class JavaScriptModule
             configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
         }
 
-        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery-1.9.1.js"));
+        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery-1.10.2.js"));
 
         if (provider.equals("prototype"))
         {
