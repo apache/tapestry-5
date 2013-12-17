@@ -160,7 +160,7 @@ public class JavaScriptModule
         for (String name : bundledModules)
         {
             String full = "t5/core/" + name;
-            configuration.add(full, new StackExtension(StackExtensionType.MODULE, full));
+            configuration.add(full, StackExtension.module(full));
         }
 
         configuration.add("underscore-module", StackExtension.module("underscore"));

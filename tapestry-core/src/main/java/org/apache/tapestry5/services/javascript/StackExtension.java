@@ -61,8 +61,27 @@ public class StackExtension
      */
     public static StackExtension module(String name)
     {
-
         return new StackExtension(StackExtensionType.MODULE, name);
+    }
+
+    /**
+     * Convenience for defining a STYLESHEET.
+     *
+     * @since 5.4
+     */
+    public static StackExtension stylesheet(String path)
+    {
+        return new StackExtension(StackExtensionType.STYLESHEET, path);
+    }
+
+    /**
+     * Convenience for defining a STACK.
+     *
+     * @since 5.4
+     */
+    public static StackExtension stack(String name)
+    {
+        return new StackExtension(StackExtensionType.STACK, name);
     }
 
 }
