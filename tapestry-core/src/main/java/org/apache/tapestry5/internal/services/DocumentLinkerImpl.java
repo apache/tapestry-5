@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -226,37 +225,13 @@ public class DocumentLinkerImpl implements DocumentLinker
         moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
     }
 
-    private static Element createTemporaryContainer(Element headElement, String existingElementName, String otherExistingElement, String newElementName)
+    private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
     {
-        Element existingElement = headElement.find(existingElementName);
-        Element otherElement = headElement.find(otherExistingElement);
-        Element element = null;
-        
-        if (existingElement != null && otherElement != null) {
-            
-            // figure out what comes first.
-            for (Node node : headElement.getChildren()) {
-                if (existingElement == node) {
-                    element = existingElement;
-                    break;
-                }
-                else if (otherElement == node) {
-                    element = otherElement;
-                    break;
-                }
-            }
-            
-        }
-        else if (existingElement != null) {
-            element = existingElement;
-        }
-        else {
-            element = otherElement;
-        }
-        
+        Element existingScript = headElement.find(existingElementName);
+
         // Create temporary container for the new <script> elements
-        return addElementBefore(headElement, element, newElementName);
-        
+
+        return addElementBefore(headElement, existingScript, newElementName);
     }
 
     /**
@@ -292,8 +267,8 @@ public class DocumentLinkerImpl implements DocumentLinker
         Element head = findOrCreateElement(root, "head", true);
 
         // Create a temporary container element.
-        Element container = createTemporaryContainer(head, "style", "link", "stylesheet-container");
-        
+        Element container = createTemporaryContainer(head, "style", "stylesheet-container");
+
         for (int i = 0; i < count; i++)
         {
             stylesheets.get(i).add(container);
