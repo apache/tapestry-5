@@ -1,4 +1,4 @@
-// Copyright 2010-2012 The Apache Software Foundation
+// Copyright 2010-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,10 +28,12 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * Alternately, the annotation maybe placed on any method (though typically it will be placed on a render phase
  * method) and the import operations will be associated of that method.
  * <p/>
+ * Use of this annotation is translated into invocations against the {@link org.apache.tapestry5.services.javascript.JavaScriptSupport}
+ * environmental; all imports there will implicitly import the core stack.
+ * <p/>
  * Assets are localized during the {@link org.apache.tapestry5.runtime.PageLifecycleAdapter#containingPageDidLoad()} lifecycle
  * method.
  *
- * @see JavaScriptSupport
  * @since 5.2.0
  */
 @Target(

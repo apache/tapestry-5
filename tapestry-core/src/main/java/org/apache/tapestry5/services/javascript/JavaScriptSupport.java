@@ -197,7 +197,9 @@ public interface JavaScriptSupport
 
     /**
      * Imports a Cascading Style Sheet file as part of the rendered page. Stylesheets are added in the
-     * order they are first imported; duplicate imports are ignored.
+     * order they are first imported; duplicate imports are ignored. Starting in 5.4, importing a stylesheet
+     * imports the core stack as well (with its stylesheets); this ensures that the imported stylesheet(s) can
+     * override rules from Tapestry's default stylesheets.
      *
      * @param stylesheetLink
      *         encapsulates the link URL plus any additional options

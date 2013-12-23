@@ -440,12 +440,17 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         Asset stylesheet = mockAsset("style.css")
 
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource()
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
+
+        train_for_empty_core_stack stackSource, pathConstructor
+
         StylesheetLink link = new StylesheetLink("style.css")
         linker.addStylesheetLink(link)
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, null, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor)
 
         jss.importStylesheet(stylesheet)
 
@@ -459,11 +464,16 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         StylesheetOptions options = new StylesheetOptions("print")
 
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource()
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
+
+        train_for_empty_core_stack stackSource, pathConstructor
+
         linker.addStylesheetLink(new StylesheetLink("style.css", options))
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, null, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor)
 
         jss.importStylesheet(new StylesheetLink("style.css", options))
         jss.importStylesheet(new StylesheetLink("style.css", new StylesheetOptions("hologram")))

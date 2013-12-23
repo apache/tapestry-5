@@ -29,7 +29,10 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.*;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -193,7 +196,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert parameter != null;
         assert InternalUtils.isNonBlank(functionName);
 
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+        importCoreStack();
 
         require("t5/core/init").priority(priority).with(functionName, parameter);
     }
@@ -218,7 +221,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert priority != null;
         assert InternalUtils.isNonBlank(format);
 
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+        importCoreStack();
 
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
@@ -260,8 +263,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public JavaScriptSupport importJavaScriptLibrary(String libraryURL)
     {
-
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+        importCoreStack();
 
         String stackName = findStackForLibrary(libraryURL);
 
@@ -280,6 +282,10 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return this;
     }
 
+    private void importCoreStack()
+    {
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+    }
 
     /**
      * Locates the name of the stack that includes the library URL. Returns the stack,
@@ -343,13 +349,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
-        // TAP5-2197: the stacks are added in reverse order because now this method
-        // adds a stack's stylesheets in the head of the stylesheets array, not in the
-        // end, avoiding the TAP5-2197 bug.
-        final List<String> reversedStacks = new ArrayList<String>(stack.getStacks());
-        Collections.reverse(reversedStacks);
-
-        for (String dependentStackname : reversedStacks)
+        for (String dependentStackname : stack.getStacks())
         {
             addAssetsFromStack(dependentStackname);
         }
@@ -371,9 +371,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             }
         }
 
-        // TAP5-2197: to avoid @Import'ed stylesheets to appear after the core ones,
-        // the latter ones are now always added in the head of stylesheetLinks, not the tail.
-        stylesheetLinks.addAll(0, stack.getStylesheets());
+        stylesheetLinks.addAll(stack.getStylesheets());
 
         String initialization = stack.getInitialization();
 
@@ -394,11 +392,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert stylesheetLink != null;
 
+        importCoreStack();
+
         String stylesheetURL = stylesheetLink.getURL();
 
         if (!importedStylesheetURLs.contains(stylesheetURL))
         {
-
             importedStylesheetURLs.add(stylesheetURL);
 
             stylesheetLinks.add(stylesheetLink);
@@ -411,7 +410,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(stackName);
 
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+        importCoreStack();
 
         addAssetsFromStack(stackName);
 
@@ -436,7 +435,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(moduleName);
 
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
+        importCoreStack();
 
         String stackName = findStackForModule(moduleName);
 
