@@ -75,6 +75,13 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
         componentClassResolver = mockComponentClassResolver();
         linkSource = mockLinkSource();
         serviceResources = mockServiceResources();
+  	    mockConfiguration.put(AccessControlException.class, MyPage.class);
+        mockConfiguration.put(MyContextAwareException.class, new ExceptionHandlerAssistant() {
+			          public Object handleRequestException(Throwable exception, List<Object> exceptionContext)
+			              throws IOException {
+			          return null;
+			      }
+			  });
         exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, mockConfiguration);
     }
 	
@@ -117,7 +124,6 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
 	
 	@Test
 	public void handleRequestExceptionWithConfiguredPage() throws IOException {
-	    mockConfiguration.put(AccessControlException.class, MyPage.class);
 	    train_resolvePageClassNameToPageName(componentClassResolver, MyPage.class.getName(), "mypage" );
 	    Link link = mockLink();
         expect(linkSource.createPageRenderLink("mypage", false, new Object[]{"accesscontrol"})).andReturn(link);

@@ -113,7 +113,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                 throw new IllegalArgumentException(Throwable.class.getName() + " is the only allowable key type but " + entry.getKey().getName()
                         + " was contributed");
 
-            if (ExceptionHandlerAssistant.class.isAssignableFrom((Class) entry.getValue()))
+            if (entry.getValue() instanceof Class && ExceptionHandlerAssistant.class.isAssignableFrom((Class) entry.getValue()))
             {
                 @SuppressWarnings("unchecked")
                 Class<ExceptionHandlerAssistant> handlerType = (Class<ExceptionHandlerAssistant>) entry.getValue();
