@@ -17,7 +17,7 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
- * Service interface for initializing Tapestry for the application.  The service is a {@linkplain
+ * NonAnnotatedServiceInterface interface for initializing Tapestry for the application.  The service is a {@linkplain
  * org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}, into which {@linkplain
  * org.apache.tapestry5.services.ApplicationInitializerFilter filters} may be contributed.
  */

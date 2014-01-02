@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.slf4j.Logger;
 
 /**
@@ -34,6 +35,12 @@ public interface ServiceResources extends ObjectLocator, AnnotationAccess
     Class getServiceInterface();
 
     /**
+     * Returns the service implementation.
+     */
+    @IncompatibleChange(release = "5.4", details = "Added method for TAP5-2029")
+    Class getServiceImplementation();
+
+    /**
      * Returns a Logger appropriate for logging messages. This includes debug level messages about the creation and
      * configuration of the underlying service, as well as debug, warning, or error level messages from the service
      * itself. Often service interceptors will make use of the service's logger.
@@ -46,11 +53,4 @@ public interface ServiceResources extends ObjectLocator, AnnotationAccess
      */
     OperationTracker getTracker();
 
-    /**
-     * Returns null (as of 5.3).
-     * 
-     * @since 5.2.0
-     * @deprecated Deprecated in 5.3 with no replacement. May be removed in 5.4.
-     */
-    Class getImplementationClass();
 }

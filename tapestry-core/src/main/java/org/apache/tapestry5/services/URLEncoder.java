@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 /**
- * Service used to encode or decode strings that are placed into URLs.  This is used as an alternative to UUEncoding.
+ * NonAnnotatedServiceInterface used to encode or decode strings that are placed into URLs.  This is used as an alternative to UUEncoding.
  * Alphabetics, numbers and some punctuation ("-", "_", ".", ":") are passed through as is, the "$" character is an
  * escape, followed by either another "$", or by a four digit hex unicode number.  A null input (not a blank input, but
  * actual null) has a special encoding, "$N". Likewise, the blank string has the special encoding "$B".

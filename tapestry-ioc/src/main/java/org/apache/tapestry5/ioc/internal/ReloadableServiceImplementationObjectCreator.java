@@ -45,7 +45,7 @@ public class ReloadableServiceImplementationObjectCreator extends AbstractReload
 
         if (constructor == null)
             throw new RuntimeException(String.format(
-                    "Service implementation class %s does not have a suitable public constructor.", clazz.getName()));
+                    "NonAnnotatedServiceInterface implementation class %s does not have a suitable public constructor.", clazz.getName()));
 
         ObjectCreator constructorServiceCreator = new ConstructorServiceCreator(resources, constructor.toString(),
                 constructor);

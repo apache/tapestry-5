@@ -19,7 +19,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import java.io.IOException;
 
 /**
- * Service responsible for writing a full page markup response.
+ * NonAnnotatedServiceInterface responsible for writing a full page markup response.
  */
 public interface PageResponseRenderer
 {

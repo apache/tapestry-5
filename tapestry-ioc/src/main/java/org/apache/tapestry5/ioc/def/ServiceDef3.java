@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.def;
 
 import org.apache.tapestry5.ioc.AnnotationAccess;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 /**
  * Introduced for Tapestry 5.3, contains new methods to provide access to annotations on the class,
@@ -26,4 +27,14 @@ import org.apache.tapestry5.ioc.AnnotationAccess;
  */
 public interface ServiceDef3 extends ServiceDef2, AnnotationAccess
 {
+	
+    /**
+     * Returns the service implementation associated with this service. When creating the proxies
+     * for the service interface, the implementation of the service interface methods will
+     * receive the annotations of the corresponding method in the service interface.
+     * @since 5.4
+     */
+	@IncompatibleChange(release = "5.4", details = "Added method")
+    Class getServiceImplementation();
+
 }

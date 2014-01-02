@@ -144,7 +144,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException ex = thrown()
 
-    ex.message.contains "Service Fred (defined by ${ServiceIdConflictMethodModule.name}.buildFred()"
+    ex.message.contains "NonAnnotatedServiceInterface Fred (defined by ${ServiceIdConflictMethodModule.name}.buildFred()"
     ex.message.contains "conflicts with previously defined service defined by ${ServiceIdConflictMethodModule.name}.buildFred(Object)"
   }
 

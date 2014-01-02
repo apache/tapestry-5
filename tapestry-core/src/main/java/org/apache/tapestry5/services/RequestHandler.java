@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import java.io.IOException;
 
 /**
- * Service interface for the RequestHandler {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}
+ * NonAnnotatedServiceInterface interface for the RequestHandler {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}
  * service. At the end of the pipeline, the service hands off to the {@linkplain org.apache.tapestry5.services.Dispatcher
  * master dispatcher service}.
  */

@@ -311,7 +311,7 @@ class ReloadSpec extends Specification {
 
     Exception e = thrown()
 
-    e.message == "Service implementation class com.example.ReloadableServiceImpl does not have a suitable public constructor."
+    e.message == "NonAnnotatedServiceInterface implementation class com.example.ReloadableServiceImpl does not have a suitable public constructor."
   }
 
   def "ensure ReloadAware services are notified when services are reloaded"() {

@@ -75,6 +75,6 @@ class ValidatingConfigurationWrapperSpec extends Specification {
 
     NullPointerException e = thrown()
 
-    e.message == "Service contribution (to service 'Baz') was null."
+    e.message == "NonAnnotatedServiceInterface contribution (to service 'Baz') was null."
   }
 }

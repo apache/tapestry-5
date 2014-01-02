@@ -119,7 +119,9 @@ public class InheritanceData
     }
 
     public void addInterface(String name) {
-        interfaceNames.add(name);
+        if (!interfaceNames.contains(name)) {
+            interfaceNames.add(name);
+        }
     }
 
     /**

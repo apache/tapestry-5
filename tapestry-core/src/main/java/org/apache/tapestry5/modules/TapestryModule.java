@@ -375,13 +375,13 @@ public final class TapestryModule
 
     // ========================================================================
     //
-    // Service Builder Methods (static)
+    // NonAnnotatedServiceInterface Builder Methods (static)
     //
     // ========================================================================
 
     // ========================================================================
     //
-    // Service Contribution Methods (static)
+    // NonAnnotatedServiceInterface Contribution Methods (static)
     //
     // ========================================================================
 
@@ -709,7 +709,7 @@ public final class TapestryModule
      * <dd>Access to properties of resources (log, messages, etc.)</dd>
      * <dt>Asset</dt>
      * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
-     * <dt>Service</dt>
+     * <dt>NonAnnotatedServiceInterface</dt>
      * <dd>Ordered last, for use when Inject is present and nothing else works, matches field type against Tapestry IoC
      * services</dd>
      * </dl>
@@ -729,7 +729,7 @@ public final class TapestryModule
 
         // This needs to be the last one, since it matches against services
         // and might blow up if there is no match.
-        configuration.addInstance("Service", ServiceInjectionProvider.class, "after:*");
+        configuration.addInstance("NonAnnotatedServiceInterface", ServiceInjectionProvider.class, "after:*");
     }
 
     /**
@@ -738,8 +738,8 @@ public final class TapestryModule
      * <dt>Asset
      * <dt>
      * <dd>Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
-     * <dt>Service</dt>
-     * <dd>Injects based on the {@link Service} annotation, if present</dd>
+     * <dt>NonAnnotatedServiceInterface</dt>
+     * <dd>Injects based on the {@link NonAnnotatedServiceInterface} annotation, if present</dd>
      * <dt>ApplicationMessages</dt>
      * <dd>Injects the global application messages</dd>
      * </dl>
@@ -753,7 +753,7 @@ public final class TapestryModule
     {
         configuration.add("Asset", assetObjectProvider, "before:AnnotationBasedContributions");
 
-        configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
+        configuration.add("NonAnnotatedServiceInterface", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
 
         configuration.add("ApplicationMessages", new ApplicationMessageCatalogObjectProvider(locator),
                 "before:AnnotationBasedContributions");
@@ -1129,7 +1129,7 @@ public final class TapestryModule
 
     // ========================================================================
     //
-    // Service Builder Methods (instance)
+    // NonAnnotatedServiceInterface Builder Methods (instance)
     //
     // ========================================================================
 
@@ -1504,7 +1504,7 @@ public final class TapestryModule
 
     // ========================================================================
     //
-    // Service Contribution Methods (instance)
+    // NonAnnotatedServiceInterface Contribution Methods (instance)
     //
     // ========================================================================
 

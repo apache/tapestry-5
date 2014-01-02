@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
 
@@ -279,7 +280,7 @@ public class ModuleImpl implements Module
                         if (lifecycle.requiresProxy())
                             throw new IllegalArgumentException(
                                     String.format(
-                                            "Service scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
+                                            "NonAnnotatedServiceInterface scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
                                             def.getServiceScope()));
 
                         return creator.createObject();
@@ -309,7 +310,7 @@ public class ModuleImpl implements Module
 
                     JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(tracker, creator, serviceId);
 
-                    Object proxy = createProxy(resources, delegate);
+                    Object proxy = createProxy(resources, delegate, def.isPreventDecoration());
 
                     registry.addRegistryShutdownListener(delegate);
 
@@ -325,6 +326,7 @@ public class ModuleImpl implements Module
                     return proxy;
                 } catch (Exception ex)
                 {
+                    ex.printStackTrace();
                     throw new RuntimeException(IOCMessages.errorBuildingService(serviceId, def, ex), ex);
                 }
             }
@@ -448,7 +450,7 @@ public class ModuleImpl implements Module
         throw new RuntimeException(IOCMessages.instantiateBuilderError(moduleClass, fail), fail);
     }
 
-    private Object createProxy(ServiceResources resources, ObjectCreator creator)
+    private Object createProxy(ServiceResources resources, ObjectCreator creator, boolean preventDecoration)
     {
         String serviceId = resources.getServiceId();
         Class serviceInterface = resources.getServiceInterface();
@@ -457,13 +459,14 @@ public class ModuleImpl implements Module
 
         ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
-        return createProxyInstance(creator, token, serviceInterface, toString);
+        final Class serviceImplementation = preventDecoration || serviceInterface == TypeCoercer.class ? null : resources.getServiceImplementation();
+        return createProxyInstance(creator, token, serviceInterface, serviceImplementation, toString);
     }
 
     private Object createProxyInstance(final ObjectCreator creator, final ServiceProxyToken token,
-                                       final Class serviceInterface, final String description)
+                                       final Class serviceInterface, final Class serviceImplementation, final String description)
     {
-        ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
+        ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, serviceImplementation, new PlasticClassTransformer()
         {
             public void transform(final PlasticClass plasticClass)
             {
@@ -588,4 +591,5 @@ public class ModuleImpl implements Module
     {
         return String.format("ModuleImpl[%s]", moduleDef.getLoggerName());
     }
+    
 }

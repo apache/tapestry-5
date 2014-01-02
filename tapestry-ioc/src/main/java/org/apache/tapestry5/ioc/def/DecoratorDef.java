@@ -36,7 +36,7 @@ import org.apache.tapestry5.ioc.ServiceResources;
  * the Security interceptor, which would delegate to the Transaction interceptor, which would finally delegate to the
  * core service implementation.
  * <p/>
- * Service decorators are part of the initial version of Tapestry IoC.  Starting in release 5.1, their use has been
+ * NonAnnotatedServiceInterface decorators are part of the initial version of Tapestry IoC.  Starting in release 5.1, their use has been
  * deprecated, in favor of {@link org.apache.tapestry5.ioc.AdvisorDef}, which is based on {@link
  * org.apache.tapestry5.ioc.services.AspectInterceptorBuilder}.
  * <p/>

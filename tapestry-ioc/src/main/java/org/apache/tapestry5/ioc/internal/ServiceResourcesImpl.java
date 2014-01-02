@@ -72,6 +72,11 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return serviceDef.getServiceInterface();
     }
 
+    public Class getServiceImplementation()
+    {
+        return serviceDef.getServiceImplementation();
+    }
+
     public Logger getLogger()
     {
         return logger;

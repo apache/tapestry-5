@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
 
 /**
- * Adds support for the {@link Service} annotation (which can be applied to fields or parameters), which is used to
+ * Adds support for the {@link NonAnnotatedServiceInterface} annotation (which can be applied to fields or parameters), which is used to
  * disambiguate injection when multiple services implement the same service interface.
  */
 public class ServiceAnnotationObjectProvider implements ObjectProvider

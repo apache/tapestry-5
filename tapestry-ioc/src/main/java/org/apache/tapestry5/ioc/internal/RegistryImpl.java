@@ -445,7 +445,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Module module = serviceIdToModule.get(serviceId);
 
         if (module == null)
-            throw new UnknownValueException(String.format("Service id '%s' is not defined by any module.", serviceId),
+            throw new UnknownValueException(String.format("NonAnnotatedServiceInterface id '%s' is not defined by any module.", serviceId),
                     new AvailableValues("Defined service ids", serviceIdToModule));
 
         return module;
@@ -1093,7 +1093,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 
-        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator,
+        return proxyFactory.createProxy(interfaceClass, implementationClass, (ObjectCreator<T>) creator,
                 String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 

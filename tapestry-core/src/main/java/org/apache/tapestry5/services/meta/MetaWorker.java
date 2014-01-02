@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 
 /**
- * Service that makes it easy to identify a class annotation and use its presence, or the value of an attribute,
+ * NonAnnotatedServiceInterface that makes it easy to identify a class annotation and use its presence, or the value of an attribute,
  * to set a meta-data key. The configuration map class annotation types to corresponding extractors who will be invoked
  * when the annotation is present. Most commonly, a {@link FixedExtractor} is used to set a fixed value to a fixed key,
  * triggered by the presence of the corresponding annotation.

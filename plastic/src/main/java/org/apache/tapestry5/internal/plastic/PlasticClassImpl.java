@@ -14,11 +14,13 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -166,28 +168,34 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     // Set of methods that need to contribute to the shim and gain access to it
 
     final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
+    
+    final ClassNode implementationClassNode;
+    
+    private ClassNode interfaceClassNode;
 
     /**
      * @param classNode
+     * @param implementationClassNode
      * @param pool
      * @param parentInheritanceData
      * @param parentStaticContext
      * @param proxy
      */
-    public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, InheritanceData parentInheritanceData,
+    public PlasticClassImpl(ClassNode classNode, ClassNode implementationClassNode, PlasticClassPool pool, InheritanceData parentInheritanceData,
                             StaticContext parentStaticContext, boolean proxy)
     {
         this.classNode = classNode;
         this.pool = pool;
         this.proxy = proxy;
-
+        this.implementationClassNode = implementationClassNode;
+        
         staticContext = parentStaticContext.dupe();
 
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
         fieldInstrumentations = new FieldInstrumentations(classNode.superName);
-
+        
         annotationAccess = new DelegatingAnnotationAccess(pool.createAnnotationAccess(classNode.visibleAnnotations),
                 pool.createAnnotationAccess(superClassName));
 
@@ -326,6 +334,32 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         return annotationAccess.getAnnotation(annotationType);
     }
+    
+    private static void copyAnnotationsFromServiceImplementation(MethodNode methodNode, ClassNode source)
+    {
+        if (source != null)
+        {
+        
+            for (MethodNode implementationNode : source.methods)
+            {
+                // Find corresponding method in the implementation class MethodNode
+                if (methodNode.name.equals(implementationNode.name) && methodNode.desc.equals(implementationNode.desc))
+                {
+                    implementationNode.accept(methodNode);
+                    
+                    // We want to copy just annotations, not code.
+                    methodNode.instructions.clear();
+                    methodNode.instructions.resetLabels();
+                    
+                    break;
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
 
     public PlasticClass proxyInterface(Class interfaceType, PlasticField field)
     {
@@ -346,6 +380,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     public ClassInstantiator createInstantiator()
     {
         lock();
+        
+        addClassAnnotations(implementationClassNode);
 
         createShimIfNeeded();
 
@@ -358,6 +394,29 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         transformedClass = pool.realizeTransformedClass(classNode, inheritanceData, staticContext);
 
         return createInstantiatorFromClass(transformedClass);
+    }
+
+    private void addClassAnnotations(ClassNode otherClassNode)
+    {
+        // Copy annotations from implementation if available.
+        // Code adapted from ClassNode.accept(), as we just want to copy
+        // the annotations and nothing more.
+        if (otherClassNode != null) 
+        {
+            
+            int i, n;
+            n = otherClassNode.visibleAnnotations == null ? 0 : otherClassNode.visibleAnnotations.size();
+            for (i = 0; i < n; ++i) {
+                AnnotationNode an = otherClassNode.visibleAnnotations.get(i);
+                an.accept(classNode.visitAnnotation(an.desc, true));
+            }
+            n = otherClassNode.invisibleAnnotations == null ? 0 : otherClassNode.invisibleAnnotations.size();
+            for (i = 0; i < n; ++i) {
+                AnnotationNode an = otherClassNode.invisibleAnnotations.get(i);
+                an.accept(classNode.visitAnnotation(an.desc, false));
+            }
+            
+        }
     }
 
     private ClassInstantiator createInstantiatorFromClass(Class clazz)
@@ -674,6 +733,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         MethodNode methodNode = new MethodNode(description.modifiers, description.methodName, desc,
                 description.genericSignature, exceptions);
         boolean isOverride = inheritanceData.isImplemented(methodNode.name, desc);
+        
+        if (!isOverride) {
+            copyAnnotationsFromServiceImplementation(methodNode, interfaceClassNode);
+            copyAnnotationsFromServiceImplementation(methodNode, implementationClassNode);
+        }
 
         if (isOverride)
             createOverrideOfBaseClassImpl(description, methodNode);
@@ -1065,12 +1129,23 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     "Class %s is not an interface; ony interfaces may be introduced.", interfaceType.getName()));
 
         String interfaceName = nameCache.toInternalName(interfaceType);
+        
+        try
+        {
+            interfaceClassNode = PlasticClassPool.readClassNode(interfaceType.getName(), getClass().getClassLoader());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
 
         if (!inheritanceData.isInterfaceImplemented(interfaceName))
         {
             classNode.interfaces.add(interfaceName);
             inheritanceData.addInterface(interfaceName);
         }
+        
+        addClassAnnotations(interfaceClassNode);
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
 
@@ -1083,6 +1158,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 introducedMethods.add(introduceMethod(m));
             }
         }
+        
+        interfaceClassNode = null;
 
         return introducedMethods;
     }

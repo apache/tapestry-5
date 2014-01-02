@@ -99,6 +99,11 @@ public class ServiceDefImpl implements ServiceDef3
         return serviceInterface;
     }
 
+    public Class getServiceImplementation()
+    {
+        return serviceImplementation;
+    }
+
     public String getServiceScope()
     {
         return scope;

@@ -20,7 +20,7 @@ class RegistryConstructionAndRuntimeErrorsSpec extends AbstractRegistrySpecifica
 
     RuntimeException ex = thrown()
 
-    ex.message.startsWith "Service id 'Fred' has already been defined by"
+    ex.message.startsWith "NonAnnotatedServiceInterface id 'Fred' has already been defined by"
 
     // Can't check entire message, can't guarantee what order modules will be processed in
   }

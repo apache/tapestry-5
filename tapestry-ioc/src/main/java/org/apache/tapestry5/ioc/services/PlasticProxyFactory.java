@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.PlasticClassListenerHub;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
@@ -51,6 +52,21 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
     <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback);
 
     /**
+     * Creates a proxy object that implements the indicated interface and indicated service implementation type,
+     * then invokes the callback to further configure the proxy.
+     *
+     * @param interfaceType
+     *         interface implemented by proxy
+     * @param implementationType
+     *         a class that implements the interfaceType. It can be null.
+     * @param callback
+     *         configures the proxy
+     * @return instantiator that can be used to create an instance of the proxy class
+     */
+    @IncompatibleChange(release = "5.4", details = "TAP5-2029")
+    <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback);
+
+    /**
      * Creates the underlying {@link PlasticClassTransformation} for an interface proxy. This should only be
      * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
      * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
@@ -60,6 +76,21 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * @return transformation from which an instantiator may be created
      */
     <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType);
+
+    /**
+     * Creates the underlying {@link PlasticClassTransformation} for an interface proxy with a given
+     * implementation class. This should only be
+     * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
+     * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
+     *
+     * @param interfaceType
+     *         class proxy will extend from
+     * @param implementationType
+     *         a class that implements the interfaceType. It can be null.
+     * @return transformation from which an instantiator may be created
+     */
+    @IncompatibleChange(release = "5.4", details = "TAP5-2029")
+    <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType, Class<? extends T> implementationType);
 
     /**
      * Creates a proxy instance that delegates all methods through a corresponding
@@ -78,6 +109,27 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * @return proxy instance
      */
     <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, String description);
+    
+    /**
+     * Creates a proxy instance that delegates all methods through a corresponding
+     * ObjectCreator. Each method invocation on the proxy will route through {@link ObjectCreator#createObject()} (the
+     * creator implementation may decide to
+     * cache the return value as appropriate).
+     *
+     * @param <T>
+     *         type of proxy
+     * @param interfaceType
+     *         interface class for proxy
+     * @param implementationType
+     *         class that implements the interface type. It may be null
+     * @param creator
+     *         object responsible for creating the real object
+     * @param description
+     *         the <code>toString()</code> of the proxy
+     * @return proxy instance
+     */
+    @IncompatibleChange(release = "5.4", details = "TAP5-2029")
+    <T> T createProxy(Class<T> interfaceType, Class<? extends T> implementationType, ObjectCreator<T> creator, String description);
 
     /**
      * Converts a method to a {@link Location}, which includes information about the source file name and line number.

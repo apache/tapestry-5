@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -897,6 +898,11 @@ public class InternalUtils
             {
                 return toAnnotationProvider(findMethod(getServiceInterface(), methodName, argumentTypes));
             }
+            
+			public Class getServiceImplementation() 
+			{
+				return null;
+			}
 
             // ServiceDef2 methods:
 
@@ -934,6 +940,7 @@ public class InternalUtils
             {
                 return sd2.isEagerLoad();
             }
+
         };
     }
 

@@ -20,6 +20,9 @@ import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -86,6 +89,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Map<String, FieldInstrumentations> instrumentations = PlasticInternalUtils.newMap();
 
+    private final Map<String, String> transformedClassNameToImplementationClassName = PlasticInternalUtils.newMap();
+    
+
     private final FieldInstrumentations placeholder = new FieldInstrumentations(null);
 
 
@@ -120,7 +126,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         synchronized (loader)
         {
             Class result = realize(PlasticInternalUtils.toClassName(classNode.name), ClassType.PRIMARY, classNode);
-
             baseClassDefs.put(result.getName(), new BaseClassDef(inheritanceData, staticContext));
 
             return result;
@@ -434,17 +439,19 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
         instrumentations.put(classNode.name, new FieldInstrumentations(classNode.superName));
-
-        return createTransformation(baseClassName, classNode, false);
+        
+        // TODO: check whether second parameter should really be null
+        return createTransformation(baseClassName, classNode, null, false); 
     }
 
     /**
      * @param baseClassName class from which the transformed class extends
      * @param classNode     node for the class
+     * @param implementationClassNode     node for the implementation class. May be null.
      * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
      * @throws ClassNotFoundException
      */
-    private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode, boolean proxy)
+    private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode, ClassNode implementationClassNode, boolean proxy)
             throws ClassNotFoundException
     {
         if (shouldInterceptClassLoading(baseClassName))
@@ -455,12 +462,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             assert def != null;
 
-            return new PlasticClassImpl(classNode, this, def.inheritanceData, def.staticContext, proxy);
+            return new PlasticClassImpl(classNode, implementationClassNode, this, def.inheritanceData, def.staticContext, proxy);
         }
 
         // When the base class is Object, or otherwise not in a transformed package,
         // then start with the empty
-        return new PlasticClassImpl(classNode, this, emptyInheritanceData, emptyStaticContext, proxy);
+        return new PlasticClassImpl(classNode, implementationClassNode, this, emptyInheritanceData, emptyStaticContext, proxy);
     }
 
     /**
@@ -487,21 +494,69 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return PlasticInternalUtils.readBytecodeForClass(parentClassLoader, className, true);
     }
 
-    public PlasticClassTransformation createTransformation(String baseClassName, String newClassName)
+    public PlasticClassTransformation createTransformation(String baseClassName, String newClassName) {
+        return createTransformation(baseClassName, newClassName, null);
+    }
+    
+    public PlasticClassTransformation createTransformation(String baseClassName, String newClassName, String implementationClassName)
     {
         try
         {
             ClassNode newClassNode = new ClassNode();
 
-            newClassNode.visit(V1_5, ACC_PUBLIC, PlasticInternalUtils.toInternalName(newClassName), null,
-                    PlasticInternalUtils.toInternalName(baseClassName), null);
+            final String internalNewClassNameinternalName = PlasticInternalUtils.toInternalName(newClassName);
+            final String internalBaseClassName = PlasticInternalUtils.toInternalName(baseClassName);
+            newClassNode.visit(V1_5, ACC_PUBLIC, internalNewClassNameinternalName, null, internalBaseClassName, null);
+            
+            ClassNode implementationClassNode = null;
+            
+            if (implementationClassName != null)
+            {
+                // When decorating or advising a service, implementationClassName is the name
+                // of a proxy class already, such as "$ServiceName_[random string]",
+                // which doesn't exist as a file in the classpath, just in memory.
+                // So we need to keep what's the original implementation class name
+                // for each proxy, even a proxy around a proxy.
+                if (transformedClassNameToImplementationClassName.containsKey(implementationClassName))
+                {
+                    implementationClassName = 
+                            transformedClassNameToImplementationClassName.get(implementationClassName);
+                }
+                implementationClassNode = readClassNode(implementationClassName);
+                transformedClassNameToImplementationClassName.put(newClassName, implementationClassName);
+            }
 
-            return createTransformation(baseClassName, newClassNode, true);
+            return createTransformation(baseClassName, newClassNode, implementationClassNode, true);
         } catch (ClassNotFoundException ex)
         {
             throw new RuntimeException(String.format("Unable to create class %s as sub-class of %s: %s", newClassName,
                     baseClassName, PlasticInternalUtils.toMessage(ex)), ex);
         }
+        catch (IOException e)
+        {
+            throw new RuntimeException(String.format("Unable to load class %s as the implementation of service %s", 
+                    implementationClassName, baseClassName), e);
+        }
+    }
+
+    private ClassNode readClassNode(String className) throws IOException
+    {
+        return readClassNode(className, getClassLoader());
+    }
+    
+    static ClassNode readClassNode(String className, ClassLoader classLoader) throws IOException
+    {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(className);
+        final String location = PlasticInternalUtils.toInternalName(className) + ".class";
+        InputStream inputStream = classLoader.getResourceAsStream(location);
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        classReader = new ClassReader(inputStream);
+        bis.close();
+        inputStream.close();
+        classReader.accept(classNode, 0);
+        return classNode;
+        
     }
 
     public ClassInstantiator getClassInstantiator(String className)

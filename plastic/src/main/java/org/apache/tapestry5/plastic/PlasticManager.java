@@ -228,9 +228,27 @@ public class PlasticManager implements PlasticClassListenerHub
      */
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
+    	return createProxy(interfaceType, null, callback);
+    }
+
+    /**
+     * Creates an entirely new class. The class extends from Object and implements the provided interface.
+     * 
+     * @param interfaceType
+     *            class to extend from, which must be a class, not an interface
+     * @param implementationType
+     *            class that implements interfaceType. It can be null. 
+     * @param callback
+     *            used to configure the new class
+     * @return the instantiator, which allows instances of the new class to be created
+     * @see #createProxyTransformation(Class, Class)
+     * @since 5.4
+     */
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback)
+    {
         assert callback != null;
 
-        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType);
+        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType, implementationType);
 
         callback.transform(transformation.getPlasticClass());
 
@@ -244,9 +262,11 @@ public class PlasticManager implements PlasticClassListenerHub
      * 
      * @param interfaceType
      *            class proxy will extend from
+     * @param implementationType
+     *            class that implements interfaceType. It can be null.
      * @return transformation from which an instantiator may be created
      */
-    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType)
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType, Class implementationType)
     {
         assert interfaceType != null;
 
@@ -257,7 +277,9 @@ public class PlasticManager implements PlasticClassListenerHub
 
         String name = String.format("$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
 
-        PlasticClassTransformation<T> result = pool.createTransformation("java.lang.Object", name);
+        final String implementationClassName = implementationType != null ? implementationType.getName() : null;
+        PlasticClassTransformation<T> result = 
+                pool.createTransformation("java.lang.Object", name, implementationClassName);
 
         result.getPlasticClass().introduceInterface(interfaceType);
 

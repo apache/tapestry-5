@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 
 /**
- * Definition of a service advisor, which (by default) is derived from a service advisor method. Service advisor methods
+ * Definition of a service advisor, which (by default) is derived from a service advisor method. NonAnnotatedServiceInterface advisor methods
  * are static or instance methods on module classes prefixed with "advise". When a service is realized, a list of
  * matching AdvisorDefs is generated, then ordered, and from each a {@link org.apache.tapestry5.ioc.ServiceAdvisor} is
  * obtained and invoked.

@@ -25,7 +25,7 @@ import java.util.EventListener;
 public interface RegistryShutdownListener extends EventListener
 {
     /**
-     * Invoked when the registry shuts down, giving services a chance to perform any final operations. Service
+     * Invoked when the registry shuts down, giving services a chance to perform any final operations. NonAnnotatedServiceInterface
      * implementations should not attempt to invoke methods on other services (via proxies) as the service proxies may
      * themselves be shutdown.
      */

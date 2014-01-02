@@ -57,7 +57,7 @@ class PerThreadScopeSpec extends AbstractRegistrySpecification {
     Exception e = thrown()
 
     e.message.contains "Error building service proxy for service 'ScopeRequiresAProxyAndNoInterfaceIsProvided'"
-    e.message.contains "Service scope 'perthread' requires a proxy"
+    e.message.contains "NonAnnotatedServiceInterface scope 'perthread' requires a proxy"
   }
 
   def "ensure that perthread services are discarded by cleanupThread()"() {

@@ -37,7 +37,7 @@ public class WrongConfigurationTypeGuard implements InjectionResources
     public <T> T findResource(Class<T> type, Type genericType)
     {
         if (type == guardType)
-            throw new IllegalArgumentException(String.format("Service '%s' is configured using %s, not %s.",
+            throw new IllegalArgumentException(String.format("NonAnnotatedServiceInterface '%s' is configured using %s, not %s.",
                                                              serviceId,
                                                              expectedType.getName(), guardType.getName()));
 

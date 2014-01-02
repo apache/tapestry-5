@@ -43,7 +43,7 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
 
         this.serviceInterface = serviceInterface;
 
-        transformation = plasticProxyFactory.createProxyTransformation(serviceInterface);
+        transformation = plasticProxyFactory.createProxyTransformation(serviceInterface, (Class<? extends T>) delegate.getClass());
         plasticClass = transformation.getPlasticClass();
 
         plasticClass.addToString(description);

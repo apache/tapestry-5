@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
@@ -59,22 +60,39 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return manager.getClassLoader();
     }
 
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback)
+    {
+        return manager.createProxy(interfaceType, implementationType, callback);
+    }
+    
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
         return manager.createProxy(interfaceType, callback);
     }
-
-    public PlasticClassTransformation createProxyTransformation(Class interfaceType)
+    
+    
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType,
+            Class<? extends T> implementationType)
     {
-        return manager.createProxyTransformation(interfaceType);
+        return manager.createProxyTransformation(interfaceType, implementationType);
+    }
+
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType)
+    {
+        return createProxyTransformation(interfaceType, null);
     }
 
     public <T> T createProxy(final Class<T> interfaceType, final ObjectCreator<T> creator, final String description)
+    {   return createProxy(interfaceType, null, creator, description);
+    }
+    
+    public <T> T createProxy(final Class<T> interfaceType, final Class<? extends T> implementationType,
+            final ObjectCreator<T> creator, final String description)
     {
         assert creator != null;
         assert InternalUtils.isNonBlank(description);
 
-        ClassInstantiator<T> instantiator = createProxy(interfaceType, new PlasticClassTransformer()
+        ClassInstantiator<T> instantiator = createProxy(interfaceType, implementationType, new PlasticClassTransformer()
         {
             public void transform(PlasticClass plasticClass)
             {
