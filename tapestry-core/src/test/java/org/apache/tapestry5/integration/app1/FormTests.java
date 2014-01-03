@@ -1,4 +1,4 @@
-// Copyright 2009-2013 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -208,6 +208,29 @@ public class FormTests extends App1TestCase
         sleep(AJAX_WAIT_TIME);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
+    }
+    
+    // TAP5-2197
+    @Test
+    public void datefield_leniency()
+    {
+        openLinks("DateField Demo", "Reset Page State", "english");
+
+        type("asteroidImpact", "00/00/0000");
+        type("lenient", "00/00/0000");
+        
+        clickAndWait(SUBMIT);
+        
+        // By default, DateField is not lenient anymore
+        assertText("css=div.x-impact p.help-block", "Date value '00/00/0000' is not parseable.");
+        
+        // But this one is configured as such by setting the "lenient" parameter to true.
+        assertFalse(isElementPresent("css=div.x-lenient p.help-block"));
+
+        // Check whether a String coerced to a DateFormat results in a lenient or not instance
+        // according to the SymbolConstants.LENIENT_DATE_FORMAT symbol (default false)
+        assertText("coercedStringToDateFormatLenient", "false");
+        
     }
 
     // TAP5-1057

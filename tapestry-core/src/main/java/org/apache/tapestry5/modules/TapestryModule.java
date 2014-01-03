@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1038,7 +1038,10 @@ public final class TapestryModule
         {
             public DateFormat coerce(String input)
             {
-                return new SimpleDateFormat(input, threadLocale.getLocale());
+                final SimpleDateFormat dateFormat = new SimpleDateFormat(input, threadLocale.getLocale());
+                final String lenient = objectLocator.getService(SymbolSource.class).valueForSymbol(SymbolConstants.LENIENT_DATE_FORMAT);
+                dateFormat.setLenient(Boolean.parseBoolean(lenient));
+                return dateFormat;
             }
         }));
 
@@ -2117,6 +2120,9 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME, "");
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, "");
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "form-control");
+        
+        // TAP5-1998
+        configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, "false");
 
     }
 

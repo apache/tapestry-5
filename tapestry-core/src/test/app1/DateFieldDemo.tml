@@ -16,6 +16,11 @@
         <t:datefield t:id="asteroidImpact"/>
     </div>
 
+    <div class="field-group x-lenient">
+        <t:label for="lenient"/>
+        <t:datefield t:id="lenient" lenient="true"/>
+    </div>
+
     <input type="submit" value="Go" class="btn btn-primary"/>
 
 </t:form>
@@ -39,6 +44,8 @@
     <dd id="impact-output">
         <t:output value="asteroidImpact" format="dateFormat"/>
     </dd>
+    <dt>Is coerced string to DateFormat lenient?</dt>
+    <dd id="coercedStringToDateFormatLenient">${coercedStringToDateFormatLenient}</dd>
 </dl>
 
 

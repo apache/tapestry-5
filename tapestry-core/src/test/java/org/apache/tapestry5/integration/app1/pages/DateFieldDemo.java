@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2013 The Apache Software Foundation
+// Copyright 2007, 2008, 2013, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.PersistentLocale;
 
 import java.text.DateFormat;
@@ -37,10 +38,17 @@ public class DateFieldDemo
     @Validate("required")
     private Date asteroidImpact;
 
+    @Persist
+    @Property
+    @Validate("required")
+    private Date lenient;
+
     @Inject
     private PersistentLocale persistentLocale;
 
-
+    @Inject
+    private TypeCoercer typeCoercer;
+    
     public DateFormat getDateFormat()
     {
         return new SimpleDateFormat("MM/dd/yyyy");
@@ -61,5 +69,10 @@ public class DateFieldDemo
     void onActionFromFrench()
     {
         persistentLocale.set(Locale.FRENCH);
+    }
+    
+    public boolean isCoercedStringToDateFormatLenient()
+    {
+        return typeCoercer.coerce("dd/MM/yyyy", java.text.DateFormat.class).isLenient();
     }
 }

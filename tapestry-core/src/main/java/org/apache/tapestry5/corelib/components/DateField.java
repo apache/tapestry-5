@@ -1,4 +1,4 @@
-// Copyright 2007-2013 The Apache Software Foundation
+// Copyright 2007-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
@@ -68,6 +69,18 @@ public class DateField extends AbstractField
      */
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private DateFormat format;
+    
+    /**
+     * When the <code>format</code> parameter isn't used, this parameter defines whether the
+     * <code>DateFormat</code> created by this component will be lenient or not.
+     * The default value of this parameter is the value of the {@link SymbolConstants#LENIENT_DATE_FORMAT}
+     * symbol.
+     * @see DateFormat#setLenient(boolean)
+     * @see SymbolConstants#LENIENT_DATE_FORMAT
+     * @since 5.4
+     */
+    @Parameter(principal = true)
+    private boolean lenient;
 
     /**
      * If true, then the text field will be hidden, and only the icon for the date picker will be visible. The default
@@ -83,7 +96,7 @@ public class DateField extends AbstractField
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
-
+    
     /**
      * Icon used for the date field trigger button. This was used in Tapestry 5.3 and earlier and is now ignored.
      *
@@ -106,6 +119,10 @@ public class DateField extends AbstractField
 
     @Inject
     private DeprecationWarning deprecationWarning;
+    
+    @Inject
+    @Symbol(SymbolConstants.LENIENT_DATE_FORMAT)
+    private boolean lenientDateFormatSymbolValue;
 
     private static final String RESULT = "result";
 
@@ -128,8 +145,10 @@ public class DateField extends AbstractField
             String pattern = simpleDateFormat.toPattern();
 
             String revised = pattern.replaceAll("([^y])yy$", "$1yyyy");
-
-            return new SimpleDateFormat(revised);
+            
+            final SimpleDateFormat revisedDateFormat = new SimpleDateFormat(revised);
+            revisedDateFormat.setLenient(lenient);
+            return revisedDateFormat;
         }
 
         return shortDateFormat;
@@ -141,6 +160,10 @@ public class DateField extends AbstractField
     final Binding defaultValidate()
     {
         return defaultProvider.defaultValidatorBinding("value", resources);
+    }
+    
+    final boolean defaultLenient() {
+        return lenientDateFormatSymbolValue;
     }
 
     /**
