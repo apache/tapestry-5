@@ -547,13 +547,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     static ClassNode readClassNode(String className, ClassLoader classLoader) throws IOException
     {
         ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(className);
         final String location = PlasticInternalUtils.toInternalName(className) + ".class";
         InputStream inputStream = classLoader.getResourceAsStream(location);
         BufferedInputStream bis = new BufferedInputStream(inputStream);
-        classReader = new ClassReader(inputStream);
-        bis.close();
+        ClassReader classReader = new ClassReader(inputStream);
         inputStream.close();
+        bis.close();
         classReader.accept(classNode, 0);
         return classNode;
         

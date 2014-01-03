@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
@@ -335,7 +336,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return annotationAccess.getAnnotation(annotationType);
     }
     
-    private static void copyAnnotationsFromServiceImplementation(MethodNode methodNode, ClassNode source)
+    private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
         {
@@ -345,11 +346,57 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 // Find corresponding method in the implementation class MethodNode
                 if (methodNode.name.equals(implementationNode.name) && methodNode.desc.equals(implementationNode.desc))
                 {
-                    implementationNode.accept(methodNode);
                     
-                    // We want to copy just annotations, not code.
-                    methodNode.instructions.clear();
-                    methodNode.instructions.resetLabels();
+                    // Copied and adapted from MethodNode.accept(). We want annotation info, but not code nor attributes
+                    // Otherwise, we get ClassFormatError (Illegal exception table range) later
+
+                    // visits the method attributes
+                    int i, j, n;
+                    if (implementationNode.annotationDefault != null) {
+                        AnnotationVisitor av = methodNode.visitAnnotationDefault();
+                        AnnotationNode.accept(av, null, implementationNode.annotationDefault);
+                        if (av != null) {
+                            av.visitEnd();
+                        }
+                    }
+                    n = implementationNode.visibleAnnotations == null ? 0 : implementationNode.visibleAnnotations.size();
+                    for (i = 0; i < n; ++i) {
+                        AnnotationNode an = implementationNode.visibleAnnotations.get(i);
+                        an.accept(methodNode.visitAnnotation(an.desc, true));
+                    }
+                    n = implementationNode.invisibleAnnotations == null ? 0 : implementationNode.invisibleAnnotations.size();
+                    for (i = 0; i < n; ++i) {
+                        AnnotationNode an = implementationNode.invisibleAnnotations.get(i);
+                        an.accept(methodNode.visitAnnotation(an.desc, false));
+                    }
+                    n = implementationNode.visibleParameterAnnotations == null
+                            ? 0
+                            : implementationNode.visibleParameterAnnotations.length;
+                    for (i = 0; i < n; ++i) {
+                        List<?> l = implementationNode.visibleParameterAnnotations[i];
+                        if (l == null) {
+                            continue;
+                        }
+                        for (j = 0; j < l.size(); ++j) {
+                            AnnotationNode an = (AnnotationNode) l.get(j);
+                            an.accept(methodNode.visitParameterAnnotation(i, an.desc, true));
+                        }
+                    }
+                    n = implementationNode.invisibleParameterAnnotations == null
+                            ? 0
+                            : implementationNode.invisibleParameterAnnotations.length;
+                    for (i = 0; i < n; ++i) {
+                        List<?> l = implementationNode.invisibleParameterAnnotations[i];
+                        if (l == null) {
+                            continue;
+                        }
+                        for (j = 0; j < l.size(); ++j) {
+                            AnnotationNode an = (AnnotationNode) l.get(j);
+                            an.accept(methodNode.visitParameterAnnotation(i, an.desc, false));
+                        }
+                    }
+                    
+                    methodNode.visitEnd();
                     
                     break;
                     
@@ -735,8 +782,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         boolean isOverride = inheritanceData.isImplemented(methodNode.name, desc);
         
         if (!isOverride) {
-            copyAnnotationsFromServiceImplementation(methodNode, interfaceClassNode);
-            copyAnnotationsFromServiceImplementation(methodNode, implementationClassNode);
+            addMethodAndParameterAnnotationsFromExistingClass(methodNode, interfaceClassNode);
+            addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
         }
 
         if (isOverride)

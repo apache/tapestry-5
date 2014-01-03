@@ -198,7 +198,7 @@ public class AnnotationNode extends AnnotationVisitor
      * @param name the value name.
      * @param value the actual value.
      */
-    static void accept(
+    public static void accept(
         final AnnotationVisitor av,
         final String name,
         final Object value)

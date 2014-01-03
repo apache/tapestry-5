@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +18,25 @@ import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 
 @ReorderProperties("reorder") // no meaning, just for testing whether the proxy will have it
-public class NonAnnotatedServiceInterfaceImpl implements NonAnnotatedServiceInterface {
+public class NonAnnotatedServiceInterfaceImpl implements NonAnnotatedServiceInterface
+{
 
-	@Advise(id = "id", serviceInterface = NonAnnotatedServiceInterface.class)
-	public String execute(@IntermediateType(String.class) int i) { // annotation just for checking too
-		return null;
-	}
+    @Advise(id = "id", serviceInterface = NonAnnotatedServiceInterface.class)
+    public String execute(@IntermediateType(String.class) int i) // annotation just for checking too
+    { 
+
+        // a try/catch block, as it caused some troubles with proxy class generation
+        try
+        {
+            System.out.println();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
 
 }
