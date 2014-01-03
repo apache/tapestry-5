@@ -67,7 +67,6 @@ public class BeanDisplay
      * parameters are <em>only</em> applied to a default model, not an explicitly provided one.
      */
     @Parameter
-    @Property(write = false)
     private BeanModel model;
     /**
      * A comma-separated list of property names to be retained from the
@@ -124,7 +123,7 @@ public class BeanDisplay
     @Property
     private String propertyName;
 
-    void setupRender()
+    public BeanModel getModel()
     {
         if (model == null)
         {
@@ -132,6 +131,7 @@ public class BeanDisplay
 
             BeanModelUtils.modify(model, add, include, exclude, reorder);
         }
+        return model;
     }
 
     /**
@@ -139,7 +139,7 @@ public class BeanDisplay
      */
     public PropertyModel getPropertyModel()
     {
-        return model.get(propertyName);
+        return getModel().get(propertyName);
     }
 
     public String getPropertyClass()

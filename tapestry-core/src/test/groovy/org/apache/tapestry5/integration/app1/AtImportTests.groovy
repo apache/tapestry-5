@@ -4,7 +4,7 @@ import org.apache.tapestry5.integration.GroovyTapestryCoreTestCase
 import org.apache.tapestry5.test.TapestryTestConfiguration
 import org.testng.annotations.Test
 
-@TapestryTestConfiguration(webAppFolder = "src/test/app1", browserStartCommand = "*googlechrome")
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 class AtImportTests extends GroovyTapestryCoreTestCase
 {
 
