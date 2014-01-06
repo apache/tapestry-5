@@ -1,0 +1,2 @@
+org.apache.tapestry5.cdi.extension.BeanManagerHolder
+org.apache.tapestry5.cdi.extension.TapestryExtension
