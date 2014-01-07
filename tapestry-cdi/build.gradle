@@ -1,0 +1,114 @@
+import org.gradle.plugins.ide.idea.model.*
+import t5build.*
+
+description = "Bridge to CDI for Apache Tapestry 5 Project"
+
+apply plugin: JavaPlugin
+
+buildDir = 'target/gradle-build'
+       
+project.ext.libraryVersions = [
+    javaeeapi: '6.0-4', 
+    tomee: '1.6.0', 
+    ziplock: '1.5.1',
+    junit: '4.8.1', 
+    commonsHttpclient: '3.1',
+    arquillian: '1.1.1.Final', 
+    jbossJavaeeSpec: '1.0.0.Final',
+    arquillianGlassfish: '1.0.0.CR4',
+    glassfishDistrib: '3.1.1-b04', 
+    jbossDistrib: '7.1.1.Final', 
+    cdi: '1.0-SP4',
+    jbossAS7: '7.1.1.Final', 
+    shrinkwrapDesc: '2.0.0-alpha-3'
+]
+
+
+configurations {
+    compileOnly 
+    jboss
+    glassfish
+    tomeeEmbeddedTestRuntime  { extendsFrom testRuntime, compileOnly }
+    jbossAS7ManagedTestRuntime { extendsFrom testRuntime, compileOnly }
+    glassfishManagedTestRuntime { extendsFrom testRuntime, compileOnly }
+}
+
+dependencies {
+    compile project(':tapestry-core')
+    compile project(':tapestry-ioc')
+    testCompile (project(':tapestry-test')){
+         transitive = false
+     } 
+      
+    // replace javax.enterprise:cdi-api with group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec to compile against full Java EE API
+    compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
+    
+    
+    testCompile group: 'org.apache.openejb', name: 'ziplock', version: libraryVersions.ziplock
+    testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
+    testCompile group: 'commons-httpclient', name: 'commons-httpclient', version: libraryVersions.commonsHttpclient
+    
+    testCompile group: 'org.jboss.arquillian.junit', name: 'arquillian-junit-container', version: libraryVersions.arquillian
+    testCompile group: 'org.jboss.shrinkwrap.descriptors', name: 'shrinkwrap-descriptors-api-javaee', version: libraryVersions.shrinkwrapDesc
+    testRuntime group: 'org.jboss.shrinkwrap.descriptors', name: 'shrinkwrap-descriptors-impl-javaee', version: libraryVersions.shrinkwrapDesc
+    
+    tomeeEmbeddedTestRuntime group: 'org.apache.openejb', name: 'arquillian-tomee-embedded', version: libraryVersions.tomee
+    
+    jbossAS7ManagedTestRuntime group: 'org.jboss.as', name: 'jboss-as-arquillian-container-managed', version: libraryVersions.jbossAS7
+    jbossAS7ManagedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
+    jboss "org.jboss.as:jboss-as-dist:$libraryVersions.jbossDistrib@zip"
+ 
+    glassfishManagedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-managed-3.1', version: libraryVersions.arquillianGlassfish
+    glassfish "org.glassfish.distributions:glassfish:$libraryVersions.glassfishDistrib@zip"     
+}
+
+sourceSets {
+    main {
+        compileClasspath = configurations.compile + configurations.compileOnly
+    }
+    test {
+        compileClasspath = compileClasspath + configurations.compileOnly
+    }
+}
+
+task resolveJBoss(type: Copy) {  
+    destinationDir = file('target') 
+    from { zipTree(configurations.jboss.singleFile) }
+}
+
+task resolveGlassfish(type: Copy) {
+    destinationDir = file('target')
+    from { zipTree(configurations.glassfish.singleFile) }
+}
+
+
+task tomeeEmbeddedTest(type: Test) {
+  systemProperty 'arquillian.launch', "tomee_embedded"
+}
+
+task jbossAS7ManagedTest(type: Test) {
+  systemProperty 'arquillian.launch', "jbossas_managed"
+   dependsOn { resolveJBoss }
+}
+
+task glassfishManagedTest(type: Test){
+  systemProperty 'arquillian.launch', "glassfish_managed"
+   dependsOn { resolveGlassfish }
+}
+
+tasks.withType(Test).matching({ t-> t.name.endsWith('Test') } as Spec).each { t ->
+    t.testClassesDir = sourceSets.test.output.classesDir
+    t.classpath = sourceSets.test.output + sourceSets.main.output + configurations[t.name + 'Runtime']
+}
+
+test {
+  dependsOn { tomeeEmbeddedTest }
+  setEnabled(false)
+}
+
+jar {	
+
+	manifest {	
+		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.cdi.CDIInjectModule'
+		}
+ }
