@@ -128,7 +128,7 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      *         the <code>toString()</code> of the proxy
      * @return proxy instance
      */
-    @IncompatibleChange(release = "5.4", details = "TAP5-2029")
+    @IncompatibleChange(release = "5.4", details = "Added for TAP5-2029")
     <T> T createProxy(Class<T> interfaceType, Class<? extends T> implementationType, ObjectCreator<T> creator, String description);
 
     /**

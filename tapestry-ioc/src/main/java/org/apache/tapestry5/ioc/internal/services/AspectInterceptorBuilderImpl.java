@@ -17,6 +17,9 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticField;
@@ -43,19 +46,33 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
 
         this.serviceInterface = serviceInterface;
 
-        transformation = plasticProxyFactory.createProxyTransformation(serviceInterface, (Class<? extends T>) delegate.getClass());
+        final Class<? extends Object> delegateType = delegate.getClass();
+        transformation = plasticProxyFactory.createProxyTransformation(serviceInterface, (Class<? extends T>) delegateType);
         plasticClass = transformation.getPlasticClass();
 
         plasticClass.addToString(description);
 
         allMethods.addAll(Arrays.asList(serviceInterface.getMethods()));
 
-        PlasticField delegateField = plasticClass.introduceField(serviceInterface, "delegate").inject(delegate);
+        final PlasticField delegateField = plasticClass.introduceField(serviceInterface, "delegate").inject(delegate);
 
         for (Method method : allMethods)
         {
             plasticClass.introduceMethod(method).delegateTo(delegateField);
         }
+        
+        // TAP5-2235
+        final String delegateTypeName = delegateType.getName();
+        MethodDescription getDelegateMethodDescription = 
+                new MethodDescription(delegateTypeName, PlasticProxyFactoryImpl.INTERNAL_GET_DELEGATE);
+        plasticClass.introduceMethod(getDelegateMethodDescription, new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadThis().getField(delegateField);
+                builder.checkcast(delegateType).returnResult();
+            }
+        });
     }
 
     public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)

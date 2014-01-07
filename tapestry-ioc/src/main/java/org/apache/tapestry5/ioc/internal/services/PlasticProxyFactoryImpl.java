@@ -34,6 +34,8 @@ import java.util.Map;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
+    public static final String INTERNAL_GET_DELEGATE = null;
+
     private final PlasticManager manager;
 
     private final Map<String, Location> memberToLocation = CollectionFactory.newConcurrentMap();
@@ -99,10 +101,11 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 final PlasticField objectCreatorField = plasticClass.introduceField(ObjectCreator.class, "creator")
                         .inject(creator);
 
-                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(interfaceType.getName(), "delegate",
+                final String interfaceTypeName = interfaceType.getName();
+                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(interfaceTypeName, "delegate",
                         null, null);
 
-                delegateMethod.changeImplementation(new InstructionBuilderCallback()
+                final InstructionBuilderCallback returnCreateObject = new InstructionBuilderCallback()
                 {
                     public void doBuild(InstructionBuilder builder)
                     {
@@ -110,14 +113,22 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                         builder.invoke(ObjectCreator.class, Object.class, "createObject");
                         builder.checkcast(interfaceType).returnResult();
                     }
-                });
+                };
+                
+                delegateMethod.changeImplementation(returnCreateObject);
 
                 for (Method method : interfaceType.getMethods())
                 {
                     plasticClass.introduceMethod(method).delegateTo(delegateMethod);
                 }
-
+                
+                // TA5-2235
+                MethodDescription getDelegateMethodDescription = 
+                        new MethodDescription(implementationType.getName(), INTERNAL_GET_DELEGATE);
+                plasticClass.introduceMethod(getDelegateMethodDescription, returnCreateObject);
+                
                 plasticClass.addToString(description);
+                
             }
         });
 
