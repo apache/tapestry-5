@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
-    public static final String INTERNAL_GET_DELEGATE = null;
+    public static final String INTERNAL_GET_DELEGATE = "_____internalGetDelegate_DONT_CALL_THIS_METHOD_____";
 
     private final PlasticManager manager;
 
@@ -124,7 +124,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 
                 // TA5-2235
                 MethodDescription getDelegateMethodDescription = 
-                        new MethodDescription(implementationType.getName(), INTERNAL_GET_DELEGATE);
+                        new MethodDescription(interfaceType.getName(), INTERNAL_GET_DELEGATE);
                 plasticClass.introduceMethod(getDelegateMethodDescription, returnCreateObject);
                 
                 plasticClass.addToString(description);
