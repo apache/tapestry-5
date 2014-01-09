@@ -371,6 +371,7 @@ public final class TapestryModule
         binder.bind(ValueEncoderSource.class, ValueEncoderSourceImpl.class);
         binder.bind(PathConstructor.class, PathConstructorImpl.class);
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
+        binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
     }
 
     // ========================================================================

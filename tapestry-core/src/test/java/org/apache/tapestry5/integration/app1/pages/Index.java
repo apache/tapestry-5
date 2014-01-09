@@ -547,7 +547,9 @@ public class Index
 					new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
 							"Unwanted", "context"),
                     
-                    new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()")
+                    new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()"),
+                    
+                    new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer")
 
             );
 

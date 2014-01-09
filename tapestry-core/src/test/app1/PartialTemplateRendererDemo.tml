@@ -1,0 +1,25 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+	<t:block id="someBlock">
+		<!-- One component that generates a good amount of markup -->
+		<t:beandisplay t:id="insideBlock" t:object="object"/>
+	</t:block>
+	
+	<div id="original">
+		<t:delegate to="block:someblock"/>
+	</div>
+	
+	<div id="serviceRenderedBlock">
+		<t:outputRaw value="serviceRenderedBlock"/>
+	</div>
+	
+	<div id="originalBeanDisplay">
+		<t:beandisplay t:id="beanDisplay" t:object="object"/>
+	</div>
+
+	<div id="serviceRenderedComponent">
+		<t:outputRaw value="serviceRenderedComponent"/>
+	</div>
+
+</t:border>
