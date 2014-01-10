@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+    	<t:alerts/>
+        <t:form clientValidation="none" validate="complexBean">
+	    	<t:errors/>
+	    	<t:textfield t:id="notNullString" t:mixins="FormGroup" t:validate="required"/>
+        	<t:textfield t:id="simpleNotNullProperty" t:value="complexBean.simpleNotNullProperty" t:mixins="FormGroup"/>
+        	<t:textfield t:id="minValue" t:value="complexBean.otherSimpleBean.minValue" t:mixins="FormGroup"/>
+<!-- 			<t:beaneditor object="complexBean"/> -->
+        	<input type="submit" id="submit" value="Go"/>
+        </t:form>
+     </body>
+</html>

@@ -33,6 +33,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.metadata.BeanDescriptor;
 import javax.validation.metadata.ConstraintDescriptor;
 import javax.validation.metadata.PropertyDescriptor;
+
 import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.Map;
@@ -139,15 +140,27 @@ public class BeanFieldValidator implements FieldValidator
         String currentProperty = beanValidationContext.getCurrentProperty();
 
         if (currentProperty == null) return;
+        
+        Class<?> beanType = beanValidationContext.getBeanType();
+        String[] path = currentProperty.split("\\.");
+        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanType);
+        
+        for (int i = 1; i < path.length - 1; i++) 
+        {
+            Class<?> constrainedPropertyClass = getConstrainedPropertyClass(beanDescriptor, path[i]);
+            if (constrainedPropertyClass != null) {
+                beanType = constrainedPropertyClass;
+                beanDescriptor = validator.getConstraintsForClass(beanType);
+            }
+        }
 
-        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanValidationContext.getBeanType());
-
-        PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(currentProperty);
+        final String propertyName = path[path.length - 1];
+        PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(propertyName);
 
         if (propertyDescriptor == null) return;
 
         final Set<ConstraintViolation<Object>> violations = validator.validateValue(
-                (Class<Object>) beanValidationContext.getBeanType(), currentProperty,
+                (Class<Object>) beanType, propertyName,
                 value, beanValidationGroupSource.get());
 
         if (violations.isEmpty())
@@ -157,9 +170,9 @@ public class BeanFieldValidator implements FieldValidator
 
         final StringBuilder builder = new StringBuilder();
 
-        for (Iterator iterator = violations.iterator(); iterator.hasNext(); )
+        for (Iterator<ConstraintViolation<Object>> iterator = violations.iterator(); iterator.hasNext(); )
         {
-            ConstraintViolation<?> violation = (ConstraintViolation<Object>) iterator.next();
+            ConstraintViolation<?> violation = iterator.next();
 
             builder.append(format("%s %s", field.getLabel(), violation.getMessage()));
 
@@ -170,6 +183,24 @@ public class BeanFieldValidator implements FieldValidator
 
         throw new ValidationException(builder.toString());
 
+    }
+
+    /**
+     * Returns the class of a given property, but only if it is a constrained property of the
+     * parent class. Otherwise, it returns null.
+     */
+    final private static Class<?> getConstrainedPropertyClass(BeanDescriptor beanDescriptor, String propertyName)
+    {
+        Class<?> clasz = null;
+        for (PropertyDescriptor descriptor : beanDescriptor.getConstrainedProperties()) 
+        {
+            if (descriptor.getPropertyName().equals(propertyName)) 
+            {
+                clasz = descriptor.getElementClass();
+                break;
+            }
+        }
+        return clasz;
     }
 
     private String interpolateMessage(final ConstraintDescriptor<?> descriptor)

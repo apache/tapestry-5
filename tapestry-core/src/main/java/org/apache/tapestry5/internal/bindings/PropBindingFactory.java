@@ -51,6 +51,6 @@ public class PropBindingFactory implements BindingFactory
         String toString = interner.format("PropBinding[%s %s(%s)]", description, container
                 .getCompleteId(), expression);
 
-        return new PropBinding(location, target, conduit, toString);
+        return new PropBinding(location, target, conduit, expression, toString);
     }
 }

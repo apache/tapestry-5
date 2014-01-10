@@ -252,5 +252,26 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
                 "Min Value must be greater than or equal to 6", "Not Null String may not be null");
     }
 
+    // TAP5-1718
+    @Test
+    public void nested_object_validation() throws Exception
+    {
+        
+        final String locatorTemplate = "//p[@data-error-block-for='%s']";
+        
+        openLinks("NestedObject Demo");
+
+        clickAndWait(SUBMIT);
+        
+        assertEquals("You must provide a value for Not Null String.", 
+                getText(String.format(locatorTemplate, "notNullString")));
+        assertEquals("Simple Not Null Property may not be null", 
+                getText(String.format(locatorTemplate, "simpleNotNullProperty")));
+        assertEquals("Min Value must be greater than or equal to 6", 
+                getText(String.format(locatorTemplate, "minValue")));
+
+    }
+
+
 
 }

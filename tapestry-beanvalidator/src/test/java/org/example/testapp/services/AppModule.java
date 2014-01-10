@@ -28,6 +28,7 @@ public class AppModule
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "u93490jhsprf2904rh29-3uj");
     }
     
 	public static void contributeBeanValidatorSource(

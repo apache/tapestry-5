@@ -35,14 +35,16 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
     private final String toString;
 
     private boolean invariant;
+    
+    private final String expression;
 
-    public PropBinding(final Location location, final Object root, final PropertyConduit conduit, final String toString
-    )
+    public PropBinding(final Location location, final Object root, final PropertyConduit conduit, final String expression, final String toString)
     {
         super(location);
 
         this.root = root;
         this.conduit = conduit;
+        this.expression = expression;
         this.toString = toString;
 
         invariant = conduit.getAnnotation(Invariant.class) != null;
@@ -109,4 +111,10 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
 	{
 		return TapestryInternalUtils.toInternalPropertyConduit(conduit).getPropertyName();
 	}
+
+    public String getExpression()
+    {
+        return expression;
+    }
+	
 }

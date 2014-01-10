@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.InternalPropBinding;
+import org.apache.tapestry5.internal.bindings.PropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.internal.util.NamedSet;
@@ -668,6 +669,12 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
             return null;
         }
 
+        // TAP5-1718: we need the full prop binding expression, not just the (final) property name
+        if (binding instanceof PropBinding) 
+        {
+            return ((PropBinding) binding).getExpression();
+        }
+        
         if (binding instanceof InternalPropBinding)
         {
             return ((InternalPropBinding) binding).getPropertyName();
