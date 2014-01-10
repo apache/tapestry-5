@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp", port = 8080, browserStartCommand="*opera"/*browserStartCommand="*custom /usr/bin/chromium-browser"*/)
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
     @Test
@@ -216,6 +216,26 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
                 "Min Value must be greater than or equal to 6", "Not Null String may not be null");
 
     }
+    
+    // TAP5-1718
+    @Test
+    public void nested_object_validation() throws Exception
+    {
+        
+        final String locatorTemplate = "//p[@data-error-block-for='%s']";
+        
+        openLinks("NestedObject Demo");
+
+        clickAndWait(SUBMIT);
+        
+        assertEquals("You must provide a value for Not Null String.", 
+                getText(String.format(locatorTemplate, "notNullString")));
+        assertEquals("Simple Not Null Property may not be null", 
+                getText(String.format(locatorTemplate, "simpleNotNullProperty")));
+        assertEquals("Min Value must be greater than or equal to 6", 
+                getText(String.format(locatorTemplate, "minValue")));
+
+    }    
     
     protected final void assertBubbleMessage(String fieldId, String expected)
     {

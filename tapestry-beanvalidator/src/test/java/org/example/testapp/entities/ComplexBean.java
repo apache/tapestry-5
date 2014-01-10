@@ -1,10 +1,13 @@
 package org.example.testapp.entities;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class ComplexBean
 {
 
+    @Valid
+    private SomeSimpleBean otherSimpleBean;
     private SomeSimpleBean someSimpleBean;
     private SomeOtherSimpleBean someOtherSimpleBean;
 
@@ -39,6 +42,16 @@ public class ComplexBean
     public void setSimpleNotNullProperty(String simpleNotNullProperty)
     {
         this.simpleNotNullProperty = simpleNotNullProperty;
+    }
+
+    public SomeSimpleBean getOtherSimpleBean()
+    {
+        return otherSimpleBean;
+    }
+
+    public void setOtherSimpleBean(SomeSimpleBean otherSimpleBean)
+    {
+        this.otherSimpleBean = otherSimpleBean;
     }
 
 }

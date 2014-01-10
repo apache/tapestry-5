@@ -27,6 +27,9 @@
             <li>
                 <t:pagelink page="ComplexBeanDemo">ComplexBean Demo</t:pagelink>
             </li>            
+            <li>
+                <t:pagelink page="NestedObjectDemo">NestedObject Demo</t:pagelink>
+            </li>            
         </ul>
     </body>
 </html>

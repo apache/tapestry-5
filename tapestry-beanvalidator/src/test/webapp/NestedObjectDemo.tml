@@ -1,0 +1,22 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+    	<t:alerts/>
+        <t:form clientValidation="none" validate="complexBean">
+	    	<t:errors/>
+	    	<div class="t-beaneditor-row">
+		    	<t:label for="notNullString"/>
+		    	<t:textfield t:id="notNullString" t:validate="required"/>
+	    	</div>
+	    	<div class="t-beaneditor-row">
+		    	<t:label for="simpleNotNullProperty"/>
+	        	<t:textfield t:id="simpleNotNullProperty" t:value="complexBean.simpleNotNullProperty"/>
+        	</div>
+        	<div class="t-beaneditor-row">
+	        	<t:label for="minValue"/>
+	        	<t:textfield t:id="minValue" t:value="complexBean.otherSimpleBean.minValue"/>
+	        </div>
+<!-- 			<t:beaneditor object="complexBean"/> -->
+        	<input type="submit" id="submit" value="Go"/>
+        </t:form>
+     </body>
+</html>
