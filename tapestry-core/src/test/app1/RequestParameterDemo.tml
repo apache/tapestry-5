@@ -8,9 +8,19 @@
     .
   </p>
 
+  <p>
+    The current list of values is:
+    <ul id="values">
+      <li t:type="Loop" t:source="values" t:value="var:v">${var:v}</li>
+    </ul>
+  </p>
+
   <ul>
     <li>
       <a href="${workingLink}">Working Link</a>
+    </li>
+    <li>
+      <a href="${multivaluedQueryParameterLink}">Link With Multivalued Query Parameter</a>
     </li>
     <li>
       <a href="${brokenLink}">Broken Link</a>

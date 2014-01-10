@@ -40,6 +40,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -431,24 +432,38 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             {
                 try
                 {
+                    
+                    Class parameterType = classCache.forName(parameterTypeName);
+                    boolean isArray = parameterType.isArray();
+                    
+                    if (isArray)
+                    {
+                        parameterType = parameterType.getComponentType();
+                    }
+                    
+                    ValueEncoder valueEncoder = valueEncoderSource.getValueEncoder(parameterType);
+
                     String parameterValue = request.getParameter(parameterName);
 
-                    if (!allowBlank && InternalUtils.isBlank(parameterValue))
+                    if (!allowBlank && parameterValue == null)
                         throw new RuntimeException(String.format(
                                 "The value for query parameter '%s' was blank, but a non-blank value is needed.",
                                 parameterName));
+                    
+                    Object value;
 
-                    Class parameterType = classCache.forName(parameterTypeName);
-
-                    ValueEncoder valueEncoder = valueEncoderSource.getValueEncoder(parameterType);
-
-                    Object value = valueEncoder.toValue(parameterValue);
-
-                    if (parameterType.isPrimitive() && value == null)
-                        throw new RuntimeException(
-                                String.format(
-                                        "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
-                                        parameterName, parameterType.getName()));
+                    if (!isArray) {
+                        value = coerce(parameterName, parameterType, parameterValue, valueEncoder);
+                    }
+                    else {
+                        String[] parameterValues = request.getParameters(parameterName);
+                        Object[] array = (Object[]) Array.newInstance(parameterType, parameterValues.length);
+                        for (int i = 0; i < parameterValues.length; i++)
+                        {
+                            array[i] = coerce(parameterName, parameterType, parameterValues[i], valueEncoder);
+                        }
+                        value = array;
+                    }
 
                     return value;
                 } catch (Exception ex)
@@ -459,6 +474,19 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                                     parameterName, parameterIndex + 1, methodIdentifier,
                                     ExceptionUtils.toMessage(ex)), ex);
                 }
+            }
+
+            private Object coerce(final String parameterName, Class parameterType,
+                    String parameterValue, ValueEncoder valueEncoder)
+            {
+                Object value = valueEncoder.toValue(parameterValue);
+
+                if (parameterType.isPrimitive() && value == null)
+                    throw new RuntimeException(
+                            String.format(
+                                    "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
+                                    parameterName, parameterType.getName()));
+                return value;
             }
         };
     }

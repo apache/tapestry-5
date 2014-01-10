@@ -27,6 +27,16 @@ public class RequestParameterTests extends App1TestCase
     }
 
     @Test
+    public void successful_use_of_query_parameter_annotation_with_array_parameter()
+    {
+        openLinks("RequestParameter Annotation Demo", "Link With Multivalued Query Parameter");
+
+        assertText("//ul[@id='values']/li[1]", "97");
+        assertText("//ul[@id='values']/li[2]", "98");
+        assertText("//ul[@id='values']/li[3]", "99");
+    }
+
+    @Test
     public void null_value_when_not_allowed()
     {
         openLinks("RequestParameter Annotation Demo", "Null Link");

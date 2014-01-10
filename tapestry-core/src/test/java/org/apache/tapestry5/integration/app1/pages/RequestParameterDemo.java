@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Persist;
@@ -26,10 +29,16 @@ public class RequestParameterDemo
     private static final String PARAMETER_NAME = "gnip";
 
     private static final String EVENT_NAME = "frob";
+    
+    private static final String MULTIVALUED_PARAMETER_EVENT_NAME = "frobFrob";
 
     @Property
     @Persist
     private int value;
+
+    @Property
+    @Persist
+    private List<Integer> values;
 
     @Inject
     private ComponentResources resources;
@@ -38,6 +47,16 @@ public class RequestParameterDemo
     {
         Link link = resources.createEventLink(EVENT_NAME);
         link.addParameter(PARAMETER_NAME, "97");
+
+        return link;
+    }
+    
+    public Link getMultivaluedQueryParameterLink()
+    {
+        Link link = resources.createEventLink(MULTIVALUED_PARAMETER_EVENT_NAME);
+        link.addParameter(PARAMETER_NAME, "97");
+        link.addParameter(PARAMETER_NAME, "98");
+        link.addParameter(PARAMETER_NAME, "99");
 
         return link;
     }
@@ -64,6 +83,12 @@ public class RequestParameterDemo
     int value)
     {
         this.value = value;
+    }
+    
+    void onFrobFrob(@RequestParameter(PARAMETER_NAME)
+    Integer[] values)
+    {
+        this.values = Arrays.asList(values);
     }
 
     void onFrobNullAllowed(@RequestParameter(value = PARAMETER_NAME, allowBlank = true)
