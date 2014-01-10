@@ -143,6 +143,27 @@ public class GridTests extends App1TestCase
 
         assertTextPresent("There is no data to display.");
     }
+    
+
+    // TAP5-244
+    @Test
+    public void empty_grid_with_columns() throws Exception
+    {
+        openLinks("Empty Grid Demo");
+        
+        assertText("//th[1]", "Random");
+
+        assertText("//table/tbody/tr/td[@colspan='1']", "There is no data to display.");
+    }
+    
+    // TAP5-244
+    @Test
+    public void empty_grid_with_columns_requires_model_parameter() throws Exception
+    {
+        openLinks("Empty Grid Demo", "Remove the Grid's model");
+        
+        assertTextPresent("You should bind the model parameter explicitly.");
+    }
 
     @Test
     public void grid_inside_form()

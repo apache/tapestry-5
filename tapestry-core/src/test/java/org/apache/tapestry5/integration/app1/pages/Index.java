@@ -318,6 +318,8 @@ public class Index
 
                     new Item("GridRemoveReorderDemo", "Grid Remove/Reorder Demo",
                             "handling of remove and reorder parameters"),
+                            
+                    new Item("EmptyGrid", "Empty Grid Demo", "show table for empty data sources"),
 
                     new Item("protected", "Protected Page",
                             "Demonstrate result of non-void return from a page's activate method"),

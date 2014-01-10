@@ -1,0 +1,19 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    
+    <h1>Empty Grid Demo</h1>
+    
+    <p>A grid with an empty data source.</p>
+    
+    <t:if test="removeExplicitModel">
+    	<table t:type="Grid" source="source" renderTableIfEmpty="true"/>
+    </t:if>
+    <t:if test="!removeExplicitModel">
+   		<table t:type="Grid" source="source" renderTableIfEmpty="true" model="model"/>
+   	</t:if>
+    
+    
+    <div>
+        <t:eventlink event="removemodel" class="btn">Remove the Grid's model</t:eventlink>
+    </div>
+    
+</html>

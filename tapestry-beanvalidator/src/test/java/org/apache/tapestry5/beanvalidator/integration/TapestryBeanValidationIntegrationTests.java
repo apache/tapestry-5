@@ -272,6 +272,4 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
     }
 
-
-
 }

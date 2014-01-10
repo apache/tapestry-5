@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -193,6 +193,15 @@ public class Grid implements GridModel, ClientElement
      */
     @Parameter
     private boolean inPlace;
+    
+    /**
+     * If true, then the Grid will also render a table element complete with headers if the data source is empty.
+     * If set to true, a model parameter will have to be specified. A default model for a specific class can be
+     * created using {@link BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)}.
+     */
+    @Parameter
+    private boolean renderTableIfEmpty = false;
+    
 
     /**
      * The name of the pseudo-zone that encloses the Grid. Starting in 5.4, this is always either
@@ -377,6 +386,7 @@ public class Grid implements GridModel, ClientElement
      */
     protected Binding defaultModel()
     {
+      
         return new AbstractBinding()
         {
             public Object get()
@@ -387,7 +397,7 @@ public class Grid implements GridModel, ClientElement
 
                 Class rowType = gridDataSource.getRowType();
 
-                if (rowType == null)
+                if (renderTableIfEmpty || rowType == null)
                     throw new RuntimeException(
                             String.format(
                                     "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
@@ -437,7 +447,7 @@ public class Grid implements GridModel, ClientElement
 
         // If there's no rows, display the empty block placeholder.
 
-        return cachingSource.getAvailableRows() == 0 ? empty : null;
+        return !renderTableIfEmpty && cachingSource.getAvailableRows() == 0 ? empty : null;
     }
 
     void setupDataSource()
@@ -478,7 +488,7 @@ public class Grid implements GridModel, ClientElement
         // The empty placeholder will already have rendered.
 
         if (cachingSource.getAvailableRows() == 0)
-            return false;
+            return !renderTableIfEmpty ? false : null;
 
         if (inPlace && zone == null)
         {
@@ -516,6 +526,11 @@ public class Grid implements GridModel, ClientElement
         }
 
         return dataModel;
+    }
+    
+    public int getNumberOfProperties()
+    {
+        return getDataModel().getPropertyNames().size();
     }
 
     public GridDataSource getDataSource()

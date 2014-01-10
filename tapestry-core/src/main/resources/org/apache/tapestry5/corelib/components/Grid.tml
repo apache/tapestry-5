@@ -1,11 +1,18 @@
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 
     <div t:id="pagerTop"/>
 
     <table t:id="table">
         <thead t:id="columns"/>
         <tbody>
-        <tr t:id="rows"/>
+            <t:if test="dataSource.availableRows">
+                <tr t:id="rows"/>
+            </t:if>
+            <t:if test="!dataSource.availableRows">
+                <tr>
+                    <td colspan="${numberOfProperties}"><t:delegate to="block:empty"/></td>
+                </tr>
+            </t:if>
         </tbody>
     </table>
 
