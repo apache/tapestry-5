@@ -15,15 +15,19 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Renders a {@code <span>} tag with the CSS class to select a <a href="http://getbootstrap.com/components/#glyphicons">Bootstrap Glyphicon</a>.
  *
- * @since 5.4
  * @tapestrydoc
+ * @since 5.4
  */
+@SupportsInformalParameters
 public class Glyphicon
 {
     /**
@@ -32,10 +36,14 @@ public class Glyphicon
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     String name;
 
+    @Inject
+    ComponentResources resources;
+
     boolean beginRender(MarkupWriter writer)
     {
         writer.element("span",
                 "class", "glyphicon glyphicon-" + name);
+        resources.renderInformalParameters(writer);
         writer.end();
 
         return false;
