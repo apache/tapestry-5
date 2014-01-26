@@ -54,7 +54,9 @@ define ["underscore", "./console", "./dom", "./events"],
       .without(null)
       .map(rebuildURLOnIE)
 
-      insertionPoint = _.find(document.styleSheets, (ss) -> ss.ownerNode.rel is "stylesheet t-ajax-insertion-point")
+      insertionPoint = _.find(document.styleSheets, (ss) ->
+        parent = ss.ownerNode || ss.owningElement
+        parent.rel is "stylesheet t-ajax-insertion-point")
 
       # Most browsers support document.head, but older IE doesn't:
       head = document.head or document.getElementsByTagName("head")[0]
