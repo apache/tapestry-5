@@ -72,11 +72,11 @@ define ["./dom", "./events", "./console", "./ajax"],
                 </#{insertionPoint.element.tagName}>
               """
 
-          newElement = insertionPoint.insertBefore newElement
+          insertionPoint.insertBefore newElement
 
           # Trigger this event, to inform the world that the zone-like new element has been updated
           # with content.
-          newElement.trigger events.zone.didUpdate
+          insertionPoint.trigger events.zone.didUpdate
 
       return false
 
