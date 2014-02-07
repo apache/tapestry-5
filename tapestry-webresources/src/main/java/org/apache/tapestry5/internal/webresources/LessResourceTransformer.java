@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.github.sommeri.less4j.core.DefaultLessCompiler;
 import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 
@@ -71,12 +72,11 @@ public class LessResourceTransformer implements ResourceTransformer
         public String getContent() throws FileNotFound, CannotReadFile
         {
             // Adapted from Less's URLSource
+            Reader input = null;
             try
             {
-                Reader input = new InputStreamReader(resource.openStream());
+                input = new InputStreamReader(resource.openStream());
                 String content = IOUtils.toString(input).replace("\r\n", "\n");
-
-                input.close();
 
                 return content;
             } catch (FileNotFoundException ex)
@@ -85,7 +85,32 @@ public class LessResourceTransformer implements ResourceTransformer
             } catch (IOException ex)
             {
                 throw new CannotReadFile();
+            } finally
+            {
+                InternalUtils.close(input);
             }
+        }
+
+        @Override
+        public byte[] getBytes() throws FileNotFound, CannotReadFile
+        {
+            Reader input = null;
+            try
+            {
+                input = new InputStreamReader(resource.openStream());
+
+                return IOUtils.toByteArray(input);
+            } catch (FileNotFoundException ex)
+            {
+                throw new FileNotFound();
+            } catch (IOException ex)
+            {
+                throw new CannotReadFile();
+            } finally
+            {
+                InternalUtils.close(input);
+            }
+
         }
     }
 
