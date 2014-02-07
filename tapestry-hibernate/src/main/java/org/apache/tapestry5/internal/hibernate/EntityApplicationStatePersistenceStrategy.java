@@ -17,9 +17,7 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.internal.services.SessionApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.Request;
-import org.hibernate.HibernateException;
-
-import java.io.Serializable;
+import org.hibernate.Session;
 
 /**
  * Persists Hibernate entities as SSOs by storing their primary key in the {@link org.apache.tapestry5.services.Session}.
@@ -29,12 +27,13 @@ import java.io.Serializable;
 public class EntityApplicationStatePersistenceStrategy extends SessionApplicationStatePersistenceStrategy
 {
 
-    private final org.hibernate.Session hibernateSession;
+    private final EntityPersistentFieldStrategy delegate;
 
-    public EntityApplicationStatePersistenceStrategy(Request request, org.hibernate.Session hibernateSession)
+    public EntityApplicationStatePersistenceStrategy(Request request, Session hibernateSession)
     {
         super(request);
-        this.hibernateSession = hibernateSession;
+
+        delegate = new EntityPersistentFieldStrategy(hibernateSession, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -42,13 +41,11 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
     {
         final Object persistedValue = getOrCreate(ssoClass, creator);
 
-        if (persistedValue instanceof PersistedEntity)
+        if (persistedValue instanceof SessionRestorable)
         {
-            final PersistedEntity persisted = (PersistedEntity) persistedValue;
+            Object restored = delegate.convertPersistedToApplicationValue(persistedValue);
 
-            Object restored = persisted.restore(this.hibernateSession);
-
-            //shall we maybe throw an exception instead?
+            // Maybe throw an exception instead?
             if (restored == null)
             {
                 set(ssoClass, null);
@@ -64,27 +61,16 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
     public <T> void set(Class<T> ssoClass, T sso)
     {
         final String key = buildKey(ssoClass);
-        Object entity;
 
-        if (sso != null)
+        if (sso == null)
         {
-            try
-            {
-                final String entityName = this.hibernateSession.getEntityName(sso);
-                final Serializable id = this.hibernateSession.getIdentifier(sso);
-
-                entity = new PersistedEntity(entityName, id);
-            } catch (final HibernateException ex)
-            {
-                // if entity not attached to a Hibernate Session yet, store it as usual sso
-                entity = sso;
-            }
-        } else
-        {
-            entity = sso;
+            getSession().setAttribute(key, null);
+            return;
         }
 
-        getSession().setAttribute(key, entity);
+        Object persistable = delegate.convertApplicationValueToPersisted(sso);
+
+        getSession().setAttribute(key, persistable);
     }
 
 }

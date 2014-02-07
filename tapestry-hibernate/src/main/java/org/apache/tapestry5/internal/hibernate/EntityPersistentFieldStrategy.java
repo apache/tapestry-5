@@ -1,4 +1,4 @@
-// Copyright 2008m 2913 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,24 +40,32 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
     @Override
     protected Object convertApplicationValueToPersisted(Object newValue)
     {
+        assert newValue != null;
+
+        if (!session.contains(newValue))
+        {
+            return new PersistedTransientEntity(newValue);
+        }
+
         try
         {
             String entityName = session.getEntityName(newValue);
             Serializable id = session.getIdentifier(newValue);
 
             return new PersistedEntity(entityName, id);
-        }
-        catch (HibernateException ex)
+        } catch (HibernateException ex)
         {
-            throw new IllegalArgumentException(String.format("Failed persisting an entity in the session. Only entities attached to a Hibernate Session can be persisted. entity: %s", newValue), ex);
+            throw new IllegalArgumentException(String.format("Failed persisting an entity in the session. entity: %s", newValue), ex);
         }
     }
 
     @Override
     protected Object convertPersistedToApplicationValue(Object persistedValue)
     {
-        PersistedEntity persisted = (PersistedEntity) persistedValue;
+        assert persistedValue != null;
 
-        return persisted.restore(session);
+        SessionRestorable persisted = (SessionRestorable) persistedValue;
+
+        return persisted.restoreWithSession(session);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2013 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.hibernate.Session;
 
 import java.io.Serializable;
@@ -23,7 +24,7 @@ import java.io.Serializable;
  * Encapsulates a Hibernate entity name with an entity id.
  */
 @ImmutableSessionPersistedObject
-public class PersistedEntity implements Serializable
+public class PersistedEntity implements SessionRestorable
 {
     private static final long serialVersionUID = 897120520279686518L;
 
@@ -33,19 +34,22 @@ public class PersistedEntity implements Serializable
 
     public PersistedEntity(String entityName, Serializable id)
     {
+        assert InternalUtils.isNonBlank(entityName);
+        assert id != null;
+
         this.entityName = entityName;
         this.id = id;
     }
 
-    public Object restore(Session session)
+    public Object restoreWithSession(Session session)
     {
         try
         {
             return session.get(entityName, id);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
-            throw new RuntimeException(String.format("Failed to load session-persisted entity %s(%s): %s", entityName, id, ex));
+            throw new RuntimeException(String.format("Failed to load session-persisted entity %s(%s): %s", entityName, id, ex),
+                    ex);
         }
     }
 

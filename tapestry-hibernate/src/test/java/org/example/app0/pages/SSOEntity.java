@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,17 +13,15 @@
 // limitations under the License.
 package org.example.app0.pages;
 
-import java.util.List;
-
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.internal.hibernate.PersistedEntity;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;
+
+import java.util.List;
 
 public class SSOEntity 
 {
@@ -51,12 +49,7 @@ public class SSOEntity
     {
         user = null;
     }
-    
-    void onSetToTransient()
-    {
-        user = new User();
-    }
-    
+
     void onDelete()
     {
         List<User> users = userDAO.findAll();

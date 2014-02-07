@@ -1,4 +1,4 @@
-// Copyright 2008, 2012, 2013 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.hibernate.integration;
 
 import org.apache.tapestry5.internal.hibernate.PersistedEntity;
+import org.apache.tapestry5.internal.hibernate.PersistedTransientEntity;
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.app0.entities.User;
@@ -24,6 +25,10 @@ import org.testng.annotations.Test;
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryHibernateIntegrationTests extends SeleniumTestCase
 {
+
+    private final String PERSISTENT_ENTITY_CLASS_NAME = PersistedEntity.class.getName();
+    private final String PERSISTED_TRANSIENT_ENTITY_CLASS_NAME = PersistedTransientEntity.class.getName();
+
     public void valueencode_all_entity_types() throws Exception
     {
         open("/encodeentities");
@@ -60,39 +65,33 @@ public class TapestryHibernateIntegrationTests extends SeleniumTestCase
         assertText("//span[@id='name']", "name");
         clickAndWait("link=delete");
         assertEquals(getText("//span[@id='name']").length(), 0);
-
-        // transient objects cannot be persisted
-        clickAndWait("link=set to transient");
-        assertTextPresent("Error persisting");
     }
 
     public void sso_entities()
     {
         open("/ssoentity");
         assertEquals(getText("//span[@id='name']").length(), 0);
-        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTED_TRANSIENT_ENTITY_CLASS_NAME);
 
         clickAndWait("link=persist entity");
         assertText("//span[@id='name']", "name");
-        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTENT_ENTITY_CLASS_NAME);
 
         // can set back to null
         clickAndWait("link=set to null");
         assertEquals(getText("//span[@id='name']").length(), 0);
-        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTED_TRANSIENT_ENTITY_CLASS_NAME);
 
         clickAndWait("link=persist entity");
         assertText("//span[@id='name']", "name");
-        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTENT_ENTITY_CLASS_NAME);
         clickAndWait("link=delete");
         assertEquals(getText("//span[@id='name']").length(), 0);
-        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTED_TRANSIENT_ENTITY_CLASS_NAME);
 
         clickAndWait("link=persist entity");
         assertText("//span[@id='name']", "name");
-        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
-        clickAndWait("link=set to transient");
-        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+        assertText("//span[@id='persistedEntityClassName']", PERSISTENT_ENTITY_CLASS_NAME);
     }
 
     /**
