@@ -40,7 +40,6 @@ public class DateFieldDemo
 
     @Persist
     @Property
-    @Validate("required")
     private Date lenient;
 
     @Inject

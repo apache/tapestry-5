@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 The Apache Software Foundation
+// Copyright 2012-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public class JavaScriptModule
 
         final String ROOT = "${tapestry.asset.root}";
 
-        configuration.add("requirejs", StackExtension.library(ROOT + "/require-2.1.9.js"));
+        configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
         configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.5.2.js"));
 
         if (provider.equals("prototype"))
@@ -137,7 +137,7 @@ public class JavaScriptModule
             configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
         }
 
-        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery-1.10.2.js"));
+        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery.js"));
 
         if (provider.equals("prototype"))
         {
