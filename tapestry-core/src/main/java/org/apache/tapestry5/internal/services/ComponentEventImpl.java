@@ -31,7 +31,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     private final ComponentPageElementResources elementResources;
 
-	private final boolean exactParameterCountMatch;
+    private final boolean exactParameterCountMatch;
 
     /**
      * @param eventType
@@ -44,17 +44,17 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
      *            invoked when a non-null return value is obtained from an event handler method
      * @param elementResources
      *            provides access to common resources and services
-	 * @param exactParameterCountMatch
-	 *            the {@link org.apache.tapestry5.ioc.annotations.Symbol} indicating an exact match
-	 *            on parameter count in the {@link EventContext}.
-	 * @param model
-	 *            the {@link ComponentModel} of the component originating the event.
+     * @param exactParameterCountMatch
+     *            the {@link org.apache.tapestry5.ioc.annotations.Symbol} indicating an exact match
+     *            on parameter count in the {@link EventContext}.
+     * @param model
+     *            the {@link ComponentModel} of the component originating the event.
      * @param logger
      *            used to log method invocations
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, EventContext context,
             ComponentEventCallback handler, ComponentPageElementResources elementResources,
-			boolean exactParameterCountMatch, ComponentModel model, Logger logger)
+            boolean exactParameterCountMatch, ComponentModel model, Logger logger)
     {
         super(handler, logger, elementResources);
 
@@ -62,7 +62,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         this.originatingComponentId = originatingComponentId;
         this.elementResources = elementResources;
         this.context = context;
-		this.exactParameterCountMatch = exactParameterCountMatch && !model.handleActivationEventContext();
+        this.exactParameterCountMatch = exactParameterCountMatch && !model.handleActivationEventContext();
     }
 
     @Override
@@ -77,10 +77,10 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         if (isAborted())
             return false;
 
-		boolean parameterCountMatch = exactParameterCountMatch ?
-				context.getCount() == parameterCount : context.getCount() >= parameterCount;
+        boolean parameterCountMatch = exactParameterCountMatch ?
+                context.getCount() == parameterCount : context.getCount() >= parameterCount;
 
-		return this.eventType.equalsIgnoreCase(eventType) && parameterCountMatch
+        return this.eventType.equalsIgnoreCase(eventType) && parameterCountMatch
                  && (originatingComponentId.equalsIgnoreCase(componentId) || componentId.equals(""));
     }
 

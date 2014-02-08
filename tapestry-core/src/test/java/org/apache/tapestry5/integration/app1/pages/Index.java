@@ -40,14 +40,14 @@ public class Index
         public final String pageName;
         public final String label;
         public final String description;
-		public final Object[] context;
+        public final Object[] context;
 
         public Item(String pageName, String label, String description, Object... context)
         {
             this.pageName = pageName;
             this.label = label;
             this.description = description;
-			this.context = context;
+            this.context = context;
         }
 
         public int compareTo(Item o)
@@ -333,7 +333,7 @@ public class Index
                             "passing explicit context in a page render link"),
 
                     new Item("pagecontextinform", "Page Context in Form", "passivate/activate page context in Form",
-							"betty", "wilma", "context with spaces", "context/with/slashes"),
+                            "betty", "wilma", "context with spaces", "context/with/slashes"),
 
                     new Item("ValidBeanEditorDemo", "Client Validation Demo", "BeanEditor with validation enabled"),
 
@@ -543,11 +543,11 @@ public class Index
 
                     new Item("FormLinkParameters", "FormLinkParameters Demo", "Form link parameters should be unescaped for a hidden field"),
 
-					new Item("KnownActivationContextDemo", "Known Activation Context Demo", "Page is displayed normally if called without context (TAP5-2070)",
-							"Exact"),
+                    new Item("KnownActivationContextDemo", "Known Activation Context Demo", "Page is displayed normally if called without context (TAP5-2070)",
+                            "Exact"),
 
-					new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
-							"Unwanted", "context"),
+                    new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
+                            "Unwanted", "context"),
                     
                     new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()"),
                     

@@ -14,59 +14,59 @@ import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
 
 public class ComponentPageElementImplTest extends TestBase {
-	/** TAP5-742 */
-	@Test public void component_render_tracing() {
-		Request request = newMock(Request.class);
-		SymbolSource symbolSource = newMock(SymbolSource.class);
-		
-		Page page = getMocksControl().createMock(Page.class);
-		Instantiator instantiator = newMock(Instantiator.class);
-		Location location = newMock(Location.class);
-		ComponentPageElementResources elementResources = newMock(ComponentPageElementResources.class);
-		ComponentModel model = newMock(ComponentModel.class);
-		MetaDataLocator locator = newMock(MetaDataLocator.class);
-		
-		getMocksControl().resetToNice();
+    /** TAP5-742 */
+    @Test public void component_render_tracing() {
+        Request request = newMock(Request.class);
+        SymbolSource symbolSource = newMock(SymbolSource.class);
+        
+        Page page = getMocksControl().createMock(Page.class);
+        Instantiator instantiator = newMock(Instantiator.class);
+        Location location = newMock(Location.class);
+        ComponentPageElementResources elementResources = newMock(ComponentPageElementResources.class);
+        ComponentModel model = newMock(ComponentModel.class);
+        MetaDataLocator locator = newMock(MetaDataLocator.class);
+        
+        getMocksControl().resetToNice();
 
-		expect(instantiator.getModel()).andReturn(model).anyTimes();
+        expect(instantiator.getModel()).andReturn(model).anyTimes();
 
-		// off by default
-		expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
-		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("false");
-		expect(request.getParameter("t:component-trace")).andReturn("false");
-		
-		// enable by query parameter
-		expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
-		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("false");
-		expect(request.getParameter("t:component-trace")).andReturn("true");
-		
-		// enable by symbol
-		expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
-		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("true");
-		expect(request.getParameter("t:component-trace")).andReturn("false");
-		
-		// off no matter what in production mode
-		expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("true");
-		expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("true");
-		expect(request.getParameter("t:component-trace")).andReturn("false");
+        // off by default
+        expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
+        expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("false");
+        expect(request.getParameter("t:component-trace")).andReturn("false");
+        
+        // enable by query parameter
+        expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
+        expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("false");
+        expect(request.getParameter("t:component-trace")).andReturn("true");
+        
+        // enable by symbol
+        expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("false");
+        expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("true");
+        expect(request.getParameter("t:component-trace")).andReturn("false");
+        
+        // off no matter what in production mode
+        expect(symbolSource.valueForSymbol(PRODUCTION_MODE)).andReturn("true");
+        expect(symbolSource.valueForSymbol(COMPONENT_RENDER_TRACING_ENABLED)).andReturn("true");
+        expect(request.getParameter("t:component-trace")).andReturn("false");
 
-		expect(page.getName()).andReturn("pageName").anyTimes();
-		expect(locator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, "pageName", Boolean.class))
-				.andReturn(false).anyTimes();
+        expect(page.getName()).andReturn("pageName").anyTimes();
+        expect(locator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, "pageName", Boolean.class))
+                .andReturn(false).anyTimes();
 
-		replay();
-		ComponentPageElementImpl c;	// need to create every time because of changing symbols
-		
-		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
-		assertFalse(c.isRenderTracingEnabled());
-		
-		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
-		assertTrue(c.isRenderTracingEnabled());
+        replay();
+        ComponentPageElementImpl c;    // need to create every time because of changing symbols
+        
+        c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
+        assertFalse(c.isRenderTracingEnabled());
+        
+        c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
+        assertTrue(c.isRenderTracingEnabled());
 
-		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
-		assertTrue(c.isRenderTracingEnabled());
+        c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
+        assertTrue(c.isRenderTracingEnabled());
 
-		c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
-		assertFalse(c.isRenderTracingEnabled());
-	}
+        c = new ComponentPageElementImpl(page, null, "id", "nestedId", "completeid", "elementname", instantiator, location, elementResources, request, symbolSource, locator);
+        assertFalse(c.isRenderTracingEnabled());
+    }
 }

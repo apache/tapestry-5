@@ -69,7 +69,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private final String libraryName;
 
-	private boolean handleActivationEventContext;
+    private boolean handleActivationEventContext;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
                                      ComponentModel parentModel, boolean pageClass, String libraryName)
@@ -81,8 +81,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         this.pageClass = pageClass;
         this.libraryName = libraryName;
 
-		// Default to false, explicitly set during page transformation
-		this.handleActivationEventContext = false;
+        // Default to false, explicitly set during page transformation
+        this.handleActivationEventContext = false;
 
         // Pre-allocate names from the parent, to avoid name collisions.
 
@@ -400,13 +400,13 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return pageClass;
     }
 
-	public void doHandleActivationEventContext()
-	{
-		this.handleActivationEventContext = true;
-	}
+    public void doHandleActivationEventContext()
+    {
+        this.handleActivationEventContext = true;
+    }
 
-	public boolean handleActivationEventContext()
-	{
-		return this.handleActivationEventContext;
-	}
+    public boolean handleActivationEventContext()
+    {
+        return this.handleActivationEventContext;
+    }
 }

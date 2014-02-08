@@ -34,14 +34,14 @@ public class BeanValidationContextImpl implements BeanValidationContext
         return bean;
     }
 
-	public String getCurrentProperty() 
-	{
-		return currentProperty;
-	}
+    public String getCurrentProperty() 
+    {
+        return currentProperty;
+    }
 
-	public void setCurrentProperty(String propertyName) 
-	{
-		this.currentProperty = propertyName;
-	}
+    public void setCurrentProperty(String propertyName) 
+    {
+        this.currentProperty = propertyName;
+    }
 
 }

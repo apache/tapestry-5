@@ -19,12 +19,12 @@ import org.apache.tapestry5.beaneditor.Validate;
 
 public class ValidatorMacroDemo 
 {
-	@Property 
-	@Persist
-	private String password;
-	
-	@Property
-	@Persist
-	@Validate("password")
-	private String password2;
+    @Property 
+    @Persist
+    private String password;
+    
+    @Property
+    @Persist
+    @Validate("password")
+    private String password2;
 }

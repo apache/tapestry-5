@@ -25,6 +25,6 @@ import org.apache.tapestry5.ioc.annotations.IntermediateType;
 public interface AnnotatedServiceInterface {
 
     @Advise(id = "id", serviceInterface = NonAnnotatedServiceInterface.class)
-	public String execute(@IntermediateType(String.class) int i); 
-	
+    public String execute(@IntermediateType(String.class) int i); 
+    
 }

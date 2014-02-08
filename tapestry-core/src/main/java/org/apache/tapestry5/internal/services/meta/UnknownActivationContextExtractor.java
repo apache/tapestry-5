@@ -24,6 +24,6 @@ public class UnknownActivationContextExtractor implements MetaDataExtractor<Unkn
 {
     public void extractMetaData(MutableComponentModel model, UnknownActivationContextCheck annotation)
     {
-		model.setMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, Boolean.toString(annotation.value()));
+        model.setMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, Boolean.toString(annotation.value()));
     }
 }

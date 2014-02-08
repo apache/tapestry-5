@@ -228,7 +228,7 @@ public class PlasticManager implements PlasticClassListenerHub
      */
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
-    	return createProxy(interfaceType, null, callback);
+        return createProxy(interfaceType, null, callback);
     }
 
     /**

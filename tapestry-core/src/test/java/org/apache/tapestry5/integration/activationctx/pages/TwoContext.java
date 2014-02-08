@@ -19,8 +19,8 @@ import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 @UnknownActivationContextCheck
 public class TwoContext
 {
-	void onActivate(String one, String two)
-	{
-		// Do some nifty stuff...
-	}
+    void onActivate(String one, String two)
+    {
+        // Do some nifty stuff...
+    }
 }

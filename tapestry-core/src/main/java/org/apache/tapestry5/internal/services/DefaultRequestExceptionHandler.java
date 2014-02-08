@@ -94,7 +94,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                                           String pageName,
 
                                           Request request, Response response, ComponentClassResolver componentClassResolver,
-										  LinkSource linkSource, ServiceResources serviceResources, Map<Class, Object> configuration)
+                                          LinkSource linkSource, ServiceResources serviceResources, Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;

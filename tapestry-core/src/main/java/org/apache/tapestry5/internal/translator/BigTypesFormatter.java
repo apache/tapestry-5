@@ -47,7 +47,7 @@ public abstract class BigTypesFormatter implements NumericFormatter
 
     public Number parse(String clientValue) throws ParseException
     {
-		// Allow for " " here since FF2/IE replaces \u00A0 (non breaking space) with \u0020 (normal space)
+        // Allow for " " here since FF2/IE replaces \u00A0 (non breaking space) with \u0020 (normal space)
         String noGroups = clientValue.replace(toString(symbols.getGroupingSeparator()), "").replace(" ", "");
         String fixedNeg = noGroups.replace(symbols.getMinusSign(), '-');
         String fixedDec = fixedNeg.replace(symbols.getDecimalSeparator(), '.');

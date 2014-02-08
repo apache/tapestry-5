@@ -23,13 +23,13 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
  */
 public class AppModule
 {
-	public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
-	{
-		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
-		configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
-		configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
 
-		// Enable by default the check on activation context parameters
-		configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, "true");
-	}
+        // Enable by default the check on activation context parameters
+        configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, "true");
+    }
 }

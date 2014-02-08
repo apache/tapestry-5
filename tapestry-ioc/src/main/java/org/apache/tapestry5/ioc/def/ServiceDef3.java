@@ -27,14 +27,14 @@ import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
  */
 public interface ServiceDef3 extends ServiceDef2, AnnotationAccess
 {
-	
+    
     /**
      * Returns the service implementation associated with this service. When creating the proxies
      * for the service interface, the implementation of the service interface methods will
      * receive the annotations of the corresponding method in the service interface.
      * @since 5.4
      */
-	@IncompatibleChange(release = "5.4", details = "Added method")
+    @IncompatibleChange(release = "5.4", details = "Added method")
     Class getServiceImplementation();
 
 }

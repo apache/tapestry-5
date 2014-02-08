@@ -28,19 +28,19 @@ import javax.servlet.http.HttpServletResponse;
 
 public class PageActivatorImpl implements PageActivator
 {
-	private final Logger logger;
+    private final Logger logger;
 
-	private final MetaDataLocator metaDataLocator;
+    private final MetaDataLocator metaDataLocator;
 
-	private final UnknownActivationContextHandler unknownActivationContextHandler;
+    private final UnknownActivationContextHandler unknownActivationContextHandler;
 
-	public PageActivatorImpl(Logger logger, MetaDataLocator metaDataLocator,
-							 UnknownActivationContextHandler unknownActivationContextHandler)
-	{
-		this.logger = logger;
-		this.metaDataLocator = metaDataLocator;
-		this.unknownActivationContextHandler = unknownActivationContextHandler;
-	}
+    public PageActivatorImpl(Logger logger, MetaDataLocator metaDataLocator,
+                             UnknownActivationContextHandler unknownActivationContextHandler)
+    {
+        this.logger = logger;
+        this.metaDataLocator = metaDataLocator;
+        this.unknownActivationContextHandler = unknownActivationContextHandler;
+    }
 
     @SuppressWarnings("unchecked")
     public boolean activatePage(ComponentResources pageResources, EventContext activationContext,
@@ -48,21 +48,21 @@ public class PageActivatorImpl implements PageActivator
     {
         TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(resultProcessor);
 
-		boolean handled = pageResources.triggerContextEvent(EventConstants.ACTIVATE, activationContext, callback);
+        boolean handled = pageResources.triggerContextEvent(EventConstants.ACTIVATE, activationContext, callback);
 
-		boolean acceptEmpty = !pageResources.getComponentModel().handlesEvent(EventConstants.ACTIVATE) &&
-								activationContext.getCount() == 0;
+        boolean acceptEmpty = !pageResources.getComponentModel().handlesEvent(EventConstants.ACTIVATE) &&
+                                activationContext.getCount() == 0;
 
-		boolean checkUnknown = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
-														pageResources, Boolean.class);
+        boolean checkUnknown = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
+                                                        pageResources, Boolean.class);
 
-		if ( !handled && !acceptEmpty && checkUnknown &&
-				!pageResources.getComponentModel().handleActivationEventContext())
-		{
-			logger.info("Page {} required an exact activation context, let's handle this", pageResources.getPageName());
-			unknownActivationContextHandler.handleUnknownContext(pageResources, activationContext);
-			return true;
-		}
+        if ( !handled && !acceptEmpty && checkUnknown &&
+                !pageResources.getComponentModel().handleActivationEventContext())
+        {
+            logger.info("Page {} required an exact activation context, let's handle this", pageResources.getPageName());
+            unknownActivationContextHandler.handleUnknownContext(pageResources, activationContext);
+            return true;
+        }
 
         if (callback.isAborted())
         {

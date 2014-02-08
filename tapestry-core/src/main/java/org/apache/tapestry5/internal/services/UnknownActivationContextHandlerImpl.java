@@ -30,28 +30,28 @@ import java.io.IOException;
  */
 public class UnknownActivationContextHandlerImpl implements UnknownActivationContextHandler
 {
-	private final Logger logger;
+    private final Logger logger;
 
-	private final ComponentEventResultProcessor resultProcessor;
+    private final ComponentEventResultProcessor resultProcessor;
 
 
-	public UnknownActivationContextHandlerImpl(Logger logger,
-											   @Traditional @Primary
-											   ComponentEventResultProcessor resultProcessor)
-	{
-		this.logger = logger;
-		this.resultProcessor = resultProcessor;
-	}
+    public UnknownActivationContextHandlerImpl(Logger logger,
+                                               @Traditional @Primary
+                                               ComponentEventResultProcessor resultProcessor)
+    {
+        this.logger = logger;
+        this.resultProcessor = resultProcessor;
+    }
 
-	public void handleUnknownContext(ComponentResources pageResources, EventContext activationContext)
-			throws IOException
-	{
-		logger.warn("Activate event on page {} was fired with context {} but was not handled",
-				pageResources.getPage().getClass(), activationContext);
+    public void handleUnknownContext(ComponentResources pageResources, EventContext activationContext)
+            throws IOException
+    {
+        logger.warn("Activate event on page {} was fired with context {} but was not handled",
+                pageResources.getPage().getClass(), activationContext);
 
-		String message = String.format("Activation context %s unrecognized for page %s",
-				activationContext, pageResources.getPage().getClass());
+        String message = String.format("Activation context %s unrecognized for page %s",
+                activationContext, pageResources.getPage().getClass());
 
-		resultProcessor.processResultValue(new HttpError(HttpServletResponse.SC_NOT_FOUND, message));
-	}
+        resultProcessor.processResultValue(new HttpError(HttpServletResponse.SC_NOT_FOUND, message));
+    }
 }

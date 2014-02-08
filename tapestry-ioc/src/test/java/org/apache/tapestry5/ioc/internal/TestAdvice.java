@@ -23,33 +23,33 @@ import org.apache.tapestry5.plastic.MethodInvocation;
 
 final public class TestAdvice implements MethodAdvice {
 
-	public static final String ANNOTATION_FOUND = "Annotation found!";
+    public static final String ANNOTATION_FOUND = "Annotation found!";
 
-	public void advise(MethodInvocation invocation) {
+    public void advise(MethodInvocation invocation) {
 
-		final Method method = invocation.getMethod();
+        final Method method = invocation.getMethod();
         boolean annotationFoundInMethod = checkAnnotation(method.getAnnotation(Advise.class));
-		boolean annotationFoundThroughAnnotationProvider = checkAnnotation(invocation.getAnnotation(Advise.class));
-		IntermediateType parameterAnnotation = null;
-		final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-		if (parameterAnnotations.length > 0 && parameterAnnotations[0].length > 0) {
-		    parameterAnnotation = (IntermediateType) parameterAnnotations[0][0];
-		}
+        boolean annotationFoundThroughAnnotationProvider = checkAnnotation(invocation.getAnnotation(Advise.class));
+        IntermediateType parameterAnnotation = null;
+        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        if (parameterAnnotations.length > 0 && parameterAnnotations[0].length > 0) {
+            parameterAnnotation = (IntermediateType) parameterAnnotations[0][0];
+        }
         boolean annotationParameter = parameterAnnotation != null && parameterAnnotation.value() == String.class;
-		
-		if (annotationFoundInMethod && annotationFoundThroughAnnotationProvider && annotationParameter) 
-		{
-			invocation.setReturnValue(ANNOTATION_FOUND);
-		}
-		else {
-			invocation.proceed();
-		}
-		
-	}
+        
+        if (annotationFoundInMethod && annotationFoundThroughAnnotationProvider && annotationParameter) 
+        {
+            invocation.setReturnValue(ANNOTATION_FOUND);
+        }
+        else {
+            invocation.proceed();
+        }
+        
+    }
 
     private boolean checkAnnotation(Advise annotation)
     {
         return annotation != null && "id".equals(annotation.id()) && NonAnnotatedServiceInterface.class.equals(annotation.serviceInterface());
     }
-	
+    
 }

@@ -19,6 +19,6 @@ package org.apache.tapestry5.ioc.internal;
  */
 public interface NonAnnotatedServiceInterface {
 
-	public String execute(int i);
-	
+    public String execute(int i);
+    
 }

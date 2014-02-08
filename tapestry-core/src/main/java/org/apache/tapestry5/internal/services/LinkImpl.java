@@ -28,7 +28,7 @@ import java.util.TreeMap;
 
 public class LinkImpl implements Link
 {
-	private Map<String, List<String>> parameters;
+    private Map<String, List<String>> parameters;
 
     private final String basePath;
 

@@ -36,13 +36,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @UseWith(AnnotationUseContext.PAGE)
 public @interface UnknownActivationContextCheck
 {
-	/**
-	 * If <code>true</code>, the default, the framework will check for an exact (number and type of parameters)
-	 * activation context method and if not found will respond with a 404 Not Found status code, if <code>false</code>
-	 * the activation context is ignored as it was before 5.4 release.
-	 *
-	 * @see org.apache.tapestry5.MetaDataConstants#UNKNOWN_ACTIVATION_CONTEXT_CHECK
-	 * @see org.apache.tapestry5.services.HttpError
-	 */
-	boolean value() default true;
+    /**
+     * If <code>true</code>, the default, the framework will check for an exact (number and type of parameters)
+     * activation context method and if not found will respond with a 404 Not Found status code, if <code>false</code>
+     * the activation context is ignored as it was before 5.4 release.
+     *
+     * @see org.apache.tapestry5.MetaDataConstants#UNKNOWN_ACTIVATION_CONTEXT_CHECK
+     * @see org.apache.tapestry5.services.HttpError
+     */
+    boolean value() default true;
 }

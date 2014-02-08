@@ -22,43 +22,43 @@ import org.testng.annotations.Test;
  */
 public class ActivationContextIntegrationTests2 extends TapestryCoreTestCase
 {
-	@Test
-	public void checked_context_correct()
-	{
-		openLinks("Context checked correct");
+    @Test
+    public void checked_context_correct()
+    {
+        openLinks("Context checked correct");
 
-		assertTextPresent("You are able to see me only without activation context");
-	}
+        assertTextPresent("You are able to see me only without activation context");
+    }
 
-	@Test
-	public void checked_context_error()
-	{
-		openLinks("Context checked error");
+    @Test
+    public void checked_context_error()
+    {
+        openLinks("Context checked error");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void unchecked_context_empty()
-	{
-		openLinks("Context unchecked without");
+    @Test
+    public void unchecked_context_empty()
+    {
+        openLinks("Context unchecked without");
 
-		assertTextPresent("You are able to see with all context you like...");
-	}
+        assertTextPresent("You are able to see with all context you like...");
+    }
 
-	@Test
-	public void unchecked_context_one()
-	{
-		openLinks("Context unchecked with one");
+    @Test
+    public void unchecked_context_one()
+    {
+        openLinks("Context unchecked with one");
 
-		assertTextPresent("You are able to see with all context you like...");
-	}
+        assertTextPresent("You are able to see with all context you like...");
+    }
 
-	@Test
-	public void unchecked_context_two()
-	{
-		openLinks("Context unchecked with two");
+    @Test
+    public void unchecked_context_two()
+    {
+        openLinks("Context unchecked with two");
 
-		assertTextPresent("You are able to see with all context you like...");
-	}
+        assertTextPresent("You are able to see with all context you like...");
+    }
 }

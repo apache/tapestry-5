@@ -61,7 +61,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final SymbolSource symbolSource;
 
-	private final MetaDataLocator metaDataLocator;
+    private final MetaDataLocator metaDataLocator;
 
     private Map<String, String> publishedParameterToEmbeddedId;
 
@@ -80,7 +80,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.tracker = tracker;
         this.request = request;
         this.symbolSource = symbolSource;
-		this.metaDataLocator = metaDataLocator;
+        this.metaDataLocator = metaDataLocator;
     }
 
     public ComponentPageElement assembleRootComponent(final Page page)

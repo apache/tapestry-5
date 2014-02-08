@@ -27,7 +27,7 @@ public class PageContextInForm
 
     Object[] onPassivate()
     {
-		return activationContext;
+        return activationContext;
     }
 
     public Object[] getActivationContext()

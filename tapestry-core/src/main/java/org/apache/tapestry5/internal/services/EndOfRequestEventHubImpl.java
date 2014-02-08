@@ -25,7 +25,7 @@ public class EndOfRequestEventHubImpl implements EndOfRequestEventHub
     private final RequestGlobals requestGlobals;
 
     public EndOfRequestEventHubImpl(RequestGlobals requestGlobals) {
-	this.requestGlobals = requestGlobals;
+    this.requestGlobals = requestGlobals;
     }
 
     private final List<EndOfRequestListener> listeners = CollectionFactory.newThreadSafeList();

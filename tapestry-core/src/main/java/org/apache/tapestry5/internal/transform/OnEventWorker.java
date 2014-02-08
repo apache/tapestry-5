@@ -133,7 +133,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
         int minContextValues = 0;
 
-		boolean handleActivationEventContext = false;
+        boolean handleActivationEventContext = false;
 
         EventHandlerMethod(PlasticMethod method)
         {
@@ -223,7 +223,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                 if (provider != null)
                 {
                     providers.add(provider);
-					this.handleActivationEventContext = true;
+                    this.handleActivationEventContext = true;
                     continue;
                 }
 
@@ -387,8 +387,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
                             model.addEventHandler(method.eventType);
 
-							if (method.handleActivationEventContext)
-								model.doHandleActivationEventContext();
+                            if (method.handleActivationEventContext)
+                                model.doHandleActivationEventContext();
                         }
 
                         builder.loadVariable(resultVariable).returnResult();

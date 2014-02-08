@@ -21,8 +21,8 @@ import org.apache.tapestry5.Binding;
  */
 public interface InternalPropBinding extends Binding
 {
-	/**
-	 * Returns the name of the property, if exists.
-	 */
-	String getPropertyName();
+    /**
+     * Returns the name of the property, if exists.
+     */
+    String getPropertyName();
 }

@@ -22,67 +22,67 @@ import org.testng.annotations.Test;
  */
 public class ActivationContextintegrationTests extends TapestryCoreTestCase
 {
-	@Test
-	public void no_context_correct()
-	{
-		openLinks("No context correct");
+    @Test
+    public void no_context_correct()
+    {
+        openLinks("No context correct");
 
-		assertTextPresent("You are able to see me only without activation context");
-	}
+        assertTextPresent("You are able to see me only without activation context");
+    }
 
-	@Test
-	public void no_context_error()
-	{
-		openLinks("No context error");
+    @Test
+    public void no_context_error()
+    {
+        openLinks("No context error");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void one_context_without()
-	{
-		openLinks("One context without");
+    @Test
+    public void one_context_without()
+    {
+        openLinks("One context without");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void one_context_with_one()
-	{
-		openLinks("One context correct");
+    @Test
+    public void one_context_with_one()
+    {
+        openLinks("One context correct");
 
-		assertTextPresent("You are able to see me only with one parameter in the activation context");
-	}
+        assertTextPresent("You are able to see me only with one parameter in the activation context");
+    }
 
-	@Test
-	public void one_context_with_two()
-	{
-		openLinks("One context error");
+    @Test
+    public void one_context_with_two()
+    {
+        openLinks("One context error");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void two_context_without()
-	{
-		openLinks("Two context without");
+    @Test
+    public void two_context_without()
+    {
+        openLinks("Two context without");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void two_context_with_one()
-	{
-		openLinks("Two context error");
+    @Test
+    public void two_context_with_one()
+    {
+        openLinks("Two context error");
 
-		assertTextPresent("HTTP ERROR 404");
-	}
+        assertTextPresent("HTTP ERROR 404");
+    }
 
-	@Test
-	public void two_context_with_two()
-	{
-		openLinks("Two context correct");
+    @Test
+    public void two_context_with_two()
+    {
+        openLinks("Two context correct");
 
-		assertTextPresent("You are able to see me only with two parameters in the activation context");
-	}
+        assertTextPresent("You are able to see me only with two parameters in the activation context");
+    }
 }

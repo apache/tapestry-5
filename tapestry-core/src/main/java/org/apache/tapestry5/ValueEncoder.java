@@ -50,9 +50,9 @@ package org.apache.tapestry5;
  * 
 * <pre>
  * public static void contributeValueEncoderSource(
- * 		MappedConfiguration&lt;Class&lt;Color&gt;, ValueEncoderFactory&lt;Color&gt;&gt; configuration)
+ *         MappedConfiguration&lt;Class&lt;Color&gt;, ValueEncoderFactory&lt;Color&gt;&gt; configuration)
  * {
- * 	configuration.addInstance(Color.class, ColorEncoder.class);
+ *     configuration.addInstance(Color.class, ColorEncoder.class);
  * }
  * </pre>
  * 

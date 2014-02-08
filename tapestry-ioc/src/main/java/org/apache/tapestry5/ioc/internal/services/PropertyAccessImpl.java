@@ -46,7 +46,7 @@ public class PropertyAccessImpl implements PropertyAccess
     }
 
     public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
-	return getAdapter(instance).getAnnotation(instance, propertyName, annotationClass);
+    return getAdapter(instance).getAnnotation(instance, propertyName, annotationClass);
     }
 
 

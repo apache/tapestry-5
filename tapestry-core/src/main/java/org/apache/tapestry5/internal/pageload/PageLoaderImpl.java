@@ -148,7 +148,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 
     private final Logger logger;
 
-	private final MetaDataLocator metaDataLocator;
+    private final MetaDataLocator metaDataLocator;
 
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
@@ -168,7 +168,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.request = request;
         this.symbolSource = symbolSource;
         this.logger = logger;
-		this.metaDataLocator = metaDataLocator;
+        this.metaDataLocator = metaDataLocator;
     }
 
     @PostInjection

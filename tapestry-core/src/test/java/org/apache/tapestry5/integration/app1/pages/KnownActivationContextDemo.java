@@ -22,7 +22,7 @@ import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 @UnknownActivationContextCheck
 public class KnownActivationContextDemo
 {
-	@PageActivationContext
-	@Property
-	private String activationContext;
+    @PageActivationContext
+    @Property
+    private String activationContext;
 }

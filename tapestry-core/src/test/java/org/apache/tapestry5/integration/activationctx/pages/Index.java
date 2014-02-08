@@ -20,11 +20,11 @@ package org.apache.tapestry5.integration.activationctx.pages;
 public class Index
 {
 
-	public String[] getTwoValues()
-	{
-		return new String[] {
-				"One",
-				"Two"
-		};
-	}
+    public String[] getTwoValues()
+    {
+        return new String[] {
+                "One",
+                "Two"
+        };
+    }
 }

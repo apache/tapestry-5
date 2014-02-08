@@ -19,7 +19,7 @@ import javax.inject.Named;
 
 public class FieldInjectionViaJavaxNamed
 {
-	@Inject
+    @Inject
     @Named("BarneyService")
     private Runnable fred;
 

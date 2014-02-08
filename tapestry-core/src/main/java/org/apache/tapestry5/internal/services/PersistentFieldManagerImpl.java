@@ -76,7 +76,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
     public void discardChanges(String pageName, String strategyName) {
         PersistentFieldStrategy strategy = strategies.get(strategyName);
         if (strategy != null) strategy.discardChanges(pageName);
-	  }
+      }
     
     
     public void postChange(String pageName, ComponentResources resources, String fieldName, Object newValue)

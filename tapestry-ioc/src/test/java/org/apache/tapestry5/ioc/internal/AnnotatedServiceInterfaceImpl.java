@@ -16,8 +16,8 @@ package org.apache.tapestry5.ioc.internal;
 
 public class AnnotatedServiceInterfaceImpl implements AnnotatedServiceInterface {
 
-	public String execute(int i) {
-		return null;
-	}
+    public String execute(int i) {
+        return null;
+    }
 
 }

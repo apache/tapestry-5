@@ -45,16 +45,16 @@ public class Delegate
     @Parameter(required = true)
     private Object to;
 
-	@Inject private ComponentResources resources;
-	@InjectContainer private Component container;
-	
-	Object beginRender()
-	{
-    	for(String name : resources.getInformalParameterNames()) {
-    		Object value = resources.getInformalParameter(name, Object.class);
-    		container.getComponentResources().storeRenderVariable(name, value);
-    	}
-    	
+    @Inject private ComponentResources resources;
+    @InjectContainer private Component container;
+    
+    Object beginRender()
+    {
+        for(String name : resources.getInformalParameterNames()) {
+            Object value = resources.getInformalParameter(name, Object.class);
+            container.getComponentResources().storeRenderVariable(name, value);
+        }
+        
         return to;
     }
 }

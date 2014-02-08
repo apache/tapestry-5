@@ -899,10 +899,10 @@ public class InternalUtils
                 return toAnnotationProvider(findMethod(getServiceInterface(), methodName, argumentTypes));
             }
             
-			public Class getServiceImplementation() 
-			{
-				return null;
-			}
+            public Class getServiceImplementation() 
+            {
+                return null;
+            }
 
             // ServiceDef2 methods:
 

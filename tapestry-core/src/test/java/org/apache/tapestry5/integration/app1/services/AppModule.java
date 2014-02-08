@@ -295,10 +295,10 @@ public class AppModule
     {
         configuration.add(Track.class, new ValueLabelProvider<Track>() {
 
-			public String getLabel(Track value) {
-				return value.getTitle();
-			}
-		}); 
+            public String getLabel(Track value) {
+                return value.getTitle();
+            }
+        }); 
     }
 
     @Contribute(ComponentClassResolver.class)

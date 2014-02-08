@@ -107,14 +107,14 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
         return conduit.getAnnotation(annotationClass);
     }
 
-	public String getPropertyName() 
-	{
-		return TapestryInternalUtils.toInternalPropertyConduit(conduit).getPropertyName();
-	}
+    public String getPropertyName() 
+    {
+        return TapestryInternalUtils.toInternalPropertyConduit(conduit).getPropertyName();
+    }
 
     public String getExpression()
     {
         return expression;
     }
-	
+    
 }

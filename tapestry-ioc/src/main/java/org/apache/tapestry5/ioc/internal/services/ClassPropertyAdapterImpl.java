@@ -107,7 +107,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     }
 
     public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
-	return adaptorFor(propertyName).getAnnotation(annotationClass);
+    return adaptorFor(propertyName).getAnnotation(annotationClass);
     }
 
     private PropertyAdapter adaptorFor(String name)

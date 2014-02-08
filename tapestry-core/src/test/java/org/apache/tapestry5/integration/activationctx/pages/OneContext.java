@@ -20,6 +20,6 @@ import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 @UnknownActivationContextCheck
 public class OneContext
 {
-	@PageActivationContext
-	private String activationContext;
+    @PageActivationContext
+    private String activationContext;
 }

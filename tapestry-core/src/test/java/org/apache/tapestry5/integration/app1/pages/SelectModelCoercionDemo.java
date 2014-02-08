@@ -18,7 +18,7 @@ public class SelectModelCoercionDemo
     private Track track;
     
     public List<Track> getTracks(){
-    	return library.getTracks();
+        return library.getTracks();
     }
     
     

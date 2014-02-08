@@ -1682,27 +1682,27 @@ public class CoreBehaviorsTests extends App1TestCase
         assertTextPresent("Component Event Link Decorated: true");
     }
 
-	/**
-	 * TAP5-2070
-	 */
-	@Test
-	public void unknown_activation_context_demo()
-	{
-		openLinks("Unknown Activation Context Demo");
+    /**
+     * TAP5-2070
+     */
+    @Test
+    public void unknown_activation_context_demo()
+    {
+        openLinks("Unknown Activation Context Demo");
 
-		assertText("//title", "Error 404 Activation context <EventContext: Unwanted, context>" +
-				" unrecognized for page class org.apache.tapestry5.integration.app1.pages.UnknownActivationContextDemo");
-	}
+        assertText("//title", "Error 404 Activation context <EventContext: Unwanted, context>" +
+                " unrecognized for page class org.apache.tapestry5.integration.app1.pages.UnknownActivationContextDemo");
+    }
 
-	/**
-	 * TAP5-2070
-	 */
-	@Test
-	public void known_activation_context_demo()
-	{
-		openLinks("Known Activation Context Demo");
+    /**
+     * TAP5-2070
+     */
+    @Test
+    public void known_activation_context_demo()
+    {
+        openLinks("Known Activation Context Demo");
 
-		assertTextPresent("Page called with correct activation context",
-				"You should never see me if use an erroneous activation context");
-	}
+        assertTextPresent("Page called with correct activation context",
+                "You should never see me if use an erroneous activation context");
+    }
 }

@@ -36,6 +36,6 @@ public interface UnknownActivationContextHandler
      * Answer the client in the case of a request coming in with an unknown activation context.
      */
     @SuppressWarnings("unchecked")
-	void handleUnknownContext(ComponentResources pageResources, EventContext activationContext)
-							throws IOException;
+    void handleUnknownContext(ComponentResources pageResources, EventContext activationContext)
+                            throws IOException;
 }

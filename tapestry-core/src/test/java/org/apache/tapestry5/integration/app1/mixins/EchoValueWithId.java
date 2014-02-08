@@ -27,9 +27,9 @@ import org.apache.tapestry5.annotations.Parameter;
  */
 public class EchoValueWithId
 {
-	@Parameter
-	private String id;
-	
+    @Parameter
+    private String id;
+    
     @BindParameter
     private String value;
 
