@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.test;
 
+import java.util.List;
+
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.services.Response;
@@ -46,6 +48,13 @@ public interface TestableResponse extends Response
      * @since 5.2.3
      */
     Object getHeader(String name);
+
+    /**
+     * Returns the values of a named header.
+     * 
+     * @since 5.4
+     */
+    List<?> getHeaders(String name);
     
     /**
      * Returns the redirect URL.

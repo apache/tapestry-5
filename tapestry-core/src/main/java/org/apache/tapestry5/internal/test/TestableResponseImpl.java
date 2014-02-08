@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -108,6 +110,22 @@ public class TestableResponseImpl implements TestableResponse
     public void setHeader(String name, String value)
     {
         headers.put(name, value);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void addHeader(String name, String value)
+    {
+        List<String> values = (List<String>) headers.get(name);
+        if (values == null) {
+            values = new ArrayList<String>();
+            headers.put(name, values);
+        }
+        values.add(value);
+    }
+    
+    public List<?> getHeaders(String name)
+    {
+        return (List<?>) headers.get(name);
     }
 
     public void setIntHeader(String name, int value)

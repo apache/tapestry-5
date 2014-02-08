@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -124,6 +125,19 @@ public interface Response
      *            the assigned value
      */
     void setHeader(String name, String value);
+
+    /**
+     * Adds a response header with the given name and value, not overwriting any previous values which
+     * may have already been added.
+     * 
+     * @param name
+     *            the name of the header to add
+     * @param value
+     *            the assigned value
+     * @since 5.4
+     */
+    @IncompatibleChange(release = "5.4", details = "Added method")
+    void addHeader(String name, String value);
 
     /**
      * Sets a response header with the given name and integer value. If the header had already been set, the new value

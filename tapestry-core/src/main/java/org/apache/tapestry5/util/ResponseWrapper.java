@@ -79,6 +79,11 @@ public class ResponseWrapper implements Response
     {
         response.setHeader(name, value);
     }
+    
+    public void addHeader(String name, String value)
+    {
+        response.addHeader(name, value);
+    }
 
     public void setIntHeader(String name, int value)
     {
