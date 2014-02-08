@@ -18,7 +18,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class StatelessEJBBeanImpl implements StatelessEJBBean{
 
-	@Override
 	public String helloStatelessEJB() {
 		return "Hello Stateless EJB";
 	}

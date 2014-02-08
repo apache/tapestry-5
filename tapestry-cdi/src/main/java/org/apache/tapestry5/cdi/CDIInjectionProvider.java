@@ -62,14 +62,13 @@ public final class CDIInjectionProvider implements InjectionProvider2 {
 	 * @see org.apache.tapestry5.services.transform.InjectionProvider2#provideInjection(org.apache.tapestry5.plastic.PlasticField, org.apache.tapestry5.ioc.ObjectLocator, org.apache.tapestry5.model.MutableComponentModel)
 	 */
 	@SuppressWarnings("rawtypes")
-	@Override
 	public boolean provideInjection(final PlasticField field, final ObjectLocator locator, final MutableComponentModel componentModel) {
 		Class type = cache.forName(field.getTypeName());
 		if(InternalUtils.isManagedByTapestry(
 				type, 
 				new AnnotationProvider(){
 
-					@Override
+
 					public <T extends Annotation> T getAnnotation(
 							Class<T> annotationClass) {
 						return field.getAnnotation(annotationClass);
@@ -84,7 +83,6 @@ public final class CDIInjectionProvider implements InjectionProvider2 {
 		final Annotation[] qualifiers = 
 				InternalUtils.getFieldQualifiers(type, new AnnotationProvider(){
 
-					@Override
 					public <T extends Annotation> T getAnnotation(
 							Class<T> annotationClass) {
 						return field.getAnnotation(annotationClass);
@@ -138,7 +136,6 @@ public final class CDIInjectionProvider implements InjectionProvider2 {
 			releasables = instancesToRelease;
 		}
 
-		@Override
 		public void run() {
 			synchronized (releasables) { // should be useless but just to be sure
 				for (BeanInstance instance : releasables) {

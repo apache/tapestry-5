@@ -124,7 +124,6 @@ public final class BeanHelper {
 		final Set<Bean<?>> beans = beanManager.getBeans(clazz, 
 				new Annotation[]{
 				new Any() {
-					@Override
 					public Class<? extends Annotation> annotationType() {
 						return Any.class;
 					}

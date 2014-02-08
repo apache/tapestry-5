@@ -92,7 +92,7 @@ public final class InternalUtils {
 	private static <T extends Annotation> boolean isAnnotation(AnnotationProvider annotationProvider, final Class<T> annotation) {
 		return annotationProvider.getAnnotation(
 				new Annotation(){
-					@Override
+
 					public Class<? extends Annotation> annotationType() {
 						return annotation;
 					}

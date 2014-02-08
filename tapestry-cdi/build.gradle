@@ -71,6 +71,18 @@ sourceSets {
     }
 }
 
+idea {
+      module {
+        scopes.PROVIDED.plus += configurations.compileOnly
+      }
+    }
+
+eclipse {
+    classpath {
+        plusConfigurations += configurations.compileOnly
+    }
+}
+
 task resolveJBoss(type: Copy) {  
     destinationDir = file('target') 
     from { zipTree(configurations.jboss.singleFile) }

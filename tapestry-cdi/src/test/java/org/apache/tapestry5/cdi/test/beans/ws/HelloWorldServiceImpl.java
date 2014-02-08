@@ -24,12 +24,10 @@ import javax.jws.WebService;
 		targetNamespace = "https://github.com/apache/tapestry-5/")
 public class HelloWorldServiceImpl implements HelloWorldService {
 
-    @Override
     public String sayHello() {
         return "Hello World!";
     }
 
-    @Override
     public String sayHelloToName(final String name) {
           return "Hello "+name;
     }

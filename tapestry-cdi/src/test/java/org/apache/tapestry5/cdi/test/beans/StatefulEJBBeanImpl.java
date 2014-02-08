@@ -20,16 +20,13 @@ public class StatefulEJBBeanImpl implements StatefulEJBBean{
 	
 	private int num = 0;
 
-	@Override
 	public int num() {
 		return num;
 	}
-	@Override
 	public int inc(){
 		return ++num;
 	}
 	
-	@Override
 	public int reset(){
 		return (num = 0);
 	}

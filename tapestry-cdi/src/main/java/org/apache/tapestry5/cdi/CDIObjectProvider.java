@@ -37,7 +37,7 @@ public class CDIObjectProvider implements ObjectProvider {
 	/* (non-Javadoc)
 	 * @see org.apache.tapestry5.ioc.ObjectProvider#provide(java.lang.Class, org.apache.tapestry5.ioc.AnnotationProvider, org.apache.tapestry5.ioc.ObjectLocator)
 	 */
-	@Override
+
 	public <T> T provide(Class<T> objectType,
 			AnnotationProvider annotationProvider, ObjectLocator locator) {
 		
