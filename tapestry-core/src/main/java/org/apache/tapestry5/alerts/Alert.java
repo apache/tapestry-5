@@ -23,7 +23,8 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * An Alert that may be presented to the user. The Alert has a message, but also includes
  * a severity (that controls how it is presented to the user), and a duration (that controls how long
- * it is presented to the user).
+ * it is presented to the user). If the <code>markup</code> field is <code>true</code>,
+ * the message is treated as HTML and used without any escaping.
  *
  * @since 5.3
  */
@@ -42,6 +43,12 @@ public class Alert implements Serializable
     public final Severity severity;
 
     public final String message;
+    
+    /**
+     * Defines whether the message will be treated as HTML or not.
+     * @since 5.4
+     */
+    public final boolean markup;
 
     /**
      * Alert with default duration of {@link Duration#SINGLE} and default severity
@@ -57,10 +64,15 @@ public class Alert implements Serializable
      */
     public Alert(Severity severity, String message)
     {
-        this(Duration.SINGLE, severity, message);
+        this(Duration.SINGLE, severity, message, false);
     }
 
     public Alert(Duration duration, Severity severity, String message)
+    {
+        this(duration, severity, message, false);
+    }
+
+    public Alert(Duration duration, Severity severity, String message, boolean markup)
     {
         assert duration != null;
         assert severity != null;
@@ -69,20 +81,22 @@ public class Alert implements Serializable
         this.duration = duration;
         this.severity = severity;
         this.message = message;
+        this.markup = markup;
     }
 
     public String toString()
     {
-        return String.format("Alert[%s %s %s]",
+        return String.format("Alert[%s %s %s %s]",
                 duration.name(),
                 severity.name(),
-                message);
+                message,
+                markup);
     }
 
     public JSONObject toJSON()
     {
         JSONObject result = new JSONObject("message", message,
-                "severity", severity.name().toLowerCase() );
+                "severity", severity.name().toLowerCase(), "markup", markup );
 
         if (duration == Duration.TRANSIENT)
         {
@@ -93,7 +107,7 @@ public class Alert implements Serializable
         {
             result.put("id", id);
         }
-
+        
         return result;
     }
 }

@@ -33,6 +33,9 @@ public class AlertsDemo
     @Validate("required")
     @Width(80)
     private String message;
+    
+    @Property
+    private boolean markup;
 
     @Persist(PersistenceConstants.FLASH)
     @Property
@@ -50,13 +53,13 @@ public class AlertsDemo
     void onSuccessFromTraditional()
     {
         alertManager.info("Traditional form submission");
-        alertManager.alert(duration, severity, message);
+        alertManager.alert(duration, severity, message, markup);
     }
 
     Object onSuccessFromAjax()
     {
         alertManager.info("Ajax form submission");
-        alertManager.alert(duration, severity, message);
+        alertManager.alert(duration, severity, message, markup);
 
         if (redirectToIndex)
         {

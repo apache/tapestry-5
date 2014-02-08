@@ -114,14 +114,21 @@ define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap
       # Note that `data-dismiss=alert` is purposely excluded
       # - we want to handle closes w/ notifications to the server if not transient
       # - we don't want to rely on bootstrap.js, as that will drag jQuery into the application
-      # Also, the <span> tag makes it easier to pull out just the content when doing tests.
+      # Also, the <span> tag makes it easier to pull out just the content when doing tests,
+      # but we only add this add if the alert doesn't have a message that contains markup (TAP5-1863)
       element = dom.create "div",
         "data-alert-id": data.id
         class: "alert alert-dismissable " + className
-        """
-          <button type="button" class="close">&times;</button>
-          <span>#{content}</span>
+        if data.markup
           """
+            <button type="button" class="close">&times;</button>
+            #{content}
+            """
+        else
+          """
+            <button type="button" class="close">&times;</button>
+            <span>#{content}</span>
+            """
 
       container.append element
 

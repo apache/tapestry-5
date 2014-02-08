@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.alerts;
 
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
+
 /**
  * Manages {@link Alert}s (using the {@link AlertStorage} SSO.  The behavior of the service switches during
  * an Ajax request to directly add JavaScript to present the alerts.
@@ -52,11 +54,24 @@ public interface AlertManager
     void error(String message);
 
     /**
-     * Adds an alert with configurable severity and duration.
+     * Adds an alert with configurable severity and duration. Message isn't treated
+     * as HTML, being HTML-escaped.
      *
      * @param duration controls how long the alert is presented to the user
      * @param severity controls how the alert is presented to the user
      * @param message  to present to the user
      */
     void alert(Duration duration, Severity severity, String message);
+    
+    /**
+     * Adds an alert with configurable severity and duration.
+     *
+     * @param duration controls how long the alert is presented to the user
+     * @param severity controls how the alert is presented to the user
+     * @param message  to present to the user
+     * @param markup   whether to treat the message as raw HTML (true) or escape it (false).
+     */
+    @IncompatibleChange(details = "Added in 5.4 in order to support HTML in alerts", release = "5.4")
+    void alert(Duration duration, Severity severity, String message, boolean markup);
+    
 }

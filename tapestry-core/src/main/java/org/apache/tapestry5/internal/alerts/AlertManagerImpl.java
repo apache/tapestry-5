@@ -61,10 +61,15 @@ public class AlertManagerImpl implements AlertManager
     {
         alert(Duration.SINGLE, Severity.ERROR, message);
     }
-
+    
     public void alert(Duration duration, Severity severity, String message)
     {
-        final Alert alert = new Alert(duration, severity, message);
+        alert(duration, severity, message, false);
+    }
+
+    public void alert(Duration duration, Severity severity, String message, boolean markup)
+    {
+        final Alert alert = new Alert(duration, severity, message, markup);
 
         if (request.isXHR())
         {

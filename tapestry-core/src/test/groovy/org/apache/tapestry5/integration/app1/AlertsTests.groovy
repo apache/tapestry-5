@@ -22,7 +22,7 @@ import org.testng.annotations.Test
  * @since 5.3
  */
 class AlertsTests extends App1TestCase {
-
+    
     def CONTAINER = "[data-container-type=alerts]"
 
     @Test
@@ -54,6 +54,19 @@ class AlertsTests extends App1TestCase {
         // Check that the alert container is now empty
 
         assertText "css=$CONTAINER", ""
+        
+        // Now with markup
+        openLinks "Alerts Demo", "Reset Alerts Storage"
+        
+        select "id=severity", "Warn"
+        select "id=duration", "Single"
+        check "id=markup"
+        type "id=message", "<a><span>Markup!</span></a>"
+        
+        clickAndWait "//input[@value='Traditional Update']"
+        
+        assert isElementPresent("//div[@class='alert alert-dismissable alert-warning']/a/span[text()='Markup!']")
+
     }
 
     @Test
@@ -103,6 +116,21 @@ class AlertsTests extends App1TestCase {
         // Check that the alert container is now empty
 
         assertText "css=$CONTAINER", ""
+        
+        // Now with markup
+        openLinks "Alerts Demo", "Reset Alerts Storage"
+        
+        select "css=#ajax select[name=\"severity\"]", "Warn"
+        select "css=#ajax select[name=\"duration\"]", "Single"
+        check "css=#ajax input[name='markup']"
+        type "css=#ajax input[name='message']", "<a><span>Markup!</span></a>"
+        
+        click "//input[@value='Ajax Update']"
+        
+        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        
+        assert isElementPresent("//div[@class='alert alert-dismissable alert-warning']/a/span[text()='Markup!']")
+
     }
 
     /** Disabled by HLS 7-oct-2011; there's a timing issue that makes it very fragile.   */
