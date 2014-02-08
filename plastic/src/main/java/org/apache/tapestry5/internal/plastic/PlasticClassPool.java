@@ -19,6 +19,8 @@ import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -35,6 +37,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings("rawtypes")
 public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticClassListenerHub
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlasticClassPool.class); 
+    
     final PlasticClassLoader loader;
 
     private final PlasticManagerDelegate delegate;
@@ -522,8 +526,22 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
                     implementationClassName = 
                             transformedClassNameToImplementationClassName.get(implementationClassName);
                 }
-                implementationClassNode = readClassNode(implementationClassName);
+                
+                if (!implementationClassName.startsWith("com.sun.proxy")) {
+                
+                    try {
+                        implementationClassNode = readClassNode(implementationClassName);
+                    }
+                    catch (IOException e) {
+                        LOGGER.warn(String.format("Unable to load class %s as the implementation of service %s", 
+                                implementationClassName, baseClassName));
+                        // Go on. Probably a proxy class
+                    }
+                    
+                }
+                
                 transformedClassNameToImplementationClassName.put(newClassName, implementationClassName);
+                
             }
 
             return createTransformation(baseClassName, newClassNode, implementationClassNode, true);
@@ -532,11 +550,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             throw new RuntimeException(String.format("Unable to create class %s as sub-class of %s: %s", newClassName,
                     baseClassName, PlasticInternalUtils.toMessage(ex)), ex);
         }
-        catch (IOException e)
-        {
-            throw new RuntimeException(String.format("Unable to load class %s as the implementation of service %s", 
-                    implementationClassName, baseClassName), e);
-        }
+        
     }
 
     private ClassNode readClassNode(String className) throws IOException
