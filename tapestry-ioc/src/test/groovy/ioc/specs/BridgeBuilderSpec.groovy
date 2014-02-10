@@ -60,7 +60,7 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
 
     ToStringService service = new ToStringService() {
 
-      String toString() { "NonAnnotatedServiceInterface" }
+      String toString() { "Service" }
     }
 
     ToStringFilter filter = new ToStringFilter() {
