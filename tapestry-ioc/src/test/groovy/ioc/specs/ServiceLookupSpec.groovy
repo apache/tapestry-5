@@ -65,7 +65,7 @@ class ServiceLookupSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message == "NonAnnotatedServiceInterface interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface."
+    e.message == "Service interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface."
   }
 
   def "access to builtin service via marker annotation"() {
