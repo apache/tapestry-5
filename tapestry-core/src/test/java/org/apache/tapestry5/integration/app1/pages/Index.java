@@ -128,10 +128,10 @@ public class Index
 
                     new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
 
-                    new Item("InjectMessagesDemo", "Inject Global Messages into NonAnnotatedServiceInterface Demo",
+                    new Item("InjectMessagesDemo", "Inject Global Messages into Service Demo",
                             "Ensure that it is possible to inject the application global message catalog into a service"),
 
-                    new Item("ReloadDemo", "Reloadable NonAnnotatedServiceInterface Implementation Demo",
+                    new Item("ReloadDemo", "Reloadable Service Implementation Demo",
                             "Used when manually testing service reloads"),
 
                     new Item("RequestParameterDemo", "RequestParameter Annotation Demo",
@@ -144,7 +144,7 @@ public class Index
                     new Item("PageResetDemo", "PageReset Annotation Demo",
                             "Use of PageReset annotation to re-initialize page state"),
 
-                    new Item("TestOnlyServiceDemo", "Test Only NonAnnotatedServiceInterface Demo",
+                    new Item("TestOnlyServiceDemo", "Test Only Service Demo",
                             "IoC module available via web.xml configuration"),
 
                     new Item("RenderObjectExceptionDemo", "RenderObject Exception Demo",

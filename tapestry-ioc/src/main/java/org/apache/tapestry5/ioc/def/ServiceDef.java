@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 import java.util.Set;
 
 /**
- * NonAnnotatedServiceInterface definition derived, by default, from a service builder method. This has been extended in Tapestry 5.1 with
+ * Service definition derived, by default, from a service builder method. This has been extended in Tapestry 5.1 with
  * {@link org.apache.tapestry5.ioc.def.ServiceDef2}, which adds additional methods. Tapestry 5.3 added {@link ServiceDef3}.
  */
 @SuppressWarnings("rawtypes")
@@ -37,8 +37,8 @@ public interface ServiceDef
     ObjectCreator createServiceCreator(ServiceBuilderResources resources);
 
     /**
-     * Returns the service id, derived from the method name or the unqualified service interface name. NonAnnotatedServiceInterface ids must
-     * be unique among <em>all</em> services in all modules. NonAnnotatedServiceInterface ids are used in a heavy handed way to support
+     * Returns the service id, derived from the method name or the unqualified service interface name. Service ids must
+     * be unique among <em>all</em> services in all modules. Service ids are used in a heavy handed way to support
      * ultimate disambiguation, but their primary purpose is to support service contribution methods.
      */
     String getServiceId();

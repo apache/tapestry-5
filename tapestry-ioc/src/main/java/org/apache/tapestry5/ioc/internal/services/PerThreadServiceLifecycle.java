@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
  * Allows a service to exist "per thread" (in each thread). Creates a proxy that delegates to a per-thread instance.
  * <p/>
  * This scheme ensures that, although the service builder method will be invoked many times over the life of the
- * application, the service decoration process occurs only once. The final calling chain is: NonAnnotatedServiceInterface Proxy --&gt;
+ * application, the service decoration process occurs only once. The final calling chain is: Service Proxy --&gt;
  * Interceptor(s) (from Decorators) --&gt; Advise Proxy (from Advisiors) --&gt; PerThread Proxy --&gt; (per thread)
  * instance.
  */

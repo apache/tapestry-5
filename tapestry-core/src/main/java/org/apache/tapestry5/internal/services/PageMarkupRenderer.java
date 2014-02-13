@@ -18,7 +18,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.structure.Page;
 
 /**
- * NonAnnotatedServiceInterface used to render page markup using a MarkupWriter.  This is  used when rendering a complete page as part of a
+ * Service used to render page markup using a MarkupWriter.  This is  used when rendering a complete page as part of a
  * {@linkplain org.apache.tapestry5.internal.services.PageRenderRequestHandlerImpl page render request},
  */
 public interface PageMarkupRenderer

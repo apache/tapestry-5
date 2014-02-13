@@ -26,7 +26,7 @@ import java.lang.annotation.*;
  * The annotation may also be placed on a module class, to indicate that all services defined for the module should not
  * allow decoration.
  * <p/>
- * NonAnnotatedServiceInterface decoration includes the decoration mechanism (from Tapestry 5.0) and the newer service advice mechanism (from
+ * Service decoration includes the decoration mechanism (from Tapestry 5.0) and the newer service advice mechanism (from
  * Tapestry 5.1).
  * <p/>
  * Generally, services that are used to advise or decorate other services (such as {@link org.apache.tapestry5.ioc.services.LoggingAdvisor}

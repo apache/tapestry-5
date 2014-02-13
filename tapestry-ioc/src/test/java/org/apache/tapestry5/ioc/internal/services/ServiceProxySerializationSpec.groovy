@@ -53,7 +53,7 @@ class ServiceProxySerializationSpec extends AbstractRegistrySpecification {
 
     Exception e = thrown()
 
-    e.message.contains "NonAnnotatedServiceInterface token for service 'TypeCoercer' can not be converted back into a proxy because no proxy provider has been registered"
+    e.message.contains "Service token for service 'TypeCoercer' can not be converted back into a proxy because no proxy provider has been registered"
   }
 
   def serialize(object) {

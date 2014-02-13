@@ -36,7 +36,7 @@ class ServiceLookupSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "NonAnnotatedServiceInterface id 'PeekABoo' is not defined by any module."
+    e.message.contains "Service id 'PeekABoo' is not defined by any module."
   }
 
   def "verify exception when accessing a service by type and there are no matching services"() {
@@ -65,7 +65,7 @@ class ServiceLookupSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message == "NonAnnotatedServiceInterface interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface."
+    e.message == "Service interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface."
   }
 
   def "access to builtin service via marker annotation"() {

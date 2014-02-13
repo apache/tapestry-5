@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.services;
 import org.slf4j.Logger;
 
 /**
- * NonAnnotatedServiceInterface that can create a logging interceptor that wraps around a service implementation (or interceptor). The
+ * Service that can create a logging interceptor that wraps around a service implementation (or interceptor). The
  * interceptor works with the service's log to log, at debug level, method entry (with arguments), method exit (with
  * return value, if any) as well as any thrown exceptions.
  * <p/>

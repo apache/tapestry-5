@@ -97,7 +97,7 @@ class ValidatingMappedConfigurationWrapperSpec extends AbstractSharedRegistrySpe
 
     IllegalArgumentException e = thrown()
 
-    e.message.contains "NonAnnotatedServiceInterface contribution (to service 'Baz') conflicts with existing contribution"
+    e.message.contains "Service contribution (to service 'Baz') conflicts with existing contribution"
 
     keyToContribution[Integer].is(def1)
     map.isEmpty()
@@ -148,7 +148,7 @@ class ValidatingMappedConfigurationWrapperSpec extends AbstractSharedRegistrySpe
 
     NullPointerException e = thrown()
 
-    e.message == "NonAnnotatedServiceInterface contribution (to service 'Baz') was null."
+    e.message == "Service contribution (to service 'Baz') was null."
     map.isEmpty()
   }
 }

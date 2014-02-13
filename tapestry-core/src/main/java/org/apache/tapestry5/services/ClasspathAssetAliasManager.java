@@ -27,7 +27,7 @@ import java.util.Map;
  * classpath, is converted into a shorter virtual path. The term "alias" here is generally referred to as
  * "virtual folder" elsewhere.
  * <p/>
- * NonAnnotatedServiceInterface configuration is a map from folder aliases (short names) to complete paths. Names should not start or end end
+ * Service configuration is a map from folder aliases (short names) to complete paths. Names should not start or end end
  * with a slash. Generally, an alias should be a single name (not contain a slash). Paths should also not start or end
  * with a slash. An example mapping would be <code>mylib</code> to <code>com/example/mylib</code>.
  * <p/>

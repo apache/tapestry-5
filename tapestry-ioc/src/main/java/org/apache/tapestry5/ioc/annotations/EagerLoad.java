@@ -24,7 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marker annotation placed on a service builder method to indicate that the service should be eagerly loaded: realized
- * as if a service method had been invoked. NonAnnotatedServiceInterface realization invokes the service builder method and applys any
+ * as if a service method had been invoked. Service realization invokes the service builder method and applys any
  * decorators to the service.
  * <p/>
  * This annotation may also be placed directly on a service implementation class, when using autobuilding via the {@link

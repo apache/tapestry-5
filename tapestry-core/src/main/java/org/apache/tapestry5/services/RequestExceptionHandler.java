@@ -17,7 +17,7 @@ package org.apache.tapestry5.services;
 import java.io.IOException;
 
 /**
- * NonAnnotatedServiceInterface invoked when an uncaught exception occurs. The error handler is responsible for providing a response to the
+ * Service invoked when an uncaught exception occurs. The error handler is responsible for providing a response to the
  * user to describe the error.
  */
 public interface RequestExceptionHandler

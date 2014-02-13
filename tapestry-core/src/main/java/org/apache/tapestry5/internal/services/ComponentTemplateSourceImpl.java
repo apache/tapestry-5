@@ -42,7 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * NonAnnotatedServiceInterface implementation that manages a cache of parsed component templates.
+ * Service implementation that manages a cache of parsed component templates.
  */
 public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements ComponentTemplateSource,
         UpdateListener

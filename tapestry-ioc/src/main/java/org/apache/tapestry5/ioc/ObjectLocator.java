@@ -36,7 +36,7 @@ public interface ObjectLocator
      * transparent to the application).
      *
      * @param <T>
-     * @param serviceId        unique NonAnnotatedServiceInterface id used to locate the service object (may contain <em>symbols</em>,
+     * @param serviceId        unique Service id used to locate the service object (may contain <em>symbols</em>,
      *                         which
      *                         will be expanded), case is ignored
      * @param serviceInterface the interface implemented by the service (or an interface extended by the service

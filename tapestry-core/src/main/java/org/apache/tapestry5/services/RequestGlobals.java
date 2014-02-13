@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * NonAnnotatedServiceInterface used to store the current request objects, both the Servlet API versions, and the
+ * Service used to store the current request objects, both the Servlet API versions, and the
  * Tapestry generic versions.
  * The service has a per-thread scope.
  */

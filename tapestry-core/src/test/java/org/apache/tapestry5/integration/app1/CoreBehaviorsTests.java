@@ -1541,7 +1541,7 @@ public class CoreBehaviorsTests extends App1TestCase
     @Test
     public void module_loading()
     {
-        openLinks("Test Only NonAnnotatedServiceInterface Demo");
+        openLinks("Test Only Service Demo");
 
         assertText("message", "TestOnly service message");
     }
@@ -1593,7 +1593,7 @@ public class CoreBehaviorsTests extends App1TestCase
     @Test
     public void injection_of_application_message_catalog_into_service()
     {
-        openLinks("Inject Global Messages into NonAnnotatedServiceInterface Demo");
+        openLinks("Inject Global Messages into Service Demo");
 
         assertText("status", "Application Catalog Working");
     }

@@ -24,7 +24,7 @@ import java.util.Set;
  * Converts {@link Resource}s into {@link StreamableResource}s, and may be responsible for
  * {@linkplain ResourceTransformer transforming} resources based on file extension. Contributions map a file extension
  * (such as "coffee") to a transformer for that file extension.
- * NonAnnotatedServiceInterface decorators added to this service may provide additional processing (compression, minimization, and caching).
+ * Service decorators added to this service may provide additional processing (compression, minimization, and caching).
  *
  * @since 5.3
  */

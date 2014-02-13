@@ -280,7 +280,7 @@ public class ModuleImpl implements Module
                         if (lifecycle.requiresProxy())
                             throw new IllegalArgumentException(
                                     String.format(
-                                            "NonAnnotatedServiceInterface scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
+                                            "Service scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
                                             def.getServiceScope()));
 
                         return creator.createObject();

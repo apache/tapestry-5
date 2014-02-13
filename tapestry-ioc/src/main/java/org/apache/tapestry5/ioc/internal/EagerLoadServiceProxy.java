@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 /**
- * Interface implemented by all service proxies. NonAnnotatedServiceInterface proxies are always {@link
+ * Interface implemented by all service proxies. Service proxies are always {@link
  * org.apache.tapestry5.ioc.services.RegistryShutdownListener}s, they also can be eager-load
  */
 public interface EagerLoadServiceProxy
