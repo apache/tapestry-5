@@ -16,6 +16,7 @@ package org.apache.tapestry5.integration.app1.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.Entity;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
@@ -270,6 +271,28 @@ public class AppModule
         };
 
         configuration.add(ToDoItem.class, GenericValueEncoderFactory.create(todoEncoder));
+
+        final ValueEncoder<Entity> encoder = new ValueEncoder<Entity>() {
+            public String toClient(Entity value) {
+                return value.getId();
+            }
+
+            public Entity toValue(String clientValue) {
+                Entity entity = new Entity();
+                entity.setId(clientValue);
+                entity.setLabel("label" + clientValue);
+                return entity;
+            }
+        };
+
+        ValueEncoderFactory<Entity> valueEncoderFactory = new ValueEncoderFactory<Entity>() {
+
+            public ValueEncoder<Entity> create(Class<Entity> type) {
+                return encoder;
+            }
+        };
+
+        configuration.add(Entity.class, valueEncoderFactory);
     }
 
     public static void contributeComponentClassTransformWorker(

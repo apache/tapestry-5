@@ -291,6 +291,8 @@ public class Index
 
                     new Item("simpleform", "SimpleForm", "first pass at writing Form and TextField components"),
 
+                    new Item("OptionGroupForm", "OptionGroupForm", "Select with Option Group"),
+
                     new Item("validform", "ValidForm", "server-side input validation"),
 
                     new Item("ToDoListVolatile", "ToDo List (Volatile)", "Loops and Submit inside Form, volatile mode"),

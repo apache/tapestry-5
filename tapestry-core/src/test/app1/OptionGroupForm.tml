@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<h1>Simple Option Group </h1>
+
+    <t:form t:id="form">
+    	<t:select t:id="select" t:value="entity" t:model="model"/>
+    	<t:submit />
+    </t:form>
+
+<p>Entered data:</p>
+
+<ul>
+    <li>entity.id: [${entity.id}]</li>
+    <li>entity.label: [${entity.label}]</li>
+</ul>
+
+
+</html>

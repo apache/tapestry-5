@@ -294,7 +294,7 @@ public class Select extends AbstractField
         {
             for (OptionGroupModel og : model.getOptionGroups())
             {
-                if (findInOptions(og.getOptions(), submittedValue))
+                if (findInOptions(og.getOptions(), asSubmitted))
                 {
                     return asSubmitted;
                 }
