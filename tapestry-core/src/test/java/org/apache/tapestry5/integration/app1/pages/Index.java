@@ -291,7 +291,7 @@ public class Index
 
                     new Item("simpleform", "SimpleForm", "first pass at writing Form and TextField components"),
 
-                    new Item("OptionGroupForm", "OptionGroupForm", "Select with Option Group"),
+                    new Item("OptionGroupForm", "OptionGroupForm Demo", "Select with Option Group"),
 
                     new Item("validform", "ValidForm", "server-side input validation"),
 

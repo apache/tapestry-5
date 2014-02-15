@@ -1134,4 +1134,21 @@ public class FormTests extends App1TestCase
         clickAndWait(SUBMIT);
         assertTextPresent("Result = '!@#$%^&*()_+='");
     }
+
+    /**
+     * TAP5-2223.
+     */
+    @Test
+    public void optionGroup_form()
+    {
+        openLinks("OptionGroupForm Demo");
+
+        assertTextPresent("entity.id: [1]");
+
+        select("entity", "label2");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("entity.id: [2]");
+    }
 }
