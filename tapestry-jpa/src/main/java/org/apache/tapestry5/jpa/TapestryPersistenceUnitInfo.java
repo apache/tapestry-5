@@ -1,4 +1,4 @@
-// Copyright 2011, 2013 The Apache Software Foundation
+// Copyright 2011, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -161,11 +161,13 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
      *
      * @param properties
      *         properties to initialize EntityManagerFactory with
+     *         @since 5.4
      */
     TapestryPersistenceUnitInfo setEntityManagerProperties(Map properties);
 
     /**
-     * @return Returns the supplied EntityManagerFactory properties. Returns null if not set
+     * @return Returns the supplied EntityManagerFactory properties. Returns null if not set.
+     * @since 5.4
      */
     Map getEntityManagerProperties();
 }
