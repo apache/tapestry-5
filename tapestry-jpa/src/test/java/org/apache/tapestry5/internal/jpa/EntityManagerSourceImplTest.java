@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
@@ -27,6 +21,11 @@ import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
+
+import javax.persistence.EntityManager;
+import javax.persistence.spi.PersistenceUnitTransactionType;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EntityManagerSourceImplTest extends TapestryTestCase
 {
@@ -62,7 +61,7 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
         PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
             @SuppressWarnings(
-            { "unchecked", "rawtypes" })
+                    {"unchecked", "rawtypes"})
             public void configure(TapestryPersistenceUnitInfo unitInfo)
             {
                 Map properties = new HashMap();
@@ -79,11 +78,11 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
         };
 
         Map<String, PersistenceUnitConfigurer> configurerMap = CollectionFactory
-                .<String, PersistenceUnitConfigurer> newMap();
+                .<String, PersistenceUnitConfigurer>newMap();
         configurerMap.put("defaultpropertytest", configurer);
         EntityManagerSourceImpl emSource = new EntityManagerSourceImpl(
                 LoggerFactory.getLogger(EntityManagerSourceImplTest.class), new ClasspathResource(
-                        "single-persistence-unit.xml"), null, configurerMap);
+                "single-persistence-unit.xml"), null, configurerMap);
         EntityManager em = emSource.createEntityManagerFactory("defaultpropertytest")
                 .createEntityManager();
         assertEquals(em.getProperties().get("MYKEY"), "MYVALUE");
