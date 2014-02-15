@@ -1,4 +1,4 @@
-// Copyright 2011-2013 The Apache Software Foundation
+// Copyright 2011-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -180,10 +180,9 @@ public class JpaModule
     public static void startupEarly(final EntityManagerManager entityManagerManager, @Symbol(JpaSymbols.EARLY_START_UP)
     final boolean earlyStartup)
     {
-        if (!earlyStartup)
-            return;
-
-        entityManagerManager.getEntityManagers();
-
+        if (earlyStartup)
+        {
+            entityManagerManager.getEntityManagers();
+        }
     }
 }
