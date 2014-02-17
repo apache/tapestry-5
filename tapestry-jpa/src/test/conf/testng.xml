@@ -9,38 +9,46 @@
 
 <suite name="Tapestry JPA" parallel="false" thread-count="10"
 	annotations="1.5" verbose="2">
-	<test name="Tapestry JPA Integration Tests" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/app1" />
-		<packages>
-			<package name="org.apache.tapestry5.jpa.integration.app1" />
-		</packages>
-	</test>
+<!-- 	<test name="Tapestry JPA Integration Tests" enabled="true"> -->
+<!-- 		<parameter name="tapestry.web-app-folder" value="src/test/app1" /> -->
+<!-- 		<packages> -->
+<!-- 			<package name="org.apache.tapestry5.jpa.integration.app1" /> -->
+<!-- 		</packages> -->
+<!-- 	</test> -->
 
-	<test name="Single Persistence Unit Integration Tests" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/app2" />
-		<packages>
-			<package name="org.apache.tapestry5.jpa.integration.app2" />
-		</packages>
-	</test>
+<!-- 	<test name="Single Persistence Unit Integration Tests" enabled="true"> -->
+<!-- 		<parameter name="tapestry.web-app-folder" value="src/test/app2" /> -->
+<!-- 		<packages> -->
+<!-- 			<package name="org.apache.tapestry5.jpa.integration.app2" /> -->
+<!-- 		</packages> -->
+<!-- 	</test> -->
 
-	<test name="JNDI DataSource Integration Tests" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/app3" />
-		<parameter name="tapestry.servlet-container" value="tomcat6" />
-		<packages>
-			<package name="org.apache.tapestry5.jpa.integration.app3" />
-		</packages>
-	</test>
+<!-- 	<test name="JNDI DataSource Integration Tests" enabled="true"> -->
+<!-- 		<parameter name="tapestry.web-app-folder" value="src/test/app3" /> -->
+<!-- 		<parameter name="tapestry.servlet-container" value="tomcat6" /> -->
+<!-- 		<packages> -->
+<!-- 			<package name="org.apache.tapestry5.jpa.integration.app3" /> -->
+<!-- 		</packages> -->
+<!-- 	</test> -->
 
-	<test name="Explicit Provider Class Name In Persistence Unit Integration Tests" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/app5" />
-		<packages>
-			<package name="org.apache.tapestry5.jpa.integration.app5" />
-		</packages>
-	</test>
+<!-- 	<test name="Explicit Provider Class Name In Persistence Unit Integration Tests" enabled="true"> -->
+<!-- 		<parameter name="tapestry.web-app-folder" value="src/test/app5" /> -->
+<!-- 		<packages> -->
+<!-- 			<package name="org.apache.tapestry5.jpa.integration.app5" /> -->
+<!-- 		</packages> -->
+<!-- 	</test> -->
 
-	<test name="Tapestry JPA Unit Tests" enabled="true">
+<!-- 	<test name="Tapestry JPA Unit Tests" enabled="false"> -->
+<!-- 		<packages> -->
+<!-- 			<package name="org.apache.tapestry5.internal.jpa" /> -->
+<!-- 		</packages> -->
+<!-- 	</test> -->
+	
+	<test name="Tapestry JPA Integration Tests with Annotations in Service Implementation" enabled="true">
+		<parameter name="tapestry.web-app-folder" value="src/test/app6" />
 		<packages>
-			<package name="org.apache.tapestry5.internal.jpa" />
+			<package name="org.apache.tapestry5.jpa.integration.app6" />
 		</packages>
 	</test>
+	
 </suite>

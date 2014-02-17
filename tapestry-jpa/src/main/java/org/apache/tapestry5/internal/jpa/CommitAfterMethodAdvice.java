@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,54 +14,63 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodInvocation;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
+
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 
 public class CommitAfterMethodAdvice implements MethodAdvice
 {
     private final EntityManagerManager manager;
 
-    private final PersistenceContext annotation;
-
-    public CommitAfterMethodAdvice(final EntityManagerManager manager, PersistenceContext annotation)
+    public CommitAfterMethodAdvice(final EntityManagerManager manager)
     {
         this.manager = manager;
-        this.annotation = annotation;
     }
 
     public void advise(final MethodInvocation invocation)
     {
-        final EntityTransaction transaction = getTransaction();
-
-        if (transaction != null && !transaction.isActive())
-        {
-            transaction.begin();
-        }
-
-        try
-        {
-            invocation.proceed();
-        } catch (final RuntimeException e)
-        {
-            if (transaction != null && transaction.isActive())
-            {
-                rollbackTransaction(transaction);
-            }
-
-            throw e;
-        }
-
-        // Success or checked exception:
-
-        if (transaction != null && transaction.isActive())
-        {
-            transaction.commit();
-        }
+    	
+    	if (invocation.hasAnnotation(CommitAfter.class))
+    	{
+    	
+			final PersistenceContext annotation = invocation.getAnnotation(PersistenceContext.class);
+	        final EntityTransaction transaction = getTransaction(annotation);
+	
+	        if (transaction != null && !transaction.isActive())
+	        {
+	            transaction.begin();
+	        }
+	
+	        try
+	        {
+	            invocation.proceed();
+	        } catch (final RuntimeException e)
+	        {
+	            if (transaction != null && transaction.isActive())
+	            {
+	                rollbackTransaction(transaction);
+	            }
+	
+	            throw e;
+	        }
+	
+	        // Success or checked exception:
+	
+	        if (transaction != null && transaction.isActive())
+	        {
+	            transaction.commit();
+	        }
+	        
+    	}
+    	else
+    	{
+    		invocation.proceed();
+    	}
 
     }
 
@@ -75,7 +84,7 @@ public class CommitAfterMethodAdvice implements MethodAdvice
         }
     }
 
-    private EntityTransaction getTransaction()
+    private EntityTransaction getTransaction(PersistenceContext annotation)
     {
         EntityManager em = JpaInternalUtils.getEntityManager(manager, annotation);
 

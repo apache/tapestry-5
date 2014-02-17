@@ -515,4 +515,19 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         @PersistenceContext(unitName = UNIT_NAME)
         void perform() throws SQLException;
     }
+    
+    public interface Service
+    {
+    	void perform();
+    }
+    
+    public class ServiceImpl implements Service {
+    	@CommitAfter
+    	@PersistenceContext(unitName = UNIT_NAME)
+    	public void perform() 
+    	{
+    		
+    	}
+    }
+    
 }
