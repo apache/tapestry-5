@@ -91,7 +91,6 @@ public class LessResourceTransformer implements ResourceTransformer
             }
         }
 
-        @Override
         public byte[] getBytes() throws FileNotFound, CannotReadFile
         {
             Reader input = null;
