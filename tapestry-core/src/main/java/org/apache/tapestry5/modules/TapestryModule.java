@@ -2092,7 +2092,7 @@ public final class TapestryModule
         configuration.add(ComponentParameterConstants.PALETTE_ROWS_SIZE, 10);
 
         // Defaults for components that use a SelectModel
-        configuration.add(ComponentParameterConstants.VALIDATE_WITH_MODEL, SecureOption.ALWAYS);
+        configuration.add(ComponentParameterConstants.VALIDATE_WITH_MODEL, SecureOption.AUTO);
 
         // Zone component parameters defaults
         configuration.add(ComponentParameterConstants.ZONE_SHOW_METHOD, "show");
