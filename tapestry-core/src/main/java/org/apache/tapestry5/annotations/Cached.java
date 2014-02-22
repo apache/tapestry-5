@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,22 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
- * Indicates that a method should only be evaluated once and the result cached. All further calls to the method will
- * return the cached result. Note that this annotation is inheritence-safe; if a subclass calls a superclass method that
- * has \@Cached then the value the subclass method gets is the cached value.
+ * Indicates that a method should only be evaluated once per request and the result cached.
+ * Further calls to the method during the same request will return the cached result.
+ * However, if the method's component occurs more than once within an enclosing component,
+ * the cached results will be distinct for each occurrence.
+ * <p/>
+ * This annotation is commonly used on getters for component properties:
+ * <pre>
+ * &#064;Cached
+ * Date getNow() {
+ *     new Date();
+ * }
+ * </pre>
+ * You may not apply &#064;Cached to void methods or methods with parameters.
+ * <p/>
+ * Note that this annotation is inheritance-safe; if a subclass calls a superclass method that
+ * has &#064;Cached then the value the subclass method gets is the cached value.
  * <p/>
  * The watch parameter can be passed a binding expression which will be evaluated each time the method is called. The
  * method will then only be executed the first time it is called and after that only when the value of the binding
