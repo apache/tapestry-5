@@ -341,7 +341,7 @@ table tr td dl, table tr td dl dt, table tr td dl dd {
 /*
 Table styles
 */
-.contentContainer table, .classUseContainer table, .constantValuesContainer table {
+.contentContainer table, .classUseContainer table, .constantValuesContainer table .parameters table {
     border-bottom:1px solid #9eadc0;
     width:100%;
 }
@@ -409,7 +409,7 @@ ul.blockList ul.blockList li.blockList table {
     text-align:left;
     padding:3px 3px 3px 7px;
 }
-th.colFirst, th.colLast, th.colOne, .constantValuesContainer th {
+th.colFirst, th.colLast, th.colOne, .constantValuesContainer th, .parameters th {
     background:#dee3e9;
     border-top:1px solid #9eadc0;
     border-bottom:1px solid #9eadc0;
@@ -474,4 +474,26 @@ h1.hidden {
 }
 .strong {
     font-weight:bold;
+}
+div.description table.parameters {
+    border-collapse: collapse;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 2em;
+}
+table.parameters tr td {
+    border: none;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+table.parameters tr.values td {
+    border-bottom: none;
+    color: brown;
+}
+div.description table.parameters td.colFirst {
+    color: black;
+    font-weight: bold;
+    vertical-align: top;
+}
+table.parameters td.description {
+    border-top: none;
 }

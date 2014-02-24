@@ -147,7 +147,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         }
     }
 
-    private void element(Writer writer, String elementName, String text) throws IOException
+    private void writeElement(Writer writer, String elementName, String text) throws IOException
     {
         writer.write(String.format("<%s>%s</%1$s>", elementName,
                 InternalUtils.isBlank(text) ? "&nbsp;" : text));
@@ -166,34 +166,33 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             return;
 
         writer.write("</dl>"
-                + "<table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
-                + "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
-                + "<th align='left' colspan='5'>"
-                + "<font size='+2'><b>Component Parameters</b></font>"
-                + "</th></tr>"
+                + "<table class='parameters'>"
+                + "<caption><span>Component Parameters</span><span class='tabEnd'>&nbsp;</span>"
                 + "<tr class='columnHeaders'>"
-                + "<th>Name</th><th>Type</th><th>Flags</th><th>Default</th>"
-                + "<th>Default Prefix</th>"
-                + "</tr></thead><tbody>");
+                + "<th class='colFirst'>Name</th><th>Type</th><th>Flags</th><th>Default</th>"
+                + "<th class='colLast'>Default Prefix</th>"
+                + "</tr><tbody>");
 
+        int toggle = 0;
         for (String name : InternalUtils.sortedKeys(cd.parameters))
         {
             ParameterDescription pd = cd.parameters.get(name);
 
-            writerParameter(pd, writer);
+            writerParameter(pd, alternateCssClass(toggle++), writer);
         }
 
         writer.write("</tbody></table></dd>");
     }
 
-    private void writerParameter(ParameterDescription pd, Writer writer) throws IOException
+    private void writerParameter(ParameterDescription pd, String rowClass, Writer writer) throws IOException
     {
 
-        writer.write("<td><strong>");
+        writer.write("<tr class='values " + rowClass + "'>");
+        writer.write("<td rowspan='2' class='colFirst'>");
         writer.write(pd.name);
-        writer.write("</strong></td>");
+        writer.write("</td>");
 
-        element(writer, "td", addWordBreaks(shortenClassName(pd.type)));
+        writeElement(writer, "td", addWordBreaks(shortenClassName(pd.type)));
 
         List<String> flags = CollectionFactory.newList();
 
@@ -216,9 +215,9 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             flags.add("Since " + pd.since);
         }
 
-        element(writer, "td", InternalUtils.join(flags));
-        element(writer, "td", addWordBreaks(pd.defaultValue));
-        element(writer, "td", pd.defaultPrefix);
+        writeElement(writer, "td", InternalUtils.join(flags));
+        writeElement(writer, "td", addWordBreaks(pd.defaultValue));
+        writeElement(writer, "td class='colLast'", pd.defaultPrefix);
 
         writer.write("</tr>");
 
@@ -227,12 +226,20 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         if (description.length() > 0)
         {
 
-            writer.write("<tr>");
-            writer.write("<td colspan='5' class='parameter-description'>");
+            writer.write("<tr class='" + rowClass + "'>");
+            writer.write("<td colspan='4' class='description colLast'>");
             writer.write(description);
             writer.write("</td>");
             writer.write("</tr>");
         }
+    }
+
+    /**
+     * Return alternating CSS class names based on the input, which the caller
+     * should increment with each call.
+     */
+    private String alternateCssClass(int num) {
+        return num % 2 == 0 ? "altColor" : "rowColor";
     }
 
     private void writeEvents(ClassDescription cd, Writer writer) throws IOException
@@ -240,24 +247,26 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         if (cd.events.isEmpty())
             return;
 
-        writer.write("<p><table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
-                + "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
-                + "<th align='left'>"
-                + "<font size='+2'><b>Events:</b></font></th></tr></thead></table></p><dl>");
+        writer.write("<p><table class='parameters'>"
+                + "<caption><span>Component Events</span><span class='tabEnd'>&nbsp;</span>"
+                + "<tr class='columnHeaders'>"
+                + "<th class='colFirst'>Name</th><th class='colLast'>Description</th>"
+                + "</tr><tbody>");
 
+        int toggle = 0;
         for (String name : InternalUtils.sortedKeys(cd.events))
         {
-            element(writer, "dt", name);
+            writer.write("<tr class='" + alternateCssClass(toggle++) + "'>");
+            writeElement(writer, "td class='colFirst'", name);
 
             String value = cd.events.get(name);
 
-            if (value.length() > 0)
-            {
-                element(writer, "dd", value);
-            }
+            writeElement(writer, "td class='colLast'", value);
+
+            writer.write("</tr>");
         }
 
-        writer.write("</dl>");
+        writer.write("</table></p>");
     }
 
     /**
