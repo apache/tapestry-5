@@ -164,7 +164,7 @@ public class XDocStreamer
                 // More JavaDoc ugliness; this makes sections fit in well with the main
                 // output.
 
-                write(String.format("<dt><b>%s:</b></dt><dd>", name));
+                write(String.format("<dt><h3>%s</h3></dt><dd>", name));
 
                 endElementHandlers.push(writeClose("dd"));
 
