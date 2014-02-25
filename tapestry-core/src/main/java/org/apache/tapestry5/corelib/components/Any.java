@@ -29,11 +29,14 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 @SupportsInformalParameters
 public class Any implements ClientElement
 {
+    /**
+     * The element to be rendered.
+     */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
     /**
-     * The desired client id, which defaults to the components id.
+     * The desired client id, which defaults to the component's id.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     private String clientId;
