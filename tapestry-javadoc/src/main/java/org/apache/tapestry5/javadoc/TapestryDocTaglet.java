@@ -167,7 +167,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
         writer.write("</dl>"
                 + "<table class='parameters'>"
-                + "<caption><span>Component Parameters</span><span class='tabEnd'>&nbsp;</span>"
+                + "<caption><span>Component Parameters</span><span class='tabEnd'>&nbsp;</span></caption>"
                 + "<tr class='columnHeaders'>"
                 + "<th class='colFirst'>Name</th><th>Type</th><th>Flags</th><th>Default</th>"
                 + "<th class='colLast'>Default Prefix</th>"
@@ -248,7 +248,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             return;
 
         writer.write("<p><table class='parameters'>"
-                + "<caption><span>Component Events</span><span class='tabEnd'>&nbsp;</span>"
+                + "<caption><span>Component Events</span><span class='tabEnd'>&nbsp;</span></caption>"
                 + "<tr class='columnHeaders'>"
                 + "<th class='colFirst'>Name</th><th class='colLast'>Description</th>"
                 + "</tr><tbody>");
