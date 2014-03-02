@@ -1,4 +1,4 @@
-// Copyright 2006-2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -336,10 +336,18 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         return CollectionFactory.newSet(map.values()).size();
     }
 
+    /**
+     * Log (at INFO level) the changes between the two logical-name-to-class-name maps
+     * @param title the title of the things in the maps (e.g. "pages" or "components")
+     * @param savedMap the old map
+     * @param newMap the new map
+     */
     private void showChanges(String title, Map<String, String> savedMap, Map<String, String> newMap)
     {
-        if (savedMap.equals(newMap))
+        if (savedMap.equals(newMap) || !logger.isInfoEnabled()) // nothing to log?
+        {
             return;
+        }
 
         Map<String, String> core = CollectionFactory.newMap();
         Map<String, String> nonCore = CollectionFactory.newMap();
@@ -403,7 +411,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             f.format(formatString, name, className);
         }
 
-        logger.info(builder.toString());
+        // log multi-line string with OS-specific line endings (TAP5-2294)
+        logger.info(builder.toString().replaceAll("\\n", System.getProperty("line.separator")));
     }
 
 

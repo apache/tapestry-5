@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -201,8 +201,16 @@ public class TapestryAppInitializer
         return registry;
     }
 
+    /**
+     * Announce application startup, by logging (at INFO level) the names of all pages,
+     * components, mixins and services.
+     */
     public void announceStartup()
     {
+        if (!logger.isInfoEnabled()) // if info logging is off we can stop now
+        {
+            return;
+        }
         long toFinish = System.currentTimeMillis();
 
         SymbolSource source = registry.getService("SymbolSource", SymbolSource.class);
@@ -258,9 +266,10 @@ public class TapestryAppInitializer
         buffer.append("/_  __/__ ____  ___ ___ / /_______ __  / __/\n");
         buffer.append(" / / / _ `/ _ \\/ -_|_-</ __/ __/ // / /__ \\ \n");
         buffer.append("/_/  \\_,_/ .__/\\__/___/\\__/_/  \\_, / /____/\n");
-        f.format("        /_/                   /___/  %s%s\n\n",
+        f.format     ("        /_/                   /___/  %s%s\n\n",
                 version, productionMode ? "" : " (development mode)");
 
-        logger.info(buffer.toString());
+        // log multi-line string with OS-specific line endings (TAP5-2294)
+        logger.info(buffer.toString().replaceAll("\\n", System.getProperty("line.separator")));
     }
 }
