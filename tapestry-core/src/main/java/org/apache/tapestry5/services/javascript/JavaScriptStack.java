@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2013 The Apache Software Foundation
+// Copyright 2010-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import java.util.List;
  * The {@link ExtensibleJavaScriptStack} is the best way to create new stacks.
  *
  * @see ThreadLocale
+ * @see org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack
  * @since 5.2.0
  */
 public interface JavaScriptStack
@@ -64,10 +65,13 @@ public interface JavaScriptStack
     List<StylesheetLink> getStylesheets();
 
     /**
-     * Returns a list of modules to {@link JavaScriptSupport#require(String) require} with the stack.
+     * Returns a list of modules to include with the stack, when aggregating the stack's JavaScript.
+     * It is still necessary to explicitly {@linkplain org.apache.tapestry5.services.javascript.JavaScriptSupport#require(String) require}
+     * such modules.
      *
-     * @since 5.4
      * @see ModuleManager
+     * @see org.apache.tapestry5.SymbolConstants#COMBINE_SCRIPTS
+     * @since 5.4
      */
     List<String> getModules();
 
@@ -78,7 +82,7 @@ public interface JavaScriptStack
      * should be localized.
      *
      * @deprecated Deprecated in Tapestry 5.4; may be removed in a future release. Implementations
-     *             may return null.
+     * may return null.
      */
     String getInitialization();
 }
