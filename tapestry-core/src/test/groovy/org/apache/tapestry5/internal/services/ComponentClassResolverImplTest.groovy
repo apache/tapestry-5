@@ -34,6 +34,8 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
     private Logger compliantLogger() {
         Logger logger = mockLogger()
 
+        expect(logger.isInfoEnabled()).andReturn(true).atLeastOnce()
+
         logger.info(EasyMock.isA(String.class))
 
         EasyMock.expectLastCall().atLeastOnce()
