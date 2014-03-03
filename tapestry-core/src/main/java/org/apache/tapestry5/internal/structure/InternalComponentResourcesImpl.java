@@ -684,7 +684,6 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
         queue.push(element);
     }
 
-    @Override
     public PageLifecycleCallbackHub getPageLifecycleCallbackHub()
     {
         return page;

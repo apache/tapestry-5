@@ -245,7 +245,6 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     private PersistenceProvider findPersistenceProviderByName(final List<PersistenceProvider> providers, final String providerClassName)
     {
         PersistenceProvider provider = F.flow(providers).filter(new Predicate<PersistenceProvider>() {
-            @Override
             public boolean accept(PersistenceProvider next) {
                 return next.getClass().getName().equals(providerClassName);
             }
@@ -264,7 +263,6 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     private List<Class> toProviderClasses(final List<PersistenceProvider> providers)
     {
        return F.flow(providers).map(new Mapper<PersistenceProvider, Class>() {
-           @Override
            public Class map(PersistenceProvider element) {
                return element.getClass();
            }

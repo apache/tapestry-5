@@ -165,7 +165,6 @@ public class PageImpl implements Page
 
         addPageLoadedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidLoad();
@@ -174,7 +173,6 @@ public class PageImpl implements Page
 
         addPageAttachedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidAttach();
@@ -183,7 +181,6 @@ public class PageImpl implements Page
 
         addPageDetachedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidDetach();
@@ -277,7 +274,6 @@ public class PageImpl implements Page
         return name;
     }
 
-    @Override
     public void addResetCallback(Runnable callback)
     {
         assert callback != null;
@@ -293,7 +289,6 @@ public class PageImpl implements Page
 
         addResetCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidReset();
@@ -325,7 +320,6 @@ public class PageImpl implements Page
         return attachCount.get();
     }
 
-    @Override
     public void addPageLoadedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();
@@ -335,7 +329,6 @@ public class PageImpl implements Page
         loadedCallbacks.add(callback);
     }
 
-    @Override
     public void addPageAttachedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();
@@ -345,7 +338,6 @@ public class PageImpl implements Page
         attachCallbacks.add(callback);
     }
 
-    @Override
     public void addPageDetachedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();

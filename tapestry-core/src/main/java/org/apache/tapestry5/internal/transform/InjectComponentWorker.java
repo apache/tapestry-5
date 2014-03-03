@@ -52,7 +52,6 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
 
             resources.getPageLifecycleCallbackHub().addPageAttachedCallback(new Runnable()
             {
-                @Override
                 public void run()
                 {
                     load();
