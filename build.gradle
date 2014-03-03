@@ -46,7 +46,7 @@ def tapestryVersion() {
 // Let analysis.apache.org get in touch with our builds
 
 project.ext {
-    sonarUrl = System.getProperty("sonarUrl", "http://analysis.apache.org");
+    sonarUrl = System.getProperty("sonarUrl", "https://analysis.apache.org");
     sonarDbUrl = System.getProperty("sonarDbUrl", "");
     sonarDbUsername = System.getProperty("sonarDbUsername", "");
     sonarDbPassword = System.getProperty("sonarDbPassword", "");
