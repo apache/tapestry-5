@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
 
 import java.io.*;
 
@@ -130,5 +131,16 @@ public class StubFileItem implements FileItem
     public boolean isDeleted()
     {
         return isDeleted;
+    }
+
+    /* unused method but required by FileItem interface */
+    public FileItemHeaders getHeaders()
+    {
+        return null;
+    }
+
+    /* unused method but required by FileItem interface */
+    public void setHeaders(FileItemHeaders headers)
+    {
     }
 }
