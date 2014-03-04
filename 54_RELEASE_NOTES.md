@@ -327,7 +327,9 @@ classes are typically not used directly by end-user code, this is not expected t
 ## tapestry-test and TapestryTestConstants
 
 Several constants defined in org.apache.tapestry5.test.TapestryTestConstants have moved to a new class,
-org.apache.tapestry5.test.TapestryRunnerConstants in the new tapestry-runner module.
+org.apache.tapestry5.test.TapestryRunnerConstants in the new tapestry-test-constants module. tapestry-core
+has a dependency on module tapestry-test-constants that is only needed when making use of the PageTester
+facility. When using PageTester, you will need to make tapestry-test-constants a testRuntime dependency.
 
 ## AbstractValidator base class
 
