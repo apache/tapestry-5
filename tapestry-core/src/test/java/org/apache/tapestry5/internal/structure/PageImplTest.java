@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterMethod;
@@ -48,15 +50,26 @@ public class PageImplTest extends InternalBaseTestCase
         perThreadManager.cleanup();
     }
 
+    private MetaDataLocator newMetaDataLocator(String pageName, boolean enabled)
+    {
+
+        MetaDataLocator locator = newMock(MetaDataLocator.class);
+
+        expect(locator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, pageName, Boolean.class)).andReturn(enabled);
+
+        return locator;
+    }
+
     @Test
     public void accessor_methods()
     {
         ComponentPageElement root = mockComponentPageElement();
         ComponentResourceSelector selector = new ComponentResourceSelector(Locale.ENGLISH);
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
 
         assertNull(page.getRootElement());
 
@@ -65,6 +78,8 @@ public class PageImplTest extends InternalBaseTestCase
         assertSame(page.getSelector(), selector);
         assertSame(page.getRootElement(), root);
         assertSame(page.getName(), LOGICAL_PAGE_NAME);
+
+        assertTrue(page.isExactParameterCountMatch());
 
         verify();
     }
@@ -78,9 +93,11 @@ public class PageImplTest extends InternalBaseTestCase
         listener1.containingPageDidDetach();
         listener2.containingPageDidDetach();
 
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
+
         replay();
 
-        Page page = new PageImpl(null, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -101,6 +118,7 @@ public class PageImplTest extends InternalBaseTestCase
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
         RuntimeException t = new RuntimeException("Listener detach exception.");
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
 
         train_getLogger(element, logger);
 
@@ -113,7 +131,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -132,6 +150,8 @@ public class PageImplTest extends InternalBaseTestCase
     @Test
     public void attach_notification()
     {
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
+
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
 
@@ -140,7 +160,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -158,6 +178,8 @@ public class PageImplTest extends InternalBaseTestCase
     @Test
     public void load_notification()
     {
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
+
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
 
@@ -166,7 +188,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -180,10 +202,11 @@ public class PageImplTest extends InternalBaseTestCase
     public void get_by_nested_id_for_blank_value_returns_root_component()
     {
         ComponentPageElement root = mockComponentPageElement();
+        MetaDataLocator locator = newMetaDataLocator(LOGICAL_PAGE_NAME, true);
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, selector, null, perThreadManager, locator);
 
         page.setRootElement(root);
 

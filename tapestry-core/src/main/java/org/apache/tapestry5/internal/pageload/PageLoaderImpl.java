@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
@@ -142,19 +141,17 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 
     private final PerthreadManager perThreadManager;
 
-    private final Request request;
-
-    private final SymbolSource symbolSource;
-
     private final Logger logger;
 
     private final MetaDataLocator metaDataLocator;
 
+    private final RequestGlobals requestGlobals;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
-                          StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-                          SymbolSource symbolSource, Logger logger, MetaDataLocator metaDataLocator)
+                          StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager,
+                          Logger logger, MetaDataLocator metaDataLocator, RequestGlobals requestGlobals)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -165,10 +162,9 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.interner = interner;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
-        this.request = request;
-        this.symbolSource = symbolSource;
         this.logger = logger;
         this.metaDataLocator = metaDataLocator;
+        this.requestGlobals = requestGlobals;
     }
 
     @PostInjection
@@ -196,7 +192,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, selector, persistentFieldManager, perThreadManager);
+                Page page = new PageImpl(logicalPageName, selector, persistentFieldManager, perThreadManager, metaDataLocator);
 
                 ComponentAssembler assembler = getAssembler(pageClassName, selector);
 
@@ -266,7 +262,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
                 ComponentPageElementResources resources = resourcesSource.get(selector);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, tracker, request, symbolSource, metaDataLocator);
+                        componentClassResolver, instantiator, resources, tracker);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).

@@ -1,4 +1,4 @@
-// Copyright 2008-2013 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
@@ -57,11 +59,15 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private final PerthreadManager perThreadManager;
 
+    private final boolean productionMode, componentTracingEnabled;
+
+    private final RequestGlobals requestGlobals;
+
     public ComponentPageElementResourcesImpl(ComponentResourceSelector selector,
                                              ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
                                              ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder, LinkSource linkSource,
                                              RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
-                                             LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
+                                             LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager, boolean productionMode, boolean componentTracingEnabled, RequestGlobals requestGlobals)
     {
         this.selector = selector;
         this.componentMessagesSource = componentMessagesSource;
@@ -74,6 +80,9 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         this.loggerSource = loggerSource;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
+        this.productionMode = productionMode;
+        this.componentTracingEnabled = componentTracingEnabled;
+        this.requestGlobals = requestGlobals;
     }
 
     public ComponentResourceSelector getSelector()
@@ -158,6 +167,28 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     public <T> PerThreadValue<T> createPerThreadValue()
     {
         return perThreadManager.createValue();
+    }
+
+    public boolean isRenderTracingEnabled()
+    {
+        if (productionMode)
+        {
+            return false;
+        }
+
+        if (componentTracingEnabled)
+        {
+            return true;
+        }
+
+        Request request = requestGlobals.getRequest();
+
+        if (request == null)
+        {
+            return false;
+        }
+
+        return "true".equals(request.getParameter("t:component-trace"));
     }
 
 }

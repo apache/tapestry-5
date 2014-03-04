@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,23 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.Map;
-
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+
+import java.util.Map;
 
 public class ComponentPageElementResourcesSourceImpl implements ComponentPageElementResourcesSource
 {
@@ -54,10 +57,17 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
 
     private final PerthreadManager perThreadManager;
 
+    private final boolean productionMode, componentTracingEnabled;
+
+    private final RequestGlobals requestGlobals;
+
     public ComponentPageElementResourcesSourceImpl(ComponentMessagesSource componentMessagesSource,
             TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
             LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
-            LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
+            LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED) boolean componentTracingEnabled,
+            RequestGlobals requestGlobals)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.typeCoercer = typeCoercer;
@@ -69,6 +79,9 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         this.loggerSource = loggerSource;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
+        this.productionMode = productionMode;
+        this.componentTracingEnabled = componentTracingEnabled;
+        this.requestGlobals = requestGlobals;
     }
 
     public ComponentPageElementResources get(ComponentResourceSelector selector)
@@ -81,7 +94,7 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         {
             result = new ComponentPageElementResourcesImpl(selector, componentMessagesSource, typeCoercer,
                     componentClassCache, contextValueEncoder, linkSource, requestPageCache, componentClassResolver,
-                    loggerSource, tracker, perThreadManager);
+                    loggerSource, tracker, perThreadManager, productionMode, componentTracingEnabled, requestGlobals);
 
             // Small race condition here, where we may create two instances of the CPER for the same locale,
             // but that's not worth worrying about.

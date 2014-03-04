@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
@@ -64,6 +66,8 @@ public class PageImpl implements Page
 
     private final AtomicInteger attachCount = new AtomicInteger();
 
+    private final boolean exactParameterCountMatch;
+
     private List<Runnable> pageVerifyCallbacks = CollectionFactory.newList();
 
     /**
@@ -83,16 +87,18 @@ public class PageImpl implements Page
      * @param persistentFieldManager
      *         for access to cross-request persistent values
      * @param perThreadManager
-     *         for managing per-request mutable state
+     * @param metaDataLocator
      */
     public PageImpl(String name, ComponentResourceSelector selector, PersistentFieldManager persistentFieldManager,
-                    PerthreadManager perThreadManager)
+                    PerthreadManager perThreadManager, MetaDataLocator metaDataLocator)
     {
         this.name = name;
         this.selector = selector;
         this.persistentFieldManager = persistentFieldManager;
 
         fieldBundle = perThreadManager.createValue();
+
+        exactParameterCountMatch = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, name, Boolean.class);
     }
 
     public void setStats(Stats stats)
@@ -318,6 +324,11 @@ public class PageImpl implements Page
     public int getAttachCount()
     {
         return attachCount.get();
+    }
+
+    public boolean isExactParameterCountMatch()
+    {
+        return exactParameterCountMatch;
     }
 
     public void addPageLoadedCallback(Runnable callback)

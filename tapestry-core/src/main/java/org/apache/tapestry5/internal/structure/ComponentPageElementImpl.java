@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2014  The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,15 +32,12 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.*;
-import org.apache.tapestry5.services.MetaDataLocator;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
@@ -506,13 +503,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final PerThreadValue<Boolean> renderingValue;
 
-    // should be okay since it's a shadow service object
-    private final Request request;
-    private final SymbolSource symbolSource;
-    private final MetaDataLocator metaDataLocator;
-
-    private final boolean productionMode;
-    private final boolean componentTracingEnabled;
     private final boolean exactParameterCountMatch;
 
     // We know that, at the very least, there will be an element to force the component to render
@@ -543,12 +533,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * @param location
      *         location of the element (within a template), used as part of exception reporting
      * @param elementResources
-     *         Provides access to common methods of various services
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
                              String elementName, Instantiator instantiator, Location location,
-                             ComponentPageElementResources elementResources, Request request,
-                             SymbolSource symbolSource, MetaDataLocator metaDataLocator)
+                             ComponentPageElementResources elementResources)
     {
         super(location);
 
@@ -559,17 +547,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.completeId = completeId;
         this.elementName = elementName;
         this.elementResources = elementResources;
-        this.request = request;
-        this.symbolSource = symbolSource;
-        this.metaDataLocator = metaDataLocator;
 
-        // evaluate this once because it gets referenced a lot during rendering
-        this.productionMode = "true".equals(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
-        this.componentTracingEnabled = "true".equals(symbolSource
-                .valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
-
-        this.exactParameterCountMatch = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK,
-                                                                page.getName(), Boolean.class);
+        this.exactParameterCountMatch = page.isExactParameterCountMatch();
 
         ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
@@ -595,11 +574,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * Constructor for the root component of a page.
      */
     public ComponentPageElementImpl(Page page, Instantiator instantiator,
-                                    ComponentPageElementResources elementResources, Request request,
-                                    SymbolSource symbolSource, MetaDataLocator metaDataLocator)
+                                    ComponentPageElementResources elementResources)
     {
-        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources,
-                request, symbolSource, metaDataLocator);
+        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources);
     }
 
     private void initializeRenderPhases()
@@ -657,7 +634,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                          Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
-                elementName, instantiator, location, elementResources, request, symbolSource, metaDataLocator);
+                elementName, instantiator, location, elementResources);
 
         addEmbeddedElement(child);
 
@@ -1293,7 +1270,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     boolean isRenderTracingEnabled()
     {
-        return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
+        return elementResources.isRenderTracingEnabled();
     }
 
     public ComponentResourceSelector getResourceSelector()

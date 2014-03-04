@@ -1,4 +1,4 @@
-// Copyright 2009-2013 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +25,12 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.MetaDataLocator;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.List;
@@ -57,20 +54,13 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final OperationTracker tracker;
 
-    private final Request request;
-
-    private final SymbolSource symbolSource;
-
-    private final MetaDataLocator metaDataLocator;
-
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
 
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                   ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-                                  Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker,
-                                  Request request, SymbolSource symbolSource, MetaDataLocator metaDataLocator)
+                                  Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -78,9 +68,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.instantiator = instantiator;
         this.resources = resources;
         this.tracker = tracker;
-        this.request = request;
-        this.symbolSource = symbolSource;
-        this.metaDataLocator = metaDataLocator;
     }
 
     public ComponentPageElement assembleRootComponent(final Page page)
@@ -106,8 +93,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
             pageAssembly.componentCount++;
             pageAssembly.weight++;
 
-            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources,
-                    request, symbolSource, metaDataLocator);
+            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources
+            );
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 

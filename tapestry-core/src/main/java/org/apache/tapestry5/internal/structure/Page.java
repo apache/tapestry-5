@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@ public interface Page extends PageLifecycleCallbackHub
      * Adds a listener that is notified of large scale page events.
      *
      * @deprecated in 5.3.4; use {@link #addPageLoadedCallback(Runnable)}, {@link #addPageAttachedCallback(Runnable)}, or
-     *             {@link #addPageDetachedCallback(Runnable)}  instead
+     * {@link #addPageDetachedCallback(Runnable)}  instead
      */
     void addLifecycleListener(PageLifecycleListener listener);
 
@@ -249,6 +249,14 @@ public interface Page extends PageLifecycleCallbackHub
      * @since 5.3
      */
     int getAttachCount();
+
+    /**
+     * Returns true if extract parameter count matching is enabled.
+     *
+     * @see org.apache.tapestry5.MetaDataConstants#UNKNOWN_ACTIVATION_CONTEXT_CHECK
+     * @since 5.4
+     */
+    boolean isExactParameterCountMatch();
 
 
 }
