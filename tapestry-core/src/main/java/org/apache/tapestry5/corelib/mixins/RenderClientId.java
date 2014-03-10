@@ -19,7 +19,14 @@ import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.ClientElement;
 
 /**
- * Forces a client element to render its client id by ensuring that {@link org.apache.tapestry5.ClientElement#getClientId()} is called.
+ * Forces a client element to render its client id by ensuring that
+ * {@link org.apache.tapestry5.ClientElement#getClientId() ClientElement#getClientId()}
+ * is called. This is sometimes needed because, by design, most components (those that
+ * implement {@link ClientElement}) only render a client-side ID if their getClientId
+ * method is called sometime during the server-side DOM render.
+ * <p/>
+ * See the {@link org.apache.tapestry5.corelib.components.Any Any} component
+ * for an example of use.
  * 
  * @tapestrydoc
  */
