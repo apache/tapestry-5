@@ -4,35 +4,83 @@
         <li>
             <t:pagelink page="nocontext">No context correct</t:pagelink>
         </li>
+        <li>
+            <t:pagelink page="prop:noContextClass">No context correct: page class</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:noContext">No context correct: page instance</t:pagelink>
+        </li>
 
         <li>
             <t:pagelink page="nocontext" context="literal:one">No context error</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:noContextClass" context="literal:one">No context error: page class</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:noContextClass" context="literal:one">No context error: page instance</t:pagelink>
         </li>
 
 
         <li>
             <t:pagelink page="onecontext">One context without</t:pagelink>
         </li>
+        <li>
+            <t:pagelink page="prop:oneContext">One context without: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:oneContextClass">One context without: page class</t:pagelink>
+        </li>
 
         <li>
             <t:pagelink page="onecontext" context="literal:one">One context correct</t:pagelink>
         </li>
+        <li>
+            <t:pagelink page="prop:oneContext" context="literal:one">One context correct: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:oneContextClass" context="literal:one">One context correct: page class</t:pagelink>
+        </li>
 
         <li>
             <t:pagelink page="onecontext" context="twoValues">One context error</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:oneContext" context="twoValues">One context error: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:oneContextClass" context="twoValues">One context error: page class</t:pagelink>
         </li>
 
 
         <li>
             <t:pagelink page="twocontext">Two context without</t:pagelink>
         </li>
+        <li>
+            <t:pagelink page="prop:twoContext">Two context without: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:twoContextClass">Two context without: page class</t:pagelink>
+        </li>
 
         <li>
             <t:pagelink page="twocontext" context="literal:one">Two context error</t:pagelink>
         </li>
+        <li>
+            <t:pagelink page="prop:twoContext" context="literal:one">Two context error: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:twoContextClass" context="literal:one">Two context error: page class</t:pagelink>
+        </li>
 
         <li>
             <t:pagelink page="twocontext" context="twoValues">Two context correct</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:twoContext" context="twoValues">Two context correct: page instance</t:pagelink>
+        </li>
+        <li>
+            <t:pagelink page="prop:twoContextClass" context="twoValues">Two context correct: page class</t:pagelink>
         </li>
     </ul>
 

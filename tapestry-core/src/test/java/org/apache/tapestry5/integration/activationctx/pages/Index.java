@@ -14,11 +14,22 @@
 
 package org.apache.tapestry5.integration.activationctx.pages;
 
+import org.apache.tapestry5.annotations.InjectPage;
+
 /**
- * TAP5-2070 Integration test index page
+ * TAP5-2070 and TAP5-1659 Integration test index page
  */
 public class Index
 {
+    
+    @InjectPage
+    private NoContext noContext;
+
+    @InjectPage
+    private OneContext oneContext;
+    
+    @InjectPage
+    private TwoContext twoContext;
 
     public String[] getTwoValues()
     {
@@ -27,4 +38,32 @@ public class Index
                 "Two"
         };
     }
+    
+    public Class<?> getNoContextClass() {
+        return NoContext.class;
+    }
+
+    public Class<?> getOneContextClass() {
+        return OneContext.class;
+    }
+
+    public Class<?> getTwoContextClass() {
+        return TwoContext.class;
+    }
+
+    public NoContext getNoContext()
+    {
+        return noContext;
+    }
+
+    public OneContext getOneContext()
+    {
+        return oneContext;
+    }
+
+    public TwoContext getTwoContext()
+    {
+        return twoContext;
+    }
+
 }

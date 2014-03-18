@@ -20,14 +20,17 @@ import org.testng.annotations.Test;
 /**
  * To test TAP5-2070
  */
-public class ActivationContextintegrationTests extends TapestryCoreTestCase
+public class ActivationContextIntegrationTests extends TapestryCoreTestCase
 {
+    
+    private final static String STRING_PARAMETER = null;
+    private final static String PAGE_CLASS_PARAMETER = "page class";
+    private final static String PAGE_INSTANCE_PARAMETER = "page instance";
+    
     @Test
     public void no_context_correct()
     {
-        openLinks("No context correct");
-
-        assertTextPresent("You are able to see me only without activation context");
+        assertLinksAreCorrect("No context correct", "You are able to see me only without activation context");
     }
 
     @Test
@@ -85,4 +88,18 @@ public class ActivationContextintegrationTests extends TapestryCoreTestCase
 
         assertTextPresent("You are able to see me only with two parameters in the activation context");
     }
+    
+    private void assertLinksAreCorrect(final String suffix, final String expectedText)
+    {
+        assertNoContextCorrect(suffix, STRING_PARAMETER, expectedText);
+        assertNoContextCorrect(suffix, PAGE_CLASS_PARAMETER, expectedText);
+        assertNoContextCorrect(suffix, PAGE_INSTANCE_PARAMETER, expectedText);
+    }
+
+    private void assertNoContextCorrect(String linkSuffix, String linkPrefix, String expectedText)
+    {
+        openLinks("No context correct" + linkPrefix != null ? ": " + linkPrefix : "");
+        assertTextPresent(expectedText);
+    }
+
 }

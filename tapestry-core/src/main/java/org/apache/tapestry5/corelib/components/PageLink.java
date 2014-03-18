@@ -36,10 +36,15 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 public class PageLink extends AbstractLink
 {
     /**
-     * The logical name of the page to link to.
+     * The page to link to. If a <code>String</code>, as usual, it should be the page logical name.
+     * If it's a <code>Class</code> instance, it's treated as the target page. 
+     * If it's not a <code>String</code> nor an <code>Class</code>, the target page will be
+     * the result of calling <code>page.getClass()</code>.
+     * Notice you'll need to use the <code>prop</code> binding when passing a value which
+     * isn't a <code>String</code>. 
      */
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private String page;
+    private Object page;
 
     /**
      * If provided, this is the activation context for the target page (the information will be encoded into the URL).
@@ -55,9 +60,20 @@ public class PageLink extends AbstractLink
     {
         if (isDisabled()) return;
 
-        Link link = resources.isBound("context")
-                ? linkSource.createPageRenderLinkWithContext(page, context == null ? InternalConstants.EMPTY_STRING_ARRAY : context)
-                : linkSource.createPageRenderLink(page);
+        Link link;
+        if (page instanceof String) {
+            final String pageName = (String) page; 
+            link = resources.isBound("context")
+                ? linkSource.createPageRenderLinkWithContext(pageName, context == null ? InternalConstants.EMPTY_STRING_ARRAY : context)
+                : linkSource.createPageRenderLink(pageName);
+        }
+        else {
+            // If page is a Class, use it directly. If not, use its class (type)
+            Class<?> clasz = page instanceof Class<?> ? (Class<?>) page : page.getClass();
+            link = resources.isBound("context")
+                    ? linkSource.createPageRenderLinkWithContext(clasz, context == null ? InternalConstants.EMPTY_STRING_ARRAY : context)
+                    : linkSource.createPageRenderLink(clasz);
+        }
 
         writeLink(writer, link);
     }
