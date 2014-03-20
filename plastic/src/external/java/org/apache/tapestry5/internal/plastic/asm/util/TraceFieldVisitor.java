@@ -1,7 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000-2011 INRIA, France Telecom
- * Copyright (c) 2011 Google
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,15 +33,15 @@ import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.TypePath;
 
 /**
- * A {@link org.apache.tapestry5.internal.plastic.asm.FieldVisitor} that prints the fields it visits with a
+ * A {@link FieldVisitor} that prints the fields it visits with a
  * {@link Printer}.
  * 
  * @author Eric Bruneton
  */
-public final class TraceFieldVisitor extends FieldVisitor
-{
+public final class TraceFieldVisitor extends FieldVisitor {
 
     public final Printer p;
 
@@ -51,18 +50,26 @@ public final class TraceFieldVisitor extends FieldVisitor
     }
 
     public TraceFieldVisitor(final FieldVisitor fv, final Printer p) {
-        super(Opcodes.ASM4, fv);
+        super(Opcodes.ASM5, fv);
         this.p = p;
     }
-        
+
     @Override
-    public AnnotationVisitor visitAnnotation(
-        final String desc,
-        final boolean visible)
-    {
+    public AnnotationVisitor visitAnnotation(final String desc,
+            final boolean visible) {
         Printer p = this.p.visitFieldAnnotation(desc, visible);
         AnnotationVisitor av = fv == null ? null : fv.visitAnnotation(desc,
                 visible);
+        return new TraceAnnotationVisitor(av, p);
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(int typeRef,
+            TypePath typePath, String desc, boolean visible) {
+        Printer p = this.p.visitFieldTypeAnnotation(typeRef, typePath, desc,
+                visible);
+        AnnotationVisitor av = fv == null ? null : fv.visitTypeAnnotation(
+                typeRef, typePath, desc, visible);
         return new TraceAnnotationVisitor(av, p);
     }
 
