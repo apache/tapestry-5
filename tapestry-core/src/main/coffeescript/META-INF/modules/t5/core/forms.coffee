@@ -113,20 +113,34 @@ define ["./events", "./dom", "underscore"],
 
           @meta SKIP_VALIDATION, null
 
-          memo = error: false
+          hasError = false
+          focusField = null
 
           for field in @find "[data-validation]"
+            memo = {}
             where = -> "triggering #{events.field.inputValidation} event on #{field.toString()}"
             field.trigger events.field.inputValidation, memo
 
+            if memo.error
+              hasError = true
+              focusField = field unless focusField
+
           # Only do form validation if all individual field validation
           # was successful.
-          unless memo.error
+          unless hasError
+            memo = {}
             where = -> "trigging cross-form validation event"
             @trigger events.form.validate, memo
 
-          if memo.error
+            hasError = memo.error
+
+          if hasError
             clearSubmittingHidden this
+
+            # If a specific field has been identified as the source of the validation error, then
+            # focus on it.
+            focusField.focus() if focusField
+
             # Cancel the original submit event when there's an error
             return false
 
