@@ -72,11 +72,11 @@ define ["./events", "./dom", "underscore"],
           # Ignore types file and submit; file doesn't make sense for Ajax, and submit
           # is handled by keeping a hidden field active with the data Tapestry needs
           # on the server.
-          return if type is "file" || type is "submit"
+          return if type is "file" or type is "submit"
 
-        return if (type is "checkbox" or type is "radio") and field.checked() is false
+          return if (type is "checkbox" or type is "radio") and field.checked() is false
 
-        value = field.value()
+          value = field.value()
 
         return if value is null
 
