@@ -18,6 +18,7 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
+import org.apache.tapestry5.beaneditor.Sortable;
 import org.apache.tapestry5.internal.PropertyOrderBean;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
@@ -693,4 +694,61 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+    
+    // https://issues.apache.org/jira/browse/TAP5-2305
+    @Test
+    public void sortable_annotation() 
+    {
+        Messages messages = mockMessages();
+
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel<SortableBean> model = source.createDisplayModel(SortableBean.class,  messages);
+        model.add("nonSortableByDefault");
+        model.add("sortable");
+        
+        // checking whether non-@Sortable annotated properties still behave in the old ways
+        assertTrue(model.get("sortableByDefault").isSortable());
+        assertFalse(model.get("nonSortableByDefault").isSortable());
+        
+        // checking @Sortable itself
+        assertFalse(model.get("nonSortable").isSortable());
+        assertTrue(model.get("sortable").isSortable());
+
+        verify();
+    }
+    
+    final private static class SortableBean
+    {
+        private int sortableByDefault;
+        private int nonSortable;
+        private SimpleBean sortable;
+        private SimpleBean nonSortableByDefault;
+        
+        public int getSortableByDefault()
+        {
+            return sortableByDefault;
+        }
+        
+        @Sortable(false)
+        public int getNonSortable()
+        {
+            return nonSortable;
+        }
+        
+        @Sortable(true)
+        public SimpleBean getSortable()
+        {
+            return sortable;
+        }
+        
+        public SimpleBean getNonSortableByDefault()
+        {
+            return nonSortableByDefault;
+        }
+        
+    }
+    
 }
