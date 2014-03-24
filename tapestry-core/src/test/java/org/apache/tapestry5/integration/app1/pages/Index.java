@@ -59,6 +59,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),
+
                     new Item("TimeIntervalDemo", "TimeInterval Demo", "Interval component, based on Moment.js"),
 
                     new Item("LocalDateDemo", "LocalDate Demo", "LocalDate component, based on Moment.js"),
@@ -320,7 +322,7 @@ public class Index
 
                     new Item("GridRemoveReorderDemo", "Grid Remove/Reorder Demo",
                             "handling of remove and reorder parameters"),
-                            
+
                     new Item("EmptyGrid", "Empty Grid Demo", "show table for empty data sources"),
 
                     new Item("protected", "Protected Page",
@@ -505,10 +507,10 @@ public class Index
 
                     new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name",
                             "Creating a SelectModel from a list of objects and a label property name"),
-                            
+
                     new Item("SelectModelFromObjectsDemo", "SelectModel from objects",
                             "Creating a SelectModel from a list of objects"),
-                            
+
                     new Item("SelectModelCoercionDemo", "SelectModel coercion",
                             "Creating a SelectModel from a list of objects using coercion"),
 
@@ -550,9 +552,9 @@ public class Index
 
                     new Item("UnknownActivationContextDemo", "Unknown Activation Context Demo", "Page refuse to serve if called with an unknown activation context (TAP5-2070)",
                             "Unwanted", "context"),
-                    
+
                     new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()"),
-                    
+
                     new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer")
 
             );
