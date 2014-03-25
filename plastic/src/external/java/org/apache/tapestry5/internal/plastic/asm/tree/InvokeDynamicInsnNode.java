@@ -29,15 +29,15 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
+import java.util.Map;
+
 import org.apache.tapestry5.internal.plastic.asm.Handle;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 
-import java.util.Map;
-
 /**
  * A node that represents an invokedynamic instruction.
- *
+ * 
  * @author Remi Forax
  */
 public class InvokeDynamicInsnNode extends AbstractInsnNode {
@@ -64,18 +64,18 @@ public class InvokeDynamicInsnNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link InvokeDynamicInsnNode}.
-     *
-     * @param name invokedynamic name.
-     * @param desc invokedynamic descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
-     * @param bsm the bootstrap method.
-     * @param bsmArgs the boostrap constant arguments.
+     * 
+     * @param name
+     *            invokedynamic name.
+     * @param desc
+     *            invokedynamic descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+     * @param bsm
+     *            the bootstrap method.
+     * @param bsmArgs
+     *            the boostrap constant arguments.
      */
-    public InvokeDynamicInsnNode(
-        final String name,
-        final String desc,
-        final Handle bsm,
-        final Object... bsmArgs)
-    {
+    public InvokeDynamicInsnNode(final String name, final String desc,
+            final Handle bsm, final Object... bsmArgs) {
         super(Opcodes.INVOKEDYNAMIC);
         this.name = name;
         this.desc = desc;
@@ -91,10 +91,12 @@ public class InvokeDynamicInsnNode extends AbstractInsnNode {
     @Override
     public void accept(final MethodVisitor mv) {
         mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+        acceptAnnotations(mv);
     }
 
     @Override
     public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
-        return new InvokeDynamicInsnNode(name, desc, bsm, bsmArgs);
+        return new InvokeDynamicInsnNode(name, desc, bsm, bsmArgs)
+                .cloneAnnotations(this);
     }
 }

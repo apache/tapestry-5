@@ -33,13 +33,12 @@ import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 
 /**
- * An {@link org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor} that prints the annotations it visits with a
+ * An {@link AnnotationVisitor} that prints the annotations it visits with a
  * {@link Printer}.
- *
+ * 
  * @author Eric Bruneton
  */
-public final class TraceAnnotationVisitor extends AnnotationVisitor
-{
+public final class TraceAnnotationVisitor extends AnnotationVisitor {
 
     private final Printer p;
 
@@ -48,7 +47,7 @@ public final class TraceAnnotationVisitor extends AnnotationVisitor
     }
 
     public TraceAnnotationVisitor(final AnnotationVisitor av, final Printer p) {
-        super(Opcodes.ASM4, av);
+        super(Opcodes.ASM5, av);
         this.p = p;
     }
 
@@ -59,33 +58,26 @@ public final class TraceAnnotationVisitor extends AnnotationVisitor
     }
 
     @Override
-    public void visitEnum(
-        final String name,
-        final String desc,
-        final String value)
-    {
+    public void visitEnum(final String name, final String desc,
+            final String value) {
         p.visitEnum(name, desc, value);
         super.visitEnum(name, desc, value);
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(
-        final String name,
-        final String desc)
-    {
+    public AnnotationVisitor visitAnnotation(final String name,
+            final String desc) {
         Printer p = this.p.visitAnnotation(name, desc);
-        AnnotationVisitor av = this.av == null
-                ? null
-                : this.av.visitAnnotation(name, desc);
+        AnnotationVisitor av = this.av == null ? null : this.av
+                .visitAnnotation(name, desc);
         return new TraceAnnotationVisitor(av, p);
     }
 
     @Override
     public AnnotationVisitor visitArray(final String name) {
         Printer p = this.p.visitArray(name);
-        AnnotationVisitor av = this.av == null
-                ? null
-                : this.av.visitArray(name);
+        AnnotationVisitor av = this.av == null ? null : this.av
+                .visitArray(name);
         return new TraceAnnotationVisitor(av, p);
     }
 
