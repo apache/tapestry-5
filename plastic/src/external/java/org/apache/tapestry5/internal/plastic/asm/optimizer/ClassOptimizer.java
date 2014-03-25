@@ -29,10 +29,14 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.optimizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
 import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.TypePath;
@@ -50,7 +54,10 @@ public class ClassOptimizer extends RemappingClassAdapter {
 
     private String pkgName;
     String clsName;
-    boolean class$;
+
+    boolean isInterface = false;
+    boolean hasClinitMethod = false;
+    List<String> syntheticClassFields = new ArrayList<String>();
 
     public ClassOptimizer(final ClassVisitor cv, final Remapper remapper) {
         super(Opcodes.ASM5, cv, remapper);
@@ -70,13 +77,14 @@ public class ClassOptimizer extends RemappingClassAdapter {
             final String signature, final String superName,
             final String[] interfaces) {
         super.visit(Opcodes.V1_2, access, name, null, superName, interfaces);
-        clsName = name;
         int index = name.lastIndexOf('/');
         if (index > 0) {
             pkgName = name.substring(0, index);
         } else {
             pkgName = "";
         }
+        clsName = name;
+        isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
     }
 
     @Override
@@ -149,6 +157,19 @@ public class ClassOptimizer extends RemappingClassAdapter {
         if ("-".equals(s)) {
             return null;
         }
+        if (name.equals("<clinit>") && !isInterface) {
+            hasClinitMethod = true;
+            MethodVisitor mv = super.visitMethod(access, name, desc, null,
+                    exceptions);
+            return new MethodVisitor(Opcodes.ASM5, mv) {
+                @Override
+                public void visitCode() {
+                    super.visitCode();
+                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, clsName,
+                            "_clinit_", "()V", false);
+                }
+            };
+        }
 
         if ((access & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED)) == 0) {
             if ("org/objectweb/asm".equals(pkgName) && !name.startsWith("<")
@@ -171,5 +192,69 @@ public class ClassOptimizer extends RemappingClassAdapter {
     protected MethodVisitor createRemappingMethodAdapter(int access,
             String newDesc, MethodVisitor mv) {
         return new MethodOptimizer(this, access, newDesc, mv, remapper);
+    }
+
+    @Override
+    public void visitEnd() {
+        if (syntheticClassFields.isEmpty()) {
+            if (hasClinitMethod) {
+                MethodVisitor mv = cv.visitMethod(Opcodes.ACC_STATIC
+                        | Opcodes.ACC_SYNTHETIC, "_clinit_", "()V", null, null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+            }
+        } else {
+            MethodVisitor mv = cv.visitMethod(Opcodes.ACC_STATIC
+                    | Opcodes.ACC_SYNTHETIC, "class$",
+                    "(Ljava/lang/String;)Ljava/lang/Class;", null, null);
+            mv.visitCode();
+            Label l0 = new Label();
+            Label l1 = new Label();
+            Label l2 = new Label();
+            mv.visitTryCatchBlock(l0, l1, l2,
+                    "java/lang/ClassNotFoundException");
+            mv.visitLabel(l0);
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Class",
+                    "forName", "(Ljava/lang/String;)Ljava/lang/Class;", false);
+            mv.visitLabel(l1);
+            mv.visitInsn(Opcodes.ARETURN);
+            mv.visitLabel(l2);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+                    "java/lang/ClassNotFoundException", "getMessage",
+                    "()Ljava/lang/String;", false);
+            mv.visitVarInsn(Opcodes.ASTORE, 1);
+            mv.visitTypeInsn(Opcodes.NEW, "java/lang/NoClassDefFoundError");
+            mv.visitInsn(Opcodes.DUP);
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                    "java/lang/NoClassDefFoundError", "<init>",
+                    "(Ljava/lang/String;)V", false);
+            mv.visitInsn(Opcodes.ATHROW);
+            mv.visitMaxs(3, 2);
+            mv.visitEnd();
+
+            if (hasClinitMethod) {
+                mv = cv.visitMethod(Opcodes.ACC_STATIC | Opcodes.ACC_PRIVATE,
+                        "_clinit_", "()V", null, null);
+            } else {
+                mv = cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V",
+                        null, null);
+            }
+            for (String ldcName : syntheticClassFields) {
+                String fieldName = "class$" + ldcName.replace('/', '$');
+                mv.visitLdcInsn(ldcName.replace('/', '.'));
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, clsName, "class$",
+                        "(Ljava/lang/String;)Ljava/lang/Class;", false);
+                mv.visitFieldInsn(Opcodes.PUTSTATIC, clsName, fieldName,
+                        "Ljava/lang/Class;");
+            }
+            mv.visitInsn(Opcodes.RETURN);
+            mv.visitMaxs(1, 0);
+            mv.visitEnd();
+        }
+        super.visitEnd();
     }
 }
