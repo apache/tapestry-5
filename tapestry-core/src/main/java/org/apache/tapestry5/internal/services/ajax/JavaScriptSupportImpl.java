@@ -29,6 +29,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         public void with(Object... arguments)
         {
+            assert arguments != null;
+
             this.arguments = new JSONArray(arguments);
         }
     }
@@ -177,28 +180,33 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
     {
-        storeInitializerCall(priority, functionName, parameter);
+        createInitializer(priority).with(functionName, parameter);
     }
 
     public void addInitializerCall(String functionName, JSONArray parameter)
     {
-        storeInitializerCall(InitializationPriority.NORMAL, functionName, parameter);
+        addInitializerCall(InitializationPriority.NORMAL, functionName, parameter);
     }
 
-    public void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter)
+    public void addInitializerCall(InitializationPriority priority, String functionName,
+            JSONArray parameter)
     {
-        storeInitializerCall(priority, functionName, parameter);
+        // TAP5-2300: In 5.3, a JSONArray implied an array of method arguments, so unwrap and add
+        // functionName to the arguments
+
+        List parameterList = new ArrayList(parameter.length() + 1);
+        parameterList.add(functionName);
+        parameterList.addAll(parameter.toList());
+        createInitializer(priority).with(parameterList.toArray());
     }
 
-    private void storeInitializerCall(InitializationPriority priority, String functionName, Object parameter)
+    private Initialization createInitializer(InitializationPriority priority)
     {
         assert priority != null;
-        assert parameter != null;
-        assert InternalUtils.isNonBlank(functionName);
 
         importCoreStack();
 
-        require("t5/core/init").priority(priority).with(functionName, parameter);
+        return require("t5/core/init").priority(priority);
     }
 
     public void addInitializerCall(String functionName, JSONObject parameter)
@@ -208,7 +216,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public void addInitializerCall(InitializationPriority priority, String functionName, String parameter)
     {
-        storeInitializerCall(priority, functionName, parameter);
+        createInitializer(priority).with(functionName, parameter);
     }
 
     public void addInitializerCall(String functionName, String parameter)
