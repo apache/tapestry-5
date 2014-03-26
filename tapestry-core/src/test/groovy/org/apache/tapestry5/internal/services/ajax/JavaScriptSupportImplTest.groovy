@@ -46,7 +46,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         train_for_just_core_stack stackSource
 
         linker.addInitialization(InitializationPriority.NORMAL, "t5/core/pageinit", "evalJavaScript",
-            new JSONArray().put("doSomething();"))
+                new JSONArray().put("doSomething();"))
 
         replay()
 
@@ -196,7 +196,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         jss.commit()
 
         verify()
-
     }
 
 
@@ -423,7 +422,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         train_for_just_core_stack stackSource
 
-        train_init(linker, InitializationPriority.NORMAL, "setup", chuck)
+        train_init(linker, InitializationPriority.NORMAL, "setup", "chuck", "yeager")
 
         replay()
 
