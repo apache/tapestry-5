@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,18 +48,29 @@ public class ComponentActionSink
 
     public <T> void store(T component, ComponentAction<T> action)
     {
+        streamAction(component, false, action);
+    }
+
+    public <T> void storeCancel(T component, ComponentAction<T> action)
+    {
+        streamAction(component, true, action);
+    }
+
+    private <T> void streamAction(T component, boolean cancel, ComponentAction<T> action)
+    {
         Component castComponent = (Component) component;
         assert action != null;
 
         String completeId = castComponent.getComponentResources().getCompleteId();
 
-        logger.debug("Storing action: {} {}", completeId, action);
+        logger.debug("Storing {}: {} {}", cancel ? "cancel action": "action", completeId, action);
 
         try
         {
             // Writing the complete id is not very efficient, but the GZip filter
             // should help out there.
             stream.writeUTF(completeId);
+            stream.writeBoolean(cancel);
             stream.writeObject(action);
         }
         catch (IOException ex)

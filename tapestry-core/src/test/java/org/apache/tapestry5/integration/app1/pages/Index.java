@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+
+                    new Item ("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
 
                     new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),
 

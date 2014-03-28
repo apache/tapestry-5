@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,6 +40,14 @@ public interface FormSupport extends ClientElement
      * its final state before invoking this method and its internal state should not be changed subsequently.
      */
     <T> void store(T component, ComponentAction<T> action);
+
+    /**
+     * Stores an action for execution in a later request when the containing form is canceled. Cancel actions
+     * are triggered before the form fires its {@link org.apache.tapestry5.EventConstants#CANCELED} event.
+     *
+     * @since 5.4
+     */
+    <T> void storeCancel(T component, ComponentAction<T> action);
 
     /**
      * As with {@link #store(Object, org.apache.tapestry5.ComponentAction)}}, but the action is also invoked
@@ -88,9 +96,9 @@ public interface FormSupport extends ClientElement
      * @param constraint
      *         additional constraint value, or null for validations that don't require a constraint
      * @deprecated Deprecated in 5.4 with no exact replacement; this default implementation now does nothing.
-     *             Invoke {@link #isClientValidationEnabled()}, and (if true),
-     *             use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} to add necessary modules, and add
-     *             triggering and configuring attributes to the field's {@link org.apache.tapestry5.dom.Element}.
+     * Invoke {@link #isClientValidationEnabled()}, and (if true),
+     * use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} to add necessary modules, and add
+     * triggering and configuring attributes to the field's {@link org.apache.tapestry5.dom.Element}.
      */
     void addValidation(Field field, String validationName, String message, Object constraint);
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -192,6 +192,12 @@ public class Zone implements ClientBodyElement
                 public <T> void store(T component, ComponentAction<T> action)
                 {
                     actionSink.store(component, action);
+                }
+
+                @Override
+                public <T> void storeCancel(T component, ComponentAction<T> action)
+                {
+                    actionSink.storeCancel(component, action);
                 }
 
                 @Override

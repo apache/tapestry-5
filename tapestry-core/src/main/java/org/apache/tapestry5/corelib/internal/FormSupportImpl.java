@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -90,6 +90,11 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
     public <T> void store(T component, ComponentAction<T> action)
     {
         actionSink.store(component, action);
+    }
+
+    public <T> void storeCancel(T component, ComponentAction<T> action)
+    {
+        actionSink.storeCancel(component, action);
     }
 
     public <T> void storeAndExecute(T component, ComponentAction<T> action)

@@ -288,6 +288,11 @@ the typo (the missing 's').
 
 The OperationTracker interface has had a new method added, for performing an IO Operation (that may throw IOException).
 
+## FormSupport Extended
+
+The FormSupport interface has a new method, storeCancel(), which stores a component action that is only executed
+if the containing form is canceled.
+
 ## Session Locking
 
 Tapestry now uses a lock on access to the HttpSession; a shared read lock is acquired when reading session attribute
