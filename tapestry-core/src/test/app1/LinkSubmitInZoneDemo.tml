@@ -23,7 +23,7 @@
         <t:errors/>
         <t:textfield t:id="value"/>
         <br/>
-        <t:linksubmit t:id="mySubmit">submit</t:linksubmit>
+        <t:linksubmit t:id="mySubmit" class="btn btn-primary">submit</t:linksubmit>
     </t:form>
 
 </t:border>
