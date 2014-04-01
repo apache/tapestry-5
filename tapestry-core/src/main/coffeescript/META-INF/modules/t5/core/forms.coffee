@@ -78,7 +78,7 @@ define ["./events", "./dom", "underscore"],
 
           value = field.value()
 
-        return if value is null
+          return if value is null
 
           name = field.element.name
 
