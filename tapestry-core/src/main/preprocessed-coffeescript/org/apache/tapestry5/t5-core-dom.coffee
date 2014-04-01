@@ -120,6 +120,7 @@ define ["underscore", "./utils", "./events", "jquery"],
       @nativeEvent.preventDefault()
       @nativeEvent.stopImmediatePropagation()
 #elseif prototype
+      # There's no equivalent to stopImmediatePropagation() unfortunately.
       @nativeEvent.stop()
 #endif
 
@@ -178,7 +179,11 @@ define ["underscore", "./utils", "./events", "jquery"],
         elementWrapper = new ElementWrapper prototypeEvent.findElement()
         eventWrapper = new EventWrapper prototypeEvent
 
-        result = handler.call elementWrapper, eventWrapper, eventWrapper.memo
+        # Because there's no stopImmediatePropogation() as with jQuery, we detect if the
+        # event was stopped and simply stop calling the handler.
+        result = if prototypeEvent.stopped
+                  false
+                else handler.call elementWrapper, eventWrapper, eventWrapper.memo
 
         # If an event handler returns exactly false, then stop the event.
         if result is false
