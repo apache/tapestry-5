@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -158,9 +158,13 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
                         // Ends with trailing slash:
                         String metaRoot = "META-INF/assets/" + toPathPrefix(resources.getComponentModel().getLibraryName());
 
-                        String metaPath = metaRoot + (restOfPath.startsWith("/")
-                                ? restOfPath.substring(1)
-                                : restOfPath);
+                        String trimmedRestOfPath = restOfPath.startsWith("/") ? restOfPath.substring(1) : restOfPath;
+
+
+                        // TAP5-2044: Some components specify a full path, starting with META-INF/assets/, and we should just trust them.
+                        // The warning logic below is for compnents that specify a relative path. Our bad decisions come back to haunt us;
+                        // Resource paths should always had a leading slash to differentiate relative from complete.
+                        String metaPath = trimmedRestOfPath.startsWith("META-INF/assets/") ? trimmedRestOfPath : metaRoot + trimmedRestOfPath;
 
                         // Based on the path, metaResource is where it should exist in a 5.4 and beyond world ... unless the expanded
                         // path was a bit too full of ../ sequences, in which case the expanded path is not valid and we adjust the
@@ -236,6 +240,11 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
         return getAssetForResource(oldStyle);
     }
 
+    /**
+     * Figure out the relative path, under /META-INF/assets/ for resources for a given library.
+     * The application library is the blank string and goes directly in /assets/; other libraries
+     * are like virtual folders within /assets/.
+     */
     private String toPathPrefix(String libraryName)
     {
         return libraryName.equals("") ? "" : libraryName + "/";
