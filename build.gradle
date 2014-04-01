@@ -36,7 +36,7 @@ project.version = tapestryVersion()
 def tapestryVersion() {
 
     def major = "5.4"
-    def minor = "-beta-4"
+    def minor = "-beta-5"
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
     // When building normally, or for a release, no suffix is desired.
@@ -165,7 +165,7 @@ subprojects {
     idea.module {
         scopes.PROVIDED.plus += configurations.provided
     }
-    
+
     eclipse.classpath.plusConfigurations += configurations.provided
 
     dependencies {
@@ -265,32 +265,23 @@ subprojects {
     // Prefer this version, because it has source artifacts available.
     def servletAPI = 'org.mortbay.jetty:servlet-api-2.5:6.1.11'
 
-    def versionOverrides = [
-        "antlr:antlr": "2.7.7",
-        "cglib:cglib-nodep": "2.2",
-        "commons-codec:commons-codec": "1.8",
-        "commons-io:commons-io": "2.4",
-        "commons-logging:commons-logging": "1.1.3",
-        "hsqldb:hsqldb": "2.2.8",
-        "org.antlr:antlr-runtime": "3.4",
-        "org.apache.tomcat:dbcp": "6.0.32",
-        // "org.apache.tomcat:servlet-api": "6.0.30",
-        "org.hamcrest:hamcrest-core": "1.3",
-        "org.json:json": "20140107",
-        "org.yaml:snakeyaml": "1.8",
-        "xml-apis:xml-apis": "1.4.01"
-    ]
-
     configurations.all {
+
+        resolutionStrategy.force "antlr:antlr:2.7.7",
+            "cglib:cglib-nodep:2.2",
+            "commons-codec:commons-codec:1.8",
+            "commons-io:commons-io:2.4",
+            "commons-logging:commons-logging:1.1.3",
+            "hsqldb:hsqldb:2.2.8",
+            "org.antlr:antlr-runtime:3.4",
+            "org.apache.tomcat:dbcp:6.0.32",
+            "org.hamcrest:hamcrest-core:1.3",
+            "org.json:json:20140107",
+            "org.yaml:snakeyaml:1.8",
+            "xml-apis:xml-apis:1.4.01"
 
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
 
-            def overrideVersion = versionOverrides[details.requested.group + ":" + details.requested.name]
-
-            if (overrideVersion != null && details.requested.version != overrideVersion) {
-                logger.info "Overriding dependency ${details.requested.group}:${details.requested.name} version ${details.requested.version} --> $overrideVersion"
-                details.useVersion overrideVersion
-            }
 
             if (details.requested.name.startsWith("servlet-api")) {
                 logger.info "Overriding dependency ${details.requested.group}:${details.requested.name}:${details.requested.version} --> $servletAPI"
@@ -375,7 +366,7 @@ task coffeeScriptDocs(type: Exec) {
     def sources = files()
 
     subprojects.each { sub ->
-      sources += sub.fileTree("src/main/coffeescript", { include "**/*.coffee" })
+        sources += sub.fileTree("src/main/coffeescript", { include "**/*.coffee" })
     }
 
     sources += project(":tapestry-core").tasks.preprocessCoffeeScript.outputs.files.asFileTree
@@ -385,7 +376,7 @@ task coffeeScriptDocs(type: Exec) {
     // Needs to be installed via "npm install -g docco"
     executable isWindows() ? "docco.cmd" : "docco"
     args "--output", outputDir
-    args sources.files.sort({ a,b -> a.name.compareTo b.name })
+    args sources.files.sort({ a, b -> a.name.compareTo b.name })
 
     inputs.files { sources }
     outputs.dir outputDir
@@ -562,8 +553,8 @@ boolean checkJDK() {
     def jdkVersion = System.properties['java.version']
     def match = jdkVersion =~ /_(\d+)/
 
-    if (! match.find())
-      throw new IllegalStateException("""Could not parse minor version number out of "#{jdkVersion}".""")
+    if (!match.find())
+        throw new IllegalStateException("""Could not parse minor version number out of "#{jdkVersion}".""")
 
     def minor = match[0][1].toInteger()
 

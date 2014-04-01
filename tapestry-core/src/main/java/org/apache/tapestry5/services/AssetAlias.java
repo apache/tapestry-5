@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 /**
- * Identifies a virtual foldre and a path within that folder.
+ * Identifies a virtual folder and a path within that folder.
  *
  * @since 5.4
  * @deprecated Deprecated in 5.4 (see notes in {@link ClasspathAssetAliasManager}).

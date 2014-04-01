@@ -1,4 +1,4 @@
-# Copyright 2012, 2013 The Apache Software Foundation
+# Copyright 2012-2014 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ define
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:
     # Triggered after fields have been validated, when there are no field validation exceptions, to allow for
-    # cross-form validation.
+    # cross-form validation. Passed a memo object: the handler should set the `error` property of the memo
+    # to true to indicate a validation exception occured, and the form submission should be prevented.
     validate: "t5:form:validate"
 
     # Triggered after `validate` (when there are no prior validation exceptions), to allow certain elements
@@ -81,7 +82,7 @@ define
     # interested in participating with user input validation). The default implementation fires a series of
     # events: `optional`, `translate`, `validate`. The latter two are always skipped if the input is blank, or if
     # a preceding event set the memo's `error` property to true.  If all events complete without setting an error,
-    # then the `clearValidationError` event is triggered, so remove any validation errors from previous
+    # then the `clearValidationError` event is triggered, to remove any validation errors from previous
     # validation cycles.
     #
     # This event is passed a memo object; it should set the memo's `error` property to true if validation failed
@@ -89,7 +90,7 @@ define
     inputValidation: "t5:field:input-validation"
 
     # Clears and hides the element used to display validation error messages. There is no memo for
-    # this event. The p.help-block for the field is located (if it exists) and empties and hidden.
+    # this event. The p.help-block for the field is located (if it exists) and emptied and hidden.
     # The containing .form-group element (if it exists) has its "has-error" class name removed.
     clearValidationError: "t5:field:clear-validation-error"
 

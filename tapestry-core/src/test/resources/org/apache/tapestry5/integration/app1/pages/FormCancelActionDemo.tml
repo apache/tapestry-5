@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+
+    <t:form t:id="form" t:mixins="rendernotification">
+        <t:submit mode="cancel" value="Cancel"/>
+    </t:form>
+
+    <ul id="messages">
+        <li t:type="loop" source="messages" value="var:message">
+            ${var:message}
+        </li>
+
+    </ul>
+
+</html>

@@ -1,5 +1,6 @@
 package org.apache.tapestry5.internal.services.ajax
 
+import org.testng.annotations.Test;
 import org.apache.tapestry5.Asset
 import org.apache.tapestry5.ComponentResources
 import org.apache.tapestry5.internal.InternalConstants
@@ -45,7 +46,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         train_for_just_core_stack stackSource
 
         linker.addInitialization(InitializationPriority.NORMAL, "t5/core/pageinit", "evalJavaScript",
-            new JSONArray().put("doSomething();"))
+                new JSONArray().put("doSomething();"))
 
         replay()
 
@@ -195,7 +196,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         jss.commit()
 
         verify()
-
     }
 
 
@@ -357,8 +357,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         train_for_just_core_stack stackSource
 
-        train_init(linker, InitializationPriority.IMMEDIATE, "setup", chuck)
-        train_init(linker, InitializationPriority.IMMEDIATE, "setup", buzz)
+        train_init(linker, InitializationPriority.IMMEDIATE, "setup", "chuck", "yeager")
+        train_init(linker, InitializationPriority.IMMEDIATE, "setup", "buzz", "aldrin")
 
         replay()
 
@@ -422,7 +422,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         train_for_just_core_stack stackSource
 
-        train_init(linker, InitializationPriority.NORMAL, "setup", chuck)
+        train_init(linker, InitializationPriority.NORMAL, "setup", "chuck", "yeager")
 
         replay()
 

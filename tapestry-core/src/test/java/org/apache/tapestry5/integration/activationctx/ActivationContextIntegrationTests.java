@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 package org.apache.tapestry5.integration.activationctx;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * To test TAP5-2070
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/activationctx")
 public class ActivationContextIntegrationTests extends TapestryCoreTestCase
 {
     
@@ -89,16 +91,19 @@ public class ActivationContextIntegrationTests extends TapestryCoreTestCase
         assertTextPresent("You are able to see me only with two parameters in the activation context");
     }
     
-    private void assertLinksAreCorrect(final String suffix, final String expectedText)
+    private void assertLinksAreCorrect(final String label, final String expectedText)
     {
-        assertNoContextCorrect(suffix, STRING_PARAMETER, expectedText);
-        assertNoContextCorrect(suffix, PAGE_CLASS_PARAMETER, expectedText);
-        assertNoContextCorrect(suffix, PAGE_INSTANCE_PARAMETER, expectedText);
+        assertNoContextCorrect(label, STRING_PARAMETER, expectedText);
+        assertNoContextCorrect(label, PAGE_CLASS_PARAMETER, expectedText);
+        assertNoContextCorrect(label, PAGE_INSTANCE_PARAMETER, expectedText);
     }
 
-    private void assertNoContextCorrect(String linkSuffix, String linkPrefix, String expectedText)
+    private void assertNoContextCorrect(String label, String suffix, String expectedText)
     {
-        openLinks("No context correct" + linkPrefix != null ? ": " + linkPrefix : "");
+        String fullLabel = suffix == null ? label : label + ": " + suffix;
+
+        openLinks(fullLabel);
+
         assertTextPresent(expectedText);
     }
 

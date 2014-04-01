@@ -1,4 +1,4 @@
-// Copyright 2008-2012 The Apache Software Foundation
+// Copyright 2008-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -186,6 +186,12 @@ public class FormFragment implements ClientElement
             public <T> void store(T component, ComponentAction<T> action)
             {
                 componentActions.store(component, action);
+            }
+
+            @Override
+            public <T> void storeCancel(T component, ComponentAction<T> action)
+            {
+                componentActions.storeCancel(component, action);
             }
 
             @Override

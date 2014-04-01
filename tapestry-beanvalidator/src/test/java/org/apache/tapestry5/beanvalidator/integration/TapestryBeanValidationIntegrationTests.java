@@ -209,7 +209,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         assertTextPresent("Birth Day may not be null");
 
 
-        type("loginName", "123");
+        type("loginName", "123456");
         click(SUBMIT);
 
         assertTextPresent("Login Name must match \"[a-zA-Z]+\"");

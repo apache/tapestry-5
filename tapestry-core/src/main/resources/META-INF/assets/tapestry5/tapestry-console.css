@@ -1,7 +1,7 @@
 /* The console is used to show debugging messages. */
 .tapestry-console {
     position: fixed;
-    z-index: 2000;
+    z-index: 1100;
     bottom: 0px;
     left: 0px;
     right: 0px;

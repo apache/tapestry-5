@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -485,6 +485,8 @@ public class Form implements ClientElement, FormValidationControl
 
             if (isFormCancelled())
             {
+                executeStoredActions(true);
+
                 resources.triggerContextEvent(EventConstants.CANCELED, context, eventCallback);
                 if (eventCallback.isAborted())
                     return true;
@@ -494,7 +496,7 @@ public class Form implements ClientElement, FormValidationControl
 
             didPushBeanValidationContext = true;
 
-            executeStoredActions();
+            executeStoredActions(false);
 
             heartbeat.end();
 
@@ -622,7 +624,7 @@ public class Form implements ClientElement, FormValidationControl
      * stream back to object stream and then
      * objects, and executes them.
      */
-    private void executeStoredActions()
+    private void executeStoredActions(boolean forFormCancel)
     {
         String[] values = request.getParameters(FORM_DATA);
 
@@ -650,7 +652,12 @@ public class Form implements ClientElement, FormValidationControl
                 while (!eventCallback.isAborted())
                 {
                     String componentId = ois.readUTF();
+                    boolean cancelAction = ois.readBoolean();
                     ComponentAction action = (ComponentAction) ois.readObject();
+
+                    // Actions are a mix of ordinary actions and cancel actions.  Filter out one set or the other
+                    // based on whether the form was submitted or cancelled.
+                    if (forFormCancel != cancelAction) { continue; }
 
                     component = source.getComponent(componentId);
 

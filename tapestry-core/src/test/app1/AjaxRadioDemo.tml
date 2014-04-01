@@ -1,0 +1,64 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Ajax Radio Demo</h1>
+
+    <t:zone>
+
+        <p>Choose a department and position:</p>
+
+        <t:form t:id="data" zone="^">
+            <t:errors/>
+
+            <t:radiogroup t:id="department" t:validate="required">
+                <div class="well">
+
+                    <t:loop source="departments" value="loopValue">
+
+                        <div class="radio">
+                            <label>
+                                <t:radio t:id="radio" value="loopValue"/>
+                                ${label}
+                            </label>
+                        </div>
+
+                    </t:loop>
+                </div>
+
+            </t:radiogroup>
+
+            <t:radiogroup t:id="position">
+                <div class="well">
+                    <div class="radio-inline">
+                        <label>
+                            <t:radio t:id="radio1" value="literal:TEMP"/>
+                            Temp
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <t:radio t:id="radio2" value="literal:LIFER"/>
+                            Lifer
+                        </label>
+                    </div>
+                </div>
+            </t:radiogroup>
+
+            <input class="btn btn-primary" type="submit" value="Update"/>
+            <t:actionlink class="btn btn-default" t:id="reset">reset</t:actionlink>
+        </t:form>
+
+    </t:zone>
+
+    <t:block t:id="dataOutput">
+
+        <dl>
+            <dt>Department</dt>
+            <dd id="selected-department">${department}</dd>
+            <dt>Position</dt>
+            <dd id="selected-position">${position}</dd>
+        </dl>
+
+    </t:block>
+
+
+</html>

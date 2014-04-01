@@ -29,10 +29,10 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
+import java.util.Map;
+
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-
-import java.util.Map;
 
 /**
  * An {@link AbstractInsnNode} that encapsulates a {@link Label}.
