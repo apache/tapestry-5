@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011, 2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,6 +87,13 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         {
             if (resourcePath.startsWith(pathPrefix))
             {
+                if (pathPrefix.length() == resourcePath.length())
+                {
+                    throw new IllegalArgumentException(String.format("Resource path '%s' is not valid as it is mapped as virtual folder '%s'.",
+                            resourcePath,
+                            pathPrefixToAlias.get(pathPrefix)));
+                }
+
                 // Prevent matching path prefix "foo" against "foobar" ... it must match against "foo/".
                 if (resourcePath.charAt(pathPrefix.length()) != '/')
                 {

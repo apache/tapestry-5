@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2012, 2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,6 +93,31 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void can_not_map_resource_path_that_matches_virtual_folder() throws IOException
+    {
+        Resource r = mockResource();
+
+        expect(r.getPath()).andReturn("com/example/mylib");
+
+        replay();
+
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(configuration());
+
+        try
+        {
+            manager.extractAssetAlias(r);
+
+            unreachable();
+        } catch (IllegalArgumentException ex)
+        {
+
+        }
+
+        verify();
+
+    }
+
+    @Test
     public void failure_if_path_not_in_mapped_alias_folder()
     {
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(configuration());
@@ -125,7 +150,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
                         {"com/example/mylib/Foo.bar", "mylib", "Foo.bar"},
                         {"com/example/mylib/nested/Foo.bar", "mylib", "nested/Foo.bar"},
                         {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal", "Foo.bar"},
-                        {"org/apache/tapestry5/Foo.bar", "tapestry", "Foo.bar"}
+                        {"org/apache/tapestry5/Foo.bar", "tapestry", "Foo.bar"},
                 };
     }
 
