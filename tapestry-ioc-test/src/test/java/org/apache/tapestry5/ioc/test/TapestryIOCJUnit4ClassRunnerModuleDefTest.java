@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import static org.apache.tapestry5.ioc.test.RegistryShutdownType.AFTER_METHOD;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.test.TapestryIOCJUnit4ClassRunnerModuleDefTest.ModuleDefTestModule;
@@ -28,36 +26,41 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(TapestryIOCJUnit4ClassRunner.class)
-@Registry(modules=ModuleDefTestModule.class, shutdown=AFTER_METHOD)
+@Registry(modules=ModuleDefTestModule.class)
 public class TapestryIOCJUnit4ClassRunnerModuleDefTest {
 	@ModuleDef
-	public static MapModuleDef createMapModuleDef() {
+	public static MapModuleDef createModuleDef1() {
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("foo", new Date(100));
-		map.put("bar", new Long(999));
+		map.put("a", new Date(111));
+		map.put("b", 222L);
 		
 		return new MapModuleDef(map);
 	}
 
+	@ModuleDef
+	public static MapModuleDef createModuleDef2() {
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("c", 333);
+
+		return new MapModuleDef(map);
+	}
+
 	public static class ModuleDefTestModule {
-		public Integer buildBaz() {
-			return new Integer(666);
+		public String buildD() {
+			return "444";
 		}
 	}
 
-	@Inject
-	private Date foo;
-	
-	@Inject
-	private Long bar;
-	
-	@Inject
-	private Integer baz;
+	@Inject private Date a;
+	@Inject private Long b;
+	@Inject private Integer c;
+	@Inject private String d;
 	
 	@Test
 	public void testModuleDefInject() {
-		Assert.assertEquals(new Date(100), foo);
-		Assert.assertEquals(new Long(999), bar);
-		Assert.assertEquals(new Integer(666), baz);
+		assertEquals(new Date(111), a);
+		assertEquals(new Long(222L), b);
+		assertEquals(new Integer(333), c);
+		assertEquals("444", d);
 	}
 }

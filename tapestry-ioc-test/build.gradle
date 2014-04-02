@@ -2,7 +2,7 @@ description = "Utilities for integration testing a tapestry-ioc app"
 
 dependencies {
     compile project(':tapestry-ioc')
-	compile 'junit:junit:4.8.1'
+	compile 'junit:junit:4.11'
 }
 
 test {

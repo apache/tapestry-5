@@ -29,7 +29,6 @@ import org.junit.runners.model.InitializationError;
  */
 public class TestRegistryManager {
 	private final Registry annotation;
-	private final Class<?> type;
 	private final List<Method> moduleDefFactories;
 	
 	private org.apache.tapestry5.ioc.Registry registry;
@@ -42,7 +41,6 @@ public class TestRegistryManager {
 			throw new InitializationError(type.getName() + " does not specify a @Registry");
 		}
 		
-		this.type = type;
 		this.annotation = annotation;
 		this.moduleDefFactories = findModuleDefFactories(type);
 	}
@@ -75,21 +73,29 @@ public class TestRegistryManager {
 		}
 	}
 
-	public void beforeTestClass() {
-	}
-	
-	public void beforeTestMethod() {
-	}
-	
-	public Object createTest() throws Exception {
-		if (!isRegistryStarted()) {
-			try {
-				createRegistry();
-			} catch (Throwable e) {
-				throw new Exception(e);
+	public org.apache.tapestry5.ioc.Registry getOrCreateRegistry() throws Exception {
+		if (registry == null) {
+			RegistryBuilder builder = new RegistryBuilder();
+			if (annotation.modules() != null) {
+				builder.add(annotation.modules());
 			}
+			for (Method moduleDefFactory : moduleDefFactories) {
+				try {
+					org.apache.tapestry5.ioc.def.ModuleDef moduleDef =
+							(org.apache.tapestry5.ioc.def.ModuleDef) moduleDefFactory.invoke(null);
+					
+					builder.add(moduleDef);
+				} catch (InvocationTargetException e) {
+					if (e.getTargetException() instanceof Exception) {
+						throw (Exception) e.getTargetException();
+					}
+					throw e;
+				}
+			}
+			registry = builder.build();
+			registry.performRegistryStartup();
 		}
-		return registry.autobuild(type);
+		return registry;
 	}
 	
 	public void afterTestMethod() {
@@ -102,29 +108,6 @@ public class TestRegistryManager {
 		if (annotation.shutdown() == RegistryShutdownType.AFTER_CLASS) {
 			shutdownRegistry();
 		}
-	}
-	
-	protected void createRegistry() throws Throwable {
-		RegistryBuilder builder = new RegistryBuilder();
-		if (annotation.modules() != null) {
-			builder.add(annotation.modules());
-		}
-		for (Method moduleDefFactory : moduleDefFactories) {
-			try {
-				org.apache.tapestry5.ioc.def.ModuleDef moduleDef =
-						(org.apache.tapestry5.ioc.def.ModuleDef) moduleDefFactory.invoke(null);
-				
-				builder.add(moduleDef);
-			} catch (InvocationTargetException e) {
-				throw e.getTargetException();
-			}
-		}
-		registry = builder.build();
-		registry.performRegistryStartup();
-	}
-	
-	protected boolean isRegistryStarted() {
-		return registry != null;
 	}
 	
 	protected void shutdownRegistry() {

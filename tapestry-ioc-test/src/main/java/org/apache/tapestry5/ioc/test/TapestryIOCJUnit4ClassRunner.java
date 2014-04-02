@@ -16,33 +16,42 @@ package org.apache.tapestry5.ioc.test;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.junit.runner.Description;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
  * <p>
- * A JUnit4ClassRunner to help with Tapestry IOC integration tests. The test runner requires a
- * registry configuration to be defined in a {@link Registry} annotation. A {@link RegistryShutdownType} can
- * be specified to configure the lifecycle of the test registry and it's services
+ * A JUnit4ClassRunner to help with Tapestry IOC integration tests. The test
+ * runner requires a registry configuration to be defined in a {@link Registry}
+ * annotation. A {@link RegistryShutdownType} can be specified to configure the
+ * lifecycle of the test registry and it's services
  * </p>
  * 
- * <p>{@link ModuleDef}s can be added to the {@link org.apache.tapestry5.ioc.Registry} by annotating a factory method(s)
- * with {@link org.apache.tapestry5.ioc.test.ModuleDef}. These {@link ModuleDef} factory methods must be
+ * <p>
+ * {@link ModuleDef}s can be added to the
+ * {@link org.apache.tapestry5.ioc.Registry} by annotating a factory method(s)
+ * with {@link org.apache.tapestry5.ioc.test.ModuleDef}. These {@link ModuleDef}
+ * factory methods must be
  * <ul>
- *    <li>public</li>
- *    <li>static</li>
- *    <li>take zero arguments</li>
- *    <li>return a subclass of {@link ModuleDef}</li>
+ * <li>public</li>
+ * <li>static</li>
+ * <li>take zero arguments</li>
+ * <li>return a subclass of {@link ModuleDef}</li>
  * </ul>
  * </p>
  * 
  * <p>
- * Any services defined in the registry can be {@link Inject}ed into the test class to be used during testing.
+ * Any services defined in the registry can be {@link Inject}ed into the test
+ * class to be used during testing.
  * </p>
  */
-@SuppressWarnings("deprecation")
 public class TapestryIOCJUnit4ClassRunner extends BlockJUnit4ClassRunner {
 	private final TestRegistryManager registryManager;
 
@@ -52,51 +61,81 @@ public class TapestryIOCJUnit4ClassRunner extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected Object createTest() throws Exception {
-		return registryManager.createTest();
+	public void run(RunNotifier notifier) {
+		RunNotifier wrapper = new RegistryManagerRunNotifier(registryManager, notifier);
+		super.run(wrapper);
 	}
 
-	@Override
-	protected Statement withBeforeClasses(Statement statement) {
-		final Statement next = super.withBeforeClasses(statement);
-		return new Statement() {
-			public void evaluate() throws Throwable {
-				registryManager.beforeTestClass();
-				next.evaluate();
-			}
-		};
-	}
-
-	@Override
-	protected Statement withBefores(FrameworkMethod method, Object target, Statement statement) {
-		final Statement next = super.withBefores(method, target, statement);
-		return new Statement() {
-			public void evaluate() throws Throwable {
-				registryManager.beforeTestMethod();
-				next.evaluate();
-			}
-		};
-	}
-	
-	@Override
-	protected Statement withAfters(FrameworkMethod method, Object target, Statement statement) {
-		final Statement first = super.withAfters(method, target, statement);
-		return new Statement() {
-			public void evaluate() throws Throwable {
-				first.evaluate();
-				registryManager.afterTestMethod();
-			}
-		};
-	}
-	
 	@Override
 	protected Statement withAfterClasses(Statement statement) {
-		final Statement first = super.withAfterClasses(statement);
+		final Statement superStatement = super.withAfterClasses(statement);
 		return new Statement() {
 			public void evaluate() throws Throwable {
-				first.evaluate();
+				superStatement.evaluate();
 				registryManager.afterTestClass();
 			}
 		};
+	}
+
+	@Override
+	protected Object createTest() throws Exception {
+		org.apache.tapestry5.ioc.Registry registry = registryManager.getOrCreateRegistry();
+		return registry.autobuild(getTestClass().getJavaClass());
+	}
+
+	public static class RegistryManagerRunNotifier extends RunNotifier {
+		private final RunNotifier delegate;
+		private final TestRegistryManager registryManager;
+
+		public RegistryManagerRunNotifier(TestRegistryManager registryManager, RunNotifier delegate) {
+			super();
+			this.delegate = delegate;
+			this.registryManager = registryManager;
+		}
+		
+		public void addListener(RunListener listener) {
+			delegate.addListener(listener);
+		}
+
+		public void removeListener(RunListener listener) {
+			delegate.removeListener(listener);
+		}
+
+		public void fireTestRunStarted(Description description) {
+			delegate.fireTestRunStarted(description);
+		}
+
+		public void fireTestRunFinished(Result result) {
+			delegate.fireTestRunFinished(result);
+		}
+
+		public void fireTestStarted(Description description) throws StoppedByUserException {
+			delegate.fireTestStarted(description);
+		}
+
+		public void fireTestFailure(Failure failure) {
+			delegate.fireTestFailure(failure);
+		}
+
+		public void fireTestAssumptionFailed(Failure failure) {
+			delegate.fireTestAssumptionFailed(failure);
+		}
+
+		public void fireTestIgnored(Description description) {
+			delegate.fireTestIgnored(description);
+		}
+
+		public void fireTestFinished(Description description) {
+			registryManager.afterTestMethod();
+			delegate.fireTestFinished(description);
+		}
+
+		public void pleaseStop() {
+			delegate.pleaseStop();
+		}
+
+		public void addFirstListener(RunListener listener) {
+			delegate.addFirstListener(listener);
+		}
 	}
 }
