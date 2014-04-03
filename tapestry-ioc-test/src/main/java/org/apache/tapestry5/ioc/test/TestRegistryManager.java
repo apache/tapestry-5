@@ -66,13 +66,18 @@ public class TestRegistryManager {
 					String.format("@ModuleDef method %s must be public static and accept no arguments",
 					method.getName()));
 		}
-		if (method.getReturnType().isAssignableFrom(org.apache.tapestry5.ioc.def.ModuleDef.class)) {
+		if (!org.apache.tapestry5.ioc.def.ModuleDef.class.isAssignableFrom(method.getReturnType())) {
 			throw new InitializationError(
 					String.format("@ModuleDef method %s return type %s is not valid",
-					method.getName(), method.getReturnType()));
+					method.getName(), method.getReturnType().getName()));
 		}
 	}
 
+	/**
+	 * Get the existing registry or create one if required.
+	 * @return The test Registry
+	 * @throws Exception
+	 */
 	public org.apache.tapestry5.ioc.Registry getOrCreateRegistry() throws Exception {
 		if (registry == null) {
 			RegistryBuilder builder = new RegistryBuilder();
@@ -98,12 +103,18 @@ public class TestRegistryManager {
 		return registry;
 	}
 	
+	/**
+	 * Notify that the current test method has completed
+	 */
 	public void afterTestMethod() {
 		if (annotation.shutdown() == RegistryShutdownType.AFTER_METHOD) {
 			shutdownRegistry();
 		}
 	}
 
+	/**
+	 * Notify that the current test class has completed
+	 */
 	public void afterTestClass() {
 		if (annotation.shutdown() == RegistryShutdownType.AFTER_CLASS) {
 			shutdownRegistry();

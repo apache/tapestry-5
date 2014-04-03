@@ -38,7 +38,7 @@ public class TapestryIOCJUnit4ClassRunnerModuleDefTest {
 	}
 
 	@ModuleDef
-	public static MapModuleDef createModuleDef2() {
+	public static org.apache.tapestry5.ioc.def.ModuleDef createModuleDef2() {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("c", 333);
 
