@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2007-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
@@ -40,8 +42,6 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final boolean compactJSON;
 
-    private final Environment environment;
-
     public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory,
 
                                            Request request,
@@ -55,7 +55,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
                                            String outputEncoding,
 
                                            @Symbol(SymbolConstants.COMPACT_JSON)
-                                           boolean compactJSON, Environment environment)
+                                           boolean compactJSON)
     {
         this.factory = factory;
         this.request = request;
@@ -63,40 +63,39 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         this.partialMarkupRenderer = partialMarkupRenderer;
         this.outputEncoding = outputEncoding;
         this.compactJSON = compactJSON;
-        this.environment = environment;
     }
 
-    public void renderPartialPageMarkup(JSONObject reply) throws IOException
+    public void renderPartialPageMarkup(final JSONObject reply) throws IOException
     {
         assert reply != null;
 
-        environment.cloak();
-
-        try
+        request.setAttribute(TapestryConstants.RESPONSE_RENDERER, new IOOperation<Void>()
         {
-            // This is a complex area as we are trying to keep public and private services properly
-            // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
-            // separated. So we inform the stateful queue service what it needs to do here ...
+            public Void perform() throws IOException
+            {
+                // This is a complex area as we are trying to keep public and private services properly
+                // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
+                // separated. So we inform the stateful queue service what it needs to do here ...
 
-            ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
-            
-            String pageName = (String) request.getAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME);
+                ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
-            MarkupWriter writer = factory.newPartialMarkupWriter(pageName);
+                String pageName = (String) request.getAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME);
 
-            // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
+                MarkupWriter writer = factory.newPartialMarkupWriter(pageName);
 
-            partialMarkupRenderer.renderMarkup(writer, reply);
+                // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
 
-            PrintWriter pw = response.getPrintWriter(contentType.toString());
+                partialMarkupRenderer.renderMarkup(writer, reply);
 
-            reply.print(pw, compactJSON);
+                PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-            pw.close();
-        } finally
-        {
-            environment.decloak();
-        }
+                reply.print(pw, compactJSON);
+
+                pw.close();
+
+                return null;
+            }
+        });
     }
 
     public void renderPartialPageMarkup() throws IOException

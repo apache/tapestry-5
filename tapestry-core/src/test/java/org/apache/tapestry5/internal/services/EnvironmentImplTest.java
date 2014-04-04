@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,20 +59,6 @@ public class EnvironmentImplTest extends TapestryTestCase
         verify();
     }
 
-    @Test
-    public void clear()
-    {
-        Environment e = new EnvironmentImpl();
-
-        try
-        {
-            e.clear();
-            unreachable();
-        } catch (IllegalStateException ex)
-        {
-            assertMessageContains(ex, "no longer supported");
-        }
-    }
 
     @Test
     public void pop_when_empty_is_error()

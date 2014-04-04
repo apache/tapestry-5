@@ -1,4 +1,4 @@
-// Copyright 2009-2013 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,6 +69,8 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
             ajaxResponseRenderer.addRender(zoneId, zoneRenderCommand);
         }
+
+        // This is actually executed deferred:
 
         partialRenderer.renderPartialPageMarkup();
     }

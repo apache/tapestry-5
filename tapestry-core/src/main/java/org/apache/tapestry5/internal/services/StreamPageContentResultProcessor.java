@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.*;
 
@@ -54,11 +56,11 @@ public class StreamPageContentResultProcessor implements ComponentEventResultPro
         Class<?> pageClass = value.getPageClass();
         Object[] activationContext = value.getPageActivationContext();
 
-        String pageName = pageClass == null
+        final String pageName = pageClass == null
                 ? requestGlobals.getActivePageName()
                 : resolver.resolvePageClassNameToPageName(pageClass.getName());
 
-        EventContext context = activationContext == null
+        final EventContext context = activationContext == null
                 ? new EmptyEventContext()
                 : new ArrayEventContext(typeCoercer, activationContext);
 
@@ -67,6 +69,14 @@ public class StreamPageContentResultProcessor implements ComponentEventResultPro
             request.setAttribute(InternalConstants.BYPASS_ACTIVATION, true);
         }
 
-        handler.handle(new PageRenderRequestParameters(pageName, context, false));
+        request.setAttribute(TapestryConstants.RESPONSE_RENDERER, new IOOperation<Void>()
+        {
+            public Void perform() throws IOException
+            {
+                handler.handle(new PageRenderRequestParameters(pageName, context, false));
+
+                return null;
+            }
+        });
     }
 }
