@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -79,6 +79,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
 
     private final Set<Class> defaultMarkers = CollectionFactory.newSet();
+
+    private final Set<StartupDef> startups = CollectionFactory.newSet();
 
     private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class.getMethods());
 
@@ -235,11 +237,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private void addStartupDef(Method method)
     {
-        Set<Class> markers = Collections.emptySet();
-
-        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, false, proxyFactory, Runnable.class, markers);
-
-        contributionDefs.add(def);
+        startups.add(new StartupDefImpl(method));
     }
 
     private void addContributionDef(Method method)
@@ -583,5 +581,10 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private <K, V> Set<V> toSet(Map<K, V> map)
     {
         return CollectionFactory.newSet(map.values());
+    }
+
+    public Set<StartupDef> getStartups()
+    {
+        return startups;
     }
 }

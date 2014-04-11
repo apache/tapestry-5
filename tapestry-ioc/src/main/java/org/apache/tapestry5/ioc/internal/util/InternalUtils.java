@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1038,6 +1038,11 @@ public class InternalUtils
             public Set<String> getServiceIds()
             {
                 return md.getServiceIds();
+            }
+
+            public Set<StartupDef> getStartups()
+            {
+                return Collections.emptySet();
             }
         };
     }

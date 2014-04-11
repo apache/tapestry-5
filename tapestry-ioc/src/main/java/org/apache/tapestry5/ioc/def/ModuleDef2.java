@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.def;
 
 import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 import java.util.Set;
 
@@ -30,4 +31,12 @@ public interface ModuleDef2 extends ModuleDef
      * Returns all the service advisor definitions built/provided by this module.
      */
     Set<AdvisorDef> getAdvisorDefs();
+
+    /**
+     * Methods marked with @Startup are converted into Runnable instances and assigned here.
+     *
+     * @since 5.4
+     */
+    @IncompatibleChange(release = "5.4", details = "StartupDef replaces the artificial ContributionDef created for @Startup methods.")
+    Set<StartupDef> getStartups();
 }
