@@ -20,6 +20,29 @@ class AjaxGroovyTests extends App1TestCase {
 
         assertText "selected-department", "IT"
         assertText "selected-position", "TEMP"
-
     }
+
+    /** TAP5-1404 */
+    @Test
+    void async_link_update() {
+        openLinks "Async Links and Forms Demo"
+
+        click "link=Link Update"
+
+        waitForAjaxRequestsToComplete()
+
+        assertText "css=#target > p", "You clicked the link."
+    }
+
+    @Test
+    void async_form_submit() {
+        openLinks "Async Links and Forms Demo"
+
+        click SUBMIT
+
+        waitForAjaxRequestsToComplete()
+
+        assertText "css=#target > p", "You submitted the form."
+    }
+
 }

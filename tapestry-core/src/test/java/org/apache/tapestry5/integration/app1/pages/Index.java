@@ -59,6 +59,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
+
                     new Item ("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
 
                     new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),

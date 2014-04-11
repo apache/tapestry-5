@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012, 2013 The Apache Software Foundation
+// Copyright 2009-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1562,22 +1562,35 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Waits until all active XHR requests are completed. However, this is Prototype-based.
+     * Waits until all active XHR requests are completed.
      *
      * @param timeout
-     *         timeout to wait for
+     *         timeout to wait for (no longer used)
      * @since 5.3
-     * @deprecated Deprecated in 5.4 as it is tied to Prototype.
+     * @deprecated Deprecated in 5.4 in favor of the version without a timeout
      */
     protected final void waitForAjaxRequestsToComplete(String timeout)
     {
-        for (int i = 0; i < 5; i++)
+        waitForAjaxRequestsToComplete();
+    }
+
+
+    /**
+     * Waits until all active XHR requests (as noted by the t5/core/dom module)
+     * have completed.  Waits up to 500 ms.
+     *
+     * @since 5.4
+     */
+    protected final void waitForAjaxRequestsToComplete() {
+        for (int i = 0; i < 6; i++)
         {
             if (i > 0)
             {
                 sleep(100);
             }
 
+            // The t5/core/dom module tracks how many Ajax requests are active
+            // and updates this property as appropriate.
             if (getAttribute("//body/@data-ajax-active").equals("false"))
             {
                 return;

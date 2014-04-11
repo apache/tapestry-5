@@ -1,0 +1,20 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+
+
+    <t:form t:id="form" async="true">
+        <t:actionlink t:id="updateTargetLink" async="true" class="btn btn-primary">Link Update</t:actionlink>
+        <input type="submit" class="btn btn-primary" value="Submit Update"/>
+    </t:form>
+
+    <br/>
+
+    <div id="target"/>
+
+    <t:block id="clickBlock">
+        <p>You clicked the link.</p>
+    </t:block>
+
+    <t:block id="formBlock">
+        <p>You submitted the form.</p>
+    </t:block>
+</html>
