@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,6 +34,17 @@ public interface ComponentTemplate
      * @since 5.1.0.1
      */
     boolean isExtension();
+
+    /**
+     * Indicates whether lax (the old default) or strict (the new default) mixin parameters are used.
+     * In strict mode, introduced with the 5.4 template DTD, mixin parameters must be qualified with the mixin name.
+     * In prior releases, Tapestry would attempt a search for a fit, and this causes ambiguities
+     * that can't be addressed.
+     *
+     * @since 5.4
+     * @return true if a 5.4 or later DTD
+     */
+    boolean usesStrictMixinParameters();
 
     /**
      * Returns a list of tokens associated with an extension point, or null if this template neither defines the

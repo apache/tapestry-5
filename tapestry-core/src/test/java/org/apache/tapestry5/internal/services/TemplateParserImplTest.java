@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -92,6 +90,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         ComponentTemplate template = getParser().parseTemplate(resource);
 
         assertSame(template.getResource(), resource);
+
+        assertFalse(template.usesStrictMixinParameters());
 
         List<TemplateToken> tokens = template.getTokens();
 
@@ -1037,6 +1037,12 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // TAP5-1976 meant that a default attribute ("Attribute[shape=rect]") would be included.
 
         assertEquals(toString(tokens), "Start[a] End");
+    }
+
+    @Test
+    public void t54_DTDs_are_strict_about_mixin_parameters() {
+
+        assertTrue(parse("instrumented_element.tml").usesStrictMixinParameters());
     }
 
     private String toString(List<TemplateToken> tokens)

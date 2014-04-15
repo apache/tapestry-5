@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -155,6 +153,8 @@ public class SaxTemplateParser
 
     private boolean active = true;
 
+    private boolean strictMixinParameters = false;
+
     private final Map<String, Boolean> extensionPointIdSet = CollectionFactory.newCaseInsensitiveMap();
 
     public SaxTemplateParser(Resource resource, Map<String, URL> publicIdToURL)
@@ -174,7 +174,7 @@ public class SaxTemplateParser
 
             root(initialParserState);
 
-            return new ComponentTemplateImpl(resource, tokens, componentIds, extension, overrides);
+            return new ComponentTemplateImpl(resource, tokens, componentIds, extension, strictMixinParameters, overrides);
         } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure parsing template %s: %s", resource,
@@ -697,8 +697,9 @@ public class SaxTemplateParser
 
     /**
      * @param elementName
-     * @param identifiedType the type of the element, usually null, but may be the
-     *                       component type derived from element
+     * @param identifiedType
+     *         the type of the element, usually null, but may be the
+     *         component type derived from element
      */
     private void possibleTapestryComponent(TemplateParserState state, String elementName,
                                            String identifiedType)
@@ -731,8 +732,18 @@ public class SaxTemplateParser
 
             String value = tokenStream.getAttributeValue(i);
 
-            if (NAMESPACE_URI_TO_VERSION.containsKey(uri))
+
+            Version version = NAMESPACE_URI_TO_VERSION.get(uri);
+
+            if (version != null)
             {
+                // We are kind of assuming that the namespace URI appears once, in the outermost element of the template.
+                // And we don't and can't handle the case that it appears multiple times in the template.
+
+                if (version.sameOrEarlier(T_5_4)) {
+                    strictMixinParameters = true;
+                }
+
                 if (localName.equalsIgnoreCase(ID_ATTRIBUTE_NAME))
                 {
                     id = nullForBlank(value);
@@ -1098,9 +1109,10 @@ public class SaxTemplateParser
      * patterns, and adds appropriate tokens for what
      * it finds.
      *
-     * @param text to add as
-     *             {@link org.apache.tapestry5.internal.parser.TextToken}s and
-     *             {@link org.apache.tapestry5.internal.parser.ExpansionToken}s
+     * @param text
+     *         to add as
+     *         {@link org.apache.tapestry5.internal.parser.TextToken}s and
+     *         {@link org.apache.tapestry5.internal.parser.ExpansionToken}s
      */
     private void addTokensForText(String text)
     {
