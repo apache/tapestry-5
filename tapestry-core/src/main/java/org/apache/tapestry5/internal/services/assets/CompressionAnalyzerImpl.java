@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,6 +34,18 @@ public class CompressionAnalyzerImpl implements CompressionAnalyzer
         String key = x < 0 ? contentType : contentType.substring(0, x);
 
         Boolean result = configuration.get(key);
+
+        if (result != null) {
+            return result.booleanValue();
+        }
+
+        // Now look for a wild card.
+
+        x = contentType.indexOf('/');
+
+        String wildKey = contentType.substring(0, x) + "/*";
+
+        result = configuration.get(wildKey);
 
         return result == null ? true : result.booleanValue();
     }
