@@ -740,7 +740,7 @@ public class SaxTemplateParser
                 // We are kind of assuming that the namespace URI appears once, in the outermost element of the template.
                 // And we don't and can't handle the case that it appears multiple times in the template.
 
-                if (version.sameOrEarlier(T_5_4)) {
+                if (T_5_4.sameOrEarlier(version)) {
                     strictMixinParameters = true;
                 }
 

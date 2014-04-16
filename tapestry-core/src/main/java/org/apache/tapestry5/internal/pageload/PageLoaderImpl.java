@@ -1,5 +1,3 @@
-// Copyright 2009-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -262,7 +260,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
                 ComponentPageElementResources resources = resourcesSource.get(selector);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, tracker);
+                        componentClassResolver, instantiator, resources, tracker, template.usesStrictMixinParameters());
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).
@@ -282,7 +280,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
     {
         TokenStream stream = createTokenStream(assembler, template);
 
-        AssemblerContext context = new AssemblerContext(assembler, stream);
+        AssemblerContext context = new AssemblerContext(assembler, stream, template.usesStrictMixinParameters());
 
         if (template.isMissing())
         {

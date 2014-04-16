@@ -1,5 +1,3 @@
-// Copyright 2009-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -54,13 +52,15 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final OperationTracker tracker;
 
+    private final boolean strictMixinParameters;
+
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
 
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                   ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-                                  Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker)
+                                  Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker, boolean strictMixinParameters)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -68,6 +68,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.instantiator = instantiator;
         this.resources = resources;
         this.tracker = tracker;
+        this.strictMixinParameters = strictMixinParameters;
     }
 
     public ComponentPageElement assembleRootComponent(final Page page)
@@ -93,8 +94,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             pageAssembly.componentCount++;
             pageAssembly.weight++;
 
-            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources
-            );
+            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources);
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 
@@ -108,7 +108,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             // Execute the deferred actions in reverse order to how they were added. This makes
             // sense, as (currently) all deferred actions are related to inheriting informal parameters;
-            // those are added deepest component to shallowed (root) component, but should be executed
+            // those are added deepest component to shallowest (root) component, but should be executed
             // in the opposite order to ensure that chained inherited parameters resolve correctly.
 
             int count = pageAssembly.deferred.size();
@@ -295,7 +295,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
                     instantiatorSource, componentClassResolver, componentClassName, getSelector(), embeddedModel,
-                    mixins, location);
+                    mixins, location, strictMixinParameters);
 
             if (embeddedIdToAssembler == null)
                 embeddedIdToAssembler = CollectionFactory.newMap();
