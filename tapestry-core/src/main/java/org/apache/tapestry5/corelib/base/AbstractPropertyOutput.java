@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,15 +12,13 @@
 
 package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.Environment;
@@ -75,6 +71,9 @@ public abstract class AbstractPropertyOutput
     private Environment environment;
 
     private boolean mustPopEnvironment;
+
+    @Inject
+    private ComponentResources resources;
 
     BeanBlockSource defaultBeanBlockSource()
     {
@@ -150,10 +149,11 @@ public abstract class AbstractPropertyOutput
         try
         {
             return conduit == null ? null : conduit.get(object);
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
-            throw new NullPointerException(String.format("Property '%s' contains a null value in the path.", model.getPropertyName()));
+            throw new TapestryException(String.format("Property '%s' contains a null value in the path.", model.getPropertyName()),
+                    resources.getLocation(),
+                    ex);
         }
     }
 
@@ -175,9 +175,10 @@ public abstract class AbstractPropertyOutput
     }
 
     // Used for testing.
-    void inject(final PropertyModel model, final Object object)
+    void inject(final PropertyModel model, final Object object, final ComponentResources resources)
     {
         this.model = model;
         this.object = object;
+        this.resources = resources;
     }
 }
