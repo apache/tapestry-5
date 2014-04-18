@@ -49,7 +49,7 @@ class OperationAdvisorSpec extends Specification {
         new DefaultModuleDefImpl(OperationTrackedModule, logger, plasticProxyFactory)],
         plasticProxyFactory,
         loggerSource,
-        simpleOperationTracker, logger)
+        simpleOperationTracker)
   }
 
   def "simple operation tracking"() {
