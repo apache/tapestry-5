@@ -22,9 +22,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * TODO: These tests wont work because Selenium cannot enter values for input type="file'
- */
 public class UploadIntegrationTest extends SeleniumTestCase
 {
 
@@ -44,7 +41,7 @@ public class UploadIntegrationTest extends SeleniumTestCase
         }
     }
 
-    @Test(enabled = false)
+    @Test
     public void integration_test() throws Exception
     {
 
@@ -52,7 +49,9 @@ public class UploadIntegrationTest extends SeleniumTestCase
 
         File source = new File("test/data/upload.txt");
 
+        type("name", "Sample file");
         type("file", source.getCanonicalPath());
+
         clickAndWait("//input[@value='Upload']");
     }
 }
