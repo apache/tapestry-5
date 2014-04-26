@@ -102,7 +102,7 @@ define ["underscore", "./console", "./dom", "./events"],
           throw new Error "Could not locate function `#{qualifiedName}'."
 
         if console.debugEnabled
-          argsString = _.map(initArguments, JSON.stringify).join(", ")
+          argsString = (JSON.stringify arg for arg in initArguments).join(", ")
           console.debug "Invoking #{qualifiedName}(#{argsString})"
 
         fn.apply null, initArguments
