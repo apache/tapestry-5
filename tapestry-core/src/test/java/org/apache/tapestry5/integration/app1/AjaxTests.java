@@ -201,6 +201,32 @@ public class AjaxTests extends App1TestCase
 
         assertText("sum", "0.0");
     }
+    
+    @Test
+    public void remove_ajaxformloop_values_using_buttons_with_nested_elements()
+    {
+        openLinks("FormInjector Demo");
+
+        assertText("sum", "0.0");
+
+        click("link=Add another value");
+
+        sleep(AJAX_WAIT_TIME);
+
+        type("//input[@type='text'][1]", "5.1");
+
+        clickAndWait(SUBMIT);
+
+        assertText("sum", "5.1");
+
+        click("css=.glyphicon-trash");
+
+        sleep(AJAX_WAIT_TIME);
+
+        clickAndWait(SUBMIT);
+
+        assertText("sum", "0.0");
+    }
 
     /**
      * TAP5-240

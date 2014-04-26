@@ -35,7 +35,7 @@ define ["./dom", "./events", "./console", "./ajax"],
 
       ajax url,
         data:
-          "t:rowvalue": @attr "data-afl-row-value"
+          "t:rowvalue": (@closest "[data-afl-row-value]").attr "data-afl-row-value"
         success: =>
           # The server has removed the row from persistent storage, lets
           # do the same on the UI.
