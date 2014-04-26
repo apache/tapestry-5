@@ -571,6 +571,14 @@ public class FuncTest extends BaseFuncTest
     }
 
     @Test
+    public void count_of_a_large_flow()
+    {
+        Flow<Integer> flow = F.series(1, 1).take(50000);
+
+        assertEquals(flow.count(), 50000);
+    }
+
+    @Test
     public void concat_empty_list()
     {
         Flow<Integer> flow = F.flow(1, 3);

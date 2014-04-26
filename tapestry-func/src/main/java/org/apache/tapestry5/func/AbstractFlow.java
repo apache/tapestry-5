@@ -213,7 +213,14 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public int count()
     {
-        return isEmpty() ? 0 : 1 + rest().count();
+        if (isEmpty()){
+            return 0;
+        }
+        int count = 0;
+        for(Flow<T> flow = this; flow != null && !flow.isEmpty(); flow = flow.rest()){
+            count++;
+        }
+        return count;
     }
 
     public Flow<T> take(int length)
