@@ -172,7 +172,7 @@ subprojects {
     eclipse.classpath.plusConfigurations += configurations.provided
 
     dependencies {
-        compile "org.codehaus.groovy:groovy-all:${versions.groovy}"
+        testCompile "org.codehaus.groovy:groovy-all:${versions.groovy}"
 
         deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
 
@@ -397,7 +397,7 @@ task continuousIntegration {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12-rc-1'
+    gradleVersion = '1.12-rc-2'
     description "Regenerates the Gradle Wrapper files"
 }
 
