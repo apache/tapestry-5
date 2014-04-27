@@ -46,4 +46,6 @@ public class LinkSubmitDemo
     }
 
     void onNeighbor() { lastClicked = "Barney"; }
+    
+    void onDaughter() { lastClicked = "Pebbles"; }
 }
