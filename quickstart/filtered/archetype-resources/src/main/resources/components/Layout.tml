@@ -28,31 +28,32 @@
 
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-header">
-        <div class="container">
-            <button type="button" class="btn navbar-btn" data-toggle="collapse" data-target=".nav-collapse">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+	    <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <t:pagelink page="index" class="brand">${artifactId}</t:pagelink>
-            <div class="nav-collapse collapse">
-                <ul class="nav">
-                    <t:loop source="pageNames" value="pageName">
-                        <li class="prop:classForPageName">
-                            <t:pagelink page="prop:pageName">${D}{pageName}</t:pagelink>
-                        </li>
-                    </t:loop>
-                </ul>
-                <span class="pull-right">
-                    <t:pagelink page="login">
-                        <button type="submit" class="btn">Sign in</button>
-                    </t:pagelink>
-                </span>
-
-            </div><!--/.nav-collapse -->
+            <t:pagelink page="index" class="navbar-brand">app</t:pagelink>
         </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <t:loop source="pageNames" value="pageName">
+                    <t:any element="li" class="prop:classForPageName">
+                        <t:pagelink page="prop:pageName">${pageName}</t:pagelink>
+                    </t:any>
+                </t:loop>
+            </ul>
+            <span class="navbar-right">
+                <li>
+                    <t:pagelink page="login" class="btn btn-default navbar-btn">Sign in</t:pagelink>
+               	</li>
+            </span>
+
+        </div><!--/.nav-collapse -->
     </div>
 </div>
 

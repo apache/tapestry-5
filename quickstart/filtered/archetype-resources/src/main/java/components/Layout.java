@@ -14,6 +14,7 @@ import org.apache.tapestry5.SymbolConstants;
 /**
  * Layout component for pages of application test-project.
  */
+@Import(module="bootstrap/collapse")
 public class Layout
 {
 	@Inject
