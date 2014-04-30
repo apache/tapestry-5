@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,7 +33,7 @@ import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 import java.util.Date;
 
-@Import(library = "../zonedemo.js")
+@Import(library = "zonedemo.js")
 public class ZoneDemo
 {
     @Component(id = "registrationForm")

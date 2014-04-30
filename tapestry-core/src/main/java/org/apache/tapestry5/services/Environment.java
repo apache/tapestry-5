@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,17 +69,12 @@ public interface Environment
     <T> T push(Class<T> type, T instance);
 
     /**
-     * Clears all stacks; no longer used by Tapestry.
-     *
-     * @deprecated Deprecated in 5.3 with no replacement.
-     */
-    void clear();
-
-    /**
      * Hides all current environment values, making the Environment object appear empty, until
      * a call to {@link #decloak()}} restores the original state.
      *
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no replacement; not longer used by Tapestry.
+     * @see org.apache.tapestry5.TapestryConstants#RESPONSE_RENDERER
      */
     void cloak();
 
@@ -87,6 +82,8 @@ public interface Environment
      * Restores state previously hidden by {@link #cloak()}}.
      *
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no replacement; not longer used by Tapestry.
+     * @see org.apache.tapestry5.TapestryConstants#RESPONSE_RENDERER
      */
     void decloak();
 }

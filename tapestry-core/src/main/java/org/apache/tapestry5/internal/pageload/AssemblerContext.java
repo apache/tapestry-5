@@ -1,5 +1,3 @@
-// Copyright 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -34,12 +32,16 @@ class AssemblerContext implements TokenStream
 
     final TokenStream stream;
 
+    // Set based on the use of the 5.4 DTD (or better) in the template.
+    final boolean strictMixinParameters;
+
     private final List<RenderCommand> composable = CollectionFactory.newList();
 
-    AssemblerContext(ComponentAssembler assembler, TokenStream stream)
+    AssemblerContext(ComponentAssembler assembler, TokenStream stream, boolean strictMixinParameters)
     {
         this.assembler = assembler;
         this.stream = stream;
+        this.strictMixinParameters = strictMixinParameters;
     }
 
     public boolean more()

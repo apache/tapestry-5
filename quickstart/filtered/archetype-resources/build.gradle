@@ -16,16 +16,28 @@ repositories {
     mavenCentral()
 
     // All things JBoss/Hibernate
-    mavenRepo name: "JBoss", url: "http://repository.jboss.org/nexus/content/groups/public/"
-
+    maven {
+        name "JBoss"
+        url "http://repository.jboss.org/nexus/content/groups/public/"
+    }
+    
     // For stable versions of the tapx libraries
-    mavenRepo name: "HLS", url: "http://howardlewisship.com/repository/"
-
+    maven {
+        name "HLS"
+        url "http://howardlewisship.com/repository/"
+    }
+    
     // For non-stable versions of the tapx libraries
-    mavenRepo name: "HLS Snapshots", url: "http://howardlewisship.com/snapshot-repository/"
-
+    maven {
+        name "HLS Snapshots"
+        url "http://howardlewisship.com/snapshot-repository/"
+    }
+    
     // For access to Apache Staging (Preview) packages
-    mavenRepo name: "Apache Staging", url: "https://repository.apache.org/content/groups/staging"
+    maven {
+        name "Apache Staging"
+        url "https://repository.apache.org/content/groups/staging"
+    }
 }
 
 // This simulates Maven's "provided" scope, until it is officially supported by Gradle

@@ -1,4 +1,4 @@
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+package org.apache.tapestry5.ioc.internal;
+
 /**
- * Ensures that the encoding type of the containing form is multipart/form-data when an Upload
- * component is dynamically added to the form via Ajax.
+ * Used by {@link org.apache.tapestry5.ioc.internal.DefaultModuleDefImplTest}.
  */
-Tapestry.Initializer.injectedUpload = function(element)
-{	
-    var form = $(element).form; 
-    if (form)
-    {
-        form.enctype = "multipart/form-data";
-        form.encoding = "multipart/form-data";
-    } 
+public class ModuleWithOverriddenObjectMethods
+{
+  public static Object build()
+  {
+      return new Object();
+  }
+
+  @Override
+  public int hashCode() {
+    return 23;
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+  
+  @Override
+  public String toString() {
+    return "This is a module class that overrides Object methods";
+  }
+  
 }

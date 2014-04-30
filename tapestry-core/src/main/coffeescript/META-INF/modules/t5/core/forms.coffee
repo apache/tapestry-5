@@ -180,7 +180,7 @@ define ["./events", "./dom", "underscore"],
         console.error "Submitting link element not contained inside a form element."
         return false
 
-      setSubmittingHidden form, this
+      setSubmittingHidden form, @closest "a[data-submit-mode]"
 
       # Now the ugly part; if we just invoke submit() on the form, it does not trigger
       # the form's "submit" event, which we need.

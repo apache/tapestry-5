@@ -15,18 +15,21 @@
 package org.apache.tapestry5.ioc.test;
 
 import static org.apache.tapestry5.ioc.test.RegistryShutdownType.AFTER_CLASS;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.test.TapestryIOCJUnit4ClassRunnerAfterClassTest.AfterClassTestModule;
-import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(TapestryIOCJUnit4ClassRunner.class)
 @Registry(modules=AfterClassTestModule.class, shutdown=AFTER_CLASS)
+@FixMethodOrder(NAME_ASCENDING) // guarantees test ordering
 public class TapestryIOCJUnit4ClassRunnerAfterClassTest {
 	public static class AfterClassTestModule {
 		public List<String> buildList() {
@@ -41,13 +44,18 @@ public class TapestryIOCJUnit4ClassRunnerAfterClassTest {
 	
 	@Test
 	public void testInjectA() {
-		Assert.assertEquals(1, list.size());
+		assertArrayEquals(new Object[] { "foo" }, list.toArray());
 		list.add("bar");
-		Assert.assertEquals(2, list.size());
 	}
 
 	@Test
 	public void testInjectB() {
-		Assert.assertEquals(2, list.size());
+		assertArrayEquals(new Object[] { "foo", "bar" }, list.toArray());
+		list.add("baz");
+	}
+
+	@Test
+	public void testInjectC() {
+		assertArrayEquals(new Object[] { "foo", "bar", "baz" }, list.toArray());
 	}
 }

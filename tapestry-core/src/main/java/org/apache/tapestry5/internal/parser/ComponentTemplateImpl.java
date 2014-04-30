@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,11 +15,12 @@ package org.apache.tapestry5.internal.parser;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {
@@ -31,23 +30,32 @@ public class ComponentTemplateImpl implements ComponentTemplate
 
     private final Map<String, Location> componentIds;
 
-    private final boolean extension;
+    private final boolean extension, strictMixinParameters;
 
     private final Map<String, List<TemplateToken>> overrides;
 
     /**
-     * @param resource     the resource from which the template was parsed
-     * @param tokens       the tokens of the template, a copy of this list will be made
-     * @param componentIds ids of components defined in the template
+     * @param resource
+     *         the resource from which the template was parsed
+     * @param tokens
+     *         the tokens of the template, a copy of this list will be made
+     * @param componentIds
+     *         ids of components defined in the template
      * @param extension
-     * @param overrides    id to list of tokens for that override
+     *         if this template is an extension of a parent-class template
+     * @param strictMixinParameters
+     *         if the template was parsed with the 5.4 DTD and is strict
+     *         about mixin parameters being fully qualified
+     * @param overrides
+     *         id to list of tokens for that override
      */
     public ComponentTemplateImpl(Resource resource, List<TemplateToken> tokens,
                                  Map<String, Location> componentIds, boolean extension,
-                                 Map<String, List<TemplateToken>> overrides)
+                                 boolean strictMixinParameters, Map<String, List<TemplateToken>> overrides)
     {
         this.resource = resource;
         this.extension = extension;
+        this.strictMixinParameters = strictMixinParameters;
         this.overrides = overrides;
         this.tokens = newList(tokens);
         this.componentIds = CollectionFactory.newMap(componentIds);
@@ -66,6 +74,11 @@ public class ComponentTemplateImpl implements ComponentTemplate
     public Map<String, Location> getComponentIds()
     {
         return componentIds;
+    }
+
+    public boolean usesStrictMixinParameters()
+    {
+        return strictMixinParameters;
     }
 
     /**

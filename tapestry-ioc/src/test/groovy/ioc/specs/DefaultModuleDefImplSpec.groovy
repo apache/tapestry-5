@@ -424,6 +424,18 @@ class DefaultModuleDefImplSpec extends Specification {
 
     md.serviceIds.size() == 1
   }
+  
+  def "Methods overridden from Object are ignored"() {
+
+    when:
+
+    def md = module ModuleWithOverriddenObjectMethods
+
+    then:
+
+    md.serviceIds.size() == 1
+  }
+
 
   private createSyntheticModuleClass() {
 

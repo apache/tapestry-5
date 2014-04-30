@@ -6,6 +6,6 @@ repositories {
 
 
 dependencies {
-    compile "ro.isdc.wro4j:wro4j-extensions:1.7.0"
+    compile "ro.isdc.wro4j:wro4j-extensions:1.7.4"
     gradleApi()
 }

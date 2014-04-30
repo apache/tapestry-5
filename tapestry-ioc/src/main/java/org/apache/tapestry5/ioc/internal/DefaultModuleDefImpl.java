@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,6 +80,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private final Set<Class> defaultMarkers = CollectionFactory.newSet();
 
+    private final Set<StartupDef> startups = CollectionFactory.newSet();
+
     private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class.getMethods());
 
     static
@@ -117,7 +119,20 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
 
-        methods.removeAll(OBJECT_METHODS);
+        Iterator<Method> methodIterator = methods.iterator();
+
+        while (methodIterator.hasNext())
+        {
+            Method method = methodIterator.next();
+            for (Method objectMethod : OBJECT_METHODS)
+            {
+                if (signaturesAreEqual(method, objectMethod))
+                {
+                    methodIterator.remove();
+                }
+            }
+        }
+
         removeSyntheticMethods(methods);
 
         boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
@@ -130,6 +145,25 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         throw new RuntimeException(String.format("Module class %s contains unrecognized public methods: %s.",
                 moduleClass.getName(), InternalUtils.joinSorted(methods)));
+    }
+
+    private static boolean signaturesAreEqual(Method m1, Method m2)
+    {
+        if (m1.getName() == m2.getName()) {
+            if (!m1.getReturnType().equals(m2.getReturnType()))
+                return false;
+            Class<?>[] params1 = m1.getParameterTypes();
+            Class<?>[] params2 = m2.getParameterTypes();
+            if (params1.length == params2.length)
+            {
+                for (int i = 0; i < params1.length; i++) {
+                    if (params1[i] != params2[i])
+                        return false;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -235,11 +269,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private void addStartupDef(Method method)
     {
-        Set<Class> markers = Collections.emptySet();
-
-        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, false, proxyFactory, Runnable.class, markers);
-
-        contributionDefs.add(def);
+        startups.add(new StartupDefImpl(method));
     }
 
     private void addContributionDef(Method method)
@@ -583,5 +613,10 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private <K, V> Set<V> toSet(Map<K, V> map)
     {
         return CollectionFactory.newSet(map.values());
+    }
+
+    public Set<StartupDef> getStartups()
+    {
+        return startups;
     }
 }

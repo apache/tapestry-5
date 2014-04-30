@@ -189,6 +189,17 @@ public class Form implements ClientElement, FormValidationControl
     @Parameter
     private Object validate;
 
+    /**
+     * When true, the the form will submit as an asynchronous request (via XmlHttpRequest); the event handler methods
+     * can make use of the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} in order to force content
+     * updates to the client.  This is used as an alternative to placing the form inside a {@link org.apache.tapestry5.corelib.components.Zone}
+     * and binding the {@code zone} parameter.
+     *
+     * @since 5.4
+     */
+    @Parameter
+    private boolean async = false;
+
     @Inject
     private Logger logger;
 
@@ -356,6 +367,12 @@ public class Form implements ClientElement, FormValidationControl
         if (clientValidation != ClientValidation.NONE)
         {
             writer.attributes("data-validate", "submit");
+        }
+
+        if (async)
+        {
+            javascriptSupport.require("t5/core/zone");
+            writer.attributes("data-async-trigger", true);
         }
 
         resources.renderInformalParameters(writer);

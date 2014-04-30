@@ -1,4 +1,4 @@
-# Copyright 2012, 2013 The Apache Software Foundation
+# Copyright 2012-2014 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@
 # * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
 #   Passed the exception. Default will generate an exception message and throw an `Error`.
 #   Note: not really supported under jQuery, a hold-over from Prototype.
+# * options.complete - handler to invoke after success, falure, or exception. The handler is passed no
+#   parameters.
 #
 # It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
@@ -34,6 +36,13 @@
 define ["./pageinit", "./dom", "./exception-frame", "./console", "underscore"],
   (pageinit, dom, exceptionframe, console, _) ->
     (url, options) ->
+
+      complete = ->
+        if options.complete
+          options.complete()
+
+        return
+
       newOptions = _.extend {}, options,
 
         # Logs the exception to the console before passing it to the
@@ -45,6 +54,10 @@ define ["./pageinit", "./dom", "./exception-frame", "./console", "underscore"],
             options.exception exception
           else
             throw exception
+
+          complete()
+
+          return
 
         failure: (response, failureMessage) ->
           raw = response.header "X-Tapestry-ErrorMessage"
@@ -63,9 +76,15 @@ define ["./pageinit", "./dom", "./exception-frame", "./console", "underscore"],
 
           options.failure and options.failure(response)
 
-          return null
+          complete()
+
+          return
 
         success: (response) ->
           pageinit.handlePartialPageRenderResponse response, options.success
+
+          complete()
+
+          return
 
       dom.ajaxRequest url, newOptions

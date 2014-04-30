@@ -12,7 +12,7 @@
                 <div class="input-group">
                     <t:textfield t:id="value" value="item.value"/>
                     <div class="input-group-addon">
-                        <t:removerowlink class="btn btn-warning btn-xs">remove</t:removerowlink>
+                        <t:removerowlink class="btn btn-warning btn-xs"><t:glyphicon name="trash"/> remove</t:removerowlink>
                     </div>
                 </div>
             </div>

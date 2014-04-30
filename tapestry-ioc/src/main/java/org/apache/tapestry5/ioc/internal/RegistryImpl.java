@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,6 +108,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final Map<Class<? extends Annotation>, Annotation> cachedAnnotationProxies = CollectionFactory.newConcurrentMap();
 
+    private final Set<Runnable> startups = CollectionFactory.newSet();
+
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
@@ -118,9 +120,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      * @param loggerSource
      *         used to obtain Logger instances
      * @param operationTracker
-     *         used to track operations related to the registry and its services
      */
-    public RegistryImpl(Collection<ModuleDef> moduleDefs, PlasticProxyFactory proxyFactory,
+    public RegistryImpl(Collection<ModuleDef2> moduleDefs, PlasticProxyFactory proxyFactory,
                         LoggerSource loggerSource, OperationTracker operationTracker)
     {
         assert moduleDefs != null;
@@ -158,7 +159,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         });
 
-        for (ModuleDef def : moduleDefs)
+        for (ModuleDef2 def : moduleDefs)
         {
             logger = this.loggerSource.getLogger(def.getLoggerName());
 
@@ -189,6 +190,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
 
             moduleToServiceDefs.put(module, moduleServiceDefs);
+
+            addStartupsInModule(def, module, logger);
         }
 
         addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
@@ -204,12 +207,27 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         SerializationSupport.setProvider(this);
     }
 
+    private void addStartupsInModule(ModuleDef2 def, final Module module, final Logger logger)
+    {
+        for (final StartupDef startup : def.getStartups())
+        {
+
+            startups.add(new Runnable()
+            {
+                public void run()
+                {
+                    startup.invoke(module, RegistryImpl.this, RegistryImpl.this, logger);
+                }
+            });
+        }
+    }
+
     /**
      * Validate that each module's ContributeDefs correspond to an actual service.
      */
-    private void validateContributeDefs(Collection<ModuleDef> moduleDefs)
+    private void validateContributeDefs(Collection<ModuleDef2> moduleDefs)
     {
-        for (ModuleDef module : moduleDefs)
+        for (ModuleDef2 module : moduleDefs)
         {
             Set<ContributionDef> contributionDefs = module.getContributionDefs();
 
@@ -315,7 +333,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // TAPESTRY-2267: Gather up all the proxies before instantiating any of them.
 
         for (EagerLoadServiceProxy proxy : proxies)
+        {
             proxy.eagerLoadService();
+        }
+
+        for (Runnable startup : startups) {
+            startup.run();
+        }
+
+        startups.clear();
 
         getService("RegistryStartup", Runnable.class).run();
 

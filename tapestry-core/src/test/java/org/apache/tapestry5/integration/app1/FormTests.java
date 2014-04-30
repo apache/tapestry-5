@@ -857,6 +857,22 @@ public class FormTests extends App1TestCase
         assertText("name-value", "Betty");
         assertText("last-clicked", "Barney");
     }
+    
+    /**
+     * TAP5-2183
+     */
+    @Test
+    public void link_submit_component_with_nested_element()
+    {
+        openLinks("LinkSubmit Demo");
+
+        type("name", "Wilma");
+
+        clickAndWait("css=.glyphicon-star");
+
+        assertText("name-value", "Wilma");
+        assertText("last-clicked", "Pebbles");
+    }
 
     @Test
     public void calendar_field_inside_bean_editor()

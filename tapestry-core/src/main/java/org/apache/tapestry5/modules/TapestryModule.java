@@ -2299,9 +2299,15 @@ public final class TapestryModule
     @Scope(ScopeConstants.PERTHREAD)
     public Environment buildEnvironment(PerthreadManager perthreadManager)
     {
-        EnvironmentImpl service = new EnvironmentImpl();
+        final EnvironmentImpl service = new EnvironmentImpl();
 
-        perthreadManager.addThreadCleanupListener(service);
+        perthreadManager.addThreadCleanupCallback(new Runnable()
+        {
+            public void run()
+            {
+                service.threadDidCleanup();
+            }
+        });
 
         return service;
     }
@@ -2421,9 +2427,11 @@ public final class TapestryModule
      * Contributes:
      * <dl>
      * <dt>OperationTracker</dt>
-     * <dd>Tracks general inforamtion about the request using {@link OperationTracker}</dd>
+     * <dd>Tracks general information about the request using {@link OperationTracker}</dd>
      * <dt>InitializeActivePageName
      * <dd>{@link InitializeActivePageName}
+     * <dt>DeferredResponseRenderer</dt>
+     * <dd>{@link DeferredResponseRenderer}</dd>
      * </dl>
      *
      * @since 5.2.0
@@ -2432,6 +2440,7 @@ public final class TapestryModule
     {
         configuration.addInstance("OperationTracker", RequestOperationTracker.class);
         configuration.addInstance("InitializeActivePageName", InitializeActivePageName.class);
+        configuration.addInstance("DeferredResponseRenderer", DeferredResponseRenderer.class);
     }
 
     /**

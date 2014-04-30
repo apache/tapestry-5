@@ -1,5 +1,3 @@
-// Copyright 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -45,6 +43,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     private final Location location;
 
     private final Map<String, Instantiator> mixinIdToInstantiator = CollectionFactory.newCaseInsensitiveMap();
+
     private final Map<String, String[]> mixinsIdToOrderConstraints = CollectionFactory.newCaseInsensitiveMap();
 
     /**
@@ -63,18 +62,27 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     /**
      * @param assemblerSource
-     * @param instantiatorSource     used to access component models
-     * @param componentClassResolver used to convert mixin types to component models
-     * @param componentClassName     class name of embedded component
-     * @param selector               used to select template and other resources
-     * @param embeddedModel          embedded model (may be null for components defined in the template)
-     * @param templateMixins         list of mixins from the t:mixins element (possibly null)
-     * @param location               location of components element in its container's template
+     * @param instantiatorSource
+     *         used to access component models
+     * @param componentClassResolver
+     *         used to convert mixin types to component models
+     * @param componentClassName
+     *         class name of embedded component
+     * @param selector
+     *         used to select template and other resources
+     * @param embeddedModel
+     *         embedded model (may be null for components defined in the template)
+     * @param templateMixins
+     *         list of mixins from the t:mixins element (possibly null)
+     * @param location
+     *         location of components element in its container's template
+     * @param strictMixinParameters
+     *         if true (e.g., the 5.4 DTD) then mixin parameters must be fully qualified
      */
     public EmbeddedComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                           ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
                                           String componentClassName, ComponentResourceSelector selector, EmbeddedComponentModel embeddedModel,
-                                          String templateMixins, Location location)
+                                          String templateMixins, Location location, boolean strictMixinParameters)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -117,11 +125,12 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         componentPsuedoMixinId = InternalUtils.lastTerm(componentClassName);
 
-        informalParametersMixinId = prescanMixins();
-
+        // A bit ugly ... side-effects PLUS a return value ... but that's final variables
+        // for you.
+        informalParametersMixinId = prescanMixins(strictMixinParameters);
     }
 
-    private String prescanMixins()
+    private String prescanMixins(boolean strictMixinParameters)
     {
         // Mixin id found to support informal parameters
 
@@ -132,7 +141,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             String mixinId = entry.getKey();
             ComponentModel mixinModel = entry.getValue().getModel();
 
-            updateParameterNameToQualified(mixinId, mixinModel);
+            updateParameterNameToQualified(mixinId, mixinModel, strictMixinParameters);
 
             if (supportsInformals == null && mixinModel.getSupportsInformalParameters())
                 supportsInformals = mixinId;
@@ -140,12 +149,12 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         // The component comes last and overwrites simple names from the others.
 
-        updateParameterNameToQualified(null, componentModel);
+        updateParameterNameToQualified(null, componentModel, false);
 
         return supportsInformals;
     }
 
-    private void updateParameterNameToQualified(String mixinId, ComponentModel model)
+    private void updateParameterNameToQualified(String mixinId, ComponentModel model, boolean strictMixinParameters)
     {
         for (String parameterName : model.getParameterNames())
         {
@@ -153,10 +162,21 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
             ParameterBinderImpl binder = new ParameterBinderImpl(mixinId, parameterName, defaultBindingPrefix);
 
-            parameterNameToBinder.put(parameterName, binder);
-
-            if (mixinId != null)
+            if (mixinId == null)
+            {
+                // This is a formal parameter of the root component so it's always unqualified.
+                parameterNameToBinder.put(parameterName, binder);
+            } else
+            {
+                // This is a formal parameter of a mixin, it must be qualified.
                 parameterNameToBinder.put(mixinId + "." + parameterName, binder);
+
+                // When not strict (the older DTDs, before 5.4), then register an unqualified alias.
+                if (!strictMixinParameters)
+                {
+                    parameterNameToBinder.put(parameterName, binder);
+                }
+            }
         }
     }
 

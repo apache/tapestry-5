@@ -1,5 +1,3 @@
-// Copyright 2011, 2012, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -196,9 +194,7 @@ public class AssetsModule
     @Contribute(CompressionAnalyzer.class)
     public void disableCompressionForImageTypes(MappedConfiguration<String, Boolean> configuration)
     {
-        configuration.add("image/jpeg", false);
-        configuration.add("image/gif", false);
-        configuration.add("image/png", false);
+        configuration.add("image/*", false);
         configuration.add("application/x-shockwave-flash", false);
         configuration.add("application/font-woff", false);
         configuration.add("application/x-font-ttf", false);

@@ -177,6 +177,17 @@ The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a
 getTransformedContentType(). This makes it possible to determine which file extensions map to which content types
 (for example, a ResourceTransformer for CoffeeScript files, with extension "coffee", would map to "text/javascript").
 
+## Rendering Changes
+
+There have been some subtle changes to how rendering of page content (in both traditional and Ajax requests) occurs;
+such rendering now occurs deferred to a later stage of request processing, rather than immediately after
+a component event handler method returns a value.
+
+## Environment.cloak() and decloak() deprecated
+
+Related to the rendering changes, the `cloak()` and `decloak()` methods of the Environment service are deprecated
+and should not be invoked: they now throw an UnsupportedOperationException.
+
 ## Zone component change
 
 Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual

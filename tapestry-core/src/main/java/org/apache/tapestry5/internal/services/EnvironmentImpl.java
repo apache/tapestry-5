@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.Environment;
 
@@ -33,19 +31,13 @@ import java.util.Map.Entry;
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).
  */
-public class EnvironmentImpl implements Environment, ThreadCleanupListener
+public class EnvironmentImpl implements Environment
 {
 
     // My generics mojo breaks down when we talk about the key and the value being related
     // types.
 
     private Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
-
-    // Support for cloak/decloak.  Cloaking pushes the current typeToStack map onto the stack
-    // and creates a new, empyt, Map to replace it. Decloaking discards the current map
-    // and replaces it with the top map on the stack.
-
-    private final Stack<Map<Class, LinkedList>> cloakStack = CollectionFactory.newStack();
 
     private final OneShotLock lock = new OneShotLock();
 
@@ -89,10 +81,12 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
             throw new UnknownValueException(String.format("No object of type %s is available from the Environment.", type.getName()),
                     new AvailableValues("Environmentals",
-                            F.flow(typeToStack.entrySet()).remove(new Predicate<Entry<Class, LinkedList>>() {
-                              public boolean accept(Entry<Class, LinkedList> element) {
-                                return element.getValue().isEmpty();
-                              }
+                            F.flow(typeToStack.entrySet()).remove(new Predicate<Entry<Class, LinkedList>>()
+                            {
+                                public boolean accept(Entry<Class, LinkedList> element)
+                                {
+                                    return element.getValue().isEmpty();
+                                }
                             }).map(new Mapper<Entry<Class, LinkedList>, String>()
                             {
                                 public String map(Entry<Class, LinkedList> element)
@@ -123,11 +117,6 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
         return result;
     }
 
-    public void clear()
-    {
-        throw new IllegalStateException("Environment.clear() is no longer supported.");
-    }
-
     public void threadDidCleanup()
     {
         lock.lock();
@@ -135,13 +124,11 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
     public void cloak()
     {
-        cloakStack.push(typeToStack);
-
-        typeToStack = CollectionFactory.newMap();
+        throw new UnsupportedOperationException("cloak() is no longer available in Tapestry 5.4.");
     }
 
     public void decloak()
     {
-        typeToStack = cloakStack.pop();
+        throw new UnsupportedOperationException("decloak() is no longer available in Tapestry 5.4.");
     }
 }

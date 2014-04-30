@@ -64,11 +64,6 @@ public class Upload extends AbstractField
     @Mixin
     private RenderDisabled renderDisabled;
 
-    @Inject
-    @Path("upload.js")
-    private Asset uploadScript;
-
-
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */

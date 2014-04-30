@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.modules.TapestryIOCModule;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
@@ -41,7 +43,7 @@ public final class RegistryBuilder
     /**
      * Module defs, keyed on module id.
      */
-    final List<ModuleDef> modules = CollectionFactory.newList();
+    final List<ModuleDef2> modules = CollectionFactory.newList();
 
     private final ClassLoader classLoader;
 
@@ -90,7 +92,7 @@ public final class RegistryBuilder
         // Part of TAPESTRY-2117 is in add(Class...) and that may be as much as we can
         // do as there is no concept of ModuleDef identity.
 
-        modules.add(moduleDef);
+        modules.add(InternalUtils.toModuleDef2(moduleDef));
 
         return this;
     }

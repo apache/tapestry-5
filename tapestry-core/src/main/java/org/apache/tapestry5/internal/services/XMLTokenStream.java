@@ -345,12 +345,14 @@ public class XMLTokenStream
     private InputStream openStream() throws IOException
     {
         InputStream rawStream = resource.openStream();
+        
+        String transformationEncoding = "UTF8";
 
-        InputStreamReader rawReader = new InputStreamReader(rawStream, "UTF8");
+        InputStreamReader rawReader = new InputStreamReader(rawStream, transformationEncoding);
         LineNumberReader reader = new LineNumberReader(rawReader);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(5000);
-        PrintWriter writer = new PrintWriter(bos);
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(bos, transformationEncoding));
 
         State state = State.MAYBE_XML;
 

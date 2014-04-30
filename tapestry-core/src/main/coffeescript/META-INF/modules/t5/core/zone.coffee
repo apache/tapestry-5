@@ -76,6 +76,18 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
       return false
 
+    dom.onDocument "submit", "form[data-async-trigger]", ->
+
+      formParameters = forms.gatherParameters this
+
+      @addClass "ajax-update"
+
+      ajax (@attr "action"),
+        data: formParameters
+        complete: => @removeClass "ajax-update"
+
+      return false
+
     dom.onDocument events.zone.update, (event) ->
 
       @trigger events.zone.willUpdate
@@ -108,6 +120,15 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
         data: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
         success: (response) =>
           zone.trigger events.zone.update, content: response.json?.content
+
+    dom.onDocument "click", "a[data-async-trigger]", ->
+
+      @addClass "ajax-update"
+
+      ajax (@attr "href"),
+        complete: => @removeClass "ajax-update"
+
+      return false # cancel click event
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
     # performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.

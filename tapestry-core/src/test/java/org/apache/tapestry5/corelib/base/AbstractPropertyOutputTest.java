@@ -1,5 +1,3 @@
-// Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,12 @@
 
 package org.apache.tapestry5.corelib.base;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.testng.annotations.Test;
 
 public class AbstractPropertyOutputTest extends InternalBaseTestCase
@@ -32,12 +33,15 @@ public class AbstractPropertyOutputTest extends InternalBaseTestCase
         final PropertyConduit conduit = mockPropertyConduit();
         final PropertyModel model = mockPropertyModel();
         final Object object = new Object();
+        ComponentResources resources = mockComponentResources();
+        Location location = mockLocation();
 
-        propertyOutputFixture.inject(model, object);
+        propertyOutputFixture.inject(model, object, resources);
 
         expect(model.getConduit()).andReturn(conduit);
         expect(conduit.get(object)).andThrow(new NullPointerException());
         expect(model.getPropertyName()).andReturn("wilma.occupation.address");
+        expect(resources.getLocation()).andReturn(location);
 
         replay();
 
@@ -47,9 +51,11 @@ public class AbstractPropertyOutputTest extends InternalBaseTestCase
 
             fail("Expected a NullPointerException to be thrown.");
         }
-        catch (final NullPointerException ex)
+        catch (final TapestryException ex)
         {
             assertEquals(ex.getMessage(), "Property 'wilma.occupation.address' contains a null value in the path.");
+            assertSame(ex.getLocation(), location);
+            assertTrue(ex.getCause() instanceof NullPointerException);
         }
 
         verify();

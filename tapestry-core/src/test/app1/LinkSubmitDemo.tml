@@ -10,6 +10,7 @@
 
     <t:linksubmit class="btn btn-default" t:id="fred" context="formContext" alt="f">Fred</t:linksubmit>
     <t:linksubmit class="btn btn-default" t:id="barney" defer="true" event="neighbor" alt="b">Barney</t:linksubmit>
+    <t:linksubmit class="btn btn-default" t:id="pebbles" defer="true" event="daughter" alt="p"><t:glyphicon name="star"/> Pebbles</t:linksubmit>
 
   </t:form>
 

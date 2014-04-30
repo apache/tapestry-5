@@ -1,0 +1,14 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+
+    <h1>Strict Mixin Parameters in the 5.4 DTD</h1>
+
+    <p>This page will not load because <code>title</code> parameter is not resolved to the alttitle mixin; instead
+    it is applied as an informal parameter of ActionLink, and then AltTitle.title is not bound, an error since
+    it is required.</p>
+
+    <p>
+        <t:actionlink t:id="frog" t:mixins="alttitle" title="Alt Title">little frog
+        </t:actionlink>
+    </p>
+
+</html>

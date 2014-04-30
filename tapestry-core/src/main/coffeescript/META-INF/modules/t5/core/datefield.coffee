@@ -15,8 +15,8 @@
 # ## t5/core/datefield
 #
 # Provides support for the `core/DateField` component.
-define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
-  (dom, events, messages, ajax, _) ->
+define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker", "./fields"],
+  (dom, events, messages, ajax, _, DatePicker) ->
 
 
     # Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
@@ -24,18 +24,18 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
     serverFirstDay = parseInt messages "date-symbols.first-day"
     datePickerFirstDay = if serverFirstDay is 0 then 6 else serverFirstDay - 1
 
-    # Loalize a few other things.
-    DatePicker.months = (messages "date-symbols.months").split ","
+    # Localize a few other things.
     days = (messages "date-symbols.days").split ","
 
     # Shuffle sunday to the end, so that monday is first.
 
     days.push days.shift()
 
-    DatePicker.days = _.map days, (name) -> name.substr(0, 1).toLowerCase()
+    monthsLabels = (messages "date-symbols.months").split ","
+    daysLabels = _.map days, (name) -> name.substr(0, 1).toLowerCase()
+    todayLabel = messages "core-datefield-today"
+    noneLabel = messages "core-datefield-none"
 
-    DatePicker.TODAY = messages "core-datefield-today"
-    DatePicker.NONE = messages "core-datefield-none"
 
     # Track the active popup; only one allowed at a time. May look to rework this
     # later so that there's just one popup and it is moved around the viewport, or
@@ -114,6 +114,9 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./fields"],
       createPopup: ->
         @datePicker = new DatePicker()
         @datePicker.setFirstWeekDay datePickerFirstDay
+        
+        @datePicker.setLocalizations monthsLabels, daysLabels, todayLabel, noneLabel
+        
         @popup = dom.create("div", { class: "datefield-popup well"}).append @datePicker.create()
         @container.insertAfter @popup
 

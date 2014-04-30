@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,9 +17,12 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 /**
  * Identifies which content types are compressable. In general, content types are assumed to be compressable. The
  * configuration of the service identifies exceptions, which are usually image file formats.
- * <p>
+ * <p/>
  * The configuration maps content types to boolean values (true for compressable).
- * 
+ * <p/>
+ * Since 5.4, the contributed values may also be a wild-card such as "image/*" (that is, the subtype
+ * may be a '*' to match any content type with the same top-level type).
+ *
  * @since 5.3
  */
 @UsesMappedConfiguration(boolean.class)
@@ -29,9 +30,9 @@ public interface CompressionAnalyzer
 {
     /**
      * For a given MIME type, is the content compressable via GZip?
-     * 
+     *
      * @param contentType
-     *            MIME content type, possibly included attributes such as encoding type
+     *         MIME content type, possibly included attributes such as encoding type
      * @return true if the content is not "naturally" compressed
      */
     boolean isCompressable(String contentType);

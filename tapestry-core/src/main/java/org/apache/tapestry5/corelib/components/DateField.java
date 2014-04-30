@@ -50,8 +50,7 @@ import java.util.Locale;
  * @see TextField
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
-@Import(library = "${tapestry.datepicker}/js/datepicker.js",
-        stylesheet = "${tapestry.datepicker}/css/datepicker.css",
+@Import(stylesheet = "${tapestry.datepicker}/css/datepicker.css",
         module = "t5/core/datefield")
 @Events(EventConstants.VALIDATE)
 public class DateField extends AbstractField
