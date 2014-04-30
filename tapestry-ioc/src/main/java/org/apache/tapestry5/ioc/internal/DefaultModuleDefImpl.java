@@ -119,7 +119,20 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
 
-        methods.removeAll(OBJECT_METHODS);
+        Iterator<Method> methodIterator = methods.iterator();
+
+        while (methodIterator.hasNext())
+        {
+            Method method = methodIterator.next();
+            for (Method objectMethod : OBJECT_METHODS)
+            {
+                if (signaturesAreEqual(method, objectMethod))
+                {
+                    methodIterator.remove();
+                }
+            }
+        }
+
         removeSyntheticMethods(methods);
 
         boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
@@ -132,6 +145,25 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         throw new RuntimeException(String.format("Module class %s contains unrecognized public methods: %s.",
                 moduleClass.getName(), InternalUtils.joinSorted(methods)));
+    }
+
+    private static boolean signaturesAreEqual(Method m1, Method m2)
+    {
+        if (m1.getName() == m2.getName()) {
+            if (!m1.getReturnType().equals(m2.getReturnType()))
+                return false;
+            Class<?>[] params1 = m1.getParameterTypes();
+            Class<?>[] params2 = m2.getParameterTypes();
+            if (params1.length == params2.length)
+            {
+                for (int i = 0; i < params1.length; i++) {
+                    if (params1[i] != params2[i])
+                        return false;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
