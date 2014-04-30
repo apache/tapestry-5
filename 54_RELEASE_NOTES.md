@@ -34,6 +34,11 @@ to running initialization functions, deals with DOM updates better, and is overa
 Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant `data-`
 attributes.
 
+## Service proxies annotations
+
+The service proxies created by Tapestry-IoC for services defined on interfaces, not just a concrete class, now have the
+service implementation class annotations. The same now happens to annotations in service methods too.
+
 ## Asset Improvements
 
 Prior versions of Tapestry created cacheable URLs for Assets that incorporated the application version number. The
@@ -103,6 +108,20 @@ The Select component has a new "secure" parameter which can be "always", "never"
 When "always", the submitted value must be listed somewhere in the SelectModel. When "never",
 this check is not performed. When "auto" (the default), the check is performed only if the
 SelectModel exists (is non-null) at the time of the submission.
+
+## @RequestParameter annotation improvements
+
+Now this annotation supports arrays: `void onEvent(@RequestParameter("values") Integer[] values)`. Same conversion
+rules used to single values apply to arrays too.
+
+## Easy rendering of parts of a template to a string
+
+The new `PartialTemplateRenderer` service provides easy rendering to a string of blocks, component instances or
+any other object which implements `RenderCommand` or coerced to it.
+
+## Raw HTML in Alerts
+
+The `Alert` class and the `Alerts` component now support rendering raw HTML instead of just plain text.
 
 # Breaking Changes:
 
