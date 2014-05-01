@@ -36,9 +36,20 @@ define ["./events", "./dom", "./console"],
 
       zone.on events.zone.didUpdate, -> executing = false
 
+      cleanUp = ->
+        window.clearInterval intervalId
+        zone = null
+
       handler = ->
         # Don't clog things up if the response rate is too slow
         return if executing
+
+        # If the zone element is no longer part of the DOM, stop the
+        # timer
+
+        unless (zone.closest 'body')
+          cleanUp()
+          return
 
         # Set the flag now, it will clear when the zone updates.
         executing = true
@@ -48,8 +59,7 @@ define ["./events", "./dom", "./console"],
       intervalId = window.setInterval handler, period * 1000
 
       # Not sure if this is needed except for IE:
-      (dom window).on "beforeunload", ->
-        window.clearInterval intervalId
+      (dom window).on "beforeunload", cleanUp
 
     # export the single function:
     return initialize
