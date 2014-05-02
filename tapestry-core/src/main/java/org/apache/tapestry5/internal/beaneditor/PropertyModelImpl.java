@@ -53,17 +53,20 @@ public class PropertyModelImpl implements PropertyModel
         label = TapestryInternalUtils.defaultLabel(id, messages, name);
 
         // TAP5-2305
-        Sortable sortableAnnotation = conduit.getAnnotation(Sortable.class);
-        if (sortableAnnotation != null) 
+        if (conduit != null)
         {
-            sortable = sortableAnnotation.value();
-        }
-        else
-        {
-            // Primitive types need to be converted to wrapper types before checking to see
-            // if they are sortable.
-            Class wrapperType = PlasticUtils.toWrapperType(getPropertyType());
-            sortable = Comparable.class.isAssignableFrom(wrapperType);
+            Sortable sortableAnnotation = conduit.getAnnotation(Sortable.class);
+            if (sortableAnnotation != null)
+            {
+                sortable = sortableAnnotation.value();
+            }
+            else
+            {
+                // Primitive types need to be converted to wrapper types before checking to see
+                // if they are sortable.
+                Class wrapperType = PlasticUtils.toWrapperType(getPropertyType());
+                sortable = Comparable.class.isAssignableFrom(wrapperType);
+            }
         }
     }
 
