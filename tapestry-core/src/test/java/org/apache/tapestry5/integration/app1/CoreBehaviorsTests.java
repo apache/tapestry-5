@@ -1705,4 +1705,19 @@ public class CoreBehaviorsTests extends App1TestCase
         assertTextPresent("Page called with correct activation context",
                 "You should never see me if use an erroneous activation context");
     }
+    
+    /**
+     * TAP5-2311
+     */
+    @Test
+    public void reload_from_nested_page()
+    {
+        openLinks("Reload on nested page");
+
+        assertTextPresent("This page throws an exception");
+        
+        clickAndWait("css=a:contains('Go to page'):contains('with reload')");
+        
+        assertTextPresent("This page throws an exception");
+    }
 }

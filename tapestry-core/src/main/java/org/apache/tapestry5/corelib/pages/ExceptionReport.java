@@ -99,6 +99,9 @@ public class ExceptionReport implements ExceptionReporter
 
     @Inject
     private ReloadHelper reloadHelper;
+    
+    @Inject
+    private URLEncoder urlEncoder;
 
     @Property
     private String rootURL;
@@ -129,7 +132,7 @@ public class ExceptionReport implements ExceptionReporter
     {
         reloadHelper.forceReload();
 
-        return linkSource.createPageRenderLinkWithContext(request.getParameter("loadPage"), reloadContext);
+        return linkSource.createPageRenderLinkWithContext(urlEncoder.decode(request.getParameter("loadPage")), reloadContext);
     }
 
     Object onActionFromReloadRoot() throws MalformedURLException

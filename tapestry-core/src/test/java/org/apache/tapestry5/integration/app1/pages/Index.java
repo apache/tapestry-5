@@ -559,7 +559,9 @@ public class Index
 
                     new Item("ModuleConfigurationCallbackDemo", "ModuleConfigurationCallback Demo", "Shows an example of changing the Require.js configuration using JavaScriptSupport.addModuleConfigurationDemo()"),
 
-                    new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer")
+                    new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer"),
+
+                    new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report")
 
             );
 
