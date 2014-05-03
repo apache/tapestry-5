@@ -327,7 +327,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
-    public <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker)
+    public ServiceBindingOptions withMarker(Class<? extends Annotation>... marker)
     {
         lock.check();
 

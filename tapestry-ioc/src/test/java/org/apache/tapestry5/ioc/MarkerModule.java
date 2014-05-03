@@ -25,6 +25,8 @@ public class MarkerModule
                 .withMarker(RedMarker.class);
         binder.bind(Greeter.class, RedGreeterImpl.class).withId("SurprisinglyBlueGreeter")
                 .withMarker(BlueMarker.class);
+        binder.bind(Greeter.class, RedGreeterImpl.class).withId("ColorfulGreeter")
+                .withMarker(RedMarker.class, BlueMarker.class);
     }
 
     @Marker(BlueMarker.class)

@@ -413,6 +413,17 @@ class DefaultModuleDefImplSpec extends Specification {
     sd.markers == [RedMarker, BlueMarker] as Set
   }
 
+  def "Multiple marker annotations can be added to service via ServiceBindingOptions"() {
+	  when:
+  
+	  def md = module MarkerModule
+	  def sd = md.getServiceDef "ColorfulGreeter"
+  
+	  then:
+  
+	  sd.markers == [RedMarker, BlueMarker] as Set
+	}
+  
   def "public synthetic methods on module class are ignored"() {
     def moduleClass = createSyntheticModuleClass()
 

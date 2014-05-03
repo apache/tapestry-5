@@ -91,5 +91,5 @@ public interface ServiceBindingOptions
      * @param marker one or more markers to add
      * @return this binding options, for further configuration
      */
-    <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker);
+    ServiceBindingOptions withMarker(Class<? extends Annotation>... marker);
 }
