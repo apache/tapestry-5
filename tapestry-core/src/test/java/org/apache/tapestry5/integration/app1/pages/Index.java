@@ -561,7 +561,9 @@ public class Index
 
                     new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer"),
 
-                    new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report")
+                    new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report"),
+                    
+                    new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop")
 
             );
 

@@ -332,4 +332,24 @@ public class GridTests extends App1TestCase
         assertAttribute("//a[contains(@href,'columns:sort')]/@rel", "nofollow");
     }
 
+    /**
+     * TAP5-2256
+     */
+    @Test
+    public void sorting_inplace_grid_in_a_loop()
+    {
+        openLinks("In-Place Grid in a Loop Demo", "reset the Grids");
+
+        click("css=.grid1 th[data-grid-property='title'] a");
+        waitForAjaxRequestsToComplete();
+        click("css=.grid2 th[data-grid-property='album'] a");
+        waitForAjaxRequestsToComplete();
+        assertAttribute("css=.grid1 th[data-grid-property='title']/@data-grid-column-sort", "ascending");
+        assertAttribute("css=.grid2 th[data-grid-property='album']/@data-grid-column-sort", "ascending");
+        assertAttribute("css=.grid2 th[data-grid-property='title']/@data-grid-column-sort", "sortable");
+
+
+    }
+
+
 }

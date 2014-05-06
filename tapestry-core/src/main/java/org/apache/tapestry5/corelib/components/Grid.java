@@ -440,6 +440,8 @@ public class Grid implements GridModel, ClientElement
 
     Object setupRender()
     {
+        zone = null;
+
         if (formSupport != null)
             formSupport.store(this, SETUP_DATA_SOURCE);
 

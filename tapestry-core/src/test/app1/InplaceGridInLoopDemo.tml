@@ -1,0 +1,22 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>In-Place Grid in a Loop Demo</h1>
+	
+	<t:loop source="[1,2]" value="index">
+		<t:any class="prop:containerclass">
+		    <table t:type="grid" t:id="grid" source="tracks" row="track" inplace="true" rowsPerPage="5">
+		        <t:parameter name="ratingheader">
+		            <t:actionlink t:id="sortRating">Sort Rating</t:actionlink>
+		        </t:parameter>
+		        <t:parameter name="ratingcell">
+		            <t:outputRating rating="track.rating"/>
+		        </t:parameter>
+		    </table>
+	    </t:any>
+    </t:loop>
+
+    <p>
+        [<t:actionlink t:id="reset">reset the Grids</t:actionlink>]
+    </p>
+
+</html>
