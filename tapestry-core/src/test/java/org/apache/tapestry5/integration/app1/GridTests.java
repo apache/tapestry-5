@@ -273,11 +273,11 @@ public class GridTests extends App1TestCase
         String timestamp = getText("lastupdate");
 
         click("link=2");
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         click("link=Album");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertEquals(getText("lastupdate"), timestamp,
                 "Timestamp should not have changed because updates are in-place.");

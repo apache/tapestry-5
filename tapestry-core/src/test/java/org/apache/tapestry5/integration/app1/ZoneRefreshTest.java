@@ -27,7 +27,7 @@ public class ZoneRefreshTest extends App1TestCase
 
         clickAndWait("link=Zone Refresh With Event Handler Returning Void");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         checkZoneValues("zone", 3);
     }
@@ -39,7 +39,7 @@ public class ZoneRefreshTest extends App1TestCase
 
         clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         checkZoneValues("zone", 3);
     }

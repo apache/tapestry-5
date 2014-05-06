@@ -35,7 +35,7 @@ public class CacheTests extends App1TestCase
 
         click("link=update");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         String time2_1 = getText("time1");
         String time2_2 = getText("time1");

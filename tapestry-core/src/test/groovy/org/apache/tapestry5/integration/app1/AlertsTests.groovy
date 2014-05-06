@@ -49,7 +49,7 @@ class AlertsTests extends App1TestCase {
 
         click "css=$CONTAINER button.close"
 
-        sleep AJAX_WAIT_TIME
+        waitForAjaxRequestsToComplete()
 
         // Check that the alert container is now empty
 
@@ -146,7 +146,7 @@ class AlertsTests extends App1TestCase {
 
         click "//input[@value='Ajax Update']"
 
-        sleep AJAX_WAIT_TIME
+        waitForAjaxRequestsToComplete()
 
         waitForCSSSelectedElementToAppear "div.t-error"
 

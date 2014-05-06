@@ -185,7 +185,7 @@ public class AjaxTests extends App1TestCase
 
         click("link=Add another value");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         type("//input[@type='text'][1]", "5.1");
 
@@ -195,7 +195,7 @@ public class AjaxTests extends App1TestCase
 
         click("link=remove");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         clickAndWait(SUBMIT);
 
@@ -211,7 +211,7 @@ public class AjaxTests extends App1TestCase
 
         click("link=Add another value");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         type("//input[@type='text'][1]", "5.1");
 
@@ -221,7 +221,7 @@ public class AjaxTests extends App1TestCase
 
         click("css=.glyphicon-trash");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         clickAndWait(SUBMIT);
 

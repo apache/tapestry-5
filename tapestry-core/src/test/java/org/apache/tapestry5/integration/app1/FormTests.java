@@ -205,7 +205,7 @@ public class FormTests extends App1TestCase
 
         click("css=.x-birthday .btn");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
     }
@@ -243,7 +243,7 @@ public class FormTests extends App1TestCase
 
         click("css=.x-impact .btn");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertSourcePresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
@@ -374,7 +374,7 @@ public class FormTests extends App1TestCase
         //immediately after picking the month label, so we sleep the test for a few seconds to provide
         //ammple time for the bug to manifest.
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertTrue(isVisible("css=div.datePicker"));
     }

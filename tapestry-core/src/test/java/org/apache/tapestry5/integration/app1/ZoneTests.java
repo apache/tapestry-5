@@ -33,7 +33,7 @@ public class ZoneTests extends App1TestCase
 
         select("carMaker", "Bmw");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         click(SUBMIT);
 
@@ -51,7 +51,7 @@ public class ZoneTests extends App1TestCase
 
         select("carMaker", "Mercedes");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         select(selectLocator, "E-Class");
 
@@ -71,7 +71,7 @@ public class ZoneTests extends App1TestCase
 
         click("link=Select \"Mr. <Roboto>\"");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertTextPresent("Selected: Mr. <Roboto>");
 
@@ -141,7 +141,7 @@ public class ZoneTests extends App1TestCase
 
         click(SUBMIT);
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         waitForElementToAppear("message");
 
@@ -162,7 +162,7 @@ public class ZoneTests extends App1TestCase
 
         // Give it some time to process.
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertText("zone-update-message", "Zone updated.");
     }
@@ -318,7 +318,7 @@ public class ZoneTests extends App1TestCase
 
         click("link=Update zone with empty body");
 
-        sleep(AJAX_WAIT_TIME);
+        waitForAjaxRequestsToComplete();
 
         assertText("zone-update-message", "Zone updated.");
     }

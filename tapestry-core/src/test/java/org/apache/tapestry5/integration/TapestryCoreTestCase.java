@@ -24,6 +24,10 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     public static final String TEST_APP_BANNER = "Tapestry Integration Test Application";
 
     // Rule of thumb time, in ms, to wait for Ajax to occur.
+    /**
+     *@deprecated Use {@link #waitForAjaxRequestsToComplete()} 
+     */
+    @Deprecated
     public static final int AJAX_WAIT_TIME = 250;
 
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
