@@ -88,6 +88,9 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
             @field.removeClass "ajax-wait"
             @fieldError message
 
+            @showPopup()
+            return
+
           success: (response) =>
             @field.removeClass "ajax-wait"
             reply = response.json
@@ -98,11 +101,13 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
               date = new Date()
               date.setTime reply.result
               @datePicker.setDate date
-              @showPopup()
-              return
 
-            @fieldError (_.escape reply.error)
-            @hidePopup()
+            if reply.error
+              @fieldError (_.escape reply.error)
+
+              @datePicker.setDate null
+
+            @showPopup()
             return
 
       fieldError: (message) ->
