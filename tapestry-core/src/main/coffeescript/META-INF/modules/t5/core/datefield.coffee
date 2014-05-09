@@ -147,20 +147,13 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
             @hidePopup()
 
 
-    scan = (root) ->
-      for container in root.find "[data-component-type='core/DateField']"
-        # Hide it from later scans
-        container.attr "data-component-type", null
-
-        new Controller(container)
-
     # Initialization:
 
-    scan dom.body
+    dom.scanner "[data-component-type='core/DateField']", (container) ->
+      # Hide it from later scans
+      container.attr "data-component-type", null
 
-    # And scan any newly added content:
-
-    dom.onDocument events.zone.didUpdate, -> scan this
+      new Controller(container)
 
     # Exports nothing.
     return null
