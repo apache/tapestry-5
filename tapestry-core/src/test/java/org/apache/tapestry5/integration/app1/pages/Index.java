@@ -57,6 +57,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item ("DateFieldValidationDemo", "DateField Validation Demo",
+                            "Use of DateField component when client validation is disabled."),
+
                     new Item("MixinParameters54", "Strict Mixin Parameters", "In the 5.4 DTD, Parameter Mixins must be qualified with the mixin id."),
 
                     new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
