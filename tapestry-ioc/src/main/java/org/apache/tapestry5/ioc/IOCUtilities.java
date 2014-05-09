@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,6 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 import java.io.Closeable;
@@ -61,8 +58,9 @@ public final class IOCUtilities
      * corresponding class to the RegistryBuilder. In addition, looks for a system property named "tapestry.modules" and
      * adds all of those modules as well. The tapestry.modules approach is intended for development.
      *
-     * @param builder the builder to which modules will be added
-     * @see SubModule
+     * @param builder
+     *         the builder to which modules will be added
+     * @see org.apache.tapestry5.ioc.annotations.ImportModule
      * @see RegistryBuilder#add(String)
      */
     public static void addDefaultModules(RegistryBuilder builder)
@@ -80,8 +78,7 @@ public final class IOCUtilities
 
             addModulesInList(builder, System.getProperty("tapestry.modules"));
 
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             throw new RuntimeException(ex.getMessage(), ex);
         }
@@ -106,24 +103,21 @@ public final class IOCUtilities
             String list = mf.getMainAttributes().getValue(MODULE_BUILDER_MANIFEST_ENTRY_NAME);
 
             addModulesInList(builder, list);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             fail = ex;
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             fail = ex;
-        }
-        finally
+        } finally
         {
             close(in);
         }
 
         if (fail != null)
             throw new RuntimeException(String.format("Exception loading module(s) from manifest %s: %s",
-                                                     url.toString(),
-                                                     ExceptionUtils.toMessage(fail)), fail);
+                    url.toString(),
+                    ExceptionUtils.toMessage(fail)), fail);
 
     }
 
@@ -142,7 +136,8 @@ public final class IOCUtilities
     /**
      * Closes an input stream (or other Closeable), ignoring any exception.
      *
-     * @param closeable the thing to close, or null to close nothing
+     * @param closeable
+     *         the thing to close, or null to close nothing
      */
     private static void close(Closeable closeable)
     {
@@ -151,8 +146,7 @@ public final class IOCUtilities
             try
             {
                 closeable.close();
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 // Ignore.
             }

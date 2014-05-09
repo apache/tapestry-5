@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +14,7 @@ package org.example.upload.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.upload.modules.UploadModule;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 
@@ -24,7 +22,7 @@ import org.apache.tapestry5.upload.services.UploadSymbols;
  * The SubModule is not normally needed, except that during tests of tapestry-upload, the necessary JAR Manifest does
  * not yet exist, so we force the tapestry-upload module into the registry explicitly.
  */
-@SubModule(UploadModule.class)
+@ImportModule(UploadModule.class)
 public class AppModule
 {
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)

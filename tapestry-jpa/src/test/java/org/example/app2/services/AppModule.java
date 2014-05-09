@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,14 +15,14 @@ package org.example.app2.services;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.jpa.JpaSymbols;
 import org.apache.tapestry5.jpa.modules.JpaModule;
 import org.example.app2.services.impl.UserDAOImpl;
 
-@SubModule(JpaModule.class)
+@ImportModule(JpaModule.class)
 public class AppModule
 {
 

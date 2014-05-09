@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,14 +22,14 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Match;
-import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
-// @SubModule just needed for developers running these tests within the IDE
-@SubModule({HibernateModule.class, HibernateCoreModule.class})
+// @ImportModule just needed for developers running these tests within the IDE
+@ImportModule({HibernateModule.class, HibernateCoreModule.class})
 public class AppModule
 {
     public static void bind(ServiceBinder binder)
@@ -53,17 +51,16 @@ public class AppModule
     }
 
 
-
     @Contribute(ClientWhitelist.class)
     public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
     {
-       configuration.add("TestAnalyzer", new WhitelistAnalyzer()
-       {
+        configuration.add("TestAnalyzer", new WhitelistAnalyzer()
+        {
 
-           public boolean isRequestOnWhitelist(Request request)
-           {
-               return true;
-           }
-       }, "before:*");
+            public boolean isRequestOnWhitelist(Request request)
+            {
+                return true;
+            }
+        }, "before:*");
     }
 }

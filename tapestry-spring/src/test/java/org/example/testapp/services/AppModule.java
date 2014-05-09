@@ -1,5 +1,3 @@
-// Copyright 2008-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,14 +16,14 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.modules.SpringModule;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import javax.servlet.ServletContext;
 
-@SubModule(SpringModule.class)
+@ImportModule(SpringModule.class)
 public class AppModule
 {
     public static final void bind(ServiceBinder binder)

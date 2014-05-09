@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,6 +17,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 /**
  * Used by {@link ioc.specs.RegistryBuilderSpec}.
  */
+// Leaving this one here as a compatibility test; other SubModules have been converted to ImportModule.
 @SubModule(
         {FredModule.class, BarneyModule.class})
 public final class MasterModule

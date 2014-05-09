@@ -21,17 +21,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Attached to a module class, this annotation identifies other module classes that should also be added to the
- * Registry. This is often easier than updating the JAR Manifest.
+ * Registry. A class is processed once, even if it is mentioned multiple times. Using this annotation
+ * is often easier than updating the JAR Manifest to list additional module class names.
  *
- * @deprecated Deprecated in 5.4, use {@link org.apache.tapestry5.ioc.annotations.ImportModule} instead.
+ * @since 5.4
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
 @UseWith(AnnotationUseContext.MODULE)
-public @interface SubModule
+public @interface ImportModule
 {
-
     /**
      * One or more classes that are also modules and should also be loaded.
      */

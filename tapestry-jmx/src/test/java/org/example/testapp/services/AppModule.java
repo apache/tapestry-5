@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,11 +16,11 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Decorate;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.jmx.MBeanSupport;
 import org.apache.tapestry5.jmx.modules.JmxModule;
 
-@SubModule(JmxModule.class)
+@ImportModule(JmxModule.class)
 public class AppModule
 {
     public static void bind(ServiceBinder binder)

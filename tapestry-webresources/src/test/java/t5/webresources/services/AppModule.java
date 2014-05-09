@@ -4,7 +4,7 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.Core;
@@ -15,7 +15,7 @@ import org.apache.tapestry5.services.javascript.StackExtension;
 import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.apache.tapestry5.webresources.modules.WebResourcesModule;
 
-@SubModule(WebResourcesModule.class)
+@ImportModule(WebResourcesModule.class)
 public class AppModule
 {
     @Contribute(Compatibility.class)
@@ -38,7 +38,7 @@ public class AppModule
     @Core
     public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
     {
-		configuration.override("bootstrap.css",
-				new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/less/bootstrap.less"), "before:tapestry.css");
+        configuration.override("bootstrap.css",
+                new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/less/bootstrap.less"), "before:tapestry.css");
     }
 }

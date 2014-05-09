@@ -1,5 +1,3 @@
-// Copyright 2012, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +14,7 @@ package org.example.app5.services;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.jpa.JpaSymbols;
@@ -29,27 +27,33 @@ import javax.persistence.spi.PersistenceProviderResolverHolder;
 import java.util.Arrays;
 import java.util.List;
 
-@SubModule(JpaModule.class)
-public class AppModule {
+@ImportModule(JpaModule.class)
+public class AppModule
+{
 
-    static {
+    static
+    {
 
-        PersistenceProviderResolverHolder.setPersistenceProviderResolver(new PersistenceProviderResolver() {
-            public List<PersistenceProvider> getPersistenceProviders() {
-                return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider(), new org.eclipse.persistence.jpa.PersistenceProvider());
-            }
+        PersistenceProviderResolverHolder.setPersistenceProviderResolver(
+                new PersistenceProviderResolver()
+                {
+                    public List<PersistenceProvider> getPersistenceProviders()
+                    {
+                        return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider(), new org.eclipse.persistence.jpa.PersistenceProvider());
+                    }
 
-            public void clearCachedProviders() {
-            }
-        }
-
+                    public void clearCachedProviders()
+                    {
+                    }
+                }
         );
     }
 
     @Contribute(SymbolProvider.class)
     @ApplicationDefaults
     public static void provideApplicationDefaults(
-            final MappedConfiguration<String, String> configuration) {
+            final MappedConfiguration<String, String> configuration)
+    {
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "false");
         configuration.add(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/explicit-persistence-provider-class-persistence-unit.xml");
     }

@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
@@ -100,7 +99,7 @@ public final class RegistryBuilder
     /**
      * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
      *
-     * @see org.apache.tapestry5.ioc.annotations.SubModule
+     * @see org.apache.tapestry5.ioc.annotations.ImportModule
      */
     public RegistryBuilder add(Class... moduleClasses)
     {
@@ -124,12 +123,22 @@ public final class RegistryBuilder
             ModuleDef def = new DefaultModuleDefImpl(c, logger, proxyFactory);
             add(def);
 
-            SubModule annotation = ((AnnotatedElement) c).getAnnotation(SubModule.class);
 
-            if (annotation == null)
-                continue;
+            @SuppressWarnings("RedundantCast")
+            AnnotatedElement element = (AnnotatedElement) c;
 
-            queue.addAll(Arrays.asList(annotation.value()));
+            SubModule subModule = element.getAnnotation(SubModule.class);
+
+            if (subModule != null)
+            {
+                queue.addAll(Arrays.asList(subModule.value()));
+            }
+            ImportModule importModule = element.getAnnotation(ImportModule.class);
+
+            if (importModule != null)
+            {
+                queue.addAll(Arrays.asList(importModule.value()));
+            }
         }
 
         return this;
@@ -139,7 +148,7 @@ public final class RegistryBuilder
      * Adds a modle class (specified by fully qualified class name) to the registry, returning the builder
      * for further configuration.
      *
-     * @see org.apache.tapestry5.ioc.annotations.SubModule
+     * @see org.apache.tapestry5.ioc.annotations.ImportModule
      */
     public RegistryBuilder add(String classname)
     {
@@ -189,8 +198,10 @@ public final class RegistryBuilder
      * performs registry startup. The returned registry is ready to use. The caller is must not invoke
      * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      *
-     * @param moduleDef     {@link ModuleDef} to add
-     * @param moduleClasses modules (as module classes) to add
+     * @param moduleDef
+     *         {@link ModuleDef} to add
+     * @param moduleClasses
+     *         modules (as module classes) to add
      * @return {@link Registry}
      * @since 5.2.0
      */
@@ -215,7 +226,8 @@ public final class RegistryBuilder
      * performs registry startup. The returned registry is ready to use. The caller is must not invoke
      * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      *
-     * @param moduleClasses modules (as module classes) to add
+     * @param moduleClasses
+     *         modules (as module classes) to add
      * @return {@link Registry}
      * @since 5.2.0
      */

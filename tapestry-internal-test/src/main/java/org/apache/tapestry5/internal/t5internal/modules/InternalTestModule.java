@@ -8,7 +8,7 @@ import org.apache.tapestry5.services.LibraryMapping;
 /**
  * Provides the "t5internal" library, that provides common text utilities needed by some of the other
  * projects' integration tests. To normalize in-IDE development with command-line development, this module
- * is not set up to auto load via a manifest attribute, instead it is referenced via {@link org.apache.tapestry5.ioc.annotations.SubModule}.
+ * is not set up to auto load via a manifest attribute, instead it is referenced via {@link org.apache.tapestry5.ioc.annotations.ImportModule}.
  *
  * @since 5.4
  */

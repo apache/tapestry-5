@@ -39,6 +39,11 @@ attributes.
 The service proxies created by Tapestry-IoC for services defined on interfaces, not just a concrete class, now have the
 service implementation class annotations. The same now happens to annotations in service methods too.
 
+## SubModule Deprecated
+
+The SubModule annotation has been deprecated; the new ImportModule annotation does exactly the same thing,
+but is more clearly named.
+
 ## Asset Improvements
 
 Prior versions of Tapestry created cacheable URLs for Assets that incorporated the application version number. The

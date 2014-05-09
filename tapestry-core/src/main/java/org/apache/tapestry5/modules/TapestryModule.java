@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -110,7 +108,7 @@ import java.util.regex.Pattern;
  * The root module for Tapestry.
  */
 @Marker(Core.class)
-@SubModule(
+@ImportModule(
         {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class})
 public final class TapestryModule
 {
