@@ -21,6 +21,8 @@ import com.sun.javadoc.Tag;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class ParameterDescription
 {
     public final FieldDoc field;
@@ -97,6 +99,12 @@ public class ParameterDescription
                     builder.append("#");
                     builder.append(seeTag.referencedMemberName());
                 }
+            }
+            else if (tag.name().equals("@code"))
+            {
+                builder.append("<code>");
+                builder.append(StringEscapeUtils.escapeHtml(tag.text()));
+                builder.append("</code>");
             }
         }
 

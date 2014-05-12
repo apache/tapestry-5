@@ -2,6 +2,7 @@ description = "JavaDoc Plugin for Tapestry that generates component reference do
 
 dependencies {
   compile project(':tapestry-core')
+  compile "commons-lang:commons-lang:2.6"
   compile files(getTools())
 }
 
