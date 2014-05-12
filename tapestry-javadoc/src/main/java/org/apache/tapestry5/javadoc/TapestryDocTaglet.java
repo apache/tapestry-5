@@ -147,10 +147,16 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         }
     }
 
-    private void writeElement(Writer writer, String elementName, String text) throws IOException
+    private void writeElement(Writer writer, String elementSpec, String text) throws IOException
     {
-        writer.write(String.format("<%s>%s</%1$s>", elementName,
-                InternalUtils.isBlank(text) ? "&nbsp;" : text));
+    	String elementName = elementSpec;
+    	int idxOfSpace = elementSpec.indexOf(' ');
+    	if (idxOfSpace != -1)
+    	{
+    		elementName = elementSpec.substring(0, idxOfSpace);
+    	}
+        writer.write(String.format("<%s>%s</%s>", elementSpec,
+                InternalUtils.isBlank(text) ? "&nbsp;" : text, elementName));
     }
 
     private void writeClassDescription(ClassDescription cd, Writer writer) throws IOException
