@@ -129,6 +129,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
                 if (signaturesAreEqual(method, objectMethod))
                 {
                     methodIterator.remove();
+                    break;
                 }
             }
         }
