@@ -21,7 +21,7 @@ package org.apache.tapestry5.ioc.internal;
 public interface ServiceProxyProvider
 {
     /**
-     * Look up the service and return it's proxy.
+     * Look up the service and return its proxy.
      *
      * @param serviceId the id of the service to obtain
      * @return the service proxy

@@ -95,7 +95,7 @@ interface ComponentAssembler
      * @param mixins
      *            mixins for the component (as defined in the template)
      * @param location
-     *            location of the component (i.e., it's location in the container template)
+     *            location of the component (i.e., its location in the container template)
      * @return assembler for the component
      */
     EmbeddedComponentAssembler createEmbeddedAssembler(String embeddedId, String componentClassName,

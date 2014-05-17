@@ -41,7 +41,7 @@ import org.slf4j.Logger;
  * content on the client side. Often, re-rendering the Zone's {@linkplain #getBody() body} is useful. Multiple
  * client-side zones may be updated via the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} service.
  * <p/>
- * You will often want to specify the id parameter of the Zone, in addition to it's Tapestry component id; this "locks
+ * You will often want to specify the id parameter of the Zone, in addition to its Tapestry component id; this "locks
  * down" the client-side id, so the same value is used even in later partial renders of the page (essential if the Zone
  * is nested inside another Zone). When you specify the client-side id, it is used exactly as provided (meaning that you
  * are responsible for ensuring that there will not be an id conflict even in the face of multiple partial renders of

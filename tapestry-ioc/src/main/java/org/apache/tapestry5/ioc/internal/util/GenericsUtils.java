@@ -314,7 +314,7 @@ public class GenericsUtils
     }
 
     /**
-     * Method to resolve a TypeVariable to it's most
+     * Method to resolve a TypeVariable to its most
      * <a href="http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#112582">reifiable</a> form.
      * <p/>
      * <p/>
@@ -336,7 +336,7 @@ public class GenericsUtils
      * <p/>
      * When extracting Types we only have to consider the superclass hierarchy and not the interfaces implemented by
      * the class. When a class implements a generic interface it must provide types for the interface and any generic
-     * methods implemented from the interface will be re-defined by the class with it's generic type variables.
+     * methods implemented from the interface will be re-defined by the class with its generic type variables.
      *
      * @param typeVariable   - the type variable to resolve.
      * @param containingType - the shallowest class in the class hierarchy (furthest from Object) where typeVariable is defined.
@@ -588,7 +588,7 @@ public class GenericsUtils
      * the actual type.
      *
      * @param typeVariable - the type variable in question.
-     * @return the index of the type variable in it's declaring class/method/constructor's type parameters.
+     * @return the index of the type variable in its declaring class/method/constructor's type parameters.
      */
     private static int getTypeVariableIndex(final TypeVariable typeVariable)
     {

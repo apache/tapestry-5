@@ -35,7 +35,7 @@ public class AppModule
     public static void contributeFactoryDefaults(
             MappedConfiguration<String, Object> configuration)
     {
-        // The application version is incorprated into URLs for most assets. Web
+        // The application version is incorporated into URLs for most assets. Web
         // browsers will cache assets because of the far future expires header.
     	// If existing assets change (or if the Tapestry version changes) you
     	// should also change this number, to force the browser to download new
