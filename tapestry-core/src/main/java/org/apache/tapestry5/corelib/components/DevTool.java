@@ -58,7 +58,7 @@ public class DevTool
 
     /**
      * If true, then the DevTool modifies its markup so as to work within a Bootstrap 3 NavBar. This renders
-     * the component as an {@code <li>} (instead of a {@code <div>}), and removes the "btn" CSS classes.
+     * the component as a {@code <li>} (instead of a {@code <div>}), and removes the "btn" CSS classes.
      */
     @Parameter
     private boolean navbar;

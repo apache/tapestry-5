@@ -14,14 +14,18 @@
 
 package org.apache.tapestry5.javadoc;
 
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.SeeTag;
-import com.sun.javadoc.Tag;
-
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import com.sun.javadoc.FieldDoc;
+import com.sun.javadoc.SeeTag;
+import com.sun.javadoc.Tag;
 
 public class ParameterDescription
 {
@@ -45,10 +49,12 @@ public class ParameterDescription
 
     public final boolean deprecated;
 
-    private static final Pattern STRIPPER = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
+    private static final Pattern SPECIAL_CONTENT = Pattern.compile("(?:</?(\\p{Alpha}+)>)|(?:&\\p{Alpha}+;)");
+    private static final Set<String> PASS_THROUGH_TAGS = CollectionFactory.newSet("b", "em", "i", "code", "strong");
 
-    public ParameterDescription(FieldDoc fieldDoc, String name, String type, String defaultValue, String defaultPrefix,
-                                boolean required, boolean allowNull, boolean cache, String since, boolean deprecated)
+
+    public ParameterDescription(final FieldDoc fieldDoc, final String name, final String type, final String defaultValue, final String defaultPrefix,
+            final boolean required, final boolean allowNull, final boolean cache, final String since, final boolean deprecated)
     {
         this.field = fieldDoc;
         this.name = name;
@@ -76,7 +82,7 @@ public class ParameterDescription
         {
             if (tag.name().equals("Text"))
             {
-                builder.append(tag.text());
+                appendContentSafe(builder, tag.text());
                 continue;
             }
 
@@ -87,17 +93,17 @@ public class ParameterDescription
                 String label = seeTag.label();
                 if (label != null && !label.equals(""))
                 {
-                    builder.append(label);
+                    builder.append(StringEscapeUtils.escapeHtml(label));
                     continue;
                 }
 
                 if (seeTag.referencedClassName() != null)
-                    builder.append(seeTag.referencedClassName());
+                    builder.append(StringEscapeUtils.escapeHtml(seeTag.referencedClassName()));
 
                 if (seeTag.referencedMemberName() != null)
                 {
                     builder.append("#");
-                    builder.append(seeTag.referencedMemberName());
+                    builder.append(StringEscapeUtils.escapeHtml(seeTag.referencedMemberName()));
                 }
             }
             else if (tag.name().equals("@code"))
@@ -114,6 +120,31 @@ public class ParameterDescription
 
         // Remove any simple open or close tags found in the text, as well as any XML entities.
 
-        return STRIPPER.matcher(text).replaceAll("").trim();
+        return text.trim();
+    }
+
+    private static void appendContentSafe(final StringBuilder sb, final String string){
+        Matcher m = SPECIAL_CONTENT.matcher(string);
+        int index = 0;
+        while (index < string.length()){
+            boolean match = m.find(index);
+            if (match){
+                if (index != m.start()){
+                    sb.append(StringEscapeUtils.escapeHtml(string.substring(index, m.start())));
+                }
+                String tagName = m.group(1);
+                if (tagName!= null){
+                    if(PASS_THROUGH_TAGS.contains(tagName.toLowerCase(Locale.US))){
+                        sb.append(m.group());
+                    }
+                }else{
+                    sb.append(m.group());
+                }
+                index = m.end();
+            }else{
+                sb.append(StringEscapeUtils.escapeHtml(string.substring(index)));
+                break;
+            }
+        }
     }
 }
