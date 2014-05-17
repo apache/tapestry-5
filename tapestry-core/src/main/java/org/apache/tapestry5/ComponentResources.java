@@ -23,6 +23,7 @@ import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -128,6 +129,18 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @see Binding#getBindingType()
      */
     Class getBoundType(String parameterName);
+    
+    
+    /**
+     * Returns the generic type of the bound parameter, or null if the parameter is not bound. This is useful
+     * for when the parameter is bound to a generic property (eg java.util.List) to determine the element type.
+     * 
+     * @param parameterName
+     *        used to select the parameter (case is ignored)
+     * @return the generic type of the bound parameter, or null if the parameter is not bound
+     * @see Binding#getBindingGenericType()
+     */
+    Type getBoundGenericType(String parameterName);
 
     /**
      * Returns an annotation provider, used to obtain annotations related to the parameter.

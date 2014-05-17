@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import java.lang.reflect.Type;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
@@ -53,4 +55,11 @@ public interface Binding extends AnnotationProvider
      * bound.
      */
     Class getBindingType();
+    
+    /**
+     * Returns the generic type of the binding, either the generic type of resource exposed by the binding, or the 
+     * generic type of the property bound.
+     * @since 5.4
+     */
+    Type getBindingGenericType();
 }

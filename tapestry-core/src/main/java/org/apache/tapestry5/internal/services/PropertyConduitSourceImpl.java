@@ -63,9 +63,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
         private static final MethodDescription GET_PROPERTY_TYPE = getMethodDescription(PropertyConduit.class,
                 "getPropertyType");
 
+        private static final MethodDescription GET_PROPERTY_GENERIC_TYPE = getMethodDescription(PropertyConduit.class,
+                "getPropertyGenericType");
+        
         private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,
                 "getPropertyName");
-
+        
         private static final MethodDescription GET_ANNOTATION = getMethodDescription(AnnotationProvider.class,
                 "getAnnotation", Class.class);
 
@@ -245,6 +248,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
         private Class conduitPropertyType;
 
+        private Type conduitPropertyGenericType;
+
         private String conduitPropertyName;
 
         private AnnotationProvider annotationProvider = nullAnnotationProvider;
@@ -302,6 +307,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                 }
             });
 
+            final PlasticField propertyGenericTypeField = plasticClass.introduceField(Type.class, "propertyGenericType").inject(
+                    conduitPropertyGenericType);
+
+            plasticClass.introduceMethod(ConduitMethods.GET_PROPERTY_GENERIC_TYPE, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadThis().getField(propertyGenericTypeField).returnResult();
+                }
+            });
         }
 
         /**
@@ -424,6 +439,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     implementNoOpSetter();
 
                     conduitPropertyType = IntegerRange.class;
+                    conduitPropertyGenericType = IntegerRange.class;
 
                     return;
 
@@ -433,7 +449,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     implementNoOpSetter();
 
                     conduitPropertyType = List.class;
-
+                    conduitPropertyGenericType = List.class;
+                    
                     return;
 
                 case MAP:
@@ -441,6 +458,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     implementNoOpSetter();
 
                     conduitPropertyType = Map.class;
+                    conduitPropertyGenericType = Map.class;
 
                     return;
 
@@ -450,6 +468,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     implementNoOpSetter();
 
                     conduitPropertyType = boolean.class;
+                    conduitPropertyGenericType = boolean.class;
 
                     return;
 
@@ -466,6 +485,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             conduitPropertyName = term.description;
             conduitPropertyType = term.genericType;
+            conduitPropertyGenericType = term.genericType;
             annotationProvider = term.annotationProvider;
 
             plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
@@ -491,15 +511,39 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             PropertyAdapter adapter = findPropertyAdapter(activeType, propertyName);
 
-            conduitPropertyType = adapter.getType();
             conduitPropertyName = propertyName;
+            conduitPropertyType = adapter.getType();
+            conduitPropertyGenericType = getGenericType(adapter);
             annotationProvider = adapter;
 
             implementGetter(adapter);
             implementSetter(adapter);
         }
 
-        private void implementSetter(PropertyAdapter adapter)
+        private Type getGenericType(PropertyAdapter adapter)
+        {
+        	Type genericType = null;
+        	if (adapter.getField() != null)
+        	{
+        		genericType = adapter.getField().getGenericType();
+        	}
+        	else if (adapter.getReadMethod() != null)
+        	{
+        		genericType = adapter.getReadMethod().getGenericReturnType(); 
+        	}
+        	else if (adapter.getWriteMethod() != null)
+        	{
+        		genericType = adapter.getWriteMethod().getGenericParameterTypes()[0];
+        	}
+        	else
+        	{
+        		throw new RuntimeException("Could not find accessor for property " + adapter.getName());
+        	}
+        	
+        	return genericType == null ? adapter.getType() : genericType;
+		}
+
+		private void implementSetter(PropertyAdapter adapter)
         {
             if (adapter.getWriteMethod() != null)
             {
@@ -1438,6 +1482,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
             public Class getPropertyType()
             {
                 return rootClass;
+            }
+            
+            public Type getPropertyGenericType()
+            {
+            	return rootClass;
             }
 
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

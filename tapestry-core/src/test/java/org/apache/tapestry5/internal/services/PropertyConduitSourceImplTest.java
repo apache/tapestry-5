@@ -29,6 +29,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -161,6 +163,31 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         smart.set(bean, "Howard");
     }
 
+    static class GenericBean {
+    	public List<Date> dates;
+    	public List<GenericBean> genericBeans;
+    	
+    	public List<Long> getLongs() {
+    		return Collections.emptyList();
+    	}
+    	
+    	public void setMap(Map<String, Integer> map) {
+    	}
+    }
+    
+    @Test
+    public void generic_types_are_determined()
+    {
+        PropertyConduit datesConduit = source.create(GenericBean.class, "dates");
+        PropertyConduit longsConduit = source.create(GenericBean.class, "longs");
+        PropertyConduit nestedDatesConduit = source.create(GenericBean.class, "genericBeans.get(0).dates");
+        PropertyConduit mapConduit = source.create(GenericBean.class, "map");
+        assertEquals(datesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");
+        assertEquals(longsConduit.getPropertyGenericType().toString(), "java.util.List<java.lang.Long>");
+        assertEquals(nestedDatesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");
+        assertEquals(mapConduit.getPropertyGenericType().toString(), "java.util.Map<java.lang.String, java.lang.Integer>");
+    }
+    
     @Test
     public void method_names_are_matched_caselessly()
     {

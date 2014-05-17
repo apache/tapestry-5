@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -63,6 +64,11 @@ public class EmptyGrid
       }
       
       public Class getPropertyType()
+      {
+        return Long.class;
+      }
+
+      public Type getPropertyGenericType()
       {
         return Long.class;
       }

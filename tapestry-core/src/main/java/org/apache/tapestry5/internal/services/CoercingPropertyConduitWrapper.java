@@ -18,6 +18,7 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 public class CoercingPropertyConduitWrapper implements PropertyConduit
 {
@@ -44,6 +45,11 @@ public class CoercingPropertyConduitWrapper implements PropertyConduit
     public Class getPropertyType()
     {
         return conduit.getPropertyType();
+    }
+    
+    public Type getPropertyGenericType()
+    {
+    	return conduit.getPropertyGenericType();
     }
 
     @SuppressWarnings("unchecked")

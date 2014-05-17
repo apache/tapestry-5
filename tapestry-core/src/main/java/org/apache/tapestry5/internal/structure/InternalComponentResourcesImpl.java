@@ -41,6 +41,7 @@ import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -344,6 +345,14 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
 
         return binding == null ? null : binding.getBindingType();
     }
+    
+    public Type getBoundGenericType(String parameterName)
+    {
+        Binding binding = getBinding(parameterName);
+
+        return binding == null ? null : binding.getBindingGenericType();
+    }
+    
 
     public Binding getBinding(String parameterName)
     {

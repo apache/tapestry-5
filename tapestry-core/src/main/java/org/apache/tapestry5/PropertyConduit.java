@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import java.lang.reflect.Type;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
@@ -42,4 +44,15 @@ public interface PropertyConduit extends AnnotationProvider
      * Returns the type of the property read or updated by the conduit.
      */
     Class getPropertyType();
+    
+    /**
+     * Returns a Type object that represents the declared type for the property.
+     * If the Type is a parameterized type, the Type object returned must accurately 
+     * reflect the actual type parameters used in the source code. If the type of the
+     * underlying property is a type variable or a parameterized type, it is created.
+     * Otherwise, it is resolved.
+     * 
+     * @since 5.4
+     */
+    Type getPropertyGenericType();
 }

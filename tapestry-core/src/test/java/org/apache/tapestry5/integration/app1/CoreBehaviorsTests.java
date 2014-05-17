@@ -1720,4 +1720,20 @@ public class CoreBehaviorsTests extends App1TestCase
         
         assertTextPresent("This page throws an exception");
     }
+    
+    @Test
+    public void bound_generic_types()
+    {
+    	openLinks("Generic bound type demo");
+    	
+		assertTextPresent("clientId=one,type=java.util.Map,genericType=java.util.Map<java.lang.String, java.lang.String>");
+		assertTextPresent("clientId=two,type=java.lang.String,genericType=class java.lang.String");
+		assertTextPresent("clientId=three,type=java.util.Set,genericType=java.util.Set<java.lang.Long>");
+		assertTextPresent("clientId=four,type=java.util.List,genericType=java.util.List<java.util.List<java.util.Date>>");
+		assertTextPresent("clientId=five,type=java.util.List,genericType=interface java.util.List");
+		assertTextPresent("clientId=six,type=java.util.Date,genericType=class java.util.Date");
+		assertTextPresent("clientId=seven,type=java.util.List,genericType=interface java.util.List");
+		assertTextPresent("clientId=eight,type=java.util.Map,genericType=interface java.util.Map");
+		assertTextPresent("clientId=nine,type=java.lang.String,genericType=class java.lang.String");
+    }
 }

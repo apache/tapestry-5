@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.ref.Reference;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -491,6 +492,11 @@ public class TapestryInternalUtils
                 return conduit.getPropertyType();
             }
 
+            public Type getPropertyGenericType()
+            {
+                return conduit.getPropertyGenericType();
+            }
+            
             public Object get(Object instance)
             {
                 return conduit.get(instance);

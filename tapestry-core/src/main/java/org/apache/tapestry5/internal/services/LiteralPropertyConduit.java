@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -58,6 +59,11 @@ public class LiteralPropertyConduit extends PropertyConduitDelegate implements I
     public Class getPropertyType()
     {
         return propertyType;
+    }
+    
+    public Type getPropertyGenericType()
+    {
+    	return propertyType;
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

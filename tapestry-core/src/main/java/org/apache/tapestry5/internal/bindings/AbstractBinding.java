@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 /**
  * Abstract base class for bindings. Assumes that the binding is read only and invariant. Subclasses must provide an
@@ -61,6 +62,15 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
     public Class getBindingType()
     {
         return get().getClass();
+    }
+    
+    /**
+     * Passes straight through to {@link AbstractBinding#getBindingType()}. Subclasses may override this method to
+     * return the generic type if it is available
+     */
+    public Type getBindingGenericType()
+    {
+    	return getBindingType();
     }
 
     /**

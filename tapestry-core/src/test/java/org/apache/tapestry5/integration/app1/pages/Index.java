@@ -566,7 +566,9 @@ public class Index
 
                     new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report"),
                     
-                    new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop")
+                    new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop"),
+                    
+                    new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings")
 
             );
 

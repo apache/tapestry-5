@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<h1>Generic Type Tests</h1>
+	<t:genericTypeDisplay clientId="one" value="mapOfStrings" />
+	<t:genericTypeDisplay clientId="two" value="mapOfStrings.get('foo')" />
+	<t:genericTypeDisplay clientId="three" value="setOfLongs" />
+	<t:genericTypeDisplay clientId="four" value="listOfListOfDates" />
+	<t:genericTypeDisplay clientId="five" value="listOfListOfDates.get(0)" />
+	<t:genericTypeDisplay clientId="six" value="listOfListOfDates.get(0).get(0)" />
+	<t:genericTypeDisplay clientId="seven" value="[1,2,3]" />
+	<t:genericTypeDisplay clientId="eight" value="{'foo':'bar'}" />
+	<t:genericTypeDisplay clientId="nine" value="literal:aaa" />
+</html>
