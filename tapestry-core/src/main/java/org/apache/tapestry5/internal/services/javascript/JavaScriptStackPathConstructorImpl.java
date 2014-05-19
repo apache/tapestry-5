@@ -103,9 +103,7 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
             StreamableResource assembled = assembler.assembleJavaScriptResourceForStack(stackName, compressionAnalyzer.isGZipSupported(),
                     stack.getJavaScriptAggregationStrategy());
 
-            String path = String.format("%s/%s.js",
-                    threadLocale.getLocale(),
-                    stackName);
+            String path = threadLocale.getLocale().toString() + '/' + stackName + ".js";
 
             String stackURL = assetPathConstructor.constructAssetPath(RequestConstants.STACK_FOLDER, path, assembled);
 

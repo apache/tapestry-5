@@ -49,6 +49,6 @@ public class OptionModelImpl extends AbstractOptionModel
     @Override
     public String toString()
     {
-        return String.format("OptionModel[%s %s]", label, value);
+        return "OptionModel[" + label + ' ' + value + ']';
     }
 }

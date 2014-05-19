@@ -34,7 +34,6 @@ public class MessagesConstraintGenerator implements ValidationConstraintGenerato
 {
 
     private final Environment environment;
-    private final String format="%s-validate";
     private final Pattern splitPattern;
 
     public MessagesConstraintGenerator(final Environment environment) {
@@ -49,7 +48,7 @@ public class MessagesConstraintGenerator implements ValidationConstraintGenerato
             return null;
         }
 
-        String key = String.format(format,environmentMessages.getOverrideId());
+        String key = environmentMessages.getOverrideId() + "-validate";
         Messages m = environmentMessages.getMessages();
         if (!m.contains(key))
         {

@@ -62,7 +62,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
         this.enablePageloadingMask = enablePageloadingMask;
 
-        tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
+        tapestryBanner = "Apache Tapestry Framework (version " + tapestryVersion + ')';
     }
 
     public void addStylesheetLink(StylesheetLink sheet)

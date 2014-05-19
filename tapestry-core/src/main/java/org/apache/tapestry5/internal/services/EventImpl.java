@@ -82,7 +82,7 @@ public class EventImpl implements Event
         if (result != null)
         {
             boolean handleResult =
-                    tracker.invoke(String.format("Handling result from method %s.", methodDescription), new Invokable<Boolean>()
+                    tracker.invoke("Handling result from method " + methodDescription + '.', new Invokable<Boolean>()
                     {
                         public Boolean invoke()
                         {

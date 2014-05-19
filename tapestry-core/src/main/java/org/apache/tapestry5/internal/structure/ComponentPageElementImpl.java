@@ -1040,7 +1040,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         assert InternalUtils.isNonBlank(eventType);
         assert context != null;
-        String description = String.format("Triggering event '%s' on %s", eventType, completeId);
+        String description = "Triggering event '" + eventType + "' on " + completeId;
 
         return elementResources.invoke(description, new Invokable<Boolean>()
         {
