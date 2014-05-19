@@ -64,9 +64,11 @@ public class PageResponseRendererImpl implements PageResponseRenderer
         markupRenderer.renderPageMarkup(page, writer);
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
-
-        long startNanos = System.nanoTime();
-
+        long startNanos = -1l;
+        if (logger.isDebugEnabled())
+        {
+            startNanos = System.nanoTime();
+        }
         writer.toMarkup(pw);
 
         long endNanos = System.nanoTime();

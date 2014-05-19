@@ -51,7 +51,11 @@ public class RenderQueueImpl implements RenderQueue
 
         boolean traceEnabled = logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS);
 
-        long startNanos = System.nanoTime();
+        long startNanos = -1l;
+        if (logger.isDebugEnabled())
+        {
+            startNanos = System.nanoTime();
+        }
         int commandCount = 0;
         int maxDepth = 0;
 
@@ -81,16 +85,19 @@ public class RenderQueueImpl implements RenderQueue
             throw new RenderQueueException(message, renderingComponents.getSnapshot(), ex);
         }
 
-        long endNanos = System.nanoTime();
+        if (logger.isDebugEnabled())
+        {
+            long endNanos = System.nanoTime();
 
-        long elapsedNanos = endNanos - startNanos;
-        double elapsedSeconds = ((double) elapsedNanos) / 1000000000d;
+            long elapsedNanos = endNanos - startNanos;
+            double elapsedSeconds = ((double) elapsedNanos) / 1000000000d;
 
-        logger.debug(TapestryMarkers.RENDER_COMMANDS,
-                String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",
-                        commandCount,
-                        maxDepth,
-                        elapsedSeconds));
+            logger.debug(TapestryMarkers.RENDER_COMMANDS,
+                    String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",
+                            commandCount,
+                            maxDepth,
+                            elapsedSeconds));
+        }
     }
 
     public void startComponent(ComponentResources resources)
