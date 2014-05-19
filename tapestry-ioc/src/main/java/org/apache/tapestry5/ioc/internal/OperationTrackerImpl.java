@@ -158,10 +158,11 @@ public class OperationTrackerImpl implements OperationTracker
 
     private long start(String description)
     {
-        long startNanos = System.nanoTime();
+        long startNanos = -1l;
 
         if (logger.isDebugEnabled())
         {
+            startNanos = System.nanoTime();
             logger.debug(String.format("[%3d] --> %s", operations.getDepth() + 1, description));
         }
 
