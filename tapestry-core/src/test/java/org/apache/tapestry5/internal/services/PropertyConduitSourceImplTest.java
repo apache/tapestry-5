@@ -14,8 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit2;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.integration.app1.data.IntegerHolder;
@@ -28,11 +34,6 @@ import org.apache.tapestry5.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to
@@ -178,10 +179,10 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void generic_types_are_determined()
     {
-        PropertyConduit datesConduit = source.create(GenericBean.class, "dates");
-        PropertyConduit longsConduit = source.create(GenericBean.class, "longs");
-        PropertyConduit nestedDatesConduit = source.create(GenericBean.class, "genericBeans.get(0).dates");
-        PropertyConduit mapConduit = source.create(GenericBean.class, "map");
+        PropertyConduit2 datesConduit = (PropertyConduit2) source.create(GenericBean.class, "dates");
+        PropertyConduit2 longsConduit = (PropertyConduit2) source.create(GenericBean.class, "longs");
+        PropertyConduit2 nestedDatesConduit = (PropertyConduit2) source.create(GenericBean.class, "genericBeans.get(0).dates");
+        PropertyConduit2 mapConduit = (PropertyConduit2) source.create(GenericBean.class, "map");
         assertEquals(datesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");
         assertEquals(longsConduit.getPropertyGenericType().toString(), "java.util.List<java.lang.Long>");
         assertEquals(nestedDatesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");

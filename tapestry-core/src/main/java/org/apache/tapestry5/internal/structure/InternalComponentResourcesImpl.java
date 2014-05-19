@@ -349,8 +349,13 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
     public Type getBoundGenericType(String parameterName)
     {
         Binding binding = getBinding(parameterName);
-
-        return binding == null ? null : binding.getBindingGenericType();
+        Type genericType;
+        if (binding instanceof Binding2) {
+        	genericType = ((Binding2) binding).getBindingGenericType();
+        } else {
+        	genericType = binding.getBindingType();
+        }
+        return genericType;
     }
     
 

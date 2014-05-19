@@ -18,6 +18,7 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit2;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
@@ -63,7 +64,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
         private static final MethodDescription GET_PROPERTY_TYPE = getMethodDescription(PropertyConduit.class,
                 "getPropertyType");
 
-        private static final MethodDescription GET_PROPERTY_GENERIC_TYPE = getMethodDescription(PropertyConduit.class,
+        private static final MethodDescription GET_PROPERTY_GENERIC_TYPE = getMethodDescription(PropertyConduit2.class,
                 "getPropertyGenericType");
         
         private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,

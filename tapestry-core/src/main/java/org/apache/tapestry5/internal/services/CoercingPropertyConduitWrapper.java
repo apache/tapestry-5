@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class CoercingPropertyConduitWrapper implements PropertyConduit
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit2;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+
+public class CoercingPropertyConduitWrapper implements PropertyConduit2
 {
     private final PropertyConduit conduit;
 
@@ -49,7 +50,10 @@ public class CoercingPropertyConduitWrapper implements PropertyConduit
     
     public Type getPropertyGenericType()
     {
-    	return conduit.getPropertyGenericType();
+    	if (conduit instanceof PropertyConduit2) {
+    		return ((PropertyConduit2) conduit).getPropertyGenericType();
+    	}
+    	return conduit.getPropertyType();
     }
 
     @SuppressWarnings("unchecked")

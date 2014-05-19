@@ -13,13 +13,13 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Binding2;
 
 /**
  * Internal marker interface for {@linkplain org.apache.tapestry5.internal.bindings.PropBinding}
  *
  */
-public interface InternalPropBinding extends Binding
+public interface InternalPropBinding extends Binding2
 {
     /**
      * Returns the name of the property, if exists.

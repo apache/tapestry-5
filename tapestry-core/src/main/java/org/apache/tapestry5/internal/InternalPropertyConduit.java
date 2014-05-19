@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit2;
 
 
 /**
- * Extension to {@link org.apache.tapestry5.PropertyConduit} that adds a method to determine the name of the property.
+ * Extension to {@link org.apache.tapestry5.PropertyConduit2} that adds a method to determine the name of the property.
  * 
  * @since 5.2.0
  *
  */
-public interface InternalPropertyConduit extends PropertyConduit
+public interface InternalPropertyConduit extends PropertyConduit2
 {
     /**
      * Returns the name of the property read or updated by the conduit or null. 

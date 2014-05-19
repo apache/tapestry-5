@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal.bindings;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit2;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.Invariant;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 
 /**
  * Base class for bindings created by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}. A subclass
@@ -103,13 +104,17 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
     }
     
     /**
-     * Get the generic type from the underlying field or getter.
-     * @see PropertyConduit#getPropertyGenericType()
+     * Get the generic type from the underlying property
+     * 
+     * @see PropertyConduit2#getPropertyGenericType()
      */
     @Override
     public Type getBindingGenericType()
     {
-    	return conduit.getPropertyGenericType();
+    	if (conduit instanceof PropertyConduit2) {
+    		return ((PropertyConduit2) conduit).getPropertyGenericType();
+    	}
+    	return conduit.getPropertyType();
     }
 
     @Override

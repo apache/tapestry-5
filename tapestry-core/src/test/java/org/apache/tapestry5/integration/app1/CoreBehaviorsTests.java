@@ -1726,14 +1726,14 @@ public class CoreBehaviorsTests extends App1TestCase
     {
     	openLinks("Generic bound type demo");
     	
-		assertTextPresent("clientId=one,type=java.util.Map,genericType=java.util.Map<java.lang.String, java.lang.String>");
-		assertTextPresent("clientId=two,type=java.lang.String,genericType=class java.lang.String");
-		assertTextPresent("clientId=three,type=java.util.Set,genericType=java.util.Set<java.lang.Long>");
-		assertTextPresent("clientId=four,type=java.util.List,genericType=java.util.List<java.util.List<java.util.Date>>");
-		assertTextPresent("clientId=five,type=java.util.List,genericType=interface java.util.List");
-		assertTextPresent("clientId=six,type=java.util.Date,genericType=class java.util.Date");
-		assertTextPresent("clientId=seven,type=java.util.List,genericType=interface java.util.List");
-		assertTextPresent("clientId=eight,type=java.util.Map,genericType=interface java.util.Map");
-		assertTextPresent("clientId=nine,type=java.lang.String,genericType=class java.lang.String");
+    	assertTextPresent("description=mapOfStrings,type=java.util.Map,genericType=java.util.Map<java.lang.String, java.lang.String>");
+    	assertTextPresent("description=mapOfStrings.get('foo'),type=java.lang.String,genericType=class java.lang.String");
+    	assertTextPresent("description=setOfLongs,type=java.util.Set,genericType=java.util.Set<java.lang.Long>");
+    	assertTextPresent("description=listOfListOfDates,type=java.util.List,genericType=java.util.List<java.util.List<java.util.Date>>");
+    	assertTextPresent("description=listOfListOfDates.get(0),type=java.util.List,genericType=interface java.util.List");
+    	assertTextPresent("description=listOfListOfDates.get(0).get(0),type=java.util.Date,genericType=class java.util.Date");
+    	assertTextPresent("description=[1,2,3],type=java.util.List,genericType=interface java.util.List");
+    	assertTextPresent("description={'foo':'bar'},type=java.util.Map,genericType=interface java.util.Map");
+    	assertTextPresent("description=baz,type=java.lang.String,genericType=class java.lang.String");
     }
 }

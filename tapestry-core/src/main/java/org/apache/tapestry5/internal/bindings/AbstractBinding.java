@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Binding2;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -26,7 +27,7 @@ import java.lang.reflect.Type;
  * Abstract base class for bindings. Assumes that the binding is read only and invariant. Subclasses must provide an
  * implementation of {@link Binding#get()}.
  */
-public abstract class AbstractBinding extends BaseLocatable implements Binding
+public abstract class AbstractBinding extends BaseLocatable implements Binding2
 {
     public AbstractBinding()
     {

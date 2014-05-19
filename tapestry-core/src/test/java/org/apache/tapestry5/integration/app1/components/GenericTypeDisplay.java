@@ -22,23 +22,23 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * Outputs the type and genericType of the 'value' parameter in a div
+ * Outputs the type and genericType of the 'value' binding in a div
  */
 public class GenericTypeDisplay {
 	@Inject
 	private ComponentResources resources;
 	
 	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
-	private String clientId;
+	private String description;
 	
 	@Parameter(required=true)
 	private Object value;
 	
 	void afterRender(MarkupWriter writer) {
-		writer.element("div", "id", clientId);
+		writer.element("div");
 		Class<?> type = resources.getBoundType("value");
 		Type genericType = resources.getBoundGenericType("value");
-		String text = String.format("clientId=%s,type=%s,genericType=%s", clientId, type.getName(), genericType.toString());
+		String text = String.format("description=%s,type=%s,genericType=%s", description, type.getName(), genericType.toString());
 		writer.write(text);
 		writer.end();
 	}
