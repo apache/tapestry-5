@@ -50,9 +50,11 @@ public class RenderQueueImpl implements RenderQueue
         RenderCommand command = null;
 
         boolean traceEnabled = logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS);
+        boolean debugEnabled = logger.isDebugEnabled();
 
         long startNanos = -1l;
-        if (logger.isDebugEnabled())
+
+        if (debugEnabled)
         {
             startNanos = System.nanoTime();
         }
@@ -85,7 +87,7 @@ public class RenderQueueImpl implements RenderQueue
             throw new RenderQueueException(message, renderingComponents.getSnapshot(), ex);
         }
 
-        if (logger.isDebugEnabled())
+        if (debugEnabled)
         {
             long endNanos = System.nanoTime();
 

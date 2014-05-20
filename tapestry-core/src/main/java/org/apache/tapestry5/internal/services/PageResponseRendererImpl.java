@@ -65,7 +65,8 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
         long startNanos = -1l;
-        if (logger.isDebugEnabled())
+        boolean debugEnabled = logger.isDebugEnabled();
+        if (debugEnabled)
         {
             startNanos = System.nanoTime();
         }
@@ -73,7 +74,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
         long endNanos = System.nanoTime();
 
-        if (logger.isDebugEnabled())
+        if (debugEnabled)
         {
             long elapsedNanos = endNanos - startNanos;
             double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;

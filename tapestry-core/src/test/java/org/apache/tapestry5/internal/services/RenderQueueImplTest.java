@@ -46,6 +46,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         // There's only one check for trace enabled now.
 
         expect(logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS)).andReturn(false);
+        expect(logger.isDebugEnabled()).andReturn(true);
 
         logger.debug(eq(TapestryMarkers.RENDER_COMMANDS), isA(String.class));
 
@@ -87,6 +88,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
 
         expect(logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS)).andReturn(false);
+        expect(logger.isDebugEnabled()).andReturn(true);
 
         logger.error("Render queue error in FailedCommand: Oops.", t);
 
