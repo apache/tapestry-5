@@ -37,7 +37,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
     private final ClasspathURLConverter converter;
 
-    private final Pattern FOLDER_NAME_PATTERN = Pattern.compile("^\\p{javaJavaIdentifierStart}[\\p{javaJavaIdentifierPart}]*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern FOLDER_NAME_PATTERN = Pattern.compile("^\\p{javaJavaIdentifierStart}[\\p{javaJavaIdentifierPart}]*$", Pattern.CASE_INSENSITIVE);
 
 
     public ClasspathScannerImpl(ClasspathURLConverter converter)
@@ -61,13 +61,13 @@ public class ClasspathScannerImpl implements ClasspathScanner
         assert packagePath != null && packagePath.endsWith("/");
         assert matcher != null;
 
-        return new Job(matcher).findMatches(packagePath);
+        return new Job(matcher, contextClassLoader, converter).findMatches(packagePath);
     }
 
     /**
      * Check whether container supports opening a stream on a dir/package to get a list of its contents.
      */
-    private boolean supportsDirStream(URL packageURL)
+    private static boolean supportsDirStream(URL packageURL)
     {
         InputStream is = null;
 
@@ -99,7 +99,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
      * @throws java.io.IOException
      *         If error occurs creating jar file
      */
-    private JarFile getAlternativeJarFile(URL url) throws IOException
+    private static JarFile getAlternativeJarFile(URL url) throws IOException
     {
         String urlFile = url.getFile();
         // Trim off any suffix - which is prefixed by "!/" on Weblogic
@@ -137,9 +137,13 @@ public class ClasspathScannerImpl implements ClasspathScanner
     /**
      * Encapsulates the data, result, and queue of deferred operations for performing the scan.
      */
-    class Job
+    static class Job
     {
         final ClasspathMatcher matcher;
+
+        final ClasspathURLConverter converter;
+
+        final ClassLoader classloader;
 
         final Set<String> matches = CollectionFactory.newSet();
 
@@ -149,15 +153,17 @@ public class ClasspathScannerImpl implements ClasspathScanner
         final Stack<IOWork> queue = CollectionFactory.newStack();
 
 
-        Job(ClasspathMatcher matcher)
+        Job(ClasspathMatcher matcher, ClassLoader classloader, ClasspathURLConverter converter)
         {
             this.matcher = matcher;
+            this.classloader = classloader;
+            this.converter = converter;
         }
 
         Set<String> findMatches(String packagePath) throws IOException
         {
 
-            Enumeration<URL> urls = contextClassLoader.getResources(packagePath);
+            Enumeration<URL> urls = classloader.getResources(packagePath);
 
             while (urls.hasMoreElements())
             {
@@ -231,7 +237,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                     if (file.isDirectory())
                     {
-                        final String nestedPackagePath = fileName + "/";
+                        final String nestedPackagePath = packagePath + fileName + "/";
 
                         queue.push(new IOWork()
                         {
