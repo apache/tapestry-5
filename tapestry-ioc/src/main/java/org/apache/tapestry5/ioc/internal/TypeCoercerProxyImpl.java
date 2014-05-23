@@ -41,6 +41,7 @@ public final class TypeCoercerProxyImpl implements TypeCoercerProxy
         return delegate;
     }
 
+    @Override
     public <S, T> T coerce(S input, Class<T> targetType)
     {
         if (targetType.isInstance(input))

@@ -153,6 +153,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         registryShutdownHub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 scoreboardAndTracker.shutdown();
@@ -214,6 +215,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             startups.add(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     startup.invoke(module, RegistryImpl.this, RegistryImpl.this, logger);
@@ -284,12 +286,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Flow<ServiceDef2> filtered = serviceDefs.filter(F.and(new Predicate<ServiceDef2>()
                                                               {
+                                                                  @Override
                                                                   public boolean accept(ServiceDef2 object)
                                                                   {
                                                                       return object.getServiceInterface().equals(cd.getServiceInterface());
                                                                   }
                                                               }, new Predicate<ServiceDef2>()
                                                               {
+                                                                  @Override
                                                                   public boolean accept(ServiceDef2 serviceDef)
                                                                   {
                                                                       return serviceDef.getMarkers().containsAll(contributionMarkers);
@@ -307,6 +311,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         return F.flow(moduleDef.getServiceIds()).map(new Mapper<String, ServiceDef2>()
         {
+            @Override
             public ServiceDef2 map(String value)
             {
                 return InternalUtils.toServiceDef2(moduleDef.getServiceDef(value));
@@ -321,6 +326,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      * eager loading of
      * services out to its own method should ensure thread safety.
      */
+    @Override
     public void performRegistryStartup()
     {
         eagerLoadLock.lock();
@@ -348,6 +354,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         cleanupThread();
     }
 
+    @Override
     public Logger getServiceLogger(String serviceId)
     {
         Module module = serviceIdToModule.get(serviceId);
@@ -372,36 +379,43 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         ServiceDef2 serviceDef = new ServiceDef2()
         {
+            @Override
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
                 return null;
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return BUILTIN;
             }
 
+            @Override
             public String getServiceId()
             {
                 return serviceId;
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return serviceInterface;
             }
 
+            @Override
             public String getServiceScope()
             {
                 return ScopeConstants.DEFAULT;
             }
 
+            @Override
             public boolean isEagerLoad()
             {
                 return false;
             }
 
+            @Override
             public boolean isPreventDecoration()
             {
                 return true;
@@ -417,6 +431,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         tracker.define(serviceDef, Status.BUILTIN);
     }
 
+    @Override
     public synchronized void shutdown()
     {
         lock.lock();
@@ -426,6 +441,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         SerializationSupport.clearProvider(this);
     }
 
+    @Override
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
         lock.check();
@@ -459,6 +475,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
+    @Override
     public void cleanupThread()
     {
         lock.check();
@@ -477,6 +494,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return module;
     }
 
+    @Override
     public <T> Collection<T> getUnorderedConfiguration(ServiceDef3 serviceDef, Class<T> objectType)
     {
         lock.check();
@@ -489,6 +507,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return result;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> List<T> getOrderedConfiguration(ServiceDef3 serviceDef, Class<T> objectType)
     {
@@ -510,6 +529,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             ObjectProvider contribution = new ObjectProvider()
             {
+                @Override
                 public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
                 {
                     return findServiceByMarkerAndType(objectType, annotationProvider, null);
@@ -525,6 +545,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
+    @Override
     public <K, V> Map<K, V> getMappedConfiguration(ServiceDef3 serviceDef, Class<K> keyType, Class<V> objectType)
     {
         lock.check();
@@ -584,6 +605,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             operationTracker.run(description, new Runnable()
             {
+                @Override
                 public void run()
                 {
                     def.contribute(module, resources, validating);
@@ -616,6 +638,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             operationTracker.run(description, new Runnable()
             {
+                @Override
                 public void run()
                 {
                     def.contribute(module, resources, validating);
@@ -649,6 +672,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             operationTracker.run(description, new Runnable()
             {
+                @Override
                 public void run()
                 {
                     def.contribute(module, resources, validating);
@@ -657,6 +681,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
+    @Override
     public <T> T getService(Class<T> serviceInterface)
     {
         lock.check();
@@ -664,6 +689,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return getServiceByTypeAndMarkers(serviceInterface);
     }
 
+    @Override
     public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         lock.check();
@@ -726,6 +752,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         return new AnnotationProvider()
         {
+            @Override
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
                 return annotationClass.cast(map.get(annotationClass));
@@ -743,6 +770,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             InvocationHandler handler = new InvocationHandler()
             {
+                @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
                 {
                     if (method.getName().equals("annotationType"))
@@ -782,6 +810,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return result;
     }
 
+    @Override
     public ServiceLifecycle2 getServiceLifecycle(String scope)
     {
         lock.check();
@@ -801,6 +830,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return InternalUtils.toServiceLifecycle2(result);
     }
 
+    @Override
     public List<ServiceDecorator> findDecoratorsForService(ServiceDef3 serviceDef)
     {
         lock.check();
@@ -831,6 +861,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
+    @Override
     public List<ServiceAdvisor> findAdvisorsForService(ServiceDef3 serviceDef)
     {
         lock.check();
@@ -861,6 +892,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
+    @Override
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
                            Module localModule)
     {
@@ -987,11 +1019,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
+    @Override
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
         return getObject(objectType, annotationProvider, this, null);
     }
 
+    @Override
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
     {
         lock.check();
@@ -999,6 +1033,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         registryShutdownHub.addRegistryShutdownListener(listener);
     }
 
+    @Override
     public void addRegistryShutdownListener(Runnable listener)
     {
         lock.check();
@@ -1006,6 +1041,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         registryShutdownHub.addRegistryShutdownListener(listener);
     }
 
+    @Override
     public void addRegistryWillShutdownListener(Runnable listener)
     {
         lock.check();
@@ -1013,6 +1049,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         registryShutdownHub.addRegistryWillShutdownListener(listener);
     }
 
+    @Override
     public String expandSymbols(String input)
     {
         lock.check();
@@ -1036,10 +1073,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return symbolSource;
     }
 
+    @Override
     public <T> T autobuild(String description, final Class<T> clazz)
     {
         return invoke(description, new Invokable<T>()
         {
+            @Override
             public T invoke()
             {
                 return autobuild(clazz);
@@ -1047,6 +1086,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         });
     }
 
+    @Override
     public <T> T autobuild(final Class<T> clazz)
     {
         assert clazz != null;
@@ -1067,11 +1107,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return plan.createObject();
     }
 
+    @Override
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
         return proxy(interfaceClass, implementationClass, this);
     }
 
+    @Override
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass, ObjectLocator locator)
     {
         assert interfaceClass != null;
@@ -1088,6 +1130,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         final ObjectCreator<T> autobuildCreator = new ObjectCreator<T>()
         {
+            @Override
             public T createObject()
             {
                 return locator.autobuild(implementationClass);
@@ -1098,6 +1141,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             private T delegate;
 
+            @Override
             public synchronized T createObject()
             {
                 if (delegate == null)
@@ -1123,26 +1167,31 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
+    @Override
     public Object provideServiceProxy(String serviceId)
     {
         return getService(serviceId, Object.class);
     }
 
+    @Override
     public void run(String description, Runnable operation)
     {
         operationTracker.run(description, operation);
     }
 
+    @Override
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operationTracker.invoke(description, operation);
     }
 
+    @Override
     public <T> T perform(String description, IOOperation<T> operation) throws IOException
     {
         return operationTracker.perform(description, operation);
     }
 
+    @Override
     public Set<Class> getMarkerAnnotations()
     {
         return markerToServiceDef.keySet();

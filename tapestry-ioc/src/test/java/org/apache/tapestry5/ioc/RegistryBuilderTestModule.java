@@ -23,6 +23,7 @@ public class RegistryBuilderTestModule
     {
         return new Square()
         {
+            @Override
             public long square(long input)
             {
                 return input * input;

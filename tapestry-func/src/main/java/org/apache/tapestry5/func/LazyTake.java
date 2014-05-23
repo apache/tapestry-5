@@ -26,6 +26,7 @@ class LazyTake<T> implements LazyFunction<T>
         this.flow = flow;
     }
 
+    @Override
     public LazyContinuation<T> next()
     {
         if (flow.isEmpty() || length < 1)

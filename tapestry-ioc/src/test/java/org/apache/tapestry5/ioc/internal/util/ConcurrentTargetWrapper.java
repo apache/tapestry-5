@@ -26,10 +26,12 @@ public class ConcurrentTargetWrapper implements Runnable
         this.target = target;
     }
 
+    @Override
     public void run()
     {
         barrier.withRead(new Runnable()
         {
+            @Override
             public void run()
             {
                 target.incrementCounter();

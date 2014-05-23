@@ -117,6 +117,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
         return new JSONArray().putAll(iterable);
     }
 
+    @Override
     public Iterator<Object> iterator()
     {
         return list.iterator();
@@ -446,6 +447,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
         return list.equals(other.list);
     }
 
+    @Override
     void print(JSONPrintSession session)
     {
         session.printSymbol('[');

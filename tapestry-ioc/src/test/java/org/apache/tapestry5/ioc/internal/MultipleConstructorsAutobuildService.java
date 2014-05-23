@@ -31,11 +31,13 @@ public class MultipleConstructorsAutobuildService implements StringHolder
         this.delegate = delegate;
     }
 
+    @Override
     public String getValue()
     {
         return delegate.getValue();
     }
 
+    @Override
     public void setValue(String value)
     {
         delegate.setValue(value);

@@ -31,6 +31,7 @@ public class DelegatingInjectionResources implements InjectionResources
         this.next = next;
     }
 
+    @Override
     public <T> T findResource(Class<T> type, Type genericType)
     {
         T result = first.findResource(type, genericType);

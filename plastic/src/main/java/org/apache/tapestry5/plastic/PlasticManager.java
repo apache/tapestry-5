@@ -286,11 +286,13 @@ public class PlasticManager implements PlasticClassListenerHub
         return result;
     }
 
+    @Override
     public void addPlasticClassListener(PlasticClassListener listener)
     {
         pool.addPlasticClassListener(listener);
     }
 
+    @Override
     public void removePlasticClassListener(PlasticClassListener listener)
     {
         pool.removePlasticClassListener(listener);

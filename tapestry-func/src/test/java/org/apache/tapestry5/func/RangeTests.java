@@ -58,6 +58,7 @@ public class RangeTests extends BaseFuncTest
     {
         Mapper<Integer, Integer> times2 = new Mapper<Integer, Integer>()
         {
+            @Override
             public Integer map(Integer value)
             {
                 return 2 * value;

@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 public class AnnotatedServiceInterfaceImpl implements AnnotatedServiceInterface {
 
+    @Override
     public String execute(int i) {
         return null;
     }

@@ -42,6 +42,7 @@ public class ValueObjectProvider implements ObjectProvider
         this.typeCoercer = typeCoercer;
     }
 
+    @Override
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         Value annotation = annotationProvider.getAnnotation(Value.class);

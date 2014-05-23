@@ -72,6 +72,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
         this.keyToContributor = keyToContributor;
     }
 
+    @Override
     public void add(K key, V value)
     {
         validateKey(key);
@@ -107,11 +108,13 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
                     expectedKeyType));
     }
 
+    @Override
     public void addInstance(K key, Class<? extends V> clazz)
     {
         add(key, instantiate(clazz));
     }
 
+    @Override
     public void override(K key, V value)
     {
         validateKey(key);
@@ -127,6 +130,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
         overrides.put(key, new MappedConfigurationOverride<K, V>(contributionDef, map, key, coerced));
     }
 
+    @Override
     public void overrideInstance(K key, Class<? extends V> clazz)
     {
         override(key, instantiate(clazz));

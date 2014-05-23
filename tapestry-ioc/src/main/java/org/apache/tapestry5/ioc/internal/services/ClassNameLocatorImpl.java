@@ -37,6 +37,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
      */
     private final ClasspathMatcher CLASS_NAME_MATCHER = new ClasspathMatcher()
     {
+        @Override
         public boolean matches(String packagePath, String fileName)
         {
             if (!CLASS_NAME_PATTERN.matcher(fileName).matches())
@@ -60,6 +61,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
      */
     private final Mapper<String, String> CLASS_NAME_MAPPER = new Mapper<String, String>()
     {
+        @Override
         public String map(String element)
         {
             return element.substring(0, element.length() - 6).replace('/', '.');
@@ -75,6 +77,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     /**
      * Synchronization should not be necessary, but perhaps the underlying ClassLoader's are sensitive to threading.
      */
+    @Override
     public synchronized Collection<String> locateClassNames(String packageName)
     {
         String packagePath = packageName.replace('.', '/') + "/";

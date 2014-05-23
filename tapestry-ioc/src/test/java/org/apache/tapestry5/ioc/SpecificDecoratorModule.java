@@ -20,6 +20,7 @@ public class SpecificDecoratorModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return delegate.getGreeting().toUpperCase();

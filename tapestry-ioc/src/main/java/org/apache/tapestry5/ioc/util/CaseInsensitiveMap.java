@@ -52,16 +52,19 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
             this.value = value;
         }
 
+        @Override
         public String getKey()
         {
             return key;
         }
 
+        @Override
         public V getValue()
         {
             return value;
         }
 
+        @Override
         public V setValue(V value)
         {
             V result = this.value;
@@ -98,11 +101,13 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
         int current = -1;
 
+        @Override
         public boolean hasNext()
         {
             return index < size;
         }
 
+        @Override
         public Object next()
         {
             check();
@@ -114,6 +119,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
             return entries[current];
         }
 
+        @Override
         public void remove()
         {
             check();

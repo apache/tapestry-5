@@ -41,21 +41,25 @@ public class AppModule
         return new KaptchaProducer()
         {
 
+            @Override
             public int getWidth()
             {
                 return producer.getWidth();
             }
 
+            @Override
             public int getHeight()
             {
                 return producer.getHeight();
             }
 
+            @Override
             public BufferedImage createImage(String text)
             {
                 return producer.createImage(text);
             }
 
+            @Override
             public String createText()
             {
                 logger.info(String.format("Kaptcha text: '%s'", producer.createText()));

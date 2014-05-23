@@ -30,32 +30,38 @@ import java.util.concurrent.TimeoutException;
  */
 public class NonParallelExecutor implements ParallelExecutor
 {
+    @Override
     public <T> Future<T> invoke(Invokable<T> invocable)
     {
         final T result = invocable.invoke();
 
         return new Future<T>()
         {
+            @Override
             public boolean cancel(boolean mayInterruptIfRunning)
             {
                 return false;
             }
 
+            @Override
             public boolean isCancelled()
             {
                 return false;
             }
 
+            @Override
             public boolean isDone()
             {
                 return true;
             }
 
+            @Override
             public T get() throws InterruptedException, ExecutionException
             {
                 return result;
             }
 
+            @Override
             public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
             {
                 return result;
@@ -63,6 +69,7 @@ public class NonParallelExecutor implements ParallelExecutor
         };
     }
 
+    @Override
     public <T> T invoke(Class<T> proxyType, Invokable<T> invocable)
     {
         return invocable.invoke();

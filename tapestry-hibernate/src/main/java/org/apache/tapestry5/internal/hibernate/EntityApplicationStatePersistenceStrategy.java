@@ -36,6 +36,7 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
         delegate = new EntityPersistentFieldStrategy(hibernateSession, null);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> ssoClass, ApplicationStateCreator<T> creator)
     {
@@ -58,6 +59,7 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
         return (T) persistedValue;
     }
 
+    @Override
     public <T> void set(Class<T> ssoClass, T sso)
     {
         final String key = buildKey(ssoClass);

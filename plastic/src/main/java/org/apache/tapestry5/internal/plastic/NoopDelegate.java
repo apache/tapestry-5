@@ -20,10 +20,12 @@ import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 
 public class NoopDelegate implements PlasticManagerDelegate
 {
+    @Override
     public void transform(PlasticClass plasticClass)
     {
     }
 
+    @Override
     public ClassInstantiator configureInstantiator(String className, ClassInstantiator instantiator)
     {
         return instantiator;

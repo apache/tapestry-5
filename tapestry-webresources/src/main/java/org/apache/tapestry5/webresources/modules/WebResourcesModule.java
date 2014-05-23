@@ -96,6 +96,7 @@ public class WebResourcesModule
     {
         configuration.add(LessCompiler.Problem.class, new ObjectRenderer<LessCompiler.Problem>()
         {
+            @Override
             public void render(LessCompiler.Problem problem, MarkupWriter writer)
             {
                 List<String> strings = CollectionFactory.newList();

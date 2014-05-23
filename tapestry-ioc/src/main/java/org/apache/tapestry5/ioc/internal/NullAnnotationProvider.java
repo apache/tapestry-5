@@ -26,6 +26,7 @@ public class NullAnnotationProvider implements AnnotationProvider
     /**
      * Always returns null.
      */
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return null;

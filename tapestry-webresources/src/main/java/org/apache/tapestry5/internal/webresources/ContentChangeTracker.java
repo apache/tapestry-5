@@ -30,6 +30,7 @@ public class ContentChangeTracker implements ResourceDependencies
 {
     private final Map<Resource, Long> checksums = CollectionFactory.newMap();
 
+    @Override
     public void addDependency(Resource dependency)
     {
         long checksum = ResourceTransformUtils.toChecksum(dependency);

@@ -35,6 +35,7 @@ public class LoggingInvokableWrapper<T> implements Invokable<T>
         this.delegate = delegate;
     }
 
+    @Override
     public T invoke()
     {
         logger.debug(message);

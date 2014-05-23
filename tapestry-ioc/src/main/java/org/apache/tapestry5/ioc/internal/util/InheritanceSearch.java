@@ -76,16 +76,19 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
         }
     }
 
+    @Override
     public Iterator<Class> iterator()
     {
         return this;
     }
 
+    @Override
     public boolean hasNext()
     {
         return state != State.DONE;
     }
 
+    @Override
     public Class next()
     {
         switch (state)
@@ -147,6 +150,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
      * @throws UnsupportedOperationException
      *         always
      */
+    @Override
     public void remove()
     {
         throw new UnsupportedOperationException();

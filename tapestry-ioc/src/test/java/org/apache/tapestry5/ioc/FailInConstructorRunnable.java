@@ -21,6 +21,7 @@ public class FailInConstructorRunnable implements Runnable
         throw new RuntimeException("Failure in Runnable constructor.");
     }
 
+    @Override
     public void run()
     {
     }

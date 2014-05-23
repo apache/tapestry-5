@@ -54,6 +54,7 @@ public class AppModule
     {
         final PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
+            @Override
             public void configure(final TapestryPersistenceUnitInfo unitInfo)
             {
                 unitInfo.addManagedClass(User.class);
@@ -63,6 +64,7 @@ public class AppModule
 
         final PersistenceUnitConfigurer configurer2 = new PersistenceUnitConfigurer()
         {
+            @Override
             public void configure(final TapestryPersistenceUnitInfo unitInfo)
             {
                 unitInfo.addProperty("javax.persistence.jdbc.driver", "org.h2.Driver")

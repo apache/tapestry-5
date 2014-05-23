@@ -50,6 +50,7 @@ public class JpaModule
     {
         return new JpaEntityPackageManager()
         {
+            @Override
             public Collection<String> getPackageNames()
             {
                 return packageNames;
@@ -139,6 +140,7 @@ public class JpaModule
 
                 final ValueEncoderFactory factory = new ValueEncoderFactory()
                 {
+                    @Override
                     public ValueEncoder create(final Class type)
                     {
                         return new JpaValueEncoder(entity, entityManagerManager, info.getPersistenceUnitName(),

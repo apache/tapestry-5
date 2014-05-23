@@ -386,6 +386,7 @@ public class CronExpression implements Serializable
      *
      * @return a string representation of the <CODE>CronExpression</CODE>
      */
+    @Override
     public String toString()
     {
         return cronExpression;

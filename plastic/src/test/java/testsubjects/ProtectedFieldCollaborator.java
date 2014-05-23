@@ -22,6 +22,7 @@ public class ProtectedFieldCollaborator
     {
         return new ValueGetter()
         {
+            @Override
             public String getValue()
             {
                 return delegate.protectedValue;

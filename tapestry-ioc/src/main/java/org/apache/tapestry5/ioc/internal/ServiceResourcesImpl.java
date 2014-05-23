@@ -62,32 +62,38 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         this.logger = logger;
     }
 
+    @Override
     public String getServiceId()
     {
         return serviceDef.getServiceId();
     }
 
+    @Override
     public Class getServiceInterface()
     {
         return serviceDef.getServiceInterface();
     }
 
+    @Override
     public Class getServiceImplementation()
     {
         return serviceDef.getServiceImplementation();
     }
 
+    @Override
     public Logger getLogger()
     {
         return logger;
     }
 
+    @Override
     public <T> Collection<T> getUnorderedConfiguration(final Class<T> valueType)
     {
         Collection<T> result = registry.invoke(
                 "Collecting unordered configuration for service " + serviceDef.getServiceId(),
                 new Invokable<Collection<T>>()
                 {
+                    @Override
                     public Collection<T> invoke()
                     {
                         return registry.getUnorderedConfiguration(serviceDef, valueType);
@@ -105,11 +111,13 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
             logger.debug(IOCMessages.constructedConfiguration(configuration));
     }
 
+    @Override
     public <T> List<T> getOrderedConfiguration(final Class<T> valueType)
     {
         List<T> result = registry.invoke("Collecting ordered configuration for service " + serviceDef.getServiceId(),
                 new Invokable<List<T>>()
                 {
+                    @Override
                     public List<T> invoke()
                     {
                         return registry.getOrderedConfiguration(serviceDef, valueType);
@@ -121,11 +129,13 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return result;
     }
 
+    @Override
     public <K, V> Map<K, V> getMappedConfiguration(final Class<K> keyType, final Class<V> valueType)
     {
         Map<K, V> result = registry.invoke("Collecting mapped configuration for service " + serviceDef.getServiceId(),
                 new Invokable<Map<K, V>>()
                 {
+                    @Override
                     public Map<K, V> invoke()
                     {
                         return registry.getMappedConfiguration(serviceDef, keyType, valueType);
@@ -138,6 +148,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return result;
     }
 
+    @Override
     public Object getModuleBuilder()
     {
         return module.getModuleBuilder();
@@ -150,6 +161,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
         return registry.invoke(description, new Invokable<T>()
         {
+            @Override
             public T invoke()
             {
                 Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
@@ -175,6 +187,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return autobuild("Autobuilding instance of class " + clazz.getName(), clazz);
     }
 
+    @Override
     public OperationTracker getTracker()
     {
         return registry;
@@ -185,11 +198,13 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return null;
     }
 
+    @Override
     public AnnotationProvider getClassAnnotationProvider()
     {
         return serviceDef.getClassAnnotationProvider();
     }
 
+    @Override
     public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes)
     {
         return serviceDef.getMethodAnnotationProvider(methodName, parameterTypes);

@@ -71,6 +71,7 @@ public class PerThreadOperationTracker implements OperationTracker
         }
     }
 
+    @Override
     public void run(String description, Runnable operation)
     {
         try
@@ -82,6 +83,7 @@ public class PerThreadOperationTracker implements OperationTracker
         }
     }
 
+    @Override
     public <T> T invoke(String description, Invokable<T> operation)
     {
         try
@@ -93,6 +95,7 @@ public class PerThreadOperationTracker implements OperationTracker
         }
     }
 
+    @Override
     public <T> T perform(String description, IOOperation<T> operation) throws IOException
     {
         try

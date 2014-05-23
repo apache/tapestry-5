@@ -79,6 +79,7 @@ public class RhinoExecutorPool
                 InternalUtils.join(scripts)),
                 new Invokable<RhinoExecutor>()
                 {
+                    @Override
                     public RhinoExecutor invoke()
                     {
                         final Context context = contextFactory.enterContext();
@@ -101,6 +102,7 @@ public class RhinoExecutorPool
 
                         return new RhinoExecutor()
                         {
+                            @Override
                             public ScriptableObject invokeFunction(String functionName, Object... arguments)
                             {
                                 contextFactory.enterContext(context);
@@ -116,6 +118,7 @@ public class RhinoExecutorPool
                                 }
                             }
 
+                            @Override
                             public void discard()
                             {
                                 put(this);
@@ -130,6 +133,7 @@ public class RhinoExecutorPool
         tracker.run(String.format("Loading script %s.", script),
                 new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         InputStream in = null;

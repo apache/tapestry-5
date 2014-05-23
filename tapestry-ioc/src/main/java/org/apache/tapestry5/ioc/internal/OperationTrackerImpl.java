@@ -43,6 +43,7 @@ public class OperationTrackerImpl implements OperationTracker
         this.logger = logger;
     }
 
+    @Override
     public void run(String description, final Runnable operation)
     {
         assert InternalUtils.isNonBlank(description);
@@ -68,6 +69,7 @@ public class OperationTrackerImpl implements OperationTracker
         }
     }
 
+    @Override
     public <T> T invoke(String description, Invokable<T> operation)
     {
         assert InternalUtils.isNonBlank(description);
@@ -95,6 +97,7 @@ public class OperationTrackerImpl implements OperationTracker
         }
     }
 
+    @Override
     public <T> T perform(String description, IOOperation<T> operation) throws IOException
     {
         InternalUtils.isNonBlank(description);

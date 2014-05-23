@@ -28,6 +28,7 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
 {
     private final List<WeakReference<UpdateListener>> listeners = CollectionFactory.newThreadSafeList();
 
+    @Override
     public void addUpdateListener(UpdateListener listener)
     {
         assert listener != null;
@@ -37,6 +38,7 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
     /**
      * Notifies all {@link UpdateListener}s.
      */
+    @Override
     public void fireCheckForUpdates()
     {
         List<WeakReference<UpdateListener>> deadReferences = CollectionFactory.newList();

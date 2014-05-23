@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.Autobuild;
  */
 public class AutobuildObjectProvider implements ObjectProvider
 {
+    @Override
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
             ObjectLocator locator)
     {

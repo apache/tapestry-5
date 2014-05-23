@@ -46,11 +46,13 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         this.description = PlasticInternalUtils.toMethodDescription(node);
     }
 
+    @Override
     public String toString()
     {
         return String.format("PlasticMethod[%s in class %s]", description, plasticClass.className);
     }
 
+    @Override
     public PlasticClass getPlasticClass()
     {
         plasticClass.check();
@@ -58,6 +60,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return plasticClass;
     }
 
+    @Override
     public MethodDescription getDescription()
     {
         plasticClass.check();
@@ -65,6 +68,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return description;
     }
 
+    @Override
     public int compareTo(PlasticMethodImpl o)
     {
         plasticClass.check();
@@ -72,6 +76,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return description.compareTo(o.description);
     }
 
+    @Override
     public boolean isOverride()
     {
         plasticClass.check();
@@ -79,6 +84,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return plasticClass.parentInheritanceData.isImplemented(node.name, node.desc);
     }
 
+    @Override
     public String getMethodIdentifier()
     {
         plasticClass.check();
@@ -93,6 +99,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return methodIdentifier;
     }
 
+    @Override
     public boolean isVoid()
     {
         plasticClass.check();
@@ -100,6 +107,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return description.returnType.equals("void");
     }
 
+    @Override
     public MethodHandle getHandle()
     {
         plasticClass.check();
@@ -114,6 +122,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return handle;
     }
 
+    @Override
     public PlasticMethod changeImplementation(InstructionBuilderCallback callback)
     {
         plasticClass.check();
@@ -138,6 +147,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return this;
     }
 
+    @Override
     public PlasticMethod addAdvice(MethodAdvice advice)
     {
         plasticClass.check();
@@ -155,6 +165,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return this;
     }
 
+    @Override
     public PlasticMethod delegateTo(final PlasticField field)
     {
         plasticClass.check();
@@ -169,6 +180,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
 
         changeImplementation(new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 // Load the field
@@ -183,6 +195,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return this;
     }
 
+    @Override
     public PlasticMethod delegateTo(PlasticMethod delegateProvidingMethod)
     {
         plasticClass.check();
@@ -202,6 +215,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
 
         changeImplementation(new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 // Load the field
@@ -225,6 +239,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         return this;
     }
 
+    @Override
     public List<MethodParameter> getParameters()
     {
         if (parameters == null)
@@ -301,14 +316,17 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
 
         block.addCase(methodIndex, false, new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.startTryCatch(new TryCatchCallback()
                 {
+                    @Override
                     public void doBlock(TryCatchBlock block)
                     {
                         block.addTry(new InstructionBuilderCallback()
                         {
+                            @Override
                             public void doBuild(InstructionBuilder builder)
                             {
                                 // The third argument is an Object array; get each
@@ -341,6 +359,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
                         {
                             block.addCatch(exceptionType, new InstructionBuilderCallback()
                             {
+                                @Override
                                 public void doBuild(InstructionBuilder builder)
                                 {
                                     builder.newInstance(FailureMethodInvocationResult.class).dupe(1).swap();

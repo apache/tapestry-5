@@ -25,6 +25,7 @@ class LazyConcat<T> implements LazyFunction<T>
         this.right = (Flow<T>) second;
     }
 
+    @Override
     public LazyContinuation<T> next()
     {
         if (left.isEmpty())

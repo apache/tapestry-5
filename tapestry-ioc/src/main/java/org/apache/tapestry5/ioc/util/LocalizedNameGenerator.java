@@ -154,6 +154,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
      * Returns true if there are more name variants to be returned, false otherwise.
      */
 
+    @Override
     public boolean hasNext()
     {
         return state != EXHAUSTED;
@@ -166,6 +167,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
      *             if all variants have been returned.
      */
 
+    @Override
     public String next()
     {
         if (state == EXHAUSTED)
@@ -239,6 +241,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
     /**
      * @throws UnsupportedOperationException
      */
+    @Override
     public void remove()
     {
         throw new UnsupportedOperationException();
@@ -247,6 +250,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
     /**
      * So that LNG may be used with the for loop.
      */
+    @Override
     public Iterator<String> iterator()
     {
         return this;

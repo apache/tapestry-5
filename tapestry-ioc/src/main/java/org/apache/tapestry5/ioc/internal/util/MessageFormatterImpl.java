@@ -32,6 +32,7 @@ public class MessageFormatterImpl implements MessageFormatter
         this.locale = locale;
     }
 
+    @Override
     public String format(Object... args)
     {
         for (int i = 0; i < args.length; i++)
@@ -55,6 +56,7 @@ public class MessageFormatterImpl implements MessageFormatter
      *
      * @since 5.4
      */
+    @Override
     public String toString()
     {
         return format;

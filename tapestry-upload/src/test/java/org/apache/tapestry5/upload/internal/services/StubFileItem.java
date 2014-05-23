@@ -42,77 +42,92 @@ public class StubFileItem implements FileItem
         this.fieldName = fieldName;
     }
 
+    @Override
     public InputStream getInputStream() throws IOException
     {
         return null;
     }
 
+    @Override
     public String getContentType()
     {
         return null;
     }
 
+    @Override
     public String getName()
     {
         return fileName;
     }
 
+    @Override
     public boolean isInMemory()
     {
         return true;
     }
 
+    @Override
     public long getSize()
     {
         return 10;
     }
 
+    @Override
     public byte[] get()
     {
         return new byte[0]; // To change body of implemented methods use File | Settings | File
         // Templates.
     }
 
+    @Override
     public String getString(String string) throws UnsupportedEncodingException
     {
         return getString();
     }
 
+    @Override
     public String getString()
     {
         return value;
     }
 
+    @Override
     public void write(File file) throws Exception
     {
     }
 
+    @Override
     public void delete()
     {
         isDeleted = true;
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName; // To change body of implemented methods use File | Settings | File
         // Templates.
     }
 
+    @Override
     public void setFieldName(String fieldName)
     {
         this.fieldName = fieldName;
     }
 
+    @Override
     public boolean isFormField()
     {
         return formField;
     }
 
+    @Override
     public void setFormField(boolean formField)
     {
         this.formField = formField;
     }
 
+    @Override
     public OutputStream getOutputStream() throws IOException
     {
         return null;
@@ -134,12 +149,14 @@ public class StubFileItem implements FileItem
     }
 
     /* unused method but required by FileItem interface */
+    @Override
     public FileItemHeaders getHeaders()
     {
         return null;
     }
 
     /* unused method but required by FileItem interface */
+    @Override
     public void setHeaders(FileItemHeaders headers)
     {
     }

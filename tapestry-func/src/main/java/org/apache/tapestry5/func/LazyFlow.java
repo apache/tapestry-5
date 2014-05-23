@@ -39,6 +39,7 @@ class LazyFlow<T> extends AbstractFlow<T>
         this.lazyFunction = lazyFunction;
     }
 
+    @Override
     public synchronized T first()
     {
         resolve();
@@ -56,6 +57,7 @@ class LazyFlow<T> extends AbstractFlow<T>
         return first;
     }
 
+    @Override
     public synchronized boolean isEmpty()
     {
         resolve();
@@ -63,6 +65,7 @@ class LazyFlow<T> extends AbstractFlow<T>
         return empty;
     }
 
+    @Override
     public synchronized Flow<T> rest()
     {
         resolve();

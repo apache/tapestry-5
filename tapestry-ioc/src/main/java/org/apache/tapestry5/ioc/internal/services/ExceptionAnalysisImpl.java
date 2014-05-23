@@ -32,6 +32,7 @@ public class ExceptionAnalysisImpl implements ExceptionAnalysis
         this.infos = unmodifiableList(infos);
     }
 
+    @Override
     public List<ExceptionInfo> getExceptionInfos()
     {
         return infos;

@@ -74,6 +74,7 @@ public class HibernateSessionSourceImplTest extends IOCTestCase
     {
         HibernateConfigurer configurer = new HibernateConfigurer()
         {
+            @Override
             public void configure(Configuration configuration)
             {
                 configuration.setProperty("foo", "bar");

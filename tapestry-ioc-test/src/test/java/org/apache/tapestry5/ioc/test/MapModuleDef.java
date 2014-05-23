@@ -38,26 +38,32 @@ public class MapModuleDef implements ModuleDef {
 		this.map = map;
 	}
 
+	@Override
 	public Class getBuilderClass() {
 		return null;
 	}
 
+	@Override
 	public Set<ContributionDef> getContributionDefs() {
 		return Collections.emptySet();
 	}
 
+	@Override
 	public Set<DecoratorDef> getDecoratorDefs() {
 		return Collections.emptySet();
 	}
 
+	@Override
 	public String getLoggerName() {
 		return "MapModuleDef";
 	}
 
+	@Override
 	public Set<String> getServiceIds() {
 		return map.keySet();
 	}
 
+	@Override
 	public ServiceDef getServiceDef(String serviceId) {
 		return new MapServiceDef(map, serviceId);
 	}
@@ -72,30 +78,37 @@ public class MapModuleDef implements ModuleDef {
 			this.serviceId = serviceId;
 		}
 
+		@Override
 		public ObjectCreator createServiceCreator(ServiceBuilderResources resources) {
 			return new ObjectCreator() {
+				@Override
 				public Object createObject() {
 					return map.get(serviceId);
 				}
 			};
 		}
 
+		@Override
 		public String getServiceId() {
 			return serviceId;
 		}
 
+		@Override
 		public Set<Class> getMarkers() {
 			return Collections.emptySet();
 		}
 
+		@Override
 		public Class getServiceInterface() {
 			return map.get(serviceId).getClass();
 		}
 
+		@Override
 		public String getServiceScope() {
 			return ScopeConstants.DEFAULT;
 		}
 
+		@Override
 		public boolean isEagerLoad() {
 			return false;
 		}

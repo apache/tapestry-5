@@ -54,26 +54,32 @@ public class PersistenceContentHandler implements ContentHandler
         return persistenceUnits;
     }
 
+    @Override
     public void setDocumentLocator(final Locator locator)
     {
     }
 
+    @Override
     public void startDocument() throws SAXException
     {
     }
 
+    @Override
     public void endDocument() throws SAXException
     {
     }
 
+    @Override
     public void startPrefixMapping(final String prefix, final String uri) throws SAXException
     {
     }
 
+    @Override
     public void endPrefixMapping(final String prefix) throws SAXException
     {
     }
 
+    @Override
     public void startElement(final String namespaceURI, final String localName, final String qName,
                              final Attributes atts) throws SAXException
     {
@@ -101,6 +107,7 @@ public class PersistenceContentHandler implements ContentHandler
         }
     }
 
+    @Override
     public void endElement(final String namespaceURI, final String localName, final String qName)
             throws SAXException
     {
@@ -156,6 +163,7 @@ public class PersistenceContentHandler implements ContentHandler
         }
     }
 
+    @Override
     public void characters(final char[] ch, final int start, final int length) throws SAXException
     {
         final String s = new String(ch, start, length);
@@ -170,15 +178,18 @@ public class PersistenceContentHandler implements ContentHandler
 
     }
 
+    @Override
     public void ignorableWhitespace(final char[] ch, final int start, final int length)
             throws SAXException
     {
     }
 
+    @Override
     public void processingInstruction(final String target, final String data) throws SAXException
     {
     }
 
+    @Override
     public void skippedEntity(final String name) throws SAXException
     {
     }

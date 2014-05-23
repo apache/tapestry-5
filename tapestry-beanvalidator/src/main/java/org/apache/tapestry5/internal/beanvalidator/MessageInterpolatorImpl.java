@@ -36,6 +36,7 @@ public class MessageInterpolatorImpl implements MessageInterpolator
 	/**
 	 * @see javax.validation.MessageInterpolator#interpolate(java.lang.String, javax.validation.MessageInterpolator.Context)
 	 */
+	@Override
 	public String interpolate(String messageTemplate, Context context) 
 	{
 		return interpolate(messageTemplate, context, threadLocale.getLocale());
@@ -44,6 +45,7 @@ public class MessageInterpolatorImpl implements MessageInterpolator
 	/**
 	 * @see javax.validation.MessageInterpolator#interpolate(java.lang.String, javax.validation.MessageInterpolator.Context, java.util.Locale)
 	 */
+	@Override
 	public String interpolate(String messageTemplate, Context context, Locale locale) 
 	{
 		return this.delegate.interpolate(messageTemplate, context, locale);

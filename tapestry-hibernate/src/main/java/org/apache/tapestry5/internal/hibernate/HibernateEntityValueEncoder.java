@@ -52,6 +52,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(property.getName());
     }
 
+    @Override
     public String toClient(E value)
     {
         if (value == null)
@@ -67,6 +68,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         return typeCoercer.coerce(id, String.class);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public E toValue(String clientValue)
     {

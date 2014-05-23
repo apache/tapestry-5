@@ -20,11 +20,13 @@ public class ToUpperCaseStringHolder implements StringHolder
 {
     private String value;
 
+    @Override
     public String getValue()
     {
         return value;
     }
 
+    @Override
     public void setValue(String value)
     {
         this.value = value.toUpperCase();

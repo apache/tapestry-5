@@ -22,6 +22,7 @@ public class LocalModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Hello, y'all!";
@@ -33,10 +34,12 @@ public class LocalModule
     {
         return new StringHolder()
         {
+            @Override
             public void setValue(String value)
             {
             }
 
+            @Override
             public String getValue()
             {
                 return greeter.getGreeting();

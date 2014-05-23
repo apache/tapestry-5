@@ -199,11 +199,13 @@ public class SymbolSourceImpl implements SymbolSource
         this.providers = providers;
     }
 
+    @Override
     public String expandSymbols(String input)
     {
         return new SymbolExpansion().expandSymbols(input);
     }
 
+    @Override
     public String valueForSymbol(String symbolName)
     {
         String value = cache.get(symbolName);

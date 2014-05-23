@@ -39,11 +39,13 @@ public class StrategyBuilderImpl implements StrategyBuilder
         this.proxyFactory = proxyFactory;
     }
 
+    @Override
     public <S> S build(StrategyRegistry<S> registry)
     {
         return createProxy(registry.getAdapterType(), registry);
     }
 
+    @Override
     public <S> S build(Class<S> adapterType, Map<Class, S> registrations)
     {
         StrategyRegistry<S> registry = StrategyRegistry.newInstance(adapterType, registrations);
@@ -55,6 +57,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(interfaceType, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 final PlasticField registryField = plasticClass.introduceField(StrategyRegistry.class, "registry")
@@ -64,6 +67,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
                 {
                     plasticClass.introduceMethod(new MethodDescription(method), new InstructionBuilderCallback()
                     {
+                        @Override
                         public void doBuild(InstructionBuilder builder)
                         {
                             Class returnType = method.getReturnType();

@@ -27,6 +27,7 @@ public class InvalidContributeDefModule3
 
         return new Runnable()
         {
+            @Override
             public void run()
             {
 

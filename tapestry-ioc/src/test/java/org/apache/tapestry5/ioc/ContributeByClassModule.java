@@ -26,6 +26,7 @@ public class ContributeByClassModule
     {
         return new StringTransformer()
         {
+            @Override
             public String transform(String input)
             {
                 String current = input;
@@ -59,6 +60,7 @@ public class ContributeByClassModule
     {
         return new StringTransformer()
         {
+            @Override
             public String transform(String input)
             {
                 return configuration.get("Default").transform(input);

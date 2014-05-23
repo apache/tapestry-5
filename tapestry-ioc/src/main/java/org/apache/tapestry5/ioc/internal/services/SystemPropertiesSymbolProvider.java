@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
  */
 public class SystemPropertiesSymbolProvider implements SymbolProvider
 {
+    @Override
     public String valueForSymbol(String symbolName)
     {
         return System.getProperty(symbolName);

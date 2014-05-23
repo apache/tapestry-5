@@ -458,11 +458,13 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         return new ReturnTypeService()
         {
 
+            @Override
             public String returnTypeMethod()
             {
                 return "Foo";
             }
 
+            @Override
             public int returnTypeMethodWithParam(final int first, final int second)
             {
                 return first + second;
@@ -486,6 +488,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         @PersistenceContext(unitName = UNIT_NAME)
         int returnTypeMethodWithParam(int first, int second);
 
+        @Override
         String toString();
     }
 
@@ -522,6 +525,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     }
     
     public class ServiceImpl implements Service {
+    	@Override
     	@CommitAfter
     	@PersistenceContext(unitName = UNIT_NAME)
     	public void perform() 

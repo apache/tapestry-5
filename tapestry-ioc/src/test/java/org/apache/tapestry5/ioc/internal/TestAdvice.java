@@ -25,6 +25,7 @@ final public class TestAdvice implements MethodAdvice {
 
     public static final String ANNOTATION_FOUND = "Annotation found!";
 
+    @Override
     public void advise(MethodInvocation invocation) {
 
         final Method method = invocation.getMethod();

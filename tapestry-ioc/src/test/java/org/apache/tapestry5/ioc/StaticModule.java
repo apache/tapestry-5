@@ -39,6 +39,7 @@ public class StaticModule {
 
   public static Runnable buildFred() {
     return new Runnable() {
+      @Override
       public void run() {
         setFredRan(true);
       }
@@ -47,6 +48,7 @@ public class StaticModule {
 
   public static Runnable buildBarney() {
     return new Runnable() {
+      @Override
       public void run() {
       }
     };
@@ -54,6 +56,7 @@ public class StaticModule {
 
   public static Runnable decorateBarney(final Object delegate, String serviseId) {
     return new Runnable() {
+      @Override
       public void run() {
         setDecoratorRan(true);
 
@@ -88,6 +91,7 @@ public class StaticModule {
 
   public static NameListHolder buildNames(final Collection<String> configuration) {
     return new NameListHolder() {
+      @Override
       public List<String> getNames() {
         List<String> result = CollectionFactory.newList(configuration);
 

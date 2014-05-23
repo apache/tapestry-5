@@ -31,6 +31,7 @@ public class MapSymbolProvider implements SymbolProvider
         this.configuration = configuration;
     }
 
+    @Override
     public String valueForSymbol(String symbolName)
     {
         return configuration.get(symbolName);

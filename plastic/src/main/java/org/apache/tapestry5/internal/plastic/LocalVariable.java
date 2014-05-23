@@ -25,6 +25,7 @@ class LocalVariableImpl implements LocalVariable
         this.type = type;
     }
 
+    @Override
     public String getType()
     {
         return type;

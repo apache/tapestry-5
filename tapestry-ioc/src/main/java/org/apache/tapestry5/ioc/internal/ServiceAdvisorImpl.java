@@ -38,6 +38,7 @@ public class ServiceAdvisorImpl extends AbstractMethodInvokingInstrumenter imple
      * Invokes the configured method, passing the builder. The method will always take, as a parameter, a
      * MethodAdvisor.
      */
+    @Override
     public void advise(MethodAdviceReceiver methodAdviceReceiver)
     {
         Map<Class, Object> resources = CollectionFactory.newMap(this.resourcesDefaults);

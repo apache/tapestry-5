@@ -39,6 +39,7 @@ public class StaticObjectProvider<S> implements ObjectProvider
     }
 
 
+    @Override
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         if (objectType == valueType)

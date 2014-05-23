@@ -23,6 +23,7 @@ class StaticValue<T> implements LazyValue<T>
         this.nextValue = nextValue;
     }
 
+    @Override
     public T get()
     {
         return nextValue;

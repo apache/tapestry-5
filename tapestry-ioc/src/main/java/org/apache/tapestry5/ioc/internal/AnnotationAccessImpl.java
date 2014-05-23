@@ -32,11 +32,13 @@ public class AnnotationAccessImpl implements AnnotationAccess
         this.type = type;
     }
 
+    @Override
     public AnnotationProvider getClassAnnotationProvider()
     {
         return InternalUtils.toAnnotationProvider(type);
     }
 
+    @Override
     public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes)
     {
         return InternalUtils.toAnnotationProvider(InternalUtils.findMethod(type, methodName, parameterTypes));

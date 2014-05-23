@@ -24,6 +24,7 @@ public class CounterImpl implements Counter, ReloadAware
 
     private int count;
 
+    @Override
     public boolean shutdownImplementationForReload()
     {
         ReloadAwareModule.counterReloads++;
@@ -31,6 +32,7 @@ public class CounterImpl implements Counter, ReloadAware
         return true;
     }
 
+    @Override
     public synchronized int increment()
     {
         return ++count;

@@ -16,6 +16,7 @@ package org.example.testapp.services;
 
 public class UpcaseStringTransformerImpl implements StringTransformer
 {
+    @Override
     public String transform(String input)
     {
         return input.toUpperCase();

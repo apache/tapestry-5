@@ -43,6 +43,7 @@ public class AppModule
 
         final PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
+            @Override
             public void configure(final TapestryPersistenceUnitInfo unitInfo)
             {
                 unitInfo.nonJtaDataSource("jdbc/JPATest")

@@ -55,6 +55,7 @@ public class ConstructionPlan<T> implements ObjectCreator<T>
         return this;
     }
 
+    @Override
     public T createObject()
     {
         T result = tracker.invoke(description, instanceConstructor);
@@ -73,6 +74,7 @@ public class ConstructionPlan<T> implements ObjectCreator<T>
         {
             tracker.run(plan.getDescription(), new Runnable()
             {
+                @Override
                 public void run()
                 {
                     plan.initialize(newInstance);

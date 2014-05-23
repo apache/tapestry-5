@@ -27,6 +27,7 @@ public class UpcaseImpl implements Upcase
         this.transformer = transformer;
     }
 
+    @Override
     public String toUpperCase(String input)
     {
         return transformer.transform(input);

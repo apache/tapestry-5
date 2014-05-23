@@ -20,6 +20,7 @@ public class ServiceIdGreeter implements Greeter
 {
     private String greeting;
 
+    @Override
     public String getGreeting()
     {
         return greeting;

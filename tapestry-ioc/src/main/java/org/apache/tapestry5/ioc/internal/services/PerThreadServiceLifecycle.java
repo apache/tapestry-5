@@ -49,11 +49,13 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
     /**
      * Returns false; this lifecycle represents a service that will be created many times (by each thread).
      */
+    @Override
     public boolean isSingleton()
     {
         return false;
     }
 
+    @Override
     public Object createService(ServiceResources resources, ObjectCreator creator)
     {
         ObjectCreator perThreadCreator = new PerThreadServiceCreator(perthreadManager, creator);

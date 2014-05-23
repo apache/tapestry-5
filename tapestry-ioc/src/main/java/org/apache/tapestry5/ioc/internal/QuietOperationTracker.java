@@ -25,16 +25,19 @@ import java.io.IOException;
  */
 public class QuietOperationTracker implements OperationTracker
 {
+    @Override
     public void run(String description, Runnable operation)
     {
         operation.run();
     }
 
+    @Override
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operation.invoke();
     }
 
+    @Override
     public <T> T perform(String description, IOOperation<T> operation) throws IOException
     {
         return operation.perform();

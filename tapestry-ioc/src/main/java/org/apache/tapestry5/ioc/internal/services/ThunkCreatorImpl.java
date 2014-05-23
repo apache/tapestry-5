@@ -47,6 +47,7 @@ public class ThunkCreatorImpl implements ThunkCreator
         this.proxyFactory = proxyFactory;
     }
 
+    @Override
     public <T> T createThunk(Class<T> proxyType, ObjectCreator objectCreator, String description)
     {
         assert proxyType != null;
@@ -80,6 +81,7 @@ public class ThunkCreatorImpl implements ThunkCreator
     {
         return proxyFactory.createProxy(interfaceType, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 final PlasticField objectCreatorField = plasticClass.introduceField(ObjectCreator.class, "creator")
@@ -90,6 +92,7 @@ public class ThunkCreatorImpl implements ThunkCreator
 
                 delegateMethod.changeImplementation(new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.loadThis().getField(objectCreatorField);
@@ -110,6 +113,7 @@ public class ThunkCreatorImpl implements ThunkCreator
 
                     plasticClass.introduceMethod(PlasticUtils.TO_STRING_DESCRIPTION, new InstructionBuilderCallback()
                     {
+                        @Override
                         public void doBuild(InstructionBuilder builder)
                         {
                             builder.loadThis().getField(descriptionField).returnResult();

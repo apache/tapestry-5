@@ -32,6 +32,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
         this.advisor = advisor;
     }
 
+    @Override
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId)
     {
         assert serviceInterface != null;

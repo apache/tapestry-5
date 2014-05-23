@@ -109,6 +109,7 @@ public class SpringModuleDef implements ModuleDef
 
         ServiceDef applicationContextServiceDef = new ServiceDef()
         {
+            @Override
             public ObjectCreator createServiceCreator(final ServiceBuilderResources resources)
             {
                 if (compatibilityMode)
@@ -121,27 +122,32 @@ public class SpringModuleDef implements ModuleDef
                 return constructObjectCreatorForApplicationContext(resources, customizer);
             }
 
+            @Override
             public String getServiceId()
             {
                 return SERVICE_ID;
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return Collections.emptySet();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return compatibilityMode ? externalContext.getClass()
                         : ConfigurableWebApplicationContext.class;
             }
 
+            @Override
             public String getServiceScope()
             {
                 return ScopeConstants.DEFAULT;
             }
 
+            @Override
             public boolean isEagerLoad()
             {
                 return false;
@@ -169,6 +175,7 @@ public class SpringModuleDef implements ModuleDef
 
         final Runnable shutdownListener = new Runnable()
         {
+            @Override
             public void run()
             {
                 loader.closeWebApplicationContext(servletContext);
@@ -179,12 +186,14 @@ public class SpringModuleDef implements ModuleDef
 
         return new ObjectCreator()
         {
+            @Override
             public Object createObject()
             {
                 return resources.getTracker().invoke(
                         "Creating Spring ApplicationContext via ContextLoader",
                         new Invokable<Object>()
                         {
+                            @Override
                             public Object invoke()
                             {
                                 resources.getLogger().info(
@@ -211,6 +220,7 @@ public class SpringModuleDef implements ModuleDef
         };
     }
 
+    @Override
     public Class getBuilderClass()
     {
         return null;
@@ -221,6 +231,7 @@ public class SpringModuleDef implements ModuleDef
      * after the built-in
      * contributions.
      */
+    @Override
     public Set<ContributionDef> getContributionDefs()
     {
         ContributionDef def = createContributionToMasterObjectProvider();
@@ -233,6 +244,7 @@ public class SpringModuleDef implements ModuleDef
 
         ContributionDef def = new AbstractContributionDef()
         {
+            @Override
             public String getServiceId()
             {
                 return "MasterObjectProvider";
@@ -249,6 +261,7 @@ public class SpringModuleDef implements ModuleDef
 
                 final ObjectProvider springBeanProvider = new ObjectProvider()
                 {
+                    @Override
                     public <T> T provide(Class<T> objectType,
                                          AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
@@ -281,6 +294,7 @@ public class SpringModuleDef implements ModuleDef
 
                 final ObjectProvider springBeanProviderInvoker = new ObjectProvider()
                 {
+                    @Override
                     public <T> T provide(final Class<T> objectType,
                                          final AnnotationProvider annotationProvider, final ObjectLocator locator)
                     {
@@ -288,6 +302,7 @@ public class SpringModuleDef implements ModuleDef
                                 "Resolving dependency by searching Spring ApplicationContext",
                                 new Invokable<T>()
                                 {
+                                    @Override
                                     public T invoke()
                                     {
                                         return springBeanProvider.provide(objectType,
@@ -299,6 +314,7 @@ public class SpringModuleDef implements ModuleDef
 
                 ObjectProvider outerCheck = new ObjectProvider()
                 {
+                    @Override
                     public <T> T provide(Class<T> objectType,
                                          AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
@@ -325,21 +341,25 @@ public class SpringModuleDef implements ModuleDef
     /**
      * Returns an empty set.
      */
+    @Override
     public Set<DecoratorDef> getDecoratorDefs()
     {
         return Collections.emptySet();
     }
 
+    @Override
     public String getLoggerName()
     {
         return SpringModuleDef.class.getName();
     }
 
+    @Override
     public ServiceDef getServiceDef(String serviceId)
     {
         return services.get(serviceId);
     }
 
+    @Override
     public Set<String> getServiceIds()
     {
         return services.keySet();

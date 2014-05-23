@@ -39,11 +39,13 @@ public class BeanValidatorSourceImpl implements BeanValidatorSource
 		this.validatorFactory = configuration.buildValidatorFactory();
 	}
 
+	@Override
 	public Validator create() 
 	{
 		return this.validatorFactory.getValidator();
 	}
 
+	@Override
 	public ValidatorFactory getValidatorFactory() 
 	{
 		return this.validatorFactory;

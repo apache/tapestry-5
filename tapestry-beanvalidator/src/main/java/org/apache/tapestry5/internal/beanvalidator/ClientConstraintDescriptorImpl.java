@@ -31,6 +31,7 @@ public class ClientConstraintDescriptorImpl implements ClientConstraintDescripto
         this.descriptors = configuration;
     }
 
+    @Override
     public ClientConstraintDescriptor getConstraintDescriptor(final Class annotationClass)
     {
         for (final ClientConstraintDescriptor desc : this.descriptors)

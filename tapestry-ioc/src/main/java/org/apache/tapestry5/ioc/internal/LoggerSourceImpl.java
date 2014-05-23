@@ -25,11 +25,13 @@ import org.slf4j.LoggerFactory;
  */
 public class LoggerSourceImpl implements LoggerSource
 {
+    @Override
     public Logger getLogger(Class clazz)
     {
         return LoggerFactory.getLogger(clazz);
     }
 
+    @Override
     public Logger getLogger(String name)
     {
         return LoggerFactory.getLogger(name);

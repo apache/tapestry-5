@@ -32,6 +32,7 @@ public class AlphabetModule
 
         return new NameListHolder()
         {
+            @Override
             public List<String> getNames()
             {
                 return configuration;
@@ -61,6 +62,7 @@ public class AlphabetModule
     {
         return new NameListHolder2()
         {
+            @Override
             public List<String> getNames()
             {
                 return configuration;

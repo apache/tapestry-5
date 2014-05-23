@@ -40,6 +40,7 @@ public class ParallelExecutorImpl implements ParallelExecutor
         this.perthreadManager = perthreadManager;
     }
 
+    @Override
     public <T> Future<T> invoke(Invokable<T> invocable)
     {
         assert invocable != null;
@@ -51,6 +52,7 @@ public class ParallelExecutorImpl implements ParallelExecutor
     {
         return new Callable<T>()
         {
+            @Override
             public T call() throws Exception
             {
                 try
@@ -65,12 +67,14 @@ public class ParallelExecutorImpl implements ParallelExecutor
         };
     }
 
+    @Override
     public <T> T invoke(Class<T> proxyType, Invokable<T> invocable)
     {
         final Future<T> future = invoke(invocable);
 
         ObjectCreator<T> creator = new ObjectCreator<T>()
         {
+            @Override
             public T createObject()
             {
                 try

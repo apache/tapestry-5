@@ -84,41 +84,49 @@ public class ServiceDefImpl implements ServiceDef3
         return source.getDescription();
     }
 
+    @Override
     public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
     {
         return source.constructCreator(resources);
     }
 
+    @Override
     public String getServiceId()
     {
         return serviceId;
     }
 
+    @Override
     public Class getServiceInterface()
     {
         return serviceInterface;
     }
 
+    @Override
     public Class getServiceImplementation()
     {
         return serviceImplementation;
     }
 
+    @Override
     public String getServiceScope()
     {
         return scope;
     }
 
+    @Override
     public boolean isEagerLoad()
     {
         return eagerLoad;
     }
 
+    @Override
     public Set<Class> getMarkers()
     {
         return markers;
     }
 
+    @Override
     public boolean isPreventDecoration()
     {
         return preventDecoration;
@@ -129,15 +137,18 @@ public class ServiceDefImpl implements ServiceDef3
         return F.flow(serviceImplementation, serviceInterface).removeNulls();
     }
 
+    @Override
     public AnnotationProvider getClassAnnotationProvider()
     {
         return AnnotationProviderChain.create(searchPath().map(InternalUtils.CLASS_TO_AP_MAPPER).toList());
     }
 
+    @Override
     public AnnotationProvider getMethodAnnotationProvider(final String methodName, final Class... argumentTypes)
     {
         return AnnotationProviderChain.create(searchPath().map(new Mapper<Class, Method>()
         {
+            @Override
             public Method map(Class element)
             {
                 return InternalUtils.findMethod(element, methodName, argumentTypes);

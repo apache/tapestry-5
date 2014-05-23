@@ -27,6 +27,7 @@ public class BeanValidationGroupSourceImpl implements BeanValidatorGroupSource {
 		this.groups = groups.toArray(new Class<?>[]{});
 	}
 
+	@Override
 	public Class<?>[] get() 
 	{
 		return groups;

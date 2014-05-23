@@ -68,6 +68,7 @@ public class UploadModule
         {
             shutdownHub.addRegistryShutdownListener(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     FileCleaner.exitWhenFinished();

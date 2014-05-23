@@ -93,6 +93,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
     }
 
 
+    @Override
     public ResourceTransformer createCompiler(String contentType, String sourceName, String targetName, ResourceTransformer transformer, CacheMode cacheMode)
     {
         ResourceTransformer trackingCompiler = wrapWithTracking(sourceName, targetName, transformer);
@@ -128,17 +129,20 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
     {
         return new ResourceTransformer()
         {
+            @Override
             public String getTransformedContentType()
             {
                 return core.getTransformedContentType();
             }
 
+            @Override
             public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
             {
                 final String description = String.format("Compiling %s from %s to %s", source, sourceName, targetName);
 
                 return tracker.perform(description, new IOOperation<InputStream>()
                 {
+                    @Override
                     public InputStream perform() throws IOException
                     {
                         return core.transform(source, dependencies);
@@ -152,11 +156,13 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
     {
         return new ResourceTransformer()
         {
+            @Override
             public String getTransformedContentType()
             {
                 return coreCompiler.getTransformedContentType();
             }
 
+            @Override
             public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
             {
                 final long startTime = System.nanoTime();
@@ -187,11 +193,13 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         {
             final Map<Resource, Compiled> cache = CollectionFactory.newConcurrentMap();
 
+            @Override
             public String getTransformedContentType()
             {
                 return core.getTransformedContentType();
             }
 
+            @Override
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
             {
                 Compiled compiled = cache.get(source);
@@ -223,11 +231,13 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
     {
         return new ResourceTransformer()
         {
+            @Override
             public String getTransformedContentType()
             {
                 return core.getTransformedContentType();
             }
 
+            @Override
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
             {
                 long checksum = ResourceTransformUtils.toChecksum(source);

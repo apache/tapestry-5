@@ -28,22 +28,26 @@ public class UserDAOImpl implements UserDAO
         this.session = session;
     }
 
+    @Override
     public void add(User user)
     {
         session.save(user);
     }
 
+    @Override
     @SuppressWarnings({ "unchecked" })
     public List<User> findAll()
     {
         return (List<User>) session.createQuery("from User").list();
     }
 
+    @Override
     public void delete(User... users)
     {
         for (User user : users) session.delete(user);
     }
 
+    @Override
     public void deleteAll()
     {
         for (User u : findAll())

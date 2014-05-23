@@ -155,6 +155,7 @@ public class ZippedFlowTests extends BaseFuncTest
 
         zipped.each(new Worker<Tuple<Integer, String>>()
         {
+            @Override
             public void work(Tuple<Integer, String> value)
             {
                 count.addAndGet(value.second.length());
@@ -170,6 +171,7 @@ public class ZippedFlowTests extends BaseFuncTest
     {
         int totalLength = zipped.reduce(new Reducer<Integer, Tuple<Integer, String>>()
         {
+            @Override
             public Integer reduce(Integer accumulator, Tuple<Integer, String> value)
             {
                 return accumulator + value.second.length();
@@ -218,6 +220,7 @@ public class ZippedFlowTests extends BaseFuncTest
     {
         Tuple<String, String> firstTuple = zipped.mapTuples(new Mapper<Tuple<Integer, String>, Tuple<String, String>>()
         {
+            @Override
             public Tuple<String, String> map(Tuple<Integer, String> value)
             {
                 return Tuple.create(StringUtils.reverse(value.second),

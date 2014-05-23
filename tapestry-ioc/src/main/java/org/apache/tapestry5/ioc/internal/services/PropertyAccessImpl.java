@@ -35,16 +35,19 @@ public class PropertyAccessImpl implements PropertyAccess
 {
     private final Map<Class, ClassPropertyAdapter> adapters = CollectionFactory.newConcurrentMap();
 
+    @Override
     public Object get(Object instance, String propertyName)
     {
         return getAdapter(instance).get(instance, propertyName);
     }
 
+    @Override
     public void set(Object instance, String propertyName, Object value)
     {
         getAdapter(instance).set(instance, propertyName, value);
     }
 
+    @Override
     public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
     return getAdapter(instance).getAnnotation(instance, propertyName, annotationClass);
     }
@@ -53,6 +56,7 @@ public class PropertyAccessImpl implements PropertyAccess
     /**
      * Clears the cache of adapters and asks the {@link Introspector} to clear its cache.
      */
+    @Override
     public synchronized void clearCache()
     {
         adapters.clear();
@@ -60,11 +64,13 @@ public class PropertyAccessImpl implements PropertyAccess
         Introspector.flushCaches();
     }
 
+    @Override
     public ClassPropertyAdapter getAdapter(Object instance)
     {
         return getAdapter(instance.getClass());
     }
 
+    @Override
     public ClassPropertyAdapter getAdapter(Class forClass)
     {
         ClassPropertyAdapter result = adapters.get(forClass);

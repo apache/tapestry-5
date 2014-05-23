@@ -115,6 +115,7 @@ public class MethodDescription implements Comparable<MethodDescription>
                 .toTypeNames(method.getParameterTypes()), null, PlasticUtils.toTypeNames(method.getExceptionTypes()));
     }
 
+    @Override
     public int compareTo(MethodDescription o)
     {
         int result = methodName.compareTo(o.methodName);

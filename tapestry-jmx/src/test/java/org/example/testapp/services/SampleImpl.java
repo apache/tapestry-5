@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.annotations.EagerLoad;
 @EagerLoad
 public class SampleImpl implements Sample, SampleImplMBean
 {
+    @Override
     public int getSampleValue()
     {
         return 42;

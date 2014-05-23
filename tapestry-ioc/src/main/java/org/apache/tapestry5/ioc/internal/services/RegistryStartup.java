@@ -43,6 +43,7 @@ public class RegistryStartup implements Runnable
      * Invokes run() on each contributed object. If the object throws a runtime exception, it is logged but startup
      * continues anyway. This method may only be {@linkplain OneShotLock invoked once}.
      */
+    @Override
     public void run()
     {
         lock.lock();

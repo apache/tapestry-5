@@ -16,5 +16,6 @@ package org.apache.tapestry5.ioc.internal.services;
 
 public interface ToStringService
 {
+    @Override
     public String toString();
 }

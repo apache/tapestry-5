@@ -64,6 +64,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
+        @Override
         protected TypeCategory convert(String typeName)
         {
             ClassNode cn = constructClassNodeFromBytecode(typeName);
@@ -159,21 +160,25 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         return new PlasticClassEvent()
         {
+            @Override
             public ClassType getType()
             {
                 return classType;
             }
 
+            @Override
             public String getPrimaryClassName()
             {
                 return primaryClassName;
             }
 
+            @Override
             public String getDissasembledBytecode()
             {
                 return PlasticInternalUtils.dissasembleBytecode(classNode);
             }
 
+            @Override
             public String getClassName()
             {
                 return PlasticInternalUtils.toClassName(classNode.name);
@@ -206,11 +211,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             return new AnnotationAccess()
             {
+                @Override
                 public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
                 {
                     return getAnnotation(annotationType) != null;
                 }
 
+                @Override
                 public <T extends Annotation> T getAnnotation(Class<T> annotationType)
                 {
                     return searchClass.getAnnotation(annotationType);
@@ -239,11 +246,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
         return new AnnotationAccess()
         {
+            @Override
             public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
             {
                 return nameToNode.containsKey(annotationType.getName());
             }
 
+            @Override
             public <T extends Annotation> T getAnnotation(Class<T> annotationType)
             {
                 String className = annotationType.getName();
@@ -294,6 +303,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return builder.createAnnotation();
     }
 
+    @Override
     public boolean shouldInterceptClassLoading(String className)
     {
         int searchFromIndex = className.length() - 1;
@@ -318,6 +328,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     // Hopefully the synchronized will not cause a deadlock
 
+    @Override
     public synchronized Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
         // Inner classes are not transformed, but they are loaded by the same class loader.
@@ -630,6 +641,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         }
     }
 
+    @Override
     public void addPlasticClassListener(PlasticClassListener listener)
     {
         assert listener != null;
@@ -637,6 +649,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         listeners.add(listener);
     }
 
+    @Override
     public void removePlasticClassListener(PlasticClassListener listener)
     {
         assert listener != null;

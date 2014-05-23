@@ -42,6 +42,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
         throw new IllegalStateException("elementTypeForArrayAttribute() may not be invoked here.");
     }
 
+    @Override
     public void visit(String name, Object value)
     {
         if (value instanceof Type)
@@ -56,6 +57,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
         store(name, value);
     }
 
+    @Override
     public void visitEnum(String name, String desc, String value)
     {
 
@@ -76,6 +78,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
         }
     }
 
+    @Override
     public AnnotationVisitor visitAnnotation(final String name, String desc)
     {
         final AbstractAnnotationBuilder outerBuilder = this;
@@ -101,6 +104,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
      * nested annotations. All the arrays of strings and primitives are handled by ASM and become
      * a single call to {@link #visit(String, Object)}.
      */
+    @Override
     public AnnotationVisitor visitArray(final String name)
     {
         final List<Object> values = new ArrayList<Object>();
@@ -134,6 +138,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
         };
     }
 
+    @Override
     public void visitEnd()
     {
         // Nothing to do here. Subclasses use this as a chance to store a value into an outer

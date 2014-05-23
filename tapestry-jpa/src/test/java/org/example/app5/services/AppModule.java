@@ -37,11 +37,13 @@ public class AppModule
         PersistenceProviderResolverHolder.setPersistenceProviderResolver(
                 new PersistenceProviderResolver()
                 {
+                    @Override
                     public List<PersistenceProvider> getPersistenceProviders()
                     {
                         return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider(), new org.eclipse.persistence.jpa.PersistenceProvider());
                     }
 
+                    @Override
                     public void clearCachedProviders()
                     {
                     }

@@ -220,16 +220,19 @@ public class HibernateTransactionDecoratorImplTest extends IOCTestCase
         return new ReturnTypeService()
         {
 
+            @Override
             public String returnTypeMethod()
             {
                 return "Foo";
             }
 
+            @Override
             public int returnTypeMethodWithParam(int first, int second)
             {
                 return first + second;
             }
 
+            @Override
             public String toString()
             {
                 return "Baz";
@@ -245,6 +248,7 @@ public class HibernateTransactionDecoratorImplTest extends IOCTestCase
         @CommitAfter
         int returnTypeMethodWithParam(int first, int second);
 
+        @Override
         String toString();
     }
 

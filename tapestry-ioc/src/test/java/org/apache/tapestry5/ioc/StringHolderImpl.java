@@ -24,12 +24,14 @@ public class StringHolderImpl implements StringHolder
 {
     private String value;
 
+    @Override
     @SimpleAnnotation("StringHolderImpl#getValue()")
     public String getValue()
     {
         return value;
     }
 
+    @Override
     public void setValue(String value)
     {
         this.value = value;

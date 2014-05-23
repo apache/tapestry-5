@@ -106,9 +106,7 @@ allprojects {
 
 idea {
     project {
-        // Leave at 1.5 to make sure that IDEA doesn't break the build for non-IDEA users by inserting
-        // @Override on implementations all over the place.
-        languageLevel = "1.5"
+        languageLevel = "1.6"
         // But this is what most (all?) of the devs are actually using:
         jdkName = "1.7"
     }
@@ -150,8 +148,8 @@ subprojects {
     apply plugin: "maven"  // for deployment
     apply plugin: "project-report"
 
-    sourceCompatibility = "1.5"
-    targetCompatibility = "1.5"
+    sourceCompatibility = "1.6"
+    targetCompatibility = "1.6"
 
     // See http://jira.codehaus.org/browse/GRADLE-784
 

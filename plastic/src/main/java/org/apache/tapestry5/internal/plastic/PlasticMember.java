@@ -32,6 +32,7 @@ class PlasticMember implements AnnotationAccess
         annotationAccess = plasticClass.pool.createAnnotationAccess((List<AnnotationNode>) visibleAnnotations);
     }
 
+    @Override
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         plasticClass.check();
@@ -39,6 +40,7 @@ class PlasticMember implements AnnotationAccess
         return annotationAccess.hasAnnotation(annotationType);
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
         plasticClass.check();

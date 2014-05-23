@@ -43,6 +43,7 @@ public class JSONLiteral implements JSONString, Serializable
         return text;
     }
 
+    @Override
     public String toJSONString()
     {
         return text;

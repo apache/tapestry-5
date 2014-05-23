@@ -26,6 +26,7 @@ public class BaseLocatable implements Locatable
         this.location = location;
     }
 
+    @Override
     public final Location getLocation()
     {
         return location;

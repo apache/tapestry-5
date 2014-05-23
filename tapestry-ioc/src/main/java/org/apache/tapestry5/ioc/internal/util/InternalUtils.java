@@ -186,6 +186,7 @@ public class InternalUtils
     {
         return new ObjectCreator<Object>()
         {
+            @Override
             public Object createObject()
             {
                 return fixedValue;
@@ -198,6 +199,7 @@ public class InternalUtils
     {
         final AnnotationProvider provider = new AnnotationProvider()
         {
+            @Override
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
                 return findAnnotation(annotations, annotationClass);
@@ -244,6 +246,7 @@ public class InternalUtils
         {
             return new ObjectCreator()
             {
+                @Override
                 public Object createObject()
                 {
                     return locator.getObject(injectionType, provider);
@@ -284,6 +287,7 @@ public class InternalUtils
 
             final Invokable<ObjectCreator> operation = new Invokable<ObjectCreator>()
             {
+                @Override
                 public ObjectCreator invoke()
                 {
                     return calculateInjection(type, genericType, annotations, locator, resources);
@@ -329,6 +333,7 @@ public class InternalUtils
 
                 final AnnotationProvider ap = new AnnotationProvider()
                 {
+                    @Override
                     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                     {
                         return f.getAnnotation(annotationClass);
@@ -341,6 +346,7 @@ public class InternalUtils
 
                 tracker.run(description, new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         final Class<?> fieldType = f.getType();
@@ -610,16 +616,19 @@ public class InternalUtils
 
         return new Iterator<T>()
         {
+            @Override
             public boolean hasNext()
             {
                 return normal.hasPrevious();
             }
 
+            @Override
             public T next()
             {
                 return normal.previous();
             }
 
+            @Override
             public void remove()
             {
                 throw new UnsupportedOperationException();
@@ -704,6 +713,7 @@ public class InternalUtils
 
         Comparator<Constructor> comparator = new Comparator<Constructor>()
         {
+            @Override
             public int compare(Constructor o1, Constructor o2)
             {
                 return o2.getParameterTypes().length - o1.getParameterTypes().length;
@@ -824,6 +834,7 @@ public class InternalUtils
      */
     public static final Mapper<Class, AnnotationProvider> CLASS_TO_AP_MAPPER = new Mapper<Class, AnnotationProvider>()
     {
+        @Override
         public AnnotationProvider map(final Class element)
         {
             return toAnnotationProvider(element);
@@ -838,6 +849,7 @@ public class InternalUtils
     {
         return new AnnotationProvider()
         {
+            @Override
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
                 return annotationClass.cast(element.getAnnotation(annotationClass));
@@ -852,6 +864,7 @@ public class InternalUtils
      */
     public static final Mapper<Method, AnnotationProvider> METHOD_TO_AP_MAPPER = new Mapper<Method, AnnotationProvider>()
     {
+        @Override
         public AnnotationProvider map(final Method element)
         {
             return toAnnotationProvider(element);
@@ -889,16 +902,19 @@ public class InternalUtils
         {
             // ServiceDef3 methods:
 
+            @Override
             public AnnotationProvider getClassAnnotationProvider()
             {
                 return toAnnotationProvider(getServiceInterface());
             }
 
+            @Override
             public AnnotationProvider getMethodAnnotationProvider(final String methodName, final Class... argumentTypes)
             {
                 return toAnnotationProvider(findMethod(getServiceInterface(), methodName, argumentTypes));
             }
             
+            @Override
             public Class getServiceImplementation() 
             {
                 return null;
@@ -906,36 +922,43 @@ public class InternalUtils
 
             // ServiceDef2 methods:
 
+            @Override
             public boolean isPreventDecoration()
             {
                 return sd2.isPreventDecoration();
             }
 
+            @Override
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
                 return sd2.createServiceCreator(resources);
             }
 
+            @Override
             public String getServiceId()
             {
                 return sd2.getServiceId();
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return sd2.getMarkers();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return sd2.getServiceInterface();
             }
 
+            @Override
             public String getServiceScope()
             {
                 return sd2.getServiceScope();
             }
 
+            @Override
             public boolean isEagerLoad()
             {
                 return sd2.isEagerLoad();
@@ -953,6 +976,7 @@ public class InternalUtils
         {
             // ServiceDef2 methods:
 
+            @Override
             public boolean isPreventDecoration()
             {
                 return false;
@@ -960,31 +984,37 @@ public class InternalUtils
 
             // ServiceDef methods:
 
+            @Override
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
                 return sd.createServiceCreator(resources);
             }
 
+            @Override
             public String getServiceId()
             {
                 return sd.getServiceId();
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return sd.getMarkers();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return sd.getServiceInterface();
             }
 
+            @Override
             public String getServiceScope()
             {
                 return sd.getServiceScope();
             }
 
+            @Override
             public boolean isEagerLoad()
             {
                 return sd.isEagerLoad();
@@ -1005,41 +1035,49 @@ public class InternalUtils
 
         return new ModuleDef2()
         {
+            @Override
             public Set<AdvisorDef> getAdvisorDefs()
             {
                 return Collections.emptySet();
             }
 
+            @Override
             public Class getBuilderClass()
             {
                 return md.getBuilderClass();
             }
 
+            @Override
             public Set<ContributionDef> getContributionDefs()
             {
                 return md.getContributionDefs();
             }
 
+            @Override
             public Set<DecoratorDef> getDecoratorDefs()
             {
                 return md.getDecoratorDefs();
             }
 
+            @Override
             public String getLoggerName()
             {
                 return md.getLoggerName();
             }
 
+            @Override
             public ServiceDef getServiceDef(String serviceId)
             {
                 return md.getServiceDef(serviceId);
             }
 
+            @Override
             public Set<String> getServiceIds()
             {
                 return md.getServiceIds();
             }
 
+            @Override
             public Set<StartupDef> getStartups()
             {
                 return Collections.emptySet();
@@ -1057,16 +1095,19 @@ public class InternalUtils
 
         return new ServiceLifecycle2()
         {
+            @Override
             public boolean requiresProxy()
             {
                 return true;
             }
 
+            @Override
             public Object createService(ServiceResources resources, ObjectCreator creator)
             {
                 return lifecycle.createService(resources, creator);
             }
 
+            @Override
             public boolean isSingleton()
             {
                 return lifecycle.isSingleton();
@@ -1106,34 +1147,40 @@ public class InternalUtils
         return new ContributionDef2()
         {
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return Collections.emptySet();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return null;
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                                    Configuration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                                    OrderedConfiguration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                                    MappedConfiguration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public String getServiceId()
             {
                 return contribution.getServiceId();
@@ -1159,36 +1206,43 @@ public class InternalUtils
 
         return new ContributionDef3()
         {
+            @Override
             public boolean isOptional()
             {
                 return false;
             }
 
+            @Override
             public String getServiceId()
             {
                 return cd2.getServiceId();
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, Configuration configuration)
             {
                 cd2.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, OrderedConfiguration configuration)
             {
                 cd2.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, MappedConfiguration configuration)
             {
                 cd2.contribute(moduleSource, resources, configuration);
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return cd2.getMarkers();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return cd2.getServiceInterface();
@@ -1213,31 +1267,37 @@ public class InternalUtils
         return new AdvisorDef2()
         {
 
+            @Override
             public ServiceAdvisor createAdvisor(ModuleBuilderSource moduleSource, ServiceResources resources)
             {
                 return advisor.createAdvisor(moduleSource, resources);
             }
 
+            @Override
             public String getAdvisorId()
             {
                 return advisor.getAdvisorId();
             }
 
+            @Override
             public String[] getConstraints()
             {
                 return advisor.getConstraints();
             }
 
+            @Override
             public boolean matches(ServiceDef serviceDef)
             {
                 return advisor.matches(serviceDef);
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return Collections.emptySet();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return null;
@@ -1262,31 +1322,37 @@ public class InternalUtils
         return new DecoratorDef2()
         {
 
+            @Override
             public ServiceDecorator createDecorator(ModuleBuilderSource moduleSource, ServiceResources resources)
             {
                 return decorator.createDecorator(moduleSource, resources);
             }
 
+            @Override
             public String[] getConstraints()
             {
                 return decorator.getConstraints();
             }
 
+            @Override
             public String getDecoratorId()
             {
                 return decorator.getDecoratorId();
             }
 
+            @Override
             public boolean matches(ServiceDef serviceDef)
             {
                 return decorator.matches(serviceDef);
             }
 
+            @Override
             public Set<Class> getMarkers()
             {
                 return Collections.emptySet();
             }
 
+            @Override
             public Class getServiceInterface()
             {
                 return null;
@@ -1334,6 +1400,7 @@ public class InternalUtils
 
         return new Mapper<S, T>()
         {
+            @Override
             public T map(S value)
             {
                 return coercion.coerce(value);
@@ -1396,6 +1463,7 @@ public class InternalUtils
 
         return new AnnotationProvider()
         {
+            @Override
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
                 return element.getAnnotation(annotationClass);
@@ -1413,6 +1481,7 @@ public class InternalUtils
                 constructor.getDeclaringClass().getName(),
                 constructor), new Invokable<ObjectCreator<T>>()
         {
+            @Override
             public ObjectCreator<T> invoke()
             {
                 validateConstructorForAutobuild(constructor);
@@ -1453,6 +1522,7 @@ public class InternalUtils
 
                 final AnnotationProvider ap = new AnnotationProvider()
                 {
+                    @Override
                     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                     {
                         return f.getAnnotation(annotationClass);
@@ -1465,6 +1535,7 @@ public class InternalUtils
 
                 tracker.run(description, new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         final Class<?> fieldType = f.getType();
@@ -1519,6 +1590,7 @@ public class InternalUtils
     {
         plan.add(new InitializationPlan<T>()
         {
+            @Override
             public String getDescription()
             {
                 return String.format("Injecting %s into field %s of class %s.",
@@ -1527,6 +1599,7 @@ public class InternalUtils
                         field.getDeclaringClass().getName());
             }
 
+            @Override
             public void initialize(T instance)
             {
                 inject(instance, field, injectedValue);
@@ -1555,6 +1628,7 @@ public class InternalUtils
         tracker.run("Computing parameters for post-injection method " + method,
                 new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         final ObjectCreator[] parameters = InternalUtils.calculateParametersForMethod(method, locator,
@@ -1562,11 +1636,13 @@ public class InternalUtils
 
                         plan.add(new InitializationPlan<Object>()
                         {
+                            @Override
                             public String getDescription()
                             {
                                 return "Invoking " + method;
                             }
 
+                            @Override
                             public void initialize(Object instance)
                             {
                                 Throwable fail = null;
@@ -1606,6 +1682,7 @@ public class InternalUtils
 
         return tracker.invoke("Creating plan to invoke " + method, new Invokable<ObjectCreator<T>>()
         {
+            @Override
             public ObjectCreator<T> invoke()
             {
                 ObjectCreator[] methodParameters = calculateParametersForMethod(method, locator, resources, tracker);
@@ -1624,6 +1701,7 @@ public class InternalUtils
      */
     public static Mapper<ObjectCreator, Object> CREATE_OBJECT = new Mapper<ObjectCreator, Object>()
     {
+        @Override
         public Object map(ObjectCreator element)
         {
             return element.createObject();

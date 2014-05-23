@@ -24,6 +24,7 @@ public class ExceptionInConstructorServiceImpl implements Pingable
         throw new RuntimeException("Yes, we have no tomatoes.");
     }
 
+    @Override
     public void ping()
     {
     }

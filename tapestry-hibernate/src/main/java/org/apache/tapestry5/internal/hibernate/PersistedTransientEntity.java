@@ -27,6 +27,7 @@ public class PersistedTransientEntity implements SessionRestorable
         this.transientEntity = transientEntity;
     }
 
+    @Override
     public Object restoreWithSession(Session session)
     {
         return transientEntity;

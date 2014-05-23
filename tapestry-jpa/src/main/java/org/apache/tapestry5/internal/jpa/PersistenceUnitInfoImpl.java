@@ -71,6 +71,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPersistenceUnitName()
     {
         return persistenceUnitName;
@@ -79,6 +80,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPersistenceProviderClassName()
     {
         return persistenceProviderClassName;
@@ -87,6 +89,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo persistenceProviderClassName(final String persistenceProviderClassName)
     {
         this.persistenceProviderClassName = persistenceProviderClassName;
@@ -97,6 +100,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public PersistenceUnitTransactionType getTransactionType()
     {
         return transactionType;
@@ -105,6 +109,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo transactionType(final PersistenceUnitTransactionType transactionType)
     {
         this.transactionType = transactionType;
@@ -115,6 +120,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public DataSource getJtaDataSource()
     {
         return jtaDataSource;
@@ -123,6 +129,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public DataSource getNonJtaDataSource()
     {
         return nonJtaDataSource;
@@ -131,6 +138,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo nonJtaDataSource(final String nonJtaDataSource)
     {
         this.nonJtaDataSource = lookupDataSource(nonJtaDataSource);
@@ -141,6 +149,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo jtaDataSource(final String jtaDataSource)
     {
         this.jtaDataSource = lookupDataSource(jtaDataSource);
@@ -151,6 +160,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getMappingFileNames()
     {
         List<String> tmp = CollectionFactory.newList(mappingFilesNames);
@@ -160,6 +170,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addMappingFileName(final String fileName)
     {
         mappingFilesNames.add(fileName);
@@ -171,6 +182,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addJarFileUrl(URL url)
     {
         jarFileUrls.add(url);
@@ -181,6 +193,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addJarFileUrl(String url)
     {
         try
@@ -196,6 +209,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addProperty(String name, String value)
     {
         getProperties().put(name, value);
@@ -207,6 +221,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo excludeUnlistedClasses(boolean exclude)
     {
         this.excludeUnlistedClasses = exclude;
@@ -217,6 +232,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<URL> getJarFileUrls()
     {
         return Collections.unmodifiableList(jarFileUrls);
@@ -225,6 +241,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public URL getPersistenceUnitRootUrl()
     {
         return getClass().getResource("/");
@@ -233,6 +250,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getManagedClassNames()
     {
         List<String> tmp = CollectionFactory.newList(managedClassNames);
@@ -242,6 +260,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addManagedClassName(final String className)
     {
         managedClassNames.add(className);
@@ -252,6 +271,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo addManagedClass(final Class<?> clazz)
     {
         addManagedClassName(clazz.getName());
@@ -262,6 +282,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean excludeUnlistedClasses()
     {
         return excludeUnlistedClasses;
@@ -270,6 +291,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public SharedCacheMode getSharedCacheMode()
     {
         return sharedCacheMode;
@@ -278,6 +300,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo sharedCacheMode(final SharedCacheMode cacheMode)
     {
         sharedCacheMode = cacheMode;
@@ -288,6 +311,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public ValidationMode getValidationMode()
     {
         return validationMode;
@@ -296,6 +320,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public TapestryPersistenceUnitInfo validationMode(final ValidationMode validationMode)
     {
         this.validationMode = validationMode;
@@ -306,6 +331,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public Properties getProperties()
     {
         return properties;
@@ -314,6 +340,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPersistenceXMLSchemaVersion()
     {
         return persistenceXMLSchemaVersion;
@@ -327,6 +354,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public ClassLoader getClassLoader()
     {
         return Thread.currentThread().getContextClassLoader();
@@ -335,6 +363,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addTransformer(final ClassTransformer transformer)
     {
 
@@ -343,6 +372,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public ClassLoader getNewTempClassLoader()
     {
         return getClassLoader();
@@ -366,11 +396,13 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     }
 
+    @Override
     public TapestryPersistenceUnitInfo setEntityManagerProperties(Map properties) {
     	entityManagerProperties = properties;
     	return this;
     }
 
+    @Override
     public Map getEntityManagerProperties() {
     	return entityManagerProperties;
     }

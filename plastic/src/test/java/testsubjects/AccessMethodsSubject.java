@@ -10,11 +10,13 @@ public class AccessMethodsSubject
     {
         return new IndirectAccess<String>()
         {
+            @Override
             public String get()
             {
                 return value;
             }
 
+            @Override
             public void set(String newValue)
             {
                 value = newValue;

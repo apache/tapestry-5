@@ -22,6 +22,7 @@ public class SymbolExpandingTransformer implements StringTransformer
 
     public SymbolExpandingTransformer(SymbolSource symbolSource) {this.symbolSource = symbolSource;}
 
+    @Override
     public String transform(String input)
     {
         return symbolSource.expandSymbols(input);

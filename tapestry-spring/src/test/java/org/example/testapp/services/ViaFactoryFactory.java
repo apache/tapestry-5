@@ -18,10 +18,12 @@ import org.springframework.beans.factory.FactoryBean;
 
 public class ViaFactoryFactory implements FactoryBean
 {
+    @Override
     public Object getObject() throws Exception
     {
         return new ViaFactory()
         {
+            @Override
             public String getMessage()
             {
                 return "Instantiated via a factory bean.";
@@ -29,11 +31,13 @@ public class ViaFactoryFactory implements FactoryBean
         };
     }
 
+    @Override
     public Class getObjectType()
     {
         return ViaFactory.class;
     }
 
+    @Override
     public boolean isSingleton()
     {
         return true;

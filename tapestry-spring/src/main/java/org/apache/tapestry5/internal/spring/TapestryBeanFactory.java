@@ -57,6 +57,7 @@ public class TapestryBeanFactory extends DefaultListableBeanFactory
         {
             AnnotationProvider provider = new AnnotationProvider()
             {
+                @Override
                 public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                 {
                     for (Object a : annotations)

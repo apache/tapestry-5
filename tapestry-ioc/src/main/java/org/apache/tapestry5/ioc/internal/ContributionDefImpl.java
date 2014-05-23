@@ -59,27 +59,32 @@ public class ContributionDefImpl implements ContributionDef3
         return InternalUtils.asString(contributorMethod, proxyFactory);
     }
 
+    @Override
     public boolean isOptional()
     {
         return optional;
     }
 
+    @Override
     public String getServiceId()
     {
         return serviceId;
     }
 
+    @Override
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, Configuration configuration)
     {
         invokeMethod(moduleSource, resources, Configuration.class, configuration);
     }
 
+    @Override
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                            OrderedConfiguration configuration)
     {
         invokeMethod(moduleSource, resources, OrderedConfiguration.class, configuration);
     }
 
+    @Override
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                            MappedConfiguration configuration)
     {
@@ -130,11 +135,13 @@ public class ContributionDefImpl implements ContributionDef3
             throw new RuntimeException(IOCMessages.contributionMethodError(contributorMethod, fail), fail);
     }
 
+    @Override
     public Set<Class> getMarkers()
     {
         return markers;
     }
 
+    @Override
     public Class getServiceInterface()
     {
         return serviceInterface;

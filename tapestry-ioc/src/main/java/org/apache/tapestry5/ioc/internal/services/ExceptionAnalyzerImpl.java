@@ -49,6 +49,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
                 .getPropertyNames());
     }
 
+    @Override
     public ExceptionAnalysis analyze(Throwable rootException)
     {
         List<ExceptionInfo> list = CollectionFactory.newList();

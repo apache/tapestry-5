@@ -20,6 +20,7 @@ import javax.inject.Named;
 public class NamedViaAnnotationServiceImpl implements Runnable
 {
 
+    @Override
     public void run()
     {
     }

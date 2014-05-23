@@ -35,6 +35,7 @@ public class AnnotationBuilder extends AbstractAnnotationBuilder
             this.attributes = attributes;
         }
 
+        @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
         {
             // args is null for no-arguments methods
@@ -86,11 +87,13 @@ public class AnnotationBuilder extends AbstractAnnotationBuilder
 
     }
 
+    @Override
     protected void store(String name, Object value)
     {
         attributes.put(name, value);
     }
 
+    @Override
     protected Class elementTypeForArrayAttribute(String name)
     {
         try

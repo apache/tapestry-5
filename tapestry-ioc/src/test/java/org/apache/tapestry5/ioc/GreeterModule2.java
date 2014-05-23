@@ -22,6 +22,7 @@ public class GreeterModule2
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Green";
@@ -34,6 +35,7 @@ public class GreeterModule2
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Blue";

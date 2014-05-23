@@ -56,6 +56,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
      * @return collection of matching paths, in no specified order
      * @throws java.io.IOException
      */
+    @Override
     public Set<String> scan(String packagePath, ClasspathMatcher matcher) throws IOException
     {
         assert packagePath != null && packagePath.endsWith("/");
@@ -205,6 +206,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
             {
                 queue.push(new IOWork()
                 {
+                    @Override
                     public void run() throws IOException
                     {
                         scanDirStream(packagePath, url);
@@ -241,6 +243,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                         queue.push(new IOWork()
                         {
+                            @Override
                             public void run() throws IOException
                             {
                                 scanDir(nestedPackagePath, file);
@@ -299,6 +302,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                             queue.push(new IOWork()
                             {
+                                @Override
                                 public void run() throws IOException
                                 {
                                     scanURL(nestedPackagePath, newURL);

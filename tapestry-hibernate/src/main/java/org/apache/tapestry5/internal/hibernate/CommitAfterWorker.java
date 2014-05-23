@@ -46,6 +46,7 @@ public class CommitAfterWorker implements ComponentClassTransformWorker2
             }
         }
 
+        @Override
         public void advise(MethodInvocation invocation)
         {
             try
@@ -69,6 +70,7 @@ public class CommitAfterWorker implements ComponentClassTransformWorker2
         this.manager = manager;
     }
 
+    @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (PlasticMethod method : plasticClass.getMethodsWithAnnotation(CommitAfter.class))

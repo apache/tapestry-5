@@ -57,6 +57,7 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
         this.expectedType = expectedType;
     }
 
+    @Override
     public void add(String id, T object, String... constraints)
     {
         T coerced = object == null ? null : typeCoercer.coerce(object, expectedType);
@@ -75,6 +76,7 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
         priorId = id;
     }
 
+    @Override
     public void override(String id, T object, String... constraints)
     {
         assert InternalUtils.isNonBlank(id);
@@ -90,11 +92,13 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
         overrides.put(id, new OrderedConfigurationOverride<T>(orderer, id, coerced, constraints, contribDef));
     }
 
+    @Override
     public void addInstance(String id, Class<? extends T> clazz, String... constraints)
     {
         add(id, instantiate(clazz), constraints);
     }
 
+    @Override
     public void overrideInstance(String id, Class<? extends T> clazz, String... constraints)
     {
         override(id, instantiate(clazz), constraints);

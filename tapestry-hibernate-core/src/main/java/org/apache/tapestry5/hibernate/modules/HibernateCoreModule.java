@@ -62,6 +62,7 @@ public class HibernateCoreModule
     {
         configuration.add("HibernateStartup", new Runnable()
         {
+            @Override
             public void run()
             {
                 if (earlyStartup)
@@ -75,6 +76,7 @@ public class HibernateCoreModule
     {
         return new HibernateEntityPackageManager()
         {
+            @Override
             public Collection<String> getPackageNames()
             {
                 return packageNames;

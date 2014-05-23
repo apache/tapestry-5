@@ -56,6 +56,7 @@ public class Orderer<T>
 
     final DependencyLinker<T> _before = new DependencyLinker<T>()
     {
+        @Override
         public void link(DependencyNode<T> source, DependencyNode<T> target)
         {
             target.addDependency(source);
@@ -67,6 +68,7 @@ public class Orderer<T>
 
     final DependencyLinker<T> _after = new DependencyLinker<T>()
     {
+        @Override
         public void link(DependencyNode<T> source, DependencyNode<T> target)
         {
             source.addDependency(target);

@@ -33,6 +33,7 @@ public final class DefaultHibernateConfigurer implements HibernateConfigurer
         this.defaultConfiguration = defaultConfiguration;
     }
 
+    @Override
     public void configure(Configuration configuration)
     {
         if (defaultConfiguration) configuration.configure();

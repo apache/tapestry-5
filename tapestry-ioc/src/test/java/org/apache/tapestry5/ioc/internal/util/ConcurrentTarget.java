@@ -31,6 +31,7 @@ public class ConcurrentTarget
     {
         return barrier.withRead(new Invokable<Integer>()
         {
+            @Override
             public Integer invoke()
             {
                 return getCounter();
@@ -42,6 +43,7 @@ public class ConcurrentTarget
     {
         return barrier.withRead(new Invokable<Integer>()
         {
+            @Override
             public Integer invoke()
             {
                 return counter;
@@ -53,6 +55,7 @@ public class ConcurrentTarget
     {
         barrier.withWrite(new Runnable()
         {
+            @Override
             public void run()
             {
                 counter++;
@@ -64,6 +67,7 @@ public class ConcurrentTarget
     {
         barrier.withWrite(new Runnable()
         {
+            @Override
             public void run()
             {
                 ConcurrentTarget.this.counter = counter;
@@ -75,6 +79,7 @@ public class ConcurrentTarget
     {
         barrier.withRead(new Runnable()
         {
+            @Override
             public void run()
             {
                 if (counter >= 0)
@@ -87,10 +92,12 @@ public class ConcurrentTarget
     {
         barrier.withRead(new Runnable()
         {
+            @Override
             public void run()
             {
                 Runnable r = new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         incrementCounter();
@@ -106,6 +113,7 @@ public class ConcurrentTarget
     {
         barrier.withWrite(new Runnable()
         {
+            @Override
             public void run()
             {
                 counter = getCounter() + 1;
@@ -117,6 +125,7 @@ public class ConcurrentTarget
     {
         return barrier.tryWithWrite(new Runnable()
         {
+            @Override
             public void run()
             {
                 counter++;
@@ -128,6 +137,7 @@ public class ConcurrentTarget
     {
         return barrier.tryWithWrite(new Runnable()
         {
+            @Override
             public void run()
             {
                 counter = getCounter() + 1;
@@ -140,6 +150,7 @@ public class ConcurrentTarget
         final List<Boolean> result = new ArrayList<Boolean>();
         barrier.withRead(new Runnable()
         {
+            @Override
             public void run()
             {
                 if (counter >= 0)

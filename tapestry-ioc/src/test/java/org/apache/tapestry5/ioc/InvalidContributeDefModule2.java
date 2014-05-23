@@ -27,6 +27,7 @@ public class InvalidContributeDefModule2
 
         return new NameListHolder()
         {
+            @Override
             public List<String> getNames()
             {
                 return configuration;

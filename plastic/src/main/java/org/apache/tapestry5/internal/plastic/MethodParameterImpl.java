@@ -19,6 +19,7 @@ class MethodParameterImpl extends PlasticMember implements MethodParameter
         this.index = index;
     }
 
+    @Override
     public String getType()
     {
         plasticClass.check();
@@ -26,6 +27,7 @@ class MethodParameterImpl extends PlasticMember implements MethodParameter
         return type;
     }
 
+    @Override
     public int getIndex()
     {
         plasticClass.check();

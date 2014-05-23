@@ -42,6 +42,7 @@ public class ExtraPublicConstructorsModule
     {
         return new UpcaseService()
         {
+            @Override
             public String upcase(String input)
             {
                 return source.expandSymbols(input).toUpperCase();

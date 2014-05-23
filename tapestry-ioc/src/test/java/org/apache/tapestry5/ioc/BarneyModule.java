@@ -44,6 +44,7 @@ public class BarneyModule {
 
   public void contributeSizer(MappedConfiguration<Class, Sizer> configuration) {
     Sizer listSizer = new Sizer() {
+      @Override
       public int size(Object object) {
         List list = (List) object;
 
@@ -52,6 +53,7 @@ public class BarneyModule {
     };
 
     Sizer mapSizer = new Sizer() {
+      @Override
       public int size(Object object) {
         Map map = (Map) object;
 
@@ -67,12 +69,14 @@ public class BarneyModule {
   @Contribute(Sizer.class)
   public void moreSizerContributions(MappedConfiguration<Class, Sizer> configuration) {
     Sizer defaultSizer = new Sizer() {
+      @Override
       public int size(Object object) {
         return 1;
       }
     };
 
     Sizer nullSizer = new Sizer() {
+      @Override
       public int size(Object object) {
         return 0;
       }
@@ -91,10 +95,12 @@ public class BarneyModule {
     return new DecoratorList() {
       private List<String> names = CollectionFactory.newList();
 
+      @Override
       public void add(String name) {
         names.add(name);
       }
 
+      @Override
       public List<String> getNames() {
         return names;
       }

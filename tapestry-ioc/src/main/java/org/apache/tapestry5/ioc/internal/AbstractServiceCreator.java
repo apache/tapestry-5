@@ -80,6 +80,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         {
             private boolean seenOne;
 
+            @Override
             public <T> T findResource(Class<T> resourceType, Type genericType)
             {
                 ConfigurationType thisType = PARAMETER_TYPE_TO_CONFIGURATION_TYPE.get(resourceType);

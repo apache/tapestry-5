@@ -63,6 +63,7 @@ public class JpaValueEncoder<E> implements ValueEncoder<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toClient(final E value)
     {
         if (value == null)
@@ -81,6 +82,7 @@ public class JpaValueEncoder<E> implements ValueEncoder<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public E toValue(final String clientValue)
     {
         if (InternalUtils.isBlank(clientValue))

@@ -46,6 +46,7 @@ public class RecursiveServiceCreationCheckWrapper implements ObjectCreator
      * We could make this method synchronized, but in the context of creating a service for a proxy, it will already be
      * synchronized (inside the proxy).
      */
+    @Override
     public Object createObject()
     {
         if (locked)

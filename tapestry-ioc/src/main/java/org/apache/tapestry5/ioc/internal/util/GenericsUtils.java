@@ -486,16 +486,19 @@ public class GenericsUtils
     {
         return new ParameterizedType()
         {
+            @Override
             public Type[] getActualTypeArguments()
             {
                 return typeArguments;
             }
 
+            @Override
             public Type getRawType()
             {
                 return rawType;
             }
 
+            @Override
             public Type getOwnerType()
             {
                 return ownerType;
@@ -513,6 +516,7 @@ public class GenericsUtils
     {
         return new GenericArrayType()
         {
+            @Override
             public Type getGenericComponentType()
             {
                 return componentType;
@@ -536,11 +540,13 @@ public class GenericsUtils
 
         return new WildcardType()
         {
+            @Override
             public Type[] getUpperBounds()
             {
                 return upperBounds;
             }
 
+            @Override
             public Type[] getLowerBounds()
             {
                 return lowerBounds;

@@ -30,6 +30,7 @@ class LazyIterator<T> implements LazyFunction<T>
         this.iterator = iterator;
     }
 
+    @Override
     public LazyContinuation<T> next()
     {
         if (!iterator.hasNext())

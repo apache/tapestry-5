@@ -49,6 +49,7 @@ public class InterceptorStackBuilder implements ObjectCreator
         this.registry = registry;
     }
 
+    @Override
     public Object createObject()
     {
         Object current = delegate.createObject();
@@ -66,6 +67,7 @@ public class InterceptorStackBuilder implements ObjectCreator
 
             Object interceptor = registry.invoke("Invoking " + decorator, new Invokable<Object>()
             {
+                @Override
                 public Object invoke()
                 {
                     return decorator.createInterceptor(delegate);

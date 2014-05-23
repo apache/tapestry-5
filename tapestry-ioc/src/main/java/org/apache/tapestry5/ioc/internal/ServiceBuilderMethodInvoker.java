@@ -55,6 +55,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
     /**
      * Invoked from the proxy to create the actual service implementation.
      */
+    @Override
     public Object createObject()
     {
         Object result = getPlan().createObject();

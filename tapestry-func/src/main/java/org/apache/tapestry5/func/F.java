@@ -54,6 +54,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return element.equals(value);
@@ -66,6 +67,7 @@ public class F
      */
     public static Predicate<String> IS_BLANK = new Predicate<String>()
     {
+        @Override
         public boolean accept(String element)
         {
             return element == null || element.trim().length() == 0;
@@ -79,6 +81,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return element.compareTo(value) == 0;
@@ -93,6 +96,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T object)
             {
                 return object.compareTo(value) != 0;
@@ -108,6 +112,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return element.compareTo(value) > 0;
@@ -123,6 +128,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return element.compareTo(value) >= 0;
@@ -155,6 +161,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return element == null;
@@ -177,6 +184,7 @@ public class F
     {
         return new Mapper<T, String>()
         {
+            @Override
             public String map(T value)
             {
                 return String.valueOf(value);
@@ -192,6 +200,7 @@ public class F
     {
         return new Mapper<S, T>()
         {
+            @Override
             public T map(S input)
             {
                 return fixedResult;
@@ -219,6 +228,7 @@ public class F
 
         return new Mapper<S, T>()
         {
+            @Override
             public T map(S input)
             {
                 Mapper<S, T> active = predicate.accept(input) ? ifAccepted : ifRejected;
@@ -255,6 +265,7 @@ public class F
     {
         return new Mapper<S, S>()
         {
+            @Override
             public S map(S input)
             {
                 return input;
@@ -271,6 +282,7 @@ public class F
 
         return new Predicate<S>()
         {
+            @Override
             public boolean accept(S object)
             {
                 return mapper.map(object);
@@ -283,6 +295,7 @@ public class F
      */
     public static Reducer<Integer, Integer> SUM_INTS = new Reducer<Integer, Integer>()
     {
+        @Override
         public Integer reduce(Integer accumulator, Integer value)
         {
             return accumulator + value;
@@ -295,6 +308,7 @@ public class F
      */
     public static Mapper2<Integer, Integer, Integer> ADD_INTS = new Mapper2<Integer, Integer, Integer>()
     {
+        @Override
         public Integer map(Integer first, Integer second)
         {
             return first + second;
@@ -370,6 +384,7 @@ public class F
 
         Flow<Tuple<A, B>> tuples = F.flow(map.entrySet()).map(new Mapper<Map.Entry<A, B>, Tuple<A, B>>()
         {
+            @Override
             public Tuple<A, B> map(Entry<A, B> element)
             {
                 return Tuple.create(element.getKey(), element.getValue());
@@ -415,6 +430,7 @@ public class F
     {
         return new LazyFunction<T>()
         {
+            @Override
             public LazyContinuation<T> next()
             {
                 final T nextValue = function.map(currentValue);
@@ -438,6 +454,7 @@ public class F
     {
         LazyFunction<T> head = new LazyFunction<T>()
         {
+            @Override
             public LazyContinuation<T> next()
             {
                 return new LazyContinuation<T>(initial, toLazyFunction(initial, function));
@@ -456,6 +473,7 @@ public class F
     {
         return iterate(start, new Mapper<Integer, Integer>()
         {
+            @Override
             public Integer map(Integer element)
             {
                 return element + delta;
@@ -470,6 +488,7 @@ public class F
     {
         return new Worker<T>()
         {
+            @Override
             public void work(T value)
             {
                 coll.add(value);
@@ -504,6 +523,7 @@ public class F
     {
         return new Predicate<String>()
         {
+            @Override
             public boolean accept(String element)
             {
                 return element.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
@@ -538,6 +558,7 @@ public class F
     {
         return new Predicate<String>()
         {
+            @Override
             public boolean accept(String element)
             {
                 return element
@@ -556,6 +577,7 @@ public class F
     {
         return new Comparator<Tuple<A, B>>()
         {
+            @Override
             public int compare(Tuple<A, B> o1, Tuple<A, B> o2)
             {
                 return o1.first.compareTo(o2.first);
@@ -573,6 +595,7 @@ public class F
     {
         return new Comparator<Tuple<A, B>>()
         {
+            @Override
             public int compare(Tuple<A, B> o1, Tuple<A, B> o2)
             {
                 return o1.second.compareTo(o2.second);
@@ -594,6 +617,7 @@ public class F
 
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 return !delegate.accept(element);
@@ -618,6 +642,7 @@ public class F
         return new Mapper<A, C>()
         {
 
+            @Override
             public C map(A aElement)
             {
                 B bElement = abMapper.map(aElement);
@@ -641,6 +666,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 for (Predicate<? super T> delegate : delegates)
@@ -667,6 +693,7 @@ public class F
     {
         return new Predicate<T>()
         {
+            @Override
             public boolean accept(T element)
             {
                 for (Predicate<? super T> delegate : delegates)
@@ -691,6 +718,7 @@ public class F
 
         return new Worker<T>()
         {
+            @Override
             public void work(T value)
             {
                 for (Worker<? super T> delegate : delegates)

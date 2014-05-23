@@ -83,6 +83,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         errorReporter.writeErrorReport(report);
     }
 
+    @Override
     public String doCommand(String command, String[] args)
     {
         try
@@ -95,6 +96,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public boolean getBoolean(String string, String[] strings)
     {
         try
@@ -107,6 +109,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public boolean[] getBooleanArray(String string, String[] strings)
     {
         try
@@ -119,6 +122,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public Number getNumber(String string, String[] strings)
     {
         try
@@ -131,6 +135,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public Number[] getNumberArray(String string, String[] strings)
     {
         try
@@ -143,6 +148,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public String getString(String string, String[] strings)
     {
         try
@@ -155,6 +161,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public String[] getStringArray(String string, String[] strings)
     {
         try
@@ -167,11 +174,13 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
     }
 
+    @Override
     public void start()
     {
         delegate.start();
     }
 
+    @Override
     public void stop()
     {
         delegate.stop();
@@ -180,6 +189,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     /**
      * @since 5.1.0.0
      */
+    @Override
     public String getRemoteControlServerLocation()
     {
         return delegate.getRemoteControlServerLocation();
@@ -188,6 +198,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     /**
      * @since 5.1.0.0
      */
+    @Override
     public void setExtensionJs(String extensionJs)
     {
         delegate.setExtensionJs(extensionJs);
@@ -196,6 +207,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     /**
      * @since 5.1.0.0
      */
+    @Override
     public void start(String optionsString)
     {
         delegate.start(optionsString);
@@ -204,6 +216,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     /**
      * @since 5.1.0.0
      */
+    @Override
     public void start(Object optionsObject)
     {
         delegate.start(optionsObject);

@@ -28,20 +28,24 @@ public class SuccessMethodInvocationResult implements MethodInvocationResult
         this.returnValue = returnValue;
     }
 
+    @Override
     public Object getReturnValue()
     {
         return returnValue;
     }
 
+    @Override
     public void rethrow()
     {
     }
 
+    @Override
     public boolean didThrowCheckedException()
     {
         return false;
     }
 
+    @Override
     public <T extends Throwable> T getCheckedException(Class<T> exceptionType)
     {
         return null;

@@ -25,11 +25,13 @@ public class ThreadLocaleImpl implements ThreadLocale
 {
     private Locale locale = Locale.getDefault();
 
+    @Override
     public Locale getLocale()
     {
         return locale;
     }
 
+    @Override
     public void setLocale(Locale locale)
     {
         assert locale != null;

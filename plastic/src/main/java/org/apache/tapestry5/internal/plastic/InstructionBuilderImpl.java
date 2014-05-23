@@ -106,6 +106,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         this.cache = state.nameCache;
     }
 
+    @Override
     public InstructionBuilder returnDefaultValue()
     {
         check();
@@ -146,6 +147,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadThis()
     {
         check();
@@ -155,6 +157,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadNull()
     {
         check();
@@ -164,6 +167,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadArgument(int index)
     {
         check();
@@ -177,6 +181,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadArguments()
     {
         check();
@@ -189,6 +194,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder invokeSpecial(String containingClassName, MethodDescription description)
     {
         check();
@@ -198,6 +204,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder invokeVirtual(PlasticMethod method)
     {
         check();
@@ -210,6 +217,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 description.argumentTypes);
     }
 
+    @Override
     public InstructionBuilder invokeVirtual(String className, String returnType, String methodName,
                                             String... argumentTypes)
     {
@@ -220,6 +228,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder invokeInterface(String interfaceName, String returnType, String methodName,
                                               String... argumentTypes)
     {
@@ -236,6 +245,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 cache.toMethodDescriptor(returnType, argumentTypes));
     }
 
+    @Override
     public InstructionBuilder invokeStatic(Class clazz, Class returnType, String methodName, Class... argumentTypes)
     {
         doInvoke(INVOKESTATIC, clazz, returnType, methodName, argumentTypes);
@@ -249,6 +259,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 PlasticUtils.toTypeNames(argumentTypes));
     }
 
+    @Override
     public InstructionBuilder invoke(Method method)
     {
         check();
@@ -256,6 +267,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return invoke(method.getDeclaringClass(), method.getReturnType(), method.getName(), method.getParameterTypes());
     }
 
+    @Override
     public InstructionBuilder invoke(Class clazz, Class returnType, String methodName, Class... argumentTypes)
     {
         check();
@@ -271,6 +283,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 cache.toDesc(description));
     }
 
+    @Override
     public InstructionBuilder returnResult()
     {
         check();
@@ -284,6 +297,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder boxPrimitive(String typeName)
     {
         check();
@@ -298,6 +312,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder unboxPrimitive(String typeName)
     {
         check();
@@ -317,6 +332,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         v.visitMethodInsn(INVOKEVIRTUAL, type.wrapperInternalName, type.toValueMethodName, type.toValueMethodDescriptor);
     }
 
+    @Override
     public InstructionBuilder getField(String className, String fieldName, String typeName)
     {
         check();
@@ -326,6 +342,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder getStaticField(String className, String fieldName, String typeName)
     {
         check();
@@ -335,6 +352,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder getStaticField(String className, String fieldName, Class fieldType)
     {
         check();
@@ -342,6 +360,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return getStaticField(className, fieldName, cache.toTypeName(fieldType));
     }
 
+    @Override
     public InstructionBuilder putStaticField(String className, String fieldName, Class fieldType)
     {
         check();
@@ -349,6 +368,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return putStaticField(className, fieldName, cache.toTypeName(fieldType));
     }
 
+    @Override
     public InstructionBuilder putStaticField(String className, String fieldName, String typeName)
     {
         check();
@@ -358,6 +378,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder getField(PlasticField field)
     {
         check();
@@ -365,6 +386,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return getField(field.getPlasticClass().getClassName(), field.getName(), field.getTypeName());
     }
 
+    @Override
     public InstructionBuilder putField(String className, String fieldName, String typeName)
     {
         check();
@@ -374,6 +396,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder putField(String className, String fieldName, Class fieldType)
     {
         check();
@@ -381,6 +404,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return putField(className, fieldName, cache.toTypeName(fieldType));
     }
 
+    @Override
     public InstructionBuilder getField(String className, String fieldName, Class fieldType)
     {
         check();
@@ -388,6 +412,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return getField(className, fieldName, cache.toTypeName(fieldType));
     }
 
+    @Override
     public InstructionBuilder loadArrayElement(int index, String elementType)
     {
         check();
@@ -407,6 +432,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadArrayElement()
     {
         check();
@@ -416,6 +442,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder checkcast(String className)
     {
         check();
@@ -430,6 +457,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder checkcast(Class clazz)
     {
         check();
@@ -437,6 +465,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return checkcast(cache.toTypeName(clazz));
     }
 
+    @Override
     public InstructionBuilder startTryCatch(TryCatchCallback callback)
     {
         check();
@@ -446,6 +475,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder newInstance(String className)
     {
         check();
@@ -455,6 +485,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder newInstance(Class clazz)
     {
         check();
@@ -462,6 +493,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return newInstance(clazz.getName());
     }
 
+    @Override
     public InstructionBuilder invokeConstructor(String className, String... argumentTypes)
     {
         check();
@@ -471,6 +503,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder invokeConstructor(Class clazz, Class... argumentTypes)
     {
         check();
@@ -478,6 +511,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return invokeConstructor(clazz.getName(), PlasticUtils.toTypeNames(argumentTypes));
     }
 
+    @Override
     public InstructionBuilder dupe(int depth)
     {
         check();
@@ -491,6 +525,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder dupe()
     {
         check();
@@ -500,6 +535,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder pop()
     {
         check();
@@ -509,6 +545,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder swap()
     {
         check();
@@ -518,6 +555,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadConstant(Object constant)
     {
         check();
@@ -532,6 +570,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadTypeConstant(String typeName)
     {
         check();
@@ -543,6 +582,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadTypeConstant(Class clazz)
     {
         check();
@@ -554,6 +594,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder castOrUnbox(String typeName)
     {
         check();
@@ -569,6 +610,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder throwException(String className, String message)
     {
         check();
@@ -582,6 +624,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder throwException(Class<? extends Throwable> exceptionType, String message)
     {
         check();
@@ -589,6 +632,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return throwException(cache.toTypeName(exceptionType), message);
     }
 
+    @Override
     public InstructionBuilder throwException()
     {
         check();
@@ -598,6 +642,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder startSwitch(int min, int max, SwitchCallback callback)
     {
         check();
@@ -609,6 +654,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder startVariable(String type, final LocalVariableCallback callback)
     {
         check();
@@ -617,6 +663,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 callback.doBuild(var, builder);
@@ -628,6 +675,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder storeVariable(LocalVariable var)
     {
         check();
@@ -637,6 +685,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder loadVariable(LocalVariable var)
     {
         check();
@@ -646,6 +695,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder when(Condition condition, final InstructionBuilderCallback ifTrue)
     {
         check();
@@ -657,17 +707,20 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         return when(condition, new WhenCallback()
         {
+            @Override
             public void ifTrue(InstructionBuilder builder)
             {
                 ifTrue.doBuild(builder);
             }
 
+            @Override
             public void ifFalse(InstructionBuilder builder)
             {
             }
         });
     }
 
+    @Override
     public InstructionBuilder when(Condition condition, final WhenCallback callback)
     {
         check();
@@ -682,6 +735,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 callback.ifTrue(builder);
@@ -694,6 +748,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 callback.ifFalse(builder);
@@ -705,6 +760,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder doWhile(Condition condition, final WhileCallback callback)
     {
         check();
@@ -718,6 +774,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 callback.buildTest(builder);
@@ -728,6 +785,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 callback.buildBody(builder);
@@ -741,6 +799,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder increment(LocalVariable variable)
     {
         check();
@@ -752,6 +811,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder arrayLength()
     {
         check();
@@ -761,22 +821,26 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder iterateArray(final InstructionBuilderCallback callback)
     {
         startVariable("int", new LocalVariableCallback()
         {
+            @Override
             public void doBuild(final LocalVariable indexVariable, InstructionBuilder builder)
             {
                 builder.loadConstant(0).storeVariable(indexVariable);
 
                 builder.doWhile(Condition.LESS_THAN, new WhileCallback()
                 {
+                    @Override
                     public void buildTest(InstructionBuilder builder)
                     {
                         builder.dupe().arrayLength();
                         builder.loadVariable(indexVariable).swap();
                     }
 
+                    @Override
                     public void buildBody(InstructionBuilder builder)
                     {
                         builder.dupe().loadVariable(indexVariable).loadArrayElement();
@@ -792,6 +856,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder dupeWide()
     {
         check();
@@ -801,6 +866,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder popWide()
     {
         check();
@@ -810,6 +876,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    @Override
     public InstructionBuilder compareSpecial(String typeName)
     {
         check();

@@ -34,6 +34,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
         this.advisor = advisor;
     }
 
+    @Override
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
         AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, String.format(

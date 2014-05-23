@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 @PreventServiceDecoration
 public class RocketImpl implements Rocket
 {
+    @Override
     public String getCountdown()
     {
         return "3, 2, 1, Launch!";

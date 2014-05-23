@@ -49,6 +49,7 @@ public final class CoercionTuple<S, T>
             this.coercion = coercion;
         }
 
+        @Override
         public WT coerce(WS input)
         {
             return coercion.coerce(input);

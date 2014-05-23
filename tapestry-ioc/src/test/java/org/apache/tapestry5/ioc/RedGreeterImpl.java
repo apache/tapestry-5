@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 public class RedGreeterImpl implements Greeter
 {
 
+    @Override
     public String getGreeting()
     {
         return null;

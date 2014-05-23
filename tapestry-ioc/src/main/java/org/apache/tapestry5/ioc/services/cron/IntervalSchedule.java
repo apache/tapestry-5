@@ -36,11 +36,13 @@ public class IntervalSchedule implements Schedule
         this.interval = interval;
     }
 
+    @Override
     public long firstExecution()
     {
         return nextExecution(System.currentTimeMillis());
     }
 
+    @Override
     public long nextExecution(long previousExecution)
     {
         return previousExecution + interval;

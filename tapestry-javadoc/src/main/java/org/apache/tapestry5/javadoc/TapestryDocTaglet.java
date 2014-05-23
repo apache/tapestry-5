@@ -47,46 +47,55 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         paramMap.put(NAME, new TapestryDocTaglet());
     }
 
+    @Override
     public boolean inField()
     {
         return false;
     }
 
+    @Override
     public boolean inConstructor()
     {
         return false;
     }
 
+    @Override
     public boolean inMethod()
     {
         return false;
     }
 
+    @Override
     public boolean inOverview()
     {
         return false;
     }
 
+    @Override
     public boolean inPackage()
     {
         return false;
     }
 
+    @Override
     public boolean inType()
     {
         return true;
     }
 
+    @Override
     public boolean isInlineTag()
     {
         return false;
     }
 
+    @Override
     public String getName()
     {
         return NAME;
     }
 
+    @Override
     public ClassDescription getDescription(String className)
     {
         ClassDescription result = classDescriptions.get(className);
@@ -107,11 +116,13 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         return result;
     }
 
+    @Override
     public String toString(Tag tag)
     {
         throw new IllegalStateException("toString(Tag) should not be called for a non-inline tag.");
     }
 
+    @Override
     public String toString(Tag[] tags)
     {
         if (tags.length == 0)

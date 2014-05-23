@@ -30,16 +30,19 @@ public abstract class AbtractAspectInterceptorBuilder<T> implements AspectInterc
         this.annotationAccess = annotationAccess;
     }
 
+    @Override
     public AnnotationProvider getClassAnnotationProvider()
     {
         return annotationAccess.getClassAnnotationProvider();
     }
 
+    @Override
     public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes)
     {
         return annotationAccess.getMethodAnnotationProvider(methodName, parameterTypes);
     }
 
+    @Override
     public <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationType)
     {
         return getMethodAnnotationProvider(method.getName(), method.getParameterTypes()).getAnnotation(annotationType);

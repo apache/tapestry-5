@@ -42,21 +42,25 @@ public class KaptchaProducerImpl implements KaptchaProducer
         width = config.getWidth();
     }
 
+    @Override
     public int getHeight()
     {
         return height;
     }
 
+    @Override
     public int getWidth()
     {
         return width;
     }
 
+    @Override
     public BufferedImage createImage(String text)
     {
         return producer.createImage(text);
     }
 
+    @Override
     public String createText()
     {
         return producer.createText();

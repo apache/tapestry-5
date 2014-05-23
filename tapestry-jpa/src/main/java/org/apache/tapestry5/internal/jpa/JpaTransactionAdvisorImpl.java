@@ -27,6 +27,7 @@ public class JpaTransactionAdvisorImpl implements JpaTransactionAdvisor
         this.manager = manager;
     }
 
+    @Override
     public void addTransactionCommitAdvice(final MethodAdviceReceiver receiver)
     {
     	receiver.adviseAllMethods(new CommitAfterMethodAdvice(manager));

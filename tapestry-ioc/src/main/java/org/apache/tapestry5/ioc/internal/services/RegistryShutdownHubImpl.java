@@ -40,12 +40,14 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
         this.logger = logger;
     }
 
+    @Override
     public void addRegistryShutdownListener(final RegistryShutdownListener listener)
     {
         assert listener != null;
 
         addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 listener.registryDidShutdown();
@@ -53,6 +55,7 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
         });
     }
 
+    @Override
     public void addRegistryShutdownListener(Runnable listener)
     {
         assert listener != null;
@@ -62,6 +65,7 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
         listeners.add(listener);
     }
 
+    @Override
     public void addRegistryWillShutdownListener(Runnable listener)
     {
         assert listener != null;
@@ -81,6 +85,7 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
 
         F.flow(preListeners).concat(listeners).each(new Worker<Runnable>()
         {
+            @Override
             public void work(Runnable element)
             {
                 try

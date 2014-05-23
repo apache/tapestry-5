@@ -384,3 +384,7 @@ look and feel.
 The Grid component no longer emits CSS class names, instead it renders data attributes into Grid headers, rows, and cells,
 such as `data-grid-row="first"`, `data-grid-property="title"`, etc. These attributes may still be referenced using CSS rules
 where desired.
+
+## Java 1.6 required
+
+As of version 5.4, Tapestry requires Java 1.6 at least.

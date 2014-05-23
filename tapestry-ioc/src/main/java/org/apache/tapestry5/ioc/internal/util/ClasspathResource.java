@@ -50,6 +50,7 @@ public final class ClasspathResource extends AbstractResource
         return new ClasspathResource(classLoader, path);
     }
 
+    @Override
     public URL toURL()
     {
         try

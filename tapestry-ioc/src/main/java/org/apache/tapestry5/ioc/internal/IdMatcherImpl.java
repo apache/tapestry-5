@@ -28,6 +28,7 @@ public class IdMatcherImpl implements IdMatcher
         globMatcher = new GlobPatternMatcher(pattern);
     }
 
+    @Override
     public boolean matches(String id)
     {
         return globMatcher.matches(id);

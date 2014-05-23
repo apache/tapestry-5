@@ -7,6 +7,7 @@ package org.apache.tapestry5.ioc.internal.util;
 public class DrivableImpl implements Drivable
 {
 
+    @Override
     public void drive()
     {
 

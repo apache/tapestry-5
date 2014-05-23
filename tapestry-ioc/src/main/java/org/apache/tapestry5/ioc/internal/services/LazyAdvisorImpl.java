@@ -36,6 +36,7 @@ public class LazyAdvisorImpl implements LazyAdvisor
         this.thunkCreator = thunkCreator;
     }
 
+    @Override
     public void addLazyMethodInvocationAdvice(MethodAdviceReceiver methodAdviceReceiver)
     {
         for (Method m : methodAdviceReceiver.getInterface().getMethods())
@@ -58,10 +59,12 @@ public class LazyAdvisorImpl implements LazyAdvisor
              * When the method is invoked, we don't immediately proceed. Instead, we return a thunk instance
              * that defers its behavior to the lazily invoked invocation.
              */
+            @Override
             public void advise(final MethodInvocation invocation)
             {
                 ObjectCreator deferred = new ObjectCreator()
                 {
+                    @Override
                     public Object createObject()
                     {
                         invocation.proceed();

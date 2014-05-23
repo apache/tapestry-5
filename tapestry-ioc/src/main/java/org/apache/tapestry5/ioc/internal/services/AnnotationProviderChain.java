@@ -44,6 +44,7 @@ public class AnnotationProviderChain implements AnnotationProvider
         return new AnnotationProviderChain(providers.toArray(new AnnotationProvider[providers.size()]));
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         for (AnnotationProvider p : providers)

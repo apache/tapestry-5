@@ -39,6 +39,7 @@ public class ReloadableServiceImplementationObjectCreator extends AbstractReload
         this.resources = resources;
     }
 
+    @Override
     protected Object createInstance(Class clazz)
     {
         final Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);

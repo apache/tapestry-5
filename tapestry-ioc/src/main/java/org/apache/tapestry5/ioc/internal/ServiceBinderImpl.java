@@ -147,11 +147,13 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         return new ObjectCreatorSource()
         {
+            @Override
             public ObjectCreator constructCreator(ServiceBuilderResources resources)
             {
                 return new ConstructorServiceCreator(resources, getDescription(), constructor);
             }
 
+            @Override
             public String getDescription()
             {
                 return String.format("%s via %s", proxyFactory.getConstructorLocation(constructor),
@@ -166,6 +168,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
                 eagerLoad);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> ServiceBindingOptions bind(Class<T> serviceClass)
     {
@@ -195,6 +198,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return bind(serviceClass, serviceClass);
     }
 
+    @Override
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, final ServiceBuilder<T> builder)
     {
         assert serviceInterface != null;
@@ -210,10 +214,12 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         this.source = new ObjectCreatorSource()
         {
+            @Override
             public ObjectCreator constructCreator(final ServiceBuilderResources resources)
             {
                 return new ObjectCreator()
                 {
+                    @Override
                     public Object createObject()
                     {
                         return builder.buildService(resources);
@@ -221,6 +227,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
                 };
             }
 
+            @Override
             public String getDescription()
             {
                 return proxyFactory.getMethodLocation(bindMethod).toString();
@@ -230,6 +237,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
     {
         assert serviceInterface != null;
@@ -270,6 +278,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions eagerLoad()
     {
         lock.check();
@@ -279,6 +288,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions preventDecoration()
     {
         lock.check();
@@ -288,6 +298,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions preventReloading()
     {
         lock.check();
@@ -297,6 +308,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions withId(String id)
     {
         assert InternalUtils.isNonBlank(id);
@@ -307,6 +319,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions withSimpleId()
     {
         if (serviceImplementation == null)
@@ -317,6 +330,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return withId(serviceImplementation.getSimpleName());
     }
 
+    @Override
     public ServiceBindingOptions scope(String scope)
     {
         assert InternalUtils.isNonBlank(scope);
@@ -327,6 +341,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    @Override
     public ServiceBindingOptions withMarker(Class<? extends Annotation>... marker)
     {
         lock.check();

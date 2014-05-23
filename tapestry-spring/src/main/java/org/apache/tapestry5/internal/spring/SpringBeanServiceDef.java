@@ -35,15 +35,18 @@ public class SpringBeanServiceDef implements ServiceDef2
         this.context = context;
     }
 
+    @Override
     public boolean isPreventDecoration()
     {
         return true;
     }
 
+    @Override
     public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
     {
         return new ObjectCreator()
         {
+            @Override
             public Object createObject()
             {
                 return context.getBean(beanName);
@@ -57,26 +60,31 @@ public class SpringBeanServiceDef implements ServiceDef2
         };
     }
 
+    @Override
     public String getServiceId()
     {
         return beanName;
     }
 
+    @Override
     public Set<Class> getMarkers()
     {
         return Collections.emptySet();
     }
 
+    @Override
     public Class getServiceInterface()
     {
         return context.getType(beanName);
     }
 
+    @Override
     public String getServiceScope()
     {
         return ScopeConstants.DEFAULT;
     }
 
+    @Override
     public boolean isEagerLoad()
     {
         return false;

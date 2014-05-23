@@ -21,6 +21,7 @@ import org.apache.tapestry5.json.JSONObject;
  * @since 5.3
  */
 public class StringToJSONObject  implements Coercion<String,JSONObject> {
+    @Override
     public JSONObject coerce(String input) {
         return new JSONObject(input);
     }

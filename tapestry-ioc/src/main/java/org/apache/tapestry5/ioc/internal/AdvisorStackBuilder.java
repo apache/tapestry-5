@@ -58,6 +58,7 @@ public class AdvisorStackBuilder implements ObjectCreator
         this.aspectDecorator = aspectDecorator;
     }
 
+    @Override
     public Object createObject()
     {
         Object service = delegate.createObject();
@@ -75,6 +76,7 @@ public class AdvisorStackBuilder implements ObjectCreator
         {
             registry.run("Invoking " + advisor, new Runnable()
             {
+                @Override
                 public void run()
                 {
                     advisor.advise(builder);

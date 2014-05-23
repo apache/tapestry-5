@@ -102,6 +102,7 @@ public class HibernateModule
             {
                 ValueEncoderFactory factory = new ValueEncoderFactory()
                 {
+                    @Override
                     public ValueEncoder create(Class type)
                     {
                         return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,

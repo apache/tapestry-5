@@ -64,6 +64,7 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 cleanup();
@@ -106,12 +107,14 @@ public class PerthreadManagerImpl implements PerthreadManager
         return result;
     }
 
+    @Override
     public void addThreadCleanupListener(final ThreadCleanupListener listener)
     {
         assert listener != null;
 
         addThreadCleanupCallback(new Runnable()
         {
+            @Override
             public void run()
             {
                 listener.threadDidCleanup();
@@ -119,6 +122,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         });
     }
 
+    @Override
     public void addThreadCleanupCallback(Runnable callback)
     {
         assert callback != null;
@@ -130,6 +134,7 @@ public class PerthreadManagerImpl implements PerthreadManager
      * Instructs the hub to notify all its listeners (for the current thread).
      * It also discards its list of listeners.
      */
+    @Override
     public void cleanup()
     {
         List<Runnable> callbacks = getCallbacks();
@@ -173,11 +178,13 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         return new PerThreadValue<T>()
         {
+            @Override
             public T get()
             {
                 return get(null);
             }
 
+            @Override
             public T get(T defaultValue)
             {
                 Map map = getPerthreadMap();
@@ -195,6 +202,7 @@ public class PerthreadManagerImpl implements PerthreadManager
                 return defaultValue;
             }
 
+            @Override
             public T set(T newValue)
             {
                 getPerthreadMap().put(key, newValue == null ? NULL_VALUE : newValue);
@@ -202,6 +210,7 @@ public class PerthreadManagerImpl implements PerthreadManager
                 return newValue;
             }
 
+            @Override
             public boolean exists()
             {
                 return getPerthreadMap().containsKey(key);
@@ -209,11 +218,13 @@ public class PerthreadManagerImpl implements PerthreadManager
         };
     }
 
+    @Override
     public <T> PerThreadValue<T> createValue()
     {
         return createValue(uuidGenerator.getAndIncrement());
     }
 
+    @Override
     public void run(Runnable runnable)
     {
         assert runnable != null;
@@ -227,6 +238,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
     }
 
+    @Override
     public <T> T invoke(Invokable<T> invokable)
     {
         try

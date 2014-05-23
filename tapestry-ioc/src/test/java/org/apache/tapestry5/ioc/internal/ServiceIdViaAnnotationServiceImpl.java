@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.ServiceId;
 public class ServiceIdViaAnnotationServiceImpl implements Runnable
 {
 
+    @Override
     public void run()
     {
     }

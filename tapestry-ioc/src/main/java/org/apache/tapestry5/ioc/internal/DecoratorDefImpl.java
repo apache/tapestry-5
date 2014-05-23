@@ -38,11 +38,13 @@ public class DecoratorDefImpl extends AbstractServiceInstrumenter implements Dec
 
     }
 
+    @Override
     public ServiceDecorator createDecorator(ModuleBuilderSource moduleSource, ServiceResources resources)
     {
         return new ServiceDecoratorImpl(method, moduleSource, resources, proxyFactory);
     }
 
+    @Override
     public String getDecoratorId()
     {
         return decoratorId;

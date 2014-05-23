@@ -99,6 +99,7 @@ public class ModuleImpl implements Module
         }
     }
 
+    @Override
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
         assert InternalUtils.isNonBlank(serviceId);
@@ -124,6 +125,7 @@ public class ModuleImpl implements Module
         }
     }
 
+    @Override
     public Set<DecoratorDef> findMatchingDecoratorDefs(ServiceDef serviceDef)
     {
         Set<DecoratorDef> result = CollectionFactory.newSet();
@@ -137,6 +139,7 @@ public class ModuleImpl implements Module
         return result;
     }
 
+    @Override
     public Set<AdvisorDef> findMatchingServiceAdvisors(ServiceDef serviceDef)
     {
         Set<AdvisorDef> result = CollectionFactory.newSet();
@@ -150,6 +153,7 @@ public class ModuleImpl implements Module
         return result;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Collection<String> findServiceIdsForInterface(Class serviceInterface)
     {
@@ -178,6 +182,7 @@ public class ModuleImpl implements Module
 
         final Invokable create = new Invokable()
         {
+            @Override
             public Object invoke()
             {
                 // In a race condition, two threads may try to create the same service simulatenously.
@@ -201,6 +206,7 @@ public class ModuleImpl implements Module
 
         Invokable find = new Invokable()
         {
+            @Override
             public Object invoke()
             {
                 Object result = services.get(key);
@@ -215,10 +221,12 @@ public class ModuleImpl implements Module
         return BARRIER.withRead(find);
     }
 
+    @Override
     public void collectEagerLoadServices(final Collection<EagerLoadServiceProxy> proxies)
     {
         Runnable work = new Runnable()
         {
+            @Override
             public void run()
             {
                 for (ServiceDef3 def : serviceDefs.values())
@@ -256,6 +264,7 @@ public class ModuleImpl implements Module
 
         Invokable operation = new Invokable()
         {
+            @Override
             public Object invoke()
             {
                 try
@@ -339,6 +348,7 @@ public class ModuleImpl implements Module
     {
         return registry.invoke("Obtaining AspectDecorator service", new Invokable<AspectDecorator>()
         {
+            @Override
             public AspectDecorator invoke()
             {
                 return registry.getService(AspectDecorator.class);
@@ -348,11 +358,13 @@ public class ModuleImpl implements Module
 
     private final Runnable instantiateModule = new Runnable()
     {
+        @Override
         public void run()
         {
             moduleInstance = registry.invoke("Constructing module class " + moduleDef.getBuilderClass().getName(),
                     new Invokable()
                     {
+                        @Override
                         public Object invoke()
                         {
                             return instantiateModuleInstance();
@@ -363,6 +375,7 @@ public class ModuleImpl implements Module
 
     private final Invokable provideModuleInstance = new Invokable<Object>()
     {
+        @Override
         public Object invoke()
         {
             if (moduleInstance == null)
@@ -372,6 +385,7 @@ public class ModuleImpl implements Module
         }
     };
 
+    @Override
     public Object getModuleBuilder()
     {
         return BARRIER.withRead(provideModuleInstance);
@@ -394,6 +408,7 @@ public class ModuleImpl implements Module
 
             Comparator<Constructor> comparator = new Comparator<Constructor>()
             {
+                @Override
                 public int compare(Constructor c1, Constructor c2)
                 {
                     return c2.getParameterTypes().length - c1.getParameterTypes().length;
@@ -468,6 +483,7 @@ public class ModuleImpl implements Module
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, serviceImplementation, new PlasticClassTransformer()
         {
+            @Override
             public void transform(final PlasticClass plasticClass)
             {
                 plasticClass.introduceInterface(Serializable.class);
@@ -484,6 +500,7 @@ public class ModuleImpl implements Module
                 // If not concerned with efficiency, this might be done with method advice instead.
                 delegateMethod.changeImplementation(new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.loadThis().getField(creatorField);
@@ -499,6 +516,7 @@ public class ModuleImpl implements Module
 
                 plasticClass.introduceMethod(WRITE_REPLACE).changeImplementation(new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.loadThis().getField(tokenField).returnResult();
@@ -512,6 +530,7 @@ public class ModuleImpl implements Module
         return instantiator.newInstance();
     }
 
+    @Override
     @SuppressWarnings("all")
     public Set<ContributionDef2> getContributorDefsForService(ServiceDef serviceDef)
     {
@@ -576,11 +595,13 @@ public class ModuleImpl implements Module
         return serviceDefs.containsKey(serviceDef.getServiceId());
     }
 
+    @Override
     public ServiceDef3 getServiceDef(String serviceId)
     {
         return serviceDefs.get(serviceId);
     }
 
+    @Override
     public String getLoggerName()
     {
         return moduleDef.getLoggerName();

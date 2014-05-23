@@ -101,6 +101,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
 
     private static final Coercion NO_COERCION = new Coercion<Object, Object>()
     {
+        @Override
         public Object coerce(Object input)
         {
             return input;
@@ -109,6 +110,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
 
     private static final Coercion COERCION_NULL_TO_OBJECT = new Coercion<Void, Object>()
     {
+        @Override
         public Object coerce(Void input)
         {
             return null;
@@ -131,6 +133,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Object coerce(Object input, Class targetType)
     {
@@ -147,6 +150,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         return getTargetCoercion(effectiveTargetType).coerce(input);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <S, T> Coercion<S, T> getCoercion(Class<S> sourceType, Class<T> targetType)
     {
@@ -164,6 +168,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         return getTargetCoercion(effectiveTargetType).getCoercion(effectiveSourceType);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <S, T> String explain(Class<S> sourceType, Class<T> targetType)
     {
@@ -222,6 +227,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         }
     }
 
+    @Override
     public void clearCache()
     {
         try

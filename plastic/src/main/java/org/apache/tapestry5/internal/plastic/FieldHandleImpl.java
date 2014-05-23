@@ -37,6 +37,7 @@ public class FieldHandleImpl implements FieldHandle
         return String.format("FieldHandle[%s#%s]", className, fieldName);
     }
 
+    @Override
     public Object get(Object instance)
     {
         checkNullInstance(instance, "get");
@@ -52,6 +53,7 @@ public class FieldHandleImpl implements FieldHandle
                     className));
     }
 
+    @Override
     public void set(Object instance, Object newValue)
     {
         checkNullInstance(instance, "set");

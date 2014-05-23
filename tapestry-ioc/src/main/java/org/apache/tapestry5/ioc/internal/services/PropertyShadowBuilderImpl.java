@@ -34,6 +34,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
         this.propertyAccess = propertyAccess;
     }
 
+    @Override
     public <T> T build(final Object source, final String propertyName, final Class<T> propertyType)
     {
         final Class sourceClass = source.getClass();
@@ -57,6 +58,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
         ClassInstantiator instantiator = proxyFactory.createProxy(propertyType, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 final PlasticField sourceField = plasticClass.introduceField(sourceClass, "source").inject(source);
@@ -69,6 +71,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
                 delegateMethod.changeImplementation(new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.loadThis().getField(sourceField);
@@ -78,6 +81,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
                         builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
                         {
+                            @Override
                             public void doBuild(InstructionBuilder builder)
                             {
                                 builder.throwException(

@@ -30,11 +30,13 @@ public class ExtraRunnableModule
     {
         return new ExtraRunnable()
         {
+            @Override
             public void runOrThrow() throws Exception
             {
                 run();
             }
 
+            @Override
             public void run()
             {
                 for (Runnable r : configuration)
@@ -49,6 +51,7 @@ public class ExtraRunnableModule
     {
         configuration.add("Solo", new Runnable()
         {
+            @Override
             public void run()
             {
                 InvokeCounts.contributionInvokeCount++;

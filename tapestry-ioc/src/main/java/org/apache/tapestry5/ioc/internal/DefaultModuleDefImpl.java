@@ -176,16 +176,19 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         return String.format("ModuleDef[%s %s]", moduleClass.getName(), InternalUtils.joinSorted(serviceDefs.keySet()));
     }
 
+    @Override
     public Class getBuilderClass()
     {
         return moduleClass;
     }
 
+    @Override
     public Set<String> getServiceIds()
     {
         return serviceDefs.keySet();
     }
 
+    @Override
     public ServiceDef getServiceDef(String serviceId)
     {
         return serviceDefs.get(serviceId);
@@ -214,6 +217,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         {
             // By name, ascending, then by parameter count, descending.
 
+            @Override
             public int compare(Method o1, Method o2)
             {
                 int result = o1.getName().compareTo(o2.getName());
@@ -462,11 +466,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         ObjectCreatorSource source = new ObjectCreatorSource()
         {
+            @Override
             public ObjectCreator constructCreator(ServiceBuilderResources resources)
             {
                 return new ServiceBuilderMethodInvoker(resources, getDescription(), method);
             }
 
+            @Override
             public String getDescription()
             {
                 return DefaultModuleDefImpl.this.toString(method);
@@ -497,12 +503,14 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     {
         return F.flow(method.getAnnotations()).map(new Mapper<Annotation, Class>()
         {
+            @Override
             public Class map(Annotation value)
             {
                 return value.annotationType();
             }
         }).filter(new Predicate<Class>()
         {
+            @Override
             public boolean accept(Class element)
             {
                 for (Class skip : annotationClassesToSkip)
@@ -518,6 +526,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         }).toSet();
     }
 
+    @Override
     public void addServiceDef(ServiceDef serviceDef)
     {
         String serviceId = serviceDef.getServiceId();
@@ -538,16 +547,19 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         return scope != null ? scope.value() : ScopeConstants.DEFAULT;
     }
 
+    @Override
     public Set<DecoratorDef> getDecoratorDefs()
     {
         return toSet(decoratorDefs);
     }
 
+    @Override
     public Set<ContributionDef> getContributionDefs()
     {
         return contributionDefs;
     }
 
+    @Override
     public String getLoggerName()
     {
         return moduleClass.getName();
@@ -606,6 +618,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         throw new RuntimeException(IOCMessages.errorInBindMethod(methodId, failure), failure);
     }
 
+    @Override
     public Set<AdvisorDef> getAdvisorDefs()
     {
         return toSet(advisorDefs);
@@ -616,6 +629,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         return CollectionFactory.newSet(map.values());
     }
 
+    @Override
     public Set<StartupDef> getStartups()
     {
         return startups;

@@ -50,11 +50,13 @@ public abstract class AbstractMessages implements Messages
     protected abstract String valueForKey(String key);
 
 
+    @Override
     public boolean contains(String key)
     {
         return valueForKey(key) != null;
     }
 
+    @Override
     public String get(String key)
     {
         if (contains(key)) return valueForKey(key);
@@ -62,6 +64,7 @@ public abstract class AbstractMessages implements Messages
         return String.format("[[missing key: %s]]", key);
     }
 
+    @Override
     public MessageFormatter getFormatter(String key)
     {
         MessageFormatter result = cache.get(key);
@@ -82,6 +85,7 @@ public abstract class AbstractMessages implements Messages
         return new MessageFormatterImpl(format, locale);
     }
 
+    @Override
     public String format(String key, Object... args)
     {
         return getFormatter(key).format(args);

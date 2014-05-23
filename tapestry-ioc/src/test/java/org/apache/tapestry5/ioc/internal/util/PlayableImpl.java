@@ -6,6 +6,7 @@ package org.apache.tapestry5.ioc.internal.util;
 public class PlayableImpl extends DrivableImpl implements Playable
 {
 
+    @Override
     public void play()
     {
 

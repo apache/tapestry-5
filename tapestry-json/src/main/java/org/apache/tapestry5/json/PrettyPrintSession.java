@@ -54,6 +54,7 @@ class PrettyPrintSession implements JSONPrintSession
         this.indentString = indentString;
     }
 
+    @Override
     public JSONPrintSession indent()
     {
         indentLevel++;
@@ -61,6 +62,7 @@ class PrettyPrintSession implements JSONPrintSession
         return this;
     }
 
+    @Override
     public JSONPrintSession newline()
     {
         if (position != Position.MARGIN)
@@ -72,6 +74,7 @@ class PrettyPrintSession implements JSONPrintSession
         return this;
     }
 
+    @Override
     public JSONPrintSession outdent()
     {
         indentLevel--;
@@ -105,6 +108,7 @@ class PrettyPrintSession implements JSONPrintSession
         addSep();
     }
 
+    @Override
     public JSONPrintSession print(String value)
     {
         prepareToPrint();
@@ -116,11 +120,13 @@ class PrettyPrintSession implements JSONPrintSession
         return this;
     }
 
+    @Override
     public JSONPrintSession printQuoted(String value)
     {
         return print(JSONObject.quote(value));
     }
 
+    @Override
     public JSONPrintSession printSymbol(char symbol)
     {
         addIndentation();

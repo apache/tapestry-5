@@ -37,11 +37,13 @@ public class AdvisorDefImpl extends AbstractServiceInstrumenter implements Advis
         this.advisorId = advisorId;
     }
 
+    @Override
     public ServiceAdvisor createAdvisor(ModuleBuilderSource moduleSource, ServiceResources resources)
     {
         return new ServiceAdvisorImpl(moduleSource, method, resources, proxyFactory);
     }
 
+    @Override
     public String getAdvisorId()
     {
         return advisorId;

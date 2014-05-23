@@ -18,11 +18,13 @@ import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
 
 public class NoopClassLoaderDelegate implements ClassLoaderDelegate
 {
+    @Override
     public boolean shouldInterceptClassLoading(String className)
     {
         return false;
     }
 
+    @Override
     public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
         throw new IllegalStateException();

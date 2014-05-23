@@ -52,21 +52,25 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
             }
         }
 
+        @Override
         public String getServiceId()
         {
             return serviceDef.getServiceId();
         }
 
+        @Override
         public Class getServiceInterface()
         {
             return serviceDef.getServiceInterface();
         }
 
+        @Override
         public String getScope()
         {
             return serviceDef.getServiceScope();
         }
 
+        @Override
         public Set<Class> getMarkers()
         {
             return serviceDef.getMarkers();
@@ -74,6 +78,7 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
 
         // Mutable properties must be synchronized
 
+        @Override
         public synchronized Status getStatus()
         {
             if (perThreadStatus != null) {
@@ -101,6 +106,7 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
      */
     private final Map<String, MutableServiceActivity> serviceIdToServiceStatus = new TreeMap<String, MutableServiceActivity>();
 
+    @Override
     public synchronized List<ServiceActivity> getServiceActivity()
     {
         // Need to wrap the values in a new list because
@@ -127,12 +133,14 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
         // Does nothing, first pass does not use a worker thread
     }
 
+    @Override
     public synchronized void define(ServiceDef serviceDef, Status initialStatus)
     {
         serviceIdToServiceStatus.put(serviceDef.getServiceId(), new MutableServiceActivity(
                 serviceDef, perthreadManager, initialStatus));
     }
 
+    @Override
     public synchronized void setStatus(String serviceId, Status status)
     {
         serviceIdToServiceStatus.get(serviceId).setStatus(status);

@@ -34,11 +34,13 @@ public class CronSchedule implements Schedule
         }
     }
 
+    @Override
     public long firstExecution()
     {
         return getNextValidTimeAfterNow();
     }
 
+    @Override
     public long nextExecution(long previousExecution)
     {
         return getNextValidTimeAfterNow();

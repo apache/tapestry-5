@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc;
 
 public class UppercaseStringTransformer implements StringTransformer
 {
+    @Override
     public String transform(String input)
     {
         return input.toUpperCase();

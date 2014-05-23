@@ -27,6 +27,7 @@ public class DelegatingAnnotationAccess implements AnnotationAccess
         return annotationType.getAnnotation(Inherited.class) != null;
     }
 
+    @Override
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         if (primary.hasAnnotation(annotationType))
@@ -35,6 +36,7 @@ public class DelegatingAnnotationAccess implements AnnotationAccess
         return isInherited(annotationType) && inherited.hasAnnotation(annotationType);
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
         T fromPrimary = primary.getAnnotation(annotationType);

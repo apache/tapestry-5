@@ -10,6 +10,7 @@ public class UserDAOImpl implements UserDAO
     @Inject
     private EntityManager entityManager;
 
+    @Override
     public void persist(Object entity)
     {
         entityManager.persist(entity);

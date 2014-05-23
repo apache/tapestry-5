@@ -41,6 +41,7 @@ public class PersistedEntity implements SessionRestorable
         this.id = id;
     }
 
+    @Override
     public Object restoreWithSession(Session session)
     {
         try

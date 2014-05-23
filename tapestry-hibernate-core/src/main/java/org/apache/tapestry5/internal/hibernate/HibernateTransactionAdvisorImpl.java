@@ -33,6 +33,7 @@ public class HibernateTransactionAdvisorImpl implements HibernateTransactionAdvi
      */
     private final MethodAdvice advice = new MethodAdvice()
     {
+        @Override
         public void advise(MethodInvocation invocation)
         {
             try
@@ -57,6 +58,7 @@ public class HibernateTransactionAdvisorImpl implements HibernateTransactionAdvi
         this.manager = manager;
     }
 
+    @Override
     public void addTransactionCommitAdvice(MethodAdviceReceiver receiver)
     {
         for (Method m : receiver.getInterface().getMethods())

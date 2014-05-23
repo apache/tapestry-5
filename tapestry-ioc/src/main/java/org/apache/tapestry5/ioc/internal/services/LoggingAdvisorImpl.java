@@ -31,6 +31,7 @@ public class LoggingAdvisorImpl implements LoggingAdvisor
         this.exceptionTracker = exceptionTracker;
     }
 
+    @Override
     public void addLoggingAdvice(Logger logger, MethodAdviceReceiver receiver)
     {
         MethodAdvice advice = new LoggingAdvice(logger, exceptionTracker);

@@ -36,6 +36,7 @@ public class DefaultImplementationBuilderImpl implements DefaultImplementationBu
         this.proxyFactory = proxyFactory;
     }
 
+    @Override
     public <S> S createDefaultImplementation(Class<S> serviceInterface)
     {
         S instance = serviceInterface.cast(cache.get(serviceInterface));
@@ -56,6 +57,7 @@ public class DefaultImplementationBuilderImpl implements DefaultImplementationBu
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 plasticClass.addToString(String.format("<NoOp %s>", serviceInterface.getName()));

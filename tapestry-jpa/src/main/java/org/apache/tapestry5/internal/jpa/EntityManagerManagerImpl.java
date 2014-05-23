@@ -46,6 +46,7 @@ public class EntityManagerManagerImpl implements EntityManagerManager, ThreadCle
     /**
      * {@inheritDoc}
      */
+    @Override
     public EntityManager getEntityManager(final String persistenceUnitName)
     {
         return getOrCreateEntityManager(persistenceUnitName);
@@ -54,6 +55,7 @@ public class EntityManagerManagerImpl implements EntityManagerManager, ThreadCle
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, EntityManager> getEntityManagers()
     {
         createAllEntityManagers();
@@ -83,6 +85,7 @@ public class EntityManagerManagerImpl implements EntityManagerManager, ThreadCle
         return em;
     }
 
+    @Override
     public void threadDidCleanup()
     {
         for (final Entry<String, EntityManager> next : entityManagers.entrySet())

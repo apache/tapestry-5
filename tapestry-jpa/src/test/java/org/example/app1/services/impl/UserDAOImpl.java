@@ -30,11 +30,13 @@ public class UserDAOImpl implements UserDAO
     @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
+    @Override
     public void add(final User user)
     {
         entityManager.persist(user);
     }
 
+    @Override
     @SuppressWarnings(
     { "unchecked" })
     public List<User> findAll()
@@ -42,12 +44,14 @@ public class UserDAOImpl implements UserDAO
         return entityManager.createQuery("select u from User u order by u.id desc").getResultList();
     }
 
+    @Override
     public void delete(final User... users)
     {
         for (final User user : users)
             entityManager.remove(user);
     }
 
+    @Override
     public void deleteAll()
     {
         for (final User u : findAll())

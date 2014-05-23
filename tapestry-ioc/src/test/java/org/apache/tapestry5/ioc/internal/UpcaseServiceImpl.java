@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 public class UpcaseServiceImpl implements UpcaseService
 {
 
+    @Override
     public String upcase(String input)
     {
         return input.toUpperCase();

@@ -28,6 +28,7 @@ public class LoggingAdvice implements MethodAdvice
         methodLogger = new MethodLogger(logger, exceptionTracker);
     }
 
+    @Override
     public void advise(MethodInvocation invocation)
     {
         boolean debug = methodLogger.isDebugEnabled();

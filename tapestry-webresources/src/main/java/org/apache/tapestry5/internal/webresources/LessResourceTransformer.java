@@ -35,6 +35,7 @@ public class LessResourceTransformer implements ResourceTransformer
 {
     private final LessCompiler compiler = new DefaultLessCompiler();
 
+    @Override
     public String getTransformedContentType()
     {
         return "text/css";
@@ -91,6 +92,7 @@ public class LessResourceTransformer implements ResourceTransformer
             }
         }
 
+        @Override
         public byte[] getBytes() throws FileNotFound, CannotReadFile
         {
             Reader input = null;
@@ -114,6 +116,7 @@ public class LessResourceTransformer implements ResourceTransformer
     }
 
 
+    @Override
     public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
     {
         BytestreamCache compiled = invokeLessCompiler(source, dependencies);

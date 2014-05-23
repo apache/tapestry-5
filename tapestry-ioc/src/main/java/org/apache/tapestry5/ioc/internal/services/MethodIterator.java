@@ -39,6 +39,7 @@ public class MethodIterator
 
     private static final Comparator<MethodSignature> COMPARATOR = new Comparator<MethodSignature>()
     {
+        @Override
         public int compare(MethodSignature o1, MethodSignature o2)
         {
 

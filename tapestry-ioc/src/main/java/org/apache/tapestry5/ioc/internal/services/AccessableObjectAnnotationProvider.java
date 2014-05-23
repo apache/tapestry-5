@@ -32,6 +32,7 @@ public class AccessableObjectAnnotationProvider implements AnnotationProvider
         this.object = object;
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return object.getAnnotation(annotationClass);

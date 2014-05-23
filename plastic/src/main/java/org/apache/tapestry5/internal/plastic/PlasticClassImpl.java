@@ -322,6 +322,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return String.format("Class %s has been transformed and may not be directly instantiated.", className);
     }
 
+    @Override
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         check();
@@ -329,6 +330,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return annotationAccess.hasAnnotation(annotationType);
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
         check();
@@ -408,6 +410,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         
     }
 
+    @Override
     public PlasticClass proxyInterface(Class interfaceType, PlasticField field)
     {
         check();
@@ -424,6 +427,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
+    @Override
     public ClassInstantiator createInstantiator()
     {
         lock();
@@ -588,6 +592,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         throw new AssertionError("Could not convert constructor to simple method.");
     }
 
+    @Override
     public <T extends Annotation> List<PlasticField> getFieldsWithAnnotation(Class<T> annotationType)
     {
         check();
@@ -607,6 +612,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return result;
     }
 
+    @Override
     public List<PlasticField> getAllFields()
     {
         check();
@@ -614,6 +620,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new ArrayList<PlasticField>(fields);
     }
 
+    @Override
     public List<PlasticField> getUnclaimedFields()
     {
         check();
@@ -634,6 +641,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return unclaimedFields;
     }
 
+    @Override
     public PlasticMethod introducePrivateMethod(String typeName, String suggestedName, String[] argumentTypes,
                                                 String[] exceptionTypes)
     {
@@ -650,6 +658,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return introduceMethod(description);
     }
 
+    @Override
     public PlasticField introduceField(String className, String suggestedName)
     {
         check();
@@ -672,6 +681,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return newField;
     }
 
+    @Override
     public PlasticField introduceField(Class fieldType, String suggestedName)
     {
         assert fieldType != null;
@@ -684,6 +694,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return values.contains(input) ? input + "$" + PlasticUtils.nextUID() : input;
     }
 
+    @Override
     public <T extends Annotation> List<PlasticMethod> getMethodsWithAnnotation(Class<T> annotationType)
     {
         check();
@@ -702,6 +713,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return result;
     }
 
+    @Override
     public List<PlasticMethod> getMethods()
     {
         check();
@@ -709,6 +721,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new ArrayList<PlasticMethod>(methods);
     }
 
+    @Override
     public PlasticMethod introduceMethod(MethodDescription description)
     {
         check();
@@ -736,6 +749,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return result;
     }
 
+    @Override
     public PlasticMethod introduceMethod(MethodDescription description, InstructionBuilderCallback callback)
     {
         check();
@@ -745,6 +759,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return introduceMethod(description).changeImplementation(callback);
     }
 
+    @Override
     public PlasticMethod introduceMethod(Method method)
     {
         check();
@@ -923,6 +938,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         builder.startSwitch(0, nextFieldIndex - 1, new SwitchCallback()
         {
+            @Override
             public void doSwitch(SwitchBlock block)
             {
                 for (PlasticFieldImpl f : shimFields)
@@ -952,6 +968,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         builder.startSwitch(0, nextFieldIndex - 1, new SwitchCallback()
         {
+            @Override
             public void doSwitch(SwitchBlock block)
             {
                 for (PlasticFieldImpl f : shimFields)
@@ -983,6 +1000,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         builder.startSwitch(0, nextMethodIndex - 1, new SwitchCallback()
         {
+            @Override
             public void doSwitch(SwitchBlock block)
             {
                 for (PlasticMethodImpl m : shimMethods)
@@ -1130,11 +1148,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         builder.loadThis().getField(className, getInstanceContextFieldName(), InstanceContext.class);
     }
 
+    @Override
     public PlasticClass getPlasticClass()
     {
         return this;
     }
 
+    @Override
     public Class<?> getTransformedClass()
     {
         if (transformedClass == null)
@@ -1150,6 +1170,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return (node.access & (ACC_ABSTRACT | ACC_PRIVATE)) == 0;
     }
 
+    @Override
     public String getClassName()
     {
         return className;
@@ -1165,6 +1186,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new InstructionBuilderImpl(description, mn, nameCache);
     }
 
+    @Override
     public Set<PlasticMethod> introduceInterface(Class interfaceType)
     {
         check();
@@ -1211,6 +1233,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return introducedMethods;
     }
 
+    @Override
     public PlasticClass addToString(final String toStringValue)
     {
         check();
@@ -1219,6 +1242,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             introduceMethod(PlasticUtils.TO_STRING_DESCRIPTION, new InstructionBuilderCallback()
             {
+                @Override
                 public void doBuild(InstructionBuilder builder)
                 {
                     builder.loadConstant(toStringValue).returnResult();
@@ -1229,11 +1253,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
+    @Override
     public boolean isMethodImplemented(MethodDescription description)
     {
         return inheritanceData.isImplemented(description.methodName, nameCache.toDesc(description));
     }
 
+    @Override
     public boolean isInterfaceImplemented(Class interfaceType)
     {
         assert interfaceType != null;
@@ -1244,11 +1270,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return inheritanceData.isInterfaceImplemented(interfaceName);
     }
 
+    @Override
     public String getSuperClassName()
     {
         return superClassName;
     }
 
+    @Override
     public PlasticClass onConstruct(ConstructorCallback callback)
     {
         check();

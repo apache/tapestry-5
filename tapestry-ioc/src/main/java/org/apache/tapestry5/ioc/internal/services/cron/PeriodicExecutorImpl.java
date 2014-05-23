@@ -68,6 +68,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
             nextExecution = schedule.firstExecution();
         }
 
+        @Override
         public String getName()
         {
             return name;
@@ -79,16 +80,19 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         }
 
 
+        @Override
         public synchronized boolean isExecuting()
         {
             return executing;
         }
 
+        @Override
         public synchronized boolean isCanceled()
         {
             return canceled;
         }
 
+        @Override
         public synchronized void cancel()
         {
             canceled = true;
@@ -166,6 +170,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
             }
         }
 
+        @Override
         public Void invoke()
         {
             if (logger.isDebugEnabled())
@@ -196,6 +201,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 registryDidShutdown();
@@ -217,6 +223,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
     }
 
 
+    @Override
     public synchronized PeriodicJob addJob(Schedule schedule, String name, Runnable job)
     {
         assert schedule != null;
@@ -242,6 +249,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         return periodicJob;
     }
 
+    @Override
     public void run()
     {
         while (!isShutdown())

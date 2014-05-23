@@ -105,6 +105,7 @@ public class ConcurrentBarrier
     {
         Invokable<Void> invokable = new Invokable<Void>()
         {
+            @Override
             public Void invoke()
             {
                 runnable.run();
@@ -195,6 +196,7 @@ public class ConcurrentBarrier
     {
         Invokable<Void> invokable = new Invokable<Void>()
         {
+            @Override
             public Void invoke()
             {
                 runnable.run();

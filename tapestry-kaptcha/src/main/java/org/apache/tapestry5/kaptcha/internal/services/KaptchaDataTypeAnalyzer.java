@@ -20,6 +20,7 @@ import org.apache.tapestry5.services.DataTypeAnalyzer;
 
 public class KaptchaDataTypeAnalyzer implements DataTypeAnalyzer
 {
+    @Override
     public String identifyDataType(PropertyAdapter adapter)
     {
         final Kaptcha annotation = adapter.getAnnotation(Kaptcha.class);

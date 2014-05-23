@@ -73,6 +73,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
         }
     }
 
+    @Override
     public Class getBeanType()
     {
         return beanType;
@@ -86,26 +87,31 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
         return String.format("<ClassPropertyAdaptor %s: %s>", beanType.getName(), names);
     }
 
+    @Override
     public List<String> getPropertyNames()
     {
         return InternalUtils.sortedKeys(adapters);
     }
 
+    @Override
     public PropertyAdapter getPropertyAdapter(String name)
     {
         return adapters.get(name);
     }
 
+    @Override
     public Object get(Object instance, String propertyName)
     {
         return adaptorFor(propertyName).get(instance);
     }
 
+    @Override
     public void set(Object instance, String propertyName, Object value)
     {
         adaptorFor(propertyName).set(instance, value);
     }
 
+    @Override
     public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
     return adaptorFor(propertyName).getAnnotation(annotationClass);
     }

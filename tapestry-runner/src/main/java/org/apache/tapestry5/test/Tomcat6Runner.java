@@ -104,6 +104,7 @@ public class Tomcat6Runner implements ServletContainerRunner
     /**
      * Immediately shuts down the server instance.
      */
+    @Override
     public void stop()
     {
         System.out.printf("Stopping Tomcat instance on port %d/%d\n", port, sslPort);

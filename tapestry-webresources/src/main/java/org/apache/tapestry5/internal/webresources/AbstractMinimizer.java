@@ -54,6 +54,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
         this.checksumGenerator = checksumGenerator;
     }
 
+    @Override
     public StreamableResource minimize(final StreamableResource input) throws IOException
     {
         long startNanos = System.nanoTime();
@@ -62,6 +63,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
         tracker.perform("Minimizing " + input, new IOOperation<Void>()
         {
+            @Override
             public Void perform() throws IOException
             {
                 InputStream in = doMinimize(input);

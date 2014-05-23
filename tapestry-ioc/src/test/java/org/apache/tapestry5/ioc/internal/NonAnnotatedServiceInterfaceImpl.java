@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.annotations.IntermediateType;
 public class NonAnnotatedServiceInterfaceImpl implements NonAnnotatedServiceInterface
 {
 
+    @Override
     @Advise(id = "id", serviceInterface = NonAnnotatedServiceInterface.class)
     public String execute(@IntermediateType(String.class) int i) // annotation just for checking too
     { 

@@ -53,6 +53,7 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
         this.withValue = withValue;
     }
 
+    @Override
     public <V> ClassInstantiator<T> with(Class<V> valueType, V instanceContextValue)
     {
         assert valueType != null;
@@ -70,6 +71,7 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
                 instanceContextValue);
     }
 
+    @Override
     public <V> V get(Class<V> valueType)
     {
         V result = find(valueType);
@@ -95,6 +97,7 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
         return null;
     }
 
+    @Override
     public T newInstance()
     {
         if (Modifier.isAbstract(clazz.getModifiers()))
@@ -112,11 +115,13 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
         }
     }
 
+    @Override
     public Class<T> getInstanceType()
     {
         return clazz;
     }
 
+    @Override
     public String toString()
     {
         return String.format("ClassInstantiator[%s]", clazz.getName());

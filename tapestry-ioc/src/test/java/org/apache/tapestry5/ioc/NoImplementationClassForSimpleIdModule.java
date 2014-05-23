@@ -20,6 +20,7 @@ public class NoImplementationClassForSimpleIdModule
     {
         binder.bind(Runnable.class, new ServiceBuilder<Runnable>()
         {
+            @Override
             public Runnable buildService(ServiceResources resources)
             {
                 return null;

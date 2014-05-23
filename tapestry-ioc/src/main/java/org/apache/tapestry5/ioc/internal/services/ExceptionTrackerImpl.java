@@ -28,6 +28,7 @@ public class ExceptionTrackerImpl implements ExceptionTracker
 {
     private final Set<Throwable> exceptions = CollectionFactory.newSet();
 
+    @Override
     public boolean exceptionLogged(Throwable exception)
     {
         boolean result = exceptions.contains(exception);

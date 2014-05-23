@@ -35,6 +35,7 @@ public class PackageNamePersistenceUnitConfigurer implements PersistenceUnitConf
     /**
      * {@inheritDoc}
      */
+    @Override
     public void configure(TapestryPersistenceUnitInfo unitInfo)
     {
         for (String packageName : packageManager.getPackageNames())

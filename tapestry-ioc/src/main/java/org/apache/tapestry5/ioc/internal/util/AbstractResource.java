@@ -64,11 +64,13 @@ public abstract class AbstractResource extends LockSupport implements Resource
         this.path = path.startsWith("/") ? path.substring(1) : path;
     }
 
+    @Override
     public final String getPath()
     {
         return path;
     }
 
+    @Override
     public final String getFile()
     {
         return extractFile(path);
@@ -81,6 +83,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
         return path.substring(slashx + 1);
     }
 
+    @Override
     public final String getFolder()
     {
         int slashx = path.lastIndexOf('/');
@@ -88,6 +91,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
         return (slashx < 0) ? "" : path.substring(0, slashx);
     }
 
+    @Override
     public final Resource forFile(String relativePath)
     {
         assert relativePath != null;
@@ -140,6 +144,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
         return createResource(path.toString());
     }
 
+    @Override
     public final Resource forLocale(Locale locale)
     {
         try
@@ -202,6 +207,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
         return null;
     }
 
+    @Override
     public final Resource withExtension(String extension)
     {
         assert InternalUtils.isNonBlank(extension);
@@ -228,6 +234,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
     /**
      * Simple check for whether {@link #toURL()} returns null or not.
      */
+    @Override
     public boolean exists()
     {
         try
@@ -266,6 +273,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
     /**
      * Obtains the URL for the Resource and opens the stream, wrapped by a BufferedInputStream.
      */
+    @Override
     public InputStream openStream() throws IOException
     {
         URL url = toURL();

@@ -23,6 +23,7 @@ import java.net.URL;
  */
 public class ClasspathURLConverterImpl implements ClasspathURLConverter
 {
+    @Override
     public URL convert(URL url)
     {
         return url;

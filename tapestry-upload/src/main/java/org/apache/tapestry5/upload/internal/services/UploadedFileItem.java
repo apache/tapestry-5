@@ -34,26 +34,31 @@ public class UploadedFileItem implements UploadedFile
         this.item = item;
     }
 
+    @Override
     public String getContentType()
     {
         return item.getContentType();
     }
 
+    @Override
     public String getFileName()
     {
         return FilenameUtils.getName(getFilePath());
     }
 
+    @Override
     public String getFilePath()
     {
         return item.getName();
     }
 
+    @Override
     public long getSize()
     {
         return item.getSize();
     }
 
+    @Override
     public InputStream getStream()
     {
         try
@@ -66,11 +71,13 @@ public class UploadedFileItem implements UploadedFile
         }
     }
 
+    @Override
     public boolean isInMemory()
     {
         return item.isInMemory();
     }
 
+    @Override
     public void write(File file)
     {
         try

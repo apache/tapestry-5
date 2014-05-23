@@ -34,6 +34,7 @@ public class CyclicMOPModule
     {
         return new Runnable()
         {
+            @Override
             public void run()
             {
             }

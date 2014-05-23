@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc;
 public class UnknownColorGreeterImpl implements Greeter
 {
 
+    @Override
     public String getGreeting()
     {
         return null;

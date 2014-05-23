@@ -49,16 +49,19 @@ public final class LocationImpl implements Location
         this.column = column;
     }
 
+    @Override
     public Resource getResource()
     {
         return resource;
     }
 
+    @Override
     public int getLine()
     {
         return line;
     }
 
+    @Override
     public int getColumn()
     {
         return column;

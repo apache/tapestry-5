@@ -47,17 +47,20 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         checkedException = null;
     }
 
+    @Override
     public void rethrow()
     {
         if (checkedException != null)
             throw new RuntimeException(checkedException);
     }
 
+    @Override
     public boolean didThrowCheckedException()
     {
         return checkedException != null;
     }
 
+    @Override
     public <T extends Throwable> T getCheckedException(Class<T> exceptionType)
     {
         assert exceptionType != null;
@@ -68,16 +71,19 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         return null;
     }
 
+    @Override
     public Object getInstance()
     {
         return instance;
     }
 
+    @Override
     public InstanceContext getInstanceContext()
     {
         return instanceContext;
     }
 
+    @Override
     public MethodInvocation proceed()
     {
         if (adviceIndex == bundle.advice.length)
@@ -88,6 +94,7 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         return this;
     }
 
+    @Override
     public MethodInvocation setCheckedException(Exception exception)
     {
         checkedException = exception;
@@ -95,16 +102,19 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         return this;
     }
 
+    @Override
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         return getAnnotation(annotationType) != null;
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
         return getMethod().getAnnotation(annotationType);
     }
 
+    @Override
     public Method getMethod()
     {
         return bundle.getMethod(getInstance());

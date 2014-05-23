@@ -36,6 +36,7 @@ public class AppModule
         configuration.add("Test", new BeanValidatorConfigurer()
         {
 
+            @Override
             public void configure(javax.validation.Configuration<?> configuration)
             {
                 configuration.ignoreXmlConfiguration();

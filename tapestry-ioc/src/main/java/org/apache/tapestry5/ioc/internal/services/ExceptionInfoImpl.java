@@ -40,26 +40,31 @@ public class ExceptionInfoImpl implements ExceptionInfo
         this.stackTrace = unmodifiableList(stackTrace);
     }
 
+    @Override
     public String getClassName()
     {
         return className;
     }
 
+    @Override
     public String getMessage()
     {
         return message;
     }
 
+    @Override
     public Object getProperty(String name)
     {
         return properties.get(name);
     }
 
+    @Override
     public List<String> getPropertyNames()
     {
         return InternalUtils.sortedKeys(properties);
     }
 
+    @Override
     public List<StackTraceElement> getStackTrace()
     {
         return stackTrace;

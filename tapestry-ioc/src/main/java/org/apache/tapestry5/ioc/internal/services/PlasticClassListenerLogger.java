@@ -30,6 +30,7 @@ public class PlasticClassListenerLogger implements PlasticClassListener
         this.logger = logger;
     }
 
+    @Override
     public void classWillLoad(PlasticClassEvent event)
     {
         if (logger.isDebugEnabled())

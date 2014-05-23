@@ -36,6 +36,7 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
         this.classNameLocator = classNameLocator;
     }
 
+    @Override
     public void configure(Configuration configuration)
     {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();

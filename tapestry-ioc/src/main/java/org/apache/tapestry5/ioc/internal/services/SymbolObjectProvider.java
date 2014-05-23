@@ -40,6 +40,7 @@ public class SymbolObjectProvider implements ObjectProvider
         this.typeCoercer = typeCoercer;
     }
 
+    @Override
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         Symbol annotation = annotationProvider.getAnnotation(Symbol.class);

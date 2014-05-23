@@ -34,6 +34,7 @@ public class WrongConfigurationTypeGuard implements InjectionResources
         this.expectedType = expectedType;
     }
 
+    @Override
     public <T> T findResource(Class<T> type, Type genericType)
     {
         if (type == guardType)

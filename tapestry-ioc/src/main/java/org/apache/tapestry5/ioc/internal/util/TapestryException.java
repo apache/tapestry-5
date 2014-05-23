@@ -58,6 +58,7 @@ public class TapestryException extends RuntimeException implements Locatable
         this.location = location;
     }
 
+    @Override
     public Location getLocation()
     {
         return location;

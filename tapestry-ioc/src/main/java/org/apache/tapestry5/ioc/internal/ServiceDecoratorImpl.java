@@ -37,6 +37,7 @@ public class ServiceDecoratorImpl extends AbstractMethodInvokingInstrumenter imp
         super(moduleSource, method, resources, proxyFactory);
     }
 
+    @Override
     public Object createInterceptor(Object delegate)
     {
         // Create a copy of the parameters map so that Object.class points to the delegate instance.

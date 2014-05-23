@@ -24,6 +24,7 @@ public class StartupModule
     {
         Runnable r = new Runnable()
         {
+            @Override
             public void run()
             {
                 startupInvoked = true;

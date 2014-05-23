@@ -26,6 +26,7 @@ class LazyFilter<T> implements LazyFunction<T>
         this.flow = flow;
     }
 
+    @Override
     public LazyContinuation<T> next()
     {
         Flow<T> cursor = flow;

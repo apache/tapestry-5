@@ -47,6 +47,7 @@ public class UploadExceptionFilter implements ComponentEventRequestFilter
         this.componentSource = componentSource;
     }
 
+    @Override
     public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
             throws IOException
     {

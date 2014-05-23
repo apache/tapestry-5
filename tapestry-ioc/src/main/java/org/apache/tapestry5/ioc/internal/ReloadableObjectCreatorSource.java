@@ -48,10 +48,12 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
     }
 
 
+    @Override
     public ObjectCreator constructCreator(final ServiceBuilderResources resources)
     {
         return new ObjectCreator()
         {
+            @Override
             public Object createObject()
             {
                 return createReloadableProxy(resources);
@@ -65,6 +67,7 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
         };
     }
 
+    @Override
     public String getDescription()
     {
         return String.format("Reloadable %s via %s", serviceImplementationClass.getName(),

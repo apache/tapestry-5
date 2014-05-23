@@ -29,6 +29,7 @@ public class SystemEnvSymbolProvider implements SymbolProvider
 {
     private final Map<String, String> symbols = CollectionFactory.newCaseInsensitiveMap();
 
+    @Override
     public synchronized String valueForSymbol(String symbolName)
     {
         if (symbols.isEmpty())

@@ -67,6 +67,7 @@ public class MBeanSupportImpl implements MBeanSupport
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 registryDidShutdown();
@@ -74,6 +75,7 @@ public class MBeanSupportImpl implements MBeanSupport
         });
     }
 
+    @Override
     public void register(Object bean, String name)
     {
         register(bean, toObjectName(name));
@@ -90,6 +92,7 @@ public class MBeanSupportImpl implements MBeanSupport
         }
     }
 
+    @Override
     public void register(final Object object, final ObjectName objectName)
     {
         lock.check();
@@ -110,6 +113,7 @@ public class MBeanSupportImpl implements MBeanSupport
         }
     }
 
+    @Override
     public void unregister(final ObjectName objectName)
     {
         lock.check();

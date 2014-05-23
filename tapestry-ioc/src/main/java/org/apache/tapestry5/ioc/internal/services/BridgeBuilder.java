@@ -72,6 +72,7 @@ public class BridgeBuilder<S, F>
     {
         instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 PlasticField filterField = plasticClass.introduceField(filterInterface, "filter")
@@ -158,6 +159,7 @@ public class BridgeBuilder<S, F>
 
         method.changeImplementation(new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 String message = String.format("Method %s has no match in filter interface %s.", ms, filterInterface.getName());
@@ -174,6 +176,7 @@ public class BridgeBuilder<S, F>
     {
         method.changeImplementation(new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.loadThis().getField(filterField);

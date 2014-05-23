@@ -18,6 +18,7 @@ package org.apache.tapestry5.ioc.internal;
 public class ServiceIdViaMethodAnnotationServiceImpl implements Runnable
 {
 
+    @Override
     public void run()
     {
     }

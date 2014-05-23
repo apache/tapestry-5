@@ -38,6 +38,7 @@ public class FredModule
     {
         return new Runnable()
         {
+            @Override
             public void run()
             {
             }
@@ -72,6 +73,7 @@ public class FredModule
         return new NameListHolder()
         {
 
+            @Override
             public List<String> getNames()
             {
                 return sorted;
@@ -84,6 +86,7 @@ public class FredModule
         return new NameListHolder()
         {
 
+            @Override
             public List<String> getNames()
             {
                 return configuration;
@@ -107,11 +110,13 @@ public class FredModule
     {
         return new StringLookup()
         {
+            @Override
             public String lookup(String key)
             {
                 return configuration.get(key);
             }
 
+            @Override
             public List<String> keys()
             {
                 return InternalUtils.sortedKeys(configuration);

@@ -68,11 +68,13 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         this.requestEncoding = requestEncoding;
     }
 
+    @Override
     public UploadedFile getFileUpload(String parameterName)
     {
         return uploads.get(parameterName);
     }
 
+    @Override
     public HttpServletRequest decode(HttpServletRequest request)
     {
         try
@@ -88,6 +90,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         return processFileItems(request, fileItems);
     }
 
+    @Override
     public void threadDidCleanup()
     {
         for (UploadedFileItem uploaded : uploads.values())
@@ -169,6 +172,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         uploads.put(name, file);
     }
 
+    @Override
     public FileUploadException getUploadException()
     {
         return uploadException;

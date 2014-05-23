@@ -56,6 +56,7 @@ public class BeanFieldValidatorDefaultSource implements FieldValidatorDefaultSou
 		this.environment = environment;
 	}
 
+	@Override
 	public FieldValidator createDefaultValidator(final Field field,
 			final String overrideId, final Messages overrideMessages,
 			final Locale locale, final Class propertyType,
@@ -73,6 +74,7 @@ public class BeanFieldValidatorDefaultSource implements FieldValidatorDefaultSou
 		return new CompositeFieldValidator(Arrays.asList(validator, beanValidator));
 	}
 
+	@Override
 	public FieldValidator createDefaultValidator(
 			final ComponentResources resources, final String parameterName) 
 	{

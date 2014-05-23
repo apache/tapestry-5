@@ -40,6 +40,7 @@ public class ChainBuilderImpl implements ChainBuilder
         this.proxyFactory = proxyFactory;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T build(final Class<T> commandInterface, List<T> commands)
     {
@@ -51,6 +52,7 @@ public class ChainBuilderImpl implements ChainBuilder
 
         ClassInstantiator<T> instantiator = proxyFactory.createProxy(commandInterface, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 PlasticField commandsField = plasticClass.introduceField(commandsArray.getClass(), "commands").inject(
@@ -72,10 +74,12 @@ public class ChainBuilderImpl implements ChainBuilder
     {
         plasticClass.introduceMethod(method).changeImplementation(new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.loadThis().getField(commandsField).iterateArray(new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         // The command is on the stack; add the elements and invoke the method.
@@ -113,11 +117,13 @@ public class ChainBuilderImpl implements ChainBuilder
 
                         builder.when(condition, new WhenCallback()
                         {
+                            @Override
                             public void ifTrue(InstructionBuilder builder)
                             {
                                 builder.returnResult();
                             }
 
+                            @Override
                             public void ifFalse(InstructionBuilder builder)
                             {
                                 if (wide)

@@ -46,17 +46,20 @@ abstract class AbstractFlow<T> implements Flow<T>
         return result;
     }
 
+    @Override
     public Iterator<T> iterator()
     {
         return new Iterator<T>()
         {
             private Flow<T> current = AbstractFlow.this;
 
+            @Override
             public boolean hasNext()
             {
                 return !current.isEmpty();
             }
 
+            @Override
             public T next()
             {
                 T next = current.first();
@@ -66,6 +69,7 @@ abstract class AbstractFlow<T> implements Flow<T>
                 return next;
             }
 
+            @Override
             public void remove()
             {
                 throw new UnsupportedOperationException("Flows are immutable.");
@@ -74,22 +78,26 @@ abstract class AbstractFlow<T> implements Flow<T>
         };
     }
 
+    @Override
     public Flow<T> concat(Collection<? extends T> collection)
     {
         return concat(F.flow(collection));
     }
 
+    @Override
     public <V extends T> Flow<T> append(V... values)
     {
         return concat(F.flow(values));
     }
 
+    @Override
     public Flow<T> concat(Flow<? extends T> other)
     {
         return F.lazy(new LazyConcat<T>(this, other));
     }
 
     /** Subclasses may override this for efficiency. */
+    @Override
     public Flow<T> each(Worker<? super T> worker)
     {
         assert worker != null;
@@ -102,6 +110,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return this;
     }
 
+    @Override
     public Flow<T> filter(Predicate<? super T> predicate)
     {
         assert predicate != null;
@@ -109,6 +118,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyFilter<T>(predicate, this));
     }
 
+    @Override
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
         assert mapper != null;
@@ -116,6 +126,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyMapper<T, X>(mapper, this));
     }
 
+    @Override
     public <X, Y> Flow<Y> map(Mapper2<T, X, Y> mapper, Flow<? extends X> flow)
     {
         assert mapper != null;
@@ -127,6 +138,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyMapper2<T, X, Y>(mapper, this, flow));
     }
 
+    @Override
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
         assert reducer != null;
@@ -144,6 +156,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return accumulator;
     }
 
+    @Override
     public <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper)
     {
         Flow<Flow<X>> flows = map(mapper);
@@ -153,6 +166,7 @@ abstract class AbstractFlow<T> implements Flow<T>
 
         return flows.rest().reduce(new Reducer<Flow<X>, Flow<X>>()
         {
+            @Override
             public Flow<X> reduce(Flow<X> accumulator, Flow<X> value)
             {
                 return accumulator.concat(value);
@@ -160,6 +174,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         }, flows.first());
     }
 
+    @Override
     public Flow<T> remove(Predicate<? super T> predicate)
     {
         assert predicate != null;
@@ -167,6 +182,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return filter(F.not(predicate));
     }
 
+    @Override
     public Flow<T> reverse()
     {
         if (isEmpty())
@@ -175,6 +191,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return new ArrayFlow<T>(this).reverse();
     }
 
+    @Override
     public Flow<T> sort()
     {
         if (isEmpty())
@@ -183,6 +200,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return new ArrayFlow<T>(this).sort();
     }
 
+    @Override
     public Flow<T> sort(Comparator<T> comparator)
     {
         if (isEmpty())
@@ -191,6 +209,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return new ArrayFlow<T>(this).sort(comparator);
     }
 
+    @Override
     public List<T> toList()
     {
         if (isEmpty())
@@ -199,6 +218,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return Collections.unmodifiableList(toMutableList());
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public T[] toArray(Class<T> type)
     {
@@ -211,6 +231,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return list.toArray((T[]) array);
     }
 
+    @Override
     public int count()
     {
         if (isEmpty()){
@@ -223,11 +244,13 @@ abstract class AbstractFlow<T> implements Flow<T>
         return count;
     }
 
+    @Override
     public Flow<T> take(int length)
     {
         return F.lazy(new LazyTake<T>(length, this));
     }
 
+    @Override
     public Flow<T> drop(int length)
     {
         assert length >= 0;
@@ -238,6 +261,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyDrop<T>(length, this));
     }
 
+    @Override
     public Set<T> toSet()
     {
         Set<T> set = new HashSet<T>();
@@ -247,6 +271,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return Collections.unmodifiableSet(set);
     }
 
+    @Override
     public <X> ZippedFlow<T, X> zipWith(Flow<X> otherFlow)
     {
         assert otherFlow != null;
@@ -256,29 +281,34 @@ abstract class AbstractFlow<T> implements Flow<T>
         return ZippedFlowImpl.create(tupleFlow);
     }
 
+    @Override
     public Flow<T> removeNulls()
     {
         return remove(F.isNull());
     }
 
+    @Override
     public boolean isEmpty()
     {
         // TODO Auto-generated method stub
         return false;
     }
 
+    @Override
     public T first()
     {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public Flow<T> rest()
     {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public Flow<T> interleave(Flow<T>... otherFlows)
     {
         List<Flow<T>> allFlows = new ArrayList<Flow<T>>(otherFlows.length + 1);

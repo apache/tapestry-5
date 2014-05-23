@@ -23,6 +23,7 @@ class LazyFirst<T> implements LazyValue<T>
         this.flow = flow;
     }
 
+    @Override
     public T get()
     {
         return flow.first();

@@ -30,6 +30,7 @@ public final class OrIdMatcher implements IdMatcher
         this.matchers = matchers.toArray(new IdMatcher[matchers.size()]);
     }
 
+    @Override
     public boolean matches(String id)
     {
         for (IdMatcher m : matchers)

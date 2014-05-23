@@ -29,6 +29,7 @@ class LazyMapped2Value<T, X, Y> implements LazyValue<Y>
         this.mapper = mapper;
     }
 
+    @Override
     public Y get()
     {
         return mapper.map(left.first(), right.first());

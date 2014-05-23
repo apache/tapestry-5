@@ -21,6 +21,7 @@ import org.apache.tapestry5.json.JSONArray;
  * @since 5.3
  */
 public class StringToJSONArray implements Coercion<String,JSONArray> {
+    @Override
     public JSONArray coerce(String input) {
         return new JSONArray(input);
     }

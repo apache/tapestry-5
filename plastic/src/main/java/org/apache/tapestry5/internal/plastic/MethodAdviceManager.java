@@ -206,6 +206,7 @@ class MethodAdviceManager
             builder.startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
             {
 
+                @Override
                 public void doSwitch(SwitchBlock block)
                 {
                     for (int i = 0; i < description.argumentTypes.length; i++)
@@ -215,6 +216,7 @@ class MethodAdviceManager
                         block.addCase(i, false, new InstructionBuilderCallback()
                         {
 
+                            @Override
                             public void doBuild(InstructionBuilder builder)
                             {
                                 String type = description.argumentTypes[index];
@@ -247,6 +249,7 @@ class MethodAdviceManager
             builder.loadArgument(0).startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
             {
 
+                @Override
                 public void doSwitch(SwitchBlock block)
                 {
                     for (int i = 0; i < description.argumentTypes.length; i++)
@@ -256,6 +259,7 @@ class MethodAdviceManager
                         block.addCase(i, true, new InstructionBuilderCallback()
                         {
 
+                            @Override
                             public void doBuild(InstructionBuilder builder)
                             {
                                 String type = description.argumentTypes[index];
@@ -316,11 +320,13 @@ class MethodAdviceManager
 
         builder.startTryCatch(new TryCatchCallback()
         {
+            @Override
             public void doBlock(TryCatchBlock block)
             {
                 block.addTry(new InstructionBuilderCallback()
                 {
 
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.invokeVirtual(plasticClass.className, description.returnType, newMethodName,
@@ -337,6 +343,7 @@ class MethodAdviceManager
                 {
                     block.addCatch(exceptionName, new InstructionBuilderCallback()
                     {
+                        @Override
                         public void doBuild(InstructionBuilder builder)
                         {
                             builder.loadThis().swap();
@@ -402,6 +409,7 @@ class MethodAdviceManager
 
         builder.startVariable(invocationClassName, new LocalVariableCallback()
         {
+            @Override
             public void doBuild(final LocalVariable invocation, InstructionBuilder builder)
             {
                 builder.dupe().storeVariable(invocation);
@@ -414,6 +422,7 @@ class MethodAdviceManager
 
                     builder.when(Condition.NON_ZERO, new InstructionBuilderCallback()
                     {
+                        @Override
                         public void doBuild(InstructionBuilder builder)
                         {
                             builder.loadVariable(invocation).loadTypeConstant(Exception.class);

@@ -60,6 +60,7 @@ public class FuncTest extends BaseFuncTest
 
         Worker<String> worker = new Worker<String>()
         {
+            @Override
             public void work(String value)
             {
                 if (buffer.length() > 0)
@@ -83,6 +84,7 @@ public class FuncTest extends BaseFuncTest
 
         Worker<String> worker = new Worker<String>()
         {
+            @Override
             public void work(String value)
             {
                 if (buffer.length() > 0)
@@ -94,6 +96,7 @@ public class FuncTest extends BaseFuncTest
 
         F.flow(source).filter(new Predicate<String>()
         {
+            @Override
             public boolean accept(String object)
             {
                 return object.contains("a");
@@ -112,6 +115,7 @@ public class FuncTest extends BaseFuncTest
 
         Worker<String> worker = new Worker<String>()
         {
+            @Override
             public void work(String value)
             {
                 if (buffer.length() > 0)
@@ -133,6 +137,7 @@ public class FuncTest extends BaseFuncTest
 
         Worker<String> appendWorker = new Worker<String>()
         {
+            @Override
             public void work(String value)
             {
                 if (buffer.length() > 0)
@@ -144,6 +149,7 @@ public class FuncTest extends BaseFuncTest
 
         Worker<String> appendLength = new Worker<String>()
         {
+            @Override
             public void work(String value)
             {
                 buffer.append("(");
@@ -354,6 +360,7 @@ public class FuncTest extends BaseFuncTest
 
         Comparator<String> comparator = new Comparator<String>()
         {
+            @Override
             public int compare(String o1, String o2)
             {
                 return o1.length() - o2.length();
@@ -375,6 +382,7 @@ public class FuncTest extends BaseFuncTest
         Flow<String> flow = F.flow("a", "eeeee", "ccc", "bb", "dddd");
         Comparator<String> comparator = new Comparator<String>()
         {
+            @Override
             public int compare(String o1, String o2)
             {
                 return o1.length() - o2.length();
@@ -453,6 +461,7 @@ public class FuncTest extends BaseFuncTest
         assertSame(filteredEmpty.sort(), F.EMPTY_FLOW);
         assertSame(filteredEmpty.sort(new Comparator<Integer>()
         {
+            @Override
             public int compare(Integer o1, Integer o2)
             {
                 unreachable();
@@ -494,12 +503,14 @@ public class FuncTest extends BaseFuncTest
 
         List<String> result = flow.filter(new Predicate<String>()
         {
+            @Override
             public boolean accept(String object)
             {
                 return object.contains("a");
             }
         }).sort(new Comparator<String>()
         {
+            @Override
             public int compare(String o1, String o2)
             {
                 return o1.length() - o2.length();
@@ -517,6 +528,7 @@ public class FuncTest extends BaseFuncTest
 
         assertSame(flow.each(new Worker<Integer>()
         {
+            @Override
             public void work(Integer value)
             {
                 unreachable();
@@ -540,6 +552,7 @@ public class FuncTest extends BaseFuncTest
 
         assertSame(flow.reduce(new Reducer<Integer, Integer>()
         {
+            @Override
             public Integer reduce(Integer accumulator, Integer value)
             {
                 unreachable();
@@ -601,6 +614,7 @@ public class FuncTest extends BaseFuncTest
         Iterable<Integer> iterable = new Iterable<Integer>()
         {
 
+            @Override
             public Iterator<Integer> iterator()
             {
                 return Arrays.asList(9, 7, 1).iterator();

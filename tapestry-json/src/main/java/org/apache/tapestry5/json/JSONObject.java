@@ -126,6 +126,7 @@ public final class JSONObject extends JSONCollection
             return "null";
         }
 
+        @Override
         public String toJSONString()
         {
             return "null";
@@ -871,6 +872,7 @@ public final class JSONObject extends JSONCollection
      *
      * @since 5.2.0
      */
+    @Override
     void print(JSONPrintSession session)
     {
         session.printSymbol('{');

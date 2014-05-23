@@ -70,6 +70,7 @@ public class DecorateByMarkerModule
         builder.adviseAllMethods(new MethodAdvice()
         {
 
+            @Override
             public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
@@ -89,6 +90,7 @@ public class DecorateByMarkerModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Red";

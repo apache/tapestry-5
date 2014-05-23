@@ -60,6 +60,7 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
     {
         PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
+            @Override
             @SuppressWarnings(
                     {"unchecked", "rawtypes"})
             public void configure(TapestryPersistenceUnitInfo unitInfo)

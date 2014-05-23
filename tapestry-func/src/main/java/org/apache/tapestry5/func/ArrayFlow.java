@@ -60,6 +60,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         this.count = count;
     }
 
+    @Override
     public Flow<T> each(Worker<? super T> worker)
     {
         for (int i = 0; i < count; i++)
@@ -68,6 +69,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return this;
     }
 
+    @Override
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
         assert reducer != null;
@@ -84,11 +86,13 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return accumulator;
     }
 
+    @Override
     public List<T> toList()
     {
         return Arrays.asList(values).subList(start, start + count);
     }
 
+    @Override
     public Flow<T> reverse()
     {
         if (values.length < 2)
@@ -103,11 +107,13 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>(newValues);
     }
 
+    @Override
     public boolean isEmpty()
     {
         return false;
     }
 
+    @Override
     protected List<T> toMutableList()
     {
         List<T> result = new ArrayList<T>(count);
@@ -120,6 +126,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return result;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Flow<T> sort()
     {
@@ -133,6 +140,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>((List<T>) newValues);
     }
 
+    @Override
     public Flow<T> sort(Comparator<T> comparator)
     {
         assert comparator != null;
@@ -147,16 +155,19 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>(newValues);
     }
 
+    @Override
     public Iterator<T> iterator()
     {
         return toList().iterator();
     }
 
+    @Override
     public T first()
     {
         return values[start];
     }
 
+    @Override
     public synchronized Flow<T> rest()
     {
         if (rest == null)
@@ -173,11 +184,13 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>(values, start + 1, count - 1);
     }
 
+    @Override
     public int count()
     {
         return count;
     }
 
+    @Override
     public Flow<T> take(int length)
     {
         if (length < 1)
@@ -186,6 +199,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>(values, start, Math.min(count, length));
     }
 
+    @Override
     public Flow<T> drop(int length)
     {
         assert length >= 0;

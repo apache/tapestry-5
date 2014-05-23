@@ -29,6 +29,7 @@ public class EntityManagerObjectProvider implements ObjectProvider
 
     private EntityManager proxy;
 
+    @Override
     public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
                          final ObjectLocator locator)
     {
@@ -51,6 +52,7 @@ public class EntityManagerObjectProvider implements ObjectProvider
 
             proxy = proxyFactory.createProxy(EntityManager.class, new ObjectCreator()
             {
+                @Override
                 public Object createObject()
                 {
                     final EntityManagerManager entityManagerManager = objectLocator

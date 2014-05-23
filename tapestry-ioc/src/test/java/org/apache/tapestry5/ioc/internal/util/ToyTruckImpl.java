@@ -7,6 +7,7 @@ package org.apache.tapestry5.ioc.internal.util;
 public class ToyTruckImpl extends PlayableImpl implements Drivable, ToyTruck
 {
 
+    @Override
     public void playDrive()
     {
 

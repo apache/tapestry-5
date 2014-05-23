@@ -23,16 +23,19 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class DummyPersistenceProvider implements PersistenceProvider
 {
+    @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map)
     {
         return new DummyEntityManagerFactory();
     }
 
+    @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map map)
     {
         return new DummyEntityManagerFactory();
     }
 
+    @Override
     public ProviderUtil getProviderUtil()
     {
         return null;

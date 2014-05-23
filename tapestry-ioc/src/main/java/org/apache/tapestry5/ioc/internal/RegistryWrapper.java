@@ -33,21 +33,25 @@ public class RegistryWrapper implements Registry
         this.registry = registry;
     }
 
+    @Override
     public void cleanupThread()
     {
         registry.cleanupThread();
     }
 
+    @Override
     public void shutdown()
     {
         registry.shutdown();
     }
 
+    @Override
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
         return registry.getObject(objectType, annotationProvider);
     }
 
+    @Override
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
         String expandedServiceId = registry.expandSymbols(serviceId);
@@ -55,31 +59,37 @@ public class RegistryWrapper implements Registry
         return registry.getService(expandedServiceId, serviceInterface);
     }
 
+    @Override
     public <T> T getService(Class<T> serviceInterface)
     {
         return registry.getService(serviceInterface);
     }
 
+    @Override
     public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         return registry.getService(serviceInterface, markerTypes);
     }
 
+    @Override
     public <T> T autobuild(Class<T> clazz)
     {
         return registry.autobuild(clazz);
     }
 
+    @Override
     public <T> T autobuild(String description, Class<T> clazz)
     {
         return registry.autobuild(description, clazz);
     }
 
+    @Override
     public void performRegistryStartup()
     {
         registry.performRegistryStartup();
     }
 
+    @Override
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
         return registry.proxy(interfaceClass, implementationClass);

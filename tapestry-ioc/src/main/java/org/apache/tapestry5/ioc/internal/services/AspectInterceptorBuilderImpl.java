@@ -67,6 +67,7 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
                 new MethodDescription(delegateTypeName, PlasticProxyFactoryImpl.INTERNAL_GET_DELEGATE);
         plasticClass.introduceMethod(getDelegateMethodDescription, new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.loadThis().getField(delegateField);
@@ -75,6 +76,7 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
         });
     }
 
+    @Override
     public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)
     {
         assert method != null;
@@ -87,6 +89,7 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
         plasticClass.introduceMethod(method).addAdvice(advice);
     }
 
+    @Override
     public void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice)
     {
         for (Method m : serviceInterface.getMethods())
@@ -95,11 +98,13 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
         }
     }
 
+    @Override
     public Class getInterface()
     {
         return serviceInterface;
     }
 
+    @Override
     public T build()
     {
         return (T) transformation.createInstantiator().newInstance();

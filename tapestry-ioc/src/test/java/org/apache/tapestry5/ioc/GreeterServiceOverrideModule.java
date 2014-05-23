@@ -20,6 +20,7 @@ public class GreeterServiceOverrideModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Hello";
@@ -31,6 +32,7 @@ public class GreeterServiceOverrideModule
     {
         configuration.add(Greeter.class, new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Override Greeting";

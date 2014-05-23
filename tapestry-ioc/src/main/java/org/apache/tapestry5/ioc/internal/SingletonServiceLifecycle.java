@@ -24,16 +24,19 @@ import org.apache.tapestry5.ioc.ServiceResources;
  */
 public class SingletonServiceLifecycle implements ServiceLifecycle2
 {
+    @Override
     public Object createService(ServiceResources resources, ObjectCreator creator)
     {
         return creator.createObject();
     }
 
+    @Override
     public boolean isSingleton()
     {
         return true;
     }
 
+    @Override
     public boolean requiresProxy()
     {
         return false;

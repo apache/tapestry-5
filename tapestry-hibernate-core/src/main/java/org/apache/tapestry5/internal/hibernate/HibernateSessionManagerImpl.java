@@ -38,18 +38,21 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
         transaction = session.beginTransaction();
     }
 
+    @Override
     public void abort()
     {
         transaction.rollback();
         startNewTransaction();
     }
 
+    @Override
     public void commit()
     {
         transaction.commit();
         startNewTransaction();
     }
 
+    @Override
     public Session getSession()
     {
         return session;
@@ -60,6 +63,7 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
      * changes are lost; code should inject the HSM and invoke {@link #commit()} after making any changes, if they
      * should persist.
      */
+    @Override
     public void threadDidCleanup()
     {
         transaction.rollback();

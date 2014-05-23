@@ -53,6 +53,7 @@ public class HibernateGridDataSource implements GridDataSource
     /**
      * Returns the total number of rows for the configured entity type.
      */
+    @Override
     public int getAvailableRows()
     {
         Criteria criteria = session.createCriteria(entityType);
@@ -74,6 +75,7 @@ public class HibernateGridDataSource implements GridDataSource
      * @param endIndex        index, from zero, of the last item to be retrieved
      * @param sortConstraints zero or more constraints used to set the order of the returned values
      */
+    @Override
     public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
     {
         assert sortConstraints != null;
@@ -125,6 +127,7 @@ public class HibernateGridDataSource implements GridDataSource
      * @param index of object
      * @return object at that index
      */
+    @Override
     public Object getRowValue(int index)
     {
         return preparedResults.get(index - startIndex);
@@ -133,6 +136,7 @@ public class HibernateGridDataSource implements GridDataSource
     /**
      * Returns the entity type, as provided via the constructor.
      */
+    @Override
     public Class getRowType()
     {
         return entityType;

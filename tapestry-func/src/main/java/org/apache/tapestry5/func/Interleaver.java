@@ -33,6 +33,7 @@ class Interleaver<T> implements LazyFunction<T>
         this.valueIndex = valueIndex;
     }
 
+    @Override
     public LazyContinuation<T> next()
     {
         if (valueIndex == 0)
@@ -54,6 +55,7 @@ class Interleaver<T> implements LazyFunction<T>
 
         List<Flow<T>> nextFlows = F.flow(flows).map(new Mapper<Flow<T>, Flow<T>>()
         {
+            @Override
             public Flow<T> map(Flow<T> element)
             {
                 return element.rest();

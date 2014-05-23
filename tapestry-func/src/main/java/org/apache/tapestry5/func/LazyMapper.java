@@ -26,6 +26,7 @@ class LazyMapper<T, X> implements LazyFunction<X>
         this.flow = flow;
     }
 
+    @Override
     public LazyContinuation<X> next()
     {
         if (flow.isEmpty())

@@ -39,6 +39,7 @@ public class CommitAfterWorker implements ComponentClassTransformWorker2
         shared = new CommitAfterMethodAdvice(manager);
     }
 
+    @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (final PlasticMethod method : plasticClass

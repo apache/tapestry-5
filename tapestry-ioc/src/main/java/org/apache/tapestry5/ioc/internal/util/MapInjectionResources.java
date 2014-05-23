@@ -26,6 +26,7 @@ public class MapInjectionResources implements InjectionResources
 
     public MapInjectionResources(Map<Class, Object> map) {this.map = map;}
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public <T> T findResource(Class<T> type, Type genericType)
     {

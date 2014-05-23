@@ -51,27 +51,32 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         this.typeName = Type.getType(node.desc).getClassName();
     }
 
+    @Override
     public String toString()
     {
         return String.format("PlasticField[%s %s %s (in class %s)]", Modifier.toString(node.access), typeName,
                 node.name, plasticClass.className);
     }
 
+    @Override
     public String getGenericSignature()
     {
         return node.signature;
     }
 
+    @Override
     public int getModifiers()
     {
         return node.access;
     }
 
+    @Override
     public int compareTo(PlasticFieldImpl o)
     {
         return this.node.name.compareTo(o.node.name);
     }
 
+    @Override
     public PlasticClass getPlasticClass()
     {
         plasticClass.check();
@@ -79,6 +84,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return plasticClass;
     }
 
+    @Override
     public FieldHandle getHandle()
     {
         plasticClass.check();
@@ -97,6 +103,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return handle;
     }
 
+    @Override
     public PlasticField claim(Object tag)
     {
         assert tag != null;
@@ -119,6 +126,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return this;
     }
 
+    @Override
     public boolean isClaimed()
     {
         plasticClass.check();
@@ -126,6 +134,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return tag != null;
     }
 
+    @Override
     public String getName()
     {
         plasticClass.check();
@@ -133,6 +142,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return node.name;
     }
 
+    @Override
     public String getTypeName()
     {
         plasticClass.check();
@@ -157,6 +167,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         }
     }
 
+    @Override
     public PlasticField inject(Object value)
     {
         plasticClass.check();
@@ -174,6 +185,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return this;
     }
 
+    @Override
     public PlasticField injectComputed(ComputedValue<?> computedValue)
     {
         plasticClass.check();
@@ -210,6 +222,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         plasticClass.constructorBuilder.putField(plasticClass.className, node.name, typeName);
     }
 
+    @Override
     public PlasticField injectFromInstanceContext()
     {
         plasticClass.check();
@@ -238,6 +251,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return this;
     }
 
+    @Override
     public <F> PlasticField setConduit(FieldConduit<F> conduit)
     {
         assert conduit != null;
@@ -260,6 +274,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return this;
     }
 
+    @Override
     public <F> PlasticField setComputedConduit(ComputedValue<FieldConduit<F>> computedConduit)
     {
         assert computedConduit != null;
@@ -282,6 +297,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return this;
     }
 
+    @Override
     public PlasticField createAccessors(PropertyAccessType accessType)
     {
         plasticClass.check();
@@ -289,6 +305,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         return createAccessors(accessType, PlasticInternalUtils.toPropertyName(node.name));
     }
 
+    @Override
     public PlasticField createAccessors(PropertyAccessType accessType, String propertyName)
     {
         plasticClass.check();
@@ -305,6 +322,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
             introduceAccessorMethod(getTypeName(), "get" + capitalized, null, signature,
                     new InstructionBuilderCallback()
                     {
+                        @Override
                         public void doBuild(InstructionBuilder builder)
                         {
                             builder.loadThis().getField(PlasticFieldImpl.this).returnResult();
@@ -319,6 +337,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
             introduceAccessorMethod("void", "set" + capitalized, new String[]
                     {getTypeName()}, signature, new InstructionBuilderCallback()
             {
+                @Override
                 public void doBuild(InstructionBuilder builder)
                 {
                     builder.loadThis().loadArgument(0);
@@ -554,6 +573,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         switchBlock.addCase(fieldIndex, false, new InstructionBuilderCallback()
         {
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.invokeVirtual(plasticClass.className, typeName, methodToInvoke).boxPrimitive(typeName).returnResult();
@@ -581,6 +601,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         switchBlock.addCase(fieldIndex, true, new InstructionBuilderCallback()
         {
 
+            @Override
             public void doBuild(InstructionBuilder builder)
             {
                 builder.castOrUnbox(typeName);

@@ -32,6 +32,7 @@ public class StaticObjectCreator implements ObjectCreator
         this.description = description;
     }
 
+    @Override
     public Object createObject()
     {
         return object;

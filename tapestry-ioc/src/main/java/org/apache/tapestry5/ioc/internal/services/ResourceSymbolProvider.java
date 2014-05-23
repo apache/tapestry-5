@@ -75,6 +75,7 @@ public class ResourceSymbolProvider implements SymbolProvider
         }
     }
 
+    @Override
     public String valueForSymbol(String symbolName)
     {
         return properties.get(symbolName);

@@ -26,6 +26,7 @@ public class LazyZipValue<A, B> implements LazyValue<Tuple<A, B>>
         this.bFlow = bFlow;
     }
 
+    @Override
     public Tuple<A, B> get()
     {
         return new Tuple<A, B>(aFlow.first(), bFlow.first());

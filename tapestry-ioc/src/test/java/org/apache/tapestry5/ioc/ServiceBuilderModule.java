@@ -24,10 +24,12 @@ public class ServiceBuilderModule
     {
         binder.bind(Greeter.class, new ServiceBuilder<Greeter>()
         {
+            @Override
             public Greeter buildService(ServiceResources resources)
             {
                 return new Greeter()
                 {
+                    @Override
                     public String getGreeting()
                     {
                         return "Greetings from service Greeter.";
@@ -38,6 +40,7 @@ public class ServiceBuilderModule
 
         binder.bind(Greeter.class, new ServiceBuilder<Greeter>()
         {
+            @Override
             public Greeter buildService(ServiceResources resources)
             {
                 throw new RuntimeException("Failure inside ServiceBuilder callback.");

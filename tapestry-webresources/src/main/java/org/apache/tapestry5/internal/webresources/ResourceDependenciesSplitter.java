@@ -32,6 +32,7 @@ public class ResourceDependenciesSplitter implements ResourceDependencies
         this.right = right;
     }
 
+    @Override
     public void addDependency(Resource dependency)
     {
         left.addDependency(dependency);

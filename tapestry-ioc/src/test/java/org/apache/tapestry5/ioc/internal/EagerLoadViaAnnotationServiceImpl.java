@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.EagerLoad;
 public class EagerLoadViaAnnotationServiceImpl implements Runnable
 {
 
+    @Override
     public void run()
     {
     }

@@ -78,6 +78,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 registryDidShutdown();
@@ -89,12 +90,14 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     {
         final List<String> affectedUnits = F.flow(persistenceUnitInfos).filter(new Predicate<TapestryPersistenceUnitInfo>()
         {
+            @Override
             public boolean accept(TapestryPersistenceUnitInfo info)
             {
                 return !info.excludeUnlistedClasses();
             }
         }).map(new Mapper<TapestryPersistenceUnitInfo, String>()
         {
+            @Override
             public String map(TapestryPersistenceUnitInfo info)
             {
                 return info.getPersistenceUnitName();
@@ -176,6 +179,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     /**
      * {@inheritDoc}
      */
+    @Override
     public EntityManagerFactory getEntityManagerFactory(final String persistenceUnitName)
     {
         EntityManagerFactory emf = entityManagerFactories.get(persistenceUnitName);
@@ -245,6 +249,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     private PersistenceProvider findPersistenceProviderByName(final List<PersistenceProvider> providers, final String providerClassName)
     {
         PersistenceProvider provider = F.flow(providers).filter(new Predicate<PersistenceProvider>() {
+            @Override
             public boolean accept(PersistenceProvider next) {
                 return next.getClass().getName().equals(providerClassName);
             }
@@ -263,12 +268,14 @@ public class EntityManagerSourceImpl implements EntityManagerSource
     private List<Class> toProviderClasses(final List<PersistenceProvider> providers)
     {
        return F.flow(providers).map(new Mapper<PersistenceProvider, Class>() {
+           @Override
            public Class map(PersistenceProvider element) {
                return element.getClass();
            }
        }).toList();
     }
 
+    @Override
     public EntityManager create(final String persistenceUnitName)
     {
         return getEntityManagerFactory(persistenceUnitName).createEntityManager();
@@ -296,6 +303,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource
 
     }
 
+    @Override
     public List<PersistenceUnitInfo> getPersistenceUnitInfos()
     {
         return Collections.<PersistenceUnitInfo>unmodifiableList(persistenceUnitInfos);

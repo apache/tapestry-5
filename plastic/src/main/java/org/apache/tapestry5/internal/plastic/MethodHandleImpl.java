@@ -32,11 +32,13 @@ public class MethodHandleImpl implements MethodHandle
         this.methodIndex = methodIndex;
     }
 
+    @Override
     public String toString()
     {
         return String.format("MethodHandle[%s %s]", className, methodDescription);
     }
 
+    @Override
     public MethodInvocationResult invoke(Object instance, Object... arguments)
     {
 

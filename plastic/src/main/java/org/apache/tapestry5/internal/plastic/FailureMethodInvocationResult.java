@@ -27,21 +27,25 @@ public class FailureMethodInvocationResult implements MethodInvocationResult
         this.thrown = thrown;
     }
 
+    @Override
     public Object getReturnValue()
     {
         return null;
     }
 
+    @Override
     public void rethrow()
     {
         throw new RuntimeException(thrown);
     }
 
+    @Override
     public boolean didThrowCheckedException()
     {
         return true;
     }
 
+    @Override
     public <T extends Throwable> T getCheckedException(Class<T> exceptionType)
     {
         if (exceptionType.isInstance(thrown))

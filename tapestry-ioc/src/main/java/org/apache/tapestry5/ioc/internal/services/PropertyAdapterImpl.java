@@ -78,31 +78,37 @@ public class PropertyAdapterImpl implements PropertyAdapter
         writeMethod = null;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public Method getReadMethod()
     {
         return readMethod;
     }
 
+    @Override
     public Class getType()
     {
         return type;
     }
 
+    @Override
     public Method getWriteMethod()
     {
         return writeMethod;
     }
 
+    @Override
     public boolean isRead()
     {
         return field != null || readMethod != null;
     }
 
+    @Override
     public boolean isUpdate()
     {
         return writeMethod != null || (field != null && !isFinal(field));
@@ -113,6 +119,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
         return Modifier.isFinal(member.getModifiers());
     }
 
+    @Override
     public Object get(Object instance)
     {
         if (field == null && readMethod == null)
@@ -139,6 +146,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
         throw new RuntimeException(ServiceMessages.readFailure(name, instance, fail), fail);
     }
 
+    @Override
     public void set(Object instance, Object value)
     {
         if (field == null && writeMethod == null)
@@ -177,6 +185,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
         return instance == null ? "<null>" : instance.getClass().getName();
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return getAnnnotationProvider().getAnnotation(annotationClass);
@@ -226,31 +235,37 @@ public class PropertyAdapterImpl implements PropertyAdapter
         return annotationProvider;
     }
 
+    @Override
     public boolean isCastRequired()
     {
         return castRequired;
     }
 
+    @Override
     public ClassPropertyAdapter getClassAdapter()
     {
         return classAdapter;
     }
 
+    @Override
     public Class getBeanType()
     {
         return classAdapter.getBeanType();
     }
 
+    @Override
     public boolean isField()
     {
         return field != null;
     }
 
+    @Override
     public Field getField()
     {
         return field;
     }
 
+    @Override
     public Class getDeclaringClass()
     {
         return declaringClass;

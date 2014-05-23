@@ -37,6 +37,7 @@ public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
         this.endLabel = new Label();
     }
 
+    @Override
     public void addTry(InstructionBuilderCallback callback)
     {
         state.visitor.visitLabel(startLabel);
@@ -46,6 +47,7 @@ public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
         state.visitor.visitLabel(endLabel);
     }
 
+    @Override
     public void addCatch(String exceptionClassName, InstructionBuilderCallback callback)
     {
         assert exceptionClassName != null;
@@ -64,6 +66,7 @@ public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
         state.visitor.visitTryCatchBlock(startLabel, endLabel, handler, exceptionInternalName);
     }
 
+    @Override
     public void addFinally(InstructionBuilderCallback callback)
     {
         doCatch(null, callback);

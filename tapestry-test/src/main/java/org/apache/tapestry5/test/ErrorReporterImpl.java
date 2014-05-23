@@ -66,6 +66,7 @@ public class ErrorReporterImpl implements ErrorReporter
 
     }
 
+    @Override
     public void writeErrorReport(String reportText)
     {
         String htmlSource = commandProcessor.getString("getHtmlSource", new String[]

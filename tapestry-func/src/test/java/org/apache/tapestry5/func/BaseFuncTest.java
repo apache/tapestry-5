@@ -24,6 +24,7 @@ public class BaseFuncTest extends Assert
 
     protected Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
     {
+        @Override
         public Integer map(String input)
         {
             return input.length();
@@ -32,6 +33,7 @@ public class BaseFuncTest extends Assert
 
     protected Mapper<Integer, Boolean> toEven = new Mapper<Integer, Boolean>()
     {
+        @Override
         public Boolean map(Integer input)
         {
             return evenp.accept(input);
@@ -40,6 +42,7 @@ public class BaseFuncTest extends Assert
 
     protected Predicate<Number> evenp = new Predicate<Number>()
     {
+        @Override
         public boolean accept(Number object)
         {
             return object.longValue() % 2 == 0;

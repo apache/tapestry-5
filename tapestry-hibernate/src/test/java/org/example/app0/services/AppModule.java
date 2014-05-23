@@ -57,6 +57,7 @@ public class AppModule
         configuration.add("TestAnalyzer", new WhitelistAnalyzer()
         {
 
+            @Override
             public boolean isRequestOnWhitelist(Request request)
             {
                 return true;

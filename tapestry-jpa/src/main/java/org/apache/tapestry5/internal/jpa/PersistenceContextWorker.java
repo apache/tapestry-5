@@ -34,6 +34,7 @@ public class PersistenceContextWorker implements ComponentClassTransformWorker2
         this.entityManagerManager = entityManagerManager;
     }
 
+    @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (final PlasticField field : plasticClass
@@ -45,6 +46,7 @@ public class PersistenceContextWorker implements ComponentClassTransformWorker2
 
             field.setConduit(new ReadOnlyComponentFieldConduit(plasticClass.getClassName(), field.getName())
             {
+                @Override
                 public Object get(Object instance, InstanceContext context)
                 {
                     return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);

@@ -41,11 +41,13 @@ public final class StringLocation implements Location
     /**
      * Returns 0.
      */
+    @Override
     public int getColumn()
     {
         return 0;
     }
 
+    @Override
     public int getLine()
     {
         return line;
@@ -54,6 +56,7 @@ public final class StringLocation implements Location
     /**
      * Returns null; we don't know where the file really is (it's probably a class on the class path).
      */
+    @Override
     public Resource getResource()
     {
         return null;

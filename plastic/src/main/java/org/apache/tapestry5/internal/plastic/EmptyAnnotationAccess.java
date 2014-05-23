@@ -26,11 +26,13 @@ public class EmptyAnnotationAccess implements AnnotationAccess
     {
     }
 
+    @Override
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         return false;
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
         return null;

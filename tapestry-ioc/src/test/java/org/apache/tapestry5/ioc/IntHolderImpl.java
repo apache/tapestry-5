@@ -23,6 +23,7 @@ public class IntHolderImpl implements IntHolder
         this.value = value;
     }
 
+    @Override
     public int getValue()
     {
         return value;

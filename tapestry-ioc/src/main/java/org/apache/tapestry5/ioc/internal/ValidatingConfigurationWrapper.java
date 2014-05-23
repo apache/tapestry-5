@@ -44,6 +44,7 @@ public class ValidatingConfigurationWrapper<T> extends AbstractConfigurationImpl
         this.expectedType = expectedType;
     }
 
+    @Override
     public void add(T object)
     {
         if (object == null)
@@ -54,6 +55,7 @@ public class ValidatingConfigurationWrapper<T> extends AbstractConfigurationImpl
         collection.add(coerced);
     }
 
+    @Override
     public void addInstance(Class<? extends T> clazz)
     {
         add(instantiate(clazz));

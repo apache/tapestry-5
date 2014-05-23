@@ -31,11 +31,13 @@ public class InjectionCheckImpl implements InjectionCheck
         this.configuration = configuration;
     }
 
+    @Override
     public Logger getLogger()
     {
         return logger;
     }
 
+    @Override
     public Object getValue(String key)
     {
         return configuration.get(key);

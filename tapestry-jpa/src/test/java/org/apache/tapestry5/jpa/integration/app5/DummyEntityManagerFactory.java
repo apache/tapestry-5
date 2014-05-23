@@ -24,47 +24,56 @@ import java.util.Map;
 
 final class DummyEntityManagerFactory implements EntityManagerFactory
 {
+    @Override
     public boolean isOpen()
     {
         return false;
     }
 
+    @Override
     public Map<String, Object> getProperties()
     {
         return null;
     }
 
+    @Override
     public PersistenceUnitUtil getPersistenceUnitUtil()
     {
         return null;
     }
 
+    @Override
     public Metamodel getMetamodel()
     {
         return null;
     }
 
+    @Override
     public CriteriaBuilder getCriteriaBuilder()
     {
         return null;
     }
 
+    @Override
     public Cache getCache()
     {
         return null;
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public EntityManager createEntityManager(Map map)
     {
         return new DummyEntityManager();
     }
 
+    @Override
     public EntityManager createEntityManager()
     {
         return new DummyEntityManager();
     }
 
+    @Override
     public void close()
     {
 

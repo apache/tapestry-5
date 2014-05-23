@@ -41,6 +41,7 @@ public class AppModule
     {
         configuration.add("WasInvoked", new ApplicationContextCustomizer()
         {
+            @Override
             public void customizeApplicationContext(ServletContext servletContext,
                                                     ConfigurableWebApplicationContext applicationContext)
             {

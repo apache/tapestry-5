@@ -21,6 +21,7 @@ public class CountingGreeterImpl implements Greeter
         IntegrationTestFixture.countingGreeterInstantiationCount++;
     }
 
+    @Override
     public String getGreeting()
     {
         return "Hello";

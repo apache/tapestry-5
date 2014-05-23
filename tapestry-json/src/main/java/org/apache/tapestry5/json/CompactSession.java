@@ -30,21 +30,25 @@ class CompactSession implements JSONPrintSession
         this.writer = writer;
     }
 
+    @Override
     public JSONPrintSession indent()
     {
         return this;
     }
 
+    @Override
     public JSONPrintSession newline()
     {
         return this;
     }
 
+    @Override
     public JSONPrintSession outdent()
     {
         return this;
     }
 
+    @Override
     public JSONPrintSession print(String value)
     {
         writer.print(value);
@@ -52,11 +56,13 @@ class CompactSession implements JSONPrintSession
         return this;
     }
 
+    @Override
     public JSONPrintSession printQuoted(String value)
     {
         return print(JSONObject.quote(value));
     }
 
+    @Override
     public JSONPrintSession printSymbol(char symbol)
     {
         writer.print(symbol);

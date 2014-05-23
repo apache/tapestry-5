@@ -67,6 +67,7 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
         {
             addDefault(new InstructionBuilderCallback()
             {
+                @Override
                 public void doBuild(InstructionBuilder builder)
                 {
                     builder.throwException(IllegalArgumentException.class,
@@ -80,6 +81,7 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
         lock();
     }
 
+    @Override
     public void addCase(int caseValue, boolean jumpToEnd, InstructionBuilderCallback callback)
     {
         assert caseValue >= min;
@@ -98,6 +100,7 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
             state.visitor.visitJumpInsn(GOTO, endSwitchLabel);
     }
 
+    @Override
     public void addDefault(InstructionBuilderCallback callback)
     {
         if (defaultAdded)

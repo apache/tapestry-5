@@ -36,11 +36,13 @@ public class AspectDecoratorImpl implements AspectDecorator
         this.proxyFactory = proxyFactory;
     }
 
+    @Override
     public <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, final T delegate, String description)
     {
         return createBuilder(serviceInterface, delegate, new AnnotationAccessImpl(delegate.getClass()), description);
     }
 
+    @Override
     public <T> AspectInterceptorBuilder<T> createBuilder(final Class<T> serviceInterface, final T delegate,
                                                          AnnotationAccess annotationAccess, final String description)
     {
@@ -55,21 +57,25 @@ public class AspectDecoratorImpl implements AspectDecorator
         {
             private AspectInterceptorBuilder<T> builder;
 
+            @Override
             public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)
             {
                 getBuilder().adviseMethod(method, advice);
             }
 
+            @Override
             public void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice)
             {
                 getBuilder().adviseAllMethods(advice);
             }
 
+            @Override
             public Class getInterface()
             {
                 return serviceInterface;
             }
 
+            @Override
             public T build()
             {
                 return builder == null ? delegate : builder.build();

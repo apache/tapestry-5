@@ -25,6 +25,7 @@ public class MapperTest extends BaseFuncTest
     protected Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
     {
 
+        @Override
         public Flow<Integer> map(Integer value)
         {
             Flow<Integer> flow = F.flow();
@@ -57,6 +58,7 @@ public class MapperTest extends BaseFuncTest
     {
         assertTrue(filteredEmpty.map(new Mapper<Integer, Integer>()
         {
+            @Override
             public Integer map(Integer value)
             {
                 unreachable();
@@ -108,6 +110,7 @@ public class MapperTest extends BaseFuncTest
 
         Mapper<Integer, Integer> doubler = new Mapper<Integer, Integer>()
         {
+            @Override
             public Integer map(Integer value)
             {
                 count.incrementAndGet();

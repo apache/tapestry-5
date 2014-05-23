@@ -16,6 +16,7 @@ package org.example.testapp.services;
 
 public class FlintstoneImpl implements Flintstone
 {
+    @Override
     public void bam()
     {
     }

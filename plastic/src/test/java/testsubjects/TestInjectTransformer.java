@@ -18,6 +18,7 @@ public class TestInjectTransformer<T> implements PlasticClassTransformer
         this.fieldValue = fieldValue;
     }
 
+    @Override
     public void transform(PlasticClass plasticClass)
     {
         for (PlasticField f : plasticClass.getFieldsWithAnnotation(TestInject.class))

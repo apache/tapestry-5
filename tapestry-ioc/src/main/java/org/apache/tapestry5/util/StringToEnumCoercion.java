@@ -51,6 +51,7 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
             stringToEnum.put(value.name(), value);
     }
 
+    @Override
     public T coerce(String input)
     {
         if (InternalUtils.isBlank(input))

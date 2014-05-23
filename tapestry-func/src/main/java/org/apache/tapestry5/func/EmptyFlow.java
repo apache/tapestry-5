@@ -26,102 +26,120 @@ import java.util.Set;
  */
 class EmptyFlow<T> extends AbstractFlow<T>
 {
+    @Override
     public T first()
     {
         return null;
     }
 
+    @Override
     public boolean isEmpty()
     {
         return true;
     }
 
+    @Override
     public Flow<T> rest()
     {
         return this;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> each(Worker<? super T> worker)
     {
         return this;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> filter(Predicate<? super T> predicate)
     {
         return this;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> remove(Predicate<? super T> predicate)
     {
         return this;
     }
 
     /** Does nothing; returns this empty list (as a Flow<X>). */
+    @Override
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
         return F.emptyFlow();
     }
 
     /** Does nothing; returns the initial value. */
+    @Override
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
         return initial;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> reverse()
     {
         return this;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> sort()
     {
         return this;
     }
 
     /** Does nothing; returns this empty list. */
+    @Override
     public Flow<T> sort(Comparator<T> comparator)
     {
         return this;
     }
 
     /** Returns the empty list. */
+    @Override
     public List<T> toList()
     {
         return Collections.emptyList();
     }
 
     /** Returns the other list (i.e. empty ++ other == other). */
+    @Override
     @SuppressWarnings("unchecked")
     public Flow<T> concat(Flow<? extends T> other)
     {
         return (Flow<T>) other;
     }
 
+    @Override
     public <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper)
     {
         return F.emptyFlow();
     }
 
+    @Override
     public int count()
     {
         return 0;
     }
 
+    @Override
     public Flow<T> take(int length)
     {
         return this;
     }
 
+    @Override
     public Flow<T> drop(int length)
     {
         return this;
     }
 
+    @Override
     public Set<T> toSet()
     {
         return Collections.emptySet();

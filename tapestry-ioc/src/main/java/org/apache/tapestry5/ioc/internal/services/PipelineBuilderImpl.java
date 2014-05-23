@@ -38,6 +38,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
         this.defaultImplementationBuilder = defaultImplementationBuilder;
     }
 
+    @Override
     public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters)
     {
         S terminator = defaultImplementationBuilder.createDefaultImplementation(serviceInterface);
@@ -45,6 +46,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
         return build(logger, serviceInterface, filterInterface, filters, terminator);
     }
 
+    @Override
     public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
             S terminator)
     {

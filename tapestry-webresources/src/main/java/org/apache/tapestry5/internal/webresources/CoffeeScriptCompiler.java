@@ -35,6 +35,7 @@ public class CoffeeScriptCompiler implements ResourceTransformer
 
     private final RhinoExecutorPool executorPool;
 
+    @Override
     public String getTransformedContentType()
     {
         return "text/javascript";
@@ -69,6 +70,7 @@ public class CoffeeScriptCompiler implements ResourceTransformer
     }
 
 
+    @Override
     public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
     {
         InputStream is = null;

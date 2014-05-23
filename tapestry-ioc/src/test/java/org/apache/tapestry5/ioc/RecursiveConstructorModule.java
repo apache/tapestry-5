@@ -32,6 +32,7 @@ public class RecursiveConstructorModule
     {
         return new Runnable()
         {
+            @Override
             public void run()
             {
             }

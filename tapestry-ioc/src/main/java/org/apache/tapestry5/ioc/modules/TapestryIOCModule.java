@@ -95,6 +95,7 @@ public final class TapestryIOCModule
 
         return new ServiceLifecycleSource()
         {
+            @Override
             public ServiceLifecycle get(String scope)
             {
                 return lifecycles.get(scope);
@@ -139,6 +140,7 @@ public final class TapestryIOCModule
 
         ObjectProvider wrapper = new ObjectProvider()
         {
+            @Override
             public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
             {
                 return serviceOverride.getServiceOverrideProvider().provide(objectType, annotationProvider, locator);
@@ -188,6 +190,7 @@ public final class TapestryIOCModule
     {
         add(configuration, Object.class, String.class, new Coercion<Object, String>()
         {
+            @Override
             public String coerce(Object input)
             {
                 return input.toString();
@@ -196,6 +199,7 @@ public final class TapestryIOCModule
 
         add(configuration, Object.class, Boolean.class, new Coercion<Object, Boolean>()
         {
+            @Override
             public Boolean coerce(Object input)
             {
                 return input != null;
@@ -204,6 +208,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, Double.class, new Coercion<String, Double>()
         {
+            @Override
             public Double coerce(String input)
             {
                 return new Double(input);
@@ -215,6 +220,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, BigDecimal.class, new Coercion<String, BigDecimal>()
         {
+            @Override
             public BigDecimal coerce(String input)
             {
                 return new BigDecimal(input);
@@ -223,6 +229,7 @@ public final class TapestryIOCModule
 
         add(configuration, BigDecimal.class, Double.class, new Coercion<BigDecimal, Double>()
         {
+            @Override
             public Double coerce(BigDecimal input)
             {
                 return input.doubleValue();
@@ -231,6 +238,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, BigInteger.class, new Coercion<String, BigInteger>()
         {
+            @Override
             public BigInteger coerce(String input)
             {
                 return new BigInteger(input);
@@ -239,6 +247,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, Long.class, new Coercion<String, Long>()
         {
+            @Override
             public Long coerce(String input)
             {
                 return new Long(input);
@@ -247,6 +256,7 @@ public final class TapestryIOCModule
 
         add(configuration, Long.class, Byte.class, new Coercion<Long, Byte>()
         {
+            @Override
             public Byte coerce(Long input)
             {
                 return input.byteValue();
@@ -255,6 +265,7 @@ public final class TapestryIOCModule
 
         add(configuration, Long.class, Short.class, new Coercion<Long, Short>()
         {
+            @Override
             public Short coerce(Long input)
             {
                 return input.shortValue();
@@ -263,6 +274,7 @@ public final class TapestryIOCModule
 
         add(configuration, Long.class, Integer.class, new Coercion<Long, Integer>()
         {
+            @Override
             public Integer coerce(Long input)
             {
                 return input.intValue();
@@ -271,6 +283,7 @@ public final class TapestryIOCModule
 
         add(configuration, Number.class, Long.class, new Coercion<Number, Long>()
         {
+            @Override
             public Long coerce(Number input)
             {
                 return input.longValue();
@@ -279,6 +292,7 @@ public final class TapestryIOCModule
 
         add(configuration, Double.class, Float.class, new Coercion<Double, Float>()
         {
+            @Override
             public Float coerce(Double input)
             {
                 return input.floatValue();
@@ -287,6 +301,7 @@ public final class TapestryIOCModule
 
         add(configuration, Long.class, Double.class, new Coercion<Long, Double>()
         {
+            @Override
             public Double coerce(Long input)
             {
                 return input.doubleValue();
@@ -295,6 +310,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, Boolean.class, new Coercion<String, Boolean>()
         {
+            @Override
             public Boolean coerce(String input)
             {
                 String trimmed = input == null ? "" : input.trim();
@@ -310,6 +326,7 @@ public final class TapestryIOCModule
 
         add(configuration, Number.class, Boolean.class, new Coercion<Number, Boolean>()
         {
+            @Override
             public Boolean coerce(Number input)
             {
                 return input.longValue() != 0;
@@ -318,6 +335,7 @@ public final class TapestryIOCModule
 
         add(configuration, Void.class, Boolean.class, new Coercion<Void, Boolean>()
         {
+            @Override
             public Boolean coerce(Void input)
             {
                 return false;
@@ -326,6 +344,7 @@ public final class TapestryIOCModule
 
         add(configuration, Collection.class, Boolean.class, new Coercion<Collection, Boolean>()
         {
+            @Override
             public Boolean coerce(Collection input)
             {
                 return !input.isEmpty();
@@ -334,6 +353,7 @@ public final class TapestryIOCModule
 
         add(configuration, Object.class, List.class, new Coercion<Object, List>()
         {
+            @Override
             public List coerce(Object input)
             {
                 return Collections.singletonList(input);
@@ -342,6 +362,7 @@ public final class TapestryIOCModule
 
         add(configuration, Object[].class, List.class, new Coercion<Object[], List>()
         {
+            @Override
             public List coerce(Object[] input)
             {
                 return Arrays.asList(input);
@@ -350,6 +371,7 @@ public final class TapestryIOCModule
 
         add(configuration, Object[].class, Boolean.class, new Coercion<Object[], Boolean>()
         {
+            @Override
             public Boolean coerce(Object[] input)
             {
                 return input != null && input.length > 0;
@@ -358,6 +380,7 @@ public final class TapestryIOCModule
 
         add(configuration, Float.class, Double.class, new Coercion<Float, Double>()
         {
+            @Override
             public Double coerce(Float input)
             {
                 return input.doubleValue();
@@ -366,6 +389,7 @@ public final class TapestryIOCModule
 
         Coercion primitiveArrayCoercion = new Coercion<Object, List>()
         {
+            @Override
             public List<Object> coerce(Object input)
             {
                 int length = Array.getLength(input);
@@ -389,6 +413,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, File.class, new Coercion<String, File>()
         {
+            @Override
             public File coerce(String input)
             {
                 return new File(input);
@@ -397,6 +422,7 @@ public final class TapestryIOCModule
 
         add(configuration, String.class, TimeInterval.class, new Coercion<String, TimeInterval>()
         {
+            @Override
             public TimeInterval coerce(String input)
             {
                 return new TimeInterval(input);
@@ -405,6 +431,7 @@ public final class TapestryIOCModule
 
         add(configuration, TimeInterval.class, Long.class, new Coercion<TimeInterval, Long>()
         {
+            @Override
             public Long coerce(TimeInterval input)
             {
                 return input.milliseconds();
@@ -413,6 +440,7 @@ public final class TapestryIOCModule
 
         add(configuration, Object.class, Object[].class, new Coercion<Object, Object[]>()
         {
+            @Override
             public Object[] coerce(Object input)
             {
                 return new Object[]
@@ -422,6 +450,7 @@ public final class TapestryIOCModule
 
         add(configuration, Collection.class, Object[].class, new Coercion<Collection, Object[]>()
         {
+            @Override
             public Object[] coerce(Collection input)
             {
                 return input.toArray();
@@ -430,6 +459,7 @@ public final class TapestryIOCModule
 
         add(configuration, Flow.class, List.class, new Coercion<Flow, List>()
         {
+            @Override
             public List coerce(Flow input)
             {
                 return input.toList();
@@ -438,6 +468,7 @@ public final class TapestryIOCModule
 
         add(configuration, Flow.class, Boolean.class, new Coercion<Flow, Boolean>()
         {
+            @Override
             public Boolean coerce(Flow input)
             {
                 return !input.isEmpty();
@@ -511,6 +542,7 @@ public final class TapestryIOCModule
 
         shutdownHub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 executorService.shutdown();

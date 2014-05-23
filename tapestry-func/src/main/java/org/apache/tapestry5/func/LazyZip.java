@@ -26,6 +26,7 @@ class LazyZip<A, B> implements LazyFunction<Tuple<A, B>>
         this.bFlow = bFlow;
     }
 
+    @Override
     public LazyContinuation<Tuple<A, B>> next()
     {
         if (aFlow.isEmpty() || bFlow.isEmpty())

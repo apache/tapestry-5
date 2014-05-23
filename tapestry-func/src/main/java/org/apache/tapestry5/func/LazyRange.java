@@ -25,6 +25,7 @@ class LazyRange implements LazyFunction<Integer>
         this.delta = delta;
     }
 
+    @Override
     public LazyContinuation<Integer> next()
     {
         if (delta < 0 && lower + delta < upper)

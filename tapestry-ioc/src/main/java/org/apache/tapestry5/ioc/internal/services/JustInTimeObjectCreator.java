@@ -48,6 +48,7 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
      *
      * @throws IllegalStateException if the registry has been shutdown
      */
+    @Override
     public T createObject()
     {
         if (object == null)
@@ -79,6 +80,7 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
     /**
      * Invokes {@link #createObject()} to force the creation of the underlying service.
      */
+    @Override
     public void eagerLoadService()
     {
         // Force object creation now
@@ -90,10 +92,12 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
      * Invoked when the Registry is shutdown; deletes the instantiated object (if it exists) and replaces
      * the ObjectCreator with one that throws an IllegalStateException.
      */
+    @Override
     public synchronized void run()
     {
         creator = new ObjectCreator<T>()
         {
+            @Override
             public T createObject()
             {
                 throw new IllegalStateException(ServiceMessages.registryShutdown(serviceId));

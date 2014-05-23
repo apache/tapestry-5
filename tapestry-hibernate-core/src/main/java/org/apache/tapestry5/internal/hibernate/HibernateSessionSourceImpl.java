@@ -57,6 +57,7 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
     {
         hub.addRegistryShutdownListener(new Runnable()
         {
+            @Override
             public void run()
             {
                 sessionFactory.close();
@@ -64,16 +65,19 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
         });
     }
 
+    @Override
     public Session create()
     {
         return sessionFactory.openSession();
     }
 
+    @Override
     public SessionFactory getSessionFactory()
     {
         return sessionFactory;
     }
 
+    @Override
     public Configuration getConfiguration()
     {
         return configuration;

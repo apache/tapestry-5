@@ -56,6 +56,7 @@ public class AdviseByMarkerModule
         receiver.adviseAllMethods(new MethodAdvice()
         {
 
+            @Override
             public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
@@ -80,6 +81,7 @@ public class AdviseByMarkerModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Red";

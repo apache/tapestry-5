@@ -29,6 +29,7 @@ public class AdviceDemoModule
     {
         return new Greeter()
         {
+            @Override
             public String getGreeting()
             {
                 return "Advice is Easy!";
@@ -47,6 +48,7 @@ public class AdviceDemoModule
     {
         MethodAdvice advice = new MethodAdvice()
         {
+            @Override
             public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();

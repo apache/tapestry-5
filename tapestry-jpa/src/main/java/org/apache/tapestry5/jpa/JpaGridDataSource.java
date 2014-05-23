@@ -61,6 +61,7 @@ public class JpaGridDataSource<E> implements GridDataSource
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getAvailableRows()
     {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -79,6 +80,7 @@ public class JpaGridDataSource<E> implements GridDataSource
     /**
      * {@inheritDoc}
      */
+    @Override
     public void prepare(final int startIndex, final int endIndex,
             final List<SortConstraint> sortConstraints)
     {
@@ -132,6 +134,7 @@ public class JpaGridDataSource<E> implements GridDataSource
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getRowValue(final int index)
     {
         return preparedResults.get(index - startIndex);
@@ -140,6 +143,7 @@ public class JpaGridDataSource<E> implements GridDataSource
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<E> getRowType()
     {
         return entityType;

@@ -29,11 +29,13 @@ public class FieldResourceServiceImpl implements FieldResourceService
     @InjectResource
     private Collection<String> configuration;
 
+    @Override
     public String getServiceId()
     {
         return resources.getServiceId();
     }
 
+    @Override
     public List<String> getLabels()
     {
         List<String> result = CollectionFactory.newList(configuration);

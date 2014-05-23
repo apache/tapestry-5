@@ -20,6 +20,7 @@ import org.apache.tapestry5.plastic.MethodInvocation;
 public class NoopAdvice implements MethodAdvice
 {
 
+    @Override
     public void advise(MethodInvocation invocation)
     {
         invocation.proceed();

@@ -58,6 +58,7 @@ public class SpringModule
     {
         ApplicationInitializerFilter filter = new ApplicationInitializerFilter()
         {
+            @Override
             public void initializeApplication(Context context, ApplicationInitializer initializer)
             {
                 logger.info(String.format("Spring version %s with %,d defined beans.",
@@ -99,6 +100,7 @@ public class SpringModule
         ApplicationContextCustomizer beanFactoryPostProcessorCustomizer = new ApplicationContextCustomizer()
         {
 
+            @Override
             public void customizeApplicationContext(ServletContext servletContext,
                                                     ConfigurableWebApplicationContext applicationContext)
             {

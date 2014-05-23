@@ -41,6 +41,7 @@ public class LifecycleWrappedServiceCreator implements ObjectCreator
     /**
      * Passes the resources and the service creator through the {@link org.apache.tapestry5.ioc.ServiceLifecycle}.
      */
+    @Override
     public Object createObject()
     {
         return lifecycle.createService(resources, creator);

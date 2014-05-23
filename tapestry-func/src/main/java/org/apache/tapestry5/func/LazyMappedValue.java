@@ -26,6 +26,7 @@ class LazyMappedValue<T, X> implements LazyValue<X>
         this.mapper = mapper;
     }
 
+    @Override
     public X get()
     {
         return mapper.map(flow.first());

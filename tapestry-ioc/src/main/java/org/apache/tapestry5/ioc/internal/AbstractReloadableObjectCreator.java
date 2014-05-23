@@ -76,6 +76,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         this.tracker = tracker;
     }
 
+    @Override
     public synchronized void checkForUpdates()
     {
         if (instance == null || !changeTracker.containsChanges())
@@ -112,6 +113,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         return false;
     }
 
+    @Override
     public synchronized Object createObject()
     {
         if (instance == null)
@@ -126,6 +128,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     {
         return tracker.invoke(String.format("Reloading class %s.", implementationClassName), new Invokable<Object>()
         {
+            @Override
             public Object invoke()
             {
                 Class reloadedClass = reloadImplementationClass();
@@ -180,11 +183,13 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         }
     }
 
+    @Override
     public boolean shouldInterceptClassLoading(String className)
     {
         return classesToLoad.contains(className);
     }
 
+    @Override
     public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
         logger.debug(String.format("BEGIN Analyzing %s", className));

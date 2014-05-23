@@ -38,6 +38,7 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
         this.configuration.add(0, new StaticObjectProvider(OperationTracker.class, tracker));
     }
 
+    @Override
     public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
                          final ObjectLocator locator,
                          final boolean required)
@@ -45,6 +46,7 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
         return tracker.invoke(String.format("Resolving object of type %s using MasterObjectProvider",
                 PlasticUtils.toTypeName(objectType)), new Invokable<T>()
         {
+            @Override
             public T invoke()
             {
                 for (ObjectProvider provider : configuration)

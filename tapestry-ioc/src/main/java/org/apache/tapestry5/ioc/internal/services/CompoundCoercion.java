@@ -35,6 +35,7 @@ public class CompoundCoercion<S, I, T> implements Coercion<S, T>
         this.op2 = op2;
     }
 
+    @Override
     public T coerce(S input)
     {
         // Run the input through the first operation (S --> I), then run the result of that through

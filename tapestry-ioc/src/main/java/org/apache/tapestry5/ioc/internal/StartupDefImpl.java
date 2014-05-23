@@ -38,6 +38,7 @@ public class StartupDefImpl implements StartupDef
         this.startupMethod = contributorMethod;
     }
 
+    @Override
     public void invoke(final ModuleBuilderSource moduleBuilderSource,
                        final OperationTracker tracker,
                        final ObjectLocator locator,
@@ -47,6 +48,7 @@ public class StartupDefImpl implements StartupDef
         tracker.run(String.format("Invoking startup method %s.", InternalUtils.asString(startupMethod)),
                 new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         Map<Class, Object> resourceMap = CollectionFactory.newMap();

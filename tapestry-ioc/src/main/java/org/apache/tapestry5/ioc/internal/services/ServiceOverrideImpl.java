@@ -32,10 +32,12 @@ public class ServiceOverrideImpl implements ServiceOverride
         this.configuration = configuration;
     }
 
+    @Override
     public ObjectProvider getServiceOverrideProvider()
     {
         return new ObjectProvider()
         {
+            @Override
             public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
             {
                 return objectType.cast(configuration.get(objectType));

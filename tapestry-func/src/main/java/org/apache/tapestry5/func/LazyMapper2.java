@@ -30,6 +30,7 @@ class LazyMapper2<T, X, Y> implements LazyFunction<Y>
         this.right = (Flow<X>) right;
     }
 
+    @Override
     public LazyContinuation<Y> next()
     {
         if (left.isEmpty() || right.isEmpty())

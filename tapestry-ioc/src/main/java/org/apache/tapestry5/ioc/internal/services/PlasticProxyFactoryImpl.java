@@ -57,37 +57,44 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         }
     }
 
+    @Override
     public ClassLoader getClassLoader()
     {
         return manager.getClassLoader();
     }
 
+    @Override
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback)
     {
         return manager.createProxy(interfaceType, implementationType, callback);
     }
     
+    @Override
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
         return manager.createProxy(interfaceType, callback);
     }
     
     
+    @Override
     public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType,
             Class<? extends T> implementationType)
     {
         return manager.createProxyTransformation(interfaceType, implementationType);
     }
 
+    @Override
     public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType)
     {
         return createProxyTransformation(interfaceType, null);
     }
 
+    @Override
     public <T> T createProxy(final Class<T> interfaceType, final ObjectCreator<T> creator, final String description)
     {   return createProxy(interfaceType, null, creator, description);
     }
     
+    @Override
     public <T> T createProxy(final Class<T> interfaceType, final Class<? extends T> implementationType,
             final ObjectCreator<T> creator, final String description)
     {
@@ -96,6 +103,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
         ClassInstantiator<T> instantiator = createProxy(interfaceType, implementationType, new PlasticClassTransformer()
         {
+            @Override
             public void transform(PlasticClass plasticClass)
             {
                 final PlasticField objectCreatorField = plasticClass.introduceField(ObjectCreator.class, "creator")
@@ -107,6 +115,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
                 final InstructionBuilderCallback returnCreateObject = new InstructionBuilderCallback()
                 {
+                    @Override
                     public void doBuild(InstructionBuilder builder)
                     {
                         builder.loadThis().getField(objectCreatorField);
@@ -142,10 +151,12 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return bytecode == null ? null : PlasticInternalUtils.convertBytecodeToClassNode(bytecode);
     }
 
+    @Override
     public Location getMethodLocation(final Method method)
     {
         ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
         {
+            @Override
             public String createObject()
             {
                 return InternalUtils.asString(method);
@@ -156,10 +167,12 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 descriptionCreator);
     }
 
+    @Override
     public Location getConstructorLocation(final Constructor constructor)
     {
         ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
         {
+            @Override
             public String createObject()
             {
                 StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
@@ -183,6 +196,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 descriptionCreator);
     }
 
+    @Override
     public void clearCache()
     {
         memberToLocation.clear();
@@ -257,11 +271,13 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return -1;
     }
 
+    @Override
     public void addPlasticClassListener(PlasticClassListener listener)
     {
         manager.addPlasticClassListener(listener);
     }
 
+    @Override
     public void removePlasticClassListener(PlasticClassListener listener)
     {
         manager.removePlasticClassListener(listener);
