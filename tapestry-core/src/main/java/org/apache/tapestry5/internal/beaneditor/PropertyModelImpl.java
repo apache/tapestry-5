@@ -53,7 +53,7 @@ public class PropertyModelImpl implements PropertyModel
         label = TapestryInternalUtils.defaultLabel(id, messages, name);
 
         // TAP5-2305
-        Sortable sortableAnnotation = conduit.getAnnotation(Sortable.class);
+        Sortable sortableAnnotation = conduit != null ? conduit.getAnnotation(Sortable.class) : null;
         if (sortableAnnotation != null) 
         {
             sortable = sortableAnnotation.value();
