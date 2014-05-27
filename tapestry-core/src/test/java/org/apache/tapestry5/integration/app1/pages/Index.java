@@ -568,8 +568,9 @@ public class Index
                     
                     new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop"),
                     
-                    new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings")
+                    new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings"),
 
+                    new Item("FormFieldClientIdParameterDemo", "Form Field clientId Parameter Demo", "Shows and tests how to explicitly set the id of a form field component")
             );
 
     static

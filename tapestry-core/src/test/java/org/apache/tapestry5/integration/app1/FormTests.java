@@ -1167,4 +1167,27 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("entity.id: [2]");
     }
+
+    /** TAP5-2331 */
+    @Test
+    public void form_fields_client_id_parameter()
+    {
+        final String[] clientIds = {"clientId-0", "clientId-1"};
+        
+        openLinks("Form Field clientId Parameter Demo");
+        
+        for (int i = 0; i < 4; i++) {
+        
+            for (String clientId : clientIds)
+            {
+                assertTrue(selenium.isElementPresent(clientId));
+            }
+            
+            click("updateZone");
+            waitForAjaxRequestsToComplete();
+            
+        }
+        
+    }
+
 }

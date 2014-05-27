@@ -1,0 +1,26 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<h1>Form Field clientId Parameter Demo</h1>
+
+	<p>Without explicit client id</p>
+
+	<t:zone t:id="zone">
+
+		<t:form t:zone="zone">
+			<t:loop source="source">
+				<t:textfield t:id="textfield" value="string" />
+			</t:loop>
+		</t:form>
+	
+		<p>With explicit client id</p>
+		<t:form>
+			<t:loop source="source" index="index">
+				<t:textfield t:id="textfieldWithClientId" value="string" clientId="prop:clientId" />
+			</t:loop>
+		</t:form>
+		
+		<t:eventlink event="updateZone" zone="zone" id="updateZone">Update zone</t:eventlink>
+		 
+	</t:zone>
+
+</html>

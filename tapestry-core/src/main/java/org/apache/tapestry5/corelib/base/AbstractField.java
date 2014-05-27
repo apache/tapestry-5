@@ -115,9 +115,12 @@ public abstract class AbstractField implements Field
     private static final ProcessSubmission PROCESS_SUBMISSION_ACTION = new ProcessSubmission();
 
     /**
-     * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
-     * times, a suffix will be appended to the to id to ensure uniqueness. The uniqued value may be accessed via the
-     * {@link #getClientId() clientId property}.
+     * The id used to generate a page-unique client-side identifier for the component. If this parameter is not bound
+     * and a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness. Either way, 
+     * its value may be accessed via the {@link #getClientId() clientId property}.
+     * When this parameter is bound, Tapestry considers the user (developer) is taking care of 
+     * providing unique client-side identifiers. Special care should be taken when the
+     * field is inside a Zone.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     protected String clientId;
@@ -174,7 +177,7 @@ public abstract class AbstractField implements Field
             throw new RuntimeException(String.format("Component %s must be enclosed by a Form component.",
                     resources.getCompleteId()));
 
-        assignedClientId = javaScriptSupport.allocateClientId(id);
+        assignedClientId = resources.isBound("clientId") ? clientId : javaScriptSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
 
         formSupport.storeAndExecute(this, new Setup(controlName));
