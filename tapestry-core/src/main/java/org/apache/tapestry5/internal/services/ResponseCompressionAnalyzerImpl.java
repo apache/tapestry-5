@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
@@ -48,6 +49,12 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
 
         // TAP5-1880:
         if (request.getProtocol() == "HTTP/1.0")
+        {
+            return false;
+        }
+
+        // TAP5-2264:
+        if (request.getAttribute(InternalConstants.SUPPRESS_COMPRESSION) != null)
         {
             return false;
         }
