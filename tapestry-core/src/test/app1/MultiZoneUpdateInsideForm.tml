@@ -4,7 +4,7 @@
 
   <form t:type="Form" t:id="form" t:clientValidation="none" action="#">
     <t:label for="selectValue1"/>
-    <select t:type="Select" t:id="selectValue1" t:validate="required" t:zone="select1ValueZone"/>
+    <select t:type="Select" t:id="selectValue1" t:validate="required" t:zone="select1ValueZone" t:context="selectContext"/>
     <t:zone t:id="select1ValueZone" visible="false">Show</t:zone>
     <t:zone t:id="select2ValueZone">
       <t:label for="selectValue2"/>

@@ -143,6 +143,19 @@ public class Select extends AbstractField
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
+    
+    /**
+     * The context for the "valueChanged" event triggered by this component (optional parameter). 
+     * This list of values will be converted into strings and included in
+     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
+     * methods. The first parameter of the context passed to "valueChanged" event handlers will
+     * still be the selected value chosen by the user, so the context passed through this parameter
+     * will be added from the second position on.
+     * 
+     * @since 5.4
+     */
+    @Parameter
+    private Object[] context;
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
@@ -230,7 +243,7 @@ public class Select extends AbstractField
         {
             javaScriptSupport.require("t5/core/select");
 
-            Link link = resources.createEventLink(CHANGE_EVENT);
+            Link link = resources.createEventLink(CHANGE_EVENT, context);
 
             writer.attributes(
                     "data-update-zone", zone,
@@ -238,15 +251,22 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(@RequestParameter(value = "t:selectvalue", allowBlank = true)
-                    final String selectValue) throws ValidationException
+    Object onChange(final List<Context> context, 
+            @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue) 
+                    throws ValidationException
     {
         final Object newValue = toValue(selectValue);
 
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
+        
+        Object[] newContext = new Object[context.size() + 1];
+        newContext[0] = newValue;
+        for (int i = 1; i < newContext.length; i++) {
+            newContext[i] = context.get(i - 1);
+        }
 
-        this.resources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
-                {newValue}, callback);
+
+        this.resources.triggerEvent(EventConstants.VALUE_CHANGED, newContext, callback);
 
         this.value = newValue;
 

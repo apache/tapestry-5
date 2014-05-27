@@ -1189,5 +1189,18 @@ public class FormTests extends App1TestCase
         }
         
     }
+    
+    /** TAP5-2301 */
+    @Test
+    public void select_context() {
+        
+        openLinks("MultiZone Update inside a Form");
+        selenium.select("selectValue1", "label=3 pre ajax");
+        waitForAjaxRequestsToComplete();
+        assertEquals(
+                "4 post ajax, number 013, retention policy RUNTIME",
+                selenium.getText("//select[@id='selectValue2']/option"));
+        
+    }
 
 }

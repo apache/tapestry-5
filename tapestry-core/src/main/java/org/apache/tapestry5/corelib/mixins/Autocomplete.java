@@ -91,13 +91,12 @@ public class Autocomplete
     private String tokens;
     
     /**
-     * The context for the link (optional parameter). This list of values will be converted into strings and included in
+     * The context for the "providecompletions" event. 
+     * This list of values will be converted into strings and included in
      * the URI. The strings will be coerced back to whatever their values are and made available to event handler
      * methods. The first parameter of the context passed to "providecompletions" event handlers will
      * still be the partial string typed by the user, so the context passed through this parameter
      * will be added from the second position on.
-     * 
-     * Paramenter introduced in 5.4
      * 
      * @since 5.4
      */

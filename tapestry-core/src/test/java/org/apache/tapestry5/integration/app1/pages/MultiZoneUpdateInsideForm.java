@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,10 @@ public class MultiZoneUpdateInsideForm
 
     @Component(id = "select2ValueZone")
     private Zone select2ValueZone;
+    
+    public Object[] getSelectContext() {
+        return new Object[] {13, RetentionPolicy.RUNTIME};
+    }
 
     public class SelectObj
     {
@@ -163,13 +168,14 @@ public class MultiZoneUpdateInsideForm
     }
 
     @Log
-    public Object onValueChangedFromSelectValue1(SelectObj selectObj)
+    public Object onValueChangedFromSelectValue1(SelectObj selectObj, Integer integer, RetentionPolicy retentionPolicy)
     {
+        final String suffix = String.format(", number %03d, retention policy %s", integer, retentionPolicy);
         List<SelectObj> select2List = new ArrayList();
-        select2List.add(new SelectObj(4, "4 post ajax"));
-        select2List.add(new SelectObj(5, "5 post ajax"));
-        select2List.add(new SelectObj(6, "6 post ajax"));
-        select2List.add(new SelectObj(7, "7 post ajax"));
+        select2List.add(new SelectObj(4, "4 post ajax" + suffix));
+        select2List.add(new SelectObj(5, "5 post ajax" + suffix));
+        select2List.add(new SelectObj(6, "6 post ajax" + suffix));
+        select2List.add(new SelectObj(7, "7 post ajax" + suffix));
         select2Model = new SelectObjModel(select2List);
 
         if (request.isXHR())
