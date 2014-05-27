@@ -28,6 +28,9 @@ public class AjaxTests extends App1TestCase
 
         // And that's as far as we can go currently, because
         // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
+        
+        // also test Autocomplete with context
+        
     }
 
     @Test

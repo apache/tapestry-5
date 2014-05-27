@@ -14,13 +14,20 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.alerts.Duration;
+import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
+import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
+import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.List;
 
 public class AutocompleteDemo
@@ -29,10 +36,25 @@ public class AutocompleteDemo
     private MusicLibrary library;
 
     @Persist
+    @Property
     private String title;
+
+    @Persist
+    @Property
+    private String withContext;
 
     @Inject
     private AlertManager alertManager;
+    
+    public Object[] getContext() {
+        return new Object[] {1, RetentionPolicy.RUNTIME, AnnotationUseContext.MIXIN};
+    }
+    
+    List onProvideCompletionsFromWithContext(String partial, Integer integer,
+            RetentionPolicy retentionPolicy, AnnotationUseContext annotationUseContext) {
+        return Arrays.asList(String.format("%s : %03d, %s, %s", partial,
+                integer, retentionPolicy, annotationUseContext));
+    }
 
     List onProvideCompletionsFromTitle(String partialTitle) throws Exception
     {
@@ -59,13 +81,9 @@ public class AutocompleteDemo
         return result;
     }
 
-    public String getTitle()
-    {
-        return title;
+    void onSuccess() {
+        alertManager.alert(Duration.SINGLE, Severity.INFO, String.format("Title: %s", title));
+        alertManager.alert(Duration.SINGLE, Severity.INFO, String.format("With context: %s", withContext));
     }
 
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
 }

@@ -24,6 +24,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -88,6 +89,20 @@ public class Autocomplete
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String tokens;
+    
+    /**
+     * The context for the link (optional parameter). This list of values will be converted into strings and included in
+     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
+     * methods. The first parameter of the context passed to "providecompletions" event handlers will
+     * still be the partial string typed by the user, so the context passed through this parameter
+     * will be added from the second position on.
+     * 
+     * Paramenter introduced in 5.4
+     * 
+     * @since 5.4
+     */
+    @Parameter
+    private Object[] context;
 
     @Inject
     private DeprecationWarning deprecationWarning;
@@ -105,7 +120,7 @@ public class Autocomplete
     @Import(stylesheet="Autocomplete.css")
     void afterRender()
     {
-        Link link = resources.createEventLink(EVENT_NAME);
+        Link link = resources.createEventLink(EVENT_NAME, context);
 
         JSONObject spec = new JSONObject("id", field.getClientId(),
                 "url", link.toString()).put("minChars", minChars);
@@ -113,7 +128,7 @@ public class Autocomplete
         jsSupport.require("t5/core/autocomplete").with(spec);
     }
 
-    Object onAutocomplete(@RequestParameter("t:input")
+    Object onAutocomplete(List<String> context, @RequestParameter("t:input")
                           String input)
     {
         final Holder<List> matchesHolder = Holder.create();
@@ -134,8 +149,19 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[]
-                {input}, callback);
+        Object[] newContext;
+        if (context.size() == 0) {
+            newContext = new Object[] {input};
+        }
+        else {
+            newContext = new Object[context.size() + 1];
+            newContext[0] = input;
+            for (int i = 1; i < newContext.length; i++) {
+                newContext[i] = context.get(i - 1);
+            }
+        }
+        
+        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, newContext, callback);
 
         JSONObject reply = new JSONObject();
 

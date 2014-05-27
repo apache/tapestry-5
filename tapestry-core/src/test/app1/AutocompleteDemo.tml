@@ -6,6 +6,7 @@
         <t:errors/>
 
         <t:textfield t:id="title" t:mixins="autocomplete,formgroup" tokens=",;" size="60"/>
+        <t:textfield t:id="withContext" t:mixins="autocomplete,formgroup" context="context"/>
 
         <div class="form-actions">
             <input type="submit" class="btn btn-primary" value="Show Track"/>
