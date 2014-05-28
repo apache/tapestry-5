@@ -75,7 +75,8 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 
     private MarkupWriter constructMarkupWriter(ContentType contentType, boolean partial, boolean HTML5)
     {
-        boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
+        final String mimeType = contentType.getMimeType();
+        boolean isHTML = mimeType.equalsIgnoreCase("text/html");
 
         MarkupModel model;
         
@@ -86,7 +87,7 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.
 
-        return new MarkupWriterImpl(model, contentType.getCharset());
+        return new MarkupWriterImpl(model, contentType.getCharset(), mimeType);
     }
 
     public MarkupWriter newMarkupWriter(String pageName)

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,18 +44,39 @@ public final class Document extends Node
     private final MarkupModel model;
 
     private final String encoding;
+    
+    private final String mimeType;
 
     /**
      * Non-element content that comes between the DOCTYPE and the root element.
      */
     private List<Node> preamble;
 
-    public Document(MarkupModel model)
+    /**
+     * Same as Document(model, null).
+     * @param model a {@link MarkupModel}.
+     */
+    public Document(final MarkupModel model)
     {
         this(model, null);
     }
 
-    public Document(MarkupModel model, String encoding)
+    /**
+     * Same as Document(model, encoding, null).
+     * @param model a {@link MarkupModel}.
+     */
+    public Document(final MarkupModel model, final String encoding) {
+        this(model, encoding, null);
+    }
+
+    /**
+     * Creates a document instance with a given markup model, encoding and MIME type.
+     * @param model a {@link MarkupModel}.
+     * @param encoding the encoding.
+     * @param mimeType the MIME type.
+     * @since 5.4
+     */
+    public Document(final MarkupModel model, final String encoding, final String mimeType)
     {
         super(null);
 
@@ -63,6 +84,7 @@ public final class Document extends Node
 
         this.model = model;
         this.encoding = encoding;
+        this.mimeType = mimeType;
     }
 
     @Override
@@ -282,4 +304,15 @@ public final class Document extends Node
     {
         return newChild(new CData(null, content));
     }
+
+    /**
+     * Returns the MIME type of this document.
+     * @return the MIME type.
+     * @since 5.4
+     */
+    public String getMimeType()
+    {
+        return mimeType;
+    }
+    
 }

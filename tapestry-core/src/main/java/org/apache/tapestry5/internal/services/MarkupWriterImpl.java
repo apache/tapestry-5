@@ -45,12 +45,12 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public MarkupWriterImpl(MarkupModel model)
     {
-        this(model, null);
+        this(model, null, null);
     }
 
-    public MarkupWriterImpl(MarkupModel model, String encoding)
+    public MarkupWriterImpl(MarkupModel model, String encoding, String mimeType)
     {
-        document = new Document(model, encoding);
+        document = new Document(model, encoding, mimeType);
     }
 
     public void toMarkup(PrintWriter writer)

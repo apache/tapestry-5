@@ -23,10 +23,15 @@ import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
+    
+    private final static Set<String> HTML_MIME_TYPES = CollectionFactory.newSet("text/html", "application/xml+xhtml");
+    
     private final List<String> coreLibraryURLs = CollectionFactory.newList();
 
     private final List<String> libraryURLs = CollectionFactory.newList();
@@ -108,6 +113,13 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (root == null)
         {
+            return;
+        }
+        
+        // TAP5-2200: Generating XML from pages and templates is not possible anymore
+        // only add JavaScript and CSS if we're actually generating 
+        final String mimeType = document.getMimeType();
+        if (mimeType != null && !HTML_MIME_TYPES.contains(mimeType)) {
             return;
         }
 
