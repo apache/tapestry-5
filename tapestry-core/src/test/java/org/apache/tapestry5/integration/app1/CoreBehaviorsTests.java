@@ -1458,9 +1458,7 @@ public class CoreBehaviorsTests extends App1TestCase
     {
         open(getBaseURL() + "xmlcontent");
 
-        // Commented out ... Selenium can't seem to handle an XML response.
-
-        // assertSourcePresent("<![CDATA[< & >]]>");
+        assertSourcePresent("<![CDATA[< & >]]>");
     }
 
     @Test
