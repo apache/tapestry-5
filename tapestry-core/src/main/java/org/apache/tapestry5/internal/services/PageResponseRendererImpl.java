@@ -72,10 +72,10 @@ public class PageResponseRendererImpl implements PageResponseRenderer
         }
         writer.toMarkup(pw);
 
-        long endNanos = System.nanoTime();
 
         if (debugEnabled)
         {
+            long endNanos = System.nanoTime();
             long elapsedNanos = endNanos - startNanos;
             double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
 
