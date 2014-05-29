@@ -570,7 +570,9 @@ public class Index
                     
                     new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings"),
 
-                    new Item("FormFieldClientIdParameterDemo", "Form Field clientId Parameter Demo", "Shows and tests how to explicitly set the id of a form field component")
+                    new Item("FormFieldClientIdParameterDemo", "Form Field clientId Parameter Demo", "Shows and tests how to explicitly set the id of a form field component"),
+
+                    new Item("gridwithsubmitwithcontextdemo", "Grid with Submit with context", "A grid whose rows contain a Submit component with context")
             );
 
     static

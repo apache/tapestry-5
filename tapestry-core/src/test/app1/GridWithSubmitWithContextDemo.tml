@@ -1,0 +1,16 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Grid with Submit with context Demo</h1>
+
+    <t:alerts />
+	<t:form>
+	    <table t:type="grid" t:id="grid" source="tracks" row="track" add="delete">
+	        <t:parameter name="ratingcell">
+	            <t:outputRating rating="track.rating"/>
+	        </t:parameter>
+	        <t:parameter name="deletecell">
+	            <t:submit class="btn" context="track"/>
+	        </t:parameter>
+	    </table>
+	</t:form>
+</html>

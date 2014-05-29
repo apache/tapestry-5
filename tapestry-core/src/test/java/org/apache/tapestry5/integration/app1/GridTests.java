@@ -351,5 +351,21 @@ public class GridTests extends App1TestCase
 
     }
 
+    /**
+     * TAP5-1658
+     */
+    @Test
+    public void submit_with_context_inside_grid()
+    {
+        openLinks("Grid with Submit with context");
+
+        clickAndWait("css=tr[data-grid-row='first'] input[type='submit']");
+        assertTextPresent("Deleted Bug Juice");
+
+        clickAndWait("css=tr[data-grid-row='last'] input[type='submit']");
+        assertTextPresent(" Deleted Studying Stones");
+
+    }
+
 
 }

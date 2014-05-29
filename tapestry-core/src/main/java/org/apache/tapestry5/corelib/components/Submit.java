@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.SubmitMode;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -194,12 +195,22 @@ public class Submit implements ClientElement
         if (disabled || !selected(clientId, elementName))
             return;
 
+        // TAP5-1658: copy the context of the current Submit instance so we trigger the event with
+        // the correct context later
+        final Holder<Object[]> currentContextHolder = Holder.create();
+        if (context != null)
+        {
+            Object[] currentContext = new Object[context.length];
+            System.arraycopy(context, 0, currentContext, 0, context.length);
+            currentContextHolder.put(currentContext);
+        }
+
         Runnable sendNotification = new Runnable()
         {
             public void run()
             {
                 // TAP5-1024: allow for navigation result from the event callback
-                resources.triggerEvent(event, context, eventCallback);
+                resources.triggerEvent(event, currentContextHolder.get(), eventCallback);
             }
         };
 
