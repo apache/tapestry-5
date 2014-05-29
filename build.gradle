@@ -298,11 +298,11 @@ subprojects {
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
 task aggregateJavadoc(type: Javadoc) {
-
-    // Temporary: don't check on the CI server. This can be removed when the CI server is upgraded.
-    if (!continuousIntegrationBuild && !checkJDK())
-        throw new StopActionException("Update your JDK to fix VU#225657")
-
+    doFirst {
+        // Temporary: don't check on the CI server. This can be removed when the CI server is upgraded.
+        if (!continuousIntegrationBuild && !checkJDK())
+            throw new StopActionException("Update your JDK to fix VU#225657")
+    }
     dependsOn configurations.javadoc
     group "Documentation"
 
@@ -557,14 +557,18 @@ boolean checkJDK() {
     def match = jdkVersion =~ /_(\d+)/
 
     if (!match.find())
-        throw new IllegalStateException("""Could not parse minor version number out of "#{jdkVersion}".""")
+        throw new IllegalStateException("""Could not parse minor version number out of "${jdkVersion}".""")
 
     def minor = match[0][1].toInteger()
 
     if (jdkVersion.startsWith("1.7")) {
         minor > 21
     }
-    else { // JDK 6 and 5 require the same minor version
+    else if (jdkVersion.startsWith("1.5") || jdkVersion.startsWith("1.6")) {
+        // JDK 6 and 5 require the same minor version
         minor > 45
+    }
+    else {
+        true
     }
 }
