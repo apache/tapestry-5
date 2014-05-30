@@ -18,14 +18,14 @@ import com.github.sommeri.less4j.Less4jException;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.LessSource;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
-import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Direct wrapper around the LessCompiler, so that Less source files may use {@code @import}, which isn't
@@ -39,80 +39,6 @@ public class LessResourceTransformer implements ResourceTransformer
     public String getTransformedContentType()
     {
         return "text/css";
-    }
-
-    class ResourceLessSource extends LessSource
-    {
-        private final Resource resource;
-
-        private final ResourceDependencies dependencies;
-
-
-        ResourceLessSource(Resource resource, ResourceDependencies dependencies)
-        {
-            this.resource = resource;
-            this.dependencies = dependencies;
-        }
-
-        @Override
-        public LessSource relativeSource(String filename) throws FileNotFound, CannotReadFile, StringSourceException
-        {
-            Resource relative = resource.forFile(filename);
-
-            if (!relative.exists())
-            {
-                throw new FileNotFound();
-            }
-
-            dependencies.addDependency(relative);
-
-            return new ResourceLessSource(relative, dependencies);
-        }
-
-        @Override
-        public String getContent() throws FileNotFound, CannotReadFile
-        {
-            // Adapted from Less's URLSource
-            Reader input = null;
-            try
-            {
-                input = new InputStreamReader(resource.openStream());
-                String content = IOUtils.toString(input).replace("\r\n", "\n");
-
-                return content;
-            } catch (FileNotFoundException ex)
-            {
-                throw new FileNotFound();
-            } catch (IOException ex)
-            {
-                throw new CannotReadFile();
-            } finally
-            {
-                InternalUtils.close(input);
-            }
-        }
-
-        @Override
-        public byte[] getBytes() throws FileNotFound, CannotReadFile
-        {
-            Reader input = null;
-            try
-            {
-                input = new InputStreamReader(resource.openStream());
-
-                return IOUtils.toByteArray(input);
-            } catch (FileNotFoundException ex)
-            {
-                throw new FileNotFound();
-            } catch (IOException ex)
-            {
-                throw new CannotReadFile();
-            } finally
-            {
-                InternalUtils.close(input);
-            }
-
-        }
     }
 
 
@@ -130,7 +56,7 @@ public class LessResourceTransformer implements ResourceTransformer
         {
             LessSource lessSource = new ResourceLessSource(source, dependencies);
 
-            LessCompiler.CompilationResult compilationResult = compiler.compile(lessSource);
+            LessCompiler.CompilationResult compilationResult = compile(compiler, lessSource);
 
             // Currently, ignoring any warnings.
 
@@ -143,5 +69,15 @@ public class LessResourceTransformer implements ResourceTransformer
         {
             throw new IOException(ex);
         }
+    }
+
+    /**
+     * Invoked from {@link #transform(org.apache.tapestry5.ioc.Resource, org.apache.tapestry5.services.assets.ResourceDependencies)}
+     * to perform the actual work of compiling a {@link org.apache.tapestry5.ioc.Resource} which has been wrapped as a
+     * {@link com.github.sommeri.less4j.LessSource}.
+     */
+    protected LessCompiler.CompilationResult compile(LessCompiler compiler, LessSource lessSource) throws Less4jException
+    {
+        return compiler.compile(lessSource);
     }
 }
