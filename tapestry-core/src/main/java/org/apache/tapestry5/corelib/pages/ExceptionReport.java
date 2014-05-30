@@ -21,16 +21,20 @@ import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageActivationContextCollector;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -99,17 +103,42 @@ public class ExceptionReport implements ExceptionReporter
 
     @Inject
     private ReloadHelper reloadHelper;
-    
+
     @Inject
     private URLEncoder urlEncoder;
 
     @Property
     private String rootURL;
 
+    @Property
+    private ThreadInfo thread;
+
+    public class ThreadInfo implements Comparable<ThreadInfo>
+    {
+        public final String className, name, flags;
+
+        public final ThreadGroup group;
+
+        public ThreadInfo(String className, String name, String flags, ThreadGroup group)
+        {
+            this.className = className;
+            this.name = name;
+            this.flags = flags;
+            this.group = group;
+        }
+
+        @Override
+        public int compareTo(ThreadInfo o)
+        {
+            return name.compareTo(o.name);
+        }
+    }
+
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
-    public boolean isShowActions() {
-        return failurePage != null && ! request.isXHR();
+    public boolean isShowActions()
+    {
+        return failurePage != null && !request.isXHR();
     }
 
     public void reportException(Throwable exception)
@@ -181,5 +210,70 @@ public class ExceptionReport implements ExceptionReporter
         // Neither : nor ; is a regexp character.
 
         return getPropertyValue().split(pathSeparator);
+    }
+
+    private Thread[] assembleThreads()
+    {
+        ThreadGroup rootGroup = Thread.currentThread().getThreadGroup();
+
+        while (true)
+        {
+            ThreadGroup parentGroup = rootGroup.getParent();
+            if (parentGroup == null)
+            {
+                break;
+            }
+            rootGroup = parentGroup;
+        }
+
+        Thread[] threads = new Thread[rootGroup.activeCount()];
+
+        while (true)
+        {
+            // A really ugly API. threads.length must be larger than
+            // the actual number of threads, just so we can determine
+            // if we're done.
+            int count = rootGroup.enumerate(threads, true);
+            if (count < threads.length)
+            {
+                return Arrays.copyOf(threads, count);
+            }
+            threads = new Thread[threads.length * 2];
+        }
+    }
+
+    public List<ThreadInfo> getThreads()
+    {
+        return F.flow(assembleThreads()).map(new Mapper<Thread, ThreadInfo>()
+        {
+            @Override
+            public ThreadInfo map(Thread t)
+            {
+                List<String> flags = CollectionFactory.newList();
+
+                if (t.isDaemon())
+                {
+                    flags.add("daemon");
+                }
+                if (!t.isAlive())
+                {
+                    flags.add("NOT alive");
+                }
+                if (t.isInterrupted())
+                {
+                    flags.add("interrupted");
+                }
+
+                if (t.getPriority() != Thread.NORM_PRIORITY)
+                {
+                    flags.add("priority " + t.getPriority());
+                }
+
+                return new ThreadInfo(Thread.currentThread() == t ? "active-thread" : "",
+                        t.getName(),
+                        InternalUtils.join(flags),
+                        t.getThreadGroup());
+            }
+        }).sort().toList();
     }
 }

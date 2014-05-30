@@ -1,3 +1,16 @@
 body {
     padding-top: 55px;
 }
+
+table.exception-report-threads td, table.exception-report-threads th {
+    text-align: right;
+}
+
+table.exception-report-threads tr td:last-child,
+table.exception-report-threads tr th:last-child {
+    text-align: left;
+}
+
+table.exception-report-threads tr.active-thread {
+    font-weight:  bold;
+}

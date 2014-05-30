@@ -155,6 +155,10 @@ The FormFragment component's visibleBound parameter is no longer supported; it w
 far up the DOM above the FormFragment's client-side element should be searched when determining visibility. This may
 resurface in the future as a CSS expression, but is currently not supported.
 
+## ExceptionReport Page
+
+The default exception report page has been modified to display a list of threads.
+
 ## Symbol tapestry.asset-path-prefix
 
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing

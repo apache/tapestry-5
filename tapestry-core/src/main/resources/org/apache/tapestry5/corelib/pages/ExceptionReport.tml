@@ -94,6 +94,27 @@
                     </dl>
                 </t:if>
 
+                <h3>Threads</h3>
+
+                <table class="table table-compact table-striped exception-report-threads">
+                    <thread>
+                        <tr>
+                            <th>Thread Name</th>
+                            <th>Group Name</th>
+                            <th>Flags</th>
+                        </tr>
+                    </thread>
+                    <tbody>
+
+                        <tr t:type="loop" source="threads" value="thread" class="${thread.className}">
+                            <td class="thread-name">${thread.name}</td>
+                            <td>${thread.group?.name}</td>
+                            <td>${thread.flags}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
                 <h3>System Properties</h3>
                 <dl>
                     <t:loop source="systemProperties" value="propertyName">
