@@ -1,5 +1,3 @@
-// Copyright 2013-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -41,14 +39,13 @@ public class LessResourceTransformer implements ResourceTransformer
         return "text/css";
     }
 
-    class ResourceLessSource extends LessSource
+    protected class ResourceLessSource extends LessSource
     {
         private final Resource resource;
 
         private final ResourceDependencies dependencies;
 
-
-        ResourceLessSource(Resource resource, ResourceDependencies dependencies)
+        protected ResourceLessSource(Resource resource, ResourceDependencies dependencies)
         {
             this.resource = resource;
             this.dependencies = dependencies;
@@ -124,7 +121,7 @@ public class LessResourceTransformer implements ResourceTransformer
         return compiled.openStream();
     }
 
-    private BytestreamCache invokeLessCompiler(Resource source, ResourceDependencies dependencies) throws IOException
+    protected BytestreamCache invokeLessCompiler(Resource source, ResourceDependencies dependencies) throws IOException
     {
         try
         {
