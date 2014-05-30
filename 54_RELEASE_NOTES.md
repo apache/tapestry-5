@@ -159,6 +159,10 @@ resurface in the future as a CSS expression, but is currently not supported.
 
 The default exception report page has been modified to display a list of threads.
 
+## ExceptionReporter Service
+
+A new service, `ExceptionReporter`, will now create a text file on the file system for each runtime request processing exception.
+
 ## Symbol tapestry.asset-path-prefix
 
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing

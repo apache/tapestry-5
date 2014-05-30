@@ -38,6 +38,7 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -370,6 +371,7 @@ public final class TapestryModule
         binder.bind(PathConstructor.class, PathConstructorImpl.class);
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
+        binder.bind(org.apache.tapestry5.services.exceptions.ExceptionReporter.class, ExceptionReporterImpl.class);
     }
 
     // ========================================================================
@@ -2126,6 +2128,7 @@ public final class TapestryModule
         // TAP5-2187
         configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, "false");
 
+        configuration.add(SymbolConstants.EXCEPTION_REPORTS_DIR, "build/exceptions");
     }
 
     /**

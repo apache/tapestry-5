@@ -1,5 +1,3 @@
-// Copyright 2008-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -474,14 +472,24 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String FORM_FIELD_CSS_CLASS = "tapestry.form-field-css-class";
-    
+
     /**
      * Defines whether {@link java.text.DateFormat} instances created by Tapestry should be
      * lenient or not by default. The default value is <code>false</code>.
+     *
      * @since 5.4
      */
     public static final String LENIENT_DATE_FORMAT = "tapestry.lenient-date-format";
 
+    /**
+     * The directory to which exception report files should be written. The default is appropriate
+     * for development: {@code build/exceptions}, and should be changed for production.
+     *
+     * @see org.apache.tapestry5.services.exceptions.ExceptionReporter
+     * @since 5.4
+     */
+    
+    public static final String EXCEPTION_REPORTS_DIR = "tapestry.exception-reports-dir";
     /**
      * Defines whether {@link CSSURLRewriter} will throw an exception when a CSS file
      * references an URL which doesn't exist. The default value is <code>false</code>.

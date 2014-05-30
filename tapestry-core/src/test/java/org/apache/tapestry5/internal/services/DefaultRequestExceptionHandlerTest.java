@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,12 +12,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-import java.security.AccessControlException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.ContextAwareException;
 import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.Link;
@@ -28,13 +20,21 @@ import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.exceptions.ExceptionReporter;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.security.AccessControlException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @SuppressWarnings("serial")
-public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
+public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase
+{
     private Map<Class, Object> mockConfiguration = new HashMap<Class, Object>();
     RequestPageCache pageCache;
     PageResponseRenderer renderer;
@@ -44,25 +44,31 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     ComponentClassResolver componentClassResolver;
     LinkSource linkSource;
     ServiceResources serviceResources;
+
     private DefaultRequestExceptionHandler exceptionHandler;
 
-    private static class MyContextAwareException extends Throwable implements ContextAwareException {
+
+    private static class MyContextAwareException extends Throwable implements ContextAwareException
+    {
         private Object[] context;
 
-        public MyContextAwareException(Object[] context) {
+        public MyContextAwareException(Object[] context)
+        {
             this.context = context;
         }
 
-        public Object[] getContext() {
+        public Object[] getContext()
+        {
             return context;
         }
 
     }
-    
-    private static class MyPage {
-        
+
+    private static class MyPage
+    {
+
     }
-    
+
     @BeforeMethod
     public void setup_tests() throws Exception
     {
@@ -75,28 +81,45 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
         componentClassResolver = mockComponentClassResolver();
         linkSource = mockLinkSource();
         serviceResources = mockServiceResources();
-          mockConfiguration.put(AccessControlException.class, MyPage.class);
-        mockConfiguration.put(MyContextAwareException.class, new ExceptionHandlerAssistant() {
-                      public Object handleRequestException(Throwable exception, List<Object> exceptionContext)
-                          throws IOException {
-                      return null;
-                  }
-              });
-        exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, mockConfiguration);
+        mockConfiguration.put(AccessControlException.class, MyPage.class);
+        mockConfiguration.put(MyContextAwareException.class, new ExceptionHandlerAssistant()
+        {
+            public Object handleRequestException(Throwable exception, List<Object> exceptionContext)
+                    throws IOException
+            {
+                return null;
+            }
+        });
+
+        ExceptionReporter noopExceptionReporter = new ExceptionReporter()
+        {
+            @Override
+            public void reportException(Throwable exception)
+            {
+
+            }
+        };
+
+        exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, noopExceptionReporter, mockConfiguration);
     }
-    
+
 
     @Test
-    public void noContextWhenExceptionDoesntContainMessage() {
-        Object[] context = exceptionHandler.formExceptionContext(new RuntimeException() {
+    public void noContextWhenExceptionDoesntContainMessage()
+    {
+        Object[] context = exceptionHandler.formExceptionContext(new RuntimeException()
+        {
         });
         assertEquals(context.length, 0);
     }
 
     @Test
-    public void contextIsExceptionMessage() {
-        Object[] context = exceptionHandler.formExceptionContext(new RuntimeException() {
-            public String getMessage() {
+    public void contextIsExceptionMessage()
+    {
+        Object[] context = exceptionHandler.formExceptionContext(new RuntimeException()
+        {
+            public String getMessage()
+            {
                 return "HelloWorld";
             }
         });
@@ -105,7 +128,8 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     }
 
     @Test
-    public void contextIsExceptionType() {
+    public void contextIsExceptionType()
+    {
         Object[] context = exceptionHandler.formExceptionContext(new IllegalArgumentException("Value not allowed"));
         assertEquals(context.length, 1);
         assertTrue(context[0] instanceof String);
@@ -113,42 +137,47 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     }
 
     @Test
-    public void contextIsProvidedByContextAwareException() {
-        Object[] sourceContext = new Object[] { new Integer(10), this };
+    public void contextIsProvidedByContextAwareException()
+    {
+        Object[] sourceContext = new Object[]{new Integer(10), this};
 
-        Object[] context = exceptionHandler.formExceptionContext(new MyContextAwareException(sourceContext) {
+        Object[] context = exceptionHandler.formExceptionContext(new MyContextAwareException(sourceContext)
+        {
         });
         assertEquals(context, sourceContext);
 
     }
-    
+
     @Test
-    public void handleRequestExceptionWithConfiguredPage() throws IOException {
-        train_resolvePageClassNameToPageName(componentClassResolver, MyPage.class.getName(), "mypage" );
+    public void handleRequestExceptionWithConfiguredPage() throws IOException
+    {
+        train_resolvePageClassNameToPageName(componentClassResolver, MyPage.class.getName(), "mypage");
         Link link = mockLink();
         expect(linkSource.createPageRenderLink("mypage", false, new Object[]{"accesscontrol"})).andReturn(link);
         expect(request.isXHR()).andReturn(false);
         response.sendRedirect(link);
         EasyMock.expectLastCall();
         replay();
-        
+
         exceptionHandler.handleRequestException(new AccessControlException("No permission"));
     }
-    
+
     @Test
-    public void handleRequestExceptionWithConfiguredAssistant() throws IOException {
-        ExceptionHandlerAssistant assistant = new ExceptionHandlerAssistant() {
+    public void handleRequestExceptionWithConfiguredAssistant() throws IOException
+    {
+        ExceptionHandlerAssistant assistant = new ExceptionHandlerAssistant()
+        {
             public Object handleRequestException(Throwable exception, List<Object> exceptionContext)
                     throws IOException
             {
                 return null;
             }
         };
-        
+
         mockConfiguration.put(MyContextAwareException.class, assistant);
         replay();
-        
+
         exceptionHandler.handleRequestException(new MyContextAwareException(new Object[]{}));
     }
-    
+
 }

@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,6 +31,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.ref.Reference;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -586,6 +585,34 @@ public class TapestryInternalUtils
         Reference<V> ref = map.get(key);
 
         return ref == null ? null : ref.get();
+    }
+
+    /**
+     * Gathers together an array containing all the threads.
+     * @since 5.4 */
+    public static Thread[] getAllThreads() {
+        ThreadGroup rootGroup = Thread.currentThread().getThreadGroup();
+
+        while (true) {
+            ThreadGroup parentGroup = rootGroup.getParent();
+            if (parentGroup == null) {
+                break;
+            }
+            rootGroup = parentGroup;
+        }
+
+        Thread[] threads = new Thread[rootGroup.activeCount()];
+
+        while (true) {
+            // A really ugly API. threads.length must be larger than
+            // the actual number of threads, just so we can determine
+            // if we're done.
+            int count = rootGroup.enumerate(threads, true);
+            if (count < threads.length) {
+                return Arrays.copyOf(threads, count);
+            }
+            threads = new Thread[threads.length * 2];
+        }
     }
 }
 
