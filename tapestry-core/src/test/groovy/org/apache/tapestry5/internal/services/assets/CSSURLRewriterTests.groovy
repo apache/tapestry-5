@@ -284,4 +284,50 @@ div.busy {
 
     }
 
+    // See TAP5-2187    
+    @Test
+    void dont_fail_when_rewritten_url_is_not_found() {
+        def input = '''
+body {
+  background: white url("images/back.png") attach-x;
+}
+h1 {
+  background: white url("images/i_dont_exist.png") attach-x;
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+        def asset = newMock Asset
+
+        expect(
+            assetSource.getAsset(resource, "images/back.png", null)
+        ).andReturn asset
+
+        expect(asset.toClientURL()).andReturn "/ctx/images/back.png"
+
+        expect(
+            assetSource.getAsset(resource, "images/i_dont_exist.png", null)
+        ).andReturn null
+
+        replay()
+
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+
+        def output = rewriter.replaceURLs input, resource
+
+        assertEquals output, '''
+body {
+  background: white url("/ctx/images/back.png") attach-x;
+}
+h1 {
+  background: white url("images/i_dont_exist.png") attach-x;
+}
+'''
+
+        verify()
+
+    }
+
 }

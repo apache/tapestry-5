@@ -154,17 +154,22 @@ public class CSSURLRewriter extends DelegatingSRS
 
             Asset asset = assetSource.getAsset(baseResource, url, null);
 
-            String assetURL = asset.toClientURL();
-
-            String queryParameters = matcher.group(3);
-            if (queryParameters != null)
+            if (asset != null) 
             {
-                assetURL += queryParameters;
+                String assetURL = asset.toClientURL();
+
+                String queryParameters = matcher.group(3);
+                if (queryParameters != null)
+                {
+                    assetURL += queryParameters;
+                }
+
+                appendReplacement(matcher, output, assetURL);
+
+                didReplace = true;
+                
             }
-
-            appendReplacement(matcher, output, assetURL);
-
-            didReplace = true;
+            
         }
 
         if (!didReplace)
