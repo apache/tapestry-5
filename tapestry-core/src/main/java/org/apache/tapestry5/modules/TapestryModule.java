@@ -2122,6 +2122,9 @@ public final class TapestryModule
         
         // TAP5-1998
         configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, "false");
+        
+        // TAP5-2187
+        configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, "false");
 
     }
 

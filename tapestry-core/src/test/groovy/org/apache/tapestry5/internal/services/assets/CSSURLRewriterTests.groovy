@@ -17,7 +17,7 @@ body {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null, true)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -43,7 +43,7 @@ body {
         replay()
 
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -78,7 +78,7 @@ body {
 
         replay()
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -112,7 +112,7 @@ body {
         replay()
 
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -134,7 +134,7 @@ body {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null, true)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -147,7 +147,7 @@ body {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null, true)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -178,7 +178,7 @@ body {
         replay()
 
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -199,7 +199,7 @@ span {
 }
 '''
 
-        def rewriter = new CSSURLRewriter(null, null, null, null)
+        def rewriter = new CSSURLRewriter(null, null, null, null, true)
 
         assertNull rewriter.replaceURLs(input, null)
     }
@@ -229,7 +229,7 @@ div.busy {
 
         replay()
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -269,7 +269,7 @@ div.busy {
 
         replay()
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -305,7 +305,8 @@ h1 {
         ).andReturn asset
 
         expect(asset.toClientURL()).andReturn "/ctx/images/back.png"
-
+        expect(resource.toURL()).andReturn new java.net.URL("file:/home/you/layout.css")
+        
         expect(
             assetSource.getAsset(resource, "images/i_dont_exist.png", null)
         ).andReturn null
@@ -313,7 +314,7 @@ h1 {
         replay()
 
 
-        def rewriter = new CSSURLRewriter(null, null, assetSource, null)
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, false)
 
         def output = rewriter.replaceURLs input, resource
 
@@ -325,8 +326,33 @@ h1 {
   background: white url("images/i_dont_exist.png") attach-x;
 }
 '''
-
         verify()
+
+    }
+    
+    // See TAP5-2187
+    @Test(expectedExceptions = RuntimeException.class)
+    void strict_css_url_rewriting() {
+        def input = '''
+h1 {
+  background: white url("images/i_dont_exist.png") attach-x;
+}
+'''
+
+        def assetSource = newMock AssetSource
+        def resource = newMock Resource
+
+        expect(
+            assetSource.getAsset(resource, "images/i_dont_exist.png", null)
+        ).andReturn null
+        expect(resource.toURL()).andReturn new java.net.URL("file:/home/you/layout.css")
+    
+        replay()
+
+        def rewriter = new CSSURLRewriter(null, null, assetSource, null, true) 
+        
+        // should throw an exception here
+        rewriter.replaceURLs input, resource
 
     }
 

@@ -482,4 +482,12 @@ public class SymbolConstants
      */
     public static final String LENIENT_DATE_FORMAT = "tapestry.lenient-date-format";
 
+    /**
+     * Defines whether {@link CSSURLRewriter} will throw an exception when a CSS file
+     * references an URL which doesn't exist. The default value is <code>false</code>.
+     * 
+     * @since 5.4
+     */
+    public static final String STRICT_CSS_URL_REWRITING = "tapestry.strict-css-url-rewriting";
+
 }

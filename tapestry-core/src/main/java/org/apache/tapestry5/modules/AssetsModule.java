@@ -135,9 +135,10 @@ public class AssetsModule
     public StreamableResourceSource enableCSSURLRewriting(StreamableResourceSource delegate,
                                                           OperationTracker tracker,
                                                           AssetSource assetSource,
-                                                          AssetChecksumGenerator checksumGenerator)
+                                                          AssetChecksumGenerator checksumGenerator,
+                                                          @Symbol(SymbolConstants.STRICT_CSS_URL_REWRITING) boolean strictCssUrlRewriting)
     {
-        return new CSSURLRewriter(delegate, tracker, assetSource, checksumGenerator);
+        return new CSSURLRewriter(delegate, tracker, assetSource, checksumGenerator, strictCssUrlRewriting);
     }
 
     /**

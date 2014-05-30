@@ -15,11 +15,14 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.assets.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +42,7 @@ import java.util.regex.Pattern;
  * somewhat banking on the fact that referenced resources are non-compressable images.
  *
  * @since 5.4
+ * @see SymbolConstants#STRICT_CSS_URL_REWRITING
  */
 public class CSSURLRewriter extends DelegatingSRS
 {
@@ -64,13 +68,19 @@ public class CSSURLRewriter extends DelegatingSRS
     private final AssetSource assetSource;
 
     private final AssetChecksumGenerator checksumGenerator;
+    
+    private final Logger logger = LoggerFactory.getLogger(CSSURLRewriter.class);
+    
+    private final boolean strictCssUrlRewriting;
 
-    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource, AssetChecksumGenerator checksumGenerator)
+    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource, 
+            AssetChecksumGenerator checksumGenerator, boolean strictCssUrlRewriting)
     {
         super(delegate);
         this.tracker = tracker;
         this.assetSource = assetSource;
         this.checksumGenerator = checksumGenerator;
+        this.strictCssUrlRewriting = strictCssUrlRewriting;
     }
 
     @Override
@@ -168,6 +178,18 @@ public class CSSURLRewriter extends DelegatingSRS
 
                 didReplace = true;
                 
+            }
+            else 
+            {
+                final String message = String.format("URL %s, referenced in file %s, doesn't exist.", url, baseResource.toURL(), baseResource);
+                if (strictCssUrlRewriting) 
+                {
+                    throw new RuntimeException(message);
+                }
+                else if (logger.isWarnEnabled()) 
+                {
+                    logger.warn(message);
+                }
             }
             
         }
