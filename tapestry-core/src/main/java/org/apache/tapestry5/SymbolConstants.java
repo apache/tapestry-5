@@ -488,12 +488,12 @@ public class SymbolConstants
      * @see org.apache.tapestry5.services.exceptions.ExceptionReporter
      * @since 5.4
      */
-    
+
     public static final String EXCEPTION_REPORTS_DIR = "tapestry.exception-reports-dir";
     /**
-     * Defines whether {@link CSSURLRewriter} will throw an exception when a CSS file
+     * Defines whether {@link org.apache.tapestry5.internal.services.assets.CSSURLRewriter} will throw an exception when a CSS file
      * references an URL which doesn't exist. The default value is <code>false</code>.
-     * 
+     *
      * @since 5.4
      */
     public static final String STRICT_CSS_URL_REWRITING = "tapestry.strict-css-url-rewriting";
