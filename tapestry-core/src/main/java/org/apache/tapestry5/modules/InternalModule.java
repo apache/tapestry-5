@@ -29,6 +29,7 @@ import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 import javax.servlet.http.Cookie;
+
 import java.util.Map;
 
 /**
@@ -71,6 +72,8 @@ public class InternalModule
         binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();
         binder.bind(UnknownActivationContextHandler.class, UnknownActivationContextHandlerImpl.class);
         binder.bind(ReloadHelper.class, ReloadHelperImpl.class);
+        binder.bind(PreSelectedFormNamesService.class, PreSelectedFormNamesServiceImpl.class);
+
     }
 
     public static CookieSource buildCookieSource(final RequestGlobals requestGlobals)

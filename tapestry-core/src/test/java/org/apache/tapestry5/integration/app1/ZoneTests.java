@@ -233,9 +233,9 @@ public class ZoneTests extends App1TestCase
 
         select("selectValue1", "3 pre ajax");
 
-        waitForElementToAppear("select2ValueZone");
+        waitForAjaxRequestsToComplete();
 
-        select("//div[@id='select2ValueZone']//select", "4 post ajax");
+        select("//div[@id='select2ValueZone']//select", "4 post ajax, number 013, retention policy RUNTIME");
     }
 
     @Test

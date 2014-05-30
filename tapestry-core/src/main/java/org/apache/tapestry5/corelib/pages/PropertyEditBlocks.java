@@ -44,51 +44,53 @@ public class PropertyEditBlocks
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-                    "clientId=prop:context.propertyId", "annotationProvider=context"})
+                    "clientId=prop:context.propertyId", "annotationProvider=context",
+                    "forceClientIdAllocation=true"})
     private TextField textField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:numberFieldTranslator", "validate=prop:numberFieldValidator",
-                    "clientId=prop:context.propertyId", "annotationProvider=context"})
+                    "clientId=prop:context.propertyId", "annotationProvider=context",
+                    "forceClientIdAllocation=true"})
     private TextField numberField;
 
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
                     "model=selectModelForProperty", "validate=prop:selectValidator",
-                    "clientId=prop:context.propertyId"})
+                    "clientId=prop:context.propertyId", "forceClientIdAllocation=true"})
     private Select select;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
-                    "clientId=prop:context.propertyId"})
+                    "clientId=prop:context.propertyId", "forceClientIdAllocation=true"})
     private Checkbox checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
-                    "validate=prop:dateFieldValidator"})
+                    "validate=prop:dateFieldValidator", "forceClientIdAllocation=true"})
     private DateField dateField;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
-                    "validate=prop:calendarFieldValidator"})
+                    "validate=prop:calendarFieldValidator", "forceClientIdAllocation=true"})
     private DateField calendarField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:passwordFieldTranslator", "validate=prop:passwordFieldValidator",
-                    "clientId=prop:context.propertyId", "annotationProvider=context"})
+                    "clientId=prop:context.propertyId", "annotationProvider=context", "forceClientIdAllocation=true"})
     private PasswordField passwordField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:textAreaTranslator",
                     "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
-                    "annotationProvider=context"})
+                    "annotationProvider=context", "forceClientIdAllocation=true"})
     private TextArea textArea;
 
 
