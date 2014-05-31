@@ -222,4 +222,10 @@ public class ZoneDemo
     {
         return new MultiZoneUpdate("notAZone", forNotAZone);
     }
+    
+    void onActionFromUpdateViaAjaxResponseRenderer()
+    {
+        name = "AjaxResponseRenderer";
+        ajaxResponseRenderer.addRender(output);
+    }
 }

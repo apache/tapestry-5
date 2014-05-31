@@ -87,6 +87,7 @@
         MultiZone update with id of non-Zone
         element
     </t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="updateViaAjaxResponseRenderer" zone="output">Update via AjaxResponseRenderer</t:actionlink>
 </div>
 
 <div id="notAZone"/>

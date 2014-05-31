@@ -323,4 +323,24 @@ public class ZoneTests extends App1TestCase
         assertText("zone-update-message", "Zone updated.");
     }
 
+    /**
+     * TAP5-2330
+     */
+    @Test
+    public void update_zone_with_no_clientid()
+    {
+        openLinks("Zone Demo");
+
+        assertText("zone-update-message", "");
+
+        click("link=Update via AjaxResponseRenderer");
+
+        waitForAjaxRequestsToComplete();
+
+        assertText("zone-update-message", "Zone updated.");
+        
+        assertEquals("Selected: AjaxResponseRenderer", getText("output"));
+        
+    }
+
 }

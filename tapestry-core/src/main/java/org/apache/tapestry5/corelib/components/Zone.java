@@ -250,6 +250,12 @@ public class Zone implements ClientBodyElement
     {
         if (resources.isBound("id"))
             return idParameter;
+        
+        // TAP4-2342. I know this won't work with a Zone with no given clientId and that was already 
+        // via AJAX inside an outer Zone, but it's still better than nothing.
+        if (clientId == null) {
+            clientId = resources.getId();
+        }
 
         return clientId;
     }
