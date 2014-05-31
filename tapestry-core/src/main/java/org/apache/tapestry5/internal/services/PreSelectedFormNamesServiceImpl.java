@@ -29,7 +29,7 @@ public class PreSelectedFormNamesServiceImpl implements PreSelectedFormNamesServ
     public PreSelectedFormNamesServiceImpl(    
             @Symbol(InternalSymbols.PRE_SELECTED_FORM_NAMES) String preselectedFormNames)
     {
-        this.names = Collections.unmodifiableSet(CollectionFactory.newSet(TapestryInternalUtils.splitAtCommas(preselectedFormNames)));
+        this.names = Collections.unmodifiableSet(CollectionFactory.<String,String>newSet(TapestryInternalUtils.splitAtCommas(preselectedFormNames)));
     }
 
     @Override
