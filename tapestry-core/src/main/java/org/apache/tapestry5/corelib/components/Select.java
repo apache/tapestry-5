@@ -90,7 +90,7 @@ public class Select extends AbstractField
      *
      * @since 5.4
      */
-    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.VALIDATE_WITH_MODEL)
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.VALIDATE_WITH_MODEL, defaultPrefix = BindingConstants.LITERAL)
     private SecureOption secure;
 
     /**
