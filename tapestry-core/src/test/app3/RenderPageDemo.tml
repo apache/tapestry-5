@@ -9,7 +9,7 @@
         </p>
 
         <blockquote id="content">
-            <t:outputraw value="pageContent"/>
+            ${pageContent}
         </blockquote>
 
         <p>
