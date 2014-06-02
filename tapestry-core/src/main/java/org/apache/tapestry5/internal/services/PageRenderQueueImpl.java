@@ -93,21 +93,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
         return partialRenderInitialized;
     }
 
-    private void partialRenderInitialized()
-    {
-        if (page == null)
-        {
-            throw new IllegalStateException("Page must be specified before initializing for partial page render.");
-        }
-
-        partialRenderInitialized = true;
-    }
-
     public void addPartialRenderer(RenderCommand renderer)
     {
         assert renderer != null;
 
-        partialRenderInitialized();
+        partialRenderInitialized = true;
 
         queue.push(renderer);
     }
@@ -128,7 +118,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
     {
         assert filter != null;
 
-        partialRenderInitialized();
+        partialRenderInitialized = true;
 
         filters.push(filter);
     }
