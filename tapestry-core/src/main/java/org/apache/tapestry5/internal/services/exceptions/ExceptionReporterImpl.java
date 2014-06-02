@@ -83,7 +83,7 @@ public class ExceptionReporterImpl implements ExceptionReporter
     public void reportException(Throwable exception)
     {
         Date date = new Date();
-        String folderName = String.format("%tY/%<tm/%<td/%<tH/%<tM", date);
+        String folderName = String.format("%tY-%<tm-%<td/%<tH/%<tM", date);
         String fileName = String.format(
                 "exception-%tY%<tm%<td-%<tH%<tM%<tS-%<tL.%d.txt", date,
                 uid.getAndIncrement());
