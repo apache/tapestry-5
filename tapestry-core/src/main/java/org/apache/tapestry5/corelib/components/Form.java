@@ -19,7 +19,9 @@ import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.BeanValidationContext;
+import org.apache.tapestry5.internal.BeanValidationContextImpl;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.FormControlNameManager;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
@@ -128,7 +130,7 @@ public class Form implements ClientElement, FormValidationControl
      * <a href="https://issues.apache.org/jira/browse/TAP5-1808">TAP5-1801</a>.
      */
     @Parameter("defaultTracker")
-    private ValidationTracker tracker;
+    protected ValidationTracker tracker;
 
     @Inject
     @Symbol(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED)
@@ -388,8 +390,7 @@ public class Form implements ClientElement, FormValidationControl
                 try
                 {
                     value = URLDecoder.decode(value, "UTF-8");
-                }
-                catch (UnsupportedEncodingException e)
+                } catch (UnsupportedEncodingException e)
                 {
                     logger.error(String.format(
                             "Enable to decode parameter value for parameter %s in form %s",
@@ -472,6 +473,8 @@ public class Form implements ClientElement, FormValidationControl
             {"unchecked", "InfiniteLoopStatement"})
     Object onAction(EventContext context) throws IOException
     {
+        beforeProcessSubmit(context);
+
         tracker.clear();
 
         formSupport = new FormSupportImpl(resources, validationId);
@@ -520,7 +523,11 @@ public class Form implements ClientElement, FormValidationControl
             fireValidateEvent(EventConstants.VALIDATE, context, eventCallback);
 
             if (eventCallback.isAborted())
+            {
                 return true;
+            }
+
+            afterValidate();
 
             // Let the listeners know about overall success or failure. Most
             // listeners fall into
@@ -551,6 +558,8 @@ public class Form implements ClientElement, FormValidationControl
             // submitted.
 
             resources.triggerContextEvent(EventConstants.SUBMIT, context, eventCallback);
+
+            afterSuccessOrFailure();
 
             if (eventCallback.isAborted())
             {
@@ -583,6 +592,52 @@ public class Form implements ClientElement, FormValidationControl
                 environment.pop(BeanValidationContext.class);
             }
         }
+    }
+
+    /**
+     * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} after the
+     * {@link org.apache.tapestry5.EventConstants#SUBMIT} or {@link org.apache.tapestry5.EventConstants#FAILURE} event has been triggered.
+     * <p/>
+     * This method will be invoked regardless of whether the submit or failure event was aborted.
+     * <p/>
+     * This implementation does nothing.
+     *
+     * @since 5.4
+     */
+
+    protected void afterSuccessOrFailure()
+    {
+
+    }
+
+    /**
+     * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} before any other setup.
+     * <p/>
+     * This implementation does nothing.
+     *
+     * @param context
+     *         as passed to {@code onAction()}
+     * @since 5.4
+     */
+    protected void beforeProcessSubmit(EventContext context)
+    {
+
+    }
+
+    /**
+     * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} after the
+     * {@link org.apache.tapestry5.EventConstants#VALIDATE} event has been triggered, and
+     * before the {@link #tracker} has been {@linkplain org.apache.tapestry5.ValidationTracker#clear() cleared}.
+     * <p/>
+     * Only invoked if the valiate event did not abort (that is, the no event handler method returned a value).
+     * <p/>
+     * This implementation does nothing.
+     *
+     * @since 5.4
+     */
+    protected void afterValidate()
+    {
+
     }
 
     private boolean isFormCancelled()
@@ -672,7 +727,10 @@ public class Form implements ClientElement, FormValidationControl
 
                     // Actions are a mix of ordinary actions and cancel actions.  Filter out one set or the other
                     // based on whether the form was submitted or cancelled.
-                    if (forFormCancel != cancelAction) { continue; }
+                    if (forFormCancel != cancelAction)
+                    {
+                        continue;
+                    }
 
                     component = source.getComponent(componentId);
 
@@ -765,7 +823,7 @@ public class Form implements ClientElement, FormValidationControl
         } catch (RuntimeException ex)
         {
             logger.error(
-                    String.format("Unable to obtrain form control names to preallocate: %s",
+                    String.format("Unable to obtain form control names to preallocate: %s",
                             ExceptionUtils.toMessage(ex)), ex);
         }
     }
