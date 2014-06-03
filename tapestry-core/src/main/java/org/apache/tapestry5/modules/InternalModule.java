@@ -1,5 +1,3 @@
-// Copyright 2008-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -72,7 +70,7 @@ public class InternalModule
         binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();
         binder.bind(UnknownActivationContextHandler.class, UnknownActivationContextHandlerImpl.class);
         binder.bind(ReloadHelper.class, ReloadHelperImpl.class);
-        binder.bind(PreSelectedFormNamesService.class, PreSelectedFormNamesServiceImpl.class);
+        binder.bind(FormControlNameManager.class, FormControlNameManagerImpl.class);
 
     }
 

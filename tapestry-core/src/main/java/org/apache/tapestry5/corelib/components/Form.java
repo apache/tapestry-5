@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,8 +20,8 @@ import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.services.FormControlNameManager;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
-import org.apache.tapestry5.internal.services.PreSelectedFormNamesService;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -223,7 +221,7 @@ public class Form implements ClientElement, FormValidationControl
     private ComponentSource source;
 
     @Inject
-    private PreSelectedFormNamesService preSelectedFormNamesService;
+    private FormControlNameManager formControlNameManager;
 
 
     /**
@@ -741,7 +739,7 @@ public class Form implements ClientElement, FormValidationControl
 
     private void preallocateNames(IdAllocator idAllocator)
     {
-        for (String name : preSelectedFormNamesService.getNames())
+        for (String name : formControlNameManager.getPreselectedNames())
         {
             idAllocator.allocateId(name);
             // See https://issues.apache.org/jira/browse/TAP5-1632

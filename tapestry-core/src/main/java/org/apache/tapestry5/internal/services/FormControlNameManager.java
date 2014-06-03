@@ -20,14 +20,14 @@ import org.apache.tapestry5.internal.InternalSymbols;
  * 
  * @see InternalSymbols#PRE_SELECTED_FORM_NAMES
  */
-public interface PreSelectedFormNamesService
+public interface FormControlNameManager
 {
     /**
      * Returns the set of pre-selected form names (ones that shouldn't be used as HTML elements
-     * client ids.
+     * client ids).
      * @return a {@link Set} of {@link String}s.
      */
-    Set<String> getNames();
+    Set<String> getPreselectedNames();
     
     /**
      * Tells whether a given name is pre-selected.

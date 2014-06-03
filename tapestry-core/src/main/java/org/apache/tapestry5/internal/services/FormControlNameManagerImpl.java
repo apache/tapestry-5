@@ -1,5 +1,3 @@
-// Copyright 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,19 +19,19 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
-public class PreSelectedFormNamesServiceImpl implements PreSelectedFormNamesService
+public class FormControlNameManagerImpl implements FormControlNameManager
 {
     
     final private Set<String> names;
 
-    public PreSelectedFormNamesServiceImpl(    
+    public FormControlNameManagerImpl(
             @Symbol(InternalSymbols.PRE_SELECTED_FORM_NAMES) String preselectedFormNames)
     {
         this.names = Collections.unmodifiableSet(CollectionFactory.<String,String>newSet(TapestryInternalUtils.splitAtCommas(preselectedFormNames)));
     }
 
     @Override
-    public Set<String> getNames()
+    public Set<String> getPreselectedNames()
     {
         return names;
     }

@@ -18,7 +18,7 @@ import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.services.PreSelectedFormNamesService;
+import org.apache.tapestry5.internal.services.FormControlNameManager;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -169,7 +169,7 @@ public abstract class AbstractField implements Field
     protected FieldValidationSupport fieldValidationSupport;
 
     @Inject
-    private PreSelectedFormNamesService preSelectedFormNamesService;
+    private FormControlNameManager formControlNameManager;
 
     final String defaultLabel()
     {
@@ -207,18 +207,25 @@ public abstract class AbstractField implements Field
             return javaScriptSupport.allocateClientId(resources);
         }
 
-        if (preSelectedFormNamesService.isPreselected(clientId))
-        {
-            throw new TapestryException(String.format(
-                    "The value '%s' for parameter clientId is not allowed as it causes a naming conflict in the client-side DOM. " +
-                            "Select a name not in the list: %s.",
-                    clientId,
-                    InternalUtils.joinSorted(preSelectedFormNamesService.getNames())), this, null);
-        }
 
         if (ensureClientIdUnique)
         {
             return javaScriptSupport.allocateClientId(clientId);
+        } else
+        {
+            // See https://issues.apache.org/jira/browse/TAP5-1632
+            // Basically, on the client, there can be a convenience lookup inside a HTMLFormElement
+            // by id OR name; so an id of "submit" (for example) will mask the HTMLFormElement.submit()
+            // function.
+
+            if (formControlNameManager.isPreselected(clientId))
+            {
+                throw new TapestryException(String.format(
+                        "The value '%s' for parameter clientId is not allowed as it causes a naming conflict in the client-side DOM. " +
+                                "Select an id not in the list: %s.",
+                        clientId,
+                        InternalUtils.joinSorted(formControlNameManager.getPreselectedNames())), this, null);
+            }
         }
 
         return clientId;
