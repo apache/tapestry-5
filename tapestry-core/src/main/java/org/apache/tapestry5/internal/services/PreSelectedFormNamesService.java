@@ -1,5 +1,3 @@
-// Copyright 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,9 +16,9 @@ import java.util.Set;
 import org.apache.tapestry5.internal.InternalSymbols;
 
 /**
- * Service provinding methods related to names that shouldn't be used as HTML elements client ids.
+ * Service providing methods related to names that shouldn't be used as HTML elements client ids.
  * 
- * @see InternalSymbols.PRE_SELECTED_FORM_NAMES
+ * @see InternalSymbols#PRE_SELECTED_FORM_NAMES
  */
 public interface PreSelectedFormNamesService
 {

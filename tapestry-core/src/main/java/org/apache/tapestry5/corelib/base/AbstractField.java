@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,24 +12,8 @@
 
 package org.apache.tapestry5.corelib.base;
 
-import java.io.Serializable;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.Validator;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.BeginRender;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.internal.BeanValidationContext;
@@ -39,11 +21,15 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.PreSelectedFormNamesService;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.io.Serializable;
 
 /**
  * Provides initialization of the clientId and elementName properties. In addition, adds the {@link RenderInformals},
@@ -80,7 +66,7 @@ public abstract class AbstractField implements Field
 
     @Inject
     protected Environment environment;
-    
+
     @Inject
     @Symbol(SymbolConstants.FORM_FIELD_CSS_CLASS)
     protected String cssClass;
@@ -130,37 +116,32 @@ public abstract class AbstractField implements Field
     private static final ProcessSubmission PROCESS_SUBMISSION_ACTION = new ProcessSubmission();
 
     /**
-     * The id used to generate a page-unique client-side identifier for the component. 
-     * If this parameter is not bound and this component is rendered multiple times in a request
-     * and <code>forceClientAllocation</code> is false (the default),
-     * a suffix will be appended to the to id to ensure uniqueness. Either way, 
-     * its value may be accessed via the {@link #getClientId() clientId property}.
-     * When this parameter is bound, Tapestry considers the user (developer) is taking care of 
-     * providing unique client-side identifiers. Special care should be taken when the
-     * field is inside a Zone.
-     * <br>
-     * <strong>Default value: the component's t:id</strong>.
-     * <br>
-     * <em>This parameter will be ignored if it receives any of these values:</em>
-     * <ul>
-     *   <li>reset</li>
-     *   <li>submit</li>
-     *   <li>id</li>
-     *   <li>method</li>
-     *   <li>action</li>
-     *   <li>onsubmit</li>
-     *   <li>cancel</li>
-     * </ul>
+     * Used to explicitly set the client-side id of the element for this component. Normally this is not
+     * bound (or null) and {@link org.apache.tapestry5.services.javascript.JavaScriptSupport#allocateClientId(org.apache.tapestry5.ComponentResources)}
+     * is used to generate a unique client-id based on the component's id. In some cases, when creating client-side
+     * behaviors, it is useful to explicitly set a unique id for an element using this parameter.
+     * <p/>
+     * Certain values, such as "submit", "method", "reset", etc., will cause client-side conflicts and are not allowed; using such will
+     * cause a runtime exception.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    protected String clientId;
-    
+    private String clientId;
+
     /**
-     * When true, it forces the clientId to be passed through the id allocator to avoid repeated ids
-     * even when the clientId parameter is bound.
+     * A rarely used option that indicates that the actual client id should start with the clientId parameter (if non-null)
+     * but should still pass that Id through {@link org.apache.tapestry5.services.javascript.JavaScriptSupport#allocateClientId(String)}
+     * to generate the final id.
+     * <p/>
+     * An example of this are the components used inside a {@link org.apache.tapestry5.corelib.components.BeanEditor} which
+     * will specify a clientId (based on the property name) but still require that it be unique.
+     * <p/>
+     * Defaults to false.
+     *
+     * @since 5.4
      */
-    @Parameter("false")
-    private boolean forceClientIdAllocation;
+    @Parameter
+    private boolean ensureClientIdUnique;
+
 
     private String assignedClientId;
 
@@ -186,18 +167,13 @@ public abstract class AbstractField implements Field
 
     @Inject
     protected FieldValidationSupport fieldValidationSupport;
-    
+
     @Inject
     private PreSelectedFormNamesService preSelectedFormNamesService;
 
     final String defaultLabel()
     {
         return defaultProvider.defaultLabel(resources);
-    }
-
-    final String defaultClientId()
-    {
-        return resources.getId();
     }
 
     public final String getLabel()
@@ -208,11 +184,6 @@ public abstract class AbstractField implements Field
     @SetupRender
     final void setup()
     {
-        // By default, use the component id as the (base) client id. If the clientid
-        // parameter is bound, then that is the value to use.
-
-        String id = clientId;
-
         // Often, these controlName and clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
@@ -220,14 +191,37 @@ public abstract class AbstractField implements Field
         if (formSupport == null)
             throw new RuntimeException(String.format("Component %s must be enclosed by a Form component.",
                     resources.getCompleteId()));
-        
-        final boolean avoidAllocation = resources.isBound("clientId") && !forceClientIdAllocation && !preSelectedFormNamesService.isPreselected(clientId);
-        assignedClientId = avoidAllocation ? clientId : javaScriptSupport.allocateClientId(id);
-        
-        String controlName = formSupport.allocateControlName(id);
+
+        assignedClientId = allocateClientId();
+
+        String controlName = formSupport.allocateControlName(assignedClientId);
 
         formSupport.storeAndExecute(this, new Setup(controlName));
         formSupport.store(this, PROCESS_SUBMISSION_ACTION);
+    }
+
+    private String allocateClientId()
+    {
+        if (clientId == null)
+        {
+            return javaScriptSupport.allocateClientId(resources);
+        }
+
+        if (preSelectedFormNamesService.isPreselected(clientId))
+        {
+            throw new TapestryException(String.format(
+                    "The value '%s' for parameter clientId is not allowed as it causes a naming conflict in the client-side DOM. " +
+                            "Select a name not in the list: %s.",
+                    clientId,
+                    InternalUtils.joinSorted(preSelectedFormNamesService.getNames())), this, null);
+        }
+
+        if (ensureClientIdUnique)
+        {
+            return javaScriptSupport.allocateClientId(clientId);
+        }
+
+        return clientId;
     }
 
     public final String getClientId()
@@ -328,7 +322,10 @@ public abstract class AbstractField implements Field
 
     protected void putPropertyNameIntoBeanValidationContext(String parameterName)
     {
-        if (beanValidationDisabled) { return; }
+        if (beanValidationDisabled)
+        {
+            return;
+        }
 
         String propertyName = ((InternalComponentResources) resources).getPropertyName(parameterName);
 
@@ -346,7 +343,10 @@ public abstract class AbstractField implements Field
 
     protected void removePropertyNameFromBeanValidationContext()
     {
-        if (beanValidationDisabled) { return; }
+        if (beanValidationDisabled)
+        {
+            return;
+        }
 
         BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
 

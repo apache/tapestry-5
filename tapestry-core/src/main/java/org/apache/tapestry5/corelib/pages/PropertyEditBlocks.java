@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -45,52 +43,52 @@ public class PropertyEditBlocks
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
                     "clientId=prop:context.propertyId", "annotationProvider=context",
-                    "forceClientIdAllocation=true"})
+                    "ensureClientIdUnique=true"})
     private TextField textField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:numberFieldTranslator", "validate=prop:numberFieldValidator",
                     "clientId=prop:context.propertyId", "annotationProvider=context",
-                    "forceClientIdAllocation=true"})
+                    "ensureClientIdUnique=true"})
     private TextField numberField;
 
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
                     "model=selectModelForProperty", "validate=prop:selectValidator",
-                    "clientId=prop:context.propertyId", "forceClientIdAllocation=true"})
+                    "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
     private Select select;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
-                    "clientId=prop:context.propertyId", "forceClientIdAllocation=true"})
+                    "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
     private Checkbox checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
-                    "validate=prop:dateFieldValidator", "forceClientIdAllocation=true"})
+                    "validate=prop:dateFieldValidator", "ensureClientIdUnique=true"})
     private DateField dateField;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
-                    "validate=prop:calendarFieldValidator", "forceClientIdAllocation=true"})
+                    "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true"})
     private DateField calendarField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:passwordFieldTranslator", "validate=prop:passwordFieldValidator",
-                    "clientId=prop:context.propertyId", "annotationProvider=context", "forceClientIdAllocation=true"})
+                    "clientId=prop:context.propertyId", "annotationProvider=context", "ensureClientIdUnique=true"})
     private PasswordField passwordField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:textAreaTranslator",
                     "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
-                    "annotationProvider=context", "forceClientIdAllocation=true"})
+                    "annotationProvider=context", "ensureClientIdUnique=true"})
     private TextArea textArea;
 
 

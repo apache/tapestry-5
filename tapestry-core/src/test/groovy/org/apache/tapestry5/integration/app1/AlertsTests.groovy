@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -99,9 +97,14 @@ class AlertsTests extends App1TestCase {
     void ajax_update_and_remove() {
         openLinks "Alerts Demo", "Reset Alerts Storage"
 
-        select "css=#ajax select[name=\"severity\"]", "Error"
-        select "css=#ajax select[name=\"duration\"]", "Until Dismissed"
-        type "css=#ajax input[name=\"message\"]", "ajax error until"
+        def severitySelector = "css=#ajax select[name='severity_0']"
+        def durationSelector = "css=#ajax select[name='duration_0']"
+        def messageSelector = "css=#ajax input[name='message_0']"
+        def markupSelector = "css=#ajax input[name='markup_0']"
+
+        select severitySelector, "Error"
+        select durationSelector, "Until Dismissed"
+        type messageSelector, "ajax error until"
 
         click "//input[@value='Ajax Update']"
 
@@ -116,14 +119,15 @@ class AlertsTests extends App1TestCase {
         // Check that the alert container is now empty
 
         assertText "css=$CONTAINER", ""
-        
+
         // Now with markup
         openLinks "Alerts Demo", "Reset Alerts Storage"
-        
-        select "css=#ajax select[name=\"severity\"]", "Warn"
-        select "css=#ajax select[name=\"duration\"]", "Single"
-        check "css=#ajax input[name='markup']"
-        type "css=#ajax input[name='message']", "<a><span>Markup!</span></a>"
+
+        select severitySelector, "Warn"
+        select durationSelector, "Single"
+
+        check markupSelector
+        type messageSelector, "<a><span>Markup!</span></a>"
         
         click "//input[@value='Ajax Update']"
         

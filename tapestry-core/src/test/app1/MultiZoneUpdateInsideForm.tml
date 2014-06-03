@@ -8,7 +8,8 @@
     <t:zone t:id="select1ValueZone" visible="false">Show</t:zone>
     <t:zone t:id="select2ValueZone">
       <t:label for="selectValue2"/>
-      <select t:type="Select" t:id="selectValue2" t:validate="required"/>
+      <!-- Only necessary to "lock down" the clientId to facilliate the test. -->
+      <select t:type="Select" t:id="selectValue2" clientId="selectValue2" t:validate="required"/>
     </t:zone>
     <br/>
     <input type="submit" value="Upate Form"/>
