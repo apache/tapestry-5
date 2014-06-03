@@ -19,6 +19,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -28,14 +29,19 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * <p>
- * This mixin periodically refreshs a @{link org.apache.tapestry5.corelib.components.Zone zone}
+ * This mixin periodically refreshs a {@link org.apache.tapestry5.corelib.components.Zone zone}
  * by triggering an event on the server using ajax requests.
  * </p>
- * <p/>
- * <b>Note: </b> This mixin is only meant for a @{link org.apache.tapestry5.corelib.components.Zone zone}
+ * <p>
+ * Server-side, the mixin triggers the "refresh" event with the mixin's context. A container may but
+ * does not need to handle the event. If the event is handled and a value is returned, that value is
+ * used to render the response. Otherwise, the Zone's body is re-rendered.
+ * </p>
+ * <b>Note: </b> This mixin is only meant for a {@link org.apache.tapestry5.corelib.components.Zone zone}.
  *
  * @tapestrydoc
  */
+@Events(EventConstants.REFRESH)
 public class ZoneRefresh
 {
     /**
