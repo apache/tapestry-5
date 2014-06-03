@@ -739,7 +739,7 @@ public class Form implements ClientElement, FormValidationControl
 
     private void preallocateNames(IdAllocator idAllocator)
     {
-        for (String name : formControlNameManager.getPreselectedNames())
+        for (String name : formControlNameManager.getReservedNames())
         {
             idAllocator.allocateId(name);
             // See https://issues.apache.org/jira/browse/TAP5-1632

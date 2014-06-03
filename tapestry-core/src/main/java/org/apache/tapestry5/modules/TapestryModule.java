@@ -2063,7 +2063,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, true);
 
-        configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit," + InternalConstants.CANCEL_NAME);
+        configuration.add(InternalSymbols.RESERVED_FORM_CONTROL_NAMES, "reset,submit,select,id,method,action,onsubmit," + InternalConstants.CANCEL_NAME);
 
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, false);
 

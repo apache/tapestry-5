@@ -1,5 +1,3 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,6 +11,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal;
+
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 public class InternalSymbols
 {
@@ -34,8 +34,10 @@ public class InternalSymbols
      * Comma-separated list of pre-allocated Form component control names. Basically, this exists to
      * work around name collisions on the client side. Starting in 5.3, these names are
      * also pre-allocated as ids.
+     * <p/>
      *
      * @since 5.2.0
      */
-    public static final String PRE_SELECTED_FORM_NAMES = "tapestry.pre-selected-form-names";
+    @IncompatibleChange(release = "5.4", details = "Renamed from PRE_SELECTED_FORM_NAMES.")
+    public static final String RESERVED_FORM_CONTROL_NAMES = "tapestry.reserved-form-control-names";
 }

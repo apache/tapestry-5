@@ -25,19 +25,19 @@ public class FormControlNameManagerImpl implements FormControlNameManager
     final private Set<String> names;
 
     public FormControlNameManagerImpl(
-            @Symbol(InternalSymbols.PRE_SELECTED_FORM_NAMES) String preselectedFormNames)
+            @Symbol(InternalSymbols.RESERVED_FORM_CONTROL_NAMES) String preselectedFormNames)
     {
         this.names = Collections.unmodifiableSet(CollectionFactory.<String,String>newSet(TapestryInternalUtils.splitAtCommas(preselectedFormNames)));
     }
 
     @Override
-    public Set<String> getPreselectedNames()
+    public Set<String> getReservedNames()
     {
         return names;
     }
 
     @Override
-    public boolean isPreselected(String name)
+    public boolean isReserved(String name)
     {
         return names.contains(name.toLowerCase());
     }

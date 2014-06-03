@@ -11,29 +11,32 @@
 // limitations under the License.package org.apache.tapestry5.internal.services;
 package org.apache.tapestry5.internal.services;
 
-import java.util.Set;
-
 import org.apache.tapestry5.internal.InternalSymbols;
 
+import java.util.Set;
+
 /**
- * Service providing methods related to names that shouldn't be used as HTML elements client ids.
- * 
- * @see InternalSymbols#PRE_SELECTED_FORM_NAMES
+ * Service providing methods related to names that shouldn't be used as form control element
+ * names or ids.
+ *
+ * @see InternalSymbols#RESERVED_FORM_CONTROL_NAMES
  */
 public interface FormControlNameManager
 {
     /**
-     * Returns the set of pre-selected form names (ones that shouldn't be used as HTML elements
+     * Returns the set of reserved form names (ones that shouldn't be used as HTML elements
      * client ids).
+     *
      * @return a {@link Set} of {@link String}s.
      */
-    Set<String> getPreselectedNames();
-    
+    Set<String> getReservedNames();
+
     /**
-     * Tells whether a given name is pre-selected.
+     * Tells whether a given name is reserved.
+     *
      * @param string
      * @return
      */
-    boolean isPreselected(String name);
-    
+    boolean isReserved(String name);
+
 }

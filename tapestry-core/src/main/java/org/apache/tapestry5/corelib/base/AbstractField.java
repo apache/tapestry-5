@@ -218,13 +218,13 @@ public abstract class AbstractField implements Field
             // by id OR name; so an id of "submit" (for example) will mask the HTMLFormElement.submit()
             // function.
 
-            if (formControlNameManager.isPreselected(clientId))
+            if (formControlNameManager.isReserved(clientId))
             {
                 throw new TapestryException(String.format(
                         "The value '%s' for parameter clientId is not allowed as it causes a naming conflict in the client-side DOM. " +
                                 "Select an id not in the list: %s.",
                         clientId,
-                        InternalUtils.joinSorted(formControlNameManager.getPreselectedNames())), this, null);
+                        InternalUtils.joinSorted(formControlNameManager.getReservedNames())), this, null);
             }
         }
 
