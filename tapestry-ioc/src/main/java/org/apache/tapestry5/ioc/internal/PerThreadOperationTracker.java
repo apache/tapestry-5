@@ -17,11 +17,9 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Manages a per-thread OperationTracker using a ThreadLocal.
@@ -29,8 +27,6 @@ import java.util.concurrent.locks.Lock;
 public class PerThreadOperationTracker implements OperationTracker
 {
     private final Logger logger;
-
-    private final Lock lock = JDKUtils.createLockForThreadLocalCreation();
 
     private final ThreadLocal<OperationTrackerImpl> perThread = new ThreadLocal<OperationTrackerImpl>()
     {
@@ -48,27 +44,12 @@ public class PerThreadOperationTracker implements OperationTracker
 
     OperationTracker get()
     {
-        lock.lock();
-
-        try
-        {
-            return perThread.get();
-        } finally
-        {
-            lock.unlock();
-        }
+        return perThread.get();
     }
 
     void cleanup()
     {
-        try
-        {
-            lock.lock();
-            if (perThread.get().isEmpty()) perThread.remove();
-        } finally
-        {
-            lock.unlock();
-        }
+        if (perThread.get().isEmpty()) perThread.remove();
     }
 
     @Override

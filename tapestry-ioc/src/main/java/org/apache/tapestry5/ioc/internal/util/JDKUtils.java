@@ -39,6 +39,7 @@ public class JDKUtils
      *
      * @return lock to use when creating
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static Lock createLockForThreadLocalCreation()
     {

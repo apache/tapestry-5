@@ -329,6 +329,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     @Override
     public void performRegistryStartup()
     {
+        if (JDKUtils.JDK_1_5)
+        {
+            throw new RuntimeException("Your JDK version is too old."
+                    + " Tapestry requires Java 1.6 or newer since version 5.4.");
+        }
         eagerLoadLock.lock();
 
         List<EagerLoadServiceProxy> proxies = CollectionFactory.newList();

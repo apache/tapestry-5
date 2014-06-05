@@ -20,6 +20,7 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Acts like a Lock but all operations are no-ops.
+ * @deprecated Deprecated in 5.4 with no replacement.
  */
 public class DummyLock implements Lock
 {

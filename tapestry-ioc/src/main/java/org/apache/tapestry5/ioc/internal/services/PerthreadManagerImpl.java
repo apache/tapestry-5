@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
@@ -32,8 +31,6 @@ import java.util.concurrent.locks.Lock;
 @SuppressWarnings("all")
 public class PerthreadManagerImpl implements PerthreadManager
 {
-    private final Lock lock = JDKUtils.createLockForThreadLocalCreation();
-
     private final PerThreadValue<List<Runnable>> callbacksValue;
 
     private static class MapHolder extends ThreadLocal<Map>
@@ -83,15 +80,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             return CollectionFactory.newMap();
         }
 
-        lock.lock();
-
-        try
-        {
-            return holder.get();
-        } finally
-        {
-            lock.unlock();
-        }
+        return holder.get();
     }
 
     private List<Runnable> getCallbacks()
@@ -156,20 +145,12 @@ public class PerthreadManagerImpl implements PerthreadManager
         // Listeners should not re-add themselves or store any per-thread state
         // here, it will be lost.
 
-        try
-        {
-            lock.lock();
+        // Discard the per-thread map of values, including the key that stores
+        // the listeners. This means that if a listener attempts to register
+        // new listeners, the new listeners will not be triggered and will be
+        // released to the GC.
 
-            // Discard the per-thread map of values, including the key that stores
-            // the listeners. This means that if a listener attempts to register
-            // new listeners, the new listeners will not be triggered and will be
-            // released to the GC.
-
-            holder.remove();
-        } finally
-        {
-            lock.unlock();
-        }
+        holder.remove();
     }
 
     private static Object NULL_VALUE = new Object();
