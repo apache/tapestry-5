@@ -1,7 +1,8 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <body>
+    	<p>Client validation: ${clientValidation}</p>
     	<t:alerts/>
-        <t:form clientValidation="none" validate="complexBean">
+        <t:form clientValidation="prop:clientValidation" validate="complexBean">
 	    	<t:errors/>
 	    	<t:textfield t:id="notNullString" t:mixins="FormGroup" t:validate="required"/>
         	<t:textfield t:id="simpleNotNullProperty" t:value="complexBean.simpleNotNullProperty" t:mixins="FormGroup"/>

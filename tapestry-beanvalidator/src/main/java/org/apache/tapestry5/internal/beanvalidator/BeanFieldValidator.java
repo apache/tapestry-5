@@ -84,13 +84,12 @@ public class BeanFieldValidator implements FieldValidator
 
         final Validator validator = validatorFactory.getValidator();
 
-        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanValidationContext.getBeanType());
-
-        String currentProperty = beanValidationContext.getCurrentProperty();
+        final String currentProperty = beanValidationContext.getCurrentProperty();
 
         if (currentProperty == null) return;
-
-        PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(currentProperty);
+        
+        final ValidationInfo validationInfo = getValidationInfo(beanValidationContext, currentProperty, validator);
+        final PropertyDescriptor propertyDescriptor = validationInfo.getPropertyDescriptor();
 
         if (propertyDescriptor == null) return;
 
@@ -144,26 +143,13 @@ public class BeanFieldValidator implements FieldValidator
 
         if (currentProperty == null) return;
         
-        Class<?> beanType = beanValidationContext.getBeanType();
-        String[] path = currentProperty.split("\\.");
-        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanType);
-        
-        for (int i = 1; i < path.length - 1; i++) 
-        {
-            Class<?> constrainedPropertyClass = getConstrainedPropertyClass(beanDescriptor, path[i]);
-            if (constrainedPropertyClass != null) {
-                beanType = constrainedPropertyClass;
-                beanDescriptor = validator.getConstraintsForClass(beanType);
-            }
-        }
-
-        final String propertyName = path[path.length - 1];
-        PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(propertyName);
+        final ValidationInfo validationInfo = getValidationInfo(beanValidationContext, currentProperty, validator);
+        final PropertyDescriptor propertyDescriptor = validationInfo.getPropertyDescriptor();
 
         if (propertyDescriptor == null) return;
 
         final Set<ConstraintViolation<Object>> violations = validator.validateValue(
-                (Class<Object>) beanType, propertyName,
+                (Class<Object>) validationInfo.getBeanType(), validationInfo.getPropertyName(),
                 value, beanValidationGroupSource.get());
 
         if (violations.isEmpty())
@@ -228,4 +214,54 @@ public class BeanFieldValidator implements FieldValidator
             }
         });
     }
+    
+    final private static ValidationInfo getValidationInfo(BeanValidationContext beanValidationContext, String currentProperty, Validator validator) {
+        Class<?> beanType = beanValidationContext.getBeanType();
+        String[] path = currentProperty.split("\\.");
+        BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanType);
+        
+        for (int i = 1; i < path.length - 1; i++) 
+        {
+            Class<?> constrainedPropertyClass = getConstrainedPropertyClass(beanDescriptor, path[i]);
+            if (constrainedPropertyClass != null) {
+                beanType = constrainedPropertyClass;
+                beanDescriptor = validator.getConstraintsForClass(beanType);
+            }
+        }
+
+        final String propertyName = path[path.length - 1];
+        PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(propertyName);
+        return new ValidationInfo(beanType, propertyName, propertyDescriptor);
+    }
+    
+    final private static class ValidationInfo {
+        final private Class<?> beanType;
+        final private String propertyName;
+        final private PropertyDescriptor propertyDescriptor;
+        public ValidationInfo(Class<?> beanType, String propertyName,
+                PropertyDescriptor propertyDescriptor) 
+        {
+            super();
+            this.beanType = beanType;
+            this.propertyName = propertyName;
+            this.propertyDescriptor = propertyDescriptor;
+        }
+        
+        public Class<?> getBeanType() 
+        {
+            return beanType;
+        }
+        
+        public String getPropertyName() 
+        {
+            return propertyName;
+        }
+
+        public PropertyDescriptor getPropertyDescriptor() 
+        {
+            return propertyDescriptor;
+        }
+
+    }
+    
 }

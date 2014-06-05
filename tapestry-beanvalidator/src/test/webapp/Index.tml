@@ -28,7 +28,10 @@
                 <t:pagelink page="ComplexBeanDemo">ComplexBean Demo</t:pagelink>
             </li>            
             <li>
-                <t:pagelink page="NestedObjectDemo">NestedObject Demo</t:pagelink>
+                <t:pagelink page="NestedObjectDemo" t:context="false">NestedObject Demo (client validation disabled)</t:pagelink>
+            </li>            
+            <li>
+                <t:pagelink page="NestedObjectDemo" t:context="true">NestedObject Demo (client validation enabled)</t:pagelink>
             </li>            
         </ul>
     </body>

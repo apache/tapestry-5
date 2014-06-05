@@ -259,10 +259,20 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         
         final String locatorTemplate = "//p[@data-error-block-for='%s']";
         
-        openLinks("NestedObject Demo");
+        openLinks("NestedObject Demo (client validation disabled)");
 
         clickAndWait(SUBMIT);
         
+        assertEquals("You must provide a value for Not Null String.", 
+                getText(String.format(locatorTemplate, "notNullString")));
+        assertEquals("Simple Not Null Property may not be null", 
+                getText(String.format(locatorTemplate, "simpleNotNullProperty")));
+        assertEquals("Min Value must be greater than or equal to 6", 
+                getText(String.format(locatorTemplate, "minValue")));
+        
+        openLinks("NestedObject Demo (client validation enabled)");
+        
+        click(SUBMIT);
         assertEquals("You must provide a value for Not Null String.", 
                 getText(String.format(locatorTemplate, "notNullString")));
         assertEquals("Simple Not Null Property may not be null", 
