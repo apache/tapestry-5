@@ -841,10 +841,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         lock.check();
 
         assert serviceDef != null;
-
+        
         Logger logger = getServiceLogger(serviceDef.getServiceId());
 
-        Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(logger);
+        Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(logger, true);
 
         for (Module module : moduleToServiceDefs.keySet())
         {
@@ -858,8 +858,16 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             for (DecoratorDef decoratorDef : decoratorDefs)
             {
                 ServiceDecorator decorator = decoratorDef.createDecorator(module, resources);
-
-                orderer.add(decoratorDef.getDecoratorId(), decorator, decoratorDef.getConstraints());
+                try
+                {
+                    orderer.add(decoratorDef.getDecoratorId(), decorator, decoratorDef.getConstraints());
+                }
+                catch (IllegalArgumentException e) {
+                    throw new RuntimeException(String.format(
+                            "Service %s has two different decorators methods named decorate%s in different module classes. "
+                            + "You can solve this by renaming one of them and annotating it with @Match(\"%2$s\").", 
+                            serviceDef.getServiceId(), decoratorDef.getDecoratorId()));
+                }
             }
         }
 

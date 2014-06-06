@@ -18,7 +18,9 @@ import org.apache.tapestry5.ioc.IdMatcher;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.IdMatcherImpl;
 import org.apache.tapestry5.ioc.internal.OrIdMatcher;
+
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -34,6 +36,8 @@ public class Orderer<T>
     private final OneShotLock lock = new OneShotLock();
 
     private final Logger logger;
+    
+    private final boolean exceptionWhenDuplicateId;
 
     private final List<Orderable> orderables = CollectionFactory.newList();
 
@@ -77,7 +81,13 @@ public class Orderer<T>
 
     public Orderer(Logger logger)
     {
+        this(logger, false);
+    }
+    
+    public Orderer(Logger logger, boolean exceptionWhenDuplicateId)
+    {
         this.logger = logger;
+        this.exceptionWhenDuplicateId = exceptionWhenDuplicateId;
     }
 
     /**
@@ -93,8 +103,14 @@ public class Orderer<T>
 
         if (idToOrderable.containsKey(id))
         {
-            logger.warn(UtilMessages.duplicateOrderer(id));
-            return;
+            final String message = UtilMessages.duplicateOrderer(id);
+            if (exceptionWhenDuplicateId) {
+                throw new IllegalArgumentException(message);
+            }
+            else {
+                logger.warn(message);
+                return;
+            }
         }
 
         orderables.add(orderable);

@@ -34,6 +34,21 @@ class DecoratorsSpec extends AbstractRegistrySpecification {
 
     g.greeting == "HELLO"
   }
+  
+  // TAP5-1305, TAP5-2012
+  def "two different modules with the same decorator method name"() {
+    
+    buildRegistry GreeterModule, SpecificDecoratorModule, SpecificDecoratorModuleAgain
+        
+    when: 
+    def g = getService "HelloGreeter", Greeter
+    println(g.greeting)
+    
+    then:
+    RuntimeException e = thrown();
+    e.message == "Exception constructing service 'HelloGreeter': Service HelloGreeter has two different decorators methods named decorateHelloGreeter in different module classes. You can solve this by renaming one of them and annotating it with @Match(\"HelloGreeter\").";
+    
+  }
 
   def "a service builder method with @PreventServiceDecoration is not decorated"() {
     buildRegistry PreventDecorationModule
