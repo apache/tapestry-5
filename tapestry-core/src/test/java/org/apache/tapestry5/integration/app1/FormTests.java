@@ -347,7 +347,7 @@ public class FormTests extends App1TestCase
         waitForCondition("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount('td.selected') == 0", PAGE_LOAD_TIMEOUT);
     }
 
-    // TAP4-1408
+    // TAP5-1408, TAP5-2203
     @Test
     public void datefield_clickoutside_closes()
     {
@@ -359,6 +359,14 @@ public class FormTests extends App1TestCase
         waitForCSSSelectedElementToAppear("div.datePicker");
 
         click("css=.x-impact .btn");
+        waitForInvisible("css=div.datePicker");
+
+        //make sure that clicking somewhere outside the date picker
+        //closes it
+        click("css=.x-impact .btn");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+
+        click("css=h1");
         waitForInvisible("css=div.datePicker");
 
         //also make sure that clicking the month label /doesn't/ close the picker

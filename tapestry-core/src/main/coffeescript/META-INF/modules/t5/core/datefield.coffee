@@ -42,6 +42,17 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
     # around the DOM.
     activePopup = null
 
+
+    isPartOfPopup = (element) ->
+      element.findParent(".labelPopup")? or element.findParent(".datefield-popup")?
+
+    dom.body.on "click", ->
+      if activePopup and not isPartOfPopup @
+        activePopup.hide()
+        activePopup = null
+      return
+
+
     class Controller
       constructor: (@container) ->
         @field = @container.findFirst "input"
