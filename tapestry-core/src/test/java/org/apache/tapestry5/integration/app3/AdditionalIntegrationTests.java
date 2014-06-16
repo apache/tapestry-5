@@ -15,12 +15,14 @@
 package org.apache.tapestry5.integration.app3;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * Additional integration tests that do not fit with the main group due to the need for special
  * configuration.
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/app3")
 public class AdditionalIntegrationTests extends TapestryCoreTestCase
 {
     /**
@@ -88,4 +90,23 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
 
         assertTextPresent("Communication with the server failed: Server-side exception.");
     }
+    
+    // TAP5-1611
+    @Test
+    public void component_replacer() 
+    {
+        
+        final String[] pageNames = {"ComponentReplacer demo", "ComponentReplacer demo (using @Component to declare component instances)"};
+        for (String pageName : pageNames)
+        {
+            openLinks(pageName);
+            
+            assertTrue(isElementPresent("overrideMixin"));
+            assertFalse(isElementPresent("overridenMixin"));
+            assertTrue(isElementPresent("overrideComponent"));
+            assertFalse(isElementPresent("overridenComponent"));
+        }
+        
+    }
+    
 }

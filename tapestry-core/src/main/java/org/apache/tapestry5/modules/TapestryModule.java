@@ -65,7 +65,9 @@ import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -95,6 +97,7 @@ import org.slf4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -372,6 +375,7 @@ public final class TapestryModule
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
         binder.bind(org.apache.tapestry5.services.exceptions.ExceptionReporter.class, ExceptionReporterImpl.class);
+        binder.bind(ComponentReplacer.class, ComponentReplacerImpl.class).eagerLoad();
     }
 
     // ========================================================================
@@ -2660,4 +2664,32 @@ public final class TapestryModule
     {
         return strategyBuilder.build(ValueLabelProvider.class, configuration);
     }
+    
+    @Advise(serviceInterface = ComponentInstantiatorSource.class)
+    public static void componentReplacer(MethodAdviceReceiver methodAdviceReceiver, 
+          final ComponentReplacer componentReplacer) throws NoSuchMethodException, SecurityException {
+        
+        if (componentReplacer.getReplacements().size() > 0) {
+            
+            MethodAdvice advice = new MethodAdvice()
+            {
+                @Override
+                public void advise(MethodInvocation invocation)
+                {
+                    String className = (String) invocation.getParameter(0);
+                    final Class<?> replacement = componentReplacer.getReplacement(className);
+                    if (replacement != null) 
+                    {
+                        invocation.setParameter(0, replacement.getName());
+                    }
+                    invocation.proceed();
+                }
+            };
+            
+            methodAdviceReceiver.adviseMethod(
+                    ComponentInstantiatorSource.class.getMethod("getInstantiator", String.class), advice);
+            
+        }
+    }
+    
 }

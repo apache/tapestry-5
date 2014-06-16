@@ -1,0 +1,12 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Override Page</title>
+    </head>
+    <body>
+        <h1>Override Page</h1>
+        <p>
+        	Link with mixin <t:pagelink t:page="Index" t:mixins="OverridenMixin">Index</t:pagelink>
+        </p>
+        <t:overridenComponent/>
+    </body>
+</html>

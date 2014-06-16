@@ -15,10 +15,17 @@
 package org.apache.tapestry5.integration.app3.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.integration.app3.components.OverrideComponent;
+import org.apache.tapestry5.integration.app3.components.OverridenComponent;
+import org.apache.tapestry5.integration.app3.mixins.OverrideMixin;
+import org.apache.tapestry5.integration.app3.mixins.OverridenMixin;
+import org.apache.tapestry5.integration.app3.pages.OverridePage;
+import org.apache.tapestry5.integration.app3.pages.OverridenPage;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.services.ComponentReplacer;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.Compatibility;
@@ -58,7 +65,7 @@ public class AppModule
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, FORM_FIELD_CSS_CLASS_VALUE);
         
     }
-
+    
     @Contribute(Compatibility.class)
     public static void disableBackwardsCompatibleFeatures(MappedConfiguration<Trait, Boolean> configuration)
     {
@@ -77,6 +84,13 @@ public class AppModule
                 return true;
             }
         }, "before:*");
+    }
+    
+    @Contribute(ComponentReplacer.class)
+    public static void overridePageAndComponentAndMixin(MappedConfiguration<Class, Class> configuration) {
+        configuration.add(OverridenPage.class, OverridePage.class);
+        configuration.add(OverridenComponent.class, OverrideComponent.class);
+        configuration.add(OverridenMixin.class, OverrideMixin.class);
     }
 
 }

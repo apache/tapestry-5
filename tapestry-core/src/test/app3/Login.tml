@@ -22,6 +22,12 @@
             <li>
                 <t:pagelink page="BeanEditorWithOverridenCssClassesDemo">BeanEditor with overriden CSS classes demo</t:pagelink>
             </li>
+            <li>
+                <t:pagelink page="OverridenPage">ComponentReplacer demo</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="OverridePageAtComponent">ComponentReplacer demo (using @Component to declare component instances)</t:pagelink>
+            </li>
         </ul>
 
     </body>
