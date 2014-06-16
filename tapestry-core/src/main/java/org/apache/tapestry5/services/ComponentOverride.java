@@ -31,7 +31,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * @see ComponentClassResolver.
  */
 @UsesMappedConfiguration(key = Class.class, value = Class.class)
-public interface ComponentReplacer
+public interface ComponentOverride
 {
 
     /**

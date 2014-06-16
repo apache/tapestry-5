@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.services.ComponentReplacer;
+import org.apache.tapestry5.services.ComponentOverride;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.Compatibility;
@@ -86,7 +86,7 @@ public class AppModule
         }, "before:*");
     }
     
-    @Contribute(ComponentReplacer.class)
+    @Contribute(ComponentOverride.class)
     public static void overridePageAndComponentAndMixin(MappedConfiguration<Class, Class> configuration) {
         configuration.add(OverridenPage.class, OverridePage.class);
         configuration.add(OverridenComponent.class, OverrideComponent.class);

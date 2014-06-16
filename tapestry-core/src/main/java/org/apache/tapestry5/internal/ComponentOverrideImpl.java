@@ -22,10 +22,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
-import org.apache.tapestry5.services.ComponentReplacer;
+import org.apache.tapestry5.services.ComponentOverride;
 import org.slf4j.Logger;
 
-public class ComponentReplacerImpl implements ComponentReplacer
+public class ComponentOverrideImpl implements ComponentOverride
 {
 
     final Logger logger;
@@ -33,7 +33,7 @@ public class ComponentReplacerImpl implements ComponentReplacer
     final private Map<String, Class> nameToClass;
 
     @SuppressWarnings("rawtypes")
-    public ComponentReplacerImpl(Map<Class, Class> contributions, Logger logger)
+    public ComponentOverrideImpl(Map<Class, Class> contributions, Logger logger)
     {
 
         this.logger = logger;

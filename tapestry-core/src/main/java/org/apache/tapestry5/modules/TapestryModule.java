@@ -375,7 +375,7 @@ public final class TapestryModule
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
         binder.bind(org.apache.tapestry5.services.exceptions.ExceptionReporter.class, ExceptionReporterImpl.class);
-        binder.bind(ComponentReplacer.class, ComponentReplacerImpl.class).eagerLoad();
+        binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
     }
 
     // ========================================================================
@@ -2667,7 +2667,7 @@ public final class TapestryModule
     
     @Advise(serviceInterface = ComponentInstantiatorSource.class)
     public static void componentReplacer(MethodAdviceReceiver methodAdviceReceiver, 
-          final ComponentReplacer componentReplacer) throws NoSuchMethodException, SecurityException {
+          final ComponentOverride componentReplacer) throws NoSuchMethodException, SecurityException {
         
         if (componentReplacer.getReplacements().size() > 0) {
             
