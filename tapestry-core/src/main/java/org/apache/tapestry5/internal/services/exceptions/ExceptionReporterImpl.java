@@ -270,6 +270,7 @@ public class ExceptionReporterImpl implements ExceptionReporter
             pw.write("path", request.getPath());
             pw.write("locale", request.getLocale());
             pw.write("serverName", request.getServerName());
+            pw.write("remoteHost", request.getRemoteHost());
             writer.print("\nHeaders:\n");
             for (String name : request.getHeaderNames())
             {
