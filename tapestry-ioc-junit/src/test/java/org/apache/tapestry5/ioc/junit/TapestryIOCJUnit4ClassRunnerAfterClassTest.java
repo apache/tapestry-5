@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.ioc.junit;
 
-import static org.apache.tapestry5.ioc.test.RegistryShutdownType.AFTER_CLASS;
+import static org.apache.tapestry5.ioc.junit.RegistryShutdownType.AFTER_CLASS;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 
@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.test.TapestryIOCJUnit4ClassRunnerAfterClassTest.AfterClassTestModule;
+import org.apache.tapestry5.ioc.junit.Registry;
+import org.apache.tapestry5.ioc.junit.TapestryIOCJUnit4ClassRunner;
+import org.apache.tapestry5.ioc.junit.TapestryIOCJUnit4ClassRunnerAfterClassTest.AfterClassTestModule;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;

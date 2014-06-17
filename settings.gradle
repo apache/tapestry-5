@@ -2,6 +2,6 @@ include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "t
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
 include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
 include "tapestry-javadoc", "quickstart", "tapestry-clojure", "tapestry-mongodb"
-include "tapestry-test-data", 'tapestry-internal-test', "tapestry-ioc-test"
+include "tapestry-test-data", 'tapestry-internal-test', "tapestry-ioc-junit"
 include "tapestry-webresources", "tapestry-runner", "tapestry-test-constants"
 // include "tapestry-cdi"

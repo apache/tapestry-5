@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.ioc.junit;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -35,15 +35,14 @@ import org.junit.runners.model.Statement;
  * </p>
  * 
  * <p>
- * {@link ModuleDef}s can be added to the
+ * {@link org.apache.tapestry5.ioc.junit.ModuleDef}s can be added to the
  * {@link org.apache.tapestry5.ioc.Registry} by annotating a factory method(s)
- * with {@link org.apache.tapestry5.ioc.test.ModuleDef}. These {@link ModuleDef}
- * factory methods must be
+ * with {@link ModuleDef}. These {@link ModuleDef} factory methods must be
  * <ul>
  * <li>public</li>
  * <li>static</li>
  * <li>take zero arguments</li>
- * <li>return a subclass of {@link ModuleDef}</li>
+ * <li>return a subclass of {@link org.apache.tapestry5.ioc.junit.ModuleDef}</li>
  * </ul>
  * </p>
  * 
