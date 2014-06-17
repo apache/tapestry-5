@@ -374,7 +374,7 @@ public final class TapestryModule
         binder.bind(PathConstructor.class, PathConstructorImpl.class);
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
-        binder.bind(org.apache.tapestry5.services.exceptions.ExceptionReporter.class, ExceptionReporterImpl.class);
+        binder.bind(ExceptionReporter.class, ExceptionReporterImpl.class);
         binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
     }
 

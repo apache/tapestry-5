@@ -69,7 +69,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final LinkSource linkSource;
 
-    private final org.apache.tapestry5.services.exceptions.ExceptionReporter exceptionReporter;
+    private final ExceptionReporter exceptionReporter;
 
     // should be Class<? extends Throwable>, Object but it's not allowed to configure subtypes
     private final Map<Class, Object> configuration;
@@ -89,7 +89,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                                           ComponentClassResolver componentClassResolver,
                                           LinkSource linkSource,
                                           ServiceResources serviceResources,
-                                          org.apache.tapestry5.services.exceptions.ExceptionReporter exceptionReporter,
+                                          ExceptionReporter exceptionReporter,
                                           Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
