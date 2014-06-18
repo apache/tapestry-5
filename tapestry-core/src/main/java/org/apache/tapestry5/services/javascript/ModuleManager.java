@@ -29,6 +29,7 @@ import java.util.List;
  *
  * @since 5.4
  * @see ModuleConfigurationCallback
+ * @see AMDWrapper
  */
 @UsesMappedConfiguration(JavaScriptModuleConfiguration.class)
 public interface ModuleManager

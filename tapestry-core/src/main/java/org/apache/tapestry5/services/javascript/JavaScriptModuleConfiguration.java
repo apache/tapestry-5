@@ -33,6 +33,7 @@ import java.util.List;
  * module will be satisfied by the resource.'
  *
  * @since 5.4
+ * @see AMDWrapper
  */
 public final class JavaScriptModuleConfiguration
 {
