@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +31,7 @@ public class CompressedStreamableResource extends StreamableResourceImpl
 {
     public CompressedStreamableResource(StreamableResource base, AssetChecksumGenerator assetChecksumGenerator) throws IOException
     {
-        super(base.getDescription(), base.getContentType(), CompressionStatus.COMPRESSED, base.getLastModified(), compressContent(base), assetChecksumGenerator);
+        super(base.getDescription(), base.getContentType(), CompressionStatus.COMPRESSED, base.getLastModified(), compressContent(base), assetChecksumGenerator, base.getResponseCustomizer());
 
         assert base.getCompression() == CompressionStatus.COMPRESSABLE;
     }

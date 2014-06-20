@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -195,7 +193,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
             return new StreamableResourceImpl(
                     description.toString(),
                     JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
-                    new BytestreamCache(outputStream), checksumGenerator);
+                    new BytestreamCache(outputStream), checksumGenerator, null);
         }
     }
 

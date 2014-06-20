@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,10 +21,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.assets.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -179,6 +174,13 @@ public class ResourceStreamerImpl implements ResourceStreamer
         if (streamable.getCompression() == CompressionStatus.COMPRESSED)
         {
             response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+        }
+
+        ResponseCustomizer responseCustomizer = streamable.getResponseCustomizer();
+
+        if (responseCustomizer != null)
+        {
+            responseCustomizer.customizeResponse(streamable, response);
         }
 
         OutputStream os = response.getOutputStream(streamable.getContentType());

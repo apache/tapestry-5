@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,10 +16,14 @@ import org.apache.tapestry5.SymbolConstants
 import org.apache.tapestry5.func.F
 import org.apache.tapestry5.integration.app5.Client
 import org.apache.tapestry5.integration.app5.ClientTracker
+import org.apache.tapestry5.internal.services.assets.DelegatingSRS
 import org.apache.tapestry5.ioc.MappedConfiguration
 import org.apache.tapestry5.ioc.Resource
+import org.apache.tapestry5.ioc.annotations.Decorate
 import org.apache.tapestry5.model.ComponentModel
 import org.apache.tapestry5.services.ApplicationStateManager
+import org.apache.tapestry5.services.Response
+import org.apache.tapestry5.services.assets.*
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector
@@ -36,7 +38,7 @@ class AppModule {
     def decorateComponentRequestSelectorAnalyzer(ComponentRequestSelectorAnalyzer delegate, ApplicationStateManager mgr) {
         return {
             def selector = delegate.buildSelectorForRequest()
-            def tracker = mgr.getIfExists (ClientTracker.class)
+            def tracker = mgr.getIfExists(ClientTracker.class)
 
             tracker == null ? selector : selector.withAxis(Client.class, tracker.client)
         } as ComponentRequestSelectorAnalyzer
@@ -44,6 +46,7 @@ class AppModule {
 
     def decorateComponentResourceLocator(ComponentResourceLocator delegate) {
         return new ComponentResourceLocator() {
+
             Resource locateTemplate(ComponentModel model, ComponentResourceSelector selector) {
                 def client = selector.getAxis(Client.class)
 
@@ -77,6 +80,33 @@ class AppModule {
                 }
 
                 delegate.locateMessageCatalog(baseResource, selector);
+            }
+        }
+    }
+
+    @Decorate(id = "XRobots", serviceInterface = StreamableResourceSource.class)
+    def enableXRobotsHeader(StreamableResourceSource delegate) {
+
+        return new DelegatingSRS(delegate) {
+
+            @Override
+            StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies) throws IOException {
+
+                def streamable = delegate.getStreamableResource(baseResource, processing, dependencies)
+
+                if (streamable == null) {
+                    return streamable
+                }
+                else {
+                    return streamable.addResponseCustomizer(new ResponseCustomizer() {
+
+                        @Override
+                        void customizeResponse(StreamableResource resource, Response response) throws IOException {
+                            response.setHeader("X-Robots-Tag", "noindex")
+                        }
+                    })
+                }
+
             }
         }
     }
