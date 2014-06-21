@@ -1,0 +1,28 @@
+import org.gradle.plugins.ide.idea.model.*
+import t5build.*
+
+description = "JCache (JSR 107) integration for Tapestry-IoC"
+
+//apply plugin: JavaPlugin
+
+buildDir = 'target/gradle-build'
+       
+project.ext.libraryVersions = [
+    jcache: '1.0.0',
+]
+
+dependencies {
+    /*compile "org.apache.tapestry:tapestry-ioc:${tapestryVersion()}"*/
+	provided project(":tapestry-ioc")
+	compile "javax.cache:cache-api:${libraryVersions.jcache}"
+	compile "org.jsr107.ri:cache-annotations-ri-common:${libraryVersions.jcache}"
+    testCompile "javax.cache:cache-tests:${libraryVersions.jcache}"
+    testCompile "javax.cache:test-domain:${libraryVersions.jcache}"
+    testRuntime "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
+}
+
+jar {	
+	manifest {	
+		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
+	}
+}

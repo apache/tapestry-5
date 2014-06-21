@@ -1,0 +1,5 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product includes some test files from the JSR107 Technology Compability Kit,
+released under the Apache Software License 2.0.
