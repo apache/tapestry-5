@@ -65,6 +65,16 @@ public class EmailTest extends InternalBaseTestCase
         {
         }
 
+        // TAP5-2282
+        try
+        {
+            validator.validate(field, null, formatter, "aaa@bbb/cc");
+            unreachable();
+        }
+        catch (ValidationException ex)
+        {
+        }
+
         verify();
 
     }
