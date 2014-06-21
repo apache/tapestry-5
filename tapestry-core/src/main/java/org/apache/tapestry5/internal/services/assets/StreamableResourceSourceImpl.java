@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -95,7 +93,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         long lastModified = resourceChangeTracker.trackResource(baseResource);
 
         return new StreamableResourceImpl(baseResource.toString(), contentType, compressable ? CompressionStatus.COMPRESSABLE
-                : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache, checksumGenerator);
+                : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache, checksumGenerator, null);
     }
 
     private BytestreamCache readStream(InputStream stream) throws IOException

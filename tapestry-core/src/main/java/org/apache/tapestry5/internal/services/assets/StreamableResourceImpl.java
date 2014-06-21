@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,8 +12,10 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.ResponseCustomizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
 
 import java.io.IOException;
@@ -34,7 +34,9 @@ public class StreamableResourceImpl implements StreamableResource
 
     protected final AssetChecksumGenerator assetChecksumGenerator;
 
-    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified, BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator)
+    protected final ResponseCustomizer responseCustomizer;
+
+    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified, BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator, ResponseCustomizer responseCustomizer)
     {
         this.lastModified = lastModified;
         this.description = description;
@@ -42,6 +44,7 @@ public class StreamableResourceImpl implements StreamableResource
         this.contentType = contentType;
         this.compression = compression;
         this.assetChecksumGenerator = assetChecksumGenerator;
+        this.responseCustomizer = responseCustomizer;
     }
 
     public String getDescription()
@@ -91,5 +94,37 @@ public class StreamableResourceImpl implements StreamableResource
         // Currently, we rely on AssetChecksumGenerator to manage a cache, but that may be better done
         // here (but must be threads-afe).
         return assetChecksumGenerator.generateChecksum(this);
+    }
+
+    @Override
+    public StreamableResource addResponseCustomizer(final ResponseCustomizer customizer)
+    {
+        final ResponseCustomizer oldCustomizer = responseCustomizer;
+
+        if (oldCustomizer == null)
+        {
+            return withNewResourceCustomizer(customizer);
+        }
+
+        return withNewResourceCustomizer(new ResponseCustomizer()
+        {
+            @Override
+            public void customizeResponse(StreamableResource resource, Response response) throws IOException
+            {
+                oldCustomizer.customizeResponse(resource, response);
+                customizer.customizeResponse(resource, response);
+            }
+        });
+    }
+
+    @Override
+    public ResponseCustomizer getResponseCustomizer()
+    {
+        return responseCustomizer;
+    }
+
+    private StreamableResourceImpl withNewResourceCustomizer(ResponseCustomizer customizer)
+    {
+        return new StreamableResourceImpl(description, contentType, compression, lastModified, bytestreamCache, assetChecksumGenerator, customizer);
     }
 }

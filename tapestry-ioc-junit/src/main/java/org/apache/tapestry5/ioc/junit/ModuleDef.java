@@ -12,19 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.ioc.junit;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @see TapestryIOCJUnit4ClassRunner
+ * Marker annotation for a method which creates a {@link org.apache.tapestry5.ioc.def.ModuleDef}.
+ * Used by the {@link TapestryIOCJUnit4ClassRunner}, methods with this annotation must be public, static, no-args methods
+ * which return {@link org.apache.tapestry5.ioc.def.ModuleDef} (or a subclass)
  */
-public enum RegistryShutdownType {
-	/**
-	 * Test registry will be shut down once per test class
-	 */
-	AFTER_CLASS, 
-	
-	/**
-	 * Test registry will be shut down after each test method
-	 */
-	AFTER_METHOD;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Inherited
+public @interface ModuleDef {
+
 }

@@ -1,31 +1,37 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
-  <head>
-    <title>Default Layout</title>
-  </head>
-  <body>
-    <h1>Default Layout</h1>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>Default Layout</title>
+    </head>
+    <body>
+        <div class="container">
 
-    <t:body/>
+            <h1>Default Layout</h1>
 
-    <hr/>
+            <t:body/>
 
-    <t:renderobject object="request"/>
 
-    <t:if test="session">
-      <h2>Session</h2>
-      <dl>
-        <t:loop source="session.attributeNames" value="attributeName">
-          <dt>${attributeName}</dt>
-          <dd>
-            <t:renderobject object="session.getAttribute(attributeName)"/>
-          </dd>
-        </t:loop>
-      </dl>
-    </t:if>
-    
-    <p>
-    <t:actionlink t:id="reset">reset session</t:actionlink>
-    </p>
+            <div class="panel">
 
-  </body>
+                <t:renderobject object="request"/>
+
+                <t:if test="session">
+                    <h2>Session</h2>
+                    <dl>
+                        <t:loop source="session.attributeNames" value="attributeName">
+                            <dt>${attributeName}</dt>
+                            <dd>
+                                <t:renderobject object="session.getAttribute(attributeName)"/>
+                            </dd>
+                        </t:loop>
+                    </dl>
+                </t:if>
+            </div>
+
+            <div class="row">
+                <t:actionlink t:id="reset" class="btn btn-large btn-warning">reset session</t:actionlink>
+
+            </div>
+
+        </div>
+    </body>
 </html>

@@ -27,9 +27,9 @@ import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
+import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.exceptions.ExceptionReporter;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -270,6 +270,7 @@ public class ExceptionReporterImpl implements ExceptionReporter
             pw.write("path", request.getPath());
             pw.write("locale", request.getLocale());
             pw.write("serverName", request.getServerName());
+            pw.write("remoteHost", request.getRemoteHost());
             writer.print("\nHeaders:\n");
             for (String name : request.getHeaderNames())
             {

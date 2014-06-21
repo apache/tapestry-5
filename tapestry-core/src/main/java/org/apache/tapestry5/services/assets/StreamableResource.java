@@ -1,5 +1,3 @@
-// Copyright 2011, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -77,8 +75,24 @@ public interface StreamableResource
      * based on the uncompressed content.
      *
      * @return checksum for uncompressed content
-     * @since 5.4
      * @see AssetChecksumGenerator#generateChecksum(StreamableResource)
+     * @since 5.4
      */
     String getChecksum() throws IOException;
+
+
+    /**
+     * Returns a new StreamableResource that includes the provided customizer. Customizers are invoked
+     * in the order they are added.
+     *
+     * @since 5.4
+     */
+    StreamableResource addResponseCustomizer(ResponseCustomizer customizer);
+
+    /**
+     * Returns the customizer, if any, for this resource.  This may represent an aggregate customizer.
+     *
+     * @since 5.4
+     */
+    ResponseCustomizer getResponseCustomizer();
 }

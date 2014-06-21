@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.ioc.junit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,7 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.test.TapestryIOCJUnit4ClassRunnerModuleDefTest.ModuleDefTestModule;
+import org.apache.tapestry5.ioc.junit.ModuleDef;
+import org.apache.tapestry5.ioc.junit.Registry;
+import org.apache.tapestry5.ioc.junit.TapestryIOCJUnit4ClassRunner;
+import org.apache.tapestry5.ioc.junit.TapestryIOCJUnit4ClassRunnerModuleDefTest.ModuleDefTestModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
