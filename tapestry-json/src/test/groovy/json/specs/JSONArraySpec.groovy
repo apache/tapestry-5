@@ -341,5 +341,32 @@ class JSONArraySpec extends Specification {
 
         list.toString(true) == "[1,2,3]"
     }
+	
+	def "put() should throw an IllegalArgumentException when receiving null"() {
+		
+		def array = new JSONArray()
+		
+		when:
+		
+		array.put(null)
+		
+		then:
+		
+		thrown IllegalArgumentException
+		
+	}
+	
+	def "new JSONArray() should throw an IllegalArgumentException when receiving null"() {
+		
+		when:
+		
+		new JSONArray(1, null, 3)
+		
+		then:
+		
+		thrown IllegalArgumentException
+		
+	}
+
 
 }

@@ -793,7 +793,7 @@ public final class JSONObject extends JSONCollection
     static void testValidity(Object value)
     {
         if (value == null)
-            return;
+            throw new IllegalArgumentException("null isn't valid in JSONObject and JSONArray. Use JSONObject.NULL instead.");
 
         boolean found = false;
         Class actual = value.getClass();
@@ -913,11 +913,6 @@ public final class JSONObject extends JSONCollection
      */
     static void printValue(JSONPrintSession session, Object value)
     {
-    	
-    	// TAP5-2342: a little more robustness by treating null as JSONObject.NULL and avoinding an NPE.
-    	if (value == null) {
-    		value = NULL;
-    	}
     	
         if (value instanceof JSONObject)
         {

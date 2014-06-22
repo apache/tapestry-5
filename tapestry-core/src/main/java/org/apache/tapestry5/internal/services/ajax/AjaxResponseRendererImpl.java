@@ -1,4 +1,4 @@
-//  Copyright 2011, 2013 The Apache Software Foundation
+//  Copyright 2011, 2013, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +63,16 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
     {
         assert zone != null;
 
-        addRender(zone.getClientId(), zone.getBody());
+        final String clientId = zone.getClientId();
+        
+        if (clientId == null)
+        {
+            throw new IllegalArgumentException(
+                    "Attempt to render a ClientBodyElement, probably a Zone, with a null clientId. "
+                    + "You can solve this by using the id parameter.");
+        }
+        
+        addRender(clientId, zone.getBody());
 
         return this;
     }
