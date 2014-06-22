@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,15 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
     @Test
     public void createEntityManagerFactory_with_supplied_entitymanagerproperties()
     {
-        PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
+    	final String persistenceUnitFile = "single-persistence-unit.xml";
+        EntityManagerSourceImpl emSource = create(persistenceUnitFile);
+        EntityManager em = emSource.createEntityManagerFactory("defaultpropertytest")
+                .createEntityManager();
+        assertEquals(em.getProperties().get("MYKEY"), "MYVALUE");
+    }
+
+	private EntityManagerSourceImpl create(final String persistenceUnitFile) {
+		PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
             @Override
             @SuppressWarnings(
@@ -81,12 +90,18 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
         Map<String, PersistenceUnitConfigurer> configurerMap = CollectionFactory
                 .<String, PersistenceUnitConfigurer>newMap();
         configurerMap.put("defaultpropertytest", configurer);
-        EntityManagerSourceImpl emSource = new EntityManagerSourceImpl(
+		EntityManagerSourceImpl emSource = new EntityManagerSourceImpl(
                 LoggerFactory.getLogger(EntityManagerSourceImplTest.class), new ClasspathResource(
-                "single-persistence-unit.xml"), null, configurerMap);
-        EntityManager em = emSource.createEntityManagerFactory("defaultpropertytest")
-                .createEntityManager();
-        assertEquals(em.getProperties().get("MYKEY"), "MYVALUE");
+                persistenceUnitFile), null, configurerMap);
+		return emSource;
+	}
+    
+    // TAP5-2206
+    @Test
+    public void jpa2dot1Namespace() {
+    	
+    	// fails with an NPE without the fix
+    	create("single-persistence-unit-jpa-2.1.xml");
     }
 
 }

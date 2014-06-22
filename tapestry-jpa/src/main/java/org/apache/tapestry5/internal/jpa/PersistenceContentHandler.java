@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,11 +24,16 @@ import org.xml.sax.SAXException;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class PersistenceContentHandler implements ContentHandler
 {
-    private static final String NAMESPACE_URI = "http://java.sun.com/xml/ns/persistence";
+    private static final List<String> NAMESPACE_URIS = Arrays.asList(
+    		new String[]{"http://java.sun.com/xml/ns/persistence", "http://xmlns.jcp.org/xml/ns/persistence"});
     private static final String ELEMENT_PERSISTENCE_UNIT = "persistence-unit";
     private static final String ELEMENT_PROVIDER = "provider";
     private static final String ELEMENT_JTA_DATA_SOURCE = "jta-data-source";
@@ -83,7 +88,7 @@ public class PersistenceContentHandler implements ContentHandler
     public void startElement(final String namespaceURI, final String localName, final String qName,
                              final Attributes atts) throws SAXException
     {
-        if (NAMESPACE_URI.equals(namespaceURI))
+        if (NAMESPACE_URIS.contains(namespaceURI))
         {
             if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
@@ -115,7 +120,7 @@ public class PersistenceContentHandler implements ContentHandler
         final String string = characters.toString().trim();
         characters = null;
 
-        if (NAMESPACE_URI.equals(namespaceURI))
+        if (NAMESPACE_URIS.contains(namespaceURI))
         {
             if (ELEMENT_PROVIDER.equals(localName))
             {
