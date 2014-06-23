@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,6 +36,17 @@ public interface Resource
      * @return true if the resource exists, false if it does not
      */
     boolean exists();
+
+
+    /**
+     * Returns true if the resource is virtual, meaning this is no underlying file. Many operations are unsupported
+     * on virtual resources, including {@link #toURL()}, {@link #forLocale(java.util.Locale)},
+     * {@link #withExtension(String)}, {@link #getFile()}, {@link #getFolder()}, {@link #getPath()}}; these
+     * operations will throw an {@link java.lang.UnsupportedOperationException}.
+     *
+     * @since 5.4
+     */
+    boolean isVirtual();
 
     /**
      * Opens a stream to the content of the resource, or returns null if the resource does not exist. The native

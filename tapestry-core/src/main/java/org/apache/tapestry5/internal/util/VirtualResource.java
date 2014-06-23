@@ -1,5 +1,3 @@
-// Copyright 2012, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -91,5 +89,11 @@ public abstract class VirtualResource implements Resource
     protected InputStream toInputStream(byte[] content) throws IOException
     {
         return new ByteArrayInputStream(content);
+    }
+
+    @Override
+    public boolean isVirtual()
+    {
+        return true;
     }
 }

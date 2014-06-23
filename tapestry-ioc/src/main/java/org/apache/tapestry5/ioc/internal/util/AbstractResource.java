@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -356,5 +354,11 @@ public abstract class AbstractResource extends LockSupport implements Resource
         {
             return new File(url.getPath());
         }
+    }
+
+    @Override
+    public boolean isVirtual()
+    {
+        return false;
     }
 }
