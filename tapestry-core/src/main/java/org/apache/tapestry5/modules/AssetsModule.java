@@ -79,6 +79,7 @@ public class AssetsModule
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap");
 
         configuration.add("tapestry.asset.root", "classpath:META-INF/assets/tapestry5");
+        configuration.add(SymbolConstants.OMIT_EXPIRATION_CACHE_CONTROL_HEADER, "max-age=60,must-revalidate");
     }
 
     // The use of decorators is to allow third-parties to get their own extensions

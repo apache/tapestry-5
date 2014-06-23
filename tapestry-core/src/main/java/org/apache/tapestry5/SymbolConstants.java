@@ -490,6 +490,7 @@ public class SymbolConstants
      */
 
     public static final String EXCEPTION_REPORTS_DIR = "tapestry.exception-reports-dir";
+
     /**
      * Defines whether {@link org.apache.tapestry5.internal.services.assets.CSSURLRewriter} will throw an exception when a CSS file
      * references an URL which doesn't exist. The default value is <code>false</code>.
@@ -497,5 +498,16 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String STRICT_CSS_URL_REWRITING = "tapestry.strict-css-url-rewriting";
+
+    /**
+     * When an asset (typically, a JavaScript module) is streamed without an explicit expiration header, then
+     * this value is sent as the {@code Cache-Control} header; the default is "max-age=60, must-revalidate". Setting
+     * max-age to a value above zero signficantly reduces the number of client requests for module content, as client
+     * browsers will then cache previously downloaded versions. For normal assets, which are immutable, and fingerprinted with
+     * a content hash, there is no need to set max age, and instead, a far-future expiration date is provided.
+     *
+     * @since 5.4
+     */
+    public static final String OMIT_EXPIRATION_CACHE_CONTROL_HEADER = "tapestry.omit-expiration-cache-control-header";
 
 }

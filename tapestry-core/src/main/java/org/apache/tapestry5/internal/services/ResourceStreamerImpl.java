@@ -46,6 +46,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final ResourceChangeTracker resourceChangeTracker;
 
+    private final String omitExpirationCacheControlHeader;
+
     public ResourceStreamerImpl(Request request,
 
                                 Response response,
@@ -57,7 +59,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
                                 @Symbol(SymbolConstants.PRODUCTION_MODE)
                                 boolean productionMode,
 
-                                ResourceChangeTracker resourceChangeTracker)
+                                ResourceChangeTracker resourceChangeTracker,
+
+                                @Symbol(SymbolConstants.OMIT_EXPIRATION_CACHE_CONTROL_HEADER)
+                                String omitExpirationCacheControlHeader)
     {
         this.request = request;
         this.response = response;
@@ -66,6 +71,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.tracker = tracker;
         this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
+        this.omitExpirationCacheControlHeader = omitExpirationCacheControlHeader;
     }
 
     public boolean streamResource(final Resource resource, final String providedChecksum, final Set<Options> options) throws IOException
@@ -166,7 +172,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         // mostly result in quick SC_NOT_MODIFIED responses.
         if (options.contains(Options.OMIT_EXPIRATION))
         {
-            response.setHeader("Cache-Control", "max-age=0, must-revalidate");
+            response.setHeader("Cache-Control", omitExpirationCacheControlHeader);
         }
 
         response.setContentLength(streamable.getSize());
