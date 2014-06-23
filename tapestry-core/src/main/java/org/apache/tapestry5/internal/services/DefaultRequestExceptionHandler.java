@@ -223,6 +223,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         // user's responsibility not to abuse the mechanism
         catch (Exception e)
         {
+            logger.warn(String.format("A new exception was thrown while trying to handle an instance of %s.",
+                    exception.getClass().getName()), e);
             // Nothing to do but delegate
             renderException(exception);
         }
