@@ -386,7 +386,8 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      */
     public JSONArray put(Object value)
     {
-        assert value != null;
+    	// now testValidity checks for null values.
+        // assert value != null;
 
         JSONObject.testValidity(value);
 
