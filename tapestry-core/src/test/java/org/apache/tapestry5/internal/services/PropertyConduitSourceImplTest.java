@@ -875,4 +875,81 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertListsEquals(actual, PublicStaticFieldBean.READ_ONLY);
     }
+    
+    // TAP5-1493
+    @Test
+    public void covariant_property_return_type() {
+
+        // example from Howard
+        assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
+        assertConduitPropertyType(Foo.class, "bar", Bar.class);
+        
+        // example from Robert
+        assertConduitPropertyType(RobertMyClass.class, "foo.robertBarValue", int.class);
+        
+    }
+    
+    // TAP5-1493
+    public static abstract class AbstractBar
+    {
+    }
+
+    public static class Bar extends AbstractBar
+    {
+    }
+
+    public static abstract class AbstractFoo
+    {
+        public abstract AbstractBar getBar();
+    }
+
+    public static class Foo extends AbstractFoo
+    {
+        Bar bar;
+
+        public Bar getBar()
+        {
+            return bar;
+        }
+    }
+
+    public static interface RobertFoo
+    {
+        int getRobertFooValue();
+    }
+
+    public static interface RobertBar extends RobertFoo
+    {
+        int getRobertBarValue();
+    }
+
+    public static interface RobertBaz
+    {
+        RobertFoo getFoo();
+    }
+
+    public static interface RobertQux extends RobertBaz
+    {
+        RobertBar getFoo();
+    }
+
+    public static class RobertAbstractClass implements RobertBaz
+    {
+        public RobertFoo getFoo()
+        {
+            return null;
+        }
+    }
+
+    public static class RobertMyClass extends RobertAbstractClass implements RobertQux
+    {
+        public RobertBar getFoo()
+        {
+            return null;
+        }
+    }
+    
+    private void assertConduitPropertyType(Class<?> origin, String property, Class<?> expectedType) {
+        assertEquals(expectedType, source.create(origin, property).getPropertyType());
+    }
 }
