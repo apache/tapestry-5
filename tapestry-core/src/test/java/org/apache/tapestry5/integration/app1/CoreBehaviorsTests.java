@@ -1734,4 +1734,42 @@ public class CoreBehaviorsTests extends App1TestCase
     	assertTextPresent("description={'foo':'bar'},type=java.util.Map,genericType=interface java.util.Map");
     	assertTextPresent("description=baz,type=java.lang.String,genericType=class java.lang.String");
     }
+    
+    static class PacScenario {
+    	String link;
+    	String expextedPacValues;
+    	String expectedUri;
+    	
+		public PacScenario(String link, String expextedPacValues,
+				String expectedUri) {
+			super();
+			this.link = link;
+			this.expextedPacValues = expextedPacValues;
+			this.expectedUri = expectedUri;
+		}
+    }
+    
+    @Test
+    public void multiple_pac_fields()
+    {
+    	openLinks("PageActivationContext Multiple Demo");
+    	
+    	assertText("//span[@id='pacValues']", "zero=NULL, one=NULL, two=NULL");
+    	
+    	PacScenario[] scenarios = {
+			new PacScenario("link=Change PAC (null, null, null)", "zero=NULL, one=NULL, two=NULL", "/pacmultipleannotationdemo"),
+			new PacScenario("link=Change PAC (zero, null, null)", "zero=zero, one=NULL, two=NULL", "/pacmultipleannotationdemo/zero"),
+			new PacScenario("link=Change PAC (zero, 1, null)", "zero=zero, one=1, two=NULL", "/pacmultipleannotationdemo/zero/1"),
+			new PacScenario("link=Change PAC (zero, 1, 2.2)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
+			new PacScenario("link=Change PAC (zero, 1, 2.2, 3)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
+			new PacScenario("link=Change PAC (null, null, 2.2)", "zero=NULL, one=NULL, two=2.2", "/pacmultipleannotationdemo/$N/$N/2.2"),
+			new PacScenario("link=Change PAC (zero, null, 2.2)", "zero=zero, one=NULL, two=2.2", "/pacmultipleannotationdemo/zero/$N/2.2"),
+    	};
+    	
+    	for (PacScenario scenario : scenarios) {
+        	clickAndWait(scenario.link);
+        	assertText("//span[@id='pacValues']", scenario.expextedPacValues);
+        	assertTrue(selenium.getLocation().endsWith(scenario.expectedUri));
+    	}
+    }
 }

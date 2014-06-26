@@ -119,6 +119,9 @@ public class Index
                     new Item("PACAnnotationDemo", "PageActivationContext Demo",
                             "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
 
+                    new Item("PACMultipleAnnotationDemo", "PageActivationContext Multiple Demo",
+                            "Demonstrates multiple @PageActivationContext fields."),
+                            
                     new Item("PublicFieldAccessDemo", "Public Field Access Demo", "Demonstrates TAP5-1222 fix"),
 
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",

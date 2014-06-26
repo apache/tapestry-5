@@ -1,0 +1,16 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Multiple @PageActivationContext Demo</h1>
+
+  PAC Values: <span id="pacValues">${pacValues}</span>
+
+  <ul>
+     <li><t:eventlink event="changePAC" context="[null, null, null]">Change PAC (null, null, null)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="['zero', null, null]">Change PAC (zero, null, null)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="['zero', 1, null]">Change PAC (zero, 1, null)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="['zero', 1, 2.2]">Change PAC (zero, 1, 2.2)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="['zero', 1, 2.2, 3]">Change PAC (zero, 1, 2.2, 3)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="[null, null, 2.2]">Change PAC (null, null, 2.2)</t:eventlink></li>
+     <li><t:eventlink event="changePAC" context="['zero', null, 2.2]">Change PAC (zero, null, 2.2)</t:eventlink></li>
+  </ul>
+</html>

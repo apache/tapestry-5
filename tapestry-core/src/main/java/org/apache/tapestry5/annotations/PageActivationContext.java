@@ -28,7 +28,8 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * In order to use this annotation you must contribute a {@link org.apache.tapestry5.ValueEncoder} for the class of the
  * annotated property.
  * <p/>
- * You should not use this annotation more than once per page class; doing it will result in a runtime exception.
+ * If using this annotation more than once per page class you must specify unique indexes for each. Indexes must start
+ * at 0 and increment by 1 (eg. if 3 annotations are present they must have indexes of 0, 1 and 2)
  */
 @Target(FIELD)
 @Documented
@@ -45,4 +46,10 @@ public @interface PageActivationContext
      * Whether to create a passivate event handler
      */
     boolean passivate() default true;
+    
+    /**
+     * The index of the page activation context parameter (default 0)
+     * @since 5.4
+     */
+    int index() default 0;
 }
