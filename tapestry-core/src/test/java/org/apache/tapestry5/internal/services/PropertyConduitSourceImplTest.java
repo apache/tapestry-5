@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.IntegerRange;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -882,7 +884,22 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         // example from Howard
         assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
-        assertConduitPropertyType(Foo.class, "bar", Bar.class);
+        try {
+        	assertConduitPropertyType(Foo.class, "bar", Bar.class);
+        } catch (AssertionError e) {
+        	List<Method> matches = CollectionFactory.newList();
+        	for (Method method : Foo.class.getMethods()) {
+        		if (method.getName().equals("getBar")) {
+        			matches.add(method);
+        		}
+        	}
+        	if (matches.size() < 2) {
+        		throw e;
+        	} else {
+        		String msg = String.format("%s (possible candidates %s)", e.getMessage(), matches); 
+        		throw new AssertionError(msg, e);
+        	}
+        }
         
         // example from Robert
         assertConduitPropertyType(RobertMyClass.class, "foo.robertBarValue", int.class);
