@@ -893,12 +893,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         			matches.add(method);
         		}
         	}
-        	if (matches.size() < 2) {
-        		throw e;
-        	} else {
-        		String msg = String.format("%s (possible candidates %s)", e.getMessage(), matches); 
-        		throw new AssertionError(msg, e);
-        	}
+        	fail(String.format("%s (possible candidates %s)", e.getMessage(), matches)); 
         }
         
         // example from Robert
