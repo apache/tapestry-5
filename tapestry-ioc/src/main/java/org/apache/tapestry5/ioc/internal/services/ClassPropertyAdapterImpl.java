@@ -49,7 +49,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             Method readMethod = pd.getReadMethod();
             
             // TAP5-1493
-            if (readMethod.isBridge()) {
+            if (readMethod != null && readMethod.isBridge()) {
                 for (Method m : beanType.getMethods()) {
                     if (readMethod.getName().equals(m.getName()) && !m.isBridge()) {
                         readMethod = m;
