@@ -47,6 +47,16 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 continue;
 
             Method readMethod = pd.getReadMethod();
+            
+            // TAP5-1493
+            if (readMethod.isBridge()) {
+                for (Method m : beanType.getMethods()) {
+                    if (readMethod.getName().equals(m.getName()) && !m.isBridge()) {
+                        readMethod = m;
+                        break;
+                    }
+                }
+            }
 
             Class propertyType = readMethod == null ? pd.getPropertyType() : GenericsUtils.extractGenericReturnType(
                     beanType, readMethod);
