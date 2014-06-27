@@ -883,7 +883,6 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     public void covariant_property_return_type() {
 
         // example from Howard
-        assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
         try {
         	assertConduitPropertyType(Foo.class, "bar", Bar.class);
         } catch (AssertionError e) {
@@ -895,6 +894,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         	}
         	fail(String.format("%s (possible candidates %s)", e.getMessage(), matches)); 
         }
+        assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
         
         // example from Robert
         assertConduitPropertyType(RobertMyClass.class, "foo.robertBarValue", int.class);
