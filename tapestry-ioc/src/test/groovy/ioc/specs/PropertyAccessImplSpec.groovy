@@ -12,7 +12,6 @@ import org.apache.tapestry5.ioc.internal.util.Pair
 import org.apache.tapestry5.ioc.internal.util.StringLongPair
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter
 import org.apache.tapestry5.ioc.services.PropertyAccess
-import org.apache.tapestry5.ioc.internal.PropertyAccessImplClasses
 
 import spock.lang.*
 

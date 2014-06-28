@@ -524,7 +524,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Orderer<T> orderer = new Orderer<T>(logger);
         Map<String, OrderedConfigurationOverride<T>> overrides = CollectionFactory.newCaseInsensitiveMap();
 
-        for (Module m : moduleToServiceDefs.keySet())
+        // TAP5-2129. NOTICE: if someday an ordering between modules is added, this should be reverted
+        // or a notice added to the documentation.
+        List<Module> modules = new ArrayList<Module>(moduleToServiceDefs.keySet());
+        Collections.sort(modules, new ModuleComparator());
+        
+        for (Module m : modules)
             addToOrderedConfiguration(orderer, overrides, objectType, serviceDef, m);
 
         // An ugly hack ... perhaps we should introduce a new builtin service so that this can be
@@ -1208,5 +1213,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public Set<Class> getMarkerAnnotations()
     {
         return markerToServiceDef.keySet();
+    }
+    
+    final private static class ModuleComparator implements Comparator<Module> {
+
+        @Override
+        public int compare(Module m1, Module m2)
+        {
+            return m1.getModuleBuilder().getClass().getName().compareTo(m2.getModuleBuilder().getClass().getName());
+        }
+        
     }
 }
