@@ -12,6 +12,7 @@ import org.apache.tapestry5.ioc.internal.util.Pair
 import org.apache.tapestry5.ioc.internal.util.StringLongPair
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter
 import org.apache.tapestry5.ioc.services.PropertyAccess
+import org.apache.tapestry5.ioc.internal.PropertyAccessImplClasses
 
 import spock.lang.*
 
@@ -708,6 +709,65 @@ class PropertyAccessImplSpec extends Specification {
     pa.castRequired
     pa.type == String
     pa.declaringClass == GenericBean
+  }
+  
+  interface GetterInterface {
+    int getValue();
+  }
+        
+  interface SetterGetterInterface extends GetterInterface {
+    void setValue(int value);
+  }
+  
+  interface SetterInterface {
+    void setValue(int value);
+  }
+          
+  interface GetterSetterInterface extends SetterInterface {
+    int getValue();
+  }
+  
+  final class GetterSetterClass implements GetterSetterInterface {
+    public void setValue(int value) {}
+    public int getValue() {}
+  }
+    
+  // TAP5-1885
+  def "split properties (getter in one supertype, setter in another)"() {
+        
+    when:
+    def pa1 = getPropertyAdapter SetterGetterInterface, "value";
+    def pa2 = getPropertyAdapter GetterSetterInterface, "value";
+    def pa3 = getPropertyAdapter GetterSetterClass, "value";
+      
+    then:
+    pa1.isRead();
+    pa1.isUpdate();
+    pa2.isRead();
+    pa2.isUpdate();
+    pa3.isRead();
+    pa3.isUpdate();
+  }
+  
+  public interface Baz { String getBar(); }
+ 
+  public class AbstractFoo implements Baz {
+    private String bar;
+    public String getBar() { return bar; }
+    public void setBar(String bar){ this.bar =bar; }
+  }
+  
+  public class Foo extends AbstractFoo {}
+  
+  // TAP5-1548
+  def "property expressions fails when using a supertype that implements an interface with a matching method"() {
+        
+    when:
+    def pa = getPropertyAdapter AbstractFoo, "bar";
+      
+    then:
+    pa.isRead();
+    pa.isUpdate();
   }
 
 

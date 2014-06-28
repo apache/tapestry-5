@@ -48,7 +48,8 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             // Indexed properties will have a null propertyType (and a non-null
             // indexedPropertyType). We ignore indexed properties.
 
-            if (pd.getPropertyType() == null)
+            final Class<?> thisPropertyType = pd.getPropertyType();
+            if (thisPropertyType == null)
                 continue;
 
             Method readMethod = pd.getReadMethod();
@@ -63,6 +64,27 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             	}
             	readMethod = findMethodWithSameNameAndParamCount(readMethod, nonBridgeMethods); 
             }
+            
+            // TAP5-1548, TAP5-1885: trying to find a getter which Introspector missed
+            if (readMethod == null) {
+                final String prefix = thisPropertyType != boolean.class ? "get" : "is";
+                try
+                {
+                    Method method = beanType.getMethod(prefix + capitalize(pd.getName()));
+                    final Class<?> returnType = method.getReturnType();
+                    if (returnType.equals(thisPropertyType) || returnType.isInstance(thisPropertyType)) {
+                        readMethod = method;
+                    }
+                }
+                catch (SecurityException e) {
+                    // getter not usable.
+                }
+                catch (NoSuchMethodException e)
+                {
+                    // getter doesn't exist.
+                }
+            }
+            
             if (writeMethod != null && writeMethod.isBridge())
             {
             	if (nonBridgeMethods == null)
@@ -71,8 +93,29 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             	}
             	writeMethod = findMethodWithSameNameAndParamCount(writeMethod, nonBridgeMethods);
             }
+            
+            // TAP5-1548, TAP5-1885: trying to find a setter which Introspector missed
+            if (writeMethod == null) {
+                try
+                {
+                    Method method = beanType.getMethod("set" + capitalize(pd.getName()), pd.getPropertyType());
+                    final Class<?> returnType = method.getReturnType();
+                    if (returnType.equals(void.class)) {
+                        writeMethod = method;
+                    }
+                }
+                catch (SecurityException e) {
+                    // setter not usable.
+                    e.printStackTrace();
+                }
+                catch (NoSuchMethodException e)
+                {
+                    // setter doesn't exist.
+                    e.printStackTrace();
+                }
+            }
 
-            Class propertyType = readMethod == null ? pd.getPropertyType() : GenericsUtils.extractGenericReturnType(
+            Class propertyType = readMethod == null ? thisPropertyType : GenericsUtils.extractGenericReturnType(
                     beanType, readMethod);
 
             PropertyAdapter pa = new PropertyAdapterImpl(this, pd.getName(), propertyType, readMethod, writeMethod);
@@ -94,6 +137,11 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 adapters.put(name, pa);
             }
         }
+    }
+
+    private static String capitalize(String name)
+    {
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 
     /**
