@@ -769,8 +769,27 @@ class PropertyAccessImplSpec extends Specification {
     pa.isRead();
     pa.isUpdate();
   }
+  
+  public static interface Entity<T extends Serializable>
+  { 
+    T getId(); 
+  }
+  
+  public static interface NamedEntity extends Entity<Long> { 
+    String getName(); 
+  }
 
-
+  // TAP5-1480
+  def "exception when creating property conduits for generic interfaces"() {
+    when:
+    def paId = getPropertyAdapter Entity, "id";
+    def paName = getPropertyAdapter NamedEntity, "name";
+    
+    then:
+    paId != null
+    paName != null
+  }
+  
   def getPropertyAdapter(clazz, name) {
     access.getAdapter(clazz).getPropertyAdapter(name)
   }
