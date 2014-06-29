@@ -106,12 +106,10 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 }
                 catch (SecurityException e) {
                     // setter not usable.
-                    e.printStackTrace();
                 }
                 catch (NoSuchMethodException e)
                 {
                     // setter doesn't exist.
-                    e.printStackTrace();
                 }
             }
 
