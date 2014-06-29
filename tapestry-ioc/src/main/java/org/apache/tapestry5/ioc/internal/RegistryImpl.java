@@ -1216,12 +1216,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
     
     final private static class ModuleComparator implements Comparator<Module> {
-
         @Override
         public int compare(Module m1, Module m2)
         {
-            return m1.getModuleBuilder().getClass().getName().compareTo(m2.getModuleBuilder().getClass().getName());
+            return m1.getLoggerName().compareTo(m2.getLoggerName());
         }
-        
     }
+    
 }
