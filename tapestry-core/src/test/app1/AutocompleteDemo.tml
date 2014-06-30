@@ -5,7 +5,7 @@
 
         <t:errors/>
 
-        <t:textfield t:id="title" t:mixins="autocomplete,formgroup" tokens=",;" size="60"/>
+        <t:textfield t:id="title" t:mixins="autocomplete,formgroup" tokens=",;" maxSuggestions="10" size="60"/>
         <t:textfield t:id="withContext" t:mixins="autocomplete,formgroup" context="context"/>
 
         <div class="form-actions">

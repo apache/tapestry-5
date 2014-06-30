@@ -91,6 +91,12 @@ public class Autocomplete
     private String tokens;
     
     /**
+     * Maximum number of suggestions shown in the UI. It maps to Typeahead's "limit" option. Default value: 5.
+     */
+    @Parameter("5")
+    private int maxSuggestions;
+    
+    /**
      * The context for the "providecompletions" event. 
      * This list of values will be converted into strings and included in
      * the URI. The strings will be coerced back to whatever their values are and made available to event handler
@@ -122,7 +128,7 @@ public class Autocomplete
         Link link = resources.createEventLink(EVENT_NAME, context);
 
         JSONObject spec = new JSONObject("id", field.getClientId(),
-                "url", link.toString()).put("minChars", minChars);
+                "url", link.toString()).put("minChars", minChars).put("limit", maxSuggestions);
 
         jsSupport.require("t5/core/autocomplete").with(spec);
     }

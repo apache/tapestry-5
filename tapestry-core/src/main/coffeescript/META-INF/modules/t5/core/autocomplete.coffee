@@ -23,6 +23,7 @@ define ["./dom", "./ajax", "jquery", "./utils", "./typeahead"],
 
       $field.typeahead
         minLength: spec.minChars
+        limit: spec.limit
         remote:
           url: spec.url
           replace: (uri, query) -> extendURL uri, "t:input": query
