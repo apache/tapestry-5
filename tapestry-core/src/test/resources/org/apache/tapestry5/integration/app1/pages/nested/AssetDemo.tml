@@ -45,6 +45,14 @@
     Context asset via context: binding
 </p>
 
+<p>External asset using "asset:http: " binding: <span id="httpAsset">${httpAsset.toClientURL()}</span></p>
+
+<p>External asset using "asset:https:" binding: <span id="httpsAsset">${httpsAsset.toClientURL()}</span></p>
+
+<p>External asset using "asset://:" binding: <span id="protocolRelativeAsset">${protocolRelativeAsset.toClientURL()}</span></p>
+
+<p>External asset using "asset:ftp:" binding: <span id="ftpAsset">${ftpAsset.toClientURL()}</span></p>
+
 <img id="viaContext" src="${context:images/asf_logo_wide.gif}"/>
 
 <p>
@@ -70,5 +78,11 @@
         ${properties}
     </a>
 </p>
+
+<p>
+	Using d3, loaded directly from a CDN using external asset support: 
+</p>
+
+<div id="viz"/>
 
 </html>

@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * Defines constants for the two basic asset prefixes.
  * 
@@ -26,4 +29,17 @@ public class AssetConstants
 
     /** For assets that are stored in the classpath (i.e., inside 3rd party component library JARs). */
     public static final String CLASSPATH = "classpath";
+
+    /** For assets that are external (stored in another service) and have a non-secure URL (http://...) */
+    public static final String HTTP = "http";
+
+    /** For assets that are external (stored in another service) and have a secure URL (https://...) */
+    public static final String HTTPS = "https";
+
+    /** For assets that are external (stored in another service) and have a protocol-relative URL (//...) */
+    public static final String PROTOCOL_RELATIVE = "//";
+
+    /** For assets that are external (stored in another service) and stored in a publicly available FTP server (ftp://...) */
+    public static final String FTP = "ftp";
+
 }

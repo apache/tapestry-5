@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,6 +48,26 @@ public class AssetDemo
     @Inject
     @Path("context:css/ie-only.css")
     private Asset ieOnly;
+    
+    @Property
+    @Inject
+    @Path("http://${d3.url}")
+    private Asset httpAsset;
+
+    @Property
+    @Inject
+    @Path("https://${d3.url}")
+    private Asset httpsAsset;
+
+    @Property
+    @Inject
+    @Path("//${d3.url}")
+    private Asset protocolRelativeAsset;
+
+    @Property
+    @Inject
+    @Path("ftp://${d3.url}")
+    private Asset ftpAsset;
 
     @Environmental
     private JavaScriptSupport javascriptSupport;

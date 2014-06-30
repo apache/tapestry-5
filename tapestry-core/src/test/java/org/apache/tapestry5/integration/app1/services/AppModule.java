@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package org.apache.tapestry5.integration.app1.services;
 
 import org.apache.tapestry5.SymbolConstants;
@@ -49,6 +48,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public class AppModule
 {
+    
+    final public static String D3_URL_SYMBOL = "d3.url";
+
     /**
      * Used to disambiguate services in this module from services in other modules that share the
      * same service
@@ -151,6 +153,8 @@ public class AppModule
 
         // This is the emphasis of testing at this point.
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+
+        configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)

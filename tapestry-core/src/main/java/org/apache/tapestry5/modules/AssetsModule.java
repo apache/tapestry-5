@@ -60,6 +60,10 @@ public class AssetsModule
     {
         configuration.add(AssetConstants.CONTEXT, contextAssetFactory);
         configuration.add(AssetConstants.CLASSPATH, classpathAssetFactory);
+        configuration.add(AssetConstants.HTTP, new ExternalUrlAssetFactory(AssetConstants.HTTP));
+        configuration.add(AssetConstants.HTTPS, new ExternalUrlAssetFactory(AssetConstants.HTTPS));
+        configuration.add(AssetConstants.FTP, new ExternalUrlAssetFactory(AssetConstants.FTP));
+        configuration.add(AssetConstants.PROTOCOL_RELATIVE, new ExternalUrlAssetFactory(AssetConstants.PROTOCOL_RELATIVE));
     }
 
 

@@ -53,6 +53,18 @@ public class AssetTests extends App1TestCase
 
         compareDownloadedAsset(assetURL, localPath);
     }
+    
+    // TAP5-1515
+    @Test
+    public void external_url_asset_bindings()
+    {
+        openLinks("AssetDemo");
+        
+        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js", getText("httpAsset"));
+        assertEquals("https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js", getText("httpsAsset"));
+        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js", getText("protocolRelativeAsset"));
+        assertEquals("ftp://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js", getText("ftpAsset"));
+    }
 
     private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
     {

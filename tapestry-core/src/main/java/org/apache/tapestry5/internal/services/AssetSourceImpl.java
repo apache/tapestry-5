@@ -31,9 +31,14 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -42,6 +47,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressWarnings("all")
 public class AssetSourceImpl extends LockSupport implements AssetSource
 {
+    
+    private final List<String> EXTERNAL_URL_PREFIXES = Arrays.asList(
+            AssetConstants.HTTP, AssetConstants.HTTPS, AssetConstants.PROTOCOL_RELATIVE, AssetConstants.FTP); 
+    
     private final StrategyRegistry<AssetFactory> registry;
 
     private final ThreadLocale threadLocale;
@@ -57,15 +66,29 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
     private final AtomicBoolean firstWarning = new AtomicBoolean(true);
 
     private final OperationTracker tracker;
+    
+    private final Request request;
+    
+    private final Map<String, AssetFactory> configuration;
 
-    public AssetSourceImpl(ThreadLocale threadLocale,
+    public AssetSourceImpl(ThreadLocale threadLocale, 
 
-                           Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker)
+            Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker)
     {
+        this(threadLocale, configuration, symbolSource, logger, tracker, null);
+    }
+
+    
+    public AssetSourceImpl(ThreadLocale threadLocale, 
+
+                           Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker, Request request)
+    {
+        this.configuration = configuration;
         this.threadLocale = threadLocale;
         this.symbolSource = symbolSource;
         this.logger = logger;
         this.tracker = tracker;
+        this.request = request;
 
         Map<Class, AssetFactory> byResourceClass = CollectionFactory.newMap();
 
@@ -141,9 +164,36 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
                         // We special case the hell out of 'classpath:' so that we can provide warnings today (5.4) and
                         // blow up in a useful fashion tomorrow (5.5).
 
-                        if (dotx > 0 && !expanded.substring(0, dotx).equalsIgnoreCase(AssetConstants.CLASSPATH))
+                        if (expanded.startsWith("//") || (dotx > 0 && !expanded.substring(0, dotx).equalsIgnoreCase(AssetConstants.CLASSPATH)))
                         {
-                            return getAssetInLocale(resources.getBaseResource(), expanded, resources.getLocale());
+                            final String prefix = dotx >= 0 ? expanded.substring(0, dotx) : AssetConstants.PROTOCOL_RELATIVE;
+                            if (EXTERNAL_URL_PREFIXES.contains(prefix))
+                            {
+                                
+                                String url;
+                                if (prefix.equals(AssetConstants.PROTOCOL_RELATIVE)) 
+                                {
+                                    url = (request != null && request.isSecure() ? "https:" : "http:") + expanded;  
+                                }
+                                else
+                                {
+                                    url = expanded;
+                                }
+                                
+                                try
+                                {
+                                    UrlResource resource = new UrlResource(new URL(url));
+                                    return new UrlAsset(url, resource);
+                                }
+                                catch (MalformedURLException e)
+                                {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            else
+                            {
+                                return getAssetInLocale(resources.getBaseResource(), expanded, resources.getLocale());
+                            }
                         }
 
                         // No prefix, so implicitly classpath:, or explicitly classpath:
