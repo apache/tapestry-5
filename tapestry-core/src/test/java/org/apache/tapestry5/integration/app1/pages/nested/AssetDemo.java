@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.javascript.StylesheetOptions;
  * Primarily used to demonstrate that assets can be localized and exposed to the client, this has grown to also
  * demonstrate the use of the {@link Import} annotation.
  */
-@Import(library = {"http://${d3.url}", "AssetDemo.js"})
+@Import(library = {"//:${d3.url}", "AssetDemo.js"})
 public class AssetDemo
 {
     @Property

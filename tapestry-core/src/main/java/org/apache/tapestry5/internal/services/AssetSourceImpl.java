@@ -173,7 +173,8 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
                                 String url;
                                 if (prefix.equals(AssetConstants.PROTOCOL_RELATIVE)) 
                                 {
-                                    url = (request != null && request.isSecure() ? "https:" : "http:") + expanded;  
+                                    url = (request != null && request.isSecure() ? "https:" : "http:") + expanded;
+                                    url = url.replace("//:", "//");
                                 }
                                 else
                                 {
