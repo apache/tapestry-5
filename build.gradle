@@ -572,3 +572,44 @@ boolean checkJDK() {
         true
     }
 }
+
+task updateBootstrap << {
+  def bootstrapVersion = '3.2.0'
+  def target = new File(temporaryDir, 'bootstrap.zip')
+  ant.get(src: "https://github.com/twbs/bootstrap/archive/v${bootstrapVersion}.zip", dest: target)
+
+  def adjustDirectory = {
+      def relativePath = it.relativePath
+      if (relativePath.pathString.contains('/dist/')){
+          relativePath = new RelativePath(!it.file.isDirectory(), relativePath.segments[2..-1] as String[])
+      } else {
+          relativePath = new RelativePath(!it.file.isDirectory(), relativePath.segments[1..-1] as String[])
+      }
+      println "copying $it.relativePath to $relativePath"
+      it.relativePath = relativePath
+
+  }
+
+  copy {
+    from(zipTree(target)){
+        include('*/js/*.js')
+        include('*/dist/fonts/*')
+        include('*/dist/css/bootstrap.css')
+        include('*/dist/css/bootstrap-theme.css')
+
+        eachFile adjustDirectory
+    }
+    into('tapestry-core/src/main/resources/META-INF/assets/tapestry5/bootstrap/')
+  }
+
+  copy {
+    from(zipTree(target)){
+        include('*/js/*.js')
+        include('*/dist/fonts/*')
+        include('*/less/**/*.less')
+
+        eachFile adjustDirectory
+    }
+    into('tapestry-webresources/src/test/webapp/bootstrap/')
+  }
+}
