@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -49,6 +47,7 @@ public class AssetInjectionProvider implements InjectionProvider2
         }
 
         final String assetPath = path.value();
+        final String libraryName = componentModel.getLibraryName();
 
         ComputedValue<Asset> computedAsset = new ComputedValue<Asset>()
         {
@@ -56,7 +55,10 @@ public class AssetInjectionProvider implements InjectionProvider2
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
-                return assetSource.getComponentAsset(resources, assetPath);
+                // Note how this works: the resources represents the actual instantiated class, and the libraryName
+                // comes from the componentModel, potentially, the componentModel of a base class (which may have
+                // a different library name than the subclass).
+                return assetSource.getComponentAsset(resources, assetPath, libraryName);
             }
         };
 

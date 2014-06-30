@@ -71,6 +71,12 @@ Tapestry 5.4 introduces a new module, tapestry-webresources, which provides supp
 CoffeeScript into JavaScript, Less into CSS, and for minimizing CSS and JavaScript.
 All processing takes place at runtime.
 
+Tapestry now properly handles the case for a base class referencing assets that is subclassed into a
+different library (or subclasses from a library to the application). As long as the new location, under
+`META-INF/assets`, is used, then Tapestry will locate the base class asset inside the subfolder
+corresponding the the base class' library. In prior releases, the resolution was against the
+subclass' library, which would fail.
+
 ## FormGroup Mixin
 
 This new mixin for Field components adds the outer `<div class="form-group">` and `<label>` elements for a Field

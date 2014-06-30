@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -131,6 +129,12 @@ public interface AssetSource
      * This is the preferred location in 5.4, with compatibility for 5.3 that allows assets to be stored on the classpath
      * alongside Java classes and server-only resources such as templates and message catalogs.
      *
+     * <p/>
+     * When resolving a resource in a component that is subclass, the point of injection is the class which contains
+     * the injecting annotation (e.g., {@link org.apache.tapestry5.ioc.annotations.Inject} with {@link org.apache.tapestry5.annotations.Path},
+     * or {@link org.apache.tapestry5.annotations.Import}). In other words, the library name for the library containing the class,
+     * rather than the library name of the instantiated subclass (which can be different).
+     *
      * @param resources
      *         resources, used to identify starting location of asset (if path does not include a asset prefix).
      * @param path
@@ -138,10 +142,14 @@ public interface AssetSource
      *         component's library asset folder (the 5.4 and beyond way), or the to the component's Java class file (the 5.3 and earlier
      *         way, still supported until at least 5.5).
      *         Symbols in the path are {@linkplain org.apache.tapestry5.ioc.services.SymbolSource#expandSymbols(String) expanded}.
+     * @param libraryName
+     *          The name of the library containing the component, as per {@link org.apache.tapestry5.model.ComponentModel#getLibraryName()}.
+     *          For a subclass, the libraryName must reflect the name of the library for the parent class that forms the basis of
+     *          injection.
      * @return the Asset
      * @throws RuntimeException
      *         if Asset can not be found
      * @since 5.4
      */
-    Asset getComponentAsset(ComponentResources resources, String path);
+    Asset getComponentAsset(ComponentResources resources, String path, final String libraryName);
 }

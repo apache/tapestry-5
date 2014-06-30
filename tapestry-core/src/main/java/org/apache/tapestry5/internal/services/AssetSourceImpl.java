@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -143,7 +141,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
         return getUnlocalizedAsset(symbolSource.expandSymbols(path));
     }
 
-    public Asset getComponentAsset(final ComponentResources resources, final String path)
+    public Asset getComponentAsset(final ComponentResources resources, final String path, final String libraryName)
     {
         assert resources != null;
 
@@ -207,7 +205,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
                         // represented in the URL.
 
                         // Ends with trailing slash:
-                        String metaRoot = "META-INF/assets/" + toPathPrefix(resources.getComponentModel().getLibraryName());
+                        String metaRoot = "META-INF/assets/" + toPathPrefix(libraryName);
 
                         String trimmedRestOfPath = restOfPath.startsWith("/") ? restOfPath.substring(1) : restOfPath;
 

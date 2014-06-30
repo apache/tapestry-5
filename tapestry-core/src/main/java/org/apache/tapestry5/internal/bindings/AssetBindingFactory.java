@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,7 +41,7 @@ public class AssetBindingFactory implements BindingFactory
         // sub-class gets instantiated, because relative path for the asset should be relative to the
         // base class, but will instead by relative to the subclass.
 
-        Asset asset = source.getComponentAsset(container, expression);
+        Asset asset = source.getComponentAsset(container, expression, container.getComponentModel().getLibraryName());
 
         return new AssetBinding(location, description, asset);
     }

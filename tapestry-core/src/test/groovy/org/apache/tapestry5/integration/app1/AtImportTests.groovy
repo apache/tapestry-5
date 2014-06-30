@@ -17,7 +17,7 @@ class AtImportTests extends GroovyTapestryCoreTestCase
         
         final String locatorTemplate = "//link[contains(@href, 'via-import.css')]/preceding-sibling::link[contains(@href, '%s.css')]"
         
-        open("/AtImportWithoutStackButWithStylesheet")
+        open "/AtImportWithoutStackButWithStylesheet"
         
         assert isElementPresent(String.format(locatorTemplate, "bootstrap"))
         assert isElementPresent(String.format(locatorTemplate, "tapestry"))
@@ -25,6 +25,13 @@ class AtImportTests extends GroovyTapestryCoreTestCase
         assert isElementPresent(String.format(locatorTemplate, "tapestry-console"))
         assert isElementPresent(String.format(locatorTemplate, "tree"))
         
+    }
+
+    @Test
+    void import_and_asset_injection_in_base_class_finds_resources_there() {
+        openLinks "Base class Assets in sub-classes"
+
+        assertText "//h1", "Alpha Library: Logo Demo"
     }
 
 }

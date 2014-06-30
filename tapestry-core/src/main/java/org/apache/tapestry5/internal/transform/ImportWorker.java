@@ -1,5 +1,3 @@
-// Copyright 2010-2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -114,6 +112,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
     {
         importStacks(method, annotation.stack());
 
+        String libraryName = model.getLibraryName();
+
         importLibraries(componentClass, model, method, annotation.library());
 
         importStylesheets(componentClass, model, method, annotation.stylesheet());
@@ -227,7 +227,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         PlasticField assetListField = componentClass.introduceField(Asset[].class,
                 "importedAssets_" + method.getDescription().methodName);
 
-        initializeAssetsFromPaths(expandedPaths, assetListField);
+        initializeAssetsFromPaths(expandedPaths, assetListField, model.getLibraryName());
 
         addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
     }
@@ -237,7 +237,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         return F.flow(paths).map(expandSymbols).toArray(String.class);
     }
 
-    private void initializeAssetsFromPaths(final String[] expandedPaths, PlasticField assetsField)
+    private void initializeAssetsFromPaths(final String[] expandedPaths, PlasticField assetsField, final String libraryName)
     {
         assetsField.injectComputed(new ComputedValue<Asset[]>()
         {
@@ -245,18 +245,18 @@ public class ImportWorker implements ComponentClassTransformWorker2
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
-                return convertPathsToAssetArray(resources, expandedPaths);
+                return convertPathsToAssetArray(resources, expandedPaths, libraryName);
             }
         });
     }
 
-    private Asset[] convertPathsToAssetArray(final ComponentResources resources, String[] assetPaths)
+    private Asset[] convertPathsToAssetArray(final ComponentResources resources, String[] assetPaths, final String libraryName)
     {
         return F.flow(assetPaths).map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {
-                return assetSource.getComponentAsset(resources, assetPath);
+                return assetSource.getComponentAsset(resources, assetPath, libraryName);
             }
         }).toArray(Asset.class);
     }

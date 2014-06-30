@@ -1,0 +1,1 @@
+document.getElementById("t5logo").setAttribute("style", null);
