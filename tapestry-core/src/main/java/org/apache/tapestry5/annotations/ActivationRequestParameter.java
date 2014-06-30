@@ -1,5 +1,3 @@
-// Copyright 2010, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -47,7 +45,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
  * Fields annotated with ActivationRequestParameter are <em>not</em> considered persistent (its a process parallel to the one
  * related to the {@link Persist} annotation). Invoking {@link ComponentResources#discardPersistentFieldChanges()} will
  * <em>not</em> affect annotated fields, only assigning them back to null will.
- * 
+ *
  * @see RequestParameter
  * @see ValueEncoder
  */
@@ -62,5 +60,11 @@ public @interface ActivationRequestParameter
     /** The name of the query parameter, which defaults to the name of the field. */
     String value() default "";
 
-    // TODO: Attributes to limit it to just render links, or just component event links?
+    /**
+     * If true then a null value is an error. If false, then a null value will result in no update to the field. Either way,
+     * a null field value will result in no query parameter added to a  {@linkplain org.apache.tapestry5.Link generated link}.
+     *
+     * @since 5.4
+     */
+    boolean required() default false;
 }

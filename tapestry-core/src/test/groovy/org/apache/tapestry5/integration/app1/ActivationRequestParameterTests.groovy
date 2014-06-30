@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -62,5 +60,14 @@ class ActivationRequestParameterTests extends App1TestCase
         
         assertText "click-count", "1"
         assertText "selected-click-count", "2"        
+    }
+
+    @Test
+    public void required_arp_with_missing_parameter_is_error() {
+
+        openLinks "Missing Query Parameter for @ActivationRequestParameter"
+
+        assertTextPresent"Activation request parameter field org.apache.tapestry5.integration.app1.pages.MissingRequiredARP.missingARP is marked as required, but query parameter 'missingARP' is null."
+
     }
 }

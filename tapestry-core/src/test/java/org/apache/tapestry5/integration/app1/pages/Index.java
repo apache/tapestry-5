@@ -57,6 +57,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("MissingRequiredARP", "Missing Query Parameter for @ActivationRequestParameter", "Activating a page with a required @ActivationRequestParameter, but no matching query parameter, is an error."),
+
                     new Item ("DateFieldValidationDemo", "DateField Validation Demo",
                             "Use of DateField component when client validation is disabled."),
 
