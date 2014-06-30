@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,6 +17,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.FieldHandle;
@@ -86,7 +85,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
         String fieldName = String.format("%s.%s", field.getPlasticClass().getClassName(), field.getName());
 
-        setValueFromInitializeEventHandler(support, fieldName, handle, parameterName, encoder, urlEncoder);
+        setValueFromInitializeEventHandler(support, fieldName, annotation.required(), handle, parameterName, encoder, urlEncoder);
 
         decorateLinks(support, fieldName, handle, parameterName, encoder, urlEncoder);
 
@@ -112,7 +111,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
     }
 
     @SuppressWarnings("all")
-    private void setValueFromInitializeEventHandler(TransformationSupport support, String fieldName, final FieldHandle handle,
+    private void setValueFromInitializeEventHandler(final TransformationSupport support, final String fieldName, final boolean required, final FieldHandle handle,
                                                     final String parameterName, final ValueEncoder encoder, final URLEncoder urlEncoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
@@ -122,7 +121,16 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
                 String clientValue = request.getParameter(parameterName);
 
                 if (clientValue == null)
+                {
+                    if (required)
+                    {
+                        throw new TapestryException(String.format("Activation request parameter field %s is marked as required, but query parameter '%s' is null.",
+                                fieldName,
+                                parameterName), null);
+                    }
+
                     return;
+                }
 
                 // TAP5-1768: unescape encoded value
                 clientValue = urlEncoder.decode(clientValue);
