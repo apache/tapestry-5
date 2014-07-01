@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,9 +15,11 @@ package org.apache.tapestry5.internal.webresources;
 import com.google.javascript.jscomp.*;
 import com.google.javascript.jscomp.Compiler;
 import org.apache.commons.io.IOUtils;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.slf4j.Logger;
@@ -38,14 +38,23 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 {
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
+    private final Request request;
+
     static
     {
         Compiler.setLoggingLevel(Level.SEVERE);
     }
 
-    public GoogleClosureMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator)
+    public GoogleClosureMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, Request request)
     {
         super(logger, tracker, checksumGenerator, "text/javascript");
+        this.request = request;
+    }
+
+    @Override
+    protected boolean isEnabled(StreamableResource resource)
+    {
+        return request.getAttribute(TapestryConstants.DISABLE_JAVASCRIPT_MINIMIZATION) == null;
     }
 
     @Override

@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -71,6 +69,14 @@ public enum StackExtensionType
      * @since 5.4
      */
     MODULE,
+
+    /**
+     * Overrides the {@linkplain JavaScriptStack#getJavaScriptAggregationStrategy() JavaScript aggregation strategy}
+     * for the stack. The value is string name of an {@link org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy} value.
+     *
+     * @since 5.4
+     */
+    AGGREGATION_STRATEGY,
 
     /**
      * Extra JavaScript initialization (rarely used). No symbol expansion takes place.

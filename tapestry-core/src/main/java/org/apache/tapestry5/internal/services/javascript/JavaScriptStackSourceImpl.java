@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,9 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -53,5 +53,22 @@ public class JavaScriptStackSourceImpl implements JavaScriptStackSource
     public List<String> getStackNames()
     {
         return F.flow(configuration.keySet()).sort().toList();
+    }
+
+    @Override
+    public JavaScriptStack findStackForJavaScriptLibrary(Resource resource)
+    {
+        for (JavaScriptStack stack : configuration.values())
+        {
+            for (Asset libraryAsset : stack.getJavaScriptLibraries())
+            {
+                if (libraryAsset.getResource().equals(resource))
+                {
+                    return stack;
+                }
+            }
+        }
+
+        return null;
     }
 }

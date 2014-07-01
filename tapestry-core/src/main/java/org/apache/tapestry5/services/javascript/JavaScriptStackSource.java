@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
@@ -50,4 +49,14 @@ public interface JavaScriptStackSource
      * @since 5.2.1
      */
     List<String> getStackNames();
+
+    /**
+     * Attempts to find the stack containing the indicated JavaScript library.
+     *
+     * @param resource identifies a potential JavaScript Library
+     * @return the stack if found, or null
+     * @since 5.4
+     * @see JavaScriptStack#getJavaScriptLibraries()
+     */
+    JavaScriptStack findStackForJavaScriptLibrary(Resource resource);
 }

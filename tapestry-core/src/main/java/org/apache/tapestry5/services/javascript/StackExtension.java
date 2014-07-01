@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -82,6 +80,16 @@ public class StackExtension
     public static StackExtension stack(String name)
     {
         return new StackExtension(StackExtensionType.STACK, name);
+    }
+
+    /**
+     * Convenience for defining the {@link JavaScriptStack#getJavaScriptAggregationStrategy()}.
+     *
+     * @since 5.4
+     */
+    public static StackExtension javascriptAggregation(JavascriptAggregationStrategy strategy)
+    {
+        return new StackExtension(StackExtensionType.AGGREGATION_STRATEGY, strategy.name());
     }
 
 }

@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -78,13 +76,13 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
 
         // When combine scripts is true, we want to build the virtual aggregated JavaScript ... but only
         // if there is more than one library asset, or any modules.
-        if (combineScripts)
+        if (combineScripts && stack.getJavaScriptAggregationStrategy().enablesCombine())
         {
             boolean needsVirtual = (assets.size() > 1) || (!stack.getModules().isEmpty());
 
             if (needsVirtual)
             {
-                return combinedStackURL(stackName);
+                return combinedStackURL(stackName, stack);
             }
         }
 
@@ -98,11 +96,12 @@ public class JavaScriptStackPathConstructorImpl implements JavaScriptStackPathCo
         return F.flow(assets).map(toPath).toList();
     }
 
-    private List<String> combinedStackURL(String stackName)
+    private List<String> combinedStackURL(String stackName, JavaScriptStack stack)
     {
         try
         {
-            StreamableResource assembled = assembler.assembleJavaScriptResourceForStack(stackName, compressionAnalyzer.isGZipSupported());
+            StreamableResource assembled = assembler.assembleJavaScriptResourceForStack(stackName, compressionAnalyzer.isGZipSupported(),
+                    stack.getJavaScriptAggregationStrategy());
 
             String path = String.format("%s/%s.js",
                     threadLocale.getLocale(),

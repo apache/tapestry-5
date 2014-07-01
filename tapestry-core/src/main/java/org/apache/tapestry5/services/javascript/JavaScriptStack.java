@@ -1,5 +1,3 @@
-// Copyright 2010-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -74,6 +72,14 @@ public interface JavaScriptStack
      * @since 5.4
      */
     List<String> getModules();
+
+    /**
+     * Identifies how to aggregate JavaScript within the stack.
+     * The default is {@link org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy#COMBINE_AND_MINIMIZE}.
+     *
+     * @since 5.4
+     */
+    JavascriptAggregationStrategy getJavaScriptAggregationStrategy();
 
     /**
      * Returns static JavaScript initialization for the stack. This block of JavaScript code will be added to the

@@ -11,6 +11,7 @@ import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy;
 import org.apache.tapestry5.services.javascript.StackExtension;
 import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.apache.tapestry5.webresources.modules.WebResourcesModule;
@@ -38,6 +39,8 @@ public class AppModule
     @Core
     public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
     {
+        // configuration.add("ForTestingOnly", StackExtension.javascriptAggregation(JavascriptAggregationStrategy.DO_NOTHING));
+
         configuration.override("bootstrap.css",
                 new StackExtension(StackExtensionType.STYLESHEET, "context:bootstrap/less/bootstrap.less"), "before:tapestry.css");
     }

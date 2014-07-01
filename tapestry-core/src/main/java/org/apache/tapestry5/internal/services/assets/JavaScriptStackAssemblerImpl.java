@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.*;
@@ -51,6 +52,30 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final Map<String, StreamableResource> cache = CollectionFactory.newCaseInsensitiveMap();
 
+    private class Parameters
+    {
+        final Locale locale;
+
+        final String stackName;
+
+        final boolean compress;
+
+        final JavascriptAggregationStrategy javascriptAggregationStrategy;
+
+        private Parameters(Locale locale, String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy)
+        {
+            this.locale = locale;
+            this.stackName = stackName;
+            this.compress = compress;
+            this.javascriptAggregationStrategy = javascriptAggregationStrategy;
+        }
+
+        Parameters disableCompress()
+        {
+            return new Parameters(locale, stackName, false, javascriptAggregationStrategy);
+        }
+    }
+
     // TODO: Support for aggregated CSS as well as aggregated JavaScript
 
     public JavaScriptStackAssemblerImpl(ThreadLocale threadLocale, ResourceChangeTracker resourceChangeTracker, StreamableResourceSource streamableResourceSource,
@@ -71,44 +96,44 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         resourceChangeTracker.clearOnInvalidation(cache);
     }
 
-    public StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress) throws IOException
+    public StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy) throws IOException
     {
         Locale locale = threadLocale.getLocale();
 
-        return assembleJavascriptResourceForStack(locale, stackName, compress);
+        return assembleJavascriptResourceForStack(new Parameters(locale, stackName, compress, javascriptAggregationStrategy));
     }
 
-    private StreamableResource assembleJavascriptResourceForStack(Locale locale, String stackName, boolean compress) throws IOException
+    private StreamableResource assembleJavascriptResourceForStack(Parameters parameters) throws IOException
     {
         String key =
                 String.format("%s[%s] %s",
-                        stackName,
-                        compress ? "COMPRESS" : "UNCOMPRESSED",
-                        locale.toString());
+                        parameters.stackName,
+                        parameters.compress ? "COMPRESS" : "UNCOMPRESSED",
+                        parameters.locale.toString());
 
         StreamableResource result = cache.get(key);
 
         if (result == null)
         {
-            result = assemble(locale, stackName, compress);
+            result = assemble(parameters);
             cache.put(key, result);
         }
 
         return result;
     }
 
-    private StreamableResource assemble(Locale locale, String stackName, boolean compress) throws IOException
+    private StreamableResource assemble(Parameters parameters) throws IOException
     {
-        if (compress)
+        if (parameters.compress)
         {
-            StreamableResource uncompressed = assembleJavascriptResourceForStack(locale, stackName, false);
+            StreamableResource uncompressed = assembleJavascriptResourceForStack(parameters.disableCompress());
 
             return new CompressedStreamableResource(uncompressed, checksumGenerator);
         }
 
-        JavaScriptStack stack = stackSource.getStack(stackName);
+        JavaScriptStack stack = stackSource.getStack(parameters.stackName);
 
-        return assembleStreamableForStack(locale.toString(), stackName, stack.getJavaScriptLibraries(), stack.getModules());
+        return assembleStreamableForStack(parameters.locale.toString(), parameters, stack.getJavaScriptLibraries(), stack.getModules());
     }
 
     interface StreamableReader
@@ -197,9 +222,10 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         }
     }
 
-    private StreamableResource assembleStreamableForStack(String localeName, String stackName, List<Asset> libraries, List<String> moduleNames) throws IOException
+    private StreamableResource assembleStreamableForStack(String localeName, Parameters parameters,
+                                                          List<Asset> libraries, List<String> moduleNames) throws IOException
     {
-        Assembly assembly = new Assembly(String.format("'%s' JavaScript stack, for locale %s, resources=", stackName, localeName));
+        Assembly assembly = new Assembly(String.format("'%s' JavaScript stack, for locale %s, resources=", parameters.stackName, localeName));
 
         for (Asset library : libraries)
         {
@@ -222,7 +248,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
         StreamableResource streamable = assembly.finish();
 
-        if (minificationEnabled)
+        if (minificationEnabled && parameters.javascriptAggregationStrategy.enablesMinimize())
         {
             return resourceMinimizer.minimize(streamable);
         }

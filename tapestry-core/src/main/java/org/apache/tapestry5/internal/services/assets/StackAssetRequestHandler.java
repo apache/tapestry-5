@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,6 +20,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.slf4j.Logger;
 
@@ -96,7 +95,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler
             checksum = checksum.substring(1);
         }
 
-        if (stackSource.findStack(stackName) == null)
+        final JavaScriptStack stack = stackSource.findStack(stackName);
+
+        if (stack == null)
         {
             logger.warn(String.format("JavaScript stack '%s' not found.", stackName));
             return false;
@@ -110,13 +111,14 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         StreamableResource resource =
                 tracker.perform(String.format("Assembling JavaScript asset stack '%s' (%s)",
-                        stackName, localeName),
+                                stackName, localeName),
                         new IOOperation<StreamableResource>()
                         {
                             public StreamableResource perform() throws IOException
                             {
 
-                                return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed);
+                                return javaScriptStackAssembler.assembleJavaScriptResourceForStack(stackName, compressed,
+                                        stack.getJavaScriptAggregationStrategy());
 
                             }
                         });

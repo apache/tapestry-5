@@ -55,6 +55,11 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
     @Override
     public StreamableResource minimize(final StreamableResource input) throws IOException
     {
+        if (!isEnabled(input))
+        {
+            return input;
+        }
+
         long startNanos = System.nanoTime();
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
@@ -106,4 +111,14 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
      * @return stream of minimized content
      */
     protected abstract InputStream doMinimize(StreamableResource resource) throws IOException;
+
+    /**
+     * Determines if the resource can be minimized.
+     *
+     * @return true, subclasses may override
+     */
+    protected boolean isEnabled(StreamableResource resource)
+    {
+        return true;
+    }
 }

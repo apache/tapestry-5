@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -55,6 +53,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
 
     private final String initialization;
 
+    private final JavascriptAggregationStrategy strategy;
+
     private final Predicate<StackExtension> by(final StackExtensionType type)
     {
         return new Predicate<StackExtension>()
@@ -96,6 +96,15 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         ;
     };
 
+    private final Mapper<String, JavascriptAggregationStrategy> stringToStrategy = new Mapper<String, JavascriptAggregationStrategy>()
+    {
+        @Override
+        public JavascriptAggregationStrategy map(String name)
+        {
+            return JavascriptAggregationStrategy.valueOf(name);
+        }
+    };
+
     public ExtensibleJavaScriptStack(AssetSource assetSource, List<StackExtension> configuration)
     {
         this.assetSource = assetSource;
@@ -115,6 +124,27 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
                 .toList();
 
         initialization = initializations.isEmpty() ? null : InternalUtils.join(initializations, "\n");
+
+        strategy = toStrategy(extensions);
+    }
+
+    private JavascriptAggregationStrategy toStrategy(Flow<StackExtension> extensions)
+    {
+        List<JavascriptAggregationStrategy> values = extensions.filter(by(StackExtensionType.AGGREGATION_STRATEGY)).map(extractValue).map(stringToStrategy).toList();
+
+        switch (values.size())
+        {
+            case 0:
+                return JavascriptAggregationStrategy.COMBINE_AND_MINIMIZE;
+
+            case 1:
+
+                return values.get(0);
+
+            default:
+                throw new IllegalStateException(String.format("Could not handle %d contribution(s) of JavaScriptAggregation Strategy. There should be at most one.",
+                        values.size()));
+        }
     }
 
     public List<String> getStacks()
@@ -140,5 +170,11 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
     public List<String> getModules()
     {
         return modules;
+    }
+
+    @Override
+    public JavascriptAggregationStrategy getJavaScriptAggregationStrategy()
+    {
+        return strategy;
     }
 }

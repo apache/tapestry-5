@@ -1,5 +1,3 @@
-// Copyright 2010-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -60,4 +58,14 @@ public class TapestryConstants
      * @since 5.4
      */
     public static final String RESPONSE_RENDERER = "tapestry.response-renderer";
+
+    /**
+     * Name of a {@link org.apache.tapestry5.services.Request} attribute, used
+     * to disable JavaScript minimization during asset requests.
+     *
+     * @see org.apache.tapestry5.services.javascript.JavaScriptStack#getJavaScriptAggregationStrategy()
+     * @since 5.4
+     */
+    public static final String DISABLE_JAVASCRIPT_MINIMIZATION = "tapestry.disable-javascript-minimization";
+
 }

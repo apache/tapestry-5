@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.*;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 import java.util.Map;
@@ -144,6 +145,19 @@ public class AssetsModule
                                                           @Symbol(SymbolConstants.STRICT_CSS_URL_REWRITING) boolean strictCssUrlRewriting)
     {
         return new CSSURLRewriter(delegate, tracker, assetSource, checksumGenerator, strictCssUrlRewriting);
+    }
+
+    @Decorate(id = "DisableMinificationForStacks", serviceInterface = StreamableResourceSource.class)
+    @Order("before:Minification")
+    public StreamableResourceSource setupDisableMinizationByJavaScriptStack(StreamableResourceSource delegate,
+                                                                            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+                                                                            boolean enabled,
+                                                                            JavaScriptStackSource javaScriptStackSource,
+                                                                            Request request)
+    {
+        return enabled
+                ? new JavaScriptStackMinimizeDisabler(delegate, javaScriptStackSource, request)
+                : null;
     }
 
     /**

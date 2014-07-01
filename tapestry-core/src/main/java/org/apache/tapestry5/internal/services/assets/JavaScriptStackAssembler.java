@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,6 +13,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy;
 
 import java.io.IOException;
 
@@ -35,5 +34,5 @@ public interface JavaScriptStackAssembler
      * <p/>
      * Expects the {@linkplain org.apache.tapestry5.services.LocalizationSetter#setNonPersistentLocaleFromLocaleName(String) non-persistent locale} to be set before invoking!
      */
-    StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress) throws IOException;
+    StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy) throws IOException;
 }

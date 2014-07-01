@@ -77,6 +77,10 @@ different library (or subclasses from a library to the application). As long as 
 corresponding the the base class' library. In prior releases, the resolution was against the
 subclass' library, which would fail.
 
+It is now possible to control, for each JavaScript Stack, how that stack treats its JavaScript libraries.
+The default is to aggregate the libraries and minimize them, but there are now options to aggregate
+them without minimizing, or to leave them as individual files (neither aggregating, nor minimizing).
+
 ## FormGroup Mixin
 
 This new mixin for Field components adds the outer `<div class="form-group">` and `<label>` elements for a Field
@@ -100,7 +104,7 @@ mode (but disabled in production mode):
 
 ## T5Dashboard Page
 
-The T5 Dashboard is a new page the consolidates Tapestry 5.4's PageCatalog and ServiceStatus pages.
+The T5 Dashboard is a new page the consolidates Tapestry 5.3's PageCatalog and ServiceStatus pages.
 The page is itself extensible, allowing libraries or applications to add their own tabs.
 
 ## tapestry-test deprecated
