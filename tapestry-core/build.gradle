@@ -27,12 +27,12 @@ dependencies {
     compile "commons-codec:commons-codec:1.5"
 
     // Transitive will bring in the unwanted string template library as well
-    compile "org.antlr:antlr-runtime:3.3", {
+    compile "org.antlr:antlr-runtime:3.5.2", {
         exclude group: "org.antlr", module: "stringtemplate"
     }
 
     // Antlr3 tool path used with the antlr3 task
-    antlr3 "org.antlr:antlr:3.3"
+    antlr3 "org.antlr:antlr:3.5.2"
 
     testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
