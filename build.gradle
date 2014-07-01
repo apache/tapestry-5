@@ -155,19 +155,19 @@ subprojects {
 
     sourceSets {
         main {
-            compileClasspath += configurations.provided
+            compileClasspath += [configurations.provided]
         }
         test {
-            compileClasspath += configurations.provided
-            runtimeClasspath += configurations.provided
+            compileClasspath += [configurations.provided]
+            runtimeClasspath += [configurations.provided]
         }
     }
 
     idea.module {
-        scopes.PROVIDED.plus += configurations.provided
+        scopes.PROVIDED.plus += [configurations.provided]
     }
 
-    eclipse.classpath.plusConfigurations += configurations.provided
+    eclipse.classpath.plusConfigurations += [configurations.provided]
 
     dependencies {
         testCompile "org.codehaus.groovy:groovy-all:${versions.groovy}"

@@ -49,14 +49,14 @@ configurations {
 
 sourceSets {
     main {
-        compileClasspath += configurations.provided
+        compileClasspath += [configurations.provided]
         // To give the same path as IDEA has
         // output.resourcesDir = 'build/production/${artifactId}'
         // output.classesDir = 'build/production/${artifactId}'
     }
     test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
+        compileClasspath += [configurations.provided]
+        runtimeClasspath += [configurations.provided]
     }
 }
 
