@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2014 The Apache Software Foundation
+//  Copyright 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.app1.pages;
+package org.apache.tapestry5.integration.app3.pages;
 
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.integration.app1.data.IncidentData;
 
-public class ValidForm
+public class Html5Support
 {
-    @Persist
-    private IncidentData incident;
     
     @Property
-    private String emailValidator;
+    private Integer integer;
+    
+    @Property
+    private String required;
 
-    public IncidentData getIncident()
-    {
-        return incident;
-    }
+    @Property
+    private String email;
+    
+    @Property
+    private String minNumber;
+    
+    @Property
+    private String maxNumber;
 
-    void onPrepare()
-    {
-        if (incident == null)
-            incident = new IncidentData();
-    }
+    @Property
+    private String minMaxNumber;
+
+    @Property
+    private String regexp;
+
 }

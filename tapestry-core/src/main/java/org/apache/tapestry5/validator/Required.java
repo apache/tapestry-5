@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -28,9 +29,12 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  */
 public final class Required extends AbstractValidator<Void, Object>
 {
-    public Required(JavaScriptSupport javaScriptSupport)
+    final private Html5Support html5Support;
+    
+    public Required(JavaScriptSupport javaScriptSupport, Html5Support html5Support)
     {
         super(null, Object.class, "required", javaScriptSupport);
+        this.html5Support = html5Support;
     }
 
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
@@ -65,6 +69,10 @@ public final class Required extends AbstractValidator<Void, Object>
                     DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-optionality", "required",
                     "data-required-message", buildMessage(formatter, field));
+        }
+        if (html5Support.isHtml5SupportEnabled())
+        {
+            writer.attributes("required", "required");
         }
     }
 }

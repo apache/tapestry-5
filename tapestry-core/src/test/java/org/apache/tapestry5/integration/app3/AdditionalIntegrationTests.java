@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2011, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -109,4 +109,37 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
         
     }
     
+    /** TAP5-1815. In this webapp, HTML5 support is enabled, so we check whether it actually is enabled */
+    @Test
+    public void html5_support_enabled() throws Exception
+    {
+        open("/html5support");
+
+        // number translator should cause text fields to have type="number
+        assertEquals("number", getAttribute("integer@type"));
+
+        // required attribute for the required validator
+        assertEquals("required", getAttribute("required@required"));
+        
+        // pattern attribute for the regexp validator
+        assertEquals("[0-9]{2}", getAttribute("regexp@pattern"));
+        
+        // type="email" for the email validator
+        assertEquals("email", getAttribute("email@type"));
+
+        // type="number" for min validator
+        assertEquals("number", getAttribute("minNumber@type"));
+        assertEquals("1", getAttribute("minNumber@min"));
+
+        // type="number" for max validator
+        assertEquals("number", getAttribute("maxNumber@type"));
+        assertEquals("10", getAttribute("maxNumber@max"));
+
+        // type="number" for min and validators togenter
+        assertEquals("number", getAttribute("minMaxNumber@type"));
+        assertEquals("2", getAttribute("minMaxNumber@min"));
+        assertEquals("4", getAttribute("minMaxNumber@max"));
+        
+    }
+
 }

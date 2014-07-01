@@ -28,6 +28,9 @@
             <li>
                 <t:pagelink page="OverridePageAtComponent">ComponentReplacer demo (using @Component to declare component instances)</t:pagelink>
             </li>
+            <li>
+                <t:pagelink page="Html5Support">HTML 5 support demo</t:pagelink>
+            </li>
         </ul>
 
     </body>

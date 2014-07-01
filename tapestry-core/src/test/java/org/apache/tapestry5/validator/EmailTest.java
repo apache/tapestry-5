@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 The Apache Software Foundation
+// Copyright 2008, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.services.Html5Support;
 import org.testng.annotations.Test;
 
 public class EmailTest extends InternalBaseTestCase
@@ -27,10 +28,11 @@ public class EmailTest extends InternalBaseTestCase
     {
         Field field = mockField();
         MessageFormatter formatter = mockMessageFormatter();
-
+        Html5Support html5Support = mockHtml5Support();
+        
         replay();
 
-        Email validator = new Email(null);
+        Email validator = new Email(null, html5Support);
 
         validator.validate(field, null, formatter, "myemail@mail.com");
 
@@ -42,10 +44,11 @@ public class EmailTest extends InternalBaseTestCase
     {
         Field field = mockField();
         MessageFormatter formatter = mockMessageFormatter();
-
+        Html5Support html5Support = mockHtml5Support();
+        
         replay();
 
-        Email validator = new Email(null);
+        Email validator = new Email(null, html5Support);
 
         try
         {

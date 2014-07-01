@@ -25,6 +25,11 @@
         <input t:type="TextField" t:id="hours"
                value="incident.hours" size="10" t:validate="required"/>
     </div>
+    <div class="form-group">
+        <t:label for="emailValidator"/>
+        <input t:type="TextField" t:id="emailValidator"
+               value="emailValidator" size="10" t:validate="email"/>
+    </div>
     <input type="submit" class="btn btn-primary"/>
 </t:form>
 

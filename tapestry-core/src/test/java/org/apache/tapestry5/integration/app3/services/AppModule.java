@@ -64,6 +64,8 @@ public class AppModule
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS_VALUE);
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, FORM_FIELD_CSS_CLASS_VALUE);
         
+        configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, "true");
+        
     }
     
     @Contribute(Compatibility.class)

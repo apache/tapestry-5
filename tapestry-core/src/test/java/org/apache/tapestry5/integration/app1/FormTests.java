@@ -1211,4 +1211,12 @@ public class FormTests extends App1TestCase
         
     }
 
+    /** TAP5-1815. In this webapp, HTML5 support is disabled, so we check whether it actually is disabled */
+    @Test
+    public void html5_support_disabled() throws Exception
+    {
+        openLinks("ValidForm");
+        assertEquals("text", getAttribute("emailValidator@type")); // if HTML5 support was enabled, this would be "email"
+    }
+
 }

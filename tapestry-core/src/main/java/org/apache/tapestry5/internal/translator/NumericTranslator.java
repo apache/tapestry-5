@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 The Apache Software Foundation
+// Copyright 2009, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Html5Support;
 
 import java.text.ParseException;
 
@@ -30,12 +31,14 @@ import java.text.ParseException;
 public class NumericTranslator<T extends Number> extends AbstractTranslator<T>
 {
     private final NumericTranslatorSupport support;
+    private final Html5Support html5Support;
 
-    public NumericTranslator(String name, Class<T> type, NumericTranslatorSupport support)
+    public NumericTranslator(String name, Class<T> type, NumericTranslatorSupport support, Html5Support html5Support)
     {
         super(name, type, support.getMessageKey(type));
 
         this.support = support;
+        this.html5Support = html5Support;
     }
 
     public void render(Field field, String message, MarkupWriter writer, FormSupport formSupport)
@@ -43,6 +46,10 @@ public class NumericTranslator<T extends Number> extends AbstractTranslator<T>
         if (formSupport.isClientValidationEnabled())
         {
             support.setupTranslation(getType(), writer.getElement(), message);
+        }
+        if (html5Support.isHtml5SupportEnabled())
+        {
+            writer.getElement().forceAttributes("type", "number");
         }
     }
 

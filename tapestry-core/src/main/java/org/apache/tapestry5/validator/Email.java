@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 The Apache Software Foundation
+// Copyright 2008, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -31,12 +32,16 @@ import java.util.regex.Pattern;
  */
 public class Email extends AbstractValidator<Void, String>
 {
+    
     private static final Pattern PATTERN = Pattern
             .compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
+    
+    final private Html5Support html5Support;
 
-    public Email(JavaScriptSupport javaScriptSupport)
+    public Email(JavaScriptSupport javaScriptSupport, Html5Support html5Support)
     {
         super(null, String.class, "invalid-email", javaScriptSupport);
+        this.html5Support = html5Support;
     }
 
     public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,
@@ -51,6 +56,11 @@ public class Email extends AbstractValidator<Void, String>
                     "data-validate-regexp", PATTERN.pattern(),
                     "data-regexp-message", formatter.toString());
         }
+        
+        if (html5Support.isHtml5SupportEnabled()) {
+            writer.getElement().forceAttributes("type", "email");
+        }
+        
     }
 
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, String value)

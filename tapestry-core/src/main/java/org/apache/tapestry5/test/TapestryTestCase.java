@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -162,6 +162,11 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final Field mockField()
     {
         return newMock(Field.class);
+    }
+
+    protected final Html5Support mockHtml5Support()
+    {
+        return newMock(Html5Support.class);
     }
 
     protected final FieldValidator mockFieldValidator()

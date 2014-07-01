@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class RequiredTest extends TapestryTestCase
 
         try
         {
-            new Required(null).validate(field, null, formatter, null);
+            new Required(null, mockHtml5Support()).validate(field, null, formatter, null);
             unreachable();
         }
         catch (ValidationException ex)
@@ -59,7 +59,7 @@ public class RequiredTest extends TapestryTestCase
 
         try
         {
-            new Required(null).validate(field, null, formatter, "");
+            new Required(null, mockHtml5Support()).validate(field, null, formatter, "");
             unreachable();
         }
         catch (ValidationException ex)
@@ -82,7 +82,7 @@ public class RequiredTest extends TapestryTestCase
 
         try
         {
-            new Required(null).validate(field, null, formatter, Arrays.asList());
+            new Required(null, mockHtml5Support()).validate(field, null, formatter, Arrays.asList());
             unreachable();
         }
         catch (ValidationException ex)
@@ -101,7 +101,7 @@ public class RequiredTest extends TapestryTestCase
 
         replay();
 
-        new Required(null).validate(field, null, formatter, Arrays.asList("A", "B"));
+        new Required(null, mockHtml5Support()).validate(field, null, formatter, Arrays.asList("A", "B"));
 
         verify();
     }
@@ -114,7 +114,7 @@ public class RequiredTest extends TapestryTestCase
 
         replay();
 
-        new Required(null).validate(field, null, formatter, "not null");
+        new Required(null, mockHtml5Support()).validate(field, null, formatter, "not null");
 
         verify();
     }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2012 The Apache Software Foundation
+// Copyright 2007, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,16 @@ package org.apache.tapestry5.validator;
 
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.services.Html5Support;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class MaxTest extends InternalBaseTestCase
 {
+    
     @Test
     public void small_enough() throws Exception
     {
@@ -31,7 +35,7 @@ public class MaxTest extends InternalBaseTestCase
 
         replay();
 
-        Max validator = new Max(null);
+        Max validator = new Max(null, mockHtml5Support());
 
         for (int value = 48; value <= 50; value++)
             validator.validate(field, constraint, formatter, value);
@@ -53,7 +57,7 @@ public class MaxTest extends InternalBaseTestCase
 
         replay();
 
-        Max validator = new Max(null);
+        Max validator = new Max(null, mockHtml5Support());
 
         try
         {

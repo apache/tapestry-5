@@ -17,6 +17,7 @@ import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -509,5 +510,14 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String OMIT_EXPIRATION_CACHE_CONTROL_HEADER = "tapestry.omit-expiration-cache-control-header";
+    
+    /**
+     * Defines whether HTML5 features should be used. Value used in the default implementation of
+     * {@link Html5Support#isHtml5SupportEnabled()}. Default value: <code>false</code>. 
+     *
+     * @since 5.4
+     * @see Html5Support#isHtml5SupportEnabled()
+     */
+    public static final String ENABLE_HTML5_SUPPORT = "tapestry.enable-html5-support";
 
 }

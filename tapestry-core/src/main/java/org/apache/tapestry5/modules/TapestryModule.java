@@ -376,6 +376,7 @@ public final class TapestryModule
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
         binder.bind(ExceptionReporter.class, ExceptionReporterImpl.class);
         binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
+        binder.bind(Html5Support.class, Html5SupportImpl.class);
     }
 
     // ========================================================================
@@ -888,7 +889,7 @@ public final class TapestryModule
      * </ul>
      */
     public static void contributeTranslatorSource(MappedConfiguration<Class, Translator> configuration,
-                                                  NumericTranslatorSupport support)
+                                                  NumericTranslatorSupport support, Html5Support html5Support)
     {
 
         configuration.add(String.class, new StringTranslator());
@@ -901,7 +902,7 @@ public final class TapestryModule
         {
             String name = type.getSimpleName().toLowerCase();
 
-            configuration.add(type, new NumericTranslator(name, type, support));
+            configuration.add(type, new NumericTranslator(name, type, support, html5Support));
         }
     }
 
@@ -2133,6 +2134,9 @@ public final class TapestryModule
         configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, "false");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORTS_DIR, "build/exceptions");
+        
+        // TAP5-1815
+        configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, "false");
     }
 
     /**
