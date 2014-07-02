@@ -12,13 +12,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.*;
@@ -47,6 +50,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
     private final ResourceChangeTracker resourceChangeTracker;
 
     private final String omitExpirationCacheControlHeader;
+    
+    private final AssetFactory classpathAssetFactory;
+    
+    private final AssetFactory contextAssetFactory;
 
     public ResourceStreamerImpl(Request request,
 
@@ -62,7 +69,13 @@ public class ResourceStreamerImpl implements ResourceStreamer
                                 ResourceChangeTracker resourceChangeTracker,
 
                                 @Symbol(SymbolConstants.OMIT_EXPIRATION_CACHE_CONTROL_HEADER)
-                                String omitExpirationCacheControlHeader)
+                                String omitExpirationCacheControlHeader,
+                                
+                                @InjectService("ClasspathAssetFactory")
+                                AssetFactory classpathAssetFactory,
+                                
+                                @InjectService("ContextAssetFactory")
+                                AssetFactory contextAssetFactory)
     {
         this.request = request;
         this.response = response;
@@ -72,6 +85,9 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
         this.omitExpirationCacheControlHeader = omitExpirationCacheControlHeader;
+        
+        this.classpathAssetFactory = classpathAssetFactory;
+        this.contextAssetFactory = contextAssetFactory;
     }
 
     public boolean streamResource(final Resource resource, final String providedChecksum, final Set<Options> options) throws IOException
@@ -87,7 +103,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         final boolean compress = providedChecksum.startsWith("z");
 
-        return tracker.perform(String.format("Streaming %s%s", resource, compress ? " (compressed)" : ""), new IOOperation<Boolean>()
+        return tracker.perform("Streaming " + resource + (compress ? " (compressed)" : ""), new IOOperation<Boolean>()
         {
             public Boolean perform() throws IOException
             {
@@ -97,12 +113,17 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
                 StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
-                return streamResource(streamable, compress ? providedChecksum.substring(1) : providedChecksum, options);
+                return streamResource(resource, streamable, compress ? providedChecksum.substring(1) : providedChecksum, options);
             }
         });
     }
 
     public boolean streamResource(StreamableResource streamable, String providedChecksum, Set<Options> options) throws IOException
+    {
+        return streamResource(null, streamable, providedChecksum, options);
+    }
+    
+    public boolean streamResource(Resource resource, StreamableResource streamable, String providedChecksum, Set<Options> options) throws IOException
     {
         assert streamable != null;
         assert providedChecksum != null;
@@ -112,6 +133,19 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         if (providedChecksum.length() > 0 && !providedChecksum.equals(actualChecksum))
         {
+            
+            // TAP5-2185: Trying to find the wrongly-checksummed resource in the classpath and context,
+            // so we can create an Asset with the correct checksum and redirect to it.
+            Asset asset = null;
+            if (resource != null)
+            {
+                asset = findAssetInsideWebapp(resource);
+            }
+            if (asset != null)
+            {
+                response.sendRedirect(asset.toClientURL());
+                return true;
+            }
             return false;
         }
 
@@ -196,6 +230,45 @@ public class ResourceStreamerImpl implements ResourceStreamer
         os.close();
 
         return true;
+    }
+
+    private Asset findAssetInsideWebapp(Resource resource)
+    {
+        Asset asset;
+        asset = findAssetFromClasspath(resource);
+        if (asset == null)
+        {
+            asset = findAssetFromContext(resource);
+        }
+        return asset;
+    }
+
+    private Asset findAssetFromContext(Resource resource)
+    {
+        Asset asset = null;
+        try
+        {
+            asset = contextAssetFactory.createAsset(resource);
+        }
+        catch (RuntimeException e)
+        {
+            // not an existing context asset. go ahead.
+        }
+        return asset;
+    }
+
+    private Asset findAssetFromClasspath(Resource resource)
+    {
+        Asset asset = null;
+        try
+        {
+            asset = classpathAssetFactory.createAsset(resource);
+        }
+        catch (RuntimeException e)
+        {
+            // not an existing classpath asset. go ahead.
+        }
+        return asset;
     }
 
 }

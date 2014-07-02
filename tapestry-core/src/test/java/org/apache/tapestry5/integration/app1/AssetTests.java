@@ -68,6 +68,18 @@ public class AssetTests extends App1TestCase
         // check whether externaly @Import'ed d3 works
         assertTrue(isElementPresent("css=svg"));
     }
+    
+    // TAP5-2185
+    @Test
+    public void redirection_of_requests_to_assets_with_wrong_checksums()
+    {
+        openLinks("AssetDemo");
+        // paragraph is rendered with display="none" and the javascript asset changes it to display="block"
+        // without the fix, selenium timesout because the javascript code that sets the condition
+        // used by tapestry testing code to know when the page is finished loading is never invoked.
+        assertTrue(isVisible("assetWithWrongChecksum"));
+    }
+
 
     private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
     {

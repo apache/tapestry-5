@@ -15,11 +15,13 @@
 package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
@@ -77,10 +79,27 @@ public class AssetDemo
     @Inject
     @Path("tapestry.png")
     private Asset logo;
+    
+    @Inject
+    private ComponentResources resources;
+    
+    @Inject
+    private AssetSource assetSource;
 
     @Import(stylesheet = "context:css/via-import.css")
     void afterRender()
     {
         javascriptSupport.importStylesheet(new StylesheetLink(ieOnly, new StylesheetOptions(null, "IE")));
+        javascriptSupport.importJavaScriptLibrary(getAssetWithWrongChecksumUrl());
+    }
+    
+    public String getAssetWithWrongChecksumUrl() {
+        final Asset asset = getAssetWithCorrectChecksum();
+        return asset.toClientURL().replaceAll("[0-9a-f]{8}", "00000000");
+    }
+
+    public Asset getAssetWithCorrectChecksum()
+    {
+        return assetSource.getComponentAsset(resources, "AssetWithWrongChecksum.js", "");
     }
 }

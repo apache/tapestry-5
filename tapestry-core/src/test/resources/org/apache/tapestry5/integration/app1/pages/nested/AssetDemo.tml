@@ -83,6 +83,10 @@
 	Using d3, loaded directly from a CDN using external asset support (example from http://christopheviau.com/d3_tutorial/): 
 </p>
 
-<div id="viz"/>
+<div id="viz"></div>
+
+<p>Asset with good checksum: ${assetWithCorrectChecksum}</p>
+<p>Asset with bad checksum: ${assetWithWrongChecksumUrl}</p>
+<p id="assetWithWrongChecksum" style="display: none">Asset with wrong checksum handled correctly.</p>
 
 </html>
