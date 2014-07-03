@@ -594,10 +594,14 @@ task updateBootstrap << {
     from(zipTree(target)){
         include('*/js/*.js')
         include('*/dist/fonts/*')
+        eachFile adjustDirectory
+    }
+    from(zipTree(target)){
         include('*/dist/css/bootstrap.css')
         include('*/dist/css/bootstrap-theme.css')
-
         eachFile adjustDirectory
+        // TAP5-2351: remove source map reference from css files
+        filter({ (it ==~ /\/\*\s*# sourceMappingURL=[\S]+\s*\*\//) ? "" : it })
     }
     into('tapestry-core/src/main/resources/META-INF/assets/tapestry5/bootstrap/')
   }
