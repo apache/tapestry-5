@@ -62,7 +62,7 @@ public class ServiceStatus
         model.addEmpty("serviceInterface");
 
         // There's no line number information for interfaces, so we'll reorder the
-        // proprieties manually.
+        // properties manually.
 
         model.reorder("serviceId", "serviceInterface", "scope", "status");
     }

@@ -1,0 +1,126 @@
+<t:block id="content"
+         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <h1><strong>${libraryNames.size()}</strong> component libraries found</h1>
+    
+    <ul id="libraryList" class="list-group">
+    	<li t:type="Loop" t:source="libraryNames" t:value="libraryName" class="list-group-item">
+    		<a href="#${libraryClientId}">
+    			<code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if>
+    		</a>
+    		<p t:type="If" t:test="info?.description">
+    			${info.description}
+    		</p>
+    	</li>
+    </ul>
+
+	<div id="libraries">
+	
+		<div class="libraryInfo" t:type="Loop" t:source="libraryNames" t:value="libraryName" id="${libraryClientId}">
+	
+			<h2><code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if></h2>
+			
+			<t:if test="info">
+		
+			    <dl class="dl-horizontal">
+			    
+			        <dt>Homepage</dt>
+			        <dd>
+			        	<t:if test="info.homepageUrl" else="message:not-informed">
+			        		<a href="${info.homepageUrl}">${info.homepageUrl}</a>
+			        	</t:if>
+			        </dd>
+			
+			        <dt>Documentation URL</dt>
+			        <dd>
+			        	<t:if test="info.documentationUrl" else="message:not-informed">
+			        		<a href="${info.documentationUrl}">${info.documentationUrl}</a>
+			        	</t:if>
+			        </dd>
+			        
+			        <dt>Source JavaDoc URL</dt>
+			        <dd>
+			        	<t:if test="info.javadocUrl" else="message:not-informed">
+			        		<a href="${info.javadocUrl}">${info.javadocUrl}</a>
+			        	</t:if>
+			        </dd>
+			        
+			        <t:if test="info.dependencyManagementInfoPresent">
+			        	<dt>Dependency information</dt>
+			        	<dd>
+		        			Group id <code class="groupId">${info.groupId}</code>,
+		        			artifact id <code class="groupId">${info.artifactId}</code>,
+		        			version. <code class="groupId">${info.version}</code>
+		        			<br/>
+			        		<a href="http://search.maven.org/#artifactdetails|${info.groupId}|${info.artifactId}|version=${info.version}|jar" 
+			        			target="_blank">
+			        			<em>More information at Maven Central Respository</em>
+			        		</a>
+			        	</dd>
+			        </t:if>
+			        
+			        <dt>Source browse URL</dt>
+			        <dd>
+			        	<t:if test="info.sourceBrowseUrl" else="message:not-informed">
+			        		<a href="${info.sourceBrowseUrl}">${info.sourceBrowseUrl}</a>
+			        	</t:if>
+			        </dd>
+			
+			        <dt>Source root URL</dt>
+			        <dd>
+			        	<t:if test="info.sourceRootUrl" else="message:not-informed">
+			        		<a href="${info.sourceRootUrl}">${info.sourceRootUrl}</a>
+			        	</t:if>
+			        </dd>
+
+			        <dt>Issue tracker URL</dt>
+			        <dd>
+			        	<t:if test="info.issueTrackerUrl" else="message:not-informed">
+			        		<a href="${info.issueTrackerUrl}">${info.issueTrackerUrl}</a>
+			        	</t:if>
+			        </dd>
+			
+			    </dl>
+		    
+			</t:if>
+			
+			<p t:type="If" t:test="!info">No additional information provided for <code>${libraryName}</code>.</p>
+			
+<!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
+<!-- 			</div> -->
+
+			<div t:type="Delegate" to="componentsTable"></div>
+			<div t:type="Delegate" to="pagesTable"></div>
+			<div t:type="Delegate" to="mixinsTable"></div>
+			
+		</div>
+		
+	</div>
+	
+	<t:block id="classesTable">
+		<div t:type="If" t:test="!logicalNames.empty">
+			<h3>${headerName}</h3>
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<td>Name</td>
+						<td>JavaDoc URL</td>
+						<td>Source URL</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr t:type="Loop" t:source="logicalNames" t:value="logicalName">
+						<td><code>${simpleLogicalName}</code></td>
+						<td><t:if test="javadocUrl" else="message:not-informed" target="_blank">
+							<a href="${javadocUrl}">JavaDoc</a></t:if>
+						</td>
+						<td><t:if test="sourceUrl" else="message:not-informed" target="_blank">
+							<a href="${sourceUrl}">Source</a></t:if>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</t:block>
+
+</t:block>

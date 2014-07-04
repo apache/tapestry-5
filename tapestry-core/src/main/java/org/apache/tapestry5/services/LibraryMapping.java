@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006, 2010, 2011, 2012, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -31,11 +30,18 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * <dt>base</dt>
  * <dd>contains base classes</dd>
  * </dl>
+ * <p>
+ * Since 5.4 on, a library mapping can also have a {@link ComponentLibraryInfo} to provide more
+ * information about itself, such as URLs (project, documentation, JavaDoc, sources) and
+ * coordinates for dependency management tools (group id, artifact id, version).
+ * </p>
  */
 public final class LibraryMapping
 {
     public final String libraryName, rootPackage;
-
+    
+    private ComponentLibraryInfo componentLibraryInfo;
+    
     /**
      * Identifies the root package of a library. The application has uses the library name "" (the empty string).
      * The special library "core" is all the built-in components.
@@ -53,7 +59,7 @@ public final class LibraryMapping
      * @param libraryName
      *         the unique identifier for the library.
      * @param rootPackage
-     *         The root package to search for classes; sub-packages will include ".pages", ".components", etc.
+     *         the root package to search for classes; sub-packages will include ".pages", ".components", etc.
      */
     public LibraryMapping(String libraryName, String rootPackage)
     {
@@ -68,6 +74,18 @@ public final class LibraryMapping
 
         this.libraryName = libraryName;
         this.rootPackage = rootPackage;
+        this.componentLibraryInfo = null;
+    }
+
+    /**
+     * Same as {@link #LibraryMapping(String, String)}, with with an additional {@link ComponentLibraryInfo} parameter.
+     * @since 5.4
+     */
+    public LibraryMapping(String libraryName, String rootPackage, ComponentLibraryInfo componentLibraryInfo)
+    {
+        this(libraryName, rootPackage);
+        this.componentLibraryInfo = componentLibraryInfo;
+        componentLibraryInfo.setLibraryMapping(this);
     }
 
     /**
@@ -85,10 +103,21 @@ public final class LibraryMapping
     {
         return rootPackage;
     }
+    
+    /**
+     * Returns the component library information for this library mapping.
+     * @return a {@link ComponentLibraryInfo}.
+     * @since 5.4
+     */
+    public ComponentLibraryInfo getComponentLibraryInfo()
+    {
+        return componentLibraryInfo;
+    }
 
     @Override
     public String toString()
     {
         return String.format("LibraryMapping[%s, %s]", libraryName, rootPackage);
     }
+    
 }

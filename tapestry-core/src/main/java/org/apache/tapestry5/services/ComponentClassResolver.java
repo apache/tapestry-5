@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
@@ -66,6 +67,20 @@ public interface ComponentClassResolver
      */
     List<String> getPageNames();
 
+    /**
+     * Returns a list of all component names, in sorted order. These are the "canonical" component names.
+     * @since 5.4
+     */
+    @IncompatibleChange(release = "5.4", details = "added method")
+    List<String> getComponentNames();
+
+    /**
+     * Returns a list of all mixin names, in sorted order. These are the "canonical" mixin names.
+     * @since 5.4
+     */
+    @IncompatibleChange(release = "5.4", details = "added method")
+    List<String> getMixinNames();
+    
     /**
      * Converts a fully qualified page class name into a page name (often, for inclusion as part of the URI). This value
      * may later be passed to {@link #resolvePageNameToClassName(String)}.
@@ -132,7 +147,14 @@ public interface ComponentClassResolver
      * @since 5.4
      */
     List<String> getLibraryNames();
-
+    
+    /**
+     * Returns an object encapsulating information about a component library, if provided.
+     * @param libraryName the library name (prefix).
+     * @return a {@link ComponentLibraryInfo} or <code>null</code>
+     */
+    ComponentLibraryInfo getComponentLibraryInfo(String libraryName);
+    
     /**
      * Used to identify which packages are controlled packages (from which components are loaded). Future expansion
      * may allow for additional packages which are live reloaded but not components (or perhaps are transformed, but not
