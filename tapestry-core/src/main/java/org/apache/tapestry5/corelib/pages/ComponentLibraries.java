@@ -30,7 +30,6 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentLibraryInfo;
 import org.apache.tapestry5.util.TextStreamResponse;
-import org.eclipse.jetty.io.NetworkTrafficListener.Empty;
 
 /**
  * Page used to describe the component libraries being used in the application.
@@ -201,6 +200,14 @@ public class ComponentLibraries
             putIfNotNull("issueTrackerUrl", info.getIssueTrackerUrl(), infoJsonObject);
             putIfNotNull("dependencyInfoUrl", info.getDependencyManagementInfoUrl(), infoJsonObject);
             
+            if (info.getTags() != null)
+            {
+                for (String tag : info.getTags())
+                {
+                    infoJsonObject.accumulate("tags", tag);
+                }
+            }
+            
             object.put("info", infoJsonObject);
             
         }
@@ -223,18 +230,42 @@ public class ComponentLibraries
             {
                 logicalName = logicalName.replace("core/", "");
                 final String className = getClassName(logicalName, type, componentClassResolver);
-                JSONObject claszJsonObject = new JSONObject();
-                claszJsonObject.put("logicalName", logicalName);
-                claszJsonObject.put("class", className);
+                JSONObject classJsonObject = new JSONObject();
+                classJsonObject.put("logicalName", logicalName);
+                classJsonObject.put("class", className);
                 if (info != null)
                 {
-                    putIfNotNull("sourceUrl", info.getSourceUrl(className), claszJsonObject);
-                    putIfNotNull("javadocUrl", info.getJavadocUrl(className), claszJsonObject);
+                    putIfNotNull("sourceUrl", info.getSourceUrl(className), classJsonObject);
+                    putIfNotNull("javadocUrl", info.getJavadocUrl(className), classJsonObject);
                 }
-                classesJsonArray.put(claszJsonObject);
+                try
+                {
+                    final Description description = getClass(className);
+                    if (description != null)
+                    {
+                        putIfNotNull("description", description.text(), classJsonObject);
+                        if (description.tags().length > 0)
+                        {
+                            for (String tag : description.tags())
+                            {
+                                classJsonObject.accumulate("tag", tag);
+                            }
+                        }
+                    }
+                }
+                catch (ClassNotFoundException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                classesJsonArray.put(classJsonObject);
             }
             object.put(property, classesJsonArray);
         }
+    }
+
+    private Description getClass(final String className) throws ClassNotFoundException
+    {
+        return Class.forName(className).getAnnotation(Description.class);
     }
     
     private void putIfNotNull(String propertyName, String value, JSONObject object)
