@@ -137,6 +137,21 @@ public final class ComponentLibraryInfo implements Serializable
     {
         return version;
     }
+    
+    /**
+     * Returns an URL decribing the dependency management information for this component library.
+     */
+    public String getDependencyManagementInfoUrl()
+    {
+        String url = null;
+        if (isDependencyManagementInfoPresent())
+        {
+            url = String.format(
+                    "http://search.maven.org/#artifactdetails|%s|%s|version=%s|jar",
+                    getGroupId(), getArtifactId(), getVersion());
+        }
+        return url;
+    }
 
     public void setName(String name)
     {

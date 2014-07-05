@@ -19,12 +19,16 @@ import java.util.List;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentLibraryInfo;
+import org.apache.tapestry5.util.TextStreamResponse;
 
 /**
  * Page used to describe the component libraries being used in the application.
@@ -133,7 +137,12 @@ public class ComponentLibraries
 
     private String getClassName()
     {
-        final String className;
+        return getClassName(logicalName, type, componentClassResolver);
+    }
+    
+    private static String getClassName(String logicalName, Type type, ComponentClassResolver componentClassResolver)
+    {
+        String className;
         switch (type)
         {
             case PAGE: className = componentClassResolver.resolvePageNameToClassName(logicalName); break;
@@ -147,6 +156,72 @@ public class ComponentLibraries
     public String getSimpleLogicalName()
     {
         return logicalName.replace("core/", "");
+    }
+    
+    @OnEvent("json")
+    Object generateJSONDescription(String libraryName)
+    {
+        this.libraryName = libraryName;
+        JSONObject object = new JSONObject();
+        object.put("libraryName", libraryName);
+        final ComponentLibraryInfo info = getInfo();
+        if (info != null)
+        {
+            JSONObject infoJsonObject = new JSONObject();
+            putIfNotNull("description", info.getDescription(), infoJsonObject);
+            putIfNotNull("homepage", info.getHomepageUrl(), infoJsonObject);
+            putIfNotNull("documentationUrl", info.getDocumentationUrl(), infoJsonObject);
+            putIfNotNull("javadocUrl", info.getJavadocUrl(), infoJsonObject);
+            putIfNotNull("groupId", info.getGroupId(), infoJsonObject);
+            putIfNotNull("artifactId", info.getArtifactId(), infoJsonObject);
+            putIfNotNull("version", info.getVersion(), infoJsonObject);
+            putIfNotNull("sourceBrowseUrl", info.getSourceBrowseUrl(), infoJsonObject);
+            putIfNotNull("sourceRootUrl", info.getSourceRootUrl(), infoJsonObject);
+            putIfNotNull("issueTrackerUrl", info.getIssueTrackerUrl(), infoJsonObject);
+            putIfNotNull("dependencyInfoUrl", info.getDependencyManagementInfoUrl(), infoJsonObject);
+            
+            object.put("info", infoJsonObject);
+            
+        }
+        
+        addClasses("components", filter(componentClassResolver.getComponentNames()), Type.COMPONENT, info, object);
+        addClasses("pages", filter(componentClassResolver.getPageNames()), Type.PAGE, info, object);
+        addClasses("mixins", filter(componentClassResolver.getMixinNames()), Type.MIXIN, info, object);
+        
+        return new TextStreamResponse("text/javascript", object.toString());
+        
+    }
+
+    private void addClasses(final String property, List<String> classes, Type type,
+            final ComponentLibraryInfo info, JSONObject object)
+    {
+        if (classes.size() > 0)
+        {
+            JSONArray classesJsonArray = new JSONArray();
+            for (String logicalName : classes)
+            {
+                logicalName = logicalName.replace("core/", "");
+                final String className = getClassName(logicalName, type, componentClassResolver);
+                JSONObject claszJsonObject = new JSONObject();
+                claszJsonObject.put("logicalName", logicalName);
+                claszJsonObject.put("class", className);
+                if (info != null)
+                {
+                    putIfNotNull("sourceUrl", info.getSourceUrl(className), claszJsonObject);
+                    putIfNotNull("javadocUrl", info.getJavadocUrl(className), claszJsonObject);
+                }
+                classesJsonArray.put(claszJsonObject);
+            }
+            object.put(property, classesJsonArray);
+        }
+    }
+    
+    private void putIfNotNull(String propertyName, String value, JSONObject object)
+    {
+        if (value != null)
+        {
+            object.put(propertyName, value);
+        }
     }
 
 }

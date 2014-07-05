@@ -1,7 +1,7 @@
 <t:block id="content"
          xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 
-    <h1><strong>${libraryNames.size()}</strong> component libraries found</h1>
+    <h1><strong>${libraryNames.size()}</strong> component libraries used</h1>
     
     <ul id="libraryList" class="list-group">
     	<li t:type="Loop" t:source="libraryNames" t:value="libraryName" class="list-group-item">
@@ -25,21 +25,21 @@
 			    <dl class="dl-horizontal">
 			    
 			        <dt>Homepage</dt>
-			        <dd>
+			        <dd class="homepage">
 			        	<t:if test="info.homepageUrl" else="message:not-informed">
 			        		<a href="${info.homepageUrl}">${info.homepageUrl}</a>
 			        	</t:if>
 			        </dd>
 			
 			        <dt>Documentation URL</dt>
-			        <dd>
+			        <dd class="documentationUrl">
 			        	<t:if test="info.documentationUrl" else="message:not-informed">
 			        		<a href="${info.documentationUrl}">${info.documentationUrl}</a>
 			        	</t:if>
 			        </dd>
 			        
-			        <dt>Source JavaDoc URL</dt>
-			        <dd>
+			        <dt>JavaDoc URL</dt>
+			        <dd class="javadocUrl">
 			        	<t:if test="info.javadocUrl" else="message:not-informed">
 			        		<a href="${info.javadocUrl}">${info.javadocUrl}</a>
 			        	</t:if>
@@ -47,12 +47,12 @@
 			        
 			        <t:if test="info.dependencyManagementInfoPresent">
 			        	<dt>Dependency information</dt>
-			        	<dd>
+			        	<dd class="dependencyInformation">
 		        			Group id <code class="groupId">${info.groupId}</code>,
 		        			artifact id <code class="groupId">${info.artifactId}</code>,
 		        			version. <code class="groupId">${info.version}</code>
 		        			<br/>
-			        		<a href="http://search.maven.org/#artifactdetails|${info.groupId}|${info.artifactId}|version=${info.version}|jar" 
+			        		<a href="${info.dependencyManagementInfoUrl}" 
 			        			target="_blank">
 			        			<em>More information at Maven Central Respository</em>
 			        		</a>
@@ -60,21 +60,21 @@
 			        </t:if>
 			        
 			        <dt>Source browse URL</dt>
-			        <dd>
+			        <dd class="sourceBrowseUrl">
 			        	<t:if test="info.sourceBrowseUrl" else="message:not-informed">
 			        		<a href="${info.sourceBrowseUrl}">${info.sourceBrowseUrl}</a>
 			        	</t:if>
 			        </dd>
 			
 			        <dt>Source root URL</dt>
-			        <dd>
+			        <dd class="sourceRootUrl">
 			        	<t:if test="info.sourceRootUrl" else="message:not-informed">
 			        		<a href="${info.sourceRootUrl}">${info.sourceRootUrl}</a>
 			        	</t:if>
 			        </dd>
 
 			        <dt>Issue tracker URL</dt>
-			        <dd>
+			        <dd class="issueTrackerUrl">
 			        	<t:if test="info.issueTrackerUrl" else="message:not-informed">
 			        		<a href="${info.issueTrackerUrl}">${info.issueTrackerUrl}</a>
 			        	</t:if>
@@ -83,8 +83,10 @@
 			    </dl>
 		    
 			</t:if>
+
+			<a t:type="EventLink" t:event="json" t:context="libraryName">Generate JSON description</a>
 			
-			<p t:type="If" t:test="!info">No additional information provided for <code>${libraryName}</code>.</p>
+			<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryName}</code>.</p>
 			
 <!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
 <!-- 			</div> -->
