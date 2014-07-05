@@ -14,6 +14,7 @@
 package org.apache.tapestry5.services;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Class that encapsulates information about a component library, going beyond what a library mapping
@@ -33,6 +34,8 @@ public final class ComponentLibraryInfo implements Serializable
     
     private String name, description, homepageUrl, documentationUrl, sourceBrowseUrl, issueTrackerUrl, sourceRootUrl, 
                    javadocUrl, groupId, artifactId, version;
+    
+    private List<String> tags;
     
     /**
      * Returns the actual name of the component library (not the identifier). 
@@ -137,7 +140,16 @@ public final class ComponentLibraryInfo implements Serializable
     {
         return version;
     }
-    
+
+    /**
+     * Returns the tags associated which describe this component library.
+     * Use just lowercase letters, numbers and dashes.
+     */
+    public List<String> getTags()
+    {
+        return tags;
+    }
+
     /**
      * Returns an URL decribing the dependency management information for this component library.
      */
@@ -217,6 +229,12 @@ public final class ComponentLibraryInfo implements Serializable
     {
         if (this.issueTrackerUrl != null) throwExceptionIfAlreadySet("issueTrackingUrl", issueTrackingUrl);
         this.issueTrackerUrl = issueTrackingUrl;
+    }
+
+    public void setTags(List<String> tags)
+    {
+        if (this.tags != null) throwExceptionIfAlreadySet("tags", tags);
+        this.tags = tags;
     }
 
     public void setLibraryMapping(LibraryMapping libraryMapping)

@@ -457,6 +457,7 @@ public final class TapestryModule
         info.setArtifactId("tapestry-core");
         info.setVersion("5.4.0");
         info.setSourceUrlResolver(new ComponentLibraryInfo.GitWebMavenSourceUrlResolver());
+        info.setTags(Arrays.asList("core", "out-of-the-box"));
         
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib", info));
         configuration.add(new LibraryMapping("", appRootPackage));

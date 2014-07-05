@@ -11,6 +11,13 @@
     		<p t:type="If" t:test="info?.description">
     			${info.description}
     		</p>
+    		<p class="tags" t:type="If" t:test="!info?.tags.empty">
+    			Tags: 
+				<span t:type="Loop" t:source="info.tags" t:value="var:tag" class="badge" 
+					style="margin-right: 0.3em; font-size: 0.75em">
+					${var:tag}
+				</span>
+			</p>
     	</li>
     </ul>
 
@@ -106,6 +113,8 @@
 				<thead>
 					<tr>
 						<td>Name</td>
+						<td>Description</td>
+						<td>Tags</td>
 						<td>JavaDoc URL</td>
 						<td>Source URL</td>
 					</tr>
@@ -113,11 +122,24 @@
 				<tbody>
 					<tr t:type="Loop" t:source="logicalNames" t:value="logicalName">
 						<td><code>${simpleLogicalName}</code></td>
-						<td><t:if test="javadocUrl" else="message:not-informed" target="_blank">
-							<a href="${javadocUrl}">JavaDoc</a></t:if>
+						<td>${description?.text()}</td>
+						<td>
+							<ul t:type="If" t:test="classHasTags" style="padding: 0; margin: 0;">
+								<li t:type="Loop" t:source="tags" t:value="var:tag" 
+									style="display: inline; list-style-type: none; margin: 0; margin-right: 0.3em">
+										<span class="badge">${var:tag}</span>
+								</li>
+							</ul> 
 						</td>
-						<td><t:if test="sourceUrl" else="message:not-informed" target="_blank">
-							<a href="${sourceUrl}">Source</a></t:if>
+						<td>
+							<t:if test="javadocUrl" else="message:not-informed" target="_blank">
+								<a href="${javadocUrl}">JavaDoc</a>
+							</t:if>
+						</td>
+						<td>
+							<t:if test="sourceUrl" else="message:not-informed" target="_blank">
+								<a href="${sourceUrl}">Source</a>
+							</t:if>
 						</td>
 					</tr>
 				</tbody>

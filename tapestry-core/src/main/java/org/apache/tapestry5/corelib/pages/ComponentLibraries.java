@@ -23,12 +23,14 @@ import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.ioc.annotations.Description;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentLibraryInfo;
 import org.apache.tapestry5.util.TextStreamResponse;
+import org.eclipse.jetty.io.NetworkTrafficListener.Empty;
 
 /**
  * Page used to describe the component libraries being used in the application.
@@ -39,7 +41,9 @@ import org.apache.tapestry5.util.TextStreamResponse;
 @WhitelistAccessOnly
 public class ComponentLibraries
 {
-    
+
+    final private static String[] EMTPY_STRING_ARRAY = {};
+
     private static enum Type { PAGE, COMPONENT, MIXIN }
 
     @Inject
@@ -156,6 +160,23 @@ public class ComponentLibraries
     public String getSimpleLogicalName()
     {
         return logicalName.replace("core/", "");
+    }
+    
+    @Cached(watch = "logicalName")
+    public String[] getTags() throws ClassNotFoundException {
+        Description description = getDescription();
+        return description != null ? description.tags() : EMTPY_STRING_ARRAY;
+    }
+
+    @Cached(watch = "logicalName")
+    public Description getDescription() throws ClassNotFoundException
+    {
+        return Class.forName(getClassName()).getAnnotation(Description.class);
+    }
+
+    public boolean isClassHasTags() throws ClassNotFoundException
+    {
+        return getTags().length > 0;
     }
     
     @OnEvent("json")

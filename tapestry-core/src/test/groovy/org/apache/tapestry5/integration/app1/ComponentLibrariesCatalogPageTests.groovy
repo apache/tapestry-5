@@ -21,6 +21,8 @@ class ComponentLibrariesCatalogPageTests extends TapestryCoreTestCase
         assertEquals getText("//ul[@id='libraryList']/li[1]/p"), "The set of components, pages and mixins provided by Tapestry out-of-the-box."
         assertEquals getText("//ul[@id='libraryList']/li[2]/a"), "lib/alpha"
         assertFalse isElementPresent("//ul[@id='libraryList']/li[2]/p")
+        assertEquals getText("//ul[@id='libraryList']/li[1]/p[@class='tags']"), "Tags: core out-of-the-box"
+        assertFalse isElementPresent("//ul[@id='libraryList']/li[2]/p[@class='tags']")
         
         // component library information
         
@@ -40,7 +42,15 @@ class ComponentLibrariesCatalogPageTests extends TapestryCoreTestCase
         
         // without ComponentLibraryInfo
         assertEquals "lib/alpha", getText("css=#lib-alpha h2")
-        assertEquals getText("css=#lib-alpha p.noInformation"), "No additional information provided for lib/alpha." 
+        assertEquals getText("css=#lib-alpha p.noInformation"), "No additional information provided for lib/alpha."
+        
+        // table row
+        assertEquals getText("//div[@id='lib-alpha']//table/tbody/tr[2]/td[1]"), "lib/alpha/Root"
+        assertEquals getText("//div[@id='lib-alpha']//table/tbody/tr[2]/td[2]"), "Alpha root page"
+        assertEquals getText("//div[@id='lib-alpha']//table/tbody/tr[2]/td[3]"), "alpha root page"
+        assertEquals getText("//div[@id='lib-alpha']//table/tbody/tr[2]/td[4]"), "Not informed"
+        assertEquals getText("//div[@id='lib-alpha']//table/tbody/tr[2]/td[5]"), "Not informed"
+        
 
     }
     
