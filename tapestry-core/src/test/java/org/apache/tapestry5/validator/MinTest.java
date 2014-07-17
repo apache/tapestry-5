@@ -1,5 +1,3 @@
-// Copyright 2007, 2012, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,6 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.MessageFormatter;
-import org.apache.tapestry5.services.Html5Support;
 import org.testng.annotations.Test;
 
 public class MinTest extends InternalBaseTestCase
@@ -30,9 +27,9 @@ public class MinTest extends InternalBaseTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Long constraint = 50L;
 
-        replay();
-
         Min validator = new Min(null, mockHtml5Support());
+
+        replay();
 
         for (int value = 50; value < 52; value++)
             validator.validate(field, constraint, formatter, value);
@@ -52,16 +49,15 @@ public class MinTest extends InternalBaseTestCase
 
         train_format(formatter, message, constraint, label);
 
-        replay();
-
         Min validator = new Min(null, mockHtml5Support());
+
+        replay();
 
         try
         {
             validator.validate(field, constraint, formatter, value);
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertEquals(ex.getMessage(), message);
         }

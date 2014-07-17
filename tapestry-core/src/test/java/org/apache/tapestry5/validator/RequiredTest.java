@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2012, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,6 +15,7 @@ package org.apache.tapestry5.validator;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
@@ -32,14 +31,15 @@ public class RequiredTest extends TapestryTestCase
 
         train_format(formatter, "{message}", "My Field");
 
+        Html5Support html5Support = mockHtml5Support();
+
         replay();
 
         try
         {
-            new Required(null, mockHtml5Support()).validate(field, null, formatter, null);
+            new Required(null, html5Support).validate(field, null, formatter, null);
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertEquals(ex.getMessage(), "{message}");
         }
@@ -55,14 +55,15 @@ public class RequiredTest extends TapestryTestCase
 
         train_format(formatter, "{message}", "My Field");
 
+        Html5Support html5Support = mockHtml5Support();
+
         replay();
 
         try
         {
-            new Required(null, mockHtml5Support()).validate(field, null, formatter, "");
+            new Required(null, html5Support).validate(field, null, formatter, "");
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertEquals(ex.getMessage(), "{message}");
         }
@@ -78,14 +79,15 @@ public class RequiredTest extends TapestryTestCase
 
         train_format(formatter, "{message}", "My Field");
 
+        Html5Support html5Support = mockHtml5Support();
+
         replay();
 
         try
         {
-            new Required(null, mockHtml5Support()).validate(field, null, formatter, Arrays.asList());
+            new Required(null, html5Support).validate(field, null, formatter, Arrays.asList());
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertEquals(ex.getMessage(), "{message}");
         }
@@ -99,9 +101,11 @@ public class RequiredTest extends TapestryTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Field field = mockField();
 
+        Html5Support html5Support = mockHtml5Support();
+
         replay();
 
-        new Required(null, mockHtml5Support()).validate(field, null, formatter, Arrays.asList("A", "B"));
+        new Required(null, html5Support).validate(field, null, formatter, Arrays.asList("A", "B"));
 
         verify();
     }
@@ -112,9 +116,11 @@ public class RequiredTest extends TapestryTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Field field = mockField();
 
+        Html5Support html5Support = mockHtml5Support();
+
         replay();
 
-        new Required(null, mockHtml5Support()).validate(field, null, formatter, "not null");
+        new Required(null, html5Support).validate(field, null, formatter, "not null");
 
         verify();
     }
