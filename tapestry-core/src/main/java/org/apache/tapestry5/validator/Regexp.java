@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2012, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,6 +25,9 @@ import java.util.regex.Pattern;
 
 /**
  * Enforces that the input matches a provided regular expression.
+ * <p/>
+ * Starting in 5.4, this always writes the pattern and title attribute, even when client validation is not enabled.
+ * The title attribute is used specially by modern browsers, in concert with pattern.
  */
 public class Regexp extends AbstractValidator<Pattern, String>
 {
@@ -43,15 +44,21 @@ public class Regexp extends AbstractValidator<Pattern, String>
     public void render(Field field, Pattern constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
+        String message = buildMessage(formatter, field, constraintValue);
+
         if (formSupport.isClientValidationEnabled())
         {
             javaScriptSupport.require("t5/core/validation");
 
             writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-regexp", constraintValue.pattern(),
-                    "data-regexp-message", buildMessage(formatter, field, constraintValue),
-                    "pattern", constraintValue.pattern());
+                    "data-regexp-message", message,
+                    "pattern", constraintValue.pattern(),
+                    "title", message);
         }
+
+        writer.attributes("pattern", constraintValue.pattern(),
+                "title", message);
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)
