@@ -299,6 +299,12 @@ just after the `.input-group` containing the field. The Error component can be u
 Also, note that part of the styling of the element is predicated on containment inside a `.form-group` (which may have
 the `has-error` selector added or removed).
 
+## Regexp Validator
+
+This validator now always writes the `pattern` and `title` attributes into the element, even when the Form
+is configured to disable client side validation. On modern browsers, the pattern will be enforced, and the title
+will be displayed in a browser-supplied popup window.
+
 ## BeanEditor / BeanEditForm
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
