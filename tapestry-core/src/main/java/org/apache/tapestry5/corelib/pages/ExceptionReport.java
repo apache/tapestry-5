@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
+import org.apache.tapestry5.corelib.base.AbstractInternalPage;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -44,8 +45,8 @@ import java.util.regex.Pattern;
  */
 @UnknownActivationContextCheck(false)
 @ContentType("text/html")
-@Import(stack = "core", stylesheet = "ExceptionReport.css")
-public class ExceptionReport implements ExceptionReporter
+@Import(stylesheet = "ExceptionReport.css")
+public class ExceptionReport extends AbstractInternalPage implements ExceptionReporter
 {
     private static final String PATH_SEPARATOR_PROPERTY = "path.separator";
 
@@ -55,10 +56,6 @@ public class ExceptionReport implements ExceptionReporter
 
     @Property
     private String attributeName;
-
-    @Inject
-    @Property
-    private Request request;
 
     @Inject
     @Symbol(SymbolConstants.PRODUCTION_MODE)

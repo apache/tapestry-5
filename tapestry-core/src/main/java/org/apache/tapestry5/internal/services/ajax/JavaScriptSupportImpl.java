@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,6 +13,7 @@
 package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.func.F;
@@ -29,11 +28,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -58,6 +53,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private final JavaScriptStackPathConstructor stackPathConstructor;
 
     private final boolean partialMode;
+
+    private final BooleanHook suppressCoreStylesheetsHook;
 
     private FieldFocusPriority focusPriority;
 
@@ -107,9 +104,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     }
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-                                 JavaScriptStackPathConstructor stackPathConstructor)
+                                 JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook)
     {
-        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, suppressCoreStylesheetsHook);
     }
 
     /**
@@ -117,7 +114,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
      *         responsible for assembling all the information gathered by JavaScriptSupport and
      *         attaching it to the Document (for a full page render) or to the JSON response (in a partial render)
      * @param javascriptStackSource
-     *         source of information about {@link JavaScriptStack}s, used when handling the import
+     *         source of information about {@link org.apache.tapestry5.services.javascript.JavaScriptStack}s, used when handling the import
      *         of libraries and stacks (often, to handle transitive dependencies)
      * @param stackPathConstructor
      *         encapsulates the knowledge of how to represent a stack (which may be converted
@@ -128,16 +125,19 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
      * @param partialMode
      *         if true, then the JSS configures itself for a partial page render (part of an Ajax request)
      *         which automatically assumes the "core" library has been added (to the original page render)
-     *         and makes other minor changes to behavior.
+     * @param suppressCoreStylesheetsHook
+     *         a hook that enables ignoring CSS files on the core stack
      */
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-                                 JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
+                                 JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode,
+                                 BooleanHook suppressCoreStylesheetsHook)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
         this.javascriptStackSource = javascriptStackSource;
         this.stackPathConstructor = stackPathConstructor;
         this.partialMode = partialMode;
+        this.suppressCoreStylesheetsHook = suppressCoreStylesheetsHook;
 
         // In partial mode, assume that the infrastructure stack is already present
         // (from the original page render).
@@ -189,7 +189,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName,
-            JSONArray parameter)
+                                   JSONArray parameter)
     {
         // TAP5-2300: In 5.3, a JSONArray implied an array of method arguments, so unwrap and add
         // functionName to the arguments
@@ -379,7 +379,10 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             }
         }
 
-        stylesheetLinks.addAll(stack.getStylesheets());
+        if (!(addAsCoreLibrary && suppressCoreStylesheetsHook.checkHook()))
+        {
+            stylesheetLinks.addAll(stack.getStylesheets());
+        }
 
         String initialization = stack.getInitialization();
 

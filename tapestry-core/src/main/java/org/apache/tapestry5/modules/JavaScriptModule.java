@@ -1,5 +1,3 @@
-// Copyright 2012-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.modules;
 
+import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
@@ -41,12 +40,14 @@ import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import java.util.Locale;
 
 /**
- * Defines the services related to JavaScript.
+ * Defines the services related to JavaScript and {@link org.apache.tapestry5.services.javascript.JavaScriptStack}s.
  *
  * @since 5.4
  */
 public class JavaScriptModule
 {
+    private final static String ROOT = "${tapestry.asset.root}";
+
     private final Environment environment;
 
     private final EnvironmentalShadowBuilder environmentalBuilder;
@@ -62,17 +63,21 @@ public class JavaScriptModule
         binder.bind(ModuleManager.class, ModuleManagerImpl.class);
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
+        binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Internal.class).withId("InternalJavaScriptStack");
     }
 
     /**
-     * Contributes the "core" {@link JavaScriptStack}s
+     * Contributes the "core" and "internal" {@link JavaScriptStack}s
      *
      * @since 5.2.0
      */
     @Contribute(JavaScriptStackSource.class)
-    public static void provideBuiltinJavaScriptStacks(MappedConfiguration<String, JavaScriptStack> configuration, @Core JavaScriptStack coreStack)
+    public static void provideBuiltinJavaScriptStacks(MappedConfiguration<String, JavaScriptStack> configuration,
+                                                      @Core JavaScriptStack coreStack,
+                                                      @Internal JavaScriptStack internalStack)
     {
         configuration.add(InternalConstants.CORE_STACK_NAME, coreStack);
+        configuration.add("internal", internalStack);
     }
 
     // These are automatically bundles with the core JavaScript stack; some applications may want to add a few
@@ -111,9 +116,6 @@ public class JavaScriptModule
                                                 @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
                                                 String provider)
     {
-
-        final String ROOT = "${tapestry.asset.root}";
-
         configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
         configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.5.2.js"));
 
@@ -146,16 +148,7 @@ public class JavaScriptModule
 
         add(configuration, StackExtensionType.MODULE, "jquery");
 
-        add(configuration, StackExtensionType.STYLESHEET,
-                "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css",
-
-                ROOT + "/tapestry.css",
-
-                ROOT + "/exception-frame.css",
-
-                ROOT + "/tapestry-console.css",
-
-                ROOT + "/tree.css");
+        addCoreStylesheets(configuration, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css");
 
         for (String name : bundledModules)
         {
@@ -164,6 +157,32 @@ public class JavaScriptModule
         }
 
         configuration.add("underscore-module", StackExtension.module("underscore"));
+    }
+
+    @Contribute(JavaScriptStack.class)
+    @Internal
+    public static void setupInternalJavaScriptStack(OrderedConfiguration<StackExtension> configuration)
+    {
+
+        // For the internal stack, ignore the configuration and just use the Bootstrap CSS shipped with the
+        // framework. This is part of a hack to make internal pages (such as ExceptionReport and T5Dashboard)
+        // render correctly even when the Bootstrap CSS has been replaced by the application.
+
+        addCoreStylesheets(configuration, ROOT + "/bootstrap/css/bootstrap.css");
+    }
+
+    private static void addCoreStylesheets(OrderedConfiguration<StackExtension> configuration, String bootstrapPath)
+    {
+        add(configuration, StackExtensionType.STYLESHEET,
+                bootstrapPath,
+
+                ROOT + "/tapestry.css",
+
+                ROOT + "/exception-frame.css",
+
+                ROOT + "/tapestry-console.css",
+
+                ROOT + "/tree.css");
     }
 
     private static void add(OrderedConfiguration<StackExtension> configuration, StackExtensionType type, String... paths)
@@ -220,8 +239,11 @@ public class JavaScriptModule
     @Contribute(MarkupRenderer.class)
     public void exposeJavaScriptSupportForFullPageRenders(OrderedConfiguration<MarkupRendererFilter> configuration,
                                                           final JavaScriptStackSource javascriptStackSource,
-                                                          final JavaScriptStackPathConstructor javascriptStackPathConstructor)
+                                                          final JavaScriptStackPathConstructor javascriptStackPathConstructor,
+                                                          final Request request)
     {
+
+        final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
 
         MarkupRendererFilter javaScriptSupport = new MarkupRendererFilter()
         {
@@ -230,7 +252,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor);
+                        javascriptStackPathConstructor, suppressCoreStylesheetsHook);
 
                 environment.push(JavaScriptSupport.class, support);
 
@@ -257,8 +279,12 @@ public class JavaScriptModule
     public void exposeJavaScriptSupportForPartialPageRender(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
                                                             final JavaScriptStackSource javascriptStackSource,
 
-                                                            final JavaScriptStackPathConstructor javascriptStackPathConstructor)
+                                                            final JavaScriptStackPathConstructor javascriptStackPathConstructor,
+
+                                                            final Request request)
     {
+        final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
+
         PartialMarkupRendererFilter javascriptSupport = new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
@@ -272,7 +298,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true);
+                        javascriptStackPathConstructor, idAllocator, true, suppressCoreStylesheetsHook);
 
                 environment.push(JavaScriptSupport.class, support);
 
@@ -285,6 +311,18 @@ public class JavaScriptModule
         };
 
         configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
+    }
+
+    private BooleanHook createSuppressCoreStylesheetHook(final Request request)
+    {
+        return new BooleanHook()
+        {
+            @Override
+            public boolean checkHook()
+            {
+                return request.getAttribute(InternalConstants.SUPPRESS_CORE_STYLESHEETS) != null;
+            }
+        };
     }
 
 

@@ -42,7 +42,7 @@ class JavaScriptSupportAutofocusTests extends InternalBaseTestCase {
         replay()
 
         // Test in partial mode, to bypass the logic about importing the "core' stack.
-        def jss = new JavaScriptSupportImpl(linker, stackSource, stackPathConstructor, null, true)
+        def jss = new JavaScriptSupportImpl(linker, stackSource, stackPathConstructor, null, true, null)
 
         cls jss
 

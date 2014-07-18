@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,6 +15,7 @@ package org.apache.tapestry5.corelib.pages;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.base.AbstractInternalPage;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
@@ -28,8 +27,8 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
 @UnknownActivationContextCheck(false)
 @WhitelistAccessOnly
 @ContentType("text/html")
-@Import(stack = "core", stylesheet = "dashboard.css")
-public class T5Dashboard
+@Import(stylesheet = "dashboard.css")
+public class T5Dashboard extends AbstractInternalPage
 {
     @Inject
     @Symbol(SymbolConstants.TAPESTRY_VERSION)

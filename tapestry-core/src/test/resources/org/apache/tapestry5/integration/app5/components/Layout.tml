@@ -5,7 +5,7 @@
     <body>
         <div class="container">
 
-            <h1>Default Layout</h1>
+            <h1>Default Layout <t:devtool/></h1>
 
             <t:body/>
 
@@ -29,7 +29,6 @@
 
             <div class="row">
                 <t:actionlink t:id="reset" class="btn btn-large btn-warning">reset session</t:actionlink>
-
             </div>
 
         </div>

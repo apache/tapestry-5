@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -180,4 +178,12 @@ public final class InternalConstants
      * @since 5.4
      */
     public static final String ACTIVE_PAGE_LOADED = "tapestry.active-page-loaded";
+
+    /**
+     * Used to suppress the stylesheets from the 'core' stack; this is used on certain pages
+     * that want to work around application-specific overrides to the core stack stylesheets.
+     *
+     * @since 5.4
+     */
+    public static final String SUPPRESS_CORE_STYLESHEETS = "tapestry.suppress-core-stylesheets";
 }

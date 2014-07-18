@@ -33,6 +33,8 @@ class AppModule {
     void contributeApplicationDefaults(MappedConfiguration conf) {
         conf.add(SymbolConstants.PRODUCTION_MODE, false)
         conf.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr")
+        // Override to test TAP5-2361
+        conf.add(SymbolConstants.BOOTSTRAP_ROOT, "context:bootstrap")
     }
 
     def decorateComponentRequestSelectorAnalyzer(ComponentRequestSelectorAnalyzer delegate, ApplicationStateManager mgr) {
