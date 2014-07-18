@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -57,7 +55,7 @@ public class WebResourcesModule
     @FactoryDefaults
     public static void setupDefaultCacheDirectory(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(WebResourcesSymbols.CACHE_DIR, "${java.io.tmpdir}");
+        configuration.add(WebResourcesSymbols.CACHE_DIR, "${java.io.tmpdir}/tapestry-asset-cache");
     }
 
 

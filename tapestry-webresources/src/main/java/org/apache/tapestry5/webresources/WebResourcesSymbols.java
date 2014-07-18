@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +17,8 @@ public class WebResourcesSymbols
     /**
      * Directory that stores cached copies of compiled CoffeeScript files. The directory will be created
      * as necessary. This allows compilation (e.g., CoffeeScript to JavaScript) to be avoided after a restart.
-     * The default is from the {@code java.io.tmpdir} system property (which is not necessarily stable between executions).
+     * The default is under the {@code java.io.tmpdir} system property (which is not necessarily stable between executions).
+     * It is common to set this to {@code target/asset-cache} during development.
      */
     public static final String CACHE_DIR = "tapestry.compiled-asset-cache-dir";
 }
