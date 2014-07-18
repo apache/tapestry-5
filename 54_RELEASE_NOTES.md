@@ -279,6 +279,13 @@ Bootstrap's JavaScript has been broken into multiple "shimmed" JavaScript module
 enable the JavaScript to support Bootstrap's modal dialogs. These modules do not export any value, but they
 do establish dependencies: to Bootstrap's "transition" module to enable animations, and ultimately to "jquery".
 
+Bootstrap is added to the core JavaScriptStack. Applications can override the tapestry.bootstrap-root symbol, or
+the StackElement entries contributed to the core JavaScript stack to use an application-customized version of Bootstrap.
+
+Certain built-in Tapestry pages (the T5Dashboard, the default ExceptionReport page) are set up to ignore any changes
+to the core stack CSS, and use the default copy of Bootstrap (otherwise, the CSS changes can corrupt the layout of
+these pages).
+
 ## Form element components
 
 TextField, PasswordField, TextArea, and Select now render the CSS class attribute `form-control`; you may add additional
