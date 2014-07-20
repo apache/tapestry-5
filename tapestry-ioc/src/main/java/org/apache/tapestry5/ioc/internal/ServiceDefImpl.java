@@ -23,6 +23,7 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -155,4 +156,29 @@ public class ServiceDefImpl implements ServiceDef3
             }
         }).map(InternalUtils.METHOD_TO_AP_MAPPER).toList());
     }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) { return true; }
+        if (obj == null) { return false; }
+        if (!(obj instanceof ServiceDefImpl)) { return false; }
+        ServiceDef other = (ServiceDef) obj;
+        if (serviceId == null)
+        {
+            if (other.getServiceId() != null) { return false; }
+        }
+        else if (!serviceId.equals(other.getServiceId())) { return false; }
+        return true;
+    }
+    
 }

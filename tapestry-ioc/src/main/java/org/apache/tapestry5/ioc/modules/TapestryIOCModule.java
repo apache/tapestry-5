@@ -1,4 +1,4 @@
-// Copyright 2006-2013 The Apache Software Foundation
+// Copyright 2006-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,6 +76,7 @@ public final class TapestryIOCModule
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class).preventReloading();
         binder.bind(PeriodicExecutor.class, PeriodicExecutorImpl.class);
         binder.bind(OperationAdvisor.class, OperationAdvisorImpl.class);
+        binder.bind(ServiceConfigurationListenerHub.class);
     }
 
     /**

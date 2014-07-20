@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
+import org.apache.tapestry5.ioc.internal.ServiceDefImpl;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
@@ -1025,6 +1026,31 @@ public class InternalUtils
             {
                 return sd.toString();
             }
+            
+            @Override
+            public int hashCode()
+            {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((getServiceId() == null) ? 0 : getServiceId().hashCode());
+                return result;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj) { return true; }
+                if (obj == null) { return false; }
+                if (!(obj instanceof ServiceDefImpl)) { return false; }
+                ServiceDef other = (ServiceDef) obj;
+                if (getServiceId() == null)
+                {
+                    if (other.getServiceId() != null) { return false; }
+                }
+                else if (!getServiceId().equals(other.getServiceId())) { return false; }
+                return true;
+            }
+
         };
     }
 

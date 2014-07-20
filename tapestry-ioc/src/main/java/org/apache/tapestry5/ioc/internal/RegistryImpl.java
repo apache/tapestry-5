@@ -65,7 +65,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     static final String PLASTIC_PROXY_FACTORY_SERVICE_ID = "PlasticProxyFactory";
 
     static final String LOGGER_SOURCE_SERVICE_ID = "LoggerSource";
-
+    
     private final OneShotLock lock = new OneShotLock();
 
     private final OneShotLock eagerLoadLock = new OneShotLock();
@@ -109,7 +109,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     private final Map<Class<? extends Annotation>, Annotation> cachedAnnotationProxies = CollectionFactory.newConcurrentMap();
 
     private final Set<Runnable> startups = CollectionFactory.newSet();
-
+    
+    private DelegatingServiceConfigurationListener serviceConfigurationListener;
+    
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
@@ -133,7 +135,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         this.operationTracker = operationTracker;
 
         this.proxyFactory = proxyFactory;
-
+        
+        serviceConfigurationListener = new DelegatingServiceConfigurationListener(
+                loggerForBuiltinService(ServiceConfigurationListener.class.getSimpleName()));
+        
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
         PerthreadManagerImpl ptmImpl = new PerthreadManagerImpl(logger);
@@ -202,10 +207,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         addBuiltin(PLASTIC_PROXY_FACTORY_SERVICE_ID, PlasticProxyFactory.class, proxyFactory);
 
         validateContributeDefs(moduleDefs);
+        
+        serviceConfigurationListener.setDelegates(getService(ServiceConfigurationListenerHub.class).getListeners());
 
         scoreboardAndTracker.startup();
 
         SerializationSupport.setProvider(this);
+        
     }
 
     private void addStartupsInModule(ModuleDef2 def, final Module module, final Logger logger)
@@ -425,6 +433,31 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             {
                 return true;
             }
+            
+            @Override
+            public int hashCode()
+            {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
+                return result;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (this == obj) { return true; }
+                if (obj == null) { return false; }
+                if (!(obj instanceof ServiceDefImpl)) { return false; }
+                ServiceDef other = (ServiceDef) obj;
+                if (serviceId == null)
+                {
+                    if (other.getServiceId() != null) { return false; }
+                }
+                else if (!serviceId.equals(other.getServiceId())) { return false; }
+                return true;
+            }
+            
         };
 
         for (Class marker : serviceDef.getMarkers())
@@ -508,6 +541,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (Module m : moduleToServiceDefs.keySet())
             addToUnorderedConfiguration(result, objectType, serviceDef, m);
+        
+        if (!isServiceConfigurationListenerServiceDef(serviceDef))
+        {
+            serviceConfigurationListener.onUnorderedConfiguration(serviceDef, result);
+        }
 
         return result;
     }
@@ -552,7 +590,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (OrderedConfigurationOverride<T> override : overrides.values())
             override.apply();
 
-        return orderer.getOrdered();
+        final List<T> result = orderer.getOrdered();
+        
+        if (!isServiceConfigurationListenerServiceDef(serviceDef))
+        {
+            serviceConfigurationListener.onOrderedConfiguration(serviceDef, result);
+        }
+        
+        return result;
+    }
+    
+    private boolean isServiceConfigurationListenerServiceDef(ServiceDef serviceDef)
+    {
+        return serviceDef.getServiceId().equalsIgnoreCase(ServiceConfigurationListener.class.getSimpleName());
     }
 
     @Override
@@ -574,6 +624,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             override.apply();
         }
 
+        if (!isServiceConfigurationListenerServiceDef(serviceDef))
+        {
+            serviceConfigurationListener.onMappedConfiguration(serviceDef, result);
+        }
+        
         return result;
     }
 
@@ -1221,6 +1276,121 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             return m1.getLoggerName().compareTo(m2.getLoggerName());
         }
+    }
+    
+    final static private class DelegatingServiceConfigurationListener implements ServiceConfigurationListener {
+        
+        final private Logger logger;
+        
+        private List<ServiceConfigurationListener> delegates;
+        private Map<ServiceDef, Map> mapped = CollectionFactory.newMap();
+        private Map<ServiceDef, Collection> unordered = CollectionFactory.newMap();
+        private Map<ServiceDef, List> ordered = CollectionFactory.newMap();
+        
+        public DelegatingServiceConfigurationListener(Logger logger)
+        {
+            this.logger = logger;
+        }
+
+        public void setDelegates(List<ServiceConfigurationListener> delegates)
+        {
+            
+            this.delegates = delegates;
+            
+            for (ServiceDef serviceDef : mapped.keySet())
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onMappedConfiguration(serviceDef, Collections.unmodifiableMap(mapped.get(serviceDef)));
+                }
+            }
+
+            for (ServiceDef serviceDef : unordered.keySet())
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onUnorderedConfiguration(serviceDef, Collections.unmodifiableCollection(unordered.get(serviceDef)));
+                }
+            }
+
+            for (ServiceDef serviceDef : ordered.keySet())
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onOrderedConfiguration(serviceDef, Collections.unmodifiableList(ordered.get(serviceDef)));
+                }
+            }
+            
+            mapped.clear();
+            mapped = null;
+            unordered.clear();
+            unordered = null;
+            ordered.clear();
+            ordered = null;
+
+        }
+        
+        @Override
+        public void onOrderedConfiguration(ServiceDef serviceDef, List configuration)
+        {
+            log("ordered", serviceDef, configuration);
+            if (delegates == null)
+            {
+                ordered.put(serviceDef, configuration);
+            }
+            else
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onOrderedConfiguration(serviceDef, Collections.unmodifiableList(configuration));
+                }
+            }
+        }
+
+        @Override
+        public void onUnorderedConfiguration(ServiceDef serviceDef, Collection configuration)
+        {
+            log("unordered", serviceDef, configuration);
+            if (delegates == null)
+            {
+                unordered.put(serviceDef, configuration);
+            }
+            else
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onUnorderedConfiguration(serviceDef, Collections.unmodifiableCollection(configuration));
+                }
+            }
+        }
+
+        @Override
+        public void onMappedConfiguration(ServiceDef serviceDef, Map configuration)
+        {
+            log("mapped", serviceDef, configuration);
+            if (delegates == null)
+            {
+                mapped.put(serviceDef, configuration);
+            }
+            else
+            {
+                for (ServiceConfigurationListener delegate : delegates)
+                {
+                    delegate.onMappedConfiguration(serviceDef, Collections.unmodifiableMap(configuration));
+                }
+            }
+            
+        }
+        
+        private void log(String type, ServiceDef serviceDef, Object configuration)
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("Service %s %s configuration: %s", 
+                        serviceDef.getServiceId(), type, configuration.toString()));
+            }
+        }
+        
     }
     
 }

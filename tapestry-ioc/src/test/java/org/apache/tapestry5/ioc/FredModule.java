@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ServiceConfigurationListener;
+import org.apache.tapestry5.ioc.services.ServiceConfigurationListenerHub;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -129,4 +132,18 @@ public class FredModule
         configuration.add("fred", "FRED");
         configuration.add("wilma", "WILMA");
     }
+    
+    
+    @Contribute(ServiceConfigurationListenerHub.class)
+    public static void configureServiceConfigurationListener(OrderedConfiguration<ServiceConfigurationListener> configuration, 
+            CatchAllServiceConfigurationListener listener) 
+    {
+        configuration.add("CatchAll", listener);
+    }
+    
+    public static void bind(ServiceBinder binder)
+    {
+        binder.bind(CatchAllServiceConfigurationListener.class);
+    }
+    
 }
