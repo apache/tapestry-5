@@ -31,16 +31,11 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * <dd>contains base classes</dd>
  * </dl>
  * <p>
- * Since 5.4 on, a library mapping can also have a {@link ComponentLibraryInfo} to provide more
- * information about itself, such as URLs (project, documentation, JavaDoc, sources) and
- * coordinates for dependency management tools (group id, artifact id, version).
- * </p>
+ * @see ComponentLibraryInfo 
  */
 public final class LibraryMapping
 {
     public final String libraryName, rootPackage;
-    
-    private ComponentLibraryInfo componentLibraryInfo;
     
     /**
      * Identifies the root package of a library. The application has uses the library name "" (the empty string).
@@ -74,18 +69,6 @@ public final class LibraryMapping
 
         this.libraryName = libraryName;
         this.rootPackage = rootPackage;
-        this.componentLibraryInfo = null;
-    }
-
-    /**
-     * Same as {@link #LibraryMapping(String, String)}, with with an additional {@link ComponentLibraryInfo} parameter.
-     * @since 5.4
-     */
-    public LibraryMapping(String libraryName, String rootPackage, ComponentLibraryInfo componentLibraryInfo)
-    {
-        this(libraryName, rootPackage);
-        this.componentLibraryInfo = componentLibraryInfo;
-        componentLibraryInfo.setLibraryMapping(this);
     }
 
     /**
@@ -104,16 +87,6 @@ public final class LibraryMapping
         return rootPackage;
     }
     
-    /**
-     * Returns the component library information for this library mapping.
-     * @return a {@link ComponentLibraryInfo}.
-     * @since 5.4
-     */
-    public ComponentLibraryInfo getComponentLibraryInfo()
-    {
-        return componentLibraryInfo;
-    }
-
     @Override
     public String toString()
     {

@@ -443,25 +443,8 @@ public final class TapestryModule
                                                   @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                                   String appRootPackage)
     {
-        
-        ComponentLibraryInfo info = new ComponentLibraryInfo();
-        info.setName("Tapestry 5 Core Library");
-        info.setDescription("The set of components, pages and mixins provided by Tapestry out-of-the-box.");
-        info.setHomepageUrl("http://tapestry.apache.org");
-        info.setDocumentationUrl("http://tapestry.apache.org/documentation.html");
-        info.setSourceBrowseUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary");
-        info.setSourceRootUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java");
-        info.setJavadocUrl("http://tapestry.apache.org/current/apidocs/");
-        info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
-        info.setGroupId("org.apache.tapestry");
-        info.setArtifactId("tapestry-core");
-        info.setVersion("5.4.0");
-        info.setSourceUrlResolver(new ComponentLibraryInfo.GitWebMavenSourceUrlResolver());
-        info.setTags(Arrays.asList("core", "out-of-the-box"));
-        
-        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib", info));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib"));
         configuration.add(new LibraryMapping("", appRootPackage));
-        
     }
 
     /**
@@ -2711,6 +2694,18 @@ public final class TapestryModule
                     ComponentInstantiatorSource.class.getMethod("getInstantiator", String.class), advice);
             
         }
+    }
+    
+    public static ComponentLibraryInfoSource buildComponentLibraryInfoSource(List<ComponentLibraryInfoSource> configuration,
+            ChainBuilder chainBuilder)
+    {
+        return chainBuilder.build(ComponentLibraryInfoSource.class, configuration);
+    }
+    
+    @Contribute(ComponentLibraryInfoSource.class)
+    public static void addMavenComponentLibraryInfoSource(OrderedConfiguration<ComponentLibraryInfoSource> configuration)
+    {
+        configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
     }
     
 }

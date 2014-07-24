@@ -24,7 +24,6 @@ import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentLibraryInfo;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
@@ -52,9 +51,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     // Map from library name to a list of root package names (usuallly just one).
     private final Map<String, List<String>> libraryNameToPackageNames = CollectionFactory.newCaseInsensitiveMap();
 
-    // Map from library name to a ComponentLibraryInfo
-    private final Map<String, ComponentLibraryInfo> libraryNameToInfo = CollectionFactory.newCaseInsensitiveMap();
-
     private final Map<String, ControlledPackageType> packageNameToType = CollectionFactory.newMap();
 
     /**
@@ -71,6 +67,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     // is operating.
 
     private volatile boolean needsRebuild = true;
+    
+    private final Collection<LibraryMapping> libraryMappings;
 
     private class Data
     {
@@ -255,13 +253,12 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         this.classNameLocator = classNameLocator;
 
         this.startPageName = startPageName;
+        this.libraryMappings = Collections.unmodifiableCollection(mappings);
 
         for (LibraryMapping mapping : mappings)
         {
             String libraryName = mapping.libraryName;
             
-            libraryNameToInfo.put(libraryName, mapping.getComponentLibraryInfo());
-
             List<String> packages = this.libraryNameToPackageNames.get(libraryName);
 
             if (packages == null)
@@ -698,9 +695,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         }
     }
 
-    public ComponentLibraryInfo getComponentLibraryInfo(String libraryName)
+    @Override
+    public Collection<LibraryMapping> getLibraryMappings()
     {
-        return libraryNameToInfo.get(libraryName);
+        return libraryMappings;
     }
-    
+
 }

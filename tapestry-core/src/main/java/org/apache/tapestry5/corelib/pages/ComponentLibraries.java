@@ -15,6 +15,8 @@
 package org.apache.tapestry5.corelib.pages;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
@@ -31,6 +33,8 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentLibraryInfo;
+import org.apache.tapestry5.services.ComponentLibraryInfoSource;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 /**
@@ -45,13 +49,22 @@ public class ComponentLibraries
 
     final private static String[] EMTPY_STRING_ARRAY = {};
 
+    private static final Comparator<LibraryMapping> LIBRARY_MAPPING_COMPARATOR = new Comparator<LibraryMapping>()
+    {
+        @Override
+        public int compare(LibraryMapping mapping1, LibraryMapping mapping2)
+        {
+            return mapping1.libraryName.compareTo(mapping2.libraryName);
+        }
+    };
+
     private static enum Type { PAGE, COMPONENT, MIXIN }
 
     @Inject
     private ComponentClassResolver componentClassResolver;
 
     @Property
-    private String libraryName;
+    private LibraryMapping libraryMapping;
 
     @Property
     private String logicalName;
@@ -81,10 +94,30 @@ public class ComponentLibraries
     @Property
     private boolean productionMode;
     
-    @Cached(watch="libraryName")
+    @Inject
+    private ComponentLibraryInfoSource componentLibraryInfoSource;
+    
+    @Cached
+    public List<LibraryMapping> getLibraryMappings()
+    {
+        List<LibraryMapping> mappings = new ArrayList<LibraryMapping>();
+        
+        // add all the library mappings, except the "" (empty string) one.
+        for (LibraryMapping libraryMapping : componentClassResolver.getLibraryMappings())
+        {
+            if (!"".equals(libraryMapping.libraryName)) {
+                mappings.add(libraryMapping);
+            }
+        }
+        
+        Collections.sort(mappings, LIBRARY_MAPPING_COMPARATOR);
+        return mappings;
+    }
+    
+    @Cached(watch="libraryMapping")
     public ComponentLibraryInfo getInfo()
     {
-        return componentClassResolver.getComponentLibraryInfo(libraryName);
+        return componentLibraryInfoSource.find(libraryMapping);
     }
     
     public List<String> getLibraryNames() {
@@ -93,7 +126,7 @@ public class ComponentLibraries
     
     public String getLibraryClientId() 
     {
-        return libraryName.replace("/", "-");
+        return libraryMapping.libraryName.replace("/", "-");
     }
 
     private List<String> filter(final List<String> allNames)
@@ -102,7 +135,8 @@ public class ComponentLibraries
         for (String name : allNames)
         {
             
-            if (name.startsWith(libraryName + "/") && !(libraryName.equals("core") && name.endsWith("Test")))
+            if (name.startsWith(libraryMapping.libraryName + "/") && 
+                    !(libraryMapping.libraryName.equals("core") && name.endsWith("Test")))
             {
                 logicalNames.add(name);
             }
@@ -188,9 +222,18 @@ public class ComponentLibraries
     @OnEvent("json")
     Object generateJSONDescription(String libraryName)
     {
-        this.libraryName = libraryName;
+        for (LibraryMapping mapping : componentClassResolver.getLibraryMappings())
+        {
+            if (libraryName.equalsIgnoreCase(mapping.libraryName))
+            {
+                this.libraryMapping = mapping;
+                break;
+            }
+        }
         JSONObject object = new JSONObject();
         object.put("libraryName", libraryName);
+        object.put("rootPackage", libraryMapping.getRootPackage());
+        
         final ComponentLibraryInfo info = getInfo();
         if (info != null)
         {

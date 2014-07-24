@@ -4,13 +4,13 @@
     <h2 t:type="If" t:test="productionMode">This page is disabled in production mode</h2>
     
     <t:if t:test="!productionMode">
-	    <h1><strong>${libraryNames.size()}</strong> component libraries used</h1>
+	    <h1><strong>${libraryMappings.size()}</strong> component libraries used</h1>
 	    
 	    
-	    <ul id="libraryList" class="list-group" t:type="If" t:test="!productionMode">
-	    	<li t:type="Loop" t:source="libraryNames" t:value="libraryName" class="list-group-item">
+	    <ul id="libraryList" class="list-group">
+	    	<li t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" class="list-group-item">
 	    		<a href="#${libraryClientId}">
-	    			<code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if>
+	    			<code>${libraryMapping.libraryName}</code> <t:if test="info">: ${info.name}</t:if>
 	    		</a>
 	    		<p t:type="If" t:test="info?.description">
 	    			${info.description}
@@ -28,9 +28,9 @@
 	
 		<div id="libraries">
 		
-			<div class="libraryInfo" t:type="Loop" t:source="libraryNames" t:value="libraryName" id="${libraryClientId}">
+			<div class="libraryInfo" t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" id="${libraryClientId}">
 		
-				<h2><code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if></h2>
+				<h2><code>${libraryMapping.libraryName}</code> <t:if test="info">: ${info.name}</t:if></h2>
 				
 				<t:if test="info">
 			
@@ -96,9 +96,9 @@
 			    
 				</t:if>
 	
-				<a t:type="EventLink" t:event="json" t:context="libraryName">Generate JSON description</a>
+				<a t:type="EventLink" t:event="json" t:context="libraryMapping.libraryName">Generate JSON description</a>
 				
-				<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryName}</code>.</p>
+				<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryMapping.libraryName}</code>.</p>
 				
 	<!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
 	<!-- 			</div> -->

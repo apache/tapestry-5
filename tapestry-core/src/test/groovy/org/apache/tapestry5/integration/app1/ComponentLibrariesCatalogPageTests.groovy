@@ -7,7 +7,7 @@ import org.testng.annotations.Test
 @TapestryTestConfiguration(webAppFolder = "src/test/app1")
 class ComponentLibrariesCatalogPageTests extends TapestryCoreTestCase
 {
-    @Test
+    @Test(enabled = false)
     void component_libraries_page()
     {
         open("${baseURL}t5dashboard/componentlibraries")

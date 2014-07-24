@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -149,13 +150,6 @@ public interface ComponentClassResolver
     List<String> getLibraryNames();
     
     /**
-     * Returns an object encapsulating information about a component library, if provided.
-     * @param libraryName the library name (prefix).
-     * @return a {@link ComponentLibraryInfo} or <code>null</code>
-     */
-    ComponentLibraryInfo getComponentLibraryInfo(String libraryName);
-    
-    /**
      * Used to identify which packages are controlled packages (from which components are loaded). Future expansion
      * may allow for additional packages which are live reloaded but not components (or perhaps are transformed, but not
      * as components).
@@ -184,4 +178,12 @@ public interface ComponentClassResolver
      *         if the class can't be matched to a contributed root package
      */
     String getLibraryNameForClass(String className);
+    
+    /**
+     * Returns the library mappings.
+     * @return
+     */
+    @IncompatibleChange(release = "5.4", details = "Added method")
+    Collection<LibraryMapping> getLibraryMappings();
+    
 }
