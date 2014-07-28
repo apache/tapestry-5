@@ -18,7 +18,7 @@ package org.apache.tapestry5.services.javascript;
  *
  * @since 5.4
  */
-public enum JavascriptAggregationStrategy
+public enum JavaScriptAggregationStrategy
 {
     /**
      * The default strategy is to combine all the assets and minimize them together.

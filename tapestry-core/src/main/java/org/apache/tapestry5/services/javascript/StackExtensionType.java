@@ -72,7 +72,7 @@ public enum StackExtensionType
 
     /**
      * Overrides the {@linkplain JavaScriptStack#getJavaScriptAggregationStrategy() JavaScript aggregation strategy}
-     * for the stack. The value is string name of an {@link org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy} value.
+     * for the stack. The value is string name of an {@link org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy} value.
      *
      * @since 5.4
      */

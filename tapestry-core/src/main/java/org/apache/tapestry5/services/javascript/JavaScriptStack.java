@@ -75,11 +75,11 @@ public interface JavaScriptStack
 
     /**
      * Identifies how to aggregate JavaScript within the stack.
-     * The default is {@link org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy#COMBINE_AND_MINIMIZE}.
+     * The default is {@link org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy#COMBINE_AND_MINIMIZE}.
      *
      * @since 5.4
      */
-    JavascriptAggregationStrategy getJavaScriptAggregationStrategy();
+    JavaScriptAggregationStrategy getJavaScriptAggregationStrategy();
 
     /**
      * Returns static JavaScript initialization for the stack. This block of JavaScript code will be added to the

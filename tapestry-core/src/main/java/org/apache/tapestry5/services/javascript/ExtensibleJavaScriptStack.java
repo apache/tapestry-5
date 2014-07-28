@@ -53,7 +53,7 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
 
     private final String initialization;
 
-    private final JavascriptAggregationStrategy strategy;
+    private final JavaScriptAggregationStrategy strategy;
 
     private final Predicate<StackExtension> by(final StackExtensionType type)
     {
@@ -96,12 +96,12 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         ;
     };
 
-    private final Mapper<String, JavascriptAggregationStrategy> stringToStrategy = new Mapper<String, JavascriptAggregationStrategy>()
+    private final Mapper<String, JavaScriptAggregationStrategy> stringToStrategy = new Mapper<String, JavaScriptAggregationStrategy>()
     {
         @Override
-        public JavascriptAggregationStrategy map(String name)
+        public JavaScriptAggregationStrategy map(String name)
         {
-            return JavascriptAggregationStrategy.valueOf(name);
+            return JavaScriptAggregationStrategy.valueOf(name);
         }
     };
 
@@ -128,14 +128,14 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         strategy = toStrategy(extensions);
     }
 
-    private JavascriptAggregationStrategy toStrategy(Flow<StackExtension> extensions)
+    private JavaScriptAggregationStrategy toStrategy(Flow<StackExtension> extensions)
     {
-        List<JavascriptAggregationStrategy> values = extensions.filter(by(StackExtensionType.AGGREGATION_STRATEGY)).map(extractValue).map(stringToStrategy).toList();
+        List<JavaScriptAggregationStrategy> values = extensions.filter(by(StackExtensionType.AGGREGATION_STRATEGY)).map(extractValue).map(stringToStrategy).toList();
 
         switch (values.size())
         {
             case 0:
-                return JavascriptAggregationStrategy.COMBINE_AND_MINIMIZE;
+                return JavaScriptAggregationStrategy.COMBINE_AND_MINIMIZE;
 
             case 1:
 
@@ -173,7 +173,7 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
     }
 
     @Override
-    public JavascriptAggregationStrategy getJavaScriptAggregationStrategy()
+    public JavaScriptAggregationStrategy getJavaScriptAggregationStrategy()
     {
         return strategy;
     }

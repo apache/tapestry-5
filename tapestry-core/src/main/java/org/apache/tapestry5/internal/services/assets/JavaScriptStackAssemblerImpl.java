@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy;
+import org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.*;
@@ -60,9 +60,9 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
         final boolean compress;
 
-        final JavascriptAggregationStrategy javascriptAggregationStrategy;
+        final JavaScriptAggregationStrategy javascriptAggregationStrategy;
 
-        private Parameters(Locale locale, String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy)
+        private Parameters(Locale locale, String stackName, boolean compress, JavaScriptAggregationStrategy javascriptAggregationStrategy)
         {
             this.locale = locale;
             this.stackName = stackName;
@@ -96,7 +96,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         resourceChangeTracker.clearOnInvalidation(cache);
     }
 
-    public StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy) throws IOException
+    public StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavaScriptAggregationStrategy javascriptAggregationStrategy) throws IOException
     {
         Locale locale = threadLocale.getLocale();
 

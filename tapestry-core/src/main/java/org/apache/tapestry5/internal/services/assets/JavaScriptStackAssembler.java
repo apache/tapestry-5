@@ -13,7 +13,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.javascript.JavascriptAggregationStrategy;
+import org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy;
 
 import java.io.IOException;
 
@@ -34,5 +34,5 @@ public interface JavaScriptStackAssembler
      * <p/>
      * Expects the {@linkplain org.apache.tapestry5.services.LocalizationSetter#setNonPersistentLocaleFromLocaleName(String) non-persistent locale} to be set before invoking!
      */
-    StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavascriptAggregationStrategy javascriptAggregationStrategy) throws IOException;
+    StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavaScriptAggregationStrategy javascriptAggregationStrategy) throws IOException;
 }
