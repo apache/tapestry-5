@@ -185,8 +185,7 @@ define ["./events", "./dom", "underscore"],
       # Now the ugly part; if we just invoke submit() on the form, it does not trigger
       # the form's "submit" event, which we need.
 
-      if form.trigger "submit"
-        form.element.submit()
+      form.trigger "submit"
 
       # And cancel the default behavior for the original click event
       return false
