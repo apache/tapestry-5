@@ -1,4 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -432,35 +431,36 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             {
                 try
                 {
-                    
+
                     Class parameterType = classCache.forName(parameterTypeName);
                     boolean isArray = parameterType.isArray();
-                    
+
                     if (isArray)
                     {
                         parameterType = parameterType.getComponentType();
                     }
-                    
+
                     ValueEncoder valueEncoder = valueEncoderSource.getValueEncoder(parameterType);
 
                     String parameterValue = request.getParameter(parameterName);
 
-                    if (!allowBlank && parameterValue == null)
+                    if (!allowBlank && InternalUtils.isBlank(parameterValue))
                         throw new RuntimeException(String.format(
                                 "The value for query parameter '%s' was blank, but a non-blank value is needed.",
                                 parameterName));
-                    
+
                     Object value;
 
-                    if (!isArray) {
-                        value = coerce(parameterName, parameterType, parameterValue, valueEncoder);
-                    }
-                    else {
+                    if (!isArray)
+                    {
+                        value = coerce(parameterName, parameterType, parameterValue, valueEncoder, allowBlank);
+                    } else
+                    {
                         String[] parameterValues = request.getParameters(parameterName);
                         Object[] array = (Object[]) Array.newInstance(parameterType, parameterValues.length);
                         for (int i = 0; i < parameterValues.length; i++)
                         {
-                            array[i] = coerce(parameterName, parameterType, parameterValues[i], valueEncoder);
+                            array[i] = coerce(parameterName, parameterType, parameterValues[i], valueEncoder, allowBlank);
                         }
                         value = array;
                     }
@@ -477,8 +477,16 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             }
 
             private Object coerce(final String parameterName, Class parameterType,
-                    String parameterValue, ValueEncoder valueEncoder)
+                                  String parameterValue, ValueEncoder valueEncoder, boolean allowBlank)
             {
+
+                if (!allowBlank && InternalUtils.isBlank(parameterValue))
+                {
+                    throw new RuntimeException(String.format(
+                            "The value for query parameter '%s' was blank, but a non-blank value is needed.",
+                            parameterName));
+                }
+
                 Object value = valueEncoder.toValue(parameterValue);
 
                 if (parameterType.isPrimitive() && value == null)

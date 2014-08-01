@@ -1,5 +1,3 @@
-// Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,6 +13,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 
@@ -33,6 +32,10 @@ public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Objec
 
     public ValueEncoder<Object> create(final Class<Object> type)
     {
+        final boolean blankToNull =
+                Boolean.class.isAssignableFrom(type) ||
+                Number.class.isAssignableFrom(type);
+
         return new ValueEncoder<Object>()
         {
             public String toClient(Object value)
@@ -42,6 +45,10 @@ public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Objec
 
             public Object toValue(String clientValue)
             {
+                if (blankToNull && InternalUtils.isBlank(clientValue)) {
+                    return null;
+                }
+
                 return typeCoercer.coerce(clientValue, type);
             }
         };

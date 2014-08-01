@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Persist;
@@ -24,12 +19,15 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class RequestParameterDemo
 {
     private static final String PARAMETER_NAME = "gnip";
 
     private static final String EVENT_NAME = "frob";
-    
+
     private static final String MULTIVALUED_PARAMETER_EVENT_NAME = "frobFrob";
 
     @Property
@@ -50,7 +48,7 @@ public class RequestParameterDemo
 
         return link;
     }
-    
+
     public Link getMultivaluedQueryParameterLink()
     {
         Link link = resources.createEventLink(MULTIVALUED_PARAMETER_EVENT_NAME);
@@ -69,6 +67,11 @@ public class RequestParameterDemo
         return link;
     }
 
+    public Link getBlankAllowedLink()
+    {
+        return resources.createEventLink("emptyStringAllowed").addParameter(PARAMETER_NAME, "");
+    }
+
     public Link getNullLink()
     {
         return resources.createEventLink(EVENT_NAME);
@@ -80,20 +83,32 @@ public class RequestParameterDemo
     }
 
     void onFrob(@RequestParameter(PARAMETER_NAME)
-    int value)
+                int value)
     {
         this.value = value;
     }
-    
+
     void onFrobFrob(@RequestParameter(PARAMETER_NAME)
-    Integer[] values)
+                    Integer[] values)
     {
         this.values = Arrays.asList(values);
     }
 
     void onFrobNullAllowed(@RequestParameter(value = PARAMETER_NAME, allowBlank = true)
-    int value)
+                           int value)
     {
         this.value = value;
+    }
+
+    void onEmptyStringAllowed(@RequestParameter(value = PARAMETER_NAME, allowBlank = true) Integer value)
+    {
+        if (value == null)
+        {
+            this.value = -1;
+        } else
+        {
+            this.value = value.intValue();
+        }
+
     }
 }

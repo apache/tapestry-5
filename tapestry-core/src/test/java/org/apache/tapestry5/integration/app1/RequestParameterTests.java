@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -67,5 +65,13 @@ public class RequestParameterTests extends App1TestCase
                 "Unable process query parameter 'gnip' as parameter #1 of event handler method ",
                 "org.apache.tapestry5.integration.app1.pages.RequestParameterDemo.onFrob(int)",
                 "Coercion of frodo to type java.lang.Integer");
+    }
+
+    @Test
+    public void blank_allowed_for_wrapper_types_if_enabled() {
+        openLinks("RequestParameter Annotation Demo", "Blank Allowed Link");
+
+        assertText("id=current", "-1");
+
     }
 }

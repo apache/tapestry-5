@@ -31,5 +31,8 @@
     <li>
       <a href="${nullAllowedLink}">Null Allowed Link</a>
     </li>
+     <li>
+         <a href="${blankAllowedLink}">Blank Allowed Link</a>
+     </li>
   </ul>
 </html>

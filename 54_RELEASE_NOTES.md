@@ -419,3 +419,10 @@ where desired.
 ## Java 1.6 required
 
 As of version 5.4, Tapestry requires Java 1.6 at least.
+
+## ValueEncoder Changes
+
+The automatic ValueEncoder from String to any Number type, or ti Boolean have
+changed slightly. An empty input string is encoded to a null rather than being passed through
+the type coercer. This reflects the desire that a submitted value (in a URL or a form) that is blank
+is the same as no value: null.
