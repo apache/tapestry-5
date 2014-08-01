@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,6 +21,7 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.BaseClientElement;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 /**
@@ -44,7 +43,7 @@ public class Alerts extends BaseClientElement
      * Allows the button used to dismiss all alerts to be customized (and localized).
      *
      * @deprecated Deprecated in Tapestry 5.4; override the {@code core-dismiss-label} message key in
-     *             your application's message catalog. This parameter is now ignored.
+     * your application's message catalog. This parameter is now ignored.
      */
     @Parameter(value = "message:core-dismiss-label", defaultPrefix = BindingConstants.LITERAL)
     private String dismissText;
@@ -62,6 +61,9 @@ public class Alerts extends BaseClientElement
 
     @Inject
     private DeprecationWarning deprecationWarning;
+
+    @Inject
+    private Request request;
 
     void onPageLoaded()
     {
@@ -98,6 +100,12 @@ public class Alerts extends BaseClientElement
             {
                 storage.dismissAll();
             }
+        }
+
+        // See TAP5-1941
+        if (!request.isXHR())
+        {
+            return true;
         }
 
         return new JSONObject();
