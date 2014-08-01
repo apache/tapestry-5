@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,6 +13,7 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
 
 /**
  * Manages per-thread data, and provides a way for listeners to know when such data should be cleaned up. Typically,
@@ -56,6 +55,16 @@ public interface PerthreadManager
      * @since 5.2.0
      */
     <T> PerThreadValue<T> createValue();
+
+    /**
+     * Return {@link org.apache.tapestry5.ioc.ObjectCreator}, which for each thread,
+     * the first call will use the delegate {@link org.apache.tapestry5.ioc.ObjectCreator} to create
+     * an instance, and later calls will reuse the same per-thread instance. The instance is stored in the
+     * {@link org.apache.tapestry5.ioc.services.PerthreadManager} and will be released at the end of the request.
+     *
+     * @since 5.4
+     */
+    <T> ObjectCreator<T> createValue(ObjectCreator<T> delegate);
 
     /**
      * Invokes {@link Runnable#run()}, providing a try...finally to {@linkplain #cleanup() cleanup} after.

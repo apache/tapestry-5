@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,19 +12,19 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 
 @SuppressWarnings("all")
 public class PerthreadManagerImpl implements PerthreadManager
@@ -155,6 +153,34 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private static Object NULL_VALUE = new Object();
 
+    <T> ObjectCreator<T> createValue(final Object key, final ObjectCreator<T> delegate)
+    {
+        return new ObjectCreator<T>()
+        {
+            public T createObject()
+            {
+                Map map = getPerthreadMap();
+                T storedValue = (T) map.get(key);
+
+                if (storedValue != null)
+                {
+                    return (storedValue == NULL_VALUE) ? null : storedValue;
+                }
+
+                T newValue = delegate.createObject();
+
+                map.put(key, newValue == null ? NULL_VALUE : newValue);
+
+                return newValue;
+            }
+        };
+    }
+
+    public <T> ObjectCreator<T> createValue(ObjectCreator<T> delegate)
+    {
+        return createValue(uuidGenerator.getAndIncrement(), delegate);
+    }
+
     <T> PerThreadValue<T> createValue(final Object key)
     {
         return new PerThreadValue<T>()
@@ -170,17 +196,19 @@ public class PerthreadManagerImpl implements PerthreadManager
             {
                 Map map = getPerthreadMap();
 
-                if (map.containsKey(key))
+                Object storedValue = map.get(key);
+
+                if (storedValue == null)
                 {
-                    Object storedValue = map.get(key);
-
-                    if (storedValue == NULL_VALUE)
-                        return null;
-
-                    return (T) storedValue;
+                    return defaultValue;
                 }
 
-                return defaultValue;
+                if (storedValue == NULL_VALUE)
+                {
+                    return null;
+                }
+
+                return (T) storedValue;
             }
 
             @Override
