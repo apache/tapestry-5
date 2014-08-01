@@ -1,5 +1,3 @@
-// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -48,23 +46,23 @@ public class BaseURLSourceImpl implements BaseURLSource
 
     private String portExtension(boolean secure)
     {
-        int port = secure ? secureHostPort : hostPort;
+        int configuredPort = secure ? secureHostPort : hostPort;
 
         // The default for the ports is 0, which means to use Request.serverPort. That's mostly
         // for development.
-        if (port <= 0)
+        if (configuredPort <= 0 && secure == request.isSecure())
         {
-            port = request.getServerPort();
+            configuredPort = request.getServerPort();
         }
 
         int expectedPort = secure ? 443 : 80;
 
-        if (port == expectedPort)
+        if (configuredPort == expectedPort || configuredPort <= 0)
         {
             return "";
         }
 
-        return ":" + port;
+        return ":" + configuredPort;
     }
 
     private String hostname()

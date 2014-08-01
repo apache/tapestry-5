@@ -1,5 +1,3 @@
-// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,6 +34,7 @@ public class BaseURLSourceImplTest extends InternalBaseTestCase
     {
         expect(request.getServerName()).andReturn("localhost").once();
         expect(request.getServerPort()).andReturn(80).once();
+        expect(request.isSecure()).andReturn(false);
 
         replay();
 
@@ -49,6 +48,7 @@ public class BaseURLSourceImplTest extends InternalBaseTestCase
     public void contributed_hostname()
     {
         expect(request.getServerPort()).andReturn(80).once();
+        expect(request.isSecure()).andReturn(false);
 
         replay();
 
@@ -63,6 +63,7 @@ public class BaseURLSourceImplTest extends InternalBaseTestCase
     public void hostname_from_environment_variable()
     {
         expect(request.getServerPort()).andReturn(80).once();
+        expect(request.isSecure()).andReturn(false);
 
         replay();
 
@@ -105,6 +106,22 @@ public class BaseURLSourceImplTest extends InternalBaseTestCase
         BaseURLSource baseURLSource = new BaseURLSourceImpl(request, "localhost", 80, 8443);
 
         assertEquals(baseURLSource.getBaseURL(true), "https://localhost:8443");
+
+        verify();
+    }
+
+    @Test
+    public void secure_url_without_configured_hostports()
+    {
+        expect(request.isSecure()).andReturn(false).once();
+
+        replay();
+
+        BaseURLSource baseURLSource = new BaseURLSourceImpl(request, "localhost", 0, 0);
+
+        // In other words, in the absense of any other configuration, it assumes that you have SSL on port 443
+        // and there's no need for that in the URL, since that's what the browser is going to do.
+        assertEquals(baseURLSource.getBaseURL(true), "https://localhost");
 
         verify();
     }
