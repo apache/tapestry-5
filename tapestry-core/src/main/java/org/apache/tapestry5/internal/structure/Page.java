@@ -15,6 +15,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
@@ -170,7 +171,7 @@ public interface Page extends PageLifecycleCallbackHub
      * string) returns the root
      * element of the page.
      *
-     * @throws IllegalArgumentException
+     * @throws UnknownValueException
      *         if the nestedId does not correspond to a component
      */
     ComponentPageElement getComponentElementByNestedId(String nestedId);

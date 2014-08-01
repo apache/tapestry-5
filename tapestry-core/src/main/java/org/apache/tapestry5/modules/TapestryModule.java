@@ -97,7 +97,6 @@ import org.slf4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -1729,7 +1728,7 @@ public final class TapestryModule
 
                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          boolean productionMode,
-                                         
+
                                          @Symbol(SymbolConstants.INCLUDE_CORE_STACK)
                                          final boolean includeCoreStack,
 
@@ -1812,8 +1811,9 @@ public final class TapestryModule
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
-        
-        if (includeCoreStack) {
+
+        if (includeCoreStack)
+        {
             configuration.add("ImportCoreStack", importCoreStack);
         }
 
@@ -2057,8 +2057,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.MIN_GZIP_SIZE, 100);
 
-        Random random = new Random(System.currentTimeMillis());
-
         configuration.add(SymbolConstants.APPLICATION_VERSION, "0.0.1");
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, false);
@@ -2116,25 +2114,25 @@ public final class TapestryModule
 
         // TAP5-2070 keep the old behavior, defaults to false
         configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
-        
+
         // TAP5-2197
         configuration.add(SymbolConstants.INCLUDE_CORE_STACK, true);
-        
+
         // TAP5-2182
         configuration.add(SymbolConstants.FORM_GROUP_WRAPPER_CSS_CLASS, "form-group");
         configuration.add(SymbolConstants.FORM_GROUP_LABEL_CSS_CLASS, "control-label");
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME, "");
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, "");
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "form-control");
-        
+
         // TAP5-1998
         configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, false);
-        
+
         // TAP5-2187
         configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, false);
 
         configuration.add(SymbolConstants.EXCEPTION_REPORTS_DIR, "build/exceptions");
-        
+
         // TAP5-1815
         configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, false);
 
@@ -2442,6 +2440,8 @@ public final class TapestryModule
      * <dl>
      * <dt>OperationTracker</dt>
      * <dd>Tracks general information about the request using {@link OperationTracker}</dd>
+     * <dt>UnknownComponentFilter (production mode only)</dt>
+     * <dd>{@link org.apache.tapestry5.internal.services.ProductionModeUnknownComponentFilter} - Detects request with unknown component and aborts handling to ultimately deliver a 404 response</dd>
      * <dt>InitializeActivePageName
      * <dd>{@link InitializeActivePageName}
      * <dt>DeferredResponseRenderer</dt>
@@ -2450,9 +2450,15 @@ public final class TapestryModule
      *
      * @since 5.2.0
      */
-    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration)
+    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         configuration.addInstance("OperationTracker", RequestOperationTracker.class);
+
+        if (productionMode)
+        {
+            configuration.addInstance("UnknownComponentFilter", ProductionModeUnknownComponentFilter.class);
+        }
+
         configuration.addInstance("InitializeActivePageName", InitializeActivePageName.class);
         configuration.addInstance("DeferredResponseRenderer", DeferredResponseRenderer.class);
     }
@@ -2670,13 +2676,15 @@ public final class TapestryModule
     {
         return strategyBuilder.build(ValueLabelProvider.class, configuration);
     }
-    
+
     @Advise(serviceInterface = ComponentInstantiatorSource.class)
-    public static void componentReplacer(MethodAdviceReceiver methodAdviceReceiver, 
-          final ComponentOverride componentReplacer) throws NoSuchMethodException, SecurityException {
-        
-        if (componentReplacer.getReplacements().size() > 0) {
-            
+    public static void componentReplacer(MethodAdviceReceiver methodAdviceReceiver,
+                                         final ComponentOverride componentReplacer) throws NoSuchMethodException, SecurityException
+    {
+
+        if (componentReplacer.getReplacements().size() > 0)
+        {
+
             MethodAdvice advice = new MethodAdvice()
             {
                 @Override
@@ -2684,30 +2692,30 @@ public final class TapestryModule
                 {
                     String className = (String) invocation.getParameter(0);
                     final Class<?> replacement = componentReplacer.getReplacement(className);
-                    if (replacement != null) 
+                    if (replacement != null)
                     {
                         invocation.setParameter(0, replacement.getName());
                     }
                     invocation.proceed();
                 }
             };
-            
+
             methodAdviceReceiver.adviseMethod(
                     ComponentInstantiatorSource.class.getMethod("getInstantiator", String.class), advice);
-            
+
         }
     }
-    
+
     public static ComponentLibraryInfoSource buildComponentLibraryInfoSource(List<ComponentLibraryInfoSource> configuration,
-            ChainBuilder chainBuilder)
+                                                                             ChainBuilder chainBuilder)
     {
         return chainBuilder.build(ComponentLibraryInfoSource.class, configuration);
     }
-    
+
     @Contribute(ComponentLibraryInfoSource.class)
     public static void addMavenComponentLibraryInfoSource(OrderedConfiguration<ComponentLibraryInfoSource> configuration)
     {
         configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
     }
-    
+
 }

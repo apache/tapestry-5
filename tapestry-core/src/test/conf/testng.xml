@@ -78,7 +78,7 @@
         </packages>
     </test>
 
-    <test name="App Skinning Tests" enabled="true">
+    <test name="App Skinning and Misc. Tests" enabled="true">
         <packages>
             <package name="org.apache.tapestry5.integration.app5"/>
         </packages>

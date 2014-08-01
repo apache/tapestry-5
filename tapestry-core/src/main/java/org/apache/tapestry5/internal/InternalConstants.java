@@ -186,4 +186,16 @@ public final class InternalConstants
      * @since 5.4
      */
     public static final String SUPPRESS_CORE_STYLESHEETS = "tapestry.suppress-core-stylesheets";
+
+    /**
+     * A bit of a hack that allows, in production mode, for a component event request to "unwind" when
+     * the component referenced in the URL does not exist. This is related to TAP5-1481. This situation
+     * can most likely occur when a web spider, such as Google, uses an old component event URI from
+     * a prior deployment, which no longer works in a new deployment, due to structural changes. Since
+     * changing the APIs that significantly is forbidden, a non-null value is added as an
+     * {@link org.apache.tapestry5.services.Request} attribute.
+     *
+     * @since 5.4
+     */
+    public static final String REFERENCED_COMPONENT_NOT_FOUND = "tapestry.referenced-component-not-found";
 }

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -37,6 +36,14 @@ public class PageRenderDispatcher implements Dispatcher
 
     public boolean dispatch(Request request, final Response response) throws IOException
     {
+        // If a component event request arrives (in production)
+        // with an invalid component id, then we want it to be a 404
+        // See TAP5-1481
+
+        if (request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND) != null)
+        {
+            return false;
+        }
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 

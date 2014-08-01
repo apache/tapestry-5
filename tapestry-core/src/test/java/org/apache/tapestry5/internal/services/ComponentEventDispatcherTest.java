@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -162,6 +160,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
+        expect(request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND)).andStubReturn(null);
+
         train_for_request_locale(request, ls);
 
         handler.handleComponentEvent(expectedParameters);
@@ -202,6 +202,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, "mypage");
+
+        expect(request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND)).andStubReturn(null);
 
         train_canonicalizePageName(resolver, "mypage", "mypage");
 
@@ -271,6 +273,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
+        expect(request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND)).andStubReturn(null);
+
         handler.handleComponentEvent(expectedParameters);
 
         train_for_request_locale(request, localizationSetter);
@@ -325,6 +329,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
+
+        expect(request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND)).andStubReturn(null);
 
         train_for_request_locale(request, localizationSetter);
 
