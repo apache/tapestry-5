@@ -64,6 +64,23 @@ public class RequestImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void used_encoding_from_request() throws Exception {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        expect(sr.getCharacterEncoding()).andReturn("request-encoding");
+
+        sr.setCharacterEncoding("request-encoding");
+
+        expect(sr.getParameterNames()).andReturn(Collections.enumeration(Collections.EMPTY_LIST));
+
+        replay();
+
+        new RequestImpl(sr, "app-encoding-is-ignored", null).getParameterNames();
+
+        verify();
+    }
+
+    @Test
     public void set_encoding_success() throws Exception
     {
         HttpServletRequest sr = mockHttpServletRequest();
@@ -71,6 +88,8 @@ public class RequestImplTest extends InternalBaseTestCase
         String encoding = "the-encoding";
 
         sr.setCharacterEncoding(encoding);
+
+        expect(sr.getCharacterEncoding()).andReturn(null);
 
         expect(sr.getParameterNames()).andReturn(Collections.enumeration(Collections.EMPTY_LIST));
 
@@ -91,6 +110,8 @@ public class RequestImplTest extends InternalBaseTestCase
 
         sr.setCharacterEncoding(encoding);
         setThrowable(exception);
+
+        expect(sr.getCharacterEncoding()).andReturn(null);
 
         replay();
 

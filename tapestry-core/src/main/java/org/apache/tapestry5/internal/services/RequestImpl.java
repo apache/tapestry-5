@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -151,15 +149,14 @@ public class RequestImpl implements Request
             return;
         }
 
-        // check if request specifies an encoding
-        String requestEncoding =
-                request.getCharacterEncoding() == null
-                        ? applicationCharset
-                        : request.getCharacterEncoding();
-        
+        // The request may specify an encoding, which is better than the application, which can only
+        // guess at what the client is doing!
+
+        String requestEncoding = request.getCharacterEncoding();
+
         try
         {
-            request.setCharacterEncoding(requestEncoding);
+            request.setCharacterEncoding(requestEncoding != null ? requestEncoding : applicationCharset);
         } catch (UnsupportedEncodingException ex)
         {
             throw new RuntimeException(ex);
