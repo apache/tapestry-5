@@ -1,5 +1,3 @@
-// Copyright 2012, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,6 +23,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
@@ -69,8 +68,19 @@ public class ModuleDispatcher implements Dispatcher
     {
         String path = request.getPath();
 
-        return path.startsWith(requestPrefix) &&
-                handleModuleRequest(path.substring(requestPrefix.length()));
+        if (path.startsWith(requestPrefix))
+        {
+            String extraPath = path.substring(requestPrefix.length());
+
+            if (! handleModuleRequest(extraPath))
+            {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("No module for path '%s'.", extraPath));
+            }
+
+            return true;
+        }
+
+        return false;
 
     }
 
