@@ -55,7 +55,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
     private final Map<String, Resource> prefixToRootResource = CollectionFactory.newMap();
 
-    private final Map<Resource, SoftReference<Asset>> cache = new WeakHashMap<Resource, SoftReference<Asset>>();
+    private final Map<Resource, SoftReference<Asset>> cache = CollectionFactory.newConcurrentMap();
 
     private final SymbolSource symbolSource;
 
