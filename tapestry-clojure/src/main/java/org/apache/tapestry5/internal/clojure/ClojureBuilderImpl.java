@@ -1,5 +1,3 @@
-// Copyright 2012-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,10 +12,9 @@
 
 package org.apache.tapestry5.internal.clojure;
 
+import clojure.java.api.Clojure;
 import clojure.lang.IFn;
-import clojure.lang.RT;
 import clojure.lang.Symbol;
-import clojure.lang.Var;
 import org.apache.tapestry5.clojure.ClojureBuilder;
 import org.apache.tapestry5.clojure.MethodToFunctionSymbolMapper;
 import org.apache.tapestry5.clojure.Namespace;
@@ -37,7 +34,7 @@ public class ClojureBuilderImpl implements ClojureBuilder
 
     private final OperationTracker tracker;
 
-    private final Var REQUIRE = RT.var("clojure.core", "require");
+    private final IFn REQUIRE = Clojure.var("clojure.core", "require");
 
     public ClojureBuilderImpl(@Builtin PlasticProxyFactory proxyFactory, MethodToFunctionSymbolMapper mapper, OperationTracker tracker)
     {
@@ -93,20 +90,21 @@ public class ClojureBuilderImpl implements ClojureBuilder
                     @Override
                     public void run()
                     {
+
                         Symbol namespaceSymbol = Symbol.create(symbol.getNamespace());
 
                         REQUIRE.invoke(namespaceSymbol);
 
-                        Var var = Var.find(symbol);
+                        IFn clojureFunction = Clojure.var(symbol);
 
-                        final PlasticField varField = plasticClass.introduceField(Var.class, method.getName() + "Var").inject(var);
+                        final PlasticField fnField = plasticClass.introduceField(IFn.class, method.getName() + "IFn").inject(clojureFunction);
 
                         plasticClass.introduceMethod(desc).changeImplementation(new InstructionBuilderCallback()
                         {
                             @Override
                             public void doBuild(InstructionBuilder builder)
                             {
-                                bridgeToClojure(builder, desc, varField);
+                                bridgeToClojure(builder, desc, fnField);
                             }
                         });
 
@@ -115,9 +113,9 @@ public class ClojureBuilderImpl implements ClojureBuilder
 
             }
 
-            private void bridgeToClojure(InstructionBuilder builder, MethodDescription description, PlasticField varField)
+            private void bridgeToClojure(InstructionBuilder builder, MethodDescription description, PlasticField ifnField)
             {
-                builder.loadThis().getField(varField);
+                builder.loadThis().getField(ifnField);
 
                 int count = description.argumentTypes.length;
 

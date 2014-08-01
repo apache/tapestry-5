@@ -2,7 +2,7 @@ description = "Allows Clojure functions to be injected into Tapestry services an
 
 dependencies {
   compile project(':tapestry-ioc')
-  compile "org.clojure:clojure:1.5.1"
+  compile "org.clojure:clojure:1.6.0"
 
   // Added just to prove that it works (TAP5-1945)
   testCompile project(':tapestry-core')
