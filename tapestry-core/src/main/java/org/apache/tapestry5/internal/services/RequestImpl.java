@@ -39,7 +39,7 @@ public class RequestImpl implements Request
 
     private final HttpServletRequest request;
 
-    private final String requestEncoding;
+    private final String applicationCharset;
 
     private final TapestrySessionFactory sessionFactory;
 
@@ -49,11 +49,11 @@ public class RequestImpl implements Request
 
     public RequestImpl(
             HttpServletRequest request,
-            String requestEncoding,
+            String applicationCharset,
             TapestrySessionFactory sessionFactory)
     {
         this.request = request;
-        this.requestEncoding = requestEncoding;
+        this.applicationCharset = applicationCharset;
         this.sessionFactory = sessionFactory;
     }
 
@@ -147,8 +147,16 @@ public class RequestImpl implements Request
     private void setupEncoding()
     {
         if (encodingSet)
+        {
             return;
+        }
 
+        // check if request specifies an encoding
+        String requestEncoding =
+                request.getCharacterEncoding() == null
+                        ? applicationCharset
+                        : request.getCharacterEncoding();
+        
         try
         {
             request.setCharacterEncoding(requestEncoding);
