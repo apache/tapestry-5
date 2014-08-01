@@ -365,8 +365,6 @@ task coffeeScriptDocs(type: Exec) {
 
     def outputDir = file("$buildDir/documentation/coffeescript")
 
-    // Note: this currently does not include the results of preprocessing the t5/core/dom.coffee file
-
     def sources = files()
 
     subprojects.each { sub ->
@@ -375,15 +373,10 @@ task coffeeScriptDocs(type: Exec) {
 
     sources += project(":tapestry-core").tasks.preprocessCoffeeScript.outputs.files.asFileTree
 
-    logger.error "sources=$sources"
-
-    // Needs to be installed via "npm install -g docco"
+    // Needs to be installed via "npm install -g docco@0.6.3"
     executable isWindows() ? "docco.cmd" : "docco"
     args "--output", outputDir
     args sources.files.sort({ a, b -> a.name.compareTo b.name })
-
-    inputs.files { sources }
-    outputs.dir outputDir
 }
 
 
