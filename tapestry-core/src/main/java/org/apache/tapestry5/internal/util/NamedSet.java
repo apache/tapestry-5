@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LockSupport;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -87,7 +86,12 @@ public class NamedSet<T> extends LockSupport
     public Set<T> getValues()
     {
         Set<T> result = CollectionFactory.newSet();
+        addValues(result);
+        return result;
+    }
 
+    private void addValues(Collection<T> result)
+    {
         try
         {
             acquireReadLock();
@@ -100,7 +104,6 @@ public class NamedSet<T> extends LockSupport
                 cursor = cursor.next;
             }
 
-            return result;
         } finally
         {
             releaseReadLock();
@@ -197,7 +200,9 @@ public class NamedSet<T> extends LockSupport
      */
     public void eachValue(Worker<T> worker)
     {
-        F.flow(getValues()).each(worker);
+        Collection<T> result = CollectionFactory.newList();
+        addValues(result);
+        F.flow(result).each(worker);
     }
 
 
