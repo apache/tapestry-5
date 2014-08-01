@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +13,6 @@
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
@@ -811,6 +808,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new PlasticMethodImpl(this, methodNode);
     }
 
+    private boolean isDefaultMethod(Method method)
+    {
+        return method.getDeclaringClass().isInterface() &&
+            (method.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT)) == Opcodes.ACC_PUBLIC;
+    }
+
     private void createNewMethodImpl(MethodDescription methodDescription, MethodNode methodNode)
     {
         newBuilder(methodDescription, methodNode).returnDefaultValue();
@@ -1222,7 +1225,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             MethodDescription description = new MethodDescription(m);
 
-            if (!isMethodImplemented(description))
+            if (!isMethodImplemented(description) && !isDefaultMethod(m))
             {
                 introducedMethods.add(introduceMethod(m));
             }
