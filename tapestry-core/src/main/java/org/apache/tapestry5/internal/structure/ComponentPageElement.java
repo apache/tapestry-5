@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,8 +27,9 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
 
 /**
- * Defines an element of a page that is a component elements that are, in fact, components (rather than just static
- * markup).
+ * Defines an element of a {@link org.apache.tapestry5.internal.structure.Page} that is a full {@link org.apache.tapestry5.runtime.Component},
+ * including the possibility of its own template and mixins. This is distinct from other {@linkplain org.apache.tapestry5.runtime.RenderCommand renderable}
+ * elements of the page, which represent fixed or dynamic text, or markup element that may have dynamic attribute values.
  */
 public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, RenderCommand, BodyPageElement
 {
@@ -73,16 +72,22 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     /**
      * Adds a mixin.
      *
-     * @param mixinId      a unique id for the mixin, the last term of the mixin's class name
-     * @param instantiator used to instantiate an instance of the mixin
-     * @param order        Ordering strings used to determine the order of mixin execution.
+     * @param mixinId
+     *         a unique id for the mixin, the last term of the mixin's class name
+     * @param instantiator
+     *         used to instantiate an instance of the mixin
+     * @param order
+     *         Ordering strings used to determine the order of mixin execution.
      */
     void addMixin(String mixinId, Instantiator instantiator, String... order);
 
     /**
-     * @param mixinId       id of previously added mixin
-     * @param parameterName simple (unqualified) name of parameter
-     * @param binding       binding for parameter
+     * @param mixinId
+     *         id of previously added mixin
+     * @param parameterName
+     *         simple (unqualified) name of parameter
+     * @param binding
+     *         binding for parameter
      * @since 5.1.0.0
      */
     void bindMixinParameter(String mixinId, String parameterName, Binding binding);
@@ -90,9 +95,11 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     /**
      * Retrieves a component page element by its id. The search is caseless.
      *
-     * @param id used to locate the element
+     * @param id
+     *         used to locate the element
      * @return the page element
-     * @throws IllegalArgumentException if no component exists with the given id
+     * @throws IllegalArgumentException
+     *         if no component exists with the given id
      */
     ComponentPageElement getEmbeddedElement(String id);
 
@@ -100,9 +107,11 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * Returns the {@link org.apache.tapestry5.ComponentResources} for a mixin attached to this component element. Mixin
      * ids are the simple names of the mixin class.
      *
-     * @param mixinId the mixin id (case insensitive)
+     * @param mixinId
+     *         the mixin id (case insensitive)
      * @return the resources for the component
-     * @throws IllegalArgumentException if no mixin with the given id exists
+     * @throws IllegalArgumentException
+     *         if no mixin with the given id exists
      */
     ComponentResources getMixinResources(String mixinId);
 
@@ -115,7 +124,8 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * Asks each mixin and component to {@link Component#dispatchComponentEvent(ComponentEvent)}, returning true if any
      * handler was found.
      *
-     * @param event to be handled
+     * @param event
+     *         to be handled
      * @return true if a handler was found
      */
     boolean dispatchEvent(ComponentEvent event);
@@ -124,12 +134,16 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * Creates a new child component of the invoked component.  The new element will be added as an embedded element of
      * its container.
      *
-     * @param id           simple id of the new component
+     * @param id
+     *         simple id of the new component
      * @param nestedId
      * @param completeId
-     * @param elementName  name of the component's element in its container's template
-     * @param instantiator used to create a component instance, and access the component's model
-     * @param location     location of the element within its container's template @return the new component
+     * @param elementName
+     *         name of the component's element in its container's template
+     * @param instantiator
+     *         used to create a component instance, and access the component's model
+     * @param location
+     *         location of the element within its container's template @return the new component
      */
     ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
                                   Instantiator instantiator,
