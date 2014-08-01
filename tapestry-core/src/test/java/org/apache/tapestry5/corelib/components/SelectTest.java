@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -192,6 +190,39 @@ public class SelectTest extends InternalBaseTestCase
         assertEquals(writer.toString(), read("current_selection_from_validation_tracker.txt"));
 
         verify();
+    }
+
+    @Test
+    public void output_with_raw_enabled() throws Exception
+    {
+        ValidationTracker tracker = mockValidationTracker();
+
+        List<OptionModel> options = TapestryInternalUtils.toOptionModels("bold=<b>Bold</b>,italic=<i>Italic</i>");
+
+        Select select = new Select();
+
+        train_getInput(tracker, select, null);
+
+        replay();
+
+        select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
+        select.setValue("barney");
+        select.setValidationTracker(tracker);
+        select.setRaw(true);
+
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
+
+        writer.element("select");
+
+        select.options(writer);
+
+        writer.end();
+
+        assertEquals(writer.toString(), read("output_with_raw_enabled.txt"));
+
+        verify();
+
     }
 
     @Test

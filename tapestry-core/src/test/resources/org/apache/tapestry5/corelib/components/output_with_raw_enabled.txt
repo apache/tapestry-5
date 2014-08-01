@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<select><option value="bold"><b>Bold</b></option><option value="italic"><i>Italic</i></option></select>

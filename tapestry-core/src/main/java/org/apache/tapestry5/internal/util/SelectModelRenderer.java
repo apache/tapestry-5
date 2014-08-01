@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,10 +22,13 @@ public class SelectModelRenderer implements SelectModelVisitor
 
     private final ValueEncoder encoder;
 
-    public SelectModelRenderer(final MarkupWriter writer, ValueEncoder encoder)
+    private final boolean raw;
+
+    public SelectModelRenderer(final MarkupWriter writer, ValueEncoder encoder, boolean raw)
     {
         this.writer = writer;
         this.encoder = encoder;
+        this.raw = raw;
     }
 
     public void beginOptionGroup(OptionGroupModel groupModel)
@@ -57,7 +58,14 @@ public class SelectModelRenderer implements SelectModelVisitor
         writeDisabled(optionModel.isDisabled());
         writeAttributes(optionModel.getAttributes());
 
-        writer.write(optionModel.getLabel());
+
+        if (raw)
+        {
+            writer.writeRaw(optionModel.getLabel());
+        } else
+        {
+            writer.write(optionModel.getLabel());
+        }
 
         writer.end();
     }

@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -56,7 +54,7 @@ public class Select extends AbstractField
 
         public Renderer(MarkupWriter writer)
         {
-            super(writer, encoder);
+            super(writer, encoder, raw);
         }
 
         @Override
@@ -92,6 +90,15 @@ public class Select extends AbstractField
      */
     @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.VALIDATE_WITH_MODEL, defaultPrefix = BindingConstants.LITERAL)
     private SecureOption secure;
+
+    /**
+     * If true, then the provided {@link org.apache.tapestry5.SelectModel} labels will be written raw (no escaping of
+     * embedded HTML entities); it becomes the callers responsibility to escape any such entities.
+     *
+     * @since 5.4
+     */
+    @Parameter(value = "false")
+    private boolean raw;
 
     /**
      * The model used to identify the option groups and options to be presented to the user. This can be generated
@@ -143,15 +150,15 @@ public class Select extends AbstractField
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
-    
+
     /**
-     * The context for the "valueChanged" event triggered by this component (optional parameter). 
+     * The context for the "valueChanged" event triggered by this component (optional parameter).
      * This list of values will be converted into strings and included in
      * the URI. The strings will be coerced back to whatever their values are and made available to event handler
      * methods. The first parameter of the context passed to "valueChanged" event handlers will
      * still be the selected value chosen by the user, so the context passed through this parameter
      * will be added from the second position on.
-     * 
+     *
      * @since 5.4
      */
     @Parameter
@@ -251,17 +258,18 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(final List<Context> context, 
-            @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue) 
-                    throws ValidationException
+    Object onChange(final List<Context> context,
+                    @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue)
+            throws ValidationException
     {
         final Object newValue = toValue(selectValue);
 
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
-        
+
         Object[] newContext = new Object[context.size() + 1];
         newContext[0] = newValue;
-        for (int i = 1; i < newContext.length; i++) {
+        for (int i = 1; i < newContext.length; i++)
+        {
             newContext[i] = context.get(i - 1);
         }
 
@@ -483,5 +491,10 @@ public class Select extends AbstractField
     {
         blankOption = option;
         blankLabel = label;
+    }
+
+    void setRaw(boolean b)
+    {
+        raw = b;
     }
 }
