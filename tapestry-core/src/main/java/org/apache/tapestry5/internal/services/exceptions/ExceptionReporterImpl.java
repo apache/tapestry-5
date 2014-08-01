@@ -69,6 +69,10 @@ public class ExceptionReporterImpl implements ExceptionReporter
     private String contextPath;
 
     @Inject
+    @Symbol(SymbolConstants.RESTRICTIVE_ENVIRONMENT)
+    private boolean restrictive;
+
+    @Inject
     private ExceptionAnalyzer analyzer;
 
     private final AtomicInteger uid = new AtomicInteger();
@@ -83,15 +87,25 @@ public class ExceptionReporterImpl implements ExceptionReporter
     public void reportException(Throwable exception)
     {
         Date date = new Date();
-        String folderName = String.format("%tY-%<tm-%<td/%<tH/%<tM", date);
         String fileName = String.format(
                 "exception-%tY%<tm%<td-%<tH%<tM%<tS-%<tL.%d.txt", date,
                 uid.getAndIncrement());
 
+        File folder;
+
         try
         {
-            File folder = new File(logDir, folderName);
-            folder.mkdirs();
+            if (restrictive)
+            {
+                // Good luck with this; all exceptions written to a single folder.
+                folder = logDir;
+            } else
+            {
+                String folderName = String.format("%tY-%<tm-%<td/%<tH/%<tM", date);
+                folder = new File(logDir, folderName);
+
+                folder.mkdirs();
+            }
 
             File log = new File(folder, fileName);
 

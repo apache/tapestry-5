@@ -2128,15 +2128,17 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "form-control");
         
         // TAP5-1998
-        configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, "false");
+        configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, false);
         
         // TAP5-2187
-        configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, "false");
+        configuration.add(SymbolConstants.STRICT_CSS_URL_REWRITING, false);
 
         configuration.add(SymbolConstants.EXCEPTION_REPORTS_DIR, "build/exceptions");
         
         // TAP5-1815
-        configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, "false");
+        configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, false);
+
+        configuration.add(SymbolConstants.RESTRICTIVE_ENVIRONMENT, false);
     }
 
     /**

@@ -520,4 +520,11 @@ public class SymbolConstants
      */
     public static final String ENABLE_HTML5_SUPPORT = "tapestry.enable-html5-support";
 
+    /**
+     * A general switch for restrictive environments, such as Google App Engine, which forbid some useful operations,
+     * such as creating files or directories. Defaults to false.
+     *
+     * @since 5.4
+     */
+    public static final String RESTRICTIVE_ENVIRONMENT = "tapestry.restrictive-environment";
 }
