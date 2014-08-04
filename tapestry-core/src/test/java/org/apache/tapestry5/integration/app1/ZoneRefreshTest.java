@@ -60,6 +60,7 @@ public class ZoneRefreshTest extends App1TestCase
        waitForAjaxRequestsToComplete();
 
        // assert that counter value didn't changed
+       Thread.sleep(2000l);
        assertText("zone", "true");
        Thread.sleep(2000l);
        assertText("zone", "true");
