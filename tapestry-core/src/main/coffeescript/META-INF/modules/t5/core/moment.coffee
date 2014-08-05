@@ -20,6 +20,6 @@ define ["moment"],
 (moment) ->
   locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-  moment.lang(locale)
+  moment.locale(locale)
 
   return moment
