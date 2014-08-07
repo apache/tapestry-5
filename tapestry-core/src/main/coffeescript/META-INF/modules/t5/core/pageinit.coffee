@@ -1,5 +1,3 @@
-# Copyright 2012, 2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -128,6 +126,9 @@ define ["underscore", "./console", "./dom", "./events"],
             # so some test logic may need to be driven by that instead.
 
             dom.body.attr "data-page-initialized", "true"
+
+            for mask in dom.body.find ".pageloading-mask"
+              mask.remove()
 
     exports = _.extend loadLibrariesAndInitialize,
       # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading

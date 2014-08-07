@@ -31,3 +31,44 @@ div.datefield-popup.well {
     text-align: right;
 }
 
+@-webkit-keyframes pageloading-mask-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: .50
+    }
+}
+
+@-moz-keyframes pageloading-mask-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: .50
+    }
+}
+
+/** Added via JavaScript when a page is initially loaded, then removed after all page initializations occur. */
+.pageloading-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: #000;
+    -webkit-animation-name: pageloading-mask-fade-in;
+    -webkit-animation-duration: 250ms;
+    -webkit-animation-delay: 250ms;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-name: pageloading-mask-fade-in;
+    -moz-animation-duration: 250ms;
+    -moz-animation-delay: 250ms;
+    -moz-animation-fill-mode: forwards;
+}
+
+.pageloading-mask div {
+    height: 100%;
+    background: url(pageloader-mask.gif) no-repeat center center;
+}

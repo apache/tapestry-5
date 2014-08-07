@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,28 +21,27 @@ import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
-    
+
     private final static Set<String> HTML_MIME_TYPES = CollectionFactory.newSet("text/html", "application/xml+xhtml");
-    
+
     private final List<String> coreLibraryURLs = CollectionFactory.newList();
 
     private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
-    
+
     private final List<ModuleConfigurationCallback> moduleConfigurationCallbacks = CollectionFactory.newList();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
     private final ModuleManager moduleManager;
 
-    private final boolean omitGeneratorMetaTag;
+    private final boolean omitGeneratorMetaTag, enablePageloadingMask;
 
     private final String tapestryBanner;
 
@@ -56,13 +53,14 @@ public class DocumentLinkerImpl implements DocumentLinker
      *         used to identify the root folder for dynamically loaded modules
      * @param omitGeneratorMetaTag
      *         via symbol configuration
+     * @param enablePageloadingMask
      * @param tapestryVersion
-     *         version of Tapestry framework (for meta tag)
      */
-    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion)
+    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion)
     {
         this.moduleManager = moduleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
+        this.enablePageloadingMask = enablePageloadingMask;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
     }
@@ -115,11 +113,12 @@ public class DocumentLinkerImpl implements DocumentLinker
         {
             return;
         }
-        
+
         // TAP5-2200: Generating XML from pages and templates is not possible anymore
         // only add JavaScript and CSS if we're actually generating 
         final String mimeType = document.getMimeType();
-        if (mimeType != null && !HTML_MIME_TYPES.contains(mimeType)) {
+        if (mimeType != null && !HTML_MIME_TYPES.contains(mimeType))
+        {
             return;
         }
 
@@ -182,7 +181,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // TAPESTRY-2364
 
-        addScriptsToEndOfBody(body);
+        addContentToBody(body);
     }
 
     /**
@@ -219,8 +218,20 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param body
      *         element to add the dynamic scripting to
      */
-    protected void addScriptsToEndOfBody(Element body)
+    protected void addContentToBody(Element body)
     {
+        if (enablePageloadingMask)
+        {
+            // This adds a mask element to the page, based on the Bootstrap modal dialog backdrop. The mark
+            // is present immediately, but fades in visually after a short delay, and is removed
+            // after page initialization is complete. For a client that doesn't have JavaScript enabled,
+            // this will do nothing (though I suspect the page will not behave to expectations!).
+            Element script = body.element("script", "type", "text/javascript");
+            script.raw("document.write(\"<div class=\\\"pageloading-mask\\\"><div></div></div>\");");
+
+            script.moveToTop(body);
+        }
+
         moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
 
         // Write the core libraries, which includes RequireJS:
@@ -294,5 +305,5 @@ public class DocumentLinkerImpl implements DocumentLinker
         assert callback != null;
         moduleConfigurationCallbacks.add(callback);
     }
-    
+
 }

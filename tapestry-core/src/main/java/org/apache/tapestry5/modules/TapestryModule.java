@@ -1732,13 +1732,16 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.INCLUDE_CORE_STACK)
                                          final boolean includeCoreStack,
 
+                                         @Symbol(SymbolConstants.ENABLE_PAGELOADING_MASK)
+                                         final boolean enablePageloadingMask,
+
                                          final ValidationDecoratorFactory validationDecoratorFactory)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, tapestryVersion);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, enablePageloadingMask, tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -2137,6 +2140,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, false);
 
         configuration.add(SymbolConstants.RESTRICTIVE_ENVIRONMENT, false);
+
+        configuration.add(SymbolConstants.ENABLE_PAGELOADING_MASK, true);
     }
 
     /**

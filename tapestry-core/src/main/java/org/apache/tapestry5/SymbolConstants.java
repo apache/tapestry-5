@@ -510,13 +510,13 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String OMIT_EXPIRATION_CACHE_CONTROL_HEADER = "tapestry.omit-expiration-cache-control-header";
-    
+
     /**
      * Defines whether HTML5 features should be used. Value used in the default implementation of
-     * {@link Html5Support#isHtml5SupportEnabled()}. Default value: <code>false</code>. 
+     * {@link Html5Support#isHtml5SupportEnabled()}. Default value: <code>false</code>.
      *
-     * @since 5.4
      * @see Html5Support#isHtml5SupportEnabled()
+     * @since 5.4
      */
     public static final String ENABLE_HTML5_SUPPORT = "tapestry.enable-html5-support";
 
@@ -527,4 +527,13 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String RESTRICTIVE_ENVIRONMENT = "tapestry.restrictive-environment";
+
+    /**
+     * If true, then when a page includes any JavaScript, a {@code script} block is added to insert
+     * a pageloader mask into the page; the pageloader mask ensure that the user can't interact with the page
+     * until after the page is fully initialized.
+     *
+     * @since 5.4
+     */
+    public static final String ENABLE_PAGELOADING_MASK = "tapestry.enable-pageloading-mask";
 }
