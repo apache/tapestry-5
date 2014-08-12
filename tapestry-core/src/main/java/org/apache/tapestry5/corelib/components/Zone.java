@@ -178,10 +178,7 @@ public class Zone implements ClientBodyElement
 
             e.attribute("data-zone-parameters",
                     parameters.toString(compactJSON));
-        }
 
-        if (insideForm)
-        {
             hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
             actionSink = new ComponentActionSink(logger, clientDataEncoder);
