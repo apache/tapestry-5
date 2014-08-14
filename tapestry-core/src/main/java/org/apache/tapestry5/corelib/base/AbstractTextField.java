@@ -67,7 +67,7 @@ public abstract class AbstractTextField extends AbstractField
      * The object that will perform input validation (which occurs after translation). The validate binding prefix is
      * generally used to provide this object in a declarative fashion.
      */
-    @Parameter(defaultPrefix = BindingConstants.VALIDATE)
+    @Parameter(defaultPrefix = BindingConstants.VALIDATE, allowNull = false)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
