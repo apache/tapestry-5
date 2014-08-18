@@ -9,6 +9,7 @@ import org.apache.tapestry5.annotations.Import;
         "test-dom.js",
         "test-messages.js",
         "test-validation.js",
+        "test-utils.js",
 
         // This must come last:
         "qunit-driver.js"},

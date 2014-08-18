@@ -41,7 +41,7 @@ define ["underscore"],
       trim: trim
       extendURL: extendURL
 
-      startsWith: (string, pattern) -> (string.lastIndexOf pattern) is 0
+      startsWith: (string, pattern) -> (string.indexOf pattern) is 0
       # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
       # Determines if the input is a blank string, or null, or an empty array.
       isBlank: (input) ->
