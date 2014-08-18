@@ -1219,4 +1219,15 @@ public class FormTests extends App1TestCase
         assertEquals("text", getAttribute("emailValidator@type")); // if HTML5 support was enabled, this would be "email"
     }
 
+    /** TAP5-736 **/
+    @Test
+    public void textfield_requires_non_null_validate_parameter() throws Exception
+    {
+        openLinks("TextField with null validate parameter");
+        if(isTextPresent("java.lang.NullPointerException")){
+            reportAndThrowAssertionError("Unexpected NullPointerException was thrown");
+        }
+        assertTextPresent("This parameter is not allowed to be null.");
+    }
+
 }
