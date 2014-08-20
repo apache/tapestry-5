@@ -1,0 +1,4 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<h1>Override Abstract Methods</h1>
+	<p id="length">${object.length()}</p>
+</html>
