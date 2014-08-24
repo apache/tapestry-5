@@ -97,7 +97,9 @@ import org.slf4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -2718,9 +2720,45 @@ public final class TapestryModule
     }
 
     @Contribute(ComponentLibraryInfoSource.class)
-    public static void addMavenComponentLibraryInfoSource(OrderedConfiguration<ComponentLibraryInfoSource> configuration)
+    public static void addBuiltInComponentLibraryInfoSources(OrderedConfiguration<ComponentLibraryInfoSource> configuration)
     {
         configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
+        configuration.add("TapestryCore", new TapestryCoreComponentLibraryInfoSource());
+    }
+    
+    private static final class TapestryCoreComponentLibraryInfoSource implements
+            ComponentLibraryInfoSource
+    {
+        @Override
+        public ComponentLibraryInfo find(LibraryMapping libraryMapping)
+        {
+            ComponentLibraryInfo info = null;
+            if (libraryMapping.libraryName.equals("core"))
+            {
+            
+                final InputStream inputStream = TapestryModule.class
+                        .getResourceAsStream("/META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties");
+                
+                if (inputStream != null)
+                {
+                    Properties properties = new Properties();
+                    try
+                    {
+                        properties.load(inputStream);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                    info = new ComponentLibraryInfo();
+                    info.setArtifactId("tapestry-core");
+                    info.setGroupId("org.apache.tapestry");
+                    info.setVersion(properties.getProperty("version"));
+                    info.setDescription("Tapestry 5 core component library");
+                }
+            }
+            return info;
+        }
     }
 
 }

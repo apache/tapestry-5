@@ -13,17 +13,31 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.tapestry5.ioc.services.ClasspathMatcher;
+import org.apache.tapestry5.ioc.services.ClasspathScanner;
 import org.apache.tapestry5.services.ComponentLibraryInfo;
 import org.apache.tapestry5.services.ComponentLibraryInfoSource;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
 
 /**
  * {@link ComponentLibraryInfoSource} implementation based on the pom.xml and pom.properties files 
@@ -33,36 +47,170 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
 {
     
     final private Logger logger;
+    
+    final private Set<String> pomPaths;
+    
+    final private Map<String, ComponentLibraryInfo> cache = new HashMap<String, ComponentLibraryInfo>();
+    
+    final private Map<String, String> pomPathToRootUrl;
+    
+    final private DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
-    public MavenComponentLibraryInfoSource(Logger logger)
+    public MavenComponentLibraryInfoSource(Logger logger, ClasspathScanner classpathScanner)
     {
         super();
         this.logger = logger;
+        this.pomPaths = Collections.unmodifiableSet(findPomPaths(classpathScanner));
+        pomPathToRootUrl = new WeakHashMap<String, String>(pomPaths.size());
     }
 
     @Override
     public ComponentLibraryInfo find(LibraryMapping libraryMapping)
     {
-        
-//        final File root = getRoot(libraryMapping);
-//        
-//        System.out.println(root);
-        
-        return null;
+        ComponentLibraryInfo info = null;
+        if (cache.containsKey(libraryMapping.libraryName))
+        {
+            info = cache.get(libraryMapping.libraryName);
+        }
+        else
+        {
+            final String pomPath = getPomPath(libraryMapping);
+            if (pomPath != null)
+            {
+                InputStream inputStream = getClass().getResourceAsStream("/" + pomPath);
+                info = parse(inputStream);
+                cache.put(libraryMapping.libraryName, info);
+            }
+            else
+            {
+                cache.put(libraryMapping.libraryName, null);
+            }
+        }
+        return info;
     }
 
-//    private File getRoot(LibraryMapping libraryMapping)
-//    {
-//        final String rootPackageConverted = libraryMapping.getRootPackage().replace('.', '/');
-//        final URL rootPackageUrl = getClass().getClassLoader().getResource(rootPackageConverted);
-//        final String rootPath = "jar:" + rootPackageUrl.getPath().replace(rootPackageConverted, "") + "META-INF/maven/";
-//        final URL rootUrl = getClass().getClassLoader().getResource(rootPath);
-//        return root;
-//    }
-    
-    private static InputStream open(String path)
+    /**
+     * @param inputStream
+     * @return
+     */
+    private ComponentLibraryInfo parse(InputStream inputStream)
     {
-        return MavenComponentLibraryInfoSource.class.getClassLoader().getResourceAsStream(path);
+        ComponentLibraryInfo info = null;
+        if (inputStream != null)
+        {
+            
+            Document document;
+            
+            try
+            {
+                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                document = documentBuilder.parse(inputStream);
+            }
+            catch (Exception e)
+            {
+                logger.warn("Exception while parsing pom.xml", e);
+                return null;
+            }
+            
+            info = new ComponentLibraryInfo();
+            info.setGroupId(extractText(document, "(/project/groupId | /project/parent/groupId)[1]"));
+            info.setArtifactId(extractText(document, "/project/artifactId"));
+            info.setVersion(extractText(document, "/project/version"));
+            info.setName(extractText(document, "/project/name"));
+            info.setDescription(extractText(document, "/project/description"));
+            info.setDocumentationUrl(extractText(document, "/project/properties/documentationUrl"));
+            info.setHomepageUrl(extractText(document, "/project/properties/homepageUrl"));
+            info.setIssueTrackerUrl(extractText(document, "/project/issueManagement/url"));
+            info.setJavadocUrl(extractText(document, "/project/properties/javadocUrl"));
+            info.setSourceBrowseUrl(extractText(document, "/project/scm/url"));
+            info.setSourceRootUrl(extractText(document, "/project/scm/connection"));
+            String tags = extractText(document, "/project/properties/tags");
+            if (tags != null && tags.length() > 0)
+            {
+                info.setTags(Arrays.asList(tags.split(",")));
+            }
+            
+        }
+        
+        return info;
+        
+    }
+
+    private String extractText(Document document, String xpathExpression)
+    {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        String text;
+        try
+        {
+            XPathExpression expression = xpath.compile(xpathExpression);
+            text = (String) expression.evaluate(document, XPathConstants.STRING);
+        }
+        catch (XPathExpressionException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return text;
+    }
+
+    private String getPomPath(LibraryMapping libraryMapping)
+    {
+        final String rootPackageConverted = libraryMapping.getRootPackage().replace('.', '/');
+        final URL rootPackageUrl = getClass().getClassLoader().getResource(rootPackageConverted);
+        String path = rootPackageUrl.toString();
+        String url = null;
+        if (path.contains("!/"))
+        {
+            path = path.substring(0, path.indexOf("!/"));
+        }
+        for (String pomPath : pomPaths)
+        {
+            if (path.equals(getPomPathUrl(pomPath))) {
+                url = pomPath;
+                break;
+            }
+        }
+        return url;
+    }
+    
+    private String getPomPathUrl(String pomPath)
+    {
+        String url = pomPathToRootUrl.get(pomPath);
+        if (url == null)
+        {
+            for (String path : pomPaths)
+            {
+                final URL resource = getClass().getResource("/" + path);
+                String resourcePath = null;
+                if (resource != null && resource.toString().contains("!/")) 
+                {
+                    resourcePath = resource.toString();
+                    resourcePath = resourcePath.substring(0, resourcePath.indexOf("!/"));
+                }
+                pomPathToRootUrl.put(path, resourcePath);
+                url = resourcePath;
+            }
+        }
+        return url;
+    }
+
+    private static Set<String> findPomPaths(ClasspathScanner classpathScanner)
+    {
+        final ClasspathMatcher classpathMatcher = new ClasspathMatcher()
+        {
+            @Override
+            public boolean matches(String packagePath, String fileName)
+            {
+                return fileName.equals("pom.xml");
+            }
+        };
+        try
+        {
+            return classpathScanner.scan("META-INF/maven", classpathMatcher);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Exception while finding pom.xml files in the classpath", e);
+        }
     }
 
 }

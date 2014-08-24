@@ -14,6 +14,7 @@
 package org.apache.tapestry5.services;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public final class ComponentLibraryInfo implements Serializable
     private String name, description, homepageUrl, documentationUrl, sourceBrowseUrl, issueTrackerUrl, sourceRootUrl, 
                    javadocUrl, groupId, artifactId, version;
     
-    private List<String> tags;
+    private List<String> tags = new ArrayList<String>();
     
     /**
      * Returns the actual name of the component library (not the identifier). 
@@ -199,6 +200,11 @@ public final class ComponentLibraryInfo implements Serializable
     {
         if (this.sourceRootUrl != null) throwExceptionIfAlreadySet("sourceRootUrl", sourceRootUrl);
         this.sourceRootUrl = sourceRootUrl;
+        if (sourceUrlResolver == null)
+        {
+            sourceUrlResolver = new DefaultSourceUrlResolver();
+            sourceUrlResolver.setRootUrl(sourceRootUrl);
+        }
     }
 
     public void setJavadocUrl(String javadocUrl)
@@ -329,13 +335,13 @@ public final class ComponentLibraryInfo implements Serializable
          * Sets the source root URL. This method will be invoked by {@link ComponentLibraryInfo#setSourceBrowseUrl(String)}.
          */
         void setRootUrl(String url);
+        
     }
     
     /**
-     * {@link SourceUrlResolver} implementation based on Maven Java project conventions and 
-     * GitWeb as online Git repository viewer, which Tapestry itself uses.
+     * Default {@link SourceUrlResolver} implementation.
      */
-    public static class GitWebMavenSourceUrlResolver implements SourceUrlResolver
+    public static class DefaultSourceUrlResolver implements SourceUrlResolver
     {
 
         private String sourceRootUrl;
