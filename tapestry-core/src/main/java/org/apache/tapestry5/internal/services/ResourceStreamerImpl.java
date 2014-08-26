@@ -149,6 +149,25 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return false;
         }
 
+
+        // ETag should be surrounded with quotes.
+        String token = QUOTE + actualChecksum + QUOTE;
+
+        // Even when sending a 304, we want the ETag associated with the request.
+        // In most cases (except JavaScript modules), the checksum is also embedded into the URL.
+        // However, E-Tags are also useful for enabling caching inside intermediate servers, CDNs, etc.
+        response.setHeader("ETag", token);
+
+        // If the client can send the correct ETag token, then its cache already contains the correct
+        // content.
+        String providedToken = request.getHeader("If-None-Match");
+
+        if (token.equals(providedToken))
+        {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return true;
+        }
+
         long lastModified = streamable.getLastModified();
 
         long ifModifiedSince;
@@ -164,24 +183,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
         }
 
         if (ifModifiedSince > 0 && ifModifiedSince >= lastModified)
-        {
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return true;
-        }
-
-        // ETag should be surrounded with quotes.
-        String token = QUOTE + actualChecksum + QUOTE;
-
-        // Even when sending a 304, we want the ETag associated with the request.
-        // In most cases (except JavaScript modules), the checksum is also embedded into the URL.
-        // However, E-Tags are also useful for enabling caching inside intermediate servers, CDNs, etc.
-        response.setHeader("ETag", token);
-
-        // If the client can send the correct ETag token, then its cache already contains the correct
-        // content.
-        String providedToken = request.getHeader("If-None-Match");
-
-        if (token.equals(providedToken))
         {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return true;
