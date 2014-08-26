@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,6 +23,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.tree.*;
 
@@ -37,7 +36,7 @@ import java.util.List;
  * implemented, only leaf nodes may be selected).
  * <p/>
  * Tree is <em>not</em> a form control component; all changes made to the tree on the client
- * (expansions, collapsing, and selections) are propogated immediately back to the server.
+ * (expansions, collapsing, and selections) are propagated immediately back to the server.
  * <p/>
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  *
@@ -141,10 +140,14 @@ public class Tree
         }
     };
 
+    @Environmental
+    private Heartbeat heartbeat;
+
     /**
      * Renders a single node (which may be the last within its containing node).
      * This is a mix of immediate rendering, and queuing up various Blocks and Render commands
-     * to do the rest. May recursively render child nodes of the active node.
+     * to do the rest. May recursively render child nodes of the active node. The label part
+     * of the node is rendered inside a {@linkplain org.apache.tapestry5.services.Heartbeat heartbeat}.
      *
      * @param node
      *         to render
@@ -209,7 +212,27 @@ public class Tree
                 }
 
                 queue.push(RENDER_CLOSE_TAG);
+                final RenderCommand startHeartbeat = new RenderCommand() {
+
+                    @Override
+                    public void render(MarkupWriter writer, RenderQueue queue) {
+                        heartbeat.begin();
+                    }
+                };
+
+                final RenderCommand endHeartbeat = new RenderCommand() {
+
+                    @Override
+                    public void render(MarkupWriter writer, RenderQueue queue) {
+                        heartbeat.end();
+                    }
+                };
+
+                queue.push(endHeartbeat);
+
                 queue.push(label);
+
+                queue.push(startHeartbeat);
 
                 if (isLeaf && selectionModel != null && selectionModel.isSelected(node))
                 {
