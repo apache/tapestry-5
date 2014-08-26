@@ -206,7 +206,10 @@ define ["underscore", "./console", "./dom", "./events"],
         # Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
         # No other initialization or callback invocation occurs.
         if partial?.redirectURL
-          window.location.href = partial.redirectURL
+          if window.location.href is partial.redirectURL
+            window.location.reload true
+          else
+            window.location.href = partial.redirectURL
           return
 
         addStylesheets partial?.stylesheets
