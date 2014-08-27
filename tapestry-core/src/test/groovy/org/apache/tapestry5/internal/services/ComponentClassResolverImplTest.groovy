@@ -8,6 +8,7 @@ import org.apache.tapestry5.services.ComponentClassResolver
 import org.apache.tapestry5.services.LibraryMapping
 import org.easymock.EasyMock
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.testng.annotations.Test
 
 import static org.easymock.EasyMock.isA
@@ -165,17 +166,16 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
         verify()
     }
 
-    /**
-     * TAP5-1444
-     */
     @Test
-    void index_page_precedence() {
+    void name_clashes_are_identified() {
         ClassNameLocator locator = newClassNameLocator()
-        Logger logger = compliantLogger()
+        Logger logger = newMock Logger
 
-        def classNames = ["${APP_ROOT_PACKAGE}.pages.sub.HomePage", "${APP_ROOT_PACKAGE}.pages.sub.SubIndex"] as String[]
+        def classNames = ["${APP_ROOT_PACKAGE}.pages.Foo", "${APP_ROOT_PACKAGE}.pages.foo.Index"] as String[]
 
         train_locateComponentClassNames(locator, "${APP_ROOT_PACKAGE}.pages", classNames)
+
+        expect(logger.error(EasyMock.isA(String))).atLeastOnce()
 
         replay()
 
@@ -183,15 +183,17 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage", mappings)
 
-        assertTrue(resolver.isPageName("sub/HomePage"))
-        assertTrue(resolver.isPageName("sub/subIndex"))
-        assertEquals(resolver.resolvePageNameToClassName("sub/HomePage"), "${APP_ROOT_PACKAGE}.pages.sub.HomePage")
-        assertEquals(resolver.resolvePageNameToClassName("sub/SubIndex"), "${APP_ROOT_PACKAGE}.pages.sub.SubIndex")
-        assertEquals(resolver.resolvePageNameToClassName("sub/Index"), "${APP_ROOT_PACKAGE}.pages.sub.SubIndex")
-        assertEquals(resolver.resolvePageNameToClassName("sub"), "${APP_ROOT_PACKAGE}.pages.sub.SubIndex")
+        try {
+            resolver.isPageName "foo"
+            unreachable()
+        }
+        catch (IllegalStateException ex) {
+            assertMessageContains ex, "correct these validation issues"
+        }
 
         verify()
     }
+
 
     @Test
     void page_name_in_subfolder() {
