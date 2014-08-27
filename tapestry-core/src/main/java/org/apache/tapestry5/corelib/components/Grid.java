@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -193,7 +191,7 @@ public class Grid implements GridModel, ClientElement
      */
     @Parameter
     private boolean inPlace;
-    
+
     /**
      * If true, then the Grid will also render a table element complete with headers if the data source is empty.
      * If set to true, a model parameter will have to be specified. A default model for a specific class can be
@@ -201,7 +199,7 @@ public class Grid implements GridModel, ClientElement
      */
     @Parameter
     private boolean renderTableIfEmpty = false;
-    
+
 
     /**
      * The name of the pseudo-zone that encloses the Grid. Starting in 5.4, this is always either
@@ -214,14 +212,21 @@ public class Grid implements GridModel, ClientElement
 
     private boolean didRenderZoneDiv;
 
-    @Persist
-    private Integer currentPage;
 
-    @Persist
-    private String sortColumnId;
+    /**
+     * The pagination model for the Grid, which encapsulates current page, sort column id,
+     * and sort ascending/descending. If not bound, a persistent property of the Grid is used.
+     * When rendering the Grid in a loop, this should be bound in some way to keep successive instances
+     * of the Grid configured individually.
+     *
+     * @since 5.4
+     */
+    @Parameter(value = "defaultPaginationModel")
+    private GridPaginationModel paginationModel;
 
+    @Property
     @Persist
-    private Boolean sortAscending;
+    private GridPaginationModel defaultPaginationModel;
 
     @Inject
     private ComponentResources resources;
@@ -330,8 +335,10 @@ public class Grid implements GridModel, ClientElement
     {
         public ColumnSort getColumnSort(String columnId)
         {
-            if (!TapestryInternalUtils.isEqual(columnId, sortColumnId))
+            if (!TapestryInternalUtils.isEqual(columnId, paginationModel.getSortColumnId()))
+            {
                 return ColumnSort.UNSORTED;
+            }
 
             return getColumnSort();
         }
@@ -344,22 +351,28 @@ public class Grid implements GridModel, ClientElement
         public void updateSort(String columnId)
         {
             assert InternalUtils.isNonBlank(columnId);
-            if (columnId.equals(sortColumnId))
+
+            setupPaginationModel();
+
+            if (columnId.equals(paginationModel.getSortColumnId()))
             {
                 setSortAscending(!getSortAscending());
                 return;
             }
 
-            sortColumnId = columnId;
+            paginationModel.setSortColumnId(columnId);
             setSortAscending(true);
         }
 
         public List<SortConstraint> getSortConstraints()
         {
-            if (sortColumnId == null)
+            // In a few limited cases we may not have yet hit the SetupRender phase, and the model may be null.
+            if (paginationModel == null || paginationModel.getSortColumnId() == null)
+            {
                 return Collections.emptyList();
+            }
 
-            PropertyModel sortModel = getDataModel().getById(sortColumnId);
+            PropertyModel sortModel = getDataModel().getById(paginationModel.getSortColumnId());
 
             SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
 
@@ -368,7 +381,8 @@ public class Grid implements GridModel, ClientElement
 
         public void clear()
         {
-            sortColumnId = null;
+            paginationModel.setSortColumnId(null);
+            paginationModel.setSortAscending(null);
         }
     }
 
@@ -386,7 +400,7 @@ public class Grid implements GridModel, ClientElement
      */
     protected Binding defaultModel()
     {
-      
+
         return new AbstractBinding()
         {
             public Object get()
@@ -442,14 +456,26 @@ public class Grid implements GridModel, ClientElement
     {
         zone = null;
 
+        setupPaginationModel();
+
         if (formSupport != null)
+        {
             formSupport.store(this, SETUP_DATA_SOURCE);
+        }
 
         setupDataSource();
 
         // If there's no rows, display the empty block placeholder.
 
         return !renderTableIfEmpty && cachingSource.getAvailableRows() == 0 ? empty : null;
+    }
+
+    private void setupPaginationModel()
+    {
+        if (paginationModel == null)
+        {
+            paginationModel = new GridPaginationModelImpl();
+        }
     }
 
     void setupDataSource()
@@ -529,7 +555,7 @@ public class Grid implements GridModel, ClientElement
 
         return dataModel;
     }
-    
+
     public int getNumberOfProperties()
     {
         return getDataModel().getPropertyNames().size();
@@ -557,22 +583,26 @@ public class Grid implements GridModel, ClientElement
 
     public int getCurrentPage()
     {
+        Integer currentPage = paginationModel.getCurrentPage();
+
         return currentPage == null ? 1 : currentPage;
     }
 
     public void setCurrentPage(int currentPage)
     {
-        this.currentPage = currentPage;
+        paginationModel.setCurrentPage(currentPage);
     }
 
     private boolean getSortAscending()
     {
+        Boolean sortAscending = paginationModel.getSortAscending();
+
         return sortAscending != null && sortAscending.booleanValue();
     }
 
     private void setSortAscending(boolean sortAscending)
     {
-        this.sortAscending = sortAscending;
+        paginationModel.setSortAscending(sortAscending);
     }
 
     public int getRowsPerPage()
