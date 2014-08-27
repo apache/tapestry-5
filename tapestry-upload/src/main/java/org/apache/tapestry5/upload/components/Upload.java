@@ -138,6 +138,13 @@ public class Upload extends AbstractField
         }
     }
 
+    /** @since 5.4 */
+    @Override
+    public boolean isRequired()
+    {
+        return validate.isRequired();
+    }
+
     public void afterRender(MarkupWriter writer)
     {
         writer.end();
