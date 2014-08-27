@@ -149,11 +149,11 @@ public class AssetsModule
 
     @Decorate(id = "DisableMinificationForStacks", serviceInterface = StreamableResourceSource.class)
     @Order("before:Minification")
-    public StreamableResourceSource setupDisableMinizationByJavaScriptStack(StreamableResourceSource delegate,
-                                                                            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
-                                                                            boolean enabled,
-                                                                            JavaScriptStackSource javaScriptStackSource,
-                                                                            Request request)
+    public StreamableResourceSource setupDisableMinificationByJavaScriptStack(StreamableResourceSource delegate,
+                                                                              @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+                                                                              boolean enabled,
+                                                                              JavaScriptStackSource javaScriptStackSource,
+                                                                              Request request)
     {
         return enabled
                 ? new JavaScriptStackMinimizeDisabler(delegate, javaScriptStackSource, request)
