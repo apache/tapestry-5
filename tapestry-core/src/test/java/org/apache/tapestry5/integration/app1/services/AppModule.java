@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,6 +24,8 @@ import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.pageload.PagePreloader;
+import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
@@ -48,7 +48,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public class AppModule
 {
-    
+
     final public static String D3_URL_SYMBOL = "d3.url";
 
     /**
@@ -138,14 +138,14 @@ public class AppModule
         };
     }
 
-    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
-        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
-        configuration.add(SymbolConstants.COMBINE_SCRIPTS, "true");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, false);
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, false);
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, false);
 
-        configuration.add(SymbolConstants.SECURE_ENABLED, "true");
+        configuration.add(SymbolConstants.SECURE_ENABLED, true);
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
 
@@ -155,6 +155,7 @@ public class AppModule
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
 
         configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js");
+        configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.ALWAYS);
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
@@ -276,12 +277,15 @@ public class AppModule
 
         configuration.add(ToDoItem.class, GenericValueEncoderFactory.create(todoEncoder));
 
-        final ValueEncoder<Entity> encoder = new ValueEncoder<Entity>() {
-            public String toClient(Entity value) {
+        final ValueEncoder<Entity> encoder = new ValueEncoder<Entity>()
+        {
+            public String toClient(Entity value)
+            {
                 return value.getId();
             }
 
-            public Entity toValue(String clientValue) {
+            public Entity toValue(String clientValue)
+            {
                 Entity entity = new Entity();
                 entity.setId(clientValue);
                 entity.setLabel("label" + clientValue);
@@ -289,9 +293,11 @@ public class AppModule
             }
         };
 
-        ValueEncoderFactory<Entity> valueEncoderFactory = new ValueEncoderFactory<Entity>() {
+        ValueEncoderFactory<Entity> valueEncoderFactory = new ValueEncoderFactory<Entity>()
+        {
 
-            public ValueEncoder<Entity> create(Class<Entity> type) {
+            public ValueEncoder<Entity> create(Class<Entity> type)
+            {
                 return encoder;
             }
         };
@@ -317,15 +323,17 @@ public class AppModule
     {
         configuration.add("properties");
     }
-    
+
     public void contributeValueLabelProvider(MappedConfiguration<Class, ValueLabelProvider> configuration)
     {
-        configuration.add(Track.class, new ValueLabelProvider<Track>() {
+        configuration.add(Track.class, new ValueLabelProvider<Track>()
+        {
 
-            public String getLabel(Track value) {
+            public String getLabel(Track value)
+            {
                 return value.getTitle();
             }
-        }); 
+        });
     }
 
     @Contribute(ComponentClassResolver.class)
@@ -345,6 +353,14 @@ public class AppModule
                 return true;
             }
         }, "before:*");
+    }
+
+    @Contribute(PagePreloader.class)
+    public static void setupPagePreload(Configuration<String> configuration)
+    {
+        configuration.add("index");
+        configuration.add("core/exceptionreport");
+        configuration.add("core/t5dashboard");
     }
 
 }

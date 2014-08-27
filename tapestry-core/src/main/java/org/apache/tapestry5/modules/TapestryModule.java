@@ -86,6 +86,7 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -2144,6 +2145,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.RESTRICTIVE_ENVIRONMENT, false);
 
         configuration.add(SymbolConstants.ENABLE_PAGELOADING_MASK, true);
+        configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.PRODUCTION);
     }
 
     /**

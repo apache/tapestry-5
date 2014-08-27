@@ -536,4 +536,14 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String ENABLE_PAGELOADING_MASK = "tapestry.enable-pageloading-mask";
+
+    /**
+     * Controls in what environment page preloading should occur. By default, preloading only occurs
+     * in production.
+     *
+     * @see org.apache.tapestry5.services.pageload.PagePreloader
+     * @see org.apache.tapestry5.services.pageload.PreloaderMode
+     * @since 5.4
+     */
+    public static final String PRELOADER_MODE = "tapestry.page-preload-mode";
 }

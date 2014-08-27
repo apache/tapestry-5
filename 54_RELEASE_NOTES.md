@@ -138,6 +138,12 @@ any other object which implements `RenderCommand` or coerced to it.
 
 The `Alert` class and the `Alerts` component now support rendering raw HTML instead of just plain text.
 
+## Page Preloading
+
+It is now possible to pre-load pages at system startup time by making contributions
+to the new PagePreloader service. Pages can be pre-loaded only in development, only in production,
+never, or always.
+
 # Breaking Changes:
 
 ## Charset for Assets

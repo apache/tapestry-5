@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,15 +12,21 @@
 
 package org.apache.tapestry5.modules;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
+import org.apache.tapestry5.internal.pageload.PagePreloaderImpl;
 import org.apache.tapestry5.internal.services.ComponentTemplateSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSourceImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Startup;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.apache.tapestry5.services.pageload.PagePreloader;
+import org.apache.tapestry5.services.pageload.PreloaderMode;
 
 /**
  * @since 5.3
@@ -35,5 +39,19 @@ public class PageLoadModule
         binder.bind(ComponentRequestSelectorAnalyzer.class, DefaultComponentRequestSelectorAnalyzer.class);
         binder.bind(ComponentResourceLocator.class, DefaultComponentResourceLocator.class);
         binder.bind(ComponentTemplateSource.class, ComponentTemplateSourceImpl.class);
+        binder.bind(PagePreloader.class, PagePreloaderImpl.class);
+    }
+
+    @Startup
+    public static void preloadPages(PagePreloader preloader,
+                                    @Symbol(SymbolConstants.PRELOADER_MODE)
+                                    PreloaderMode mode,
+                                    @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                    boolean productionMode)
+    {
+        if (mode.isEnabledFor(productionMode))
+        {
+            preloader.preloadPages();
+        }
     }
 }
