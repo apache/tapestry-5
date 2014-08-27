@@ -1,32 +1,24 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
 
-<h1>Client Persistence Demo</h1>
-
-
-  <p>
-    Persisted value: [${persistedValue}]
-  </p>
-  
-  <p>
-    Session: [${sessionExists}]
-  </p>
+    <h1>Client Persistence Demo</h1>
 
 
-  <p>
-    <t:actionlink t:id="nixSession">nix session</t:actionlink>
-  </p>
+    <div class="well">
+        <dl>
+            <dt>Persisted value</dt>
+            <dd id="persisted-value">${persistedValue}</dd>
+            <dt>Session</dt>
+            <dd id="session-exists">${sessionExists}</dd>
+        </dl>
+    </div>
 
-  <p>
-    <t:actionlink t:id="storeString">store string</t:actionlink>
-  </p>
-  
-  <p>
-    <t:actionlink t:id="storeBad">store non-serializable</t:actionlink>
-  </p>
-  
-  <p>
-    <t:pagelink page="clientpersistencedemo">refresh</t:pagelink>
-  </p>
+    <div class="btn-group">
+        <t:actionlink t:id="nixSession" class="btn btn-default">nix session</t:actionlink>
+        <t:actionlink t:id="storeString" class="btn btn-default">store string</t:actionlink>
+        <t:actionlink t:id="storeComplex" class="btn btn-default">store complex</t:actionlink>
+        <t:actionlink t:id="storeBad" class="btn btn-default">store non-serializable</t:actionlink>
+        <t:pagelink page="clientpersistencedemo" class="btn btn-default">refresh</t:pagelink>
+    </div>
 
 
 </html>

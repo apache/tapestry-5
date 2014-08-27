@@ -1,5 +1,3 @@
-// Copyright 2007, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +13,7 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Persist;
-
+import org.apache.tapestry5.integration.app1.ClientDataWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
@@ -41,6 +39,11 @@ public class ClientPersistenceDemo
     void onActionFromStoreString()
     {
         persistedValue = "A String";
+    }
+
+    void onActionFromStoreComplex()
+    {
+        persistedValue = new ClientDataWrapper("data inside wrapper");
     }
 
     void onActionFromStoreBad()

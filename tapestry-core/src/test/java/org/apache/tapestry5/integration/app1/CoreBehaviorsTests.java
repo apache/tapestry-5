@@ -591,11 +591,31 @@ public class CoreBehaviorsTests extends App1TestCase
         // clear the session here.
         clickAndWait("link=nix session");
 
-        assertTextPresent("Persisted value: []", "Session: [false]");
+        assertText("persisted-value", "");
+        assertText("session-exists", "false");
 
         clickAndWait("link=store string");
 
-        assertTextPresent("Persisted value: [A String]", "Session: [false]");
+        assertText("persisted-value", "A String");
+        assertText("session-exists", "false");
+
+        clickAndWait("link=refresh");
+
+        assertText("persisted-value", "A String");
+        assertText("session-exists", "false");
+    }
+
+    @Test
+    public void client_persistence_complex_object() {
+        openLinks("Client Persistence Demo", "nix session", "store complex");
+
+        assertText("persisted-value", "ClientDataWrapper[data inside wrapper]");
+        assertText("session-exists", "false");
+
+        clickAndWait("link=refresh");
+
+        assertText("persisted-value", "ClientDataWrapper[data inside wrapper]");
+        assertText("session-exists", "false");
     }
 
     @Test
