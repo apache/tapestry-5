@@ -85,7 +85,7 @@ public final class ComponentLibraryInfo implements Serializable
 
     /**
      * Returns the URL where the root folder of component library's source can be found.
-     * For example, "https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=tree".
+     * For example, "https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=tree;f=tapestry-core/src/main/java/".
      */
     public String getSourceRootUrl()
     {
@@ -200,11 +200,6 @@ public final class ComponentLibraryInfo implements Serializable
     {
         if (this.sourceRootUrl != null) throwExceptionIfAlreadySet("sourceRootUrl", sourceRootUrl);
         this.sourceRootUrl = sourceRootUrl;
-        if (sourceUrlResolver == null)
-        {
-            sourceUrlResolver = new DefaultSourceUrlResolver();
-            sourceUrlResolver.setRootUrl(sourceRootUrl);
-        }
     }
 
     public void setJavadocUrl(String javadocUrl)
@@ -305,8 +300,13 @@ public final class ComponentLibraryInfo implements Serializable
     public String getSourceUrl(String className)
     {
         String url = null;
-        if (sourceUrlResolver != null)
+        if (sourceRootUrl != null)
         {
+            if (sourceUrlResolver == null)
+            {
+                sourceUrlResolver = new DefaultSourceUrlResolver();
+                sourceUrlResolver.setRootUrl(sourceRootUrl);
+            }
             url = sourceUrlResolver.resolve(className);
         }
         return url;
@@ -349,15 +349,23 @@ public final class ComponentLibraryInfo implements Serializable
         @Override
         public String resolve(String className)
         {
-            return sourceRootUrl + "/" + className.replace('.', '/') + ".java";
+            return sourceRootUrl + className.replace('.', '/') + ".java";
         }
 
         @Override
         public void setRootUrl(String url)
         {
             this.sourceRootUrl = url;
+            if (sourceRootUrl.startsWith("scm:"))
+            {
+                this.sourceRootUrl = this.sourceRootUrl.replaceFirst("[^:]+:[^:]+:", "");
+            }
         }
         
+    }
+    
+    public String toString() {
+        return String.format("ComponentLibraryInfo[%s]", libraryMapping);
     }
     
 }

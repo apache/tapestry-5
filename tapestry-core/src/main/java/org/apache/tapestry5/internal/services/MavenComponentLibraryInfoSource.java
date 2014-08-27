@@ -79,6 +79,7 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
             {
                 InputStream inputStream = getClass().getResourceAsStream("/" + pomPath);
                 info = parse(inputStream);
+                info.setLibraryMapping(libraryMapping);
                 cache.put(libraryMapping.libraryName, info);
             }
             else
@@ -89,10 +90,6 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
         return info;
     }
 
-    /**
-     * @param inputStream
-     * @return
-     */
     private ComponentLibraryInfo parse(InputStream inputStream)
     {
         ComponentLibraryInfo info = null;
@@ -123,7 +120,7 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
             info.setIssueTrackerUrl(extractText(document, "/project/issueManagement/url"));
             info.setJavadocUrl(extractText(document, "/project/properties/javadocUrl"));
             info.setSourceBrowseUrl(extractText(document, "/project/scm/url"));
-            info.setSourceRootUrl(extractText(document, "/project/scm/connection"));
+            info.setSourceRootUrl(extractText(document, "/project/properties/sourceRootUrl"));
             String tags = extractText(document, "/project/properties/tags");
             if (tags != null && tags.length() > 0)
             {
@@ -148,6 +145,10 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
         catch (XPathExpressionException e)
         {
             throw new RuntimeException(e);
+        }
+        if ("".equals(text)) 
+        {
+            text = null;
         }
         return text;
     }
@@ -205,7 +206,7 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
         };
         try
         {
-            return classpathScanner.scan("META-INF/maven", classpathMatcher);
+            return classpathScanner.scan("META-INF/maven/", classpathMatcher);
         }
         catch (IOException e)
         {

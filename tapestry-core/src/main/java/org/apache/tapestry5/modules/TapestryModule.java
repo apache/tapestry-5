@@ -2736,8 +2736,24 @@ public final class TapestryModule
             if (libraryMapping.libraryName.equals("core"))
             {
             
-                final InputStream inputStream = TapestryModule.class
-                        .getResourceAsStream("/META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties");
+                info = new ComponentLibraryInfo();
+                
+                // the information above will probably not change in the future, or change very 
+                // infrequently, so I see no problem in hardwiring them here.
+                info.setArtifactId("tapestry-core");
+                info.setGroupId("org.apache.tapestry");
+                info.setName("Tapestry 5 core component library");
+                info.setDescription("Components provided out-of-the-box by Tapestry");
+                info.setDocumentationUrl("http://tapestry.apache.org/component-reference.html");
+                info.setJavadocUrl("http://tapestry.apache.org/current/apidocs/");
+                info.setSourceBrowseUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary");
+                info.setSourceRootUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java/");
+                info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
+                info.setHomepageUrl("http://tapestry.apache.org");
+                info.setLibraryMapping(libraryMapping);
+                
+                final InputStream inputStream = TapestryModule.class.getResourceAsStream(
+                        "/META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties");
                 
                 if (inputStream != null)
                 {
@@ -2750,11 +2766,7 @@ public final class TapestryModule
                     {
                         throw new RuntimeException(e);
                     }
-                    info = new ComponentLibraryInfo();
-                    info.setArtifactId("tapestry-core");
-                    info.setGroupId("org.apache.tapestry");
                     info.setVersion(properties.getProperty("version"));
-                    info.setDescription("Tapestry 5 core component library");
                 }
             }
             return info;

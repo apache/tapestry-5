@@ -42,6 +42,13 @@
 				        		<a href="${info.homepageUrl}">${info.homepageUrl}</a>
 				        	</t:if>
 				        </dd>
+				        
+				        <dt>Version</dt>
+				        <dd class="version">
+				        	<t:if test="info.version" else="message:not-informed">
+				        		${info.version}
+				        	</t:if>
+				        </dd>
 				
 				        <dt>Documentation URL</dt>
 				        <dd class="documentationUrl">
@@ -62,7 +69,7 @@
 				        	<dd class="dependencyInformation">
 			        			Group id <code class="groupId">${info.groupId}</code>,
 			        			artifact id <code class="groupId">${info.artifactId}</code>,
-			        			version. <code class="groupId">${info.version}</code>
+			        			version <code class="groupId">${info.version}</code>
 			        			<br/>
 				        		<a href="${info.dependencyManagementInfoUrl}" 
 				        			target="_blank">
@@ -77,27 +84,23 @@
 				        		<a href="${info.sourceBrowseUrl}">${info.sourceBrowseUrl}</a>
 				        	</t:if>
 				        </dd>
-				
-				        <dt>Source root URL</dt>
-				        <dd class="sourceRootUrl">
-				        	<t:if test="info.sourceRootUrl" else="message:not-informed">
-				        		<a href="${info.sourceRootUrl}">${info.sourceRootUrl}</a>
-				        	</t:if>
-				        </dd>
-	
+				        
 				        <dt>Issue tracker URL</dt>
 				        <dd class="issueTrackerUrl">
 				        	<t:if test="info.issueTrackerUrl" else="message:not-informed">
 				        		<a href="${info.issueTrackerUrl}">${info.issueTrackerUrl}</a>
 				        	</t:if>
 				        </dd>
+				        
+				        <dt></dt>
+				        <dd class="jsonDescription">
+				        	<a t:type="EventLink" t:event="json" t:context="libraryMapping.libraryName">Generate JSON description</a>
+				        </dd>
 				
 				    </dl>
 			    
 				</t:if>
 	
-				<a t:type="EventLink" t:event="json" t:context="libraryMapping.libraryName">Generate JSON description</a>
-				
 				<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryMapping.libraryName}</code>.</p>
 				
 	<!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
