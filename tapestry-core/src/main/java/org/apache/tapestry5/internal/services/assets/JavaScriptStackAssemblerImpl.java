@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 {
-    private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
+    private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript;charset=utf-8";
 
     private ThreadLocale threadLocale;
 

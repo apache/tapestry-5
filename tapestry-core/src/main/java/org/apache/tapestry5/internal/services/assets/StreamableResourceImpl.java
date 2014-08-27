@@ -123,6 +123,12 @@ public class StreamableResourceImpl implements StreamableResource
         return responseCustomizer;
     }
 
+    @Override
+    public StreamableResource withContentType(String newContentType)
+    {
+        return new StreamableResourceImpl(description, newContentType, compression, lastModified, bytestreamCache, assetChecksumGenerator, responseCustomizer);
+    }
+
     private StreamableResourceImpl withNewResourceCustomizer(ResponseCustomizer customizer)
     {
         return new StreamableResourceImpl(description, contentType, compression, lastModified, bytestreamCache, assetChecksumGenerator, customizer);

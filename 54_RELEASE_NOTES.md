@@ -140,6 +140,11 @@ The `Alert` class and the `Alerts` component now support rendering raw HTML inst
 
 # Breaking Changes:
 
+## Charset for Assets
+
+Tapestry now assumes that all text/* assets use the utf-8 character set. 
+This is generally the case for JavaScript files (the primary text asset). 
+
 ## tapestry-yuicompressor is replaced by tapestry-webresources
 
 The tapestry-yuicompressor module has been removed and superseded by tapestry-webresources.

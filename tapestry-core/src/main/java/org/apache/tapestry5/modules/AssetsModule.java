@@ -161,6 +161,18 @@ public class AssetsModule
     }
 
     /**
+     * Ensures that all "text/*" assets are given the UTF-8 charset.
+     *
+     * @since 5.4
+     */
+    @Decorate(id = "TextUTF8", serviceInterface = StreamableResourceSource.class)
+    @Order("after:CSSURLRewrite")
+    public StreamableResourceSource setupTextAssetsAsUTF8(StreamableResourceSource delegate)
+    {
+        return new UTF8ForTextAssets(delegate);
+    }
+
+    /**
      * Adds content types:
      * <dl>
      * <dt>css</dt>

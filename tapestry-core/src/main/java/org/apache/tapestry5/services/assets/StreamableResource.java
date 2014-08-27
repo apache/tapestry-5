@@ -95,4 +95,12 @@ public interface StreamableResource
      * @since 5.4
      */
     ResponseCustomizer getResponseCustomizer();
+
+    /**
+     * Returns a new StreamableResource instance with the new content type.
+     *
+     * @param newContentType
+     * @since 5.4
+     */
+    StreamableResource withContentType(String newContentType);
 }
