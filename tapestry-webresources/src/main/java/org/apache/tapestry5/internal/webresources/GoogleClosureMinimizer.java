@@ -36,6 +36,9 @@ import java.util.logging.Level;
  */
 public class GoogleClosureMinimizer extends AbstractMinimizer
 {
+
+    private final static String OUTPUT_CHARSET = "utf-8";
+
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
     private final Request request;
@@ -64,7 +67,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
         CompilerOptions options = new CompilerOptions();
         options.setCodingConvention(new ClosureCodingConvention());
-        options.setOutputCharset("utf-8");
+        options.setOutputCharset(OUTPUT_CHARSET);
         options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES, CheckLevel.WARNING);
 
         Compiler compiler = new Compiler();
@@ -79,7 +82,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
         if (result.success)
         {
-            return IOUtils.toInputStream(compiler.toSource());
+            return IOUtils.toInputStream(compiler.toSource(), OUTPUT_CHARSET);
         }
 
         throw new RuntimeException(String.format("Compilation failed: %s.",
