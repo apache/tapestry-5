@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -55,19 +53,15 @@ public class PageTemplateLocator implements ComponentTemplateLocator
 
         String logicalName = resolver.resolvePageClassNameToPageName(className);
 
+        String simpleClassName = InternalUtils.lastTerm(className);
+
         int slashx = logicalName.lastIndexOf('/');
 
-        if (slashx > 0)
-        {
-            // However, the logical name isn't quite what we want. It may have been somewhat
-            // trimmed.
+        // Using the simple class name always accounts for the case where a "page" suffix was stripped off to form
+        // the logical page name (and several other cases where the name was simplified in some way).
+        String baseName = slashx < 0 ? simpleClassName : logicalName.substring(0, slashx + 1) + simpleClassName;
 
-            String simpleClassName = InternalUtils.lastTerm(className);
-
-            logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
-        }
-
-        String path = prefix + logicalName + "." + TapestryConstants.TEMPLATE_EXTENSION;
+        String path = prefix + baseName + "." + TapestryConstants.TEMPLATE_EXTENSION;
 
         return contextRoot.forFile(path).forLocale(locale);
     }

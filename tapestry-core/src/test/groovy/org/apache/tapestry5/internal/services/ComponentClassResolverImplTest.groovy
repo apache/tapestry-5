@@ -8,7 +8,6 @@ import org.apache.tapestry5.services.ComponentClassResolver
 import org.apache.tapestry5.services.LibraryMapping
 import org.easymock.EasyMock
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.testng.annotations.Test
 
 import static org.easymock.EasyMock.isA
@@ -80,7 +79,7 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         List<String> pageNames = resolver.getPageNames()
 
-        assertListsEquals(pageNames, "SimplePage", "nested/Index", "nested/Other", "nested/Page")
+        assertListsEquals(pageNames, "Simple", "nested/Index", "nested/Other", "nested/Page")
 
         verify()
     }
@@ -119,7 +118,8 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         ComponentClassResolver resolver = create(logger, locator, [])
 
-        assertEquals(resolver.canonicalizePageName("simplepage"), "SimplePage")
+        assertEquals(resolver.canonicalizePageName("simplepage"), "Simple")
+        assertEquals(resolver.canonicalizePageName("simple"), "Simple")
 
         verify()
     }
@@ -135,12 +135,13 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         replay()
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage",
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "Home",
             APP_ROOT_PACKAGE_MAPPINGS)
 
-        assertEquals(resolver.canonicalizePageName("HomePage"), "HomePage")
-        assertEquals(resolver.canonicalizePageName(""), "HomePage")
-        assertTrue(resolver.isPageName("HomePage"))
+        assertEquals(resolver.canonicalizePageName("Home"), "Home")
+        assertEquals(resolver.canonicalizePageName("HomePage"), "Home")
+        assertEquals(resolver.canonicalizePageName(""), "Home")
+        assertTrue(resolver.isPageName("Home"))
 
         verify()
     }
@@ -156,11 +157,11 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         replay()
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage",
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "Home",
             APP_ROOT_PACKAGE_MAPPINGS)
 
-        assertEquals(resolver.canonicalizePageName("sub/HomePage"), "sub/HomePage")
-        assertEquals(resolver.canonicalizePageName("sub"), "sub/HomePage")
+        assertEquals(resolver.canonicalizePageName("sub/HomePage"), "sub/Home")
+        assertEquals(resolver.canonicalizePageName("sub/home"), "sub/Home")
         assertTrue(resolver.isPageName("sub/HomePage"))
 
         verify()
@@ -390,7 +391,7 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         ComponentClassResolver resolver = create(logger, locator, [])
 
-        assertEquals(resolver.resolvePageClassNameToPageName(className), "SimplePage")
+        assertEquals(resolver.resolvePageClassNameToPageName(className), "Simple")
 
         verify()
     }
@@ -468,7 +469,7 @@ class ComponentClassResolverImplTest extends InternalBaseTestCase {
 
         ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE))
 
-        assertEquals(resolver.resolvePageClassNameToPageName(className), "core/MyCorePage")
+        assertEquals(resolver.resolvePageClassNameToPageName(className), "core/MyCore")
 
         verify()
     }

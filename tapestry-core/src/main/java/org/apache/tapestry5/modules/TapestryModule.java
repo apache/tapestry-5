@@ -2691,7 +2691,7 @@ public final class TapestryModule
                                          final ComponentOverride componentReplacer) throws NoSuchMethodException, SecurityException
     {
 
-        if (componentReplacer.getReplacements().size() > 0)
+        if (componentReplacer.hasReplacements())
         {
 
             MethodAdvice advice = new MethodAdvice()

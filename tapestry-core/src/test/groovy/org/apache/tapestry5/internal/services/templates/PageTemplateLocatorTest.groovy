@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,15 +10,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services.templates;
-
-import java.util.Locale
+package org.apache.tapestry5.internal.services.templates
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
 import org.testng.annotations.Test
 
-class PageTemplateLocatorTest extends InternalBaseTestCase
-{
+class PageTemplateLocatorTest extends InternalBaseTestCase {
+
     void execute(root, resolver, closure) {
 
         replay()
@@ -38,9 +34,9 @@ class PageTemplateLocatorTest extends InternalBaseTestCase
 
         expect(model.page).andReturn(false)
 
-        execute (root, resolver) {
+        execute(root, resolver) {
 
-            assert it.locateTemplate (model, Locale.FRENCH) == null
+            assert it.locateTemplate(model, Locale.FRENCH) == null
         }
     }
 
@@ -63,7 +59,7 @@ class PageTemplateLocatorTest extends InternalBaseTestCase
         train_forFile(root, "Foo.tml", withExtension)
         train_forLocale(withExtension, locale, forLocale)
 
-        execute (root, resolver) {
+        execute(root, resolver) {
 
             assertSame it.locateTemplate(model, locale), forLocale
         }
@@ -88,14 +84,40 @@ class PageTemplateLocatorTest extends InternalBaseTestCase
         expect(model.page).andReturn(true)
 
         train_getComponentClassName(model, className)
-        train_resolvePageClassNameToPageName (resolver, className, "foo/Create")
+        train_resolvePageClassNameToPageName(resolver, className, "foo/Create")
 
         train_forFile(root, "foo/CreateFoo.tml", withExtension)
         train_forLocale(withExtension, locale, forLocale)
 
-        execute (root, resolver){
+        execute(root, resolver) {
 
-            assertSame it.locateTemplate (model, locale), forLocale
+            assertSame it.locateTemplate(model, locale), forLocale
+        }
+    }
+
+    @Test
+    void uses_class_name_when_different_than_logical_name() {
+
+        def model = mockComponentModel()
+        def root = mockResource()
+        def withExtension = mockResource()
+        def forLocale = mockResource()
+        def resolver = mockComponentClassResolver()
+
+        def locale = Locale.FRENCH
+        def className = "myapp.pages.foo.CreateFooPage"
+
+        expect(model.page).andReturn(true)
+
+        train_getComponentClassName(model, className)
+        train_resolvePageClassNameToPageName(resolver, className, "foo/CreatePage")
+
+        train_forFile(root, "foo/CreateFooPage.tml", withExtension)
+        train_forLocale(withExtension, locale, forLocale)
+
+        execute(root, resolver) {
+
+            assertSame it.locateTemplate(model, locale), forLocale
         }
     }
 
@@ -105,18 +127,18 @@ class PageTemplateLocatorTest extends InternalBaseTestCase
         def root = mockResource()
         def withExtension = mockResource()
         def resolver = mockComponentClassResolver()
-        def locale= Locale.GERMAN;
+        def locale = Locale.GERMAN;
         def className = "myapp.pages.bar.Baz"
 
-        expect (model.page).andReturn(true)
+        expect(model.page).andReturn(true)
 
-        train_getComponentClassName (model, className)
-        train_resolvePageClassNameToPageName (resolver, className, "bar/Baz")
+        train_getComponentClassName(model, className)
+        train_resolvePageClassNameToPageName(resolver, className, "bar/Baz")
 
         train_forFile(root, "bar/Baz.tml", withExtension)
         train_forLocale(withExtension, locale, null)
 
-        execute (root, resolver)  {
+        execute(root, resolver) {
 
             assertNull it.locateTemplate(model, locale)
         }

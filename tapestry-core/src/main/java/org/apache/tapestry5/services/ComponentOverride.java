@@ -1,5 +1,3 @@
-// Copyright 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,6 @@
 
 package org.apache.tapestry5.services;
 
-import java.util.Map;
-
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
@@ -28,18 +23,17 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * replaced, the value is the replacement.
  *
  * @since 5.4
- * @see ComponentClassResolver.
+ * @see org.apache.tapestry5.services.ComponentClassResolver.
  */
 @UsesMappedConfiguration(key = Class.class, value = Class.class)
 public interface ComponentOverride
 {
 
     /**
-     * Returns an immutable map of replacements. Internal use only.
+     * Returns true if the service configuration is non-empty.
      * 
-     * @return a {@link Map}.
      */
-    Map<Class, Class> getReplacements();
+   boolean hasReplacements();
     
     /**
      * Returns the replacement for a class given its name.

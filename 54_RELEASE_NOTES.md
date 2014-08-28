@@ -180,6 +180,17 @@ resurface in the future as a CSS expression, but is currently not supported.
 
 The default exception report page has been modified to display a list of threads.
 
+## Page Suffix for Page Names
+
+It is now possible to use "page" as a suffix on a page name. The "page" suffix is stripped off of the logical page
+name; thus for AccountsPage.java, the logical page name will be "Accounts", and this name (in lower case)
+will be used inside generated URLs.  However, "AccountsPage" will also be recognized in URLs or in code. The
+component template should always be named after the Java class itself, here "AccountsPage.tml".
+
+This name stripping, combined with stripping out package names as prefixes and suffixes, can be somewhat hard to
+reason about. Tapestry has always logged a listing of all these aliases at startup; in rare cases, you may
+see conflicts or undesirable page names, and you should rename your classes to suit.
+
 ## ExceptionReporter Service
 
 A new service, `ExceptionReporter`, will now create a text file on the file system for each runtime request processing exception.

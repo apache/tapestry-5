@@ -68,6 +68,15 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final Collection<LibraryMapping> libraryMappings;
 
+    private final Pattern endsWithPagePattern = Pattern.compile(".*/?\\w+page$", Pattern.CASE_INSENSITIVE);
+
+    private boolean endsWithPage(String name)
+    {
+        // Don't treat a name that's just "page" as a suffix to strip off.
+
+        return endsWithPagePattern.matcher(name).matches();
+    }
+
     private class Data
     {
 
@@ -112,58 +121,75 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         private void rebuild(String pathPrefix, String rootPackage)
         {
-            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.PAGES_SUBPACKAGE, pageToClassName, pageToClassNames);
-            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.COMPONENTS_SUBPACKAGE, componentToClassName, componentToClassNames);
-            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.MIXINS_SUBPACKAGE, mixinToClassName, mixinToClassNames);
+            fill(pathPrefix, rootPackage, InternalConstants.PAGES_SUBPACKAGE, pageToClassName, pageToClassNames);
+            fill(pathPrefix, rootPackage, InternalConstants.COMPONENTS_SUBPACKAGE, componentToClassName, componentToClassNames);
+            fill(pathPrefix, rootPackage, InternalConstants.MIXINS_SUBPACKAGE, mixinToClassName, mixinToClassNames);
         }
 
-        private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
-                                            Map<String, String> logicalNameToClassName,
-                                            Map<String, Set<String>> nameToClassNames)
+        private void fill(String pathPrefix, String rootPackage, String subPackage,
+                          Map<String, String> logicalNameToClassName,
+                          Map<String, Set<String>> nameToClassNames)
         {
             String searchPackage = rootPackage + "." + subPackage;
             boolean isPage = subPackage.equals(InternalConstants.PAGES_SUBPACKAGE);
 
             Collection<String> classNames = classNameLocator.locateClassNames(searchPackage);
 
+            Set<String> aliases = CollectionFactory.newSet();
+
             int startPos = searchPackage.length() + 1;
 
             for (String className : classNames)
             {
+                aliases.clear();
+
                 String logicalName = toLogicalName(className, pathPrefix, startPos, true);
                 String unstrippedName = toLogicalName(className, pathPrefix, startPos, false);
 
+                aliases.add(logicalName);
+                aliases.add(unstrippedName);
+
                 if (isPage)
                 {
+                    if (endsWithPage(logicalName))
+                    {
+                        logicalName = logicalName.substring(0, logicalName.length() - 4);
+                        aliases.add(logicalName);
+                    }
+
                     int lastSlashx = logicalName.lastIndexOf("/");
 
                     String lastTerm = lastSlashx < 0 ? logicalName : logicalName.substring(lastSlashx + 1);
 
-                    if (lastTerm.equalsIgnoreCase("index") || lastTerm.equalsIgnoreCase(startPageName))
+                    if (lastTerm.equalsIgnoreCase("index"))
                     {
                         String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
 
                         // Make the super-stripped name another alias to the class.
                         // TAP5-1444: Everything else but a start page has precedence
 
-                        if (!(lastTerm.equalsIgnoreCase(startPageName) && logicalNameToClassName.containsKey(reducedName)))
-                        {
-                            logicalNameToClassName.put(reducedName, className);
-                            pageNameToCanonicalPageName.put(reducedName, logicalName);
-                            addNameMapping(nameToClassNames, reducedName, className);
-                        }
+
+                        aliases.add(reducedName);
+                    }
+
+                    if (logicalName.equals(startPageName))
+                    {
+                        aliases.add("");
                     }
 
                     pageClassNameToLogicalName.put(className, logicalName);
-                    pageNameToCanonicalPageName.put(logicalName, logicalName);
-                    pageNameToCanonicalPageName.put(unstrippedName, logicalName);
                 }
 
-                logicalNameToClassName.put(logicalName, className);
-                logicalNameToClassName.put(unstrippedName, className);
+                for (String alias : aliases)
+                {
+                    logicalNameToClassName.put(alias, className);
+                    addNameMapping(nameToClassNames, alias, className);
 
-                addNameMapping(nameToClassNames, logicalName, className);
-                addNameMapping(nameToClassNames, unstrippedName, className);
+                    if (isPage)
+                    {
+                        pageNameToCanonicalPageName.put(alias, logicalName);
+                    }
+                }
             }
         }
 
@@ -204,11 +230,15 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 sep = "/";
 
                 if (stripTerms)
+                {
                     logicalName = stripTerm(term, logicalName);
+                }
             }
 
             if (logicalName.equals(""))
+            {
                 logicalName = unstripped;
+            }
 
             builder.append(sep);
             builder.append(logicalName);

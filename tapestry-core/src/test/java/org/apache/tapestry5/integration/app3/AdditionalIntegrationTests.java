@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -74,21 +72,6 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
         // In normal render: optimized
         // Fuckin Selenium
         // assertAttribute("//a[2]/@href", "login");
-    }
-
-    public void ajax_server_side_exception()
-    {
-        openLinks("Console demo");
-
-        assertTextPresent("Demonstrates Tapestry console");
-
-        click("link=Failure on the server side");
-
-        // Wait for the console to appear
-
-        waitForCSSSelectedElementToAppear(".t-console div.t-err");
-
-        assertTextPresent("Communication with the server failed: Server-side exception.");
     }
     
     // TAP5-1611
