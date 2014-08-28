@@ -47,23 +47,24 @@ public class ZoneRefreshTest extends App1TestCase
     @Test
     public void test_if_zone_with_context_works() throws Exception
     {
-       openBaseURL();
-       clickAndWait("link=Zone Refresh With Context");
+        openBaseURL();
+        clickAndWait("link=Zone Refresh With Context");
 
-       // assert that counter value didn't changed
-       assertText("zone", "false");
-       Thread.sleep(2000l);
-       assertText("zone", "false");
+        // assert that counter value didn't changed
+        assertText("zone", "false");
+        Thread.sleep(2000l);
+        assertText("zone", "false");
 
-       // increment counter
-       click("link=Add");
-       waitForAjaxRequestsToComplete();
+        // increment counter
+        click("link=Add");
+        Thread.sleep(250l);
+        waitForAjaxRequestsToComplete();
 
-       // assert that counter value didn't changed
-       Thread.sleep(2000l);
-       assertText("zone", "true");
-       Thread.sleep(2000l);
-       assertText("zone", "true");
+        // assert that counter value didn't changed
+        Thread.sleep(2000l);
+        assertText("zone", "true");
+        Thread.sleep(2000l);
+        assertText("zone", "true");
     }
 
     private void checkZoneValues(String zone, int times) throws Exception
