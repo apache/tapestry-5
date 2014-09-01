@@ -84,7 +84,6 @@ public final class TransformConstants
      * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()}.
      *
      * @since 5.3
-     * @deprecated Deprecated in 5.3, with {@link org.apache.tapestry5.annotations.PageDetached}.
      */
     public static final MethodDescription CONTAINING_PAGE_DID_DETACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidDetach");
 
@@ -93,7 +92,6 @@ public final class TransformConstants
      * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidAttach()}.
      *
      * @since 5.3
-     * @deprecated Deprecated in 5.3, along with {@link org.apache.tapestry5.annotations.PageAttached}.
      */
     public static final MethodDescription CONTAINING_PAGE_DID_ATTACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidAttach");
 

@@ -1,5 +1,3 @@
-// Copyright 2007, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,7 +33,6 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * page pool.
  *
  * @see PageAttached
- * @deprecated In Tapestry 5.3, with no replacement (detach logic no longer meaningful now that pages are singletons).
  */
 @Target(METHOD)
 @Retention(RUNTIME)

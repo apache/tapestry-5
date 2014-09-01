@@ -1,5 +1,3 @@
-// Copyright 2006, 2009, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,7 +33,7 @@ public interface PageLifecycleListener
      * Invoked when the page is detached, allowing components a chance to clear out any temporary or client specific
      * state.
      *
-     * @deprecated In Tapestry 5.3, with no replacement (detach logic no longer meaningful now that pages are singletons).
+     * @deprecated In Tapestry 5.3, use {@link PageLifecycleCallbackHub#addPageDetachedCallback(Runnable)} instead.
      */
     void containingPageDidDetach();
 
@@ -43,7 +41,7 @@ public interface PageLifecycleListener
      * Invoked when a page is first attached to the current request, giving components a chance to initialize for the
      * current request.
      *
-     * @deprecated In Tapestry 5.3, with no replacement (attach logic no longer meaningful now that pages are singletons).
+     * @deprecated In Tapestry 5.3, use {@link org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addPageAttachedCallback(Runnable)} instead.
      */
     void containingPageDidAttach();
 
