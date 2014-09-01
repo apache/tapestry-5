@@ -109,7 +109,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
     def "setting return value clears checked exceptions"() {
         def mgr = createMgr({ PlasticClass pc ->
-            findMethod(pc, "maybeThrow").addAdvice({  MethodInvocation mi ->
+            findMethod(pc, "maybeThrow").addAdvice({ MethodInvocation mi ->
 
                 mi.proceed()
 
@@ -221,7 +221,9 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
             })
         } as PlasticClassTransformer)
 
-        if (false) { enableBytecodeDebugging(mgr) }
+        if (false) {
+            enableBytecodeDebugging(mgr)
+        }
 
         def o = mgr.getClassInstantiator(testsubjects.FieldConduitInsideAdvisedMethod.name).with(MagicContainer, container).newInstance()
 
@@ -256,7 +258,9 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
             })
         } as PlasticClassTransformer)
 
-        if (false) { enableBytecodeDebugging(mgr) }
+        if (false) {
+            enableBytecodeDebugging(mgr)
+        }
 
         def o = mgr.getClassInstantiator(testsubjects.FieldConduitAdvisedMethodComplexCase.name).with(MagicContainer, container).newInstance()
 
@@ -301,6 +305,35 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
         // the new implementation. Before fixing TAP5-1979 this would be "<<null>>".
 
         o.magic() == "<<MAGIC!>>"
+    }
+
+    def "abstract methods are identified as such by PlasticMethod"() {
+
+        setup:
+
+        PlasticClass pc = mgr.getPlasticClass(testsubjects.AbstractPlaceholder.name)
+
+        PlasticMethod m = findMethod pc, "placeholder"
+
+        expect:
+
+        m.isAbstract() == true
+    }
+
+    def "implementations of abstract methods are considered to be overrides"() {
+        setup:
+
+        def packages = ["testsubjects"] as Set
+
+        PlasticManager mgr = PlasticManager.withContextClassLoader().packages(packages).create()
+
+        PlasticClass pc = mgr.getPlasticClass(testsubjects.PlaceholderImpl.name)
+
+        PlasticMethod m = findMethod pc, "placeholder"
+
+        expect:
+
+        m.isOverride() == true
     }
 
 }

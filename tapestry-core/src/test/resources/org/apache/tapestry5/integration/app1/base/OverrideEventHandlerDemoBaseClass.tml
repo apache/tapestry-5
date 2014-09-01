@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <h1>Event Handler Override Demo</h1>
+
+
+    <ul id="method-names">
+        <li t:type="loop" source="methodNames" value="var:methodName">${var:methodName}</li>
+    </ul>
+
+    <t:actionlink class="btn btn-primary" t:id="trigger">Trigger</t:actionlink>
+
+</html>
+

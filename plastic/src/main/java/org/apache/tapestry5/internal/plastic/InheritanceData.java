@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -52,49 +50,58 @@ public class InheritanceData
      * Returns a new MethodBundle that represents the methods of a child class
      * of this bundle. The returned bundle will always be {@linkplain #isTransformed() transformed}.
      *
-     * @param childClassName name of subclass
      * @return new method bundle
      */
-    public InheritanceData createChild(String childClassName)
+    public InheritanceData createChild()
     {
         return new InheritanceData(this);
     }
 
     /**
-     * Adds a new instance method. Only non-private, non-abstract methods should be added (that is, methods which might
+     * Adds a new instance method. Only non-private methods should be added (that is, methods which might
      * be overridden in subclasses). This can later be queried to see if any base class implements the method.
      *
-     * @param name name of method
-     * @param desc method descriptor
+     * @param name
+     *         name of method
+     * @param desc
+     *         describes the parameters and return value of the method
      */
     public void addMethod(String name, String desc)
     {
-        String value = toValue(name, desc);
-
-        methods.add(value);
+        methods.add(toValue(name, desc));
         methodNames.add(name);
     }
 
+
     /**
-     * Returns true if a transformed parent class contains the indicated method.
+     * Returns true if a transformed parent class contains an implementation of, or abstract placeholder for, the method.
      *
-     * @param name method name
-     * @param desc method descriptor
-     * @return the <em>internal name</em> of the implementing base class for this method,
-     *         or null if no base class implements the method
+     * @param name
+     *         method name
+     * @param desc
+     *         method descriptor
+     * @return true if a base class implements the method (including abstract methods)
      */
     public boolean isImplemented(String name, String desc)
     {
         return checkForMethod(toValue(name, desc));
     }
 
-
     private boolean checkForMethod(String value)
     {
-        if (methods.contains(value))
-            return true;
+        InheritanceData cursor = this;
 
-        return parent == null ? false : parent.checkForMethod(value);
+        while (cursor != null)
+        {
+            if (cursor.methods.contains(value))
+            {
+                return true;
+            }
+
+            cursor = cursor.parent;
+        }
+
+        return false;
     }
 
     /**
@@ -118,8 +125,10 @@ public class InheritanceData
         return false;
     }
 
-    public void addInterface(String name) {
-        if (!interfaceNames.contains(name)) {
+    public void addInterface(String name)
+    {
+        if (!interfaceNames.contains(name))
+        {
             interfaceNames.add(name);
         }
     }

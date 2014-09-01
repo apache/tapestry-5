@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -1795,5 +1793,12 @@ public class CoreBehaviorsTests extends App1TestCase
             assertText("//span[@id='pacValues']", scenario.expextedPacValues);
             assertTrue(selenium.getLocation().endsWith(scenario.expectedUri));
         }
+    }
+
+    @Test
+    public void event_handler_that_overrides_abstract_method_invoked_once() {
+        openLinks("Event Handler Override Demo", "Trigger");
+
+        assertTextSeries("//ul[@id='method-names']/li[%d]", 1, "sub-class", "DONE");
     }
 }

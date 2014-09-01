@@ -198,7 +198,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 pool.createAnnotationAccess(superClassName));
 
         this.parentInheritanceData = parentInheritanceData;
-        inheritanceData = parentInheritanceData.createChild(className);
+
+        inheritanceData = parentInheritanceData.createChild();
 
         for (String interfaceName : classNode.interfaces)
         {
@@ -233,7 +234,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
              */
             if (Modifier.isStatic(node.access))
             {
-                if (!Modifier.isPrivate(node.access))
+                if (isInheritableMethod(node))
                 {
                     inheritanceData.addMethod(node.name, node.desc);
                 }
@@ -782,8 +783,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         methodNames.add(methodNode.name);
 
-        if (!Modifier.isPrivate(methodNode.access))
+        if (isInheritableMethod(methodNode))
+        {
             inheritanceData.addMethod(methodNode.name, methodNode.desc);
+        }
     }
 
     private PlasticMethod createNewMethod(MethodDescription description)
@@ -1183,7 +1186,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private boolean isInheritableMethod(MethodNode node)
     {
-        return (node.access & (ACC_ABSTRACT | ACC_PRIVATE)) == 0;
+        return !Modifier.isPrivate(node.access);
     }
 
     @Override

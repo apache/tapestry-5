@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -48,7 +46,8 @@ public interface PlasticMethod extends AnnotationAccess
      * If the method has advice, the advice is <em>not</em> lost but will instead wrap around the new method
      * implementation.
      *
-     * @param callback passed the InstructionBuilder so that an implementation of the method can be created
+     * @param callback
+     *         passed the InstructionBuilder so that an implementation of the method can be created
      * @return this method, for further configuration
      */
     PlasticMethod changeImplementation(InstructionBuilderCallback callback);
@@ -68,7 +67,8 @@ public interface PlasticMethod extends AnnotationAccess
      * Note additionally that a recursive method invocation will still invoke the MethodAdvice chain on each recursive
      * call (this is an intended side-effect of copying the exact bytecode of the method implementation.
      *
-     * @param advice advice to add to the method
+     * @param advice
+     *         advice to add to the method
      * @return this method, for further configuration
      */
     PlasticMethod addAdvice(MethodAdvice advice);
@@ -78,7 +78,8 @@ public interface PlasticMethod extends AnnotationAccess
      * correct interface (or extend the correct class). The original implementation of the method is lost,
      * though (as with {@link #changeImplementation(InstructionBuilderCallback)}), method advice is retained.
      *
-     * @param field to delegate to
+     * @param field
+     *         to delegate to
      * @return this method, for further configuration
      */
     PlasticMethod delegateTo(PlasticField field);
@@ -88,7 +89,8 @@ public interface PlasticMethod extends AnnotationAccess
      * is dynamically computed by another method of the class. The method should take no parameters
      * and must not return null, or throw any exceptions not compatible with the method being proxied.
      *
-     * @param method to provide the dynamic delegate
+     * @param method
+     *         to provide the dynamic delegate
      * @return this method, for further configuration
      */
     PlasticMethod delegateTo(PlasticMethod method);
@@ -105,6 +107,13 @@ public interface PlasticMethod extends AnnotationAccess
      * @return true if the parent class contains a method with the name signature
      */
     boolean isOverride();
+
+    /**
+     * Returns true if the method is abstract.
+     *
+     * @since 5.4
+     */
+    boolean isAbstract();
 
     /**
      * Returns a short identifier for the method that includes the class name, the method name,

@@ -56,6 +56,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+                    new Item("OverrideEventHandlerDemo", "Event Handler Override Demo", "Event Handler methods overridden by sub-classes invoke base-class correctly."),
+
                     new Item("LogoSubclass", "Base class Assets in sub-classes", "Assets are resolved for the parent class if that's where the annotations are."),
 
                     new Item("MissingRequiredARP", "Missing Query Parameter for @ActivationRequestParameter", "Activating a page with a required @ActivationRequestParameter, but no matching query parameter, is an error."),
