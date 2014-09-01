@@ -1733,21 +1733,27 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Waits until all active XHR requests (as noted by the t5/core/dom module)
-     * have completed.  Waits up to 500 ms.
+     * have completed.
      *
      * @since 5.4
      */
-    protected final void waitForAjaxRequestsToComplete() {
-        for (int i = 0; i < 6; i++)
+    protected final void waitForAjaxRequestsToComplete()
+    {
+        // Ugly but necessary. Give the Ajax operation sufficient time to execute normally, then start
+        // polling to see if it has complete.
+        sleep(250);
+
+        // The t5/core/dom module tracks how many Ajax requests are active
+        // and body[data-ajax-active] as appropriate.
+
+        for (int i = 0; i < 10; i++)
         {
             if (i > 0)
             {
                 sleep(100);
             }
 
-            // The t5/core/dom module tracks how many Ajax requests are active
-            // and updates this property as appropriate.
-            if (getAttribute("//body/@data-ajax-active").equals("false"))
+            if (getCssCount("body[data-ajax-active=false]").equals(1))
             {
                 return;
             }
