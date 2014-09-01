@@ -1,5 +1,3 @@
-# Copyright 2012 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,11 +18,15 @@ define ["./events", "./dom", "./zone"],
 
   (events, dom, zone) ->
 
-        dom.onDocument "change", "select[data-update-zone]", ->
+    dom.onDocument "change", "select[data-update-zone]", ->
 
-          containingZone = zone.findZone this
+      containingZone = zone.findZone this
 
-          containingZone and containingZone.trigger events.zone.refresh,
-            url: @attr "data-update-url"
-            parameters:
-              "t:selectvalue": @value()
+      if containingZone
+        containingZone.trigger events.zone.refresh,
+          url: @attr "data-update-url"
+          parameters:
+            "t:selectvalue": @value()
+
+      return
+    return
