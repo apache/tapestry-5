@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,16 +15,21 @@ package org.apache.tapestry5.kaptcha.components;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
+import org.apache.tapestry5.services.HttpError;
 import org.apache.tapestry5.services.Response;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 
 /**
  * Part of a Captcha based authentication scheme; a KaptchaImage generates a new
@@ -84,24 +87,45 @@ public class KaptchaImage
         return false;
     }
 
-    void onImage() throws IOException
+    Object onImage() throws IOException
     {
-        BufferedImage image = producer.createImage(captchaText);
+        if (captchaText == null)
+        {
+            return new HttpError(HttpServletResponse.SC_NOT_FOUND, "Session expired.");
+        }
 
-        response.setDateHeader("Expires", 0);
-        // Set standard HTTP/1.1 no-cache headers.
-        response.addHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        // Set standard HTTP/1.0 no-cache header.
-        response.setHeader("Pragma", "no-cache");
+        return new StreamResponse()
+        {
+            @Override
+            public String getContentType()
+            {
+                return "image/jpeg";
+            }
 
-        OutputStream stream = response.getOutputStream("image/jpeg");
+            @Override
+            public InputStream getStream() throws IOException
+            {
+                BufferedImage image = producer.createImage(captchaText);
 
-        ImageIO.write(image, "jpg", stream);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        stream.flush();
+                ImageIO.write(image, "jpg", baos);
 
-        stream.close();
+                return new ByteArrayInputStream(baos.toByteArray());
+            }
+
+            @Override
+            public void prepareResponse(Response response)
+            {
+                response.setDateHeader("Expires", 0);
+                // Set standard HTTP/1.1 no-cache headers.
+                response.addHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+                // Set IE extended HTTP/1.1 no-cache headers (use addHeader).
+                response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+                // Set standard HTTP/1.0 no-cache header.
+                response.setHeader("Pragma", "no-cache");
+            }
+        };
+
     }
 }
