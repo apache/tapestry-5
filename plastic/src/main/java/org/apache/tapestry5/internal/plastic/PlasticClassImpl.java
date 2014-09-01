@@ -166,9 +166,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     // Set of methods that need to contribute to the shim and gain access to it
 
     final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
-    
+
     final ClassNode implementationClassNode;
-    
+
     private ClassNode interfaceClassNode;
 
     /**
@@ -186,14 +186,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         this.pool = pool;
         this.proxy = proxy;
         this.implementationClassNode = implementationClassNode;
-        
+
         staticContext = parentStaticContext.dupe();
 
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
         fieldInstrumentations = new FieldInstrumentations(classNode.superName);
-        
+
         annotationAccess = new DelegatingAnnotationAccess(pool.createAnnotationAccess(classNode.visibleAnnotations),
                 pool.createAnnotationAccess(superClassName));
 
@@ -334,49 +334,56 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         return annotationAccess.getAnnotation(annotationType);
     }
-    
+
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
         {
-        
+
             for (MethodNode implementationNode : source.methods)
             {
                 // Find corresponding method in the implementation class MethodNode
                 if (methodNode.name.equals(implementationNode.name) && methodNode.desc.equals(implementationNode.desc))
                 {
-                    
+
                     // Copied and adapted from MethodNode.accept(). We want annotation info, but not code nor attributes
                     // Otherwise, we get ClassFormatError (Illegal exception table range) later
 
                     // visits the method attributes
                     int i, j, n;
-                    if (implementationNode.annotationDefault != null) {
+                    if (implementationNode.annotationDefault != null)
+                    {
                         AnnotationVisitor av = methodNode.visitAnnotationDefault();
                         AnnotationNode.accept(av, null, implementationNode.annotationDefault);
-                        if (av != null) {
+                        if (av != null)
+                        {
                             av.visitEnd();
                         }
                     }
                     n = implementationNode.visibleAnnotations == null ? 0 : implementationNode.visibleAnnotations.size();
-                    for (i = 0; i < n; ++i) {
+                    for (i = 0; i < n; ++i)
+                    {
                         AnnotationNode an = implementationNode.visibleAnnotations.get(i);
                         an.accept(methodNode.visitAnnotation(an.desc, true));
                     }
                     n = implementationNode.invisibleAnnotations == null ? 0 : implementationNode.invisibleAnnotations.size();
-                    for (i = 0; i < n; ++i) {
+                    for (i = 0; i < n; ++i)
+                    {
                         AnnotationNode an = implementationNode.invisibleAnnotations.get(i);
                         an.accept(methodNode.visitAnnotation(an.desc, false));
                     }
                     n = implementationNode.visibleParameterAnnotations == null
                             ? 0
                             : implementationNode.visibleParameterAnnotations.length;
-                    for (i = 0; i < n; ++i) {
+                    for (i = 0; i < n; ++i)
+                    {
                         List<?> l = implementationNode.visibleParameterAnnotations[i];
-                        if (l == null) {
+                        if (l == null)
+                        {
                             continue;
                         }
-                        for (j = 0; j < l.size(); ++j) {
+                        for (j = 0; j < l.size(); ++j)
+                        {
                             AnnotationNode an = (AnnotationNode) l.get(j);
                             an.accept(methodNode.visitParameterAnnotation(i, an.desc, true));
                         }
@@ -384,27 +391,30 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     n = implementationNode.invisibleParameterAnnotations == null
                             ? 0
                             : implementationNode.invisibleParameterAnnotations.length;
-                    for (i = 0; i < n; ++i) {
+                    for (i = 0; i < n; ++i)
+                    {
                         List<?> l = implementationNode.invisibleParameterAnnotations[i];
-                        if (l == null) {
+                        if (l == null)
+                        {
                             continue;
                         }
-                        for (j = 0; j < l.size(); ++j) {
+                        for (j = 0; j < l.size(); ++j)
+                        {
                             AnnotationNode an = (AnnotationNode) l.get(j);
                             an.accept(methodNode.visitParameterAnnotation(i, an.desc, false));
                         }
                     }
-                    
+
                     methodNode.visitEnd();
-                    
+
                     break;
-                    
+
                 }
-                
+
             }
-            
+
         }
-        
+
     }
 
     @Override
@@ -428,7 +438,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     public ClassInstantiator createInstantiator()
     {
         lock();
-        
+
         addClassAnnotations(implementationClassNode);
 
         createShimIfNeeded();
@@ -449,21 +459,23 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         // Copy annotations from implementation if available.
         // Code adapted from ClassNode.accept(), as we just want to copy
         // the annotations and nothing more.
-        if (otherClassNode != null) 
+        if (otherClassNode != null)
         {
-            
+
             int i, n;
             n = otherClassNode.visibleAnnotations == null ? 0 : otherClassNode.visibleAnnotations.size();
-            for (i = 0; i < n; ++i) {
+            for (i = 0; i < n; ++i)
+            {
                 AnnotationNode an = otherClassNode.visibleAnnotations.get(i);
                 an.accept(classNode.visitAnnotation(an.desc, true));
             }
             n = otherClassNode.invisibleAnnotations == null ? 0 : otherClassNode.invisibleAnnotations.size();
-            for (i = 0; i < n; ++i) {
+            for (i = 0; i < n; ++i)
+            {
                 AnnotationNode an = otherClassNode.invisibleAnnotations.get(i);
                 an.accept(classNode.visitAnnotation(an.desc, false));
             }
-            
+
         }
     }
 
@@ -792,8 +804,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         MethodNode methodNode = new MethodNode(description.modifiers, description.methodName, desc,
                 description.genericSignature, exceptions);
         boolean isOverride = inheritanceData.isImplemented(methodNode.name, desc);
-        
-        if (!isOverride) {
+
+        if (!isOverride)
+        {
             addMethodAndParameterAnnotationsFromExistingClass(methodNode, interfaceClassNode);
             addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
         }
@@ -811,7 +824,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private boolean isDefaultMethod(Method method)
     {
         return method.getDeclaringClass().isInterface() &&
-            (method.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT)) == Opcodes.ACC_PUBLIC;
+                (method.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT)) == Opcodes.ACC_PUBLIC;
     }
 
     private void createNewMethodImpl(MethodDescription methodDescription, MethodNode methodNode)
@@ -1201,12 +1214,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     "Class %s is not an interface; ony interfaces may be introduced.", interfaceType.getName()));
 
         String interfaceName = nameCache.toInternalName(interfaceType);
-        
+
         try
         {
             interfaceClassNode = PlasticClassPool.readClassNode(interfaceType.getName(), getClass().getClassLoader());
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             throw new RuntimeException(e);
         }
@@ -1216,7 +1228,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             classNode.interfaces.add(interfaceName);
             inheritanceData.addInterface(interfaceName);
         }
-        
+
         addClassAnnotations(interfaceClassNode);
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
@@ -1230,7 +1242,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 introducedMethods.add(introduceMethod(m));
             }
         }
-        
+
         interfaceClassNode = null;
 
         return introducedMethods;
@@ -1313,5 +1325,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             pool.setFieldReadInstrumentation(classNode.name, fieldName, fi);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("PlasticClassImpl[%s]", className);
     }
 }
