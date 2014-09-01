@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,10 +17,7 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ClientDataSink;
-import org.apache.tapestry5.services.PersistentFieldChange;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -66,7 +61,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         public PersistentFieldChange toChange(Object value)
         {
             return new PersistentFieldChangeImpl(componentId == null ? "" : componentId,
-                                                 fieldName, value);
+                    fieldName, value);
         }
 
         @Override
@@ -102,8 +97,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
             if (componentId == null)
             {
                 if (other.componentId != null) return false;
-            }
-            else if (!componentId.equals(other.componentId)) return false;
+            } else if (!componentId.equals(other.componentId)) return false;
 
             return true;
         }
@@ -111,15 +105,18 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
     private final ClientDataEncoder clientDataEncoder;
 
+    private final SessionPersistedObjectAnalyzer analyzer;
+
     private final Map<Key, Object> persistedValues = CollectionFactory.newMap();
 
     private String clientData;
 
     private boolean mapUptoDate = false;
 
-    public ClientPersistentFieldStorageImpl(Request request, ClientDataEncoder clientDataEncoder)
+    public ClientPersistentFieldStorageImpl(Request request, ClientDataEncoder clientDataEncoder, SessionPersistedObjectAnalyzer analyzer)
     {
         this.clientDataEncoder = clientDataEncoder;
+        this.analyzer = analyzer;
 
         // This, here, is the problem of TAPESTRY-2501; this call can predate
         // the check to set the character set based on meta data of the page.
@@ -233,12 +230,10 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
                 persistedValues.put(key, value);
             }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException("Serialized client state was corrupted. This may indicate that too much state is being stored, which can cause the encoded string to be truncated by the client web browser.", ex);
-        }
-        finally
+        } finally
         {
             InternalUtils.close(in);
         }
@@ -246,6 +241,21 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
     private void refreshClientData()
     {
+        // TAP5-2269: Even in the absense of a change to a persistent field, a mutable persistent object
+        // may have changed.
+
+        if (clientData != null)
+        {
+            for (Object value : persistedValues.values())
+            {
+                if (analyzer.checkAndResetDirtyState(value))
+                {
+                    clientData = null;
+                    break;
+                }
+            }
+        }
+
         // Client data will be null after a change to the map, or if there was no client data in the
         // request. In any other case where the client data is non-null, it is by definition
         // up-to date (since it is reset to null any time there's a change to the map).
@@ -276,12 +286,10 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
                 os.writeObject(e.getKey());
                 os.writeObject(e.getValue());
             }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(ex.getMessage(), ex);
-        }
-        finally
+        } finally
         {
             InternalUtils.close(os);
         }

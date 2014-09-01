@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,14 +15,19 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
@@ -35,10 +38,13 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 {
     private ClientDataEncoder clientDataEncoder;
 
+    private SessionPersistedObjectAnalyzer analyzer;
+
     @BeforeClass
     public void setup()
     {
         clientDataEncoder = getService(ClientDataEncoder.class);
+        analyzer = getService(SessionPersistedObjectAnalyzer.class);
     }
 
     @Test
@@ -49,7 +55,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         // Should do nothing.
 
@@ -58,20 +64,9 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void store_and_restore_a_change()
+    private Holder<String> captureLinkModification(Link link)
     {
-        Request request = mockRequest(null);
-        Link link = mockLink();
         final Holder<String> holder = Holder.create();
-
-        String pageName = "Foo";
-        String componentId = "bar.baz";
-        String fieldName = "biff";
-        Object value = 99;
-
-        // Use an IAnswer to capture the value.
 
         link.addParameter(eq(ClientPersistentFieldStorageImpl.PARAMETER_NAME), isA(String.class));
         setAnswer(new IAnswer<Void>()
@@ -86,9 +81,26 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
             }
         });
 
+        return holder;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void store_and_restore_a_change()
+    {
+        Request request = mockRequest(null);
+        Link link = mockLink();
+
+        String pageName = "Foo";
+        String componentId = "bar.baz";
+        String fieldName = "biff";
+        Object value = 99;
+
+        final Holder<String> holder = captureLinkModification(link);
+
         replay();
 
-        ClientPersistentFieldStorage storage1 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage1 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         storage1.postChange(pageName, componentId, fieldName, value);
 
@@ -97,8 +109,6 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
         storage1.updateLink(link);
 
         verify();
-
-        System.out.println(holder.get());
 
         assertEquals(changes1.size(), 1);
         PersistentFieldChange change1 = changes1.get(0);
@@ -113,7 +123,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage2 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage2 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         List<PersistentFieldChange> changes2 = newList(storage2.gatherFieldChanges(pageName));
 
@@ -142,7 +152,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         for (int k = 0; k < 3; k++)
         {
@@ -174,7 +184,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         storage.postChange(pageName, componentId, fieldName, 99);
         storage.postChange(pageName, componentId, fieldName, null);
@@ -201,7 +211,7 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         storage.postChange(pageName, componentId, fieldName, 99);
 
@@ -231,19 +241,82 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         try
         {
             storage.postChange("Foo", "bar.baz", "woops", badBody);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(
                     ex.getMessage(),
                     "State persisted on the client must be serializable, but <BadBoy> does not implement the Serializable interface.");
         }
+
+        verify();
+    }
+
+    public static class MutableObject implements Serializable
+    {
+        public String mutableValue;
+    }
+
+    // So if an object is stored in a persistent field and is mutable, then the field should not have to be modified
+    // to force a change, instead the value should be checked to see if it is dirty (assuming true), and reserialized.
+    @Test
+    public void modified_mutable_objects_are_reserialized()
+    {
+        Request request = mockRequest(null);
+        Link link = mockLink();
+
+        MutableObject mo = new MutableObject();
+
+        mo.mutableValue = "initial state";
+
+        String pageName = "Foo";
+        String componentId = "bar.baz";
+        String fieldName = "biff";
+
+        final Holder<String> holder1 = captureLinkModification(link);
+
+        final Holder<String> holder2 = captureLinkModification(link);
+
+        replay();
+
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
+
+        storage.postChange(pageName, componentId, fieldName, mo);
+
+        storage.updateLink(link);
+
+        mo.mutableValue = "modified state";
+
+        storage.updateLink(link);
+
+        verify();
+
+        System.out.printf("holder1=%s%nholder2=%s%n", holder1.get(), holder2.get());
+
+        assertNotEquals(holder1.get(), holder2.get(), "encoded client data should be different");
+
+        // Now check that it de-serializes to the correct data.
+
+        request = mockRequest(holder2.get());
+
+        replay();
+
+        storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
+
+        Collection<PersistentFieldChange> changes = storage.gatherFieldChanges(pageName);
+
+        assertEquals(changes.size(), 1);
+
+        PersistentFieldChange change = new ArrayList<PersistentFieldChange>(changes).get(0);
+
+        MutableObject mo2 = (MutableObject) change.getValue();
+
+        assertEquals(mo2.mutableValue, "modified state");
 
         verify();
     }
@@ -256,14 +329,13 @@ public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder, analyzer);
 
         try
         {
             storage.postChange("Foo", "bar.baz", "woops", 99);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "Serialized client state was corrupted. This may indicate that too much state is being stored, which can cause the encoded string to be truncated by the client web browser.");
             assertNotNull(ex.getCause());

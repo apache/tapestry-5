@@ -448,3 +448,10 @@ The automatic ValueEncoder from String to any Number type, or ti Boolean have
 changed slightly. An empty input string is encoded to a null rather than being passed through
 the type coercer. This reflects the desire that a submitted value (in a URL or a form) that is blank
 is the same as no value: null.
+
+## Client Persistent Fields
+
+Tapestry now determines if a client-persistent field is mutable and contains changes, using the same
+checks as for session-persistent objects (the OptimizedSessionPersistedObject interface and so forth).
+Previously, Tapestry would load a mutable object into a field, but a change to the internal state
+of that mutable field would not always be preserved in the serialized object data attached to links.
