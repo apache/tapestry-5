@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -50,6 +48,7 @@ import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -312,7 +311,11 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
                                 parentModel, isPage, libraryName);
 
-                        transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot, model), model);
+                        TransformationSupportImpl transformationSupport = new TransformationSupportImpl(plasticClass, isRoot, model);
+
+                        transformerChain.transform(plasticClass, transformationSupport, model);
+
+                        transformationSupport.commit();
 
                         if (!superClassImplementsPageLifecycle && plasticClass.isInterfaceImplemented(PageLifecycleListener.class))
                         {
@@ -381,11 +384,28 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         private final MutableComponentModel model;
 
+        private final List<MethodAdvice> eventHandlerAdvice = CollectionFactory.newList();
+
         public TransformationSupportImpl(PlasticClass plasticClass, boolean root, MutableComponentModel model)
         {
             this.plasticClass = plasticClass;
             this.root = root;
             this.model = model;
+        }
+
+        /**
+         * Commits any stored changes to the PlasticClass; this is used to defer adding advice to the dispatch method.
+         */
+        public void commit()
+        {
+            if (!eventHandlerAdvice.isEmpty())
+            {
+                PlasticMethod dispatchMethod = plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION);
+                for (MethodAdvice advice : eventHandlerAdvice)
+                {
+                    dispatchMethod.addAdvice(advice);
+                }
+            }
         }
 
         public Class toClass(String typeName)
@@ -416,7 +436,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
             MethodAdvice advice = new EventMethodAdvice(tracker, eventType, minContextValues, operationDescription, handler);
 
-            plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
+            // The advice is added at the very end, after the logic provided by the OnEventWorker
+
+            eventHandlerAdvice.add(advice);
         }
     }
 
