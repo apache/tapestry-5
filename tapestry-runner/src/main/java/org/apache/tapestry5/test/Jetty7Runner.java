@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.test;
 
+import org.apache.commons.cli.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -33,11 +34,13 @@ public class Jetty7Runner implements ServletContainerRunner
 
     private int sslPort;
 
-    public Jetty7Runner() {
+    public Jetty7Runner()
+    {
         // un-configured runner
     }
 
-    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception {
+    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
+    {
         configure(webappFolder, contextPath, port, sslPort).start();
     }
 
@@ -79,11 +82,14 @@ public class Jetty7Runner implements ServletContainerRunner
         return this;
     }
 
-    public void start() throws Exception {
+    public void start() throws Exception
+    {
         jettyServer.start();
     }
 
-    /** Immediately shuts down the server instance. */
+    /**
+     * Immediately shuts down the server instance.
+     */
     @Override
     public void stop()
     {
@@ -93,8 +99,7 @@ public class Jetty7Runner implements ServletContainerRunner
         {
             // Stop immediately and not gracefully.
             jettyServer.stop();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException("Error stopping Jetty instance: " + ex.toString(), ex);
         }
@@ -131,5 +136,97 @@ public class Jetty7Runner implements ServletContainerRunner
             return moduleLocalPath;
 
         return new File(TapestryRunnerConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
+    }
+
+    /**
+     * Main entrypoint used to run the Jetty7 instance from the command line.
+     *
+     * @since 5.4
+     */
+    public static void main(String[] args) throws Exception
+    {
+        String commandName = Jetty7Runner.class.getName();
+
+        Options options = new Options();
+
+        String webapp = "src/main/webapp";
+        String context = "/";
+        int httpPort = 8080;
+        int sslPort = 8443;
+
+        options.addOption(OptionBuilder.withLongOpt("directory")
+                .withDescription("Root context directory (defaults to 'src/main/webapp')")
+                .hasArg().withArgName("DIR")
+                .create('d'))
+                .addOption(OptionBuilder.withLongOpt("context")
+                        .withDescription("Context path for application (defaults to '/')")
+                        .hasArg().withArgName("CONTEXT")
+                        .create('c'))
+                .addOption(OptionBuilder.withLongOpt("port")
+                        .withDescription("HTTP port (defaults to 8080)")
+                        .hasArg().withArgName("PORT")
+                        .create('p'))
+                .addOption(OptionBuilder.withLongOpt("secure-port")
+                        .withDescription("HTTPS port (defaults to 8443)")
+                        .hasArg().withArgName("PORT")
+                        .create('s'))
+                .addOption("h", "help", false, "Display command usage");
+
+
+        CommandLine line = new BasicParser().parse(options, args);
+
+        boolean usage = line.hasOption('h');
+
+        if (!usage)
+        {
+            if (line.hasOption('d'))
+            {
+                webapp = line.getOptionValue('d');
+            }
+
+            File folder = new File(webapp);
+
+            if (!folder.exists())
+            {
+                System.err.printf("%s: Directory `%s' does not exist.%n", commandName, webapp);
+                System.exit(-1);
+            }
+
+            if (line.hasOption('p'))
+            {
+                try
+                {
+                    httpPort = Integer.parseInt(line.getOptionValue('p'));
+                } catch (NumberFormatException e)
+                {
+                    usage = true;
+                }
+            }
+
+            if (line.hasOption('s'))
+            {
+                try
+                {
+                    sslPort = Integer.parseInt(line.getOptionValue('s'));
+                } catch (NumberFormatException e)
+                {
+                    usage = true;
+                }
+            }
+
+            if (line.hasOption('c'))
+            {
+                context = line.getOptionValue('c');
+            }
+
+        }
+
+        if (usage)
+        {
+            new HelpFormatter().printHelp(commandName, options);
+            System.exit(-1);
+        }
+
+        new Jetty7Runner(webapp, context, httpPort, sslPort);
     }
 }

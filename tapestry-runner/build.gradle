@@ -12,4 +12,5 @@ dependencies {
     compile "org.apache.tomcat:coyote:${versions.tomcat}"
 
     compile "org.apache.tomcat:dbcp:${versions.tomcat}"
+    compile "commons-cli:commons-cli:1.2"
 }
