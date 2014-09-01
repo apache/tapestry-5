@@ -136,6 +136,8 @@ define ["underscore", "./utils", "./events", "jquery"],
   # Event handlers may return false to stop event propogation; this prevents an event from bubbling up, and
   # prevents any browser default behavior from triggering.  This is often easier than accepting the `EventWrapper`
   # object as the first parameter and invoking `stop()`.
+  #
+  # Returns a function of no parameters that removes any added handlers.
 
   onevent = (jqueryObject, eventNames, match, handler) ->
     throw new Error "No event handler was provided." unless handler?
@@ -156,7 +158,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     jqueryObject.on eventNames, match, wrapped
 
-    return
+    # Return a function to stop listening
+    -> jqueryObject.off eventNames, match, wrapped
 #elseif prototype
   # Interface between the dom's event model, and Prototype's.
   #
@@ -166,9 +169,11 @@ define ["underscore", "./utils", "./events", "jquery"],
   # * handler - event handler function to invoke; it will be passed an `EventWrapper` instance as the first parameter,
   #   and the memo as the second parameter. `this` will be the `ElementWrapper` for the matched element.
   #
-  # Event handlers may return false to stop event propogation; this prevents an event from bubbling up, and
+  # Event handlers may return false to stop event propagation; this prevents an event from bubbling up, and
   # prevents any browser default behavior from triggering.  This is often easier than accepting the `EventWrapper`
   # object as the first parameter and invoking `stop()`.
+  #
+  # Returns a function of no parameters that removes any added handlers.
 
   onevent = (elements, eventNames, match, handler) ->
       throw new Error "No event handler was provided." unless handler?
@@ -191,11 +196,16 @@ define ["underscore", "./utils", "./events", "jquery"],
 
         return
 
+      eventHandlers = []
+
       for element in elements
         for eventName in eventNames
-          Event.on element, eventName, match, wrapped
+          eventHandlers.push (Event.on element, eventName, match, wrapped)
 
-      return
+      # Return a function to remove the handler(s)
+      ->
+        for eventHandler in eventHandlers
+          eventHandler.stop()
 #endif
 
   # Wraps a DOM element, providing some common behaviors.
@@ -610,6 +620,8 @@ define ["underscore", "./utils", "./events", "jquery"],
     #   will invoke the handler.
     # * handler - function invoked; the function is passed an `EventWrapper` object, and the
     #   context (`this`) is the `ElementWrapper` for the matched element.
+    #
+    # Returns a function of no parameters that removes any added handlers.
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
       return this
@@ -878,7 +890,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     ajaxRequest: ajaxRequest
 
-    # Used to add an event handler to an element (possibly from elements below it in the hierarch).
+    # Used to add an event handler to an element (possibly from elements below it in the hierarchy).
     #
     # * selector - CSS selector used to select elements to attach handler to; alternately,
     #   a single DOM element, or an array of DOM elements. The document is considered an element
@@ -889,6 +901,8 @@ define ["underscore", "./utils", "./events", "jquery"],
     #   will invoke the handler.
     # * handler - function invoked; the function is passed an `EventWrapper` object, and the context (`this`)
     #   is the `ElementWrapper` for the matched element
+    #
+    # Returns a function of no parameters that removes any added handlers.
     on: (selector, events, match, handler) ->
       unless handler?
         handler = match
@@ -901,10 +915,10 @@ define ["underscore", "./utils", "./events", "jquery"],
       events = utils.split events
 #endif
       onevent elements, events, match, handler
-      return
 
     # onDocument() is used to add an event handler to the document object; this is used
     # for global (or default) handlers.
+    # Returns a function of no parameters that removes any added handlers.
     onDocument: (events, match, handler) ->
       exports.on document, events, match, handler
 
