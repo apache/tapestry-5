@@ -1,5 +1,3 @@
-// Copyright 2006, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -41,7 +39,7 @@ public interface PersistentFieldStrategy
 
     /**
      * Discards any saved changes for the name page. There is no expectation that data already gathered from the
-     * strategy and persumably dumped into component instance fields will be affected, but future field access (within
+     * strategy and presumably dumped into component instance fields will be affected, but future field access (within
      * this request or a later one) will show no data for the indicated page.
      *
      * @param pageName logical name of page whose field persistent data should be discarded
