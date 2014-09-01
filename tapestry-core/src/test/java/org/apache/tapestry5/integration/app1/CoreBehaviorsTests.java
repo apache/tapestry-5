@@ -606,7 +606,8 @@ public class CoreBehaviorsTests extends App1TestCase
     }
 
     @Test
-    public void client_persistence_complex_object() {
+    public void client_persistence_complex_object()
+    {
         openLinks("Client Persistence Demo", "nix session", "store complex");
 
         assertText("persisted-value", "ClientDataWrapper[data inside wrapper]");
@@ -1723,7 +1724,7 @@ public class CoreBehaviorsTests extends App1TestCase
         assertTextPresent("Page called with correct activation context",
                 "You should never see me if use an erroneous activation context");
     }
-    
+
     /**
      * TAP5-2311
      */
@@ -1733,63 +1734,66 @@ public class CoreBehaviorsTests extends App1TestCase
         openLinks("Reload on nested page");
 
         assertTextPresent("This page throws an exception");
-        
+
         clickAndWait("css=a:contains('Go to page'):contains('with reload')");
-        
+
         assertTextPresent("This page throws an exception");
     }
-    
+
     @Test
     public void bound_generic_types()
     {
-    	openLinks("Generic bound type demo");
-    	
-    	assertTextPresent("description=mapOfStrings,type=java.util.Map,genericType=java.util.Map<java.lang.String, java.lang.String>");
-    	assertTextPresent("description=mapOfStrings.get('foo'),type=java.lang.String,genericType=class java.lang.String");
-    	assertTextPresent("description=setOfLongs,type=java.util.Set,genericType=java.util.Set<java.lang.Long>");
-    	assertTextPresent("description=listOfListOfDates,type=java.util.List,genericType=java.util.List<java.util.List<java.util.Date>>");
-    	assertTextPresent("description=listOfListOfDates.get(0),type=java.util.List,genericType=interface java.util.List");
-    	assertTextPresent("description=listOfListOfDates.get(0).get(0),type=java.util.Date,genericType=class java.util.Date");
-    	assertTextPresent("description=[1,2,3],type=java.util.List,genericType=interface java.util.List");
-    	assertTextPresent("description={'foo':'bar'},type=java.util.Map,genericType=interface java.util.Map");
-    	assertTextPresent("description=baz,type=java.lang.String,genericType=class java.lang.String");
+        openLinks("Generic bound type demo");
+
+        assertTextPresent("description=mapOfStrings,type=java.util.Map,genericType=java.util.Map<java.lang.String, java.lang.String>");
+        assertTextPresent("description=mapOfStrings.get('foo'),type=java.lang.String,genericType=class java.lang.String");
+        assertTextPresent("description=setOfLongs,type=java.util.Set,genericType=java.util.Set<java.lang.Long>");
+        assertTextPresent("description=listOfListOfDates,type=java.util.List,genericType=java.util.List<java.util.List<java.util.Date>>");
+        assertTextPresent("description=listOfListOfDates.get(0),type=java.util.List,genericType=interface java.util.List");
+        assertTextPresent("description=listOfListOfDates.get(0).get(0),type=java.util.Date,genericType=class java.util.Date");
+        assertTextPresent("description=[1,2,3],type=java.util.List,genericType=interface java.util.List");
+        assertTextPresent("description={'foo':'bar'},type=java.util.Map,genericType=interface java.util.Map");
+        assertTextPresent("description=baz,type=java.lang.String,genericType=class java.lang.String");
     }
-    
-    static class PacScenario {
-    	String link;
-    	String expextedPacValues;
-    	String expectedUri;
-    	
-		public PacScenario(String link, String expextedPacValues,
-				String expectedUri) {
-			super();
-			this.link = link;
-			this.expextedPacValues = expextedPacValues;
-			this.expectedUri = expectedUri;
-		}
+
+    static class PacScenario
+    {
+        String link;
+        String expextedPacValues;
+        String expectedUri;
+
+        public PacScenario(String link, String expextedPacValues,
+                           String expectedUri)
+        {
+            super();
+            this.link = link;
+            this.expextedPacValues = expextedPacValues;
+            this.expectedUri = expectedUri;
+        }
     }
-    
+
     @Test
     public void multiple_pac_fields()
     {
-    	openLinks("PageActivationContext Multiple Demo");
-    	
-    	assertText("//span[@id='pacValues']", "zero=NULL, one=NULL, two=NULL");
-    	
-    	PacScenario[] scenarios = {
-			new PacScenario("link=Change PAC (null, null, null)", "zero=NULL, one=NULL, two=NULL", "/pacmultipleannotationdemo"),
-			new PacScenario("link=Change PAC (zero, null, null)", "zero=zero, one=NULL, two=NULL", "/pacmultipleannotationdemo/zero"),
-			new PacScenario("link=Change PAC (zero, 1, null)", "zero=zero, one=1, two=NULL", "/pacmultipleannotationdemo/zero/1"),
-			new PacScenario("link=Change PAC (zero, 1, 2.2)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
-			new PacScenario("link=Change PAC (zero, 1, 2.2, 3)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
-			new PacScenario("link=Change PAC (null, null, 2.2)", "zero=NULL, one=NULL, two=2.2", "/pacmultipleannotationdemo/$N/$N/2.2"),
-			new PacScenario("link=Change PAC (zero, null, 2.2)", "zero=zero, one=NULL, two=2.2", "/pacmultipleannotationdemo/zero/$N/2.2"),
-    	};
-    	
-    	for (PacScenario scenario : scenarios) {
-        	clickAndWait(scenario.link);
-        	assertText("//span[@id='pacValues']", scenario.expextedPacValues);
-        	assertTrue(selenium.getLocation().endsWith(scenario.expectedUri));
-    	}
+        openLinks("PageActivationContext Multiple Demo");
+
+        assertText("//span[@id='pacValues']", "zero=NULL, one=NULL, two=NULL");
+
+        PacScenario[] scenarios = {
+                new PacScenario("link=Change PAC (null, null, null)", "zero=NULL, one=NULL, two=NULL", "/pacmultipleannotationdemo"),
+                new PacScenario("link=Change PAC (zero, null, null)", "zero=zero, one=NULL, two=NULL", "/pacmultipleannotationdemo/zero"),
+                new PacScenario("link=Change PAC (zero, 1, null)", "zero=zero, one=1, two=NULL", "/pacmultipleannotationdemo/zero/1"),
+                new PacScenario("link=Change PAC (zero, 1, 2.2)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
+                new PacScenario("link=Change PAC (zero, 1, 2.2, 3)", "zero=zero, one=1, two=2.2", "/pacmultipleannotationdemo/zero/1/2.2"),
+                new PacScenario("link=Change PAC (null, null, 2.2)", "zero=NULL, one=NULL, two=2.2", "/pacmultipleannotationdemo/$N/$N/2.2"),
+                new PacScenario("link=Change PAC (zero, null, 2.2)", "zero=zero, one=NULL, two=2.2", "/pacmultipleannotationdemo/zero/$N/2.2"),
+        };
+
+        for (PacScenario scenario : scenarios)
+        {
+            clickAndWait(scenario.link);
+            assertText("//span[@id='pacValues']", scenario.expextedPacValues);
+            assertTrue(selenium.getLocation().endsWith(scenario.expectedUri));
+        }
     }
 }
