@@ -420,6 +420,7 @@ public class JavaScriptModule
     public static void renderLocaleAttributeIntoPages(OrderedConfiguration<MarkupRendererFilter> configuration)
     {
         configuration.addInstance("ConfigureHTMLElement", ConfigureHTMLElementFilter.class);
+        configuration.addInstance("AddBrowserCompatibilityStyles", AddBrowserCompatibilityStyles.class);
     }
 
 }

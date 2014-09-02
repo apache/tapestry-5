@@ -58,10 +58,7 @@ div.datefield-popup.well {
     left: 0;
     z-index: 1040;
     background-color: #000;
-    /* Some translucency, for browsers w/o animation support. */
-    opacity: .25;
-    /* IE: */
-    filter:alpha(opacity=25);
+    opacity: 0;
     animation-name: pageloading-mask-fade-in;
     animation-duration: 250ms;
     animation-delay: 250ms;
