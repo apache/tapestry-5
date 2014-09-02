@@ -24,6 +24,22 @@ import org.apache.tapestry5.services.MarkupRendererFilter;
  */
 public class AddBrowserCompatibilityStyles implements MarkupRendererFilter
 {
+    private final String ie9, ie8;
+
+    public AddBrowserCompatibilityStyles()
+    {
+        this(.25);
+    }
+
+    public AddBrowserCompatibilityStyles(double opacity)
+    {
+        // IE9 does not support CSS animations, so we make the loading mask translucent
+        ie9 = String.format("<!--[if IE 9]><style type=\"text/css\">.pageloading-mask{opacity:%.2f;}</style><![endif]-->", opacity);
+        // Older IE versions do not even support opacity, we'll have to resort to a filter
+        ie8 = String.format("<!--[if IE lt 9]><style type=\"text/css\">.pageloading-mask{filter:alpha(opacity=%d);}</style><![endif]-->",
+                (int) (100. * opacity));
+    }
+
     public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
     {
         renderer.renderMarkup(writer);
@@ -33,11 +49,8 @@ public class AddBrowserCompatibilityStyles implements MarkupRendererFilter
         // Only add the respective style documents if we've rendered an HTML document
         if (head != null)
         {
-            // IE9 does not support CSS animations, so we make the loading mask translucent
-            head.raw("<!--[if IE 9]><style type=\"text/css\">.pageloading-mask{opacity:.25;}</style><![endif]-->");
-            // Older IE versions do not even support opacity, we'll have to resort to a filter
-            head.raw("<!--[if IE lt 9]><style type=\"text/css\">.pageloading-mask{filter:alpha(opacity=25);}</style><![endif]-->");
-
+            head.raw(ie9);
+            head.raw(ie8);
         }
     }
 }

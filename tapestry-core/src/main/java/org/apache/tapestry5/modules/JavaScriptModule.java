@@ -415,12 +415,14 @@ public class JavaScriptModule
 
     /**
      * Contributes 'ConfigureHTMLElement', which writes the attributes into the HTML tag to describe locale, etc.
+     * Contributes 'AddBrowserCompatibilityStyles', which writes {@code <style/>} elements into the {@code <head/>}
+     * element that modifies the page loading mask to work on IE 8 and IE 9.
      */
     @Contribute(MarkupRenderer.class)
-    public static void renderLocaleAttributeIntoPages(OrderedConfiguration<MarkupRendererFilter> configuration)
+    public static void prepareHTMLPageOnRender(OrderedConfiguration<MarkupRendererFilter> configuration)
     {
         configuration.addInstance("ConfigureHTMLElement", ConfigureHTMLElementFilter.class);
-        configuration.addInstance("AddBrowserCompatibilityStyles", AddBrowserCompatibilityStyles.class);
+        configuration.add("AddBrowserCompatibilityStyles", new AddBrowserCompatibilityStyles());
     }
 
 }
