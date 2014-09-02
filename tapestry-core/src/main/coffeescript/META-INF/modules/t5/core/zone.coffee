@@ -1,5 +1,3 @@
-# Copyright 2012, 2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -107,7 +105,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
     dom.onDocument events.zone.refresh, (event) ->
 
-      # This even may be triggered on an element inside the zone, rather than on the zone itself. Scan upwards
+      # This event may be triggered on an element inside the zone, rather than on the zone itself. Scan upwards
       # to find the actual zone.
       zone = @closest "[data-container-type=zone]"
 
@@ -116,8 +114,10 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
       parameters = attr and JSON.parse attr
 
+      simpleIdParams = if zone.attr "data-simple-ids" then {"t:suppress-namespaced-ids": true}
+
       ajax event.memo.url,
-        data: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
+        data: _.extend { "t:zoneid": zone.element.id }, simpleIdParams, parameters, event.memo.parameters
         success: (response) ->
           zone.trigger events.zone.update, content: response.json?.content
 

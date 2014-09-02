@@ -198,4 +198,13 @@ public final class InternalConstants
      * @since 5.4
      */
     public static final String REFERENCED_COMPONENT_NOT_FOUND = "tapestry.referenced-component-not-found";
+
+    /**
+     * Name of request parameter that suppresses the logic that injects a random-ish namespace into allocated ids when rending partial page
+     * responses. This, of course, requires a lot of testing to ensure that there are no resulting name classes,
+     * and should not be used inside Zones containing an {@link org.apache.tapestry5.corelib.components.AjaxFormLoop}.
+     *
+     * @since 5.4
+     */
+    public static final String SUPPRESS_NAMESPACED_IDS = "t:suppress-namespaced-ids";
 }

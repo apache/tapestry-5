@@ -5,7 +5,7 @@
 <h2>Last update: ${currentTime}</h2>
 
 
-<t:zone t:id="output" style="float:right; width: 800px;">
+<t:zone t:id="output" style="float:right; width: 800px;" simpleIds="true">
     <t:if test="name" else="No name has been selected.">
         Selected: ${name}
     </t:if>

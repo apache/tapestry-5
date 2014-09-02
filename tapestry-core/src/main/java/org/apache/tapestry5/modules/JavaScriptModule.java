@@ -289,11 +289,20 @@ public class JavaScriptModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                String uid = Long.toHexString(System.nanoTime());
+                IdAllocator idAllocator;
 
-                String namespace = "_" + uid;
+                if (request.getParameter(InternalConstants.SUPPRESS_NAMESPACED_IDS) == null)
+                {
+                    String uid = Long.toHexString(System.nanoTime());
 
-                IdAllocator idAllocator = new IdAllocator(namespace);
+                    String namespace = "_" + uid;
+
+                    idAllocator = new IdAllocator(namespace);
+                } else
+                {
+                    // When suppressed, work just like normal rendering.
+                    idAllocator = new IdAllocator();
+                }
 
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 

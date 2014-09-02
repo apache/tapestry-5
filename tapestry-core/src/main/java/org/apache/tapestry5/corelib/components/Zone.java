@@ -1,5 +1,3 @@
-// Copyright 2007-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -116,6 +114,17 @@ public class Zone implements ClientBodyElement
     @Parameter
     private boolean visible;
 
+    /**
+     * if set to true, then Ajax updates related to this Zone will, when rending, use simple IDs (not namespaced ids).
+     * This is useful when the Zone contains a simple Form, as it (hopefully) ensures that the same ids used when
+     * initially rendering, and when processing the submission, are also used when re-rendering the Form (to present
+     * errors to the user).  The default is false, maintaining the same behavior as in Tapestry 5.3 and earlier.
+     *
+     * @since 5.4
+     */
+    @Parameter
+    private boolean simpleIds;
+
     @Inject
     private ComponentResources resources;
 
@@ -166,6 +175,11 @@ public class Zone implements ClientBodyElement
         Element e = writer.element(elementName,
                 "id", clientId,
                 "data-container-type", "zone");
+
+        if (simpleIds)
+        {
+            e.attribute("data-simple-ids", "true");
+        }
 
         resources.renderInformalParameters(writer);
 
@@ -247,10 +261,11 @@ public class Zone implements ClientBodyElement
     {
         if (resources.isBound("id"))
             return idParameter;
-        
+
         // TAP4-2342. I know this won't work with a Zone with no given clientId and that was already 
         // via AJAX inside an outer Zone, but it's still better than nothing.
-        if (clientId == null) {
+        if (clientId == null)
+        {
             clientId = resources.getId();
         }
 
