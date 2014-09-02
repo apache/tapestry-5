@@ -1,7 +1,9 @@
-define ["t5/core/dom", "t5/core/events", "underscore"],
-  (dom, events, _) ->
+define ["t5/core/dom", "t5/core/events", "underscore", "t5/core/console"],
+  (dom, events, _, console) ->
 
-    dom.onDocument events.palette.willChange, (event, memo) ->
+    dom.body.on events.palette.willChange, (event, memo) ->
+
+      console.info "palette-demo, palette willChange"
 
       values = _.map memo.selectedOptions, (o) -> o.value
 
