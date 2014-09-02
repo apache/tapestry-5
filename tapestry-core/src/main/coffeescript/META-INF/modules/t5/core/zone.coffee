@@ -118,15 +118,16 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
       ajax event.memo.url,
         data: _.extend { "t:zoneid": zone.element.id }, parameters, event.memo.parameters
-        success: (response) =>
+        success: (response) ->
           zone.trigger events.zone.update, content: response.json?.content
 
     dom.onDocument "click", "a[data-async-trigger]", ->
+      link = @closest 'a[data-async-trigger]'
 
-      @addClass "ajax-update"
+      link.addClass "ajax-update"
 
-      ajax (@attr "href"),
-        complete: => @removeClass "ajax-update"
+      ajax (link.attr "href"),
+        complete: -> link.removeClass "ajax-update"
 
       return false # cancel click event
 
