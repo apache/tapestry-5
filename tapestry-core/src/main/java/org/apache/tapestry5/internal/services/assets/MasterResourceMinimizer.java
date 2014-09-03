@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -39,7 +37,7 @@ public class MasterResourceMinimizer implements ResourceMinimizer
     /** Does nothing; an override of this service can be installed to provide minimization. */
     public StreamableResource minimize(StreamableResource resource) throws IOException
     {
-        ResourceMinimizer minimizer = configuration.get(resource.getContentType());
+        ResourceMinimizer minimizer = configuration.get(resource.getContentType().getMimeType());
 
         return minimizer == null ? resource : minimizer.minimize(resource);
     }
