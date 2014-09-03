@@ -89,7 +89,7 @@ public class CSSURLRewriter extends DelegatingSRS
     {
         StreamableResource base = delegate.getStreamableResource(baseResource, processing, dependencies);
 
-        if (base.getContentType().equals("text/css"))
+        if (base.getContentType().equals(CSS_CONTENT_TYPE))
         {
             return filter(base, baseResource);
         }
