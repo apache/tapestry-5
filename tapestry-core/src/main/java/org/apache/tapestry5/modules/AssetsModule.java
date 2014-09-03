@@ -123,7 +123,7 @@ public class AssetsModule
 
     // Goes after cache, to ensure that what we are caching is the minified version.
     @Decorate(id = "Minification", serviceInterface = StreamableResourceSource.class)
-    @Order("after:Cache")
+    @Order("after:Cache,TextUTF8")
     public StreamableResourceSource enableMinification(StreamableResourceSource delegate, ResourceMinimizer minimizer,
                                                        @Symbol(SymbolConstants.MINIFICATION_ENABLED)
                                                        boolean enabled)
@@ -166,7 +166,7 @@ public class AssetsModule
      * @since 5.4
      */
     @Decorate(id = "TextUTF8", serviceInterface = StreamableResourceSource.class)
-    @Order("before:CSSURLRewrite")
+    @Order("after:Cache")
     public StreamableResourceSource setupTextAssetsAsUTF8(StreamableResourceSource delegate)
     {
         return new UTF8ForTextAssets(delegate);
