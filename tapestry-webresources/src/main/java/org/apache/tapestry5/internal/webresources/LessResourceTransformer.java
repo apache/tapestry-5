@@ -1,5 +1,3 @@
-// Copyright 2013-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,6 +16,7 @@ import com.github.sommeri.less4j.Less4jException;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.LessSource;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
@@ -33,12 +32,14 @@ import java.io.UnsupportedEncodingException;
  */
 public class LessResourceTransformer implements ResourceTransformer
 {
+    private static final ContentType CSS = new ContentType("text/css");
+
     private final LessCompiler compiler = new DefaultLessCompiler();
 
     @Override
-    public String getTransformedContentType()
+    public ContentType getTransformedContentType()
     {
-        return "text/css";
+        return CSS;
     }
 
 

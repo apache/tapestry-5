@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.StreamableResource;
@@ -33,17 +34,18 @@ public class UTF8ForTextAssets extends DelegatingSRS
         super(delegate);
     }
 
-
     @Override
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies) throws IOException
     {
         StreamableResource resource = delegate.getStreamableResource(baseResource, processing, dependencies);
 
-        if (resource.getContentType().startsWith("text/")
-                && !resource.getContentType().contains(";")
+        ContentType contentType = resource.getContentType();
+
+        if (contentType.getBaseType().equals("text")
+                && ! contentType.hasParameters()
                 && processing != StreamableResourceProcessing.FOR_AGGREGATION)
         {
-            return resource.withContentType(resource.getContentType() + ";charset=utf-8");
+            return resource.withContentType(contentType.withCharset("utf-8"));
         }
 
         return resource;

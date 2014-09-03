@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,54 +12,83 @@
 
 package org.apache.tapestry5;
 
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents an HTTP content type. Allows to set various elements like the MIME type, the character set, and other
  * parameters. This is similar to a number of other implementations of the same concept in JAF, etc. We have created
  * this simple implementation to avoid including the whole libraries.
+ * <p/>
+ * As of Tapestry 5.4, this is now an immutable data type.
  */
 public final class ContentType
 {
-    private String baseType = "";
+    private final String baseType;
 
-    private String subType = "";
+    private final String subType;
 
-    private final Map<String, String> parameters = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, String> parameters;
 
-    /**
-     * Creates a new empty content type.
-     */
-    public ContentType()
-    {
-    }
+    private static final Pattern PATTERN = Pattern.compile("^(.+)/([^;]+)(;(.+=[^;]+))*$");
 
     /**
      * Creates a new content type from the argument. The format of the argument has to be basetype/subtype(;key=value)*
      *
-     * @param contentType the content type that needs to be represented
+     * @param contentType
+     *         the content type that needs to be represented
      */
     public ContentType(String contentType)
     {
-        parse(contentType);
+        Matcher matcher = PATTERN.matcher(contentType);
+
+        if (!matcher.matches())
+        {
+            throw new IllegalArgumentException(String.format("Not a parseable content type '%s'.", contentType));
+        }
+
+        this.baseType = matcher.group(1);
+        this.subType = matcher.group(2);
+        this.parameters = parseKeyValues(matcher.group(4));
     }
 
-    /**
-     * Creates a new content type with the given MIME type and charset
-     */
-    public ContentType(String contentType, String charset)
+    private ContentType(String baseType, String subType, Map<String, String> parameters)
     {
-        this(contentType);
-
-        setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
+        this.baseType = baseType;
+        this.subType = subType;
+        this.parameters = parameters;
     }
 
+
+    private static Map<String, String> parseKeyValues(String keyValues)
+    {
+        if (keyValues == null)
+        {
+            return Collections.emptyMap();
+        }
+
+        Map<String, String> parameters = CollectionFactory.newCaseInsensitiveMap();
+
+        StringTokenizer tk = new StringTokenizer(keyValues, ";");
+
+        while (tk.hasMoreTokens())
+        {
+            String token = tk.nextToken();
+            int sep = token.indexOf('=');
+
+            parameters.put(token.substring(0, sep), token.substring(sep + 1));
+        }
+
+        return parameters;
+    }
 
     /**
      * Returns true only if the other object is another instance of ContentType, and has the same baseType, subType and
@@ -88,15 +115,6 @@ public final class ContentType
     }
 
     /**
-     * @param baseType
-     */
-    public void setBaseType(String baseType)
-    {
-        assert baseType != null;
-        this.baseType = baseType;
-    }
-
-    /**
      * @return the sub-type of the content type
      */
     public String getSubType()
@@ -105,16 +123,7 @@ public final class ContentType
     }
 
     /**
-     * @param subType
-     */
-    public void setSubType(String subType)
-    {
-        assert subType != null;
-        this.subType = subType;
-    }
-
-    /**
-     * @return the MIME type of the content type
+     * @return the MIME type of the content type (the base type and the subtype, seperated with a '/').
      */
     public String getMimeType()
     {
@@ -130,7 +139,7 @@ public final class ContentType
     }
 
     /**
-     * @return the character set (the  "charset" parameter) or null.
+     * @return the character set (the "charset" parameter) or null.
      */
     public String getCharset()
     {
@@ -138,7 +147,8 @@ public final class ContentType
     }
 
     /**
-     * @param key the name of the content type parameter
+     * @param key
+     *         the name of the content type parameter
      * @return the value of the content type parameter
      */
     public String getParameter(String key)
@@ -147,52 +157,7 @@ public final class ContentType
         return parameters.get(key);
     }
 
-    /**
-     * @param key   the name of the content type parameter
-     * @param value the value of the content type parameter
-     */
-    public void setParameter(String key, String value)
-    {
-        assert key != null;
-        assert value != null;
-        parameters.put(key, value);
-    }
-
-    /**
-     * Parses the argument and configures the content type accordingly. The format of the argument has to be
-     * type/subtype(;key=value)*
-     *
-     * @param contentType the content type that needs to be represented
-     */
-    public void parse(String contentType)
-    {
-        baseType = "";
-        subType = "";
-        parameters.clear();
-
-        StringTokenizer tokens = new StringTokenizer(contentType, ";");
-        if (!tokens.hasMoreTokens()) return;
-
-        String mimeType = tokens.nextToken();
-        StringTokenizer mimeTokens = new StringTokenizer(mimeType, "/");
-        setBaseType(mimeTokens.hasMoreTokens() ? mimeTokens.nextToken() : "");
-        setSubType(mimeTokens.hasMoreTokens() ? mimeTokens.nextToken() : "");
-
-        while (tokens.hasMoreTokens())
-        {
-            String parameter = tokens.nextToken();
-
-            StringTokenizer parameterTokens = new StringTokenizer(parameter, "=");
-            String key = parameterTokens.hasMoreTokens() ? parameterTokens.nextToken() : "";
-            String value = parameterTokens.hasMoreTokens() ? parameterTokens.nextToken() : "";
-            setParameter(key, value);
-        }
-    }
-
-    /**
-     * @return the string representation of this content type
-     */
-    public String unparse()
+    private String unparse()
     {
         StringBuilder buffer = new StringBuilder(getMimeType());
 
@@ -208,11 +173,43 @@ public final class ContentType
     }
 
     /**
-     * @return the string representation of this content type. Same as unparse().
+     * Returns a new content type with the indicated parameter.
+     *
+     * @since 5.4
+     */
+    public ContentType withParameter(String key, String value)
+    {
+        assert InternalUtils.isNonBlank(key);
+        assert InternalUtils.isNonBlank(value);
+
+        Map<String, String> newParameters = CollectionFactory.newCaseInsensitiveMap();
+
+        newParameters.putAll(parameters);
+        newParameters.put(key, value);
+
+        return new ContentType(baseType, subType, newParameters);
+    }
+
+    public ContentType withCharset(String charset)
+    {
+        return withParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
+    }
+
+    /**
+     * @return the string representation of this content type.
      */
     @Override
     public String toString()
     {
         return unparse();
+    }
+
+    /**
+     * @return true if the content type includes parameters (such as 'charset').
+     * @since 5.4
+     */
+    public boolean hasParameters()
+    {
+        return !parameters.isEmpty();
     }
 }

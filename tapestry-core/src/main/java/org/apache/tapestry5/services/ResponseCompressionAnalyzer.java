@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 /**
@@ -41,5 +40,5 @@ public interface ResponseCompressionAnalyzer
      * @return true if the content can be compressed for the current request
      * @since 5.4
      */
-    boolean isGZipEnabled(String contentType);
+    boolean isGZipEnabled(ContentType contentType);
 }

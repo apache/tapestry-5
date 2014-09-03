@@ -12,7 +12,9 @@
 
 package org.apache.tapestry5.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +42,10 @@ public interface StreamableResource
     CompressionStatus getCompression();
 
     /**
-     * Returns the MIME content type, for example, "image/jpeg".
+     * Returns the resource's content type.
      */
-    String getContentType();
+    @IncompatibleChange(release = "5.4", details = "Changed from type String to ContentType")
+    ContentType getContentType();
 
     /**
      * The size, in bytes, of the underlying bytestream.
@@ -102,5 +105,5 @@ public interface StreamableResource
      * @param newContentType
      * @since 5.4
      */
-    StreamableResource withContentType(String newContentType);
+    StreamableResource withContentType(ContentType newContentType);
 }

@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,12 +13,13 @@
 package org.apache.tapestry5.root;
 
 import org.apache.tapestry5.ContentType;
-import org.testng.Assert;
+import org.apache.tapestry5.ioc.test.TestBase;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-public class ContentTypeTest extends Assert
+public class ContentTypeTest extends TestBase
 {
     @Test
     public void simple_equals()
@@ -73,8 +72,39 @@ public class ContentTypeTest extends Assert
 
         assertEquals(contentType.getCharset(), "utf-8");
 
+        assertTrue(contentType.hasParameters());
+
         String nonexistant = contentType.getParameter("nonexistant");
+
         assertTrue(nonexistant == null);
+    }
+
+    @DataProvider
+    public Object[][] invalid_content_type_strings_data()
+    {
+        return new Object[][]{
+                {""},
+                {"foo/"},
+                {"foo/bar;"},
+                {"foo/bar;baz"},
+                {"foo/bar;baz="},
+                {"foo/bar;baz=biff;"}
+        };
+    }
+
+    @Test(dataProvider = "invalid_content_type_strings_data")
+    public void invalid_content_type_strings(String input)
+    {
+        try
+        {
+            new ContentType(input);
+
+            unreachable();
+        } catch (IllegalArgumentException ex)
+        {
+
+        }
+
     }
 
     @Test
@@ -89,40 +119,39 @@ public class ContentTypeTest extends Assert
         assertEquals(contentType.getMimeType(), "text/html");
 
         assertTrue(contentType.getParameterNames().isEmpty());
+
+        assertFalse(contentType.hasParameters());
     }
 
     @Test
     public void unparse_with_parameters() throws Exception
     {
-        ContentType contentType = new ContentType();
+        ContentType contentType = new ContentType("text/html").withCharset("utf-8");
 
-        contentType.setBaseType("text");
-        contentType.setSubType("html");
-        contentType.setParameter("charset", "utf-8");
-
-        assertEquals(contentType.unparse(), "text/html;charset=utf-8");
+        assertEquals(contentType.toString(), "text/html;charset=utf-8");
     }
 
     @Test
     public void unparse_no_parameters() throws Exception
     {
-        ContentType contentType = new ContentType();
+        ContentType contentType = new ContentType("text/html");
 
-        contentType.setBaseType("text");
-        contentType.setSubType("html");
-
-        assertEquals(contentType.unparse(), "text/html");
+        assertEquals(contentType.toString(), "text/html");
     }
 
     @Test
-    public void to_string_is_unparse()
+    public void add_charset() throws Exception
     {
-        ContentType contentType = new ContentType();
+        ContentType base = new ContentType("text/html");
 
-        contentType.setBaseType("text");
-        contentType.setSubType("html");
-        contentType.setParameter("charset", "utf-8");
+        ContentType charset = base.withCharset("utf-8");
 
-        assertEquals(contentType.toString(), contentType.unparse());
+        assertTrue(charset.hasParameters());
+
+        assertNotSame(base, charset);
+        assertNotEquals(base, charset);
+
+        assertEquals(base.toString(), "text/html");
+        assertEquals(charset.toString(), "text/html;charset=utf-8");
     }
 }

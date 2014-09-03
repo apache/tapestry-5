@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -66,9 +65,9 @@ public class PageTesterModule
         // on.
         configuration.add(ResponseCompressionAnalyzer.class, new ResponseCompressionAnalyzer()
         {
-            public boolean isGZipEnabled(String contentType)
+            public boolean isGZipEnabled(ContentType contentType)
             {
-                return locator.getObject(CompressionAnalyzer.class, null).isCompressable(contentType);
+                return locator.getObject(CompressionAnalyzer.class, null).isCompressable(contentType.getMimeType());
             }
 
             public boolean isGZipSupported()

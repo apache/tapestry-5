@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,14 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnalyzer
 {
@@ -77,8 +76,8 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
         return false;
     }
 
-    public boolean isGZipEnabled(String contentType)
+    public boolean isGZipEnabled(ContentType contentType)
     {
-        return isGZipSupported() && compressionAnalyzer.isCompressable(contentType);
+        return isGZipSupported() && compressionAnalyzer.isCompressable(contentType.getMimeType());
     }
 }

@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,7 @@
 
 package org.apache.tapestry5.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.ioc.Resource;
 
 import java.io.IOException;
@@ -35,7 +34,7 @@ public interface ResourceTransformer
      *
      * @since 5.4
      */
-    String getTransformedContentType();
+    ContentType getTransformedContentType();
 
     /**
      * Read the source input stream and provide a new input stream of the transformed content.

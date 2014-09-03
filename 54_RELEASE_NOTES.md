@@ -455,3 +455,9 @@ Tapestry now determines if a client-persistent field is mutable and contains cha
 checks as for session-persistent objects (the OptimizedSessionPersistedObject interface and so forth).
 Previously, Tapestry would load a mutable object into a field, but a change to the internal state
 of that mutable field would not always be preserved in the serialized object data attached to links.
+
+## ContentType
+
+The ContentType objects, used to represent a content types such as "text/html" in a structured manner,
+has been revised significantly in 5.4; it is now an immutable data type. In addition, a few scattered
+interfaces that used a String content type have been changed to use the ContentType class instead.

@@ -1,5 +1,3 @@
-// Copyright 2013-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +13,9 @@
 package org.apache.tapestry5.internal.webresources;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -36,9 +36,9 @@ public class CoffeeScriptCompiler implements ResourceTransformer
     private final RhinoExecutorPool executorPool;
 
     @Override
-    public String getTransformedContentType()
+    public ContentType getTransformedContentType()
     {
-        return "text/javascript";
+        return InternalConstants.JAVASCRIPT_CONTENT_TYPE;
     }
 
     public CoffeeScriptCompiler(@Path("classpath:org/apache/tapestry5/webresources/internal/coffee-script.js")
@@ -64,7 +64,7 @@ public class CoffeeScriptCompiler implements ResourceTransformer
     }
 
 
-    private String getString(NativeObject object, String key)
+    private static String getString(NativeObject object, String key)
     {
         return object.get(key).toString();
     }

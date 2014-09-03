@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
@@ -38,12 +39,12 @@ public interface StreamableResourceSource
      * based for a file with that extension.
      *
      * @param contentType
-     *         to search for
-     * @return set of file extension, possibly empty, in no particular order. These are the bare extensions, i.e.
-     *         "js", "coffee".
+     *         to search for (just a MIME type, such as "text/javascript")
+     * @return set of file extension, possibly empty, in no particular order. These are the bare extensions, e.g.,
+     * "js", "coffee".
      * @since 5.4
      */
-    Set<String> fileExtensionsForContentType(String contentType);
+    Set<String> fileExtensionsForContentType(ContentType contentType);
 
     /**
      * Converts a Resource (which must be non-null and exist) into a streamable resource, along with

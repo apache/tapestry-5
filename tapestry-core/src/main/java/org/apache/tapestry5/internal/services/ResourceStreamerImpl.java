@@ -224,7 +224,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
             responseCustomizer.customizeResponse(streamable, response);
         }
 
-        OutputStream os = response.getOutputStream(streamable.getContentType());
+        OutputStream os = response.getOutputStream(streamable.getContentType().toString());
 
         streamable.streamTo(os);
 

@@ -13,6 +13,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -39,8 +40,8 @@ import java.util.regex.Pattern;
  * One potential problem with URL rewriting is the way that URLs for referenced resources are generated; we are
  * somewhat banking on the fact that referenced resources are non-compressable images.
  *
- * @since 5.4
  * @see SymbolConstants#STRICT_CSS_URL_REWRITING
+ * @since 5.4
  */
 public class CSSURLRewriter extends DelegatingSRS
 {
@@ -66,13 +67,15 @@ public class CSSURLRewriter extends DelegatingSRS
     private final AssetSource assetSource;
 
     private final AssetChecksumGenerator checksumGenerator;
-    
+
     private final Logger logger = LoggerFactory.getLogger(CSSURLRewriter.class);
-    
+
     private final boolean strictCssUrlRewriting;
 
-    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource, 
-            AssetChecksumGenerator checksumGenerator, boolean strictCssUrlRewriting)
+    private final ContentType CSS_CONTENT_TYPE = new ContentType("text/css");
+
+    public CSSURLRewriter(StreamableResourceSource delegate, OperationTracker tracker, AssetSource assetSource,
+                          AssetChecksumGenerator checksumGenerator, boolean strictCssUrlRewriting)
     {
         super(delegate);
         this.tracker = tracker;
@@ -113,7 +116,8 @@ public class CSSURLRewriter extends DelegatingSRS
 
                         BytestreamCache cache = new BytestreamCache(filtered.getBytes("UTF-8"));
 
-                        return new StreamableResourceImpl(base.getDescription(), "text/css",
+                        return new StreamableResourceImpl(base.getDescription(),
+                                CSS_CONTENT_TYPE,
                                 CompressionStatus.COMPRESSABLE,
                                 base.getLastModified(),
                                 cache, checksumGenerator, base.getResponseCustomizer());
@@ -162,7 +166,7 @@ public class CSSURLRewriter extends DelegatingSRS
 
             Asset asset = assetSource.getAsset(baseResource, url, null);
 
-            if (asset != null) 
+            if (asset != null)
             {
                 String assetURL = asset.toClientURL();
 
@@ -175,21 +179,19 @@ public class CSSURLRewriter extends DelegatingSRS
                 appendReplacement(matcher, output, assetURL);
 
                 didReplace = true;
-                
-            }
-            else 
+
+            } else
             {
                 final String message = String.format("URL %s, referenced in file %s, doesn't exist.", url, baseResource.toURL(), baseResource);
-                if (strictCssUrlRewriting) 
+                if (strictCssUrlRewriting)
                 {
                     throw new RuntimeException(message);
-                }
-                else if (logger.isWarnEnabled()) 
+                } else if (logger.isWarnEnabled())
                 {
                     logger.warn(message);
                 }
             }
-            
+
         }
 
         if (!didReplace)

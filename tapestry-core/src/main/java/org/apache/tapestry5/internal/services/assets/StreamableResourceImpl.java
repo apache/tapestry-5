@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
@@ -24,7 +25,9 @@ import java.io.OutputStream;
 
 public class StreamableResourceImpl implements StreamableResource
 {
-    protected final String description, contentType;
+    protected final String description;
+
+    private final ContentType contentType;
 
     protected final CompressionStatus compression;
 
@@ -36,7 +39,7 @@ public class StreamableResourceImpl implements StreamableResource
 
     protected final ResponseCustomizer responseCustomizer;
 
-    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified, BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator, ResponseCustomizer responseCustomizer)
+    public StreamableResourceImpl(String description, ContentType contentType, CompressionStatus compression, long lastModified, BytestreamCache bytestreamCache, AssetChecksumGenerator assetChecksumGenerator, ResponseCustomizer responseCustomizer)
     {
         this.lastModified = lastModified;
         this.description = description;
@@ -57,7 +60,7 @@ public class StreamableResourceImpl implements StreamableResource
         return compression;
     }
 
-    public String getContentType()
+    public ContentType getContentType()
     {
         return contentType;
     }
@@ -124,7 +127,7 @@ public class StreamableResourceImpl implements StreamableResource
     }
 
     @Override
-    public StreamableResource withContentType(String newContentType)
+    public StreamableResource withContentType(ContentType newContentType)
     {
         return new StreamableResourceImpl(description, newContentType, compression, lastModified, bytestreamCache, assetChecksumGenerator, responseCustomizer);
     }

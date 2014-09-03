@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.StreamableResource;
@@ -37,7 +38,7 @@ public abstract class DelegatingSRS implements StreamableResourceSource
         this.delegate = delegate;
     }
 
-    public Set<String> fileExtensionsForContentType(String contentType)
+    public Set<String> fileExtensionsForContentType(ContentType contentType)
     {
         return delegate.fileExtensionsForContentType(contentType);
     }

@@ -1,5 +1,3 @@
-// Copyright 2007-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,7 +21,10 @@ import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,9 +39,9 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final PartialMarkupRenderer partialMarkupRenderer;
 
-    private final String outputEncoding;
-
     private final boolean compactJSON;
+
+    private final ContentType contentType;
 
     public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory,
 
@@ -61,8 +62,9 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         this.request = request;
         this.response = response;
         this.partialMarkupRenderer = partialMarkupRenderer;
-        this.outputEncoding = outputEncoding;
         this.compactJSON = compactJSON;
+
+        contentType = new ContentType(InternalConstants.JSON_MIME_TYPE).withCharset(outputEncoding);
     }
 
     public void renderPartialPageMarkup(final JSONObject reply) throws IOException
@@ -76,8 +78,6 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
                 // This is a complex area as we are trying to keep public and private services properly
                 // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
                 // separated. So we inform the stateful queue service what it needs to do here ...
-
-                ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
                 String pageName = (String) request.getAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME);
 

@@ -126,16 +126,10 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         }
     }
 
-    private ResourceTransformer wrapWithTracking(final String sourceName, final String targetName, final ResourceTransformer core)
+    private ResourceTransformer wrapWithTracking(final String sourceName, final String targetName, ResourceTransformer core)
     {
-        return new ResourceTransformer()
+        return new DelegatingResourceTransformer(core)
         {
-            @Override
-            public String getTransformedContentType()
-            {
-                return core.getTransformedContentType();
-            }
-
             @Override
             public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
             {
@@ -146,29 +140,23 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                     @Override
                     public InputStream perform() throws IOException
                     {
-                        return core.transform(source, dependencies);
+                        return delegate.transform(source, dependencies);
                     }
                 });
             }
         };
     }
 
-    private ResourceTransformer wrapWithTiming(final String targetName, final ResourceTransformer coreCompiler)
+    private ResourceTransformer wrapWithTiming(final String targetName, ResourceTransformer coreCompiler)
     {
-        return new ResourceTransformer()
+        return new DelegatingResourceTransformer(coreCompiler)
         {
-            @Override
-            public String getTransformedContentType()
-            {
-                return coreCompiler.getTransformedContentType();
-            }
-
             @Override
             public InputStream transform(final Resource source, final ResourceDependencies dependencies) throws IOException
             {
                 final long startTime = System.nanoTime();
 
-                InputStream result = coreCompiler.transform(source, dependencies);
+                InputStream result = delegate.transform(source, dependencies);
 
                 final long elapsedTime = System.nanoTime() - startTime;
 
@@ -188,17 +176,11 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
      * somewhat primitive: a change to *any* resource in a given domain results in the cache of all of those resources
      * being discarded.
      */
-    private ResourceTransformer wrapWithInMemoryCaching(final ResourceTransformer core, final String targetName)
+    private ResourceTransformer wrapWithInMemoryCaching( ResourceTransformer core, final String targetName)
     {
-        return new ResourceTransformer()
+        return new DelegatingResourceTransformer(core)
         {
             final Map<Resource, Compiled> cache = CollectionFactory.newConcurrentMap();
-
-            @Override
-            public String getTransformedContentType()
-            {
-                return core.getTransformedContentType();
-            }
 
             @Override
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
@@ -215,7 +197,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
 
                 compiled = new Compiled(source);
 
-                InputStream is = core.transform(source, new ResourceDependenciesSplitter(dependencies, compiled));
+                InputStream is = delegate.transform(source, new ResourceDependenciesSplitter(dependencies, compiled));
 
                 compiled.store(is);
 
@@ -228,16 +210,10 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
         };
     }
 
-    private ResourceTransformer wrapWithFileSystemCaching(final ResourceTransformer core, final String targetName)
+    private ResourceTransformer wrapWithFileSystemCaching( ResourceTransformer core, final String targetName)
     {
-        return new ResourceTransformer()
+        return new DelegatingResourceTransformer(core)
         {
-            @Override
-            public String getTransformedContentType()
-            {
-                return core.getTransformedContentType();
-            }
-
             @Override
             public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
             {
@@ -254,7 +230,7 @@ public class ResourceTransformerFactoryImpl implements ResourceTransformerFactor
                     return new BufferedInputStream(new FileInputStream(cacheFile));
                 }
 
-                InputStream compiled = core.transform(source, dependencies);
+                InputStream compiled = delegate.transform(source, dependencies);
 
                 // We need the InputStream twice; once to return, and once to write out to the cache file for later.
 

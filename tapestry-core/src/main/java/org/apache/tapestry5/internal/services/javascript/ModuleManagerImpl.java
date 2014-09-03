@@ -1,5 +1,3 @@
-// Copyright 2012, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,6 +14,7 @@ package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -82,7 +81,7 @@ public class ModuleManagerImpl implements ModuleManager
         classpathRoot = assetSource.resourceForPath("");
         extensions = CollectionFactory.newSet("js");
 
-        extensions.addAll(streamableResourceSource.fileExtensionsForContentType("text/javascript"));
+        extensions.addAll(streamableResourceSource.fileExtensionsForContentType(InternalConstants.JAVASCRIPT_CONTENT_TYPE));
 
         baseConfig = buildBaseConfig(configuration, !productionMode);
     }

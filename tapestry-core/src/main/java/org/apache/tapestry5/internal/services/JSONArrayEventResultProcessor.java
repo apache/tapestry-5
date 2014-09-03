@@ -1,5 +1,3 @@
-// Copyright 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -25,31 +20,33 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.Response;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 public class JSONArrayEventResultProcessor implements ComponentEventResultProcessor<JSONArray>
 {
     private final Response response;
 
-    private final String outputEncoding;
-
     private final boolean compactJSON;
+
+    private final ContentType contentType;
 
     public JSONArrayEventResultProcessor(Response response,
 
-    @Symbol(SymbolConstants.CHARSET)
-    String outputEncoding,
+                                         @Symbol(SymbolConstants.CHARSET)
+                                         String outputEncoding,
 
-    @Symbol(SymbolConstants.COMPACT_JSON)
-    boolean compactJSON)
+                                         @Symbol(SymbolConstants.COMPACT_JSON)
+                                         boolean compactJSON)
     {
         this.response = response;
-        this.outputEncoding = outputEncoding;
         this.compactJSON = compactJSON;
+
+        contentType = new ContentType(InternalConstants.JSON_MIME_TYPE).withCharset(outputEncoding);
     }
 
     public void processResultValue(JSONArray value) throws IOException
     {
-        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
-
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
         value.print(pw, compactJSON);

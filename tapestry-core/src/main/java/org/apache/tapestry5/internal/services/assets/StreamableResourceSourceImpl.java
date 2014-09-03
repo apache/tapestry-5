@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -46,7 +47,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         this.checksumGenerator = checksumGenerator;
     }
 
-    public Set<String> fileExtensionsForContentType(String contentType)
+    public Set<String> fileExtensionsForContentType(ContentType contentType)
     {
         Set<String> result = CollectionFactory.newSet();
 
@@ -86,9 +87,11 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
         transformed.close();
 
-        String contentType = rt == null ? contentTypeAnalyzer.getContentType(baseResource) : rt.getTransformedContentType();
+        ContentType contentType = rt == null
+                ? new ContentType(contentTypeAnalyzer.getContentType(baseResource))
+                : rt.getTransformedContentType();
 
-        boolean compressable = compressionAnalyzer.isCompressable(contentType);
+        boolean compressable = compressionAnalyzer.isCompressable(contentType.getMimeType());
 
         long lastModified = resourceChangeTracker.trackResource(baseResource);
 

@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -207,4 +208,9 @@ public final class InternalConstants
      * @since 5.4
      */
     public static final String SUPPRESS_NAMESPACED_IDS = "t:suppress-namespaced-ids";
+
+    /**
+     * @since 5.4
+     */
+    public static final ContentType JAVASCRIPT_CONTENT_TYPE = new ContentType("text/javascript");
 }

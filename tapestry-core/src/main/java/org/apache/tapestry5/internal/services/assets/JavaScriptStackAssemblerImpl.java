@@ -13,6 +13,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -32,9 +33,9 @@ import java.util.regex.Pattern;
 
 public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 {
-    private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript;charset=utf-8";
+    private static final ContentType JAVASCRIPT_CONTENT_TYPE = new ContentType("text/javascript;charset=utf-8");
 
-    private ThreadLocale threadLocale;
+    private final ThreadLocale threadLocale;
 
     private final ResourceChangeTracker resourceChangeTracker;
 
