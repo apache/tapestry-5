@@ -1,6 +1,6 @@
 <t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
-    <p>This page is used to demonstrate the integration of WRO4J.</p>
+    <p>This page is used to demonstrate the integration of Google Closure (for JavaScript minimization) and YUI's CSSCompressor (for CSS minification).</p>
 
     <div class="alert alert-success" id="banner"/>
 
