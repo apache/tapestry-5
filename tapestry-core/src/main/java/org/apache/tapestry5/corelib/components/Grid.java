@@ -335,7 +335,7 @@ public class Grid implements GridModel, ClientElement
     {
         public ColumnSort getColumnSort(String columnId)
         {
-            if (!TapestryInternalUtils.isEqual(columnId, paginationModel.getSortColumnId()))
+            if (paginationModel == null || !TapestryInternalUtils.isEqual(columnId, paginationModel.getSortColumnId()))
             {
                 return ColumnSort.UNSORTED;
             }
@@ -381,6 +381,7 @@ public class Grid implements GridModel, ClientElement
 
         public void clear()
         {
+            setupPaginationModel();
             paginationModel.setSortColumnId(null);
             paginationModel.setSortAscending(null);
         }
