@@ -36,7 +36,7 @@ public class AddBrowserCompatibilityStyles implements MarkupRendererFilter
         // IE9 does not support CSS animations, so we make the loading mask translucent
         ie9 = String.format("<!--[if IE 9]><style type=\"text/css\">.pageloading-mask{opacity:%.2f;}</style><![endif]-->", opacity);
         // Older IE versions do not even support opacity, we'll have to resort to a filter
-        ie8 = String.format("<!--[if IE lt 9]><style type=\"text/css\">.pageloading-mask{filter:alpha(opacity=%d);}</style><![endif]-->",
+        ie8 = String.format("<!--[if lt IE 9]><style type=\"text/css\">.pageloading-mask{filter:alpha(opacity=%d);}</style><![endif]-->",
                 (int) (100. * opacity));
     }
 
