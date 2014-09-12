@@ -455,7 +455,6 @@ public class Grid implements GridModel, ClientElement
 
     Object setupRender()
     {
-        zone = null;
 
         setupPaginationModel();
 
@@ -469,6 +468,13 @@ public class Grid implements GridModel, ClientElement
         // If there's no rows, display the empty block placeholder.
 
         return !renderTableIfEmpty && cachingSource.getAvailableRows() == 0 ? empty : null;
+    }
+
+    void cleanupRender()
+    {
+        // if an inPlace Grid is rendered inside a Loop, be sure to generate a new wrapper
+        // zone for each iteration (TAP5-2256)
+        zone = null;
     }
 
     private void setupPaginationModel()
