@@ -162,6 +162,16 @@ for the field (this is related to big improvements in rendering described below)
 Tapestry now assumes that all text/* assets use the utf-8 character set. 
 This is generally the case for JavaScript files (the primary text asset). 
 
+## Logging Dependencies
+
+Previous versions of Tapestry included dependencies on both SLF4J (Simple Logging Facade for Java)
+and Log4J (the most common logging library), as well as the bridge between the two. Users who did not wish to
+use Log4J had to muck about with dependencies in their Maven or Gradle build file.
+
+Tapestry 5.4 only has dependencies on SL4FJ and not on any particular logging implementation; SLF4J will 
+write only a warning message that it needs to be configured. Application developers must provide additional
+dependencies (hint: use Logback!).
+
 ## tapestry-yuicompressor replaced by tapestry-webresources
 
 The tapestry-yuicompressor module has been removed and superseded by tapestry-webresources.
