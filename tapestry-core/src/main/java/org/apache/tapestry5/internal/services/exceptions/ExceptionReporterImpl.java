@@ -12,7 +12,6 @@
 
 package org.apache.tapestry5.internal.services.exceptions;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
@@ -143,7 +142,7 @@ public class ExceptionReporterImpl implements ExceptionReporter
             writeException(writer, analysis);
         } finally
         {
-            IOUtils.closeQuietly(writer);
+            InternalUtils.close(writer);
         }
     }
 
