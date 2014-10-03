@@ -146,12 +146,23 @@ never, or always.
 
 # Breaking Changes:
 
+## clientId required for Ajax field decoration
+
+Applications that perform server-side validation of form control data (such as TextField) *as part of
+an Ajax Zone update* must now
+set the clientId parameter of the TextField in order for client-side validation decoration and error messages
+to appear.
+
+Non-Ajax requests are not affected.  Client-side validation is not affected. Only the rare case where validation
+only occurs on the server is affected; Tapestry has lost the ability to coordinate the Tapestry-generated id
+for the field (this is related to big improvements in rendering described below).
+
 ## Charset for Assets
 
 Tapestry now assumes that all text/* assets use the utf-8 character set. 
 This is generally the case for JavaScript files (the primary text asset). 
 
-## tapestry-yuicompressor is replaced by tapestry-webresources
+## tapestry-yuicompressor replaced by tapestry-webresources
 
 The tapestry-yuicompressor module has been removed and superseded by tapestry-webresources.
 
