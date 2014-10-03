@@ -1,0 +1,30 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+
+    <h1>Ajax Validation</h1>
+
+    <t:zone t:id="formZone">
+
+        <t:form t:id="form" zone="^">
+
+            <t:errors/>
+
+            <t:textfield t:id="name" t:mixins="formgroup" t:clientid="name"/>
+
+            <div class="form-group">
+                <label>Validation Errors?</label>
+                <p class="form-control-static">
+                    ${tracker.hasErrors}
+                </p>
+
+            </div>
+
+
+            <t:submit class="btn btn-primary" value="Update Zone"/>
+
+        </t:form>
+
+
+    </t:zone>
+
+</html>
+

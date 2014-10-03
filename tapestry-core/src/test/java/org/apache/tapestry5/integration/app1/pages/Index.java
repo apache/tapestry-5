@@ -56,6 +56,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+                    new Item("AjaxValidationDemo", "Ajax Validation", "Demonstrated proper integration of server-side validation and client-side field decoration."),
+
                     new Item("OverrideEventHandlerDemo", "Event Handler Override Demo", "Event Handler methods overridden by sub-classes invoke base-class correctly."),
 
                     new Item("LogoSubclass", "Base class Assets in sub-classes", "Assets are resolved for the parent class if that's where the annotations are."),
