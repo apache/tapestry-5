@@ -1,5 +1,3 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,6 +15,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -145,6 +144,8 @@ public class AjaxFormLoop
     private JavaScriptSupport jsSupport;
 
     private Iterator iterator;
+    
+    private Element wrapper;
 
     @Inject
     private TypeCoercer typeCoercer;
@@ -317,10 +318,15 @@ public class AjaxFormLoop
         injectRowLink.addParameter(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId());
         injectRowLink.addParameter(RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
 
-        writer.element("div",
-                "data-container-type", "core/AjaxFormLoop",
-                "data-remove-row-url", removeRowLink,
-                "data-inject-row-url", injectRowLink);
+        // Fix for TAP5-227 - AjaxFormLoop dont work well inside a table tag
+        Element element = writer.getElement();
+        this.wrapper = element.getAttribute("data-container-type") != null
+                    || element.getAttribute("data-remove-row-url") != null
+                    || element.getAttribute("data-inject-row-url") != null ? writer.element("div") : null;
+        
+        writer.attributes("data-container-type", "core/AjaxFormLoop",
+                          "data-remove-row-url", removeRowLink,
+                          "data-inject-row-url", injectRowLink);
     }
 
     private void pushContext()
@@ -368,7 +374,8 @@ public class AjaxFormLoop
 
     void cleanupRender(MarkupWriter writer)
     {
-        writer.end();
+        if (wrapper != null)
+            writer.end();
 
         popContext();
     }
