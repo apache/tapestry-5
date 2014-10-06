@@ -176,7 +176,7 @@ public final class RegistryBuilder
     {
         lock.lock();
 
-        OperationTracker tracker = new OperationTrackerImpl(loggerSource.getLogger(Registry.class));
+        PerThreadOperationTracker tracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
         RegistryImpl registry = new RegistryImpl(modules, proxyFactory, loggerSource, tracker);
 

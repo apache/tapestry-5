@@ -1,3 +1,5 @@
+// Copyright 2008-2013 The Apache Software Foundation
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,24 +17,26 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Core implementation that manages a logger and catches and reports exception.
+ *
+ * @see org.apache.tapestry5.ioc.internal.PerThreadOperationTracker
  */
 public class OperationTrackerImpl implements OperationTracker
 {
-    private static final String CLASS_NAME = OperationTrackerImpl.class.getName();
-
-    private static final List<String> OPERATIONS = Arrays.asList("run", "invoke", "perform");
-
     private final Logger logger;
+
+    private final Stack<String> operations = CollectionFactory.newStack();
+
+    private boolean logged;
 
     public OperationTrackerImpl(Logger logger)
     {
@@ -53,12 +57,15 @@ public class OperationTrackerImpl implements OperationTracker
 
             finish(description, startNanos);
 
-        } catch (OperationException oe)
+        } catch (RuntimeException ex)
         {
-            captureDescription(oe, description);
-        } catch (Throwable ex)
+            logAndRethrow(ex);
+        } catch (Error ex)
         {
-            throwNewOperationException(ex, description);
+            handleError(ex);
+        } finally
+        {
+            handleFinally();
         }
     }
 
@@ -78,12 +85,15 @@ public class OperationTrackerImpl implements OperationTracker
 
             return result;
 
-        } catch (OperationException oe)
+        } catch (RuntimeException ex)
         {
-            return captureDescription(oe, description);
-        } catch (Throwable ex)
+            return logAndRethrow(ex);
+        } catch (Error ex)
         {
-            return throwNewOperationException(ex, description);
+            return handleError(ex);
+        } finally
+        {
+            handleFinally();
         }
     }
 
@@ -103,13 +113,39 @@ public class OperationTrackerImpl implements OperationTracker
 
             return result;
 
-        } catch (OperationException oe)
+        } catch (RuntimeException ex)
         {
-            return captureDescription(oe, description);
-        } catch (Throwable ex)
+            return logAndRethrow(ex);
+        } catch (Error ex)
         {
-            return throwNewOperationException(ex, description);
+            return handleError(ex);
+        } finally
+        {
+            handleFinally();
         }
+    }
+
+    private void handleFinally()
+    {
+        operations.pop();
+
+        // We've finally backed out of the operation stack ... but there may be more to come!
+
+        if (operations.isEmpty())
+        {
+            logged = false;
+        }
+    }
+
+    private <T> T handleError(Error error)
+    {
+        if (!logged)
+        {
+            log(error);
+            logged = true;
+        }
+
+        throw error;
     }
 
     private void finish(String description, long startNanos)
@@ -119,7 +155,7 @@ public class OperationTrackerImpl implements OperationTracker
             long elapsedNanos = System.nanoTime() - startNanos;
             double elapsedMillis = ((double) elapsedNanos) / 1000000.d;
 
-            logger.debug(String.format("[%3d] <-- %s [%,.2f ms]", getDepth(), description, elapsedMillis));
+            logger.debug(String.format("[%3d] <-- %s [%,.2f ms]", operations.getDepth(), description, elapsedMillis));
         }
     }
 
@@ -129,76 +165,48 @@ public class OperationTrackerImpl implements OperationTracker
 
         if (logger.isDebugEnabled())
         {
-            logger.debug(String.format("[%3d] --> %s", getDepth(), description));
             startNanos = System.nanoTime();
+            logger.debug(String.format("[%3d] --> %s", operations.getDepth() + 1, description));
         }
 
+        operations.push(description);
         return startNanos;
     }
 
-    private <T> T captureDescription(OperationException oe, String description)
+    private <T> T logAndRethrow(RuntimeException ex)
     {
-        oe.push(description);
-
-        return logOrRethrow(oe);
-    }
-
-    private <T> T throwNewOperationException(Throwable ex, String description)
-    {
-        OperationException oe = new OperationException(ex, description);
-
-        return logOrRethrow(oe);
-    }
-
-    /**
-     * So, when an exception occurs, at the deepest level, an OperationException is thrown via
-     * {@link #throwNewOperationException(Throwable, String)}. Each perform/run/invoke call
-     * catches the OperationException, invokes {@link #captureDescription(OperationException, String)} to
-     * add a message to it, and rethrows it. This method checks to see if it is the first invocation
-     * of perform/run/invoke on the stack and, if so, it logs the operation trace (this is a difference
-     * from 5.3, which logged the trace much earlier). After logging, the OperationException, or
-     * the cause of the OE, is rethrown.
-     *
-     * @param oe
-     * @param <T>
-     * @return
-     */
-    private <T> T logOrRethrow(OperationException oe)
-    {
-        if (getDepth() == 1)
+        if (!logged)
         {
-            logger.error(ExceptionUtils.toMessage(oe.getCause()));
-            logger.error("Operations trace:");
+            String[] trace = log(ex);
 
-            String[] trace = oe.getTrace();
+            logged = true;
 
-            for (int i = 0; i < trace.length; i++)
-            {
-                logger.error(String.format("[%2d] %s", i + 1, trace[i]));
-            }
-
-            if (oe.getCause() instanceof Error)
-            {
-                throw (Error) oe.getCause();
-            }
+            throw new OperationException(ex, trace);
         }
 
-        throw oe;
+        throw ex;
     }
 
-    private int getDepth()
+    private String[] log(Throwable ex)
     {
-        int result = 0;
+        logger.error(ExceptionUtils.toMessage(ex));
+        logger.error("Operations trace:");
 
-        for (StackTraceElement ste : new Throwable().getStackTrace())
+        Object[] snapshot = operations.getSnapshot();
+        String[] trace = new String[snapshot.length];
+
+        for (int i = 0; i < snapshot.length; i++)
         {
-            if (ste.getClassName().equals(CLASS_NAME) && OPERATIONS.contains(ste.getMethodName()))
-            {
-                ++result;
-            }
+            trace[i] = snapshot[i].toString();
+
+            logger.error(String.format("[%2d] %s", i + 1, trace[i]));
         }
 
-        return result;
+        return trace;
     }
 
+    boolean isEmpty()
+    {
+        return operations.isEmpty();
+    }
 }
