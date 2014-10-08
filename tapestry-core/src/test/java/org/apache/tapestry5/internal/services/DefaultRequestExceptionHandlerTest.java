@@ -17,6 +17,8 @@ import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.internal.OperationException;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.Request;
@@ -159,7 +161,10 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase
         EasyMock.expectLastCall();
         replay();
 
-        exceptionHandler.handleRequestException(new AccessControlException("No permission"));
+        // also test unwrapping TapestryExceptions
+        exceptionHandler.handleRequestException(new OperationException(new RenderQueueException(
+                "renderqueue", new Object[0], new TapestryException("tapestryexception",
+                        new AccessControlException("No permission"))), new String[0]));
     }
 
     @Test

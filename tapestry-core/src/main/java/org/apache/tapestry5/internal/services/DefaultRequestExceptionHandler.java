@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.OperationException;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.ComponentEventException;
@@ -28,6 +29,7 @@ import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -151,7 +153,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         // For exceptions in component operations, it's OperationException -> ComponentEventException -> <Target>Exception
 
         // Throw away the wrapped exceptions first
-        while (cause instanceof OperationException || cause instanceof ComponentEventException)
+        while (cause instanceof TapestryException)
         {
             if (cause.getCause() == null) break;
             cause = cause.getCause();
