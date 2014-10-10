@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -108,8 +106,8 @@ public interface FormSupport extends ClientElement
     boolean isClientValidationEnabled();
 
     /**
-     * Returns the complete id of the underlying Form component.  This is needed by {@link
-     * org.apache.tapestry5.corelib.components.FormInjector}.
+     * Returns the complete id of the underlying Form component.
+     *
      */
     String getFormComponentId();
 

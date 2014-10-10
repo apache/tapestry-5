@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.Collections;
@@ -51,7 +52,6 @@ import java.util.Iterator;
  * @see AddRowLink
  * @see RemoveRowLink
  * @see Loop
- * @see FormInjector
  */
 @Events(
         {EventConstants.ADD_ROW, EventConstants.REMOVE_ROW})
@@ -81,8 +81,10 @@ public class AjaxFormLoop
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
-     * visible. This is used with the {@link FormInjector} component, when adding a new row to the loop. Leaving as
+     * visible. This was used by the FormInjector component (remove in 5.4), when adding a new row to the loop. Leaving as
      * null uses the default function, "highlight".
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
@@ -98,7 +100,7 @@ public class AjaxFormLoop
     private Object[] context;
 
     /**
-     * A block to render after the loop as the body of the {@link org.apache.tapestry5.corelib.components.FormInjector}.
+     * A block to render after the loo
      * This typically contains a {@link org.apache.tapestry5.corelib.components.AddRowLink}.
      */
     @Parameter(value = "block:defaultAddRow", defaultPrefix = BindingConstants.LITERAL)
@@ -144,7 +146,7 @@ public class AjaxFormLoop
     private JavaScriptSupport jsSupport;
 
     private Iterator iterator;
-    
+
     private Element wrapper;
 
     @Inject
@@ -155,6 +157,14 @@ public class AjaxFormLoop
 
     @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
+
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
+    void pageLoaded()
+    {
+        deprecationWarning.ignoredComponentParameters(resources, "show");
+    }
 
     ValueEncoder defaultEncoder()
     {
@@ -321,12 +331,12 @@ public class AjaxFormLoop
         // Fix for TAP5-227 - AjaxFormLoop dont work well inside a table tag
         Element element = writer.getElement();
         this.wrapper = element.getAttribute("data-container-type") != null
-                    || element.getAttribute("data-remove-row-url") != null
-                    || element.getAttribute("data-inject-row-url") != null ? writer.element("div") : null;
-        
+                || element.getAttribute("data-remove-row-url") != null
+                || element.getAttribute("data-inject-row-url") != null ? writer.element("div") : null;
+
         writer.attributes("data-container-type", "core/AjaxFormLoop",
-                          "data-remove-row-url", removeRowLink,
-                          "data-inject-row-url", injectRowLink);
+                "data-remove-row-url", removeRowLink,
+                "data-inject-row-url", injectRowLink);
     }
 
     private void pushContext()

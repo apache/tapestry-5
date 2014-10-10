@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +13,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.corelib.components.FormInjector;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
@@ -44,7 +41,7 @@ public final class RequestConstants
 
     /**
      * Name of parameter, in an Ajax update, that identifies the client-side id of the {@link Form} being extended. Used
-     * with {@link Zone}, {@link FormInjector} and other similar components that may be contained within a form.
+     * with {@link Zone} and other similar components that may be contained within a form.
      *
      * @since 5.2.0
      */

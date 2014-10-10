@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -73,13 +71,16 @@ public class ComponentParameterConstants
     /**
      * The default position where to insert content into {@link org.apache.tapestry5.corelib.components.Form}.
      * Defaults to "above".
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String FORMINJECTOR_INSERT_POSITION = "tapestry.components.forminjector_insert_position";
 
     /**
-     * The default name for a JS function to use to show the injected content by
-     * {@link org.apache.tapestry5.corelib.components.FormInjector}.
+     * The default name for a JS function to use to show the injected content by the (removed in 5.4) FormInjector
+     * component.
+     *
      * Defaults to "highlight".
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String FORMINJECTOR_SHOW_FUNCTION = "tapestry.components.forminjector_show_function";
 

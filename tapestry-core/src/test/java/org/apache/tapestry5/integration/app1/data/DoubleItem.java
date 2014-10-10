@@ -1,5 +1,3 @@
-// Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,8 +13,7 @@
 package org.apache.tapestry5.integration.app1.data;
 
 /**
- * Used for tests involving {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} (and indirectly, {@link
- * org.apache.tapestry5.corelib.components.FormInjector}).
+ * Used for tests involving {@link org.apache.tapestry5.corelib.components.AjaxFormLoop}.
  */
 public class DoubleItem
 {

@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -180,7 +178,7 @@ public class AjaxTests extends App1TestCase
     }
 
     @Test
-    public void form_injector()
+    public void ajax_form_loop()
     {
         openLinks("FormInjector Demo");
 

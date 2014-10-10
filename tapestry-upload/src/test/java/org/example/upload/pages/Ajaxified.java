@@ -1,5 +1,3 @@
-//  Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,9 +13,9 @@
 package org.example.upload.pages;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.corelib.components.FormInjector;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.example.upload.base.UploadBasePage;
@@ -28,7 +26,7 @@ public class Ajaxified extends UploadBasePage
     private Block content;
 
     @InjectComponent
-    private FormInjector injector;
+    private ClientElement injector;
 
     @Environmental
     private JavaScriptSupport javaScriptSupport;

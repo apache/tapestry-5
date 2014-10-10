@@ -482,3 +482,9 @@ of that mutable field would not always be preserved in the serialized object dat
 The ContentType objects, used to represent a content types such as "text/html" in a structured manner,
 has been revised significantly in 5.4; it is now an immutable data type. In addition, a few scattered
 interfaces that used a String content type have been changed to use the ContentType class instead.
+
+## FormInjector Removed
+
+The FormInjector component was removed; it was intended for use only inside the AjaxFormLoop component
+(which was rewritten in 5.4 and no longer uses FormInjector). FormInjector was not widely used elsewhere, if 
+is was used at all.

@@ -408,8 +408,7 @@ public class Form implements ClientElement, FormValidationControl
 
     /**
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
-     * this Form. This method is used
-     * by {@link org.apache.tapestry5.corelib.components.FormInjector}.
+     * this Form.
      * <p/>
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      *
@@ -701,7 +700,7 @@ public class Form implements ClientElement, FormValidationControl
         if (!request.getMethod().equals("POST") || values == null)
             throw new RuntimeException(messages.format("core-invalid-form-request", FORM_DATA));
 
-        // Due to Ajax (FormInjector) there may be multiple values here, so
+        // Due to Ajax there may be multiple values here, so
         // handle each one individually.
 
         for (String clientEncodedActions : values)

@@ -6,11 +6,17 @@
         <p>
             This test of the upload component checks Ajax related behavior.
         </p>
+
+        <div class="alert alert-warning">
+            This page was based on the Ajax FormInjector component, which was removed in 5.4.
+            It is no longer functional.
+        </div>
+
         <t:form>
             <t:errors/>
-            <t:forminjector t:id="injector">
+            <div t:type="any" t:id="injector">
                 <a href="#" id="trigger">add row</a>
-            </t:forminjector>
+            </div>
 
             <br/>
             <input type="submit" value="Upload"/>

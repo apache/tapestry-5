@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -54,7 +52,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName)
     {
-        unsupported("addFormInjector", "A replacement is forthcoming.");
+        unsupported("addFormInjector", "FormInjector compnent was removed in 5.4.");
     }
 
     public void addValidation(Field field, String validationName, String message, Object constraint)

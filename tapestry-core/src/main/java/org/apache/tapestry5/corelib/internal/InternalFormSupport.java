@@ -1,5 +1,3 @@
-//  Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,6 @@ import org.apache.tapestry5.services.FormSupport;
  * Additional methods for {@link org.apache.tapestry5.services.FormSupport} used internally by Tapestry.
  *
  * @see org.apache.tapestry5.corelib.components.Form
- * @see org.apache.tapestry5.corelib.components.FormInjector
  */
 public interface InternalFormSupport extends FormSupport
 {
