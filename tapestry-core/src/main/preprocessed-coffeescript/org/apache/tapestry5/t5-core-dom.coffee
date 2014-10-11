@@ -1,5 +1,3 @@
-# Copyright 2012-2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -685,7 +683,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
   # Used to track how many active Ajax requests are currently in-process. This is incremented
   # when an Ajax request is started, and decremented when an Ajax request completes or fails.
-  # The body attribute `data-ajax-active` is set to "true" or "false" whenever the
+  # The body attribute `data-ajax-active` is set to the number of active Ajax requests, whenever the
   # count changes. This only applies to Ajax requests that are filtered through the t5/core/dom API;
   # other libraries (including RequireJS) which bypass this API are not counted.
 
@@ -694,7 +692,7 @@ define ["underscore", "./utils", "./events", "jquery"],
   adjustAjaxCount = (delta) ->
     activeAjaxCount += delta
 
-    exports.body.attr "data-ajax-active", (activeAjaxCount > 0)
+    exports.body.attr "data-ajax-active", activeAjaxCount
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #

@@ -1,5 +1,3 @@
-// Copyright 2009-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -1753,7 +1751,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                 sleep(100);
             }
 
-            if (getCssCount("body[data-ajax-active=false]").equals(1))
+            if (getCssCount("body[data-ajax-active='0']").equals(1))
             {
                 return;
             }
