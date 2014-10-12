@@ -49,6 +49,13 @@
 				        		${info.version}
 				        	</t:if>
 				        </dd>
+
+				        <dt>Tapestry version</dt>
+				        <dd class="tapestryVersion">
+				        	<t:if test="info.tapestryVersion" else="message:not-informed">
+				        		${info.tapestryVersion}
+				        	</t:if>
+				        </dd>
 				
 				        <dt>Documentation URL</dt>
 				        <dd class="documentationUrl">

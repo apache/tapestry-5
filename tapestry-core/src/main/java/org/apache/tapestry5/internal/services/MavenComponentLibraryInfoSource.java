@@ -121,6 +121,7 @@ public class MavenComponentLibraryInfoSource implements ComponentLibraryInfoSour
             info.setJavadocUrl(extractText(document, "/project/properties/javadocUrl"));
             info.setSourceBrowseUrl(extractText(document, "/project/scm/url"));
             info.setSourceRootUrl(extractText(document, "/project/properties/sourceRootUrl"));
+            info.setTapestryVersion(extractText(document, "(/project/dependencies/dependency[./groupId='org.apache.tapestry'][./artifactId='tapestry-core']/version | /project/properties/tapestryVersion)[1]"));
             String tags = extractText(document, "/project/properties/tags");
             if (tags != null && tags.length() > 0)
             {

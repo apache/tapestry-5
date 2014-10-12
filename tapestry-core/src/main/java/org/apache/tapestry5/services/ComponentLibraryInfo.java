@@ -34,7 +34,7 @@ public final class ComponentLibraryInfo implements Serializable
     private SourceUrlResolver sourceUrlResolver;
     
     private String name, description, homepageUrl, documentationUrl, sourceBrowseUrl, issueTrackerUrl, sourceRootUrl, 
-                   javadocUrl, groupId, artifactId, version;
+                   javadocUrl, groupId, artifactId, version, tapestryVersion;
     
     private List<String> tags = new ArrayList<String>();
     
@@ -133,13 +133,21 @@ public final class ComponentLibraryInfo implements Serializable
     }
 
     /**
-     * Return the component library version. For example, "5.4.0".
+     * Returns the component library version. For example, "5.4.0".
      * @see #artifactId
      * @see #groupId
      */
     public String getVersion()
     {
         return version;
+    }
+
+    /**
+     * Returns the Tapestry version used by this component library. For example, "5.4.0".
+     */
+    public String getTapestryVersion()
+    {
+        return tapestryVersion;
     }
 
     /**
@@ -212,6 +220,12 @@ public final class ComponentLibraryInfo implements Serializable
     {
         if (this.version != null) throwExceptionIfAlreadySet("version", version);
         this.version = version;
+    }
+    
+    public void setTapestryVersion(String tapestryVersion)
+    {
+        if (this.tapestryVersion != null) throwExceptionIfAlreadySet("tapestryVersion", version);
+        this.tapestryVersion = tapestryVersion;
     }
     
     public void setGroupId(String groupId)
