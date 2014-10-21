@@ -56,9 +56,6 @@ public class Regexp extends AbstractValidator<Pattern, String>
                     "pattern", constraintValue.pattern(),
                     "title", message);
         }
-
-        writer.attributes("pattern", constraintValue.pattern(),
-                "title", message);
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)
