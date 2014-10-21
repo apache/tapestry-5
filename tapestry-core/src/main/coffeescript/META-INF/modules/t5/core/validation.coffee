@@ -1,5 +1,3 @@
-# Copyright 2012 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -143,7 +141,11 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
         re = new RegExp(@attr "data-validate-regexp")
         @meta REGEXP_META, re
 
-      unless re.test memo.translated
+      groups = memo.translated.match re
+
+      # Unlike Java, there isn't an easy way to match the entire string. This
+      # gets the job done.
+      if (groups is null) or (groups[0] isnt memo.translated)
         memo.error = (@attr "data-regexp-message") or "INVALID"
         return false
 
