@@ -1757,7 +1757,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
         }
 
-        reportAndThrowAssertionError("Body 'data-ajax-active' attribute never reverted to 'false'.");
+        reportAndThrowAssertionError("Body 'data-ajax-active' attribute never reverted to '0'.");
     }
 
     @Override
