@@ -49,9 +49,6 @@ public class ComponentEventDispatcher implements Dispatcher
 
         // ... in which case, this attribute is set.
         if (request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND) != null) {
-            // This needs to be cleared out because the container may submit a request back into the filter
-            // for the 404 page and some containers reuse the existing HttpServletRequest. See TAP5-2388.
-            request.setAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND, null);
             return false;
         }
 

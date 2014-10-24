@@ -1,0 +1,18 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+    <head>
+        <title>Error: 404</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Error 404: Not Found</h3>
+                </div>
+                <div class="panel-body">
+                    <p>The requested path,<code>${request.getAttribute('javax.servlet.error.request_uri')}</code>, was not found.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

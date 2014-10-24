@@ -9,15 +9,14 @@ import org.testng.annotations.Test
 class ProductionModeTests extends TapestryCoreTestCase {
 
     @Test
-    void invalid_component_id_is_404()
-    {
+    void invalid_component_id_is_404() {
         openBaseURL()
 
         assertTitle "Default Layout"
 
-        def invalid = new URL("${baseURL}index.missing")
+        open "${baseURL}index.missing"
 
-       assertEquals 404, invalid.openConnection().responseCode
+        assertTitle "Error: 404"
     }
 
 }
