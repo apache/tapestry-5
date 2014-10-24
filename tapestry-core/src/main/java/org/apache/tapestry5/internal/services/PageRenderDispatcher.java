@@ -38,7 +38,7 @@ public class PageRenderDispatcher implements Dispatcher
     {
         // If a component event request arrives (in production)
         // with an invalid component id, then we want it to be a 404
-        // See TAP5-1481
+        // See TAP5-1481 and TAP5-2388
 
         if (request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND) != null)
         {
