@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,6 +24,8 @@ import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 {
@@ -33,17 +33,18 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 
     private final Logger logger;
 
-    // Synchronized by this
+    // Synchronized by jobLock
     private final List<Job> jobs = CollectionFactory.newList();
 
     private final Thread thread = new Thread(this, "Tapestry PeriodicExecutor");
 
-    // Synchronized by this. Set when the registry is shutdown.
-    private boolean shutdown;
+    private transient boolean shutdown;
 
     private static final long FIVE_MINUTES = 5 * 60 * 1000;
 
     private final AtomicInteger jobIdAllocator = new AtomicInteger();
+
+    private final Lock jobLock = new ReentrantLock();
 
     private class Job implements PeriodicJob, Invokable<Void>
     {
@@ -74,42 +75,70 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
             return name;
         }
 
-        public synchronized long getNextExecution()
+        public long getNextExecution()
         {
-            return nextExecution;
-        }
-
-
-        @Override
-        public synchronized boolean isExecuting()
-        {
-            return executing;
-        }
-
-        @Override
-        public synchronized boolean isCanceled()
-        {
-            return canceled;
-        }
-
-        @Override
-        public synchronized void cancel()
-        {
-            canceled = true;
-
-            if (!executing)
+            try
             {
-                removeJob(this);
+                jobLock.lock();
+                return nextExecution;
+            } finally
+            {
+                jobLock.unlock();
             }
+        }
 
-            // Otherwise, it will be caught when the job finishes execution.
+
+        @Override
+        public boolean isExecuting()
+        {
+            try
+            {
+                jobLock.lock();
+                return executing;
+            } finally
+            {
+                jobLock.unlock();
+            }
         }
 
         @Override
-        public synchronized String toString()
+        public boolean isCanceled()
+        {
+            try
+            {
+                jobLock.lock();
+                return canceled;
+            } finally
+            {
+                jobLock.unlock();
+            }
+        }
+
+        @Override
+        public void cancel()
+        {
+            try
+            {
+                jobLock.lock();
+
+                canceled = true;
+
+                if (!executing)
+                {
+                    removeJob(this);
+                }
+
+                // Otherwise, it will be caught when the job finishes execution.
+            } finally
+            {
+                jobLock.unlock();
+            }
+        }
+
+        @Override
+        public String toString()
         {
             StringBuilder builder = new StringBuilder("PeriodicJob[#").append(jobId);
-
 
             builder.append(", (").append(name).append(")");
 
@@ -133,17 +162,24 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
          * Starts execution of the job; this sets the executing flag, calculates the next execution time,
          * and uses the ParallelExecutor to run the job.
          */
-        synchronized void start()
+        void start()
         {
-            executing = true;
+            try
+            {
+                jobLock.lock();
+                executing = true;
 
-            // This is a bit naive; it assumes there will not be a delay waiting to execute. There's a lot of options
-            // here, such as basing the next execution on the actual start time, or event actual completion time, or allowing
-            // overlapping executions of the Job on a more rigid schedule.  Use Quartz.
+                // This is a bit naive; it assumes there will not be a delay waiting to execute. There's a lot of options
+                // here, such as basing the next execution on the actual start time, or event actual completion time, or allowing
+                // overlapping executions of the Job on a more rigid schedule.  Use Quartz.
 
-            nextExecution = schedule.nextExecution(nextExecution);
+                nextExecution = schedule.nextExecution(nextExecution);
 
-            parallelExecutor.invoke(this);
+                parallelExecutor.invoke(this);
+            } finally
+            {
+                jobLock.unlock();
+            }
 
             if (logger.isTraceEnabled())
             {
@@ -151,22 +187,28 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
             }
         }
 
-        synchronized void cleanupAfterExecution()
+        void cleanupAfterExecution()
         {
-            if (logger.isTraceEnabled())
+            try
             {
-                logger.trace(this + " execution complete");
-            }
+                if (logger.isTraceEnabled())
+                {
+                    logger.trace(this + " execution complete");
+                }
 
-            executing = false;
+                executing = false;
 
-            if (canceled)
+                if (canceled)
+                {
+                    removeJob(this);
+                } else
+                {
+                    // Again, naive but necessary.
+                    thread.interrupt();
+                }
+            } finally
             {
-                removeJob(this);
-            } else
-            {
-                // Again, naive but necessary.
-                thread.interrupt();
+                jobLock.unlock();
             }
         }
 
@@ -188,6 +230,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 
             return null;
         }
+
     }
 
     public PeriodicExecutorImpl(ParallelExecutor parallelExecutor, Logger logger)
@@ -212,19 +255,26 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
     }
 
 
-    synchronized void removeJob(Job job)
+    void removeJob(Job job)
     {
         if (logger.isDebugEnabled())
         {
             logger.debug("Removing " + job);
         }
 
-        jobs.remove(job);
+        try
+        {
+            jobLock.lock();
+            jobs.remove(job);
+        } finally
+        {
+            jobLock.unlock();
+        }
     }
 
 
     @Override
-    public synchronized PeriodicJob addJob(Schedule schedule, String name, Runnable job)
+    public PeriodicJob addJob(Schedule schedule, String name, Runnable job)
     {
         assert schedule != null;
         assert name != null;
@@ -232,7 +282,15 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 
         Job periodicJob = new Job(schedule, name, job);
 
-        jobs.add(periodicJob);
+        try
+        {
+            jobLock.lock();
+
+            jobs.add(periodicJob);
+        } finally
+        {
+            jobLock.unlock();
+        }
 
         if (logger.isDebugEnabled())
         {
@@ -252,7 +310,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
     @Override
     public void run()
     {
-        while (!isShutdown())
+        while (!shutdown)
         {
             long nextExecution = executeCurrentBatch();
 
@@ -280,12 +338,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         }
     }
 
-    private synchronized boolean isShutdown()
-    {
-        return shutdown;
-    }
-
-    private synchronized void registryDidShutdown()
+    private void registryDidShutdown()
     {
         shutdown = true;
 
@@ -297,27 +350,35 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
      *
      * @return the next execution time (from the non-executing job that is scheduled earliest for execution).
      */
-    private synchronized long executeCurrentBatch()
+    private long executeCurrentBatch()
     {
         long now = System.currentTimeMillis();
         long nextExecution = now + FIVE_MINUTES;
 
-        for (Job job : jobs)
+        try
         {
-            if (job.isExecuting())
-            {
-                continue;
-            }
+            jobLock.lock();
 
-            long jobNextExecution = job.getNextExecution();
+            for (Job job : jobs)
+            {
+                if (job.isExecuting())
+                {
+                    continue;
+                }
 
-            if (jobNextExecution <= now)
-            {
-                job.start();
-            } else
-            {
-                nextExecution = Math.min(nextExecution, jobNextExecution);
+                long jobNextExecution = job.getNextExecution();
+
+                if (jobNextExecution <= now)
+                {
+                    job.start();
+                } else
+                {
+                    nextExecution = Math.min(nextExecution, jobNextExecution);
+                }
             }
+        } finally
+        {
+            jobLock.unlock();
         }
 
         return nextExecution;
