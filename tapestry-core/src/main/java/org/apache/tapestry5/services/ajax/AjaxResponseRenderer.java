@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,9 +30,11 @@ public interface AjaxResponseRenderer
     /**
      * Queues the renderer to render markup for the client-side element with the provided id.
      *
-     * @param clientId client id of zone to update with the content from the renderer
-     * @param renderer a {@link org.apache.tapestry5.Block}, {@link org.apache.tapestry5.runtime.Component} or other object that can be
-     *                 {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coerced} to  {@link org.apache.tapestry5.runtime.RenderCommand}.
+     * @param clientId
+     *         client id of zone to update with the content from the renderer
+     * @param renderer
+     *         a {@link org.apache.tapestry5.Block}, {@link org.apache.tapestry5.runtime.Component} or other object that can be
+     *         {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coerced} to  {@link org.apache.tapestry5.runtime.RenderCommand}.
      * @return the renderer, for a fluid interface
      */
     AjaxResponseRenderer addRender(String clientId, Object renderer);
@@ -42,7 +42,8 @@ public interface AjaxResponseRenderer
     /**
      * Queues an update to the zone, using the zone's body as the new content.
      *
-     * @param zone the element that contains both a client id and a body (this is primarily used to represent a {@link org.apache.tapestry5.corelib.components.Zone} component).
+     * @param zone
+     *         the element that contains both a client id and a body (this is primarily used to represent a {@link org.apache.tapestry5.corelib.components.Zone} component).
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addRender(ClientBodyElement zone);
@@ -51,7 +52,8 @@ public interface AjaxResponseRenderer
      * Queues a callback to execute during the partial markup render. The callback is {@linkplain #addFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter) added as a filter}; the
      * callback is invoked before the rest of the rendering pipeline is invoked.
      *
-     * @param callback object to be invoked
+     * @param callback
+     *         object to be invoked
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addCallback(JavaScriptCallback callback);
@@ -60,7 +62,8 @@ public interface AjaxResponseRenderer
      * Queues a callback to execute during the partial markup render. . The callback is {@linkplain #addFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter) added as a filter}; the
      * callback is invoked before the rest of the rendering pipeline is invoked.
      *
-     * @param callback object to be invoked
+     * @param callback
+     *         object to be invoked
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addCallback(Runnable callback);
@@ -77,8 +80,19 @@ public interface AjaxResponseRenderer
      * Queues a callback to execute during the partial markup render. The callback is {@linkplain #addFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter) added as a filter};
      * the callback is invoked before the rest of the rendering pipeline is invoked.
      *
-     * @param callback object o be invoked
+     * @param callback
+     *         object o be invoked
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addCallback(JSONCallback callback);
+
+    /**
+     * Initializes partial response rendering by identifying the page "responsible" for the response. This is mostly
+     * used for selecting the character set for the response.
+     *
+     * @param pageName
+     *         identifies page to render
+     * @since 5.4
+     */
+    void setupPartial(String pageName);
 }

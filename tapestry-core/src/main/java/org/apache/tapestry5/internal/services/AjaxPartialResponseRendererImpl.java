@@ -81,6 +81,11 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
                 String pageName = (String) request.getAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME);
 
+                if (pageName == null)
+                {
+                    throw new IllegalStateException("The active page name has not been specified.");
+                }
+
                 MarkupWriter writer = factory.newPartialMarkupWriter(pageName);
 
                 // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.

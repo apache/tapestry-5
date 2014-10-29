@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -97,9 +95,18 @@ public class PageRenderQueueImpl implements PageRenderQueue
     {
         assert renderer != null;
 
+        checkQueue();
+
         partialRenderInitialized = true;
 
         queue.push(renderer);
+    }
+
+    private void checkQueue()
+    {
+        if (queue == null) {
+            throw new IllegalStateException("The page used as the basis for partial rendering has not been set.");
+        }
     }
 
     public Page getRenderingPage()
@@ -125,6 +132,8 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void renderPartial(MarkupWriter writer, JSONObject reply)
     {
+        checkQueue();
+
         PartialMarkupRenderer terminator = new PartialMarkupRenderer()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply)
