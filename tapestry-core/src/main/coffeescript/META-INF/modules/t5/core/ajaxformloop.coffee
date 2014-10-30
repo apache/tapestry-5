@@ -59,7 +59,7 @@ define ["./dom", "./events", "./console", "./ajax"],
       url = afl.attr "data-inject-row-url"
 
       ajax url,
-        success: (response) =>
+        success: (response) ->
           content = response.json?.content or ""
 
           # Create a new element with the same type (usually "div") and class as this element.
@@ -75,8 +75,9 @@ define ["./dom", "./events", "./console", "./ajax"],
           # Trigger this event, to inform the world that the zone-like new element has been updated
           # with content.
           insertionPoint.trigger events.zone.didUpdate
+          return
 
       return false
 
     # This module is all event handlers, and no exported functions.
-    return null
+    return
