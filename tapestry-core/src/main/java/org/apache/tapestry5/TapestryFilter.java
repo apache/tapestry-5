@@ -116,6 +116,8 @@ public class TapestryFilter implements Filter
         init(registry);
 
         appInitializer.announceStartup();
+
+        registry.cleanupThread();
     }
 
     protected final FilterConfig getFilterConfig()
