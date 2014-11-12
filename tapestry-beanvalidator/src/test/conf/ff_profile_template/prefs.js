@@ -1,0 +1,1 @@
+user_pref("intl.accept_languages", "en,fr,de");
