@@ -60,7 +60,7 @@ class SshTask extends DefaultTask {
   def scpFile(source, destination) {
     initAnt()
     withInfoLogging {
-      ant.scp(localFile: project.files(source).singleFile, remoteToFile: "${userName}@${host}:${destination}", password: password, verbose: verbose)
+      ant.scp(localFile: project.files(source).singleFile, remoteToFile: "${userName}@${host}:${destination}", keyfile : "${System.properties['user.home']}/.ssh/id_dsa", verbose: verbose)
     }
   }
 
@@ -68,7 +68,7 @@ class SshTask extends DefaultTask {
     initAnt()
     withInfoLogging {
       ant.sshexec(host: host, username: userName, password: password, command: "mkdir -p ${destination}")
-      ant.scp(remoteTodir: "${userName}@${host}:${destination}", password: password, verbose: verbose) {
+      ant.scp(remoteTodir: "${userName}@${host}:${destination}", keyfile : "${System.properties['user.home']}/.ssh/id_dsa", verbose: verbose) {
         project.files(source).addToAntBuilder(ant, "fileSet", FileCollection.AntType.FileSet)
       }
     }
