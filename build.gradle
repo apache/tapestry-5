@@ -344,7 +344,7 @@ task zippedBinaries(type: Zip) {
     group "Release artifact"
     // This may create a few unwanted dependencies, but does
     // seem to ensure that the subprojects are created
-    inputs.files subprojects*.configurations*.archives.artifacts
+    inputs.files subprojects*.configurations*.archives.artifacts.files
 
     destinationDir buildDir
     baseName "apache-tapestry"
