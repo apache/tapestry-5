@@ -2,9 +2,13 @@ description = "Kaptcha user verification support"
 
 dependencies {
     compile project(':tapestry-core')
-    compile "com.github.axet:kaptcha:0.0.8"
+    compile "com.google.code.kaptcha:kaptcha:2.3"
     
     testCompile project(':tapestry-test')
+}
+
+repositories {
+    mavenLocal()
 }
 
 jar {
