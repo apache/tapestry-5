@@ -503,7 +503,7 @@ public class SymbolConstants
     /**
      * When an asset (typically, a JavaScript module) is streamed without an explicit expiration header, then
      * this value is sent as the {@code Cache-Control} header; the default is "max-age=60, must-revalidate". Setting
-     * max-age to a value above zero signficantly reduces the number of client requests for module content, as client
+     * max-age to a value above zero significantly reduces the number of client requests for module content, as client
      * browsers will then cache previously downloaded versions. For normal assets, which are immutable, and fingerprinted with
      * a content hash, there is no need to set max age, and instead, a far-future expiration date is provided.
      *
