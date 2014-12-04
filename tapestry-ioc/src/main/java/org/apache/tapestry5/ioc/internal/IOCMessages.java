@@ -187,6 +187,11 @@ final class IOCMessages
         return MESSAGES.format("no-constructor", implementationClass.getName(), serviceId);
     }
 
+    static String abstractServiceImplementation(Class implementationClass, String serviceId)
+    {
+        return MESSAGES.format("abstract-service-implementation", implementationClass.getName(), serviceId);
+    }
+
     static String bindMethodMustBeStatic(String methodId)
     {
         return MESSAGES.format("bind-method-must-be-static", methodId);

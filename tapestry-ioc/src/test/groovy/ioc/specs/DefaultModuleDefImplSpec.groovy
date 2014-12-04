@@ -7,9 +7,12 @@ import org.apache.tapestry5.ioc.def.ServiceDef3
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory
 import org.slf4j.Logger
+
+import spock.lang.Issue;
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
 import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.internal.*
 
@@ -415,15 +418,15 @@ class DefaultModuleDefImplSpec extends Specification {
 
   def "Multiple marker annotations can be added to service via ServiceBindingOptions"() {
 	  when:
-  
+
 	  def md = module MarkerModule
 	  def sd = md.getServiceDef "ColorfulGreeter"
-  
+
 	  then:
-  
+
 	  sd.markers == [RedMarker, BlueMarker] as Set
 	}
-  
+
   def "public synthetic methods on module class are ignored"() {
     def moduleClass = createSyntheticModuleClass()
 
@@ -435,7 +438,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     md.serviceIds.size() == 1
   }
-  
+
   def "Methods overridden from Object are ignored"() {
 
     when:
@@ -445,6 +448,21 @@ class DefaultModuleDefImplSpec extends Specification {
     then:
 
     md.serviceIds.size() == 1
+  }
+
+  @Issue('https://issues.apache.org/jira/browse/TAP5-2425')
+  def "a service implementation must not be abstract"() {
+
+    when:
+
+    module AbstractAutobuildServiceModule
+
+    then:
+
+    RuntimeException e = thrown()
+
+    e.message.contains "Class org.apache.tapestry5.ioc.internal.AbstractRunnableService (implementation of service 'Runnable') is abstract."
+
   }
 
 

@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -140,6 +141,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createStandardConstructorBasedObjectCreatorSource()
     {
+        if (Modifier.isAbstract(serviceImplementation.getModifiers()))
+            throw new RuntimeException(IOCMessages.abstractServiceImplementation(serviceImplementation, serviceId));
         final Constructor constructor = InternalUtils.findAutobuildConstructor(serviceImplementation);
 
         if (constructor == null)
