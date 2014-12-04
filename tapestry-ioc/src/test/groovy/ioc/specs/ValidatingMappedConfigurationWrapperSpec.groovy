@@ -97,7 +97,7 @@ class ValidatingMappedConfigurationWrapperSpec extends AbstractSharedRegistrySpe
 
     IllegalArgumentException e = thrown()
 
-    e.message.contains "Service contribution (to service 'Baz') conflicts with existing contribution"
+    e.message.contains "Service contribution (to service 'Baz') for key 'class java.lang.Integer' conflicts with existing contribution"
 
     keyToContribution[Integer].is(def1)
     map.isEmpty()

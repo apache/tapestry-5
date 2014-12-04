@@ -85,7 +85,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
         ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
-            throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, existing));
+            throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, key, existing));
 
         map.put(key, coerced);
 

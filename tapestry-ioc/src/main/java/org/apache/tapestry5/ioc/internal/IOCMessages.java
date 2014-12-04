@@ -137,9 +137,9 @@ final class IOCMessages
         return MESSAGES.format("generic-type-not-supported", type);
     }
 
-    static String contributionDuplicateKey(String serviceId, ContributionDef existingDef)
+    static String contributionDuplicateKey(String serviceId, Object key, ContributionDef existingDef)
     {
-        return MESSAGES.format("contribution-duplicate-key", serviceId, existingDef);
+        return MESSAGES.format("contribution-duplicate-key", serviceId, key, existingDef);
     }
 
     static String errorBuildingService(String serviceId, ServiceDef serviceDef, Throwable cause)
