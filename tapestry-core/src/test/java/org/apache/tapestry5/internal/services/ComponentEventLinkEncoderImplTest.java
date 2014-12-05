@@ -365,7 +365,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         verify();
     }
 
-
     @Test
     public void context_passed_in_path_without_final_slash() throws Exception
     {
@@ -447,5 +446,41 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         verify();
 
+    }
+
+    @Test
+    public void decode_compoent_event_request_with_slash_in_context_path() throws Exception
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
+
+        expect(ls.isSupportedLocaleName("page.component:event")).andReturn(false);
+
+        train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
+        train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
+        train_getLocale(request, Locale.ENGLISH);
+
+        ls.setNonPersistentLocaleFromLocaleName("en");
+
+        train_getPath(request, "/foo/bar/page.component:event");
+
+        train_isPageName(resolver, "page", true);
+
+        train_canonicalizePageName(resolver, "page", "Page");
+
+        replay();
+
+        ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                response, null, null, null, true, null, "foo/bar", metaDataLocator, null);
+
+        ComponentEventRequestParameters parameters = linkEncoder.decodeComponentEventRequest(request);
+        assertNotNull(parameters);
+        assertEquals(parameters.getActivePageName(), "Page");
+        assertEquals(parameters.getEventType(), "event");
+
+        verify();
     }
 }
