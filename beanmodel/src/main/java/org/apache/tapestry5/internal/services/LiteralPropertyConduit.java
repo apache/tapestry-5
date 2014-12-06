@@ -63,7 +63,7 @@ public class LiteralPropertyConduit extends PropertyConduitDelegate implements I
     
     public Type getPropertyGenericType()
     {
-    	return propertyType;
+        return propertyType;
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

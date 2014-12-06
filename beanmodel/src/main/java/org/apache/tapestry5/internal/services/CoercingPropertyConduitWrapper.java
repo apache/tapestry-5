@@ -50,10 +50,10 @@ public class CoercingPropertyConduitWrapper implements PropertyConduit2
     
     public Type getPropertyGenericType()
     {
-    	if (conduit instanceof PropertyConduit2) {
-    		return ((PropertyConduit2) conduit).getPropertyGenericType();
-    	}
-    	return conduit.getPropertyType();
+        if (conduit instanceof PropertyConduit2) {
+            return ((PropertyConduit2) conduit).getPropertyGenericType();
+        }
+        return conduit.getPropertyType();
     }
 
     @SuppressWarnings("unchecked")

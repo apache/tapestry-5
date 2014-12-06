@@ -524,28 +524,28 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
         private Type getGenericType(PropertyAdapter adapter)
         {
-        	Type genericType = null;
-        	if (adapter.getField() != null)
-        	{
-        		genericType = adapter.getField().getGenericType();
-        	}
-        	else if (adapter.getReadMethod() != null)
-        	{
-        		genericType = adapter.getReadMethod().getGenericReturnType(); 
-        	}
-        	else if (adapter.getWriteMethod() != null)
-        	{
-        		genericType = adapter.getWriteMethod().getGenericParameterTypes()[0];
-        	}
-        	else
-        	{
-        		throw new RuntimeException("Could not find accessor for property " + adapter.getName());
-        	}
-        	
-        	return genericType == null ? adapter.getType() : genericType;
-		}
+            Type genericType = null;
+            if (adapter.getField() != null)
+            {
+                genericType = adapter.getField().getGenericType();
+            }
+            else if (adapter.getReadMethod() != null)
+            {
+                genericType = adapter.getReadMethod().getGenericReturnType(); 
+            }
+            else if (adapter.getWriteMethod() != null)
+            {
+                genericType = adapter.getWriteMethod().getGenericParameterTypes()[0];
+            }
+            else
+            {
+                throw new RuntimeException("Could not find accessor for property " + adapter.getName());
+            }
+            
+            return genericType == null ? adapter.getType() : genericType;
+        }
 
-		private void implementSetter(PropertyAdapter adapter)
+        private void implementSetter(PropertyAdapter adapter)
         {
             if (adapter.getWriteMethod() != null)
             {
@@ -1488,7 +1488,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
             
             public Type getPropertyGenericType()
             {
-            	return rootClass;
+                return rootClass;
             }
 
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

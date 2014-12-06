@@ -59,6 +59,7 @@ import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.internal.BasicDataTypeAnalyzers;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
@@ -621,18 +622,7 @@ public final class TapestryModule
      */
     public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, String> configuration)
     {
-        // This is a special case contributed to avoid exceptions when a
-        // property type can't be
-        // matched. DefaultDataTypeAnalyzer converts the empty string to null.
-
-        configuration.add(Object.class, "");
-
-        configuration.add(String.class, DataTypeConstants.TEXT);
-        configuration.add(Number.class, DataTypeConstants.NUMBER);
-        configuration.add(Enum.class, DataTypeConstants.ENUM);
-        configuration.add(Boolean.class, DataTypeConstants.BOOLEAN);
-        configuration.add(Date.class, DataTypeConstants.DATE);
-        configuration.add(Calendar.class, DataTypeConstants.CALENDAR);
+        BasicDataTypeAnalyzers.provideDefaultDataTypeAnalyzers(configuration);
     }
 
     @Contribute(BeanBlockSource.class)

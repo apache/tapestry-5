@@ -111,10 +111,10 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
     @Override
     public Type getBindingGenericType()
     {
-    	if (conduit instanceof PropertyConduit2) {
-    		return ((PropertyConduit2) conduit).getPropertyGenericType();
-    	}
-    	return conduit.getPropertyType();
+        if (conduit instanceof PropertyConduit2) {
+            return ((PropertyConduit2) conduit).getPropertyGenericType();
+        }
+        return conduit.getPropertyType();
     }
 
     @Override

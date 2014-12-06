@@ -25,21 +25,21 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * Outputs the type and genericType of the 'value' binding in a div
  */
 public class GenericTypeDisplay {
-	@Inject
-	private ComponentResources resources;
-	
-	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
-	private String description;
-	
-	@Parameter(required=true)
-	private Object value;
-	
-	void afterRender(MarkupWriter writer) {
-		writer.element("div");
-		Class<?> type = resources.getBoundType("value");
-		Type genericType = resources.getBoundGenericType("value");
-		String text = String.format("description=%s,type=%s,genericType=%s", description, type.getName(), genericType.toString());
-		writer.write(text);
-		writer.end();
-	}
+    @Inject
+    private ComponentResources resources;
+    
+    @Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
+    private String description;
+    
+    @Parameter(required=true)
+    private Object value;
+    
+    void afterRender(MarkupWriter writer) {
+        writer.element("div");
+        Class<?> type = resources.getBoundType("value");
+        Type genericType = resources.getBoundGenericType("value");
+        String text = String.format("description=%s,type=%s,genericType=%s", description, type.getName(), genericType.toString());
+        writer.write(text);
+        writer.end();
+    }
 }

@@ -457,9 +457,9 @@ public class TapestryInternalUtils
             {
                 if (conduit instanceof PropertyConduit2)
                 {
-                	return ((PropertyConduit2) conduit).getPropertyGenericType();
+                    return ((PropertyConduit2) conduit).getPropertyGenericType();
                 }
-            	return conduit.getPropertyType();
+                return conduit.getPropertyType();
             }
             
             public Object get(Object instance)
