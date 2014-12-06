@@ -20,9 +20,9 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.Sortable;
-import org.apache.tapestry5.internal.InternalBeanModelUtils;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 @SuppressWarnings("all")
@@ -48,9 +48,9 @@ public class PropertyModelImpl implements PropertyModel
         this.name = name;
         this.conduit = conduit;
 
-        id = InternalBeanModelUtils.extractIdFromPropertyExpression(name);
+        id = InternalCommonsUtils.extractIdFromPropertyExpression(name);
 
-        label = InternalBeanModelUtils.defaultLabel(id, messages, name);
+        label = InternalCommonsUtils.defaultLabel(id, messages, name);
 
         // TAP5-2305
         if (conduit != null)
@@ -87,7 +87,7 @@ public class PropertyModelImpl implements PropertyModel
 
     public PropertyModel label(String label)
     {
-        assert InternalStringUtils.isNonBlank(label);
+        assert InternalCommonsUtils.isNonBlank(label);
         this.label = label;
 
         return this;

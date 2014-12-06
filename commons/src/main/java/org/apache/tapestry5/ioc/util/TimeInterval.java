@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 
 /**
  * Used to represent a period of time, specifically as a configuration value. This is often used to specify timeouts.
@@ -157,7 +157,7 @@ public class TimeInterval
             Long unitValue = UNITS.get(units);
 
             if (unitValue == null)
-                throw new RuntimeException(String.format("Unknown time interval unit '%s' (in '%s').  Defined units: %s.", units, input, InternalUtils.joinSorted(UNITS.keySet())));
+                throw new RuntimeException(String.format("Unknown time interval unit '%s' (in '%s').  Defined units: %s.", units, input, InternalCommonsUtils.joinSorted(UNITS.keySet())));
 
             milliseconds += count * unitValue;
         }

@@ -22,7 +22,7 @@ import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
@@ -93,7 +93,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private void validateNewPropertyName(String propertyName)
     {
-        assert InternalStringUtils.isNonBlank(propertyName);
+        assert InternalCommonsUtils.isNonBlank(propertyName);
         if (properties.containsKey(propertyName))
             throw new RuntimeException(String.format(
                     "Bean editor model for %s already contains a property model for property '%s'.",

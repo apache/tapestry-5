@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.beaneditor;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.
@@ -54,7 +54,7 @@ public final class BeanModelUtils
 
     private static final String join(String firstList, String optionalSecondList)
     {
-        if (InternalStringUtils.isBlank(optionalSecondList))
+        if (InternalCommonsUtils.isBlank(optionalSecondList))
             return firstList;
 
         return firstList + "," + optionalSecondList;

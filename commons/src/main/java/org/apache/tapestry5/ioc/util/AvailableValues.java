@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 
 /**
  * Used (as part of a {@link UnknownValueException} to identify what available values
@@ -81,7 +81,7 @@ public class AvailableValues
     @Override
     public String toString()
     {
-        return String.format("AvailableValues[%s: %s]", valueType, InternalStringUtils.join(values));
+        return String.format("AvailableValues[%s: %s]", valueType, InternalCommonsUtils.join(values));
     }
 
 }

@@ -19,7 +19,6 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.PropertyConduit2;
-import org.apache.tapestry5.internal.InternalBeanModelUtils;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
@@ -30,7 +29,8 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
@@ -1107,7 +1107,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             String message = String.format("Node %s was type %s, but was expected to be (one of) %s.",
                     node.toStringTree(), PropertyExpressionParser.tokenNames[node.getType()],
-                    InternalStringUtils.joinSorted(tokenNames));
+                    InternalCommonsUtils.joinSorted(tokenNames));
 
             return new RuntimeException(message);
         }
@@ -1260,7 +1260,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             Type returnType = GenericsUtils.extractActualType(activeType, method);
 
-            return new Term(returnType, toUniqueId(method), InternalBeanModelUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
+            return new Term(returnType, toUniqueId(method), InternalCommonsUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -1364,7 +1364,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
     public PropertyConduit create(Class rootClass, String expression)
     {
         assert rootClass != null;
-        assert InternalStringUtils.isNonBlank(expression);
+        assert InternalCommonsUtils.isNonBlank(expression);
 
         MultiKey key = new MultiKey(rootClass, expression);
 
