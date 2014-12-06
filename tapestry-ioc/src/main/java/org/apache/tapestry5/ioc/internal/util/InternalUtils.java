@@ -17,16 +17,16 @@ package org.apache.tapestry5.ioc.internal.util;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.BeanModelUtils;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.*;
-import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.ServiceDefImpl;
 import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
@@ -56,18 +56,6 @@ public class InternalUtils
     public static final boolean SERVICE_CLASS_RELOADING_ENABLED = Boolean.parseBoolean(System.getProperty(
             IOCConstants.SERVICE_CLASS_RELOADING_ENABLED, "true"));
 
-
-    /**
-     * Pattern used to eliminate leading and trailing underscores and dollar signs.
-     */
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$",
-            Pattern.CASE_INSENSITIVE);
-
-    /**
-     * @since 5.3
-     */
-    public static AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
-
     /**
      * Converts a method to a user presentable string using a {@link PlasticProxyFactory} to obtain a {@link Location}
      * (where possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
@@ -92,27 +80,11 @@ public class InternalUtils
      *
      * @param method
      * @return short string representation
+     * @deprecated use {@link InternalStringUtils#asString(Method)} instead.
      */
     public static String asString(Method method)
     {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(method.getDeclaringClass().getName());
-        buffer.append(".");
-        buffer.append(method.getName());
-        buffer.append("(");
-
-        for (int i = 0; i < method.getParameterTypes().length; i++)
-        {
-            if (i > 0)
-                buffer.append(", ");
-
-            String name = method.getParameterTypes()[i].getSimpleName();
-
-            buffer.append(name);
-        }
-
-        return buffer.append(")").toString();
+        return InternalStringUtils.asString(method);
     }
 
     /**
@@ -131,16 +103,11 @@ public class InternalUtils
 
     /**
      * Strips leading "_" and "$" and trailing "_" from the name.
+     * @deprecated use {@link InternalStringUtils#stripMemberName(String)} instead.
      */
     public static String stripMemberName(String memberName)
     {
-        assert InternalUtils.isNonBlank(memberName);
-        Matcher matcher = NAME_PATTERN.matcher(memberName);
-
-        if (!matcher.matches())
-            throw new IllegalArgumentException(String.format("Input '%s' is not a valid Java identifier.", memberName));
-
-        return matcher.group(1);
+        return InternalStringUtils.stripMemberName(memberName);
     }
 
     /**
@@ -425,10 +392,11 @@ public class InternalUtils
 
     /**
      * Joins together some number of elements to form a comma separated list.
+     * @deprecated use {@link InternalStringUtils#join(List)} instead.
      */
     public static String join(List elements)
     {
-        return join(elements, ", ");
+        return InternalStringUtils.join(elements);
     }
 
     /**
@@ -439,39 +407,11 @@ public class InternalUtils
      *         objects to be joined together
      * @param separator
      *         used between elements when joining
+     * @deprecated use {@link InternalStringUtils#asString(Method, String)} instead.
      */
     public static String join(List elements, String separator)
     {
-        switch (elements.size())
-        {
-            case 0:
-                return "";
-
-            case 1:
-                return elements.get(0).toString();
-
-            default:
-
-                StringBuilder buffer = new StringBuilder();
-                boolean first = true;
-
-                for (Object o : elements)
-                {
-                    if (!first)
-                        buffer.append(separator);
-
-                    String string = String.valueOf(o);
-
-                    if (string.equals(""))
-                        string = "(blank)";
-
-                    buffer.append(string);
-
-                    first = false;
-                }
-
-                return buffer.toString();
-        }
+        return InternalStringUtils.join(elements, separator);
     }
 
     /**
@@ -479,29 +419,21 @@ public class InternalUtils
      *
      * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements are null or
      *         empty
+     * @deprecated use {@link InternalStringUtils#joinSorted(Collection)} instead.
      */
     public static String joinSorted(Collection elements)
     {
-        if (elements == null || elements.isEmpty())
-            return "(none)";
-
-        List<String> list = CollectionFactory.newList();
-
-        for (Object o : elements)
-            list.add(String.valueOf(o));
-
-        Collections.sort(list);
-
-        return join(list);
+        return InternalStringUtils.joinSorted(elements);
     }
 
     /**
      * Returns true if the input is null, or is a zero length string (excluding leading/trailing whitespace).
+     * @deprecated use {@link InternalStringUtils#isBlank(String)} instead.
      */
 
     public static boolean isBlank(String input)
     {
-        return input == null || input.length() == 0 || input.trim().length() == 0;
+        return InternalStringUtils.isBlank(input);
     }
 
     /**
@@ -518,20 +450,21 @@ public class InternalUtils
         return false;
     }
 
+    /**
+     * @deprecated use {@link InternalStringUtils#isNonBlank(String)} instead.
+     */
     public static boolean isNonBlank(String input)
     {
-        return !isBlank(input);
+        return InternalStringUtils.isNonBlank(input);
     }
 
     /**
      * Capitalizes a string, converting the first character to uppercase.
+     * @deprecated use {@link InternalStringUtils#capitalize(String)} instead.
      */
     public static String capitalize(String input)
     {
-        if (input.length() == 0)
-            return input;
-
-        return input.substring(0, 1).toUpperCase() + input.substring(1);
+        return InternalStringUtils.capitalize(input);
     }
 
     /**
@@ -639,10 +572,11 @@ public class InternalUtils
 
     /**
      * Return true if the input string contains the marker for symbols that must be expanded.
+     * @deprecated use {@link InternalStringUtils#containsSymbols(String)} instead.
      */
     public static boolean containsSymbols(String input)
     {
-        return input.contains("${");
+        return InternalStringUtils.containsSymbols(input);
     }
 
     /**
@@ -650,16 +584,11 @@ public class InternalUtils
      * generally a fully qualified class name, though tapestry-core also uses this method for the occasional property
      * expression (which is also dot separated). Returns the input string unchanged if it does not contain a period
      * character.
+     * @deprecated use {@link InternalStringUtils#lastTerm(String)} instead.
      */
     public static String lastTerm(String input)
     {
-        assert InternalUtils.isNonBlank(input);
-        int dotx = input.lastIndexOf('.');
-
-        if (dotx < 0)
-            return input;
-
-        return input.substring(dotx + 1);
+        return InternalStringUtils.lastTerm(input);
     }
 
     /**
@@ -848,17 +777,8 @@ public class InternalUtils
      */
     public static AnnotationProvider toAnnotationProvider(final Class element)
     {
-        return new AnnotationProvider()
-        {
-            @Override
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                return annotationClass.cast(element.getAnnotation(annotationClass));
-            }
-        };
+        return BeanModelUtils.toAnnotationProvider(element);
     }
-
-    ;
 
     /**
      * @since 5.3
@@ -1484,17 +1404,7 @@ public class InternalUtils
 
     public static AnnotationProvider toAnnotationProvider(final Method element)
     {
-        if (element == null)
-            return NULL_ANNOTATION_PROVIDER;
-
-        return new AnnotationProvider()
-        {
-            @Override
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                return element.getAnnotation(annotationClass);
-            }
-        };
+        return BeanModelUtils.toAnnotationProvider(element);
     }
 
     public static <T> ObjectCreator<T> createConstructorConstructionPlan(final OperationTracker tracker, final ObjectLocator locator,

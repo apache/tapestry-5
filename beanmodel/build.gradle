@@ -6,7 +6,18 @@ description = "Fast class property discovery, reading and writing library based 
 //apply plugin: JavaPlugin
 
 buildDir = 'target/gradle-build'
-       
+
+project.ext {
+	antlrSource = "src/main/antlr"
+	mainGeneratedDir = "src/main/generated"
+	testGeneratedDir = "src/test/generated"
+	antlrOutput = "$mainGeneratedDir/antlr"
+}
+
+configurations {
+	antlr3
+}
+      
 project.ext.libraryVersions = [
 	jcache: '1.0.0',
 ]
@@ -15,10 +26,48 @@ dependencies {
 	compile project(":plastic")
 	compile project(":tapestry5-annotations")
 	compile project(":commons")
+	
+	// Antlr3 tool path used with the antlr3 task
+	antlr3 "org.antlr:antlr:3.5.2"
+
 	// Transitive will bring in the unwanted string template library as well
 	compile "org.antlr:antlr-runtime:3.5.2", {
 		exclude group: "org.antlr", module: "stringtemplate"
 	}
+}
+
+// This may spin out as a plugin once we've got the details down pat
+
+task generateGrammarSource(type: JavaExec) {
+	description "Generates Java sources from Antlr3 grammars."
+	inputs.source fileTree(dir: antlrSource, include: "**/*.g")
+	outputs.dir file(antlrOutput)
+
+	classpath configurations.antlr3
+
+	main "org.antlr.Tool"
+	args "-o", "${antlrOutput}/org/apache/tapestry5/internal/antlr"
+	args inputs.sourceFiles
+
+	doFirst {
+		logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
+	}
+}
+
+sourceSets {
+	main {
+		output.dir(antlrOutput, builtBy: generateGrammarSource)
+		java {
+			srcDir antlrOutput
+		}
+	}
+}
+
+clean.delete mainGeneratedDir, testGeneratedDir
+
+compileJava {
+	dependsOn generateGrammarSource
+	options.fork(memoryMaximumSize: '512m')
 }
 
 jar {	

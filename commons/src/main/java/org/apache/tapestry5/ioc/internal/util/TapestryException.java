@@ -34,7 +34,7 @@ public class TapestryException extends RuntimeException implements Locatable
      */
     public TapestryException(String message, Object location, Throwable cause)
     {
-        this(message, InternalUtils.locationOf(location), cause);
+        this(message, locationOf(location), cause);
     }
 
     /**
@@ -71,5 +71,26 @@ public class TapestryException extends RuntimeException implements Locatable
 
         return String.format("%s [at %s]", super.toString(), location);
     }
+    
+    /**
+     * Sniffs the object to see if it is a {@link Location} or {@link Locatable}. Returns null if null or not
+     * convertable to a location.
+     * Copied from InternalUtils to avoid having it moved to BeanModel or Commons subprojects.
+     */
+
+    private static Location locationOf(Object location)
+    {
+        if (location == null)
+            return null;
+
+        if (location instanceof Location)
+            return (Location) location;
+
+        if (location instanceof Locatable)
+            return ((Locatable) location).getLocation();
+
+        return null;
+    }
+
 
 }

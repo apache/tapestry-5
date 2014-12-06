@@ -19,7 +19,6 @@ import java.lang.annotation.Annotation;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
