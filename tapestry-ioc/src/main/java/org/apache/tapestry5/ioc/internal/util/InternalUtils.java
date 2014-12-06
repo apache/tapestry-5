@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.internal.util;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.internal.BeanModelUtils;
+import org.apache.tapestry5.internal.InternalBeanModelUtils;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
@@ -777,7 +777,7 @@ public class InternalUtils
      */
     public static AnnotationProvider toAnnotationProvider(final Class element)
     {
-        return BeanModelUtils.toAnnotationProvider(element);
+        return InternalBeanModelUtils.toAnnotationProvider(element);
     }
 
     /**
@@ -1404,7 +1404,7 @@ public class InternalUtils
 
     public static AnnotationProvider toAnnotationProvider(final Method element)
     {
-        return BeanModelUtils.toAnnotationProvider(element);
+        return InternalBeanModelUtils.toAnnotationProvider(element);
     }
 
     public static <T> ObjectCreator<T> createConstructorConstructionPlan(final OperationTracker tracker, final ObjectLocator locator,

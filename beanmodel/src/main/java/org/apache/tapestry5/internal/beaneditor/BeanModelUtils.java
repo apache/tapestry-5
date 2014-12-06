@@ -15,14 +15,15 @@
 package org.apache.tapestry5.internal.beaneditor;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.
  */
 public final class BeanModelUtils
 {
+
+    final private static String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}
@@ -53,7 +54,7 @@ public final class BeanModelUtils
 
     private static final String join(String firstList, String optionalSecondList)
     {
-        if (InternalUtils.isBlank(optionalSecondList))
+        if (InternalStringUtils.isBlank(optionalSecondList))
             return firstList;
 
         return firstList + "," + optionalSecondList;
@@ -106,13 +107,13 @@ public final class BeanModelUtils
     {
         model.reorder(split(propertyNames));
     }
-
+    
     static String[] split(String propertyNames)
     {
         String trimmed = propertyNames.trim();
 
         if (trimmed.length() == 0)
-            return InternalConstants.EMPTY_STRING_ARRAY;
+            return EMPTY_STRING_ARRAY;
 
         return trimmed.split("\\s*,\\s*");
     }
