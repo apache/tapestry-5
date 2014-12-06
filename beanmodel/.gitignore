@@ -1,0 +1,4 @@
+docs
+/.externalToolBuilders
+src/main/generated
+src/test/generated

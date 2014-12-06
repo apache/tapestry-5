@@ -59,40 +59,7 @@ public class TapestryInternalUtils
      */
     public static String toUserPresentable(String id)
     {
-        StringBuilder builder = new StringBuilder(id.length() * 2);
-
-        char[] chars = id.toCharArray();
-        boolean postSpace = true;
-        boolean upcaseNext = true;
-
-        for (char ch : chars)
-        {
-            if (upcaseNext)
-            {
-                builder.append(Character.toUpperCase(ch));
-                upcaseNext = false;
-
-                continue;
-            }
-
-            if (ch == '_')
-            {
-                builder.append(' ');
-                upcaseNext = true;
-                continue;
-            }
-
-            boolean upperCase = Character.isUpperCase(ch);
-
-            if (upperCase && !postSpace)
-                builder.append(' ');
-
-            builder.append(ch);
-
-            postSpace = upperCase;
-        }
-
-        return builder.toString();
+        return BeanModelUtils.toUserPresentable(id);
     }
 
     public static Map<String, String> mapFromKeysAndValues(String... keysAndValues)
@@ -261,7 +228,7 @@ public class TapestryInternalUtils
      */
     public static String extractIdFromPropertyExpression(String expression)
     {
-        return replace(expression, NON_WORD_PATTERN, "");
+        return BeanModelUtils.extractIdFromPropertyExpression(expression);
     }
 
     /**
@@ -270,12 +237,7 @@ public class TapestryInternalUtils
      */
     public static String defaultLabel(String id, Messages messages, String propertyExpression)
     {
-        String key = id + "-label";
-
-        if (messages.contains(key))
-            return messages.get(key);
-
-        return toUserPresentable(extractIdFromPropertyExpression(lastTerm(propertyExpression)));
+        return BeanModelUtils.defaultLabel(id, messages, propertyExpression);
     }
 
     /**
@@ -342,7 +304,7 @@ public class TapestryInternalUtils
 
     private static String replace(String input, Pattern pattern, String replacement)
     {
-        return pattern.matcher(input).replaceAll(replacement);
+        return BeanModelUtils.replace(input, pattern, replacement);
     }
 
     /**

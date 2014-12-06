@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.Sortable;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.BeanModelUtils;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
-
-import java.lang.annotation.Annotation;
 
 @SuppressWarnings("all")
 public class PropertyModelImpl implements PropertyModel
@@ -48,9 +48,9 @@ public class PropertyModelImpl implements PropertyModel
         this.name = name;
         this.conduit = conduit;
 
-        id = TapestryInternalUtils.extractIdFromPropertyExpression(name);
+        id = BeanModelUtils.extractIdFromPropertyExpression(name);
 
-        label = TapestryInternalUtils.defaultLabel(id, messages, name);
+        label = BeanModelUtils.defaultLabel(id, messages, name);
 
         // TAP5-2305
         if (conduit != null)
@@ -87,7 +87,7 @@ public class PropertyModelImpl implements PropertyModel
 
     public PropertyModel label(String label)
     {
-        assert InternalUtils.isNonBlank(label);
+        assert InternalStringUtils.isNonBlank(label);
         this.label = label;
 
         return this;
