@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal.util;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.internal.InternalBeanModelUtils;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
@@ -80,11 +79,10 @@ public class InternalUtils
      *
      * @param method
      * @return short string representation
-     * @deprecated use {@link InternalStringUtils#asString(Method)} instead.
      */
     public static String asString(Method method)
     {
-        return InternalStringUtils.asString(method);
+        return InternalCommonsUtils.asString(method);
     }
 
     /**
@@ -103,11 +101,10 @@ public class InternalUtils
 
     /**
      * Strips leading "_" and "$" and trailing "_" from the name.
-     * @deprecated use {@link InternalStringUtils#stripMemberName(String)} instead.
      */
     public static String stripMemberName(String memberName)
     {
-        return InternalStringUtils.stripMemberName(memberName);
+        return InternalCommonsUtils.stripMemberName(memberName);
     }
 
     /**
@@ -392,11 +389,10 @@ public class InternalUtils
 
     /**
      * Joins together some number of elements to form a comma separated list.
-     * @deprecated use {@link InternalStringUtils#join(List)} instead.
      */
     public static String join(List elements)
     {
-        return InternalStringUtils.join(elements);
+        return InternalCommonsUtils.join(elements);
     }
 
     /**
@@ -407,11 +403,10 @@ public class InternalUtils
      *         objects to be joined together
      * @param separator
      *         used between elements when joining
-     * @deprecated use {@link InternalStringUtils#asString(Method, String)} instead.
      */
     public static String join(List elements, String separator)
     {
-        return InternalStringUtils.join(elements, separator);
+        return InternalCommonsUtils.join(elements, separator);
     }
 
     /**
@@ -419,21 +414,19 @@ public class InternalUtils
      *
      * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements are null or
      *         empty
-     * @deprecated use {@link InternalStringUtils#joinSorted(Collection)} instead.
      */
     public static String joinSorted(Collection elements)
     {
-        return InternalStringUtils.joinSorted(elements);
+        return InternalCommonsUtils.joinSorted(elements);
     }
 
     /**
      * Returns true if the input is null, or is a zero length string (excluding leading/trailing whitespace).
-     * @deprecated use {@link InternalStringUtils#isBlank(String)} instead.
      */
 
     public static boolean isBlank(String input)
     {
-        return InternalStringUtils.isBlank(input);
+        return InternalCommonsUtils.isBlank(input);
     }
 
     /**
@@ -450,63 +443,27 @@ public class InternalUtils
         return false;
     }
 
-    /**
-     * @deprecated use {@link InternalStringUtils#isNonBlank(String)} instead.
-     */
     public static boolean isNonBlank(String input)
     {
-        return InternalStringUtils.isNonBlank(input);
+        return InternalCommonsUtils.isNonBlank(input);
     }
 
     /**
      * Capitalizes a string, converting the first character to uppercase.
-     * @deprecated use {@link InternalStringUtils#capitalize(String)} instead.
      */
     public static String capitalize(String input)
     {
-        return InternalStringUtils.capitalize(input);
+        return InternalCommonsUtils.capitalize(input);
     }
 
     /**
      * Sniffs the object to see if it is a {@link Location} or {@link Locatable}. Returns null if null or not
      * convertable to a location.
      */
-
+    
     public static Location locationOf(Object location)
     {
-        if (location == null)
-            return null;
-
-        if (location instanceof Location)
-            return (Location) location;
-
-        if (location instanceof Locatable)
-            return ((Locatable) location).getLocation();
-
-        return null;
-    }
-
-    /**
-     * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
-     *
-     * @param map
-     *         the map to extract keys from (may be null)
-     * @return the sorted keys, or the empty set if map is null
-     */
-
-    public static List<String> sortedKeys(Map map)
-    {
-        if (map == null)
-            return Collections.emptyList();
-
-        List<String> keys = CollectionFactory.newList();
-
-        for (Object o : map.keySet())
-            keys.add(String.valueOf(o));
-
-        Collections.sort(keys);
-
-        return keys;
+        return InternalCommonsUtils.locationOf(location);
     }
 
     public static <K, V> Set<K> keys(Map<K, V> map)
@@ -572,11 +529,10 @@ public class InternalUtils
 
     /**
      * Return true if the input string contains the marker for symbols that must be expanded.
-     * @deprecated use {@link InternalStringUtils#containsSymbols(String)} instead.
      */
     public static boolean containsSymbols(String input)
     {
-        return InternalStringUtils.containsSymbols(input);
+        return InternalCommonsUtils.containsSymbols(input);
     }
 
     /**
@@ -584,11 +540,10 @@ public class InternalUtils
      * generally a fully qualified class name, though tapestry-core also uses this method for the occasional property
      * expression (which is also dot separated). Returns the input string unchanged if it does not contain a period
      * character.
-     * @deprecated use {@link InternalStringUtils#lastTerm(String)} instead.
      */
     public static String lastTerm(String input)
     {
-        return InternalStringUtils.lastTerm(input);
+        return InternalCommonsUtils.lastTerm(input);
     }
 
     /**
@@ -684,15 +639,7 @@ public class InternalUtils
      */
     public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
     {
-        List<V> list = map.get(key);
-
-        if (list == null)
-        {
-            list = CollectionFactory.newList();
-            map.put(key, list);
-        }
-
-        list.add(value);
+        InternalCommonsUtils.addToMapList(map, key, value);
     }
 
     /**
@@ -777,7 +724,7 @@ public class InternalUtils
      */
     public static AnnotationProvider toAnnotationProvider(final Class element)
     {
-        return InternalBeanModelUtils.toAnnotationProvider(element);
+        return InternalCommonsUtils.toAnnotationProvider(element);
     }
 
     /**
@@ -1392,7 +1339,7 @@ public class InternalUtils
         {
             String value = namedAnnotation.value();
 
-            if (InternalUtils.isNonBlank(value))
+            if (InternalCommonsUtils.isNonBlank(value))
             {
                 return value;
             }
@@ -1404,7 +1351,7 @@ public class InternalUtils
 
     public static AnnotationProvider toAnnotationProvider(final Method element)
     {
-        return InternalBeanModelUtils.toAnnotationProvider(element);
+        return InternalCommonsUtils.toAnnotationProvider(element);
     }
 
     public static <T> ObjectCreator<T> createConstructorConstructionPlan(final OperationTracker tracker, final ObjectLocator locator,
@@ -1567,7 +1514,7 @@ public class InternalUtils
                     @Override
                     public void run()
                     {
-                        final ObjectCreator[] parameters = InternalUtils.calculateParametersForMethod(method, locator,
+                        final ObjectCreator[] parameters = calculateParametersForMethod(method, locator,
                                 resources, tracker);
 
                         plan.add(new InitializationPlan<Object>()
@@ -1651,4 +1598,55 @@ public class InternalUtils
     {
         return F.flow(creators).map(CREATE_OBJECT).toArray(Object.class);
     }
+
+    /**
+     * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
+     *
+     * @param map
+     *         the map to extract keys from (may be null)
+     * @return the sorted keys, or the empty set if map is null
+     */
+    
+    public static List<String> sortedKeys(Map map)
+    {
+        return InternalCommonsUtils.sortedKeys(map);
+    }
+    
+    /**
+     * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
+     * characters). Thus "userId" becomes "User Id", etc. Also, converts underscore into space (and capitalizes the
+     * following word), thus "user_id" also becomes "User Id".
+     */
+    public static String toUserPresentable(String id)
+    {
+        return InternalCommonsUtils.toUserPresentable(id);
+    }
+
+    /**
+     * Used to convert a property expression into a key that can be used to locate various resources (Blocks, messages,
+     * etc.). Strips out any punctuation characters, leaving just words characters (letters, number and the
+     * underscore).
+     *
+     * @param expression a property expression
+     * @return the expression with punctuation removed
+     */
+    public static String extractIdFromPropertyExpression(String expression)
+    {
+        return InternalCommonsUtils.extractIdFromPropertyExpression(expression);
+    }
+    
+    /**
+     * Looks for a label within the messages based on the id. If found, it is used, otherwise the name is converted to a
+     * user presentable form.
+     */
+    public static String defaultLabel(String id, Messages messages, String propertyExpression)
+    {
+        return InternalCommonsUtils.defaultLabel(id, messages, propertyExpression);
+    }
+
+    public static String replace(String input, Pattern pattern, String replacement)
+    {
+        return InternalCommonsUtils.replace(input, pattern, replacement);
+    }
+
 }

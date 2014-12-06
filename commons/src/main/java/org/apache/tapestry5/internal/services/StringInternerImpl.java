@@ -19,6 +19,7 @@ import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.InvalidationEventHub;
 
 import javax.annotation.PostConstruct;
+
 import java.util.Map;
 
 public class StringInternerImpl implements StringInterner

@@ -10,6 +10,7 @@ buildDir = 'target/gradle-build'
 dependencies {
 	compile project(":plastic")
 	compile project(":tapestry5-annotations")
+	compile project(":tapestry-func")
 }
 
 jar {	

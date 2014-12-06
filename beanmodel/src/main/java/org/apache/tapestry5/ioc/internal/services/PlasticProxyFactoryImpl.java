@@ -19,9 +19,8 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
@@ -99,7 +98,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
             final ObjectCreator<T> creator, final String description)
     {
         assert creator != null;
-        assert InternalUtils.isNonBlank(description);
+        assert InternalCommonsUtils.isNonBlank(description);
 
         ClassInstantiator<T> instantiator = createProxy(interfaceType, implementationType, new PlasticClassTransformer()
         {
@@ -159,7 +158,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
             @Override
             public String createObject()
             {
-                return InternalUtils.asString(method);
+                return InternalCommonsUtils.asString(method);
             }
         };
 

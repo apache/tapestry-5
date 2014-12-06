@@ -20,13 +20,12 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
@@ -203,7 +202,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     @Override
     public String toString()
     {
-        String names = InternalUtils.joinSorted(adapters.keySet());
+        String names = InternalCommonsUtils.joinSorted(adapters.keySet());
 
         return String.format("<ClassPropertyAdaptor %s: %s>", beanType.getName(), names);
     }
@@ -211,7 +210,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     @Override
     public List<String> getPropertyNames()
     {
-        return InternalUtils.sortedKeys(adapters);
+        return InternalCommonsUtils.sortedKeys(adapters);
     }
 
     @Override

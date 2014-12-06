@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
@@ -129,7 +129,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         {
             Class key = tuple.getSourceType();
 
-            InternalUtils.addToMapList(sourceTypeToTuple, key, tuple);
+            InternalCommonsUtils.addToMapList(sourceTypeToTuple, key, tuple);
         }
     }
 

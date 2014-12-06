@@ -17,7 +17,7 @@ package org.apache.tapestry5.util;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
@@ -54,7 +54,7 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
     @Override
     public T coerce(String input)
     {
-        if (InternalUtils.isBlank(input))
+        if (InternalCommonsUtils.isBlank(input))
             return null;
 
         T result = stringToEnum.get(input);
