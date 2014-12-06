@@ -18,6 +18,7 @@ configurations {
 dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
+    compile project(':beanmodel')
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
@@ -25,11 +26,6 @@ dependencies {
     provided "javax.servlet:servlet-api:${versions.servletapi}"
 
     compile "commons-codec:commons-codec:1.5"
-
-    // Transitive will bring in the unwanted string template library as well
-    compile "org.antlr:antlr-runtime:3.5.2", {
-        exclude group: "org.antlr", module: "stringtemplate"
-    }
 
     // Antlr3 tool path used with the antlr3 task
     antlr3 "org.antlr:antlr:3.5.2"
