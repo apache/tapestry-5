@@ -36,5 +36,5 @@ public interface PropertyConduit2 extends PropertyConduit
      * @see java.lang.reflect.Field#getGenericType()
      * 
      */
-	Type getPropertyGenericType();
+    Type getPropertyGenericType();
 }

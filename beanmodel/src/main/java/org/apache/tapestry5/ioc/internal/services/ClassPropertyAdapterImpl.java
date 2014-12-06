@@ -57,11 +57,11 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             // TAP5-1493
             if (readMethod != null && readMethod.isBridge())
             {
-            	if (nonBridgeMethods == null)
-            	{
-            		nonBridgeMethods = groupNonBridgeMethodsByName(beanType);
-            	}
-            	readMethod = findMethodWithSameNameAndParamCount(readMethod, nonBridgeMethods); 
+                if (nonBridgeMethods == null)
+                {
+                    nonBridgeMethods = groupNonBridgeMethodsByName(beanType);
+                }
+                readMethod = findMethodWithSameNameAndParamCount(readMethod, nonBridgeMethods); 
             }
             
             // TAP5-1548, TAP5-1885: trying to find a getter which Introspector missed
@@ -86,11 +86,11 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             
             if (writeMethod != null && writeMethod.isBridge())
             {
-            	if (nonBridgeMethods == null)
-            	{
-            		nonBridgeMethods = groupNonBridgeMethodsByName(beanType);
-            	}
-            	writeMethod = findMethodWithSameNameAndParamCount(writeMethod, nonBridgeMethods);
+                if (nonBridgeMethods == null)
+                {
+                    nonBridgeMethods = groupNonBridgeMethodsByName(beanType);
+                }
+                writeMethod = findMethodWithSameNameAndParamCount(writeMethod, nonBridgeMethods);
             }
             
             // TAP5-1548, TAP5-1885: trying to find a setter which Introspector missed
@@ -149,24 +149,24 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
      *         (default to providedmethod if none found)
      */
     private Method findMethodWithSameNameAndParamCount(Method method, Map<String, List<Method>> groupedMethods) {
-    	List<Method> methodGroup = groupedMethods.get(method.getName());
-    	if (methodGroup != null)
-    	{
-    		for (Method nonBridgeMethod : methodGroup)
-    		{
-    			if (nonBridgeMethod.getParameterTypes().length == method.getParameterTypes().length)
-    			{
-    				// return the non-bridge method with the same name / argument count
-    				return nonBridgeMethod;
-    			}
-    		}
-    	}
-    	
-    	// default to the provided method
-    	return method;
-	}
+        List<Method> methodGroup = groupedMethods.get(method.getName());
+        if (methodGroup != null)
+        {
+            for (Method nonBridgeMethod : methodGroup)
+            {
+                if (nonBridgeMethod.getParameterTypes().length == method.getParameterTypes().length)
+                {
+                    // return the non-bridge method with the same name / argument count
+                    return nonBridgeMethod;
+                }
+            }
+        }
+        
+        // default to the provided method
+        return method;
+    }
 
-	/**
+    /**
      * Find all of the public methods that are not bridge methods and
      * group them by method name
      * 
@@ -176,24 +176,24 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
      */
     private Map<String, List<Method>> groupNonBridgeMethodsByName(Class type)
     {
-    	Map<String, List<Method>> methodGroupsByName = CollectionFactory.newMap();
-    	for (Method method : type.getMethods())
-    	{
-    		if (!method.isBridge())
-    		{
-    			List<Method> methodGroup = methodGroupsByName.get(method.getName());
-    			if (methodGroup == null)
-    			{
-    				methodGroup = CollectionFactory.newList();
-    				methodGroupsByName.put(method.getName(), methodGroup);
-    			}
-    			methodGroup.add(method);
-    		}
-    	}
-    	return methodGroupsByName;
-	}
+        Map<String, List<Method>> methodGroupsByName = CollectionFactory.newMap();
+        for (Method method : type.getMethods())
+        {
+            if (!method.isBridge())
+            {
+                List<Method> methodGroup = methodGroupsByName.get(method.getName());
+                if (methodGroup == null)
+                {
+                    methodGroup = CollectionFactory.newList();
+                    methodGroupsByName.put(method.getName(), methodGroup);
+                }
+                methodGroup.add(method);
+            }
+        }
+        return methodGroupsByName;
+    }
 
-	@Override
+    @Override
     public Class getBeanType()
     {
         return beanType;

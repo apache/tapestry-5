@@ -167,15 +167,15 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     static class GenericBean {
-    	public List<Date> dates;
-    	public List<GenericBean> genericBeans;
-    	
-    	public List<Long> getLongs() {
-    		return Collections.emptyList();
-    	}
-    	
-    	public void setMap(Map<String, Integer> map) {
-    	}
+        public List<Date> dates;
+        public List<GenericBean> genericBeans;
+        
+        public List<Long> getLongs() {
+            return Collections.emptyList();
+        }
+        
+        public void setMap(Map<String, Integer> map) {
+        }
     }
     
     @Test
@@ -884,15 +884,15 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         // example from Howard
         try {
-        	assertConduitPropertyType(Foo.class, "bar", Bar.class);
+            assertConduitPropertyType(Foo.class, "bar", Bar.class);
         } catch (AssertionError e) {
-        	List<Method> matches = CollectionFactory.newList();
-        	for (Method method : Foo.class.getMethods()) {
-        		if (method.getName().equals("getBar")) {
-        			matches.add(method);
-        		}
-        	}
-        	fail(String.format("%s (possible candidates %s)", e.getMessage(), matches)); 
+            List<Method> matches = CollectionFactory.newList();
+            for (Method method : Foo.class.getMethods()) {
+                if (method.getName().equals("getBar")) {
+                    matches.add(method);
+                }
+            }
+            fail(String.format("%s (possible candidates %s)", e.getMessage(), matches)); 
         }
         assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
         
