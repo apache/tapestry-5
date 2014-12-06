@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalStringUtils;
  * Some methods broken off tapestry-core's InternalUtils to avoid bringing the whole class
  * plus its multiple dependencies to the BeanModel package.
  */
-public class BeanModelUtils {
+public class InternalBeanModelUtils {
 	
 	public static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
 	

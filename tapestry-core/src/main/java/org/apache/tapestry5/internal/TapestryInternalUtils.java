@@ -59,7 +59,7 @@ public class TapestryInternalUtils
      */
     public static String toUserPresentable(String id)
     {
-        return BeanModelUtils.toUserPresentable(id);
+        return InternalBeanModelUtils.toUserPresentable(id);
     }
 
     public static Map<String, String> mapFromKeysAndValues(String... keysAndValues)
@@ -228,7 +228,7 @@ public class TapestryInternalUtils
      */
     public static String extractIdFromPropertyExpression(String expression)
     {
-        return BeanModelUtils.extractIdFromPropertyExpression(expression);
+        return InternalBeanModelUtils.extractIdFromPropertyExpression(expression);
     }
 
     /**
@@ -237,7 +237,7 @@ public class TapestryInternalUtils
      */
     public static String defaultLabel(String id, Messages messages, String propertyExpression)
     {
-        return BeanModelUtils.defaultLabel(id, messages, propertyExpression);
+        return InternalBeanModelUtils.defaultLabel(id, messages, propertyExpression);
     }
 
     /**
@@ -304,7 +304,7 @@ public class TapestryInternalUtils
 
     private static String replace(String input, Pattern pattern, String replacement)
     {
-        return BeanModelUtils.replace(input, pattern, replacement);
+        return InternalBeanModelUtils.replace(input, pattern, replacement);
     }
 
     /**

@@ -19,7 +19,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.PropertyConduit2;
-import org.apache.tapestry5.internal.BeanModelUtils;
+import org.apache.tapestry5.internal.InternalBeanModelUtils;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
@@ -1260,7 +1260,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             Type returnType = GenericsUtils.extractActualType(activeType, method);
 
-            return new Term(returnType, toUniqueId(method), BeanModelUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
+            return new Term(returnType, toUniqueId(method), InternalBeanModelUtils.toAnnotationProvider(method), new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
