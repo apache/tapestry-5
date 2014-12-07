@@ -40,17 +40,12 @@ import org.apache.tapestry5.services.PropertyConduitSource;
 import org.slf4j.LoggerFactory;
 
 /**
-<<<<<<< HEAD
  * <p>Utility class for creating {@link BeanModelSource} instances without
  * Tapestry-IoC. Usage of Tapestry-IoC is still recommended.
  * </p>
  * <p>The setter methods can be used to customize the BeanModelSource to be created and can be 
- * (and usually are skipped), so <code>BeanModelSource beanModelSource = new BeanModelSourceBuilder().build()</code>
+ * (and usually are skipped), so <code>BeanModelSource beanModelSource = new BeanModelSourceBuilder().build();</code>
  * is all you need to do. 
-=======
- * Utility class for creating {@link BeanModelSource} instances without
- * Tapestry-IoC. Usage of Tapestry-IoC is still recommended.
->>>>>>> 696bc7ae848f4b4f2421ff77ceb4858a2f10465c
  */
 public class BeanModelSourceBuilder {
 
