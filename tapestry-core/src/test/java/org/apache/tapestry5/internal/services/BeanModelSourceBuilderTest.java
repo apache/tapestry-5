@@ -13,18 +13,21 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.beaneditor.BeanModelSourceBuilder;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.testng.annotations.Test;
 
 /**
- * Tests a BeanModelSource created using Tapestry-IoC.
+ * Tests a BeanModelSource created using {@link BeanModelSourceBuilder}.
  */
-public class BeanModelSourceImplTest extends AbstractBeanModelSourceImplTest
+@Test
+public class BeanModelSourceBuilderTest extends AbstractBeanModelSourceImplTest
 {
 
     @Override
     protected BeanModelSource create()
     {
-        return getObject(BeanModelSource.class, null);
+        return new BeanModelSourceBuilder().build();
     }
 
 }

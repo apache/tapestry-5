@@ -16,10 +16,12 @@ package org.apache.tapestry5.ioc.internal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.internal.services.AnnotationDataTypeAnalyzer;
+import org.apache.tapestry5.internal.services.DefaultDataTypeAnalyzer;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
@@ -46,7 +48,8 @@ public class BasicDataTypeAnalyzers
     {
         DefaultDataTypeAnalyzerMappedConfiguration mappedConfiguration = new DefaultDataTypeAnalyzerMappedConfiguration();
         provideDefaultDataTypeAnalyzers(mappedConfiguration);
-        return new CombinedDataTypeAnalyzer(new AnnotationDataTypeAnalyzer(), new MapDataTypeAnalyzer(mappedConfiguration.getMap()));
+        
+        return new CombinedDataTypeAnalyzer(new AnnotationDataTypeAnalyzer(), new DefaultDataTypeAnalyzer(mappedConfiguration.getMap()));
     }
     
     /**
@@ -106,43 +109,29 @@ public class BasicDataTypeAnalyzers
         
     }
     
-    final private static class MapDataTypeAnalyzer implements DataTypeAnalyzer
-    {
-        
-        final Map<Class, String> map;
-
-        public MapDataTypeAnalyzer(Map<Class, String> map) {
-            this.map = map;
-        }
-
-        @Override
-        public String identifyDataType(PropertyAdapter adapter) {
-            return map.get(adapter.getType());
-        }
-        
-    }
-    
     final private static class CombinedDataTypeAnalyzer implements DataTypeAnalyzer 
     {
 
-        final private DataTypeAnalyzer first, second;
+        final private DataTypeAnalyzer[] analyzers;
 
-        public CombinedDataTypeAnalyzer(DataTypeAnalyzer first, DataTypeAnalyzer second) 
+        public CombinedDataTypeAnalyzer(DataTypeAnalyzer... analyzers) 
         {
-            super();
-            this.first = first;
-            this.second = second;
+        	this.analyzers = analyzers;
         }
 
         @Override
         public String identifyDataType(PropertyAdapter adapter) 
         {
-            String type = first.identifyDataType(adapter);
-            if (type == null) 
-            {
-                type = second.identifyDataType(adapter);
-            }
-            return type;
+        	String type = null;
+        	for (DataTypeAnalyzer analyzer : analyzers) 
+        	{
+				type = analyzer.identifyDataType(adapter);
+				if (type != null)
+				{
+					break;
+				}
+			}
+        	return type;
         }
 
     }
