@@ -27,6 +27,23 @@ import org.apache.tapestry5.runtime.ComponentEvent;
  */
 public class EventHandlerMethodParameterSource
 {
+    private static final class ParameterExtractor implements Invokable<Object> {
+        private final EventHandlerMethodParameterProvider[] providers;
+        private final int index;
+        private final ComponentEvent event;
+
+        private ParameterExtractor(EventHandlerMethodParameterProvider[] providers, int index, ComponentEvent event) {
+            this.providers = providers;
+            this.index = index;
+            this.event = event;
+        }
+
+        public Object invoke()
+        {
+            return providers[index].valueForEventHandlerMethodParameter(event);
+        }
+    }
+
     private final String methodIdentifier;
 
     private final OperationTracker operationTracker;
@@ -46,13 +63,7 @@ public class EventHandlerMethodParameterSource
         // Hopefully this will not be too much overhead; it's really nice to be able to track what parameter
         // caused a failure.
 
-        return operationTracker.invoke(String.format("Obtaining value for parameter #%d of %s", index + 1, methodIdentifier),
-                new Invokable<Object>()
-                {
-                    public Object invoke()
-                    {
-                        return providers[index].valueForEventHandlerMethodParameter(event);
-                    }
-                });
+        return operationTracker.invoke("Obtaining value for parameter #" + (index + 1) + " of "+ methodIdentifier,
+                new ParameterExtractor(providers, index, event));
     }
 }
