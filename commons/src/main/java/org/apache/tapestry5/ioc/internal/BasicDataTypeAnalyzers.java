@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
@@ -48,7 +47,6 @@ public class BasicDataTypeAnalyzers
     {
         DefaultDataTypeAnalyzerMappedConfiguration mappedConfiguration = new DefaultDataTypeAnalyzerMappedConfiguration();
         provideDefaultDataTypeAnalyzers(mappedConfiguration);
-        
         return new CombinedDataTypeAnalyzer(new AnnotationDataTypeAnalyzer(), new DefaultDataTypeAnalyzer(mappedConfiguration.getMap()));
     }
     
