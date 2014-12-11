@@ -12,7 +12,7 @@ dependencies {
   runtime "geronimo-spec:geronimo-spec-jta:1.0-M1"  
   runtime "antlr:antlr:2.7.6"
   runtime "dom4j:dom4j:1.6.1"
-  runtime "javassist:javassist:3.12.1.GA"
+  runtime "org.javassist:javassist:3.18.2-GA"
   
     
   testCompile project(':tapestry-test')
