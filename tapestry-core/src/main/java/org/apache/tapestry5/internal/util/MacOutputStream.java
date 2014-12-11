@@ -42,7 +42,7 @@ public class MacOutputStream extends OutputStream
             return new MacOutputStream(mac);
         } catch (Exception ex)
         {
-            throw new IOException("Unable to create MacOutputStream: " + InternalUtils.toMessage(ex));
+            throw new IOException("Unable to create MacOutputStream: " + InternalUtils.toMessage(ex), ex);
         }
     }
 
