@@ -1,7 +1,7 @@
 import org.gradle.plugins.ide.idea.model.*
 import t5build.*
 
-description = "Fast class property discovery, reading and writing library based on bytecode generation. Extracted from Apache Tapestry, but not dependent on the Web framework (tapestry-core) not the IoC one (tapestry-ioc)."
+description = "Fast class property discovery, reading and writing library based on bytecode generation. Extracted from Apache Tapestry, but not dependent on the Web framework (tapestry-core) nor the IoC one (tapestry-ioc)."
 
 //apply plugin: JavaPlugin
 
