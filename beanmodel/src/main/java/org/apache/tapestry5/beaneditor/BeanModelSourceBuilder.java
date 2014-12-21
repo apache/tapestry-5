@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Tapestry-IoC. Usage of Tapestry-IoC is still recommended.
  * </p>
  * <p>The setter methods can be used to customize the BeanModelSource to be created and can be 
- * (and usually are skipped), so <code>BeanModelSource beanModelSource = new BeanModelSourceBuilder().build();</code>
+ * (and usually are) skipped) so <code>BeanModelSource beanModelSource = new BeanModelSourceBuilder().build();</code>
  * is all you need to do. 
  */
 public class BeanModelSourceBuilder {
