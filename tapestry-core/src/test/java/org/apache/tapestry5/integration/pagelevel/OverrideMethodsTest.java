@@ -9,13 +9,13 @@ public class OverrideMethodsTest extends Assert {
     /** TAP5-901 */
     @Test
     public void override_abstract_methods() {
-    	PageTester tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
-    	try {
-	        Document doc = tester.renderPage("OverrideAbstractMethods");
-	        assertEquals("6", doc.getElementById("length").getChildMarkup());
-    	} finally {
-    		tester.shutdown();
-    	}
+        PageTester tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
+        try {
+            Document doc = tester.renderPage("OverrideAbstractMethods");
+            assertEquals("6", doc.getElementById("length").getChildMarkup());
+        } finally {
+            tester.shutdown();
+        }
     }
 
 }

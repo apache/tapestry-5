@@ -8,16 +8,12 @@ project.ext {
     antlrSource = "src/main/antlr"
     mainGeneratedDir = "src/main/generated"
     testGeneratedDir = "src/test/generated"
-    antlrOutput = "$mainGeneratedDir/antlr"
-}
-
-configurations {
-    antlr3
 }
 
 dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
+    compile project(':beanmodel')
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
@@ -26,33 +22,7 @@ dependencies {
 
     compile "commons-codec:commons-codec:1.5"
 
-    // Transitive will bring in the unwanted string template library as well
-    compile "org.antlr:antlr-runtime:3.5.2", {
-        exclude group: "org.antlr", module: "stringtemplate"
-    }
-
-    // Antlr3 tool path used with the antlr3 task
-    antlr3 "org.antlr:antlr:3.5.2"
-
     testRuntime "org.hsqldb:hsqldb:1.8.0.10"
-}
-
-// This may spin out as a plugin once we've got the details down pat
-
-task generateGrammarSource(type: JavaExec) {
-    description "Generates Java sources from Antlr3 grammars."
-    inputs.source fileTree(dir: antlrSource, include: "**/*.g")
-    outputs.dir file(antlrOutput)
-
-    classpath configurations.antlr3
-
-    main "org.antlr.Tool"
-    args "-o", "${antlrOutput}/org/apache/tapestry5/internal/antlr"
-    args inputs.sourceFiles
-
-    doFirst {
-        logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
-    }
 }
 
 task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
@@ -77,21 +47,10 @@ sourceSets {
     main {
         output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
         output.dir(compileProcessedCoffeescript.outputDir, builtBy: compileProcessedCoffeescript)
-        output.dir(antlrOutput, builtBy: generateGrammarSource)
-        java {
-            srcDir antlrOutput
-        }
     }
     test {
         output.dir(compileTestCoffeeScript.outputDir, builtBy: compileTestCoffeeScript)
     }
-}
-
-clean.delete mainGeneratedDir, testGeneratedDir
-
-compileJava {
-    dependsOn generateGrammarSource
-    options.fork(memoryMaximumSize: '512m')
 }
 
 // Not sure why this is necessary:

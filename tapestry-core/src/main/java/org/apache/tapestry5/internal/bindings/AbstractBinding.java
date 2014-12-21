@@ -71,7 +71,7 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding2
      */
     public Type getBindingGenericType()
     {
-    	return getBindingType();
+        return getBindingType();
     }
 
     /**

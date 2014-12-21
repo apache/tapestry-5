@@ -1,0 +1,19 @@
+import org.gradle.plugins.ide.idea.model.*
+import t5build.*
+
+description = "Project including common classes for tapestry-core, tapestry-ioc and beanmodel."
+
+//apply plugin: JavaPlugin
+
+buildDir = 'target/gradle-build'
+       
+dependencies {
+	compile project(":plastic")
+	compile project(":tapestry5-annotations")
+	compile project(":tapestry-func")
+}
+
+jar {	
+	manifest {	
+	}
+}
