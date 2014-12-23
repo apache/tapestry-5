@@ -182,7 +182,7 @@ subprojects {
 
         options.suites("src/test/conf/testng.xml")
 
-        maxHeapSize "400M"
+        maxHeapSize "800M"
 
         // Turn off live service reloading
 
