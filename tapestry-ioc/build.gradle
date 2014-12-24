@@ -26,10 +26,3 @@ test {
     // Override the master build.gradle
     systemProperties.remove("tapestry.service-reloading-enabled")
 }
-
-compileTestGroovy {
-    configure(groovyOptions.forkOptions) {
-        memoryMaximumSize = '1g'
-        jvmArgs = ['-XX:MaxPermSize=512m', '-Xms512m', '-Xmx1g']
-    }
-}
