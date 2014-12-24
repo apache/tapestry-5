@@ -82,6 +82,18 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
 
       return Number canonical
 
+    matches = (input, re) ->
+      groups = input.match re
+
+      # Unlike Java, there isn't an easy way to match the entire string. This
+      # gets the job done.
+
+      return false if groups is null
+
+      groups[0] is input
+
+    emailRE = new RegExp("[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?")
+
     translate = (field, memo, isInteger) ->
       try
         result = parseNumber memo.value, isInteger
@@ -133,19 +145,22 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
         memo.error = (@attr "data-min-message") or "TOO SMALL"
         return false
 
+    dom.onDocument events.field.validate, "[data-validate-email]", (event, memo) ->
+
+      unless (matches memo.translated, emailRE)
+        memo.error = (@attr "data-email-message") or "INVALID EMAIL"
+        return false
+
     dom.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
 
       # Cache the compiled regular expression.
       re = @meta REGEXP_META
+
       unless re
         re = new RegExp(@attr "data-validate-regexp")
         @meta REGEXP_META, re
 
-      groups = memo.translated.match re
-
-      # Unlike Java, there isn't an easy way to match the entire string. This
-      # gets the job done.
-      if (groups is null) or (groups[0] isnt memo.translated)
+      unless (matches memo.translated, re)
         memo.error = (@attr "data-regexp-message") or "INVALID"
         return false
 
