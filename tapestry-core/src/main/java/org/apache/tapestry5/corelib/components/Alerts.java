@@ -35,7 +35,6 @@ import org.apache.tapestry5.services.compatibility.DeprecationWarning;
  * @since 5.3
  */
 @SupportsInformalParameters
-@Import(stack = "core")
 public class Alerts extends BaseClientElement
 {
 
