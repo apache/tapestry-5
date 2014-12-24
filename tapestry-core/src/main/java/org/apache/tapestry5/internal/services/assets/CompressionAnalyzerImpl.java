@@ -1,15 +1,3 @@
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package org.apache.tapestry5.internal.services.assets;
 
 import java.util.Map;
@@ -27,7 +15,9 @@ public class CompressionAnalyzerImpl implements CompressionAnalyzer
 
     public boolean isCompressable(String contentType)
     {
-        assert contentType != null;
+        if (contentType == null) {
+            throw new IllegalStateException("Content type provided to CompressionAnalyzer is null, which is not allowed.");
+        }
 
         int x = contentType.indexOf(';');
 
@@ -36,7 +26,7 @@ public class CompressionAnalyzerImpl implements CompressionAnalyzer
         Boolean result = configuration.get(key);
 
         if (result != null) {
-            return result.booleanValue();
+            return result;
         }
 
         // Now look for a wild card.
@@ -47,6 +37,6 @@ public class CompressionAnalyzerImpl implements CompressionAnalyzer
 
         result = configuration.get(wildKey);
 
-        return result == null ? true : result.booleanValue();
+        return result == null ? true : result;
     }
 }
