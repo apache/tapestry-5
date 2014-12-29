@@ -156,10 +156,14 @@ define ["./dom", "underscore", "./bootstrap"],
         if _.isFunction consolefn
           # Use the available native console, calling it like an instance method
           consolefn.call console, message
-        else
-          # And IE just has to be different. The properties of console are callable, like functions,
-          # but aren't proper functions that work with `call()` either.
-          consolefn message
+          return
+
+        # On IE8, the console object appears empty unless debugging tools are enabled.
+        return unless consolefn
+
+        # And IE just has to be different. The properties of console are callable, like functions,
+        # but aren't proper functions that work with `call()` either.
+        consolefn message
 
         return
 
