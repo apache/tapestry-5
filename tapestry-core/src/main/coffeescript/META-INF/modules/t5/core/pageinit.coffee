@@ -85,27 +85,27 @@ define ["underscore", "./console", "./dom", "./events"],
 
       require [moduleName], (moduleLib) ->
 
-        # Some modules export nothing but do some full-page initialization, such as adding
-        # event handlers to the body.
-        if not functionName and
-          initArguments.length is 0 and
-          not _.isFunction moduleLib
-            console.debug "Loaded module #{moduleName}"
-            tracker()
-            return
+        try
+          # Some modules export nothing but do some full-page initialization, such as adding
+          # event handlers to the body.
+          if not functionName and
+            initArguments.length is 0 and
+            not _.isFunction moduleLib
+              console.debug "Loaded module #{moduleName}"
+              return
 
-        fn = if functionName? then moduleLib[functionName] else moduleLib
+          fn = if functionName? then moduleLib[functionName] else moduleLib
 
-        unless fn?
-          throw new Error "Could not locate function `#{qualifiedName}'."
+          unless fn?
+            throw new Error "Could not locate function `#{qualifiedName}'."
 
-        if console.debugEnabled
-          argsString = (JSON.stringify arg for arg in initArguments).join(", ")
-          console.debug "Invoking #{qualifiedName}(#{argsString})"
+          if console.debugEnabled
+            argsString = (JSON.stringify arg for arg in initArguments).join(", ")
+            console.debug "Invoking #{qualifiedName}(#{argsString})"
 
-        fn.apply null, initArguments
-
-        tracker()
+          fn.apply null, initArguments
+        finally
+          tracker()
 
     # Loads all specified libraries in order (this includes the core stack, other stacks, and
     # any free-standing libraries). It then executes the initializations. Once all initializations have
