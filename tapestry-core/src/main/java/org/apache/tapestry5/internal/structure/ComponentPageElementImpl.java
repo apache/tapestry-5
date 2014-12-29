@@ -1,5 +1,3 @@
-// Copyright 2006-2014  The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -1241,11 +1239,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public Link createEventLink(String eventType, Object... context)
     {
         return elementResources.createComponentEventLink(coreResources, eventType, false, context);
-    }
-
-    public Link createActionLink(String eventType, boolean forForm, Object... context)
-    {
-        return elementResources.createComponentEventLink(coreResources, eventType, forForm, context);
     }
 
     public Link createFormEventLink(String eventType, Object... context)

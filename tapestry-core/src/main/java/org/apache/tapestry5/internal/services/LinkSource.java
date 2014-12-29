@@ -1,5 +1,3 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -44,7 +42,7 @@ public interface LinkSource
      * @param context
      *            Additional path data, each value will be converted to a string and appended to the URI @return a
      *            link
-     * @see org.apache.tapestry5.ComponentResources#createActionLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createEventLink(String, Object...)
      */
     Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
 

@@ -1,5 +1,3 @@
-// Copyright 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -48,10 +46,7 @@ public class ActionViaLinkDemo
 
     public String getActionURL()
     {
-        // This could be shifted to createEventLink(), but leaving it alone verifys backwards
-        // compatibility to 5.0.14.
-
-        Link link = resources.createActionLink("UpdateMessage", false, "from getActionURL()");
+        Link link = resources.createEventLink("UpdateMessage", false, "from getActionURL()");
 
         return link.toURI();
     }

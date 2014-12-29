@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -190,27 +188,6 @@ public interface ComponentResourcesCommon extends Locatable
      * @return link object for the callback
      */
     Link createEventLink(String eventType, Object... context);
-
-    /**
-     * Creates a component event request link as a callback for this component. The event type and context (as well as
-     * the page name and nested component id) will be encoded into a URL. A request for the URL will
-     * {@linkplain #triggerEvent(String, Object[], org.apache.tapestry5.ComponentEventCallback)} trigger} the named
-     * event on the
-     * component.
-     * 
-     * @param eventType
-     *            the type of event to be triggered. Event types should be Java identifiers (contain only
-     *            letters, numbers and the underscore).
-     * @param forForm
-     *            if true, the link will be used as the eventType for an HTML form submission, which may affect
-     *            what information is encoded into the link
-     * @param context
-     *            additional objects to be encoded into the path portion of the link; each is converted to a
-     *            string and URI encoded
-     * @return link object for the callback
-     * @deprecated Use {@link #createEventLink(String, Object[])} instead
-     */
-    Link createActionLink(String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a component event request link as a callback for this component. The event type and context (as well as
