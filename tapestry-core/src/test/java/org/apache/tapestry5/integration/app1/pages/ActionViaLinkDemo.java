@@ -29,7 +29,7 @@ public class ActionViaLinkDemo
     Object[]
     onPassivate()
     {
-        return new Object[] { };
+        return new Object[]{};
     }
 
     public String getMessage()
@@ -39,14 +39,12 @@ public class ActionViaLinkDemo
 
     void onUpdateMessage(String message)
     {
-        getActionURL();
-
         this.message = message;
     }
 
     public String getActionURL()
     {
-        Link link = resources.createEventLink("UpdateMessage", false, "from getActionURL()");
+        Link link = resources.createEventLink("UpdateMessage", "from getActionURL()");
 
         return link.toURI();
     }
