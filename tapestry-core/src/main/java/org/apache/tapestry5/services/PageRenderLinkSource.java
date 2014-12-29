@@ -1,5 +1,3 @@
-// Copyright 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,12 +12,11 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
 
 /**
- * A service that allows other services to create page render links (which are otherwise created by components, via
- * {@link org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])}).
+ * A service that allows other services to create page render links.
  *
  * @since 5.1.0.2
  */
@@ -28,7 +25,8 @@ public interface PageRenderLinkSource
     /**
      * Creates a page render link using the page's normal passivation context (if it has one).
      *
-     * @param pageName name of page to create link to
+     * @param pageName
+     *         name of page to create link to
      * @return render link for the page
      */
     Link createPageRenderLink(String pageName);
@@ -36,8 +34,10 @@ public interface PageRenderLinkSource
     /**
      * Creates a page render link using an override of the page's passivation context (possibly an empty one).
      *
-     * @param pageName name of page to create link to
-     * @param context zero or more values to encode as the passiviation context
+     * @param pageName
+     *         name of page to create link to
+     * @param context
+     *         zero or more values to encode as the passiviation context
      * @return render link for the page
      */
     Link createPageRenderLinkWithContext(String pageName, Object... context);
@@ -45,8 +45,10 @@ public interface PageRenderLinkSource
     /**
      * Creates a page render link using an override of the page's passivation context.
      *
-     * @param pageName name of page to create link to
-     * @param eventContext the EventContext to encode as the passiviation context
+     * @param pageName
+     *         name of page to create link to
+     * @param eventContext
+     *         the EventContext to encode as the passiviation context
      * @return render link for the page
      * @since 5.2.0.0
      */
@@ -66,7 +68,8 @@ public interface PageRenderLinkSource
      * page's passivation context (possibly an empty one).
      *
      * @param pageClass
-     * @param context zero or more values to encode as the passiviation context
+     * @param context
+     *         zero or more values to encode as the passiviation context
      * @return render link for the page
      */
     Link createPageRenderLinkWithContext(Class pageClass, Object... context);
@@ -76,7 +79,8 @@ public interface PageRenderLinkSource
      * page's passivation context
      *
      * @param pageClass
-     * @param eventContext the EventContext to encode as the passiviation context
+     * @param eventContext
+     *         the EventContext to encode as the passiviation context
      * @return render link for the page
      * @since 5.2.0.0
      */

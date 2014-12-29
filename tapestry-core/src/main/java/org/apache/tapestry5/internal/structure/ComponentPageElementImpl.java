@@ -1246,16 +1246,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return elementResources.createComponentEventLink(coreResources, eventType, true, context);
     }
 
-    public Link createPageLink(String pageName, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageName, override, context);
-    }
-
-    public Link createPageLink(Class pageClass, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageClass, override, context);
-    }
-
     protected RenderPhaseEvent createRenderEvent(RenderQueue queue)
     {
         return new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger, elementResources);

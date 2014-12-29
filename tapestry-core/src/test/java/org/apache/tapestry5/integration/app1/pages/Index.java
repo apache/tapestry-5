@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.StreamPageContent;
 
 import java.util.*;
@@ -64,14 +65,14 @@ public class Index
 
                     new Item("MissingRequiredARP", "Missing Query Parameter for @ActivationRequestParameter", "Activating a page with a required @ActivationRequestParameter, but no matching query parameter, is an error."),
 
-                    new Item ("DateFieldValidationDemo", "DateField Validation Demo",
+                    new Item("DateFieldValidationDemo", "DateField Validation Demo",
                             "Use of DateField component when client validation is disabled."),
 
                     new Item("MixinParameters54", "Strict Mixin Parameters", "In the 5.4 DTD, Parameter Mixins must be qualified with the mixin id."),
 
                     new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
 
-                    new Item ("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
+                    new Item("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
 
                     new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),
 
@@ -128,7 +129,7 @@ public class Index
 
                     new Item("PACMultipleAnnotationDemo", "PageActivationContext Multiple Demo",
                             "Demonstrates multiple @PageActivationContext fields."),
-                            
+
                     new Item("PublicFieldAccessDemo", "Public Field Access Demo", "Demonstrates TAP5-1222 fix"),
 
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",
@@ -575,9 +576,9 @@ public class Index
                     new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer"),
 
                     new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report"),
-                    
+
                     new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop"),
-                    
+
                     new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings"),
 
                     new Item("FormFieldClientIdParameterDemo", "Form Field clientId Parameter Demo", "Shows and tests how to explicitly set the id of a form field component"),
@@ -600,6 +601,9 @@ public class Index
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private PageRenderLinkSource linkSource;
 
     @Property
     private String key;
@@ -629,7 +633,7 @@ public class Index
 
     public Link getInjectDemoLink()
     {
-        return resources.createPageLink(InjectDemo.class, false);
+        return linkSource.createPageRenderLink(InjectDemo.class);
     }
 
     public List getDemoContext()

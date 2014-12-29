@@ -212,16 +212,6 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
         return element.createFormEventLink(eventType, context);
     }
 
-    public Link createPageLink(String pageName, boolean override, Object... context)
-    {
-        return element.createPageLink(pageName, override, context);
-    }
-
-    public Link createPageLink(Class pageClass, boolean override, Object... context)
-    {
-        return element.createPageLink(pageClass, override, context);
-    }
-
     public void discardPersistentFieldChanges()
     {
         page.discardPersistentFieldChanges();

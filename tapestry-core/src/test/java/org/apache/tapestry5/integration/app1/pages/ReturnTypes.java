@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.pages.music.MusicDetails;
@@ -22,13 +19,13 @@ import org.apache.tapestry5.integration.app1.services.MusicLibrary;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.HttpError;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.StreamPageContent;
 import org.apache.tapestry5.util.TextStreamResponse;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Tests the various event handler method return types.
@@ -41,8 +38,8 @@ public class ReturnTypes
     private Index index;
 
     @Inject
-    private ComponentResources resources;
-    
+    private PageRenderLinkSource linkSource;
+
     @Inject
     private MusicLibrary library;
 
@@ -68,7 +65,7 @@ public class ReturnTypes
 
     Object onActionFromLinkReturnValue()
     {
-        return resources.createPageLink("index", false);
+        return linkSource.createPageRenderLink("index");
     }
 
     Object onActionFromStreamReturnValue()
@@ -87,19 +84,19 @@ public class ReturnTypes
     {
         return new URL("http://google.com");
     }
-    
+
     Object onActionFromStreamPageContent()
-    {   
+    {
         return new StreamPageContent(Index.class);
     }
-    
+
     Object onActionFromStreamPageContentWithContext()
     {
         Track track = library.getById(294L);
-        
+
         return new StreamPageContent(MusicDetails.class, track);
     }
-    
+
 
     Object onActionFromHttpError()
     {

@@ -20,7 +20,7 @@ import org.apache.tapestry5.services.LinkCreationListener2;
 
 /**
  * A source for {@link org.apache.tapestry5.Link} objects.
- * 
+ *
  * @see org.apache.tapestry5.services.LinkCreationListener2
  * @since 5.1.0.0
  */
@@ -30,18 +30,18 @@ public interface LinkSource
     /**
      * Creates a stateful action link. Action links are built for components. Action links are encoded by the current
      * request (that is, bound to the current request's session, if any).
-     * 
+     *
      * @param page
-     *            the page holding the component
+     *         the page holding the component
      * @param nestedId
-     *            the component's qualified id (a sequence of simple ids, separated by dots).
+     *         the component's qualified id (a sequence of simple ids, separated by dots).
      * @param eventType
-     *            the type of event to trigger
+     *         the type of event to trigger
      * @param forForm
-     *            true if the link is for a form, false otherwise
+     *         true if the link is for a form, false otherwise
      * @param context
-     *            Additional path data, each value will be converted to a string and appended to the URI @return a
-     *            link
+     *         Additional path data, each value will be converted to a string and appended to the URI @return a
+     *         link
      * @see org.apache.tapestry5.ComponentResources#createEventLink(String, Object...)
      */
     Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
@@ -54,21 +54,22 @@ public interface LinkSource
      * When the activationContext is an empty array, the targeted page is checked to see if it can provide an activation
      * context. This is accomplished by triggering a "passivate" event on the targeted page. If the override parameter
      * is true, this will not occur (even when the activation context is empty).
-     * 
+     *
      * @param pageName
-     *            name of the page to which a link should be created
+     *         name of the page to which a link should be created
      * @param override
-     *            if true, then the provided activation context is always used even if empty
+     *         if true, then the provided activation context is always used even if empty
      * @param pageActivationContext
-     *            the activation context for the page
+     *         the activation context for the page
      * @return a link
-     * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(String)
+     * @see org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(String, Object[])
      */
     Link createPageRenderLink(String pageName, boolean override, Object... pageActivationContext);
 
     /**
      * Returns the hub, used to register and de-register {@link org.apache.tapestry5.services.LinkCreationListener2}s.
-     * 
+     *
      * @return the hub
      */
     LinkCreationHub getLinkCreationHub();
