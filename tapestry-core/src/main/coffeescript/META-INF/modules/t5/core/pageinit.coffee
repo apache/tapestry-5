@@ -54,7 +54,7 @@ define ["underscore", "./console", "./dom", "./events"],
 
       insertionPoint = _.find(document.styleSheets, (ss) ->
         parent = ss.ownerNode || ss.owningElement
-        parent.rel is "stylesheet t-ajax-insertion-point")
+        parent.rel is "stylesheet ajax-insertion-point")
 
       # Most browsers support document.head, but older IE doesn't:
       head = document.head or document.getElementsByTagName("head")[0]

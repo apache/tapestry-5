@@ -42,7 +42,7 @@ public final class StylesheetOptions
     /**
      * If true, then this stylesheet is the insertion point for Ajax operations; any added CSS links will be inserted before this link. Only at most
      * one CSS link should be the insertion point.     Only used for full page renders (not partial page renders). When this is true, the {@code <link>} element's
-     * ref attribute is wrtten out as "stylesheet t-ajax-insertion-point".
+     * ref attribute is wrtten out as "stylesheet ajax-insertion-point".
      */
     public boolean ajaxInsertionPoint;
 

@@ -303,7 +303,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet t-ajax-insertion-point" href="insertion-point.css"/></head><body data-page-initialized="true"></body></html>
+<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet ajax-insertion-point" href="insertion-point.css"/></head><body data-page-initialized="true"></body></html>
 '''
     }
 
