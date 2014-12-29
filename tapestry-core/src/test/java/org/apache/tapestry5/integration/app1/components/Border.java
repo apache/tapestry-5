@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,6 +18,8 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 
+import java.util.Calendar;
+
 /**
  * Here's a component with a template, including a t:body element. Really should rename this to "Layout" as that's the
  * T5 naming.
@@ -34,6 +34,13 @@ public class Border
     @Inject
     private ComponentResources resources;
 
+    public static final int year;
+
+    static
+    {
+        year = Calendar.getInstance().get(Calendar.YEAR);
+    }
+
     public String getSecure()
     {
         return request.isSecure() ? "secure" : "insecure";
@@ -45,5 +52,4 @@ public class Border
 
         return true;
     }
-
 }
