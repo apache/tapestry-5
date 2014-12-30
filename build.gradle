@@ -62,10 +62,15 @@ project.ext {
     deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
     deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
-    canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+    canDeploy = [deployUsernameProperty, deployPasswordProperty, "apacheArchivesFolder"].every { project.hasProperty(it) }
 
+    // These are all deferred inside closures, to allow people without the necessary values in their
+    // gradle.properties to build locally, just not deploy. getProperty() throws an exception if the property
+    // is not present.
     deployUsername = { getProperty(deployUsernameProperty) }
     deployPassword = { getProperty(deployPasswordProperty) }
+
+    archiveDeployFolder = { getProperty("apacheArchivesFolder") }
 }
 
 sonar {
@@ -512,29 +517,34 @@ if (canDeploy) {
         }
     }
 
-    task uploadArtifacts(type: Scp) {
+    // This requires that you have the apacheArchivesFolder property configured in your
+    // ~/.gradle/gradle.properties. The folder should be a Subversion workspace for
+    // https://dist.apache.org/repos/dist/dev/tapestry
+    // after the build, you must manually add the new files to the workspace (using "svn add")
+    // then commit ("svn commit").
+
+    // The files will be visible in https://dist.apache.org/repos/dist/dev/tapestry/, allowing
+    // committers to download and verify them.
+
+    // After a successful release vote, the files can be moved to a second Subversion workspace
+    // for https://dist.apache.org/repos/dist/release/tapestry. Adding the files and committing
+    // there will publish them to http://www.apache.org/dist/tapestry ... and from there
+    // to all Apache mirrors (after about a 24 hour delay).
+
+    task copyArchives(type: Copy) {
         group "Release artifact"
-        description "Uploads top-level artifacts to people.apache.org, along with MD5 checksums and PGP signatures (if signing is enabled)"
+        description "Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 checksums and PGP signatures (if signing is enabled)"
 
-        source files(generateMD5Checksums, configurations.uploads.allArtifacts.files)
+        destinationDir file(archiveDeployFolder())
 
-        host "people.apache.org"
-        userName deployUsername()
-        password deployPassword()
-
-        // The destination folder at people.apache.org needs to already exist.
-        destination "public_html/tapestry-releases"
-
-        doFirst {
-            logger.info "Uploading the following files to people.apache.org (as user '${userName}'):"
-            source.files.each { logger.info "  $it" }
-        }
+        from generateMD5Checksums
+        from configurations.uploads.allArtifacts.files
     }
 
     task generateRelease {
-        dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadArtifacts
+        dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, copyArchives
         group "Release artifact"
-        description "Generates and uploads a final release to Apache Nexus"
+        description "Generates and uploads a final release to Apache Nexus and copies archives for deployment"
     }
 }
 
