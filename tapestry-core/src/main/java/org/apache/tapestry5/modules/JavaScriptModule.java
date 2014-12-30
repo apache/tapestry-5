@@ -343,7 +343,7 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
 
-                                        @Path("${tapestry.asset.root}/typeahead-0.9.3.js")
+                                        @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
 
                                         @Path("${tapestry.asset.root}/moment-2.8.4.js")

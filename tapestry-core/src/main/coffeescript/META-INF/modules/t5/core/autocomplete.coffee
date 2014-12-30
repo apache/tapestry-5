@@ -1,5 +1,3 @@
-# Copyright 2012, 2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,19 +12,32 @@
 
 # ## t5/core/autocomplete
 #
-# Support for the core/Autocomplete Tapestry mixin.
-define ["./dom", "./ajax", "jquery", "./utils", "./typeahead"],
-  (dom, ajax, $, {extendURL}) ->
+# Support for the core/Autocomplete Tapestry mixin, a wrapper around
+# the Twitter autocomplete.js library.
+define ["./dom", "./ajax", "underscore", "jquery", "./utils", "./typeahead"],
+  (dom, ajax, _, $, {extendURL}) ->
 
     init = (spec) ->
       $field = $ document.getElementById spec.id
 
-      $field.typeahead
-        minLength: spec.minChars
+      engine = new Bloodhound
+        datumTokenizer: Bloodhound.tokenizers.whitespace
+        queryTokenizer: Bloodhound.tokenizers.whitespace
         limit: spec.limit
         remote:
           url: spec.url
           replace: (uri, query) -> extendURL uri, "t:input": query
           filter: (response) -> response.matches
+
+      engine.initialize()
+
+      dataset =
+        name: spec.id
+        displayKey: _.identity
+        source: engine.ttAdapter()
+
+      $field.typeahead
+        minLength: spec.minChars
+        dataset
 
     exports = init

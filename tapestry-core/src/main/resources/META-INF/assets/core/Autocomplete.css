@@ -42,12 +42,12 @@
     padding: 3px 20px;
 }
 
-.tt-suggestion.tt-is-under-cursor {
+.tt-suggestion.tt-cursor {
     color: #fff;
     background-color: #428bca;
 }
 
-.tt-suggestion.tt-is-under-cursor a {
+.tt-suggestion.tt-cursor a {
     color: #fff;
 }
 

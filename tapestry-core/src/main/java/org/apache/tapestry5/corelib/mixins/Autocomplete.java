@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,13 +22,12 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on
- * Twttter <a href="http://twitter.github.io/typeahead.js/">typeahead.js</a> version 0.9.3.
+ * Twttter <a href="http://twitter.github.io/typeahead.js/">typeahead.js</a> version 0.10.5.
  * <p/>
  * The container is responsible for providing an event handler for event "providecompletions". The context will be the
  * partial input string sent from the client. The return value should be an array or list of completions, in

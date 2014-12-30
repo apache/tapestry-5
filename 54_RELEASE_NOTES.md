@@ -378,7 +378,7 @@ need to provide a "prepare" event handler to initialize the property before it i
 
 ## Autocomplete Mixin
 
-The Autocomplete mixin has been rewritten to use Twitter typeahead.js; this implies it will also force jQuery onto the page,
+The Autocomplete mixin has been rewritten to use Twitter typeahead.js (0.10.5); this implies it will also force jQuery onto the page,
 to support the  typeahead.js library. In addition, typeahead.js does not support multiple
 tokens, so this behavior (available in prior releases) has been removed.
 
