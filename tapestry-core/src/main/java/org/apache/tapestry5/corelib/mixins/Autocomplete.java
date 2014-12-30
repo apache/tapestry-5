@@ -119,7 +119,7 @@ public class Autocomplete
         writer.attributes("autocomplete", "off");
     }
 
-    @Import(stylesheet="Autocomplete.css")
+    @Import(stylesheet="typeahead-bootstrap3.css")
     void afterRender()
     {
         Link link = resources.createEventLink(EVENT_NAME, context);
