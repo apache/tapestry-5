@@ -14,3 +14,7 @@ table.exception-report-threads tr th:last-child {
 table.exception-report-threads tr.active-thread {
     font-weight:  bold;
 }
+
+table.exception-report-threads {
+    font-size: small;
+}

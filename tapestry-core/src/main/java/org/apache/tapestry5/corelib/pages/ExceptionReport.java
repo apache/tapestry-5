@@ -134,7 +134,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     public boolean isShowActions()
     {
-        return failurePage != null && !request.isXHR();
+        return ! productionMode && failurePage != null && !request.isXHR();
     }
 
     public void reportException(Throwable exception)
