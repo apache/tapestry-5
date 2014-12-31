@@ -99,7 +99,6 @@ import org.slf4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -1706,8 +1705,13 @@ public final class TapestryModule
      * <dt>PageNameMeta (since 5.4)</dt>
      * <dd>Renders a {@code <meta/>} tag describing the active page name (development mode only)</dd>
      * <dt>ImportCoreStack (since 5.4) </dt>
-     * <dd>Imports to "core" stack (necessary to get the Bootstrap CSS, if nothing else).</dd>
+     * <dd>Imports the "core" stack (necessary to get the Bootstrap CSS, if nothing else).</dd>
      * </dl>
+     *
+     * @see org.apache.tapestry5.SymbolConstants#OMIT_GENERATOR_META
+     * @see org.apache.tapestry5.SymbolConstants#PRODUCTION_MODE
+     * @see org.apache.tapestry5.SymbolConstants#INCLUDE_CORE_STACK
+     * @see org.apache.tapestry5.SymbolConstants#ENABLE_PAGELOADING_MASK
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
