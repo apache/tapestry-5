@@ -268,11 +268,11 @@ public class ImportWorker implements ComponentClassTransformWorker2
         {
             public void advise(MethodInvocation invocation)
             {
+                invocation.proceed();
+
                 Asset[] assets = (Asset[]) access.get(invocation.getInstance());
 
                 F.flow(assets).each(operation);
-
-                invocation.proceed();
             }
         });
     }
