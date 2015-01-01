@@ -132,9 +132,21 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
+    /**
+     * Returns true for normal, non-XHR requests. Links (to the failure page, or to root page) are only
+     * presented if showActions is true.
+     */
     public boolean isShowActions()
     {
-        return ! productionMode && failurePage != null && !request.isXHR();
+        return !request.isXHR();
+    }
+
+    /**
+     * Returns true in development mode; enables the "with reload" actions.
+     */
+    public boolean isShowReload()
+    {
+        return !productionMode;
     }
 
     public void reportException(Throwable exception)
