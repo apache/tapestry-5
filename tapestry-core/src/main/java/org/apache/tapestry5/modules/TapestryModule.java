@@ -38,6 +38,7 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.internal.services.exceptions.ExceptionReportWriterImpl;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
@@ -377,6 +378,7 @@ public final class TapestryModule
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
         binder.bind(ExceptionReporter.class, ExceptionReporterImpl.class);
+        binder.bind(ExceptionReportWriter.class, ExceptionReportWriterImpl.class);
         binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
         binder.bind(Html5Support.class, Html5SupportImpl.class);
     }
@@ -2721,7 +2723,7 @@ public final class TapestryModule
         configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
         configuration.add("TapestryCore", new TapestryCoreComponentLibraryInfoSource());
     }
-    
+
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource
     {
@@ -2731,9 +2733,9 @@ public final class TapestryModule
             ComponentLibraryInfo info = null;
             if (libraryMapping.libraryName.equals("core"))
             {
-            
+
                 info = new ComponentLibraryInfo();
-                
+
                 // the information above will probably not change in the future, or change very 
                 // infrequently, so I see no problem in hardwiring them here.
                 info.setArtifactId("tapestry-core");
@@ -2747,18 +2749,17 @@ public final class TapestryModule
                 info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
                 info.setHomepageUrl("http://tapestry.apache.org");
                 info.setLibraryMapping(libraryMapping);
-                
+
                 final InputStream inputStream = TapestryModule.class.getResourceAsStream(
                         "/META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties");
-                
+
                 if (inputStream != null)
                 {
                     Properties properties = new Properties();
                     try
                     {
                         properties.load(inputStream);
-                    }
-                    catch (IOException e)
+                    } catch (IOException e)
                     {
                         throw new RuntimeException(e);
                     }

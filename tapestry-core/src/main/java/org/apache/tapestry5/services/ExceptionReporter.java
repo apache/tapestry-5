@@ -25,13 +25,15 @@ package org.apache.tapestry5.services;
  *
  * @see org.apache.tapestry5.SymbolConstants#EXCEPTION_REPORTS_DIR
  * @see org.apache.tapestry5.services.RequestExceptionHandler
+ * @see org.apache.tapestry5.services.ExceptionReportWriter
  */
 public interface ExceptionReporter
 {
     /**
      * Used to communicate to the page what exception is to be reported.
      *
-     * @param exception runtime exception thrown during processing of the request
+     * @param exception
+     *         runtime exception thrown during processing of the request
      */
     void reportException(Throwable exception);
 }
