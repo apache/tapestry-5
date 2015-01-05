@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,15 +33,15 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
     {
         private static final long serialVersionUID = -3653306147088451811L;
 
-        private final String fieldName;
+        private final String validationId;
 
         private String input;
 
         private String errorMessage;
 
-        FieldTracker(String fieldName)
+        FieldTracker(String validationId)
         {
-            this.fieldName = fieldName;
+            this.validationId = validationId;
         }
     }
 
@@ -52,6 +50,7 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
     private List<FieldTracker> fieldTrackers;
 
     // Rebuilt on-demand
+    // Keyed on validationId
 
     private transient Map<String, FieldTracker> fieldToTracker;
 
@@ -66,12 +65,23 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
         fieldToTracker = CollectionFactory.newMap();
 
         for (FieldTracker ft : fieldTrackers)
-            fieldToTracker.put(ft.fieldName, ft);
+            fieldToTracker.put(ft.validationId, ft);
+    }
+
+    private String getKey(Field field)
+    {
+        if (field instanceof Field2)
+        {
+            Field2 field2 = (Field2) field;
+            return field2.getValidationId();
+        }
+
+        return field.getControlName();
     }
 
     private FieldTracker get(Field field)
     {
-        String key = field.getControlName();
+        String key = getKey(field);
 
         refreshFieldToTracker();
 
@@ -90,7 +100,7 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
 
         refreshFieldToTracker();
 
-        String key = fieldTracker.fieldName;
+        String key = fieldTracker.validationId;
 
         if (!fieldToTracker.containsKey(key))
         {
