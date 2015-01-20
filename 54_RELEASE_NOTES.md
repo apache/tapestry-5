@@ -300,7 +300,7 @@ a new page.
 
 ## Bootstrap 3
 
-Tapestry now includes a default copy of Bootstrap 3.3.1, in addition to its own default set of CSS rules.
+Tapestry now includes a default copy of Bootstrap 3.3.2, in addition to its own default set of CSS rules.
 The Tapestry CSS from prior releases has been largely eliminated; instead
 components now refer to standard Bootstrap CSS classes.
 
