@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
@@ -80,8 +81,8 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
 
     // Maps from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
-    // Guarded by: LockSupport
-    private NamedSet<ParameterConduit> conduits;
+    private Map<String, ParameterConduit> conduits;
+    private PerThreadValue<Map<String, Object>> conduitStates;
 
     // Guarded by: LockSupport
     private Messages messages;
@@ -136,14 +137,6 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
         }
     }
 
-
-    private static Worker<ParameterConduit> RESET_PARAMETER_CONDUIT = new Worker<ParameterConduit>()
-    {
-        public void work(ParameterConduit value)
-        {
-            value.reset();
-        }
-    };
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
                                           ComponentResources containerResources, ComponentPageElementResources elementResources, String completeId,
@@ -578,7 +571,13 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
         if (variablesMap != null)
             variablesMap.clear();
 
-        resetParameterConduits();
+        if (conduitStates != null)
+        {
+            Map<String, Object> conduidStatesMap = conduitStates.get();
+
+            if (conduidStatesMap != null)
+                conduidStatesMap.clear();
+        }
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
@@ -596,32 +595,9 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
         page.addResetListener(listener);
     }
 
-    private void resetParameterConduits()
-    {
-        try
-        {
-            acquireReadLock();
-
-            if (conduits != null)
-            {
-                conduits.eachValue(RESET_PARAMETER_CONDUIT);
-            }
-        } finally
-        {
-            releaseReadLock();
-        }
-    }
-
     public ParameterConduit getParameterConduit(String parameterName)
     {
-        try
-        {
-            acquireReadLock();
-            return NamedSet.get(conduits, parameterName);
-        } finally
-        {
-            releaseReadLock();
-        }
+        return conduits.get(parameterName);
     }
 
     public void setParameterConduit(String parameterName, ParameterConduit conduit)
@@ -635,6 +611,7 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
                 createConduits();
             }
 
+            conduit.init(conduitStates);
             conduits.put(parameterName, conduit);
         } finally
         {
@@ -649,7 +626,8 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
             upgradeReadLockToWriteLock();
             if (conduits == null)
             {
-                conduits = NamedSet.create();
+                conduits = CollectionFactory.newCaseInsensitiveMap();
+                conduitStates = elementResources.createPerThreadValue();
             }
         } finally
         {
