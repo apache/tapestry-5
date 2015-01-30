@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.InstanceContext;
@@ -38,7 +38,12 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
     {
         private final String injectedPageName;
 
-        private final PerThreadValue<Object> pageValue = perThreadManager.createValue();
+        private final ObjectCreator<Object> pageValue = perThreadManager.createValue(new ObjectCreator<Object>() {
+            @Override
+            public Object createObject() {
+                return componentSource.getPage(injectedPageName);
+            }
+        });
 
         private InjectedPageConduit(String className, String fieldName,
                                     String injectedPageName)
@@ -50,12 +55,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
 
         public Object get(Object instance, InstanceContext context)
         {
-            if (!pageValue.exists())
-            {
-                pageValue.set(componentSource.getPage(injectedPageName));
-            }
-
-            return pageValue.get();
+            return pageValue.createObject();
         }
     }
 
