@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,9 +14,10 @@ package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A mixin that can be placed on a clickable component, such as {@link org.apache.tapestry5.corelib.components.LinkSubmit},
@@ -32,7 +31,6 @@ import org.apache.tapestry5.annotations.Parameter;
  * @since 5.4
  */
 @MixinAfter
-@Import(module = "t5/core/confirm-click")
 public class Confirm
 {
     /**
@@ -47,9 +45,23 @@ public class Confirm
     @Parameter(value = "message:private-default-confirm-title", defaultPrefix = BindingConstants.LITERAL)
     private String title;
 
+    /**
+     * If true, then the mixin does nothing (no attributes added, no module imported).
+     */
+    @Parameter("false")
+    private boolean disabled;
+
+    @Environmental
+    private JavaScriptSupport javaScriptSupport;
+
     void beginRender(MarkupWriter writer)
     {
-        writer.attributes("data-confirm-title", title,
-                "data-confirm-message", message);
+        if (!disabled)
+        {
+            javaScriptSupport.require("t5/core/confirm-click");
+
+            writer.attributes("data-confirm-title", title,
+                    "data-confirm-message", message);
+        }
     }
 }
