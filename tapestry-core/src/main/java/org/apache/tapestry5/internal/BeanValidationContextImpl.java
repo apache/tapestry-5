@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,17 +14,21 @@ package org.apache.tapestry5.internal;
 
 public class BeanValidationContextImpl implements BeanValidationContext
 {
-    private Object bean;
+    private final Object bean;
+
+    private final String editorValidationId;
+
     private String currentProperty;
 
-    public BeanValidationContextImpl(Object bean)
+    public BeanValidationContextImpl(Object bean, String editorValidationId)
     {
         this.bean = bean;
+        this.editorValidationId = editorValidationId;
     }
 
     public Class getBeanType()
     {
-        return bean==null?null:bean.getClass();
+        return bean == null ? null : bean.getClass();
     }
 
     public Object getBeanInstance()
@@ -34,14 +36,18 @@ public class BeanValidationContextImpl implements BeanValidationContext
         return bean;
     }
 
-    public String getCurrentProperty() 
+    public String getCurrentProperty()
     {
         return currentProperty;
     }
 
-    public void setCurrentProperty(String propertyName) 
+    public void setCurrentProperty(String propertyName)
     {
         this.currentProperty = propertyName;
     }
 
+    public String getEditorValidationId()
+    {
+        return editorValidationId;
+    }
 }

@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,13 +33,13 @@ import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
-import java.lang.annotation.Annotation;
+import java.util.UUID;
 
 /**
  * A component that generates a user interface for editing the properties of a bean. This is the central component of
  * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality. This component places
  * a {@link BeanEditContext} into the environment.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -183,6 +181,8 @@ public class BeanEditor
         formSupport.storeAndExecute(this, CLEANUP_ENVIRONMENT);
     }
 
+    private String validationId;
+
     /**
      * Used to initialize the model if necessary, to instantiate the object being edited if necessary, and to push the
      * BeanEditContext into the environment.
@@ -206,13 +206,17 @@ public class BeanEditor
             try
             {
                 object = model.newInstance();
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 String message = String.format("Exception instantiating instance of %s (for component '%s'): %s",
                         PlasticUtils.toTypeName(model.getBeanType()), resources.getCompleteId(), ex);
                 throw new TapestryException(message, resources.getLocation(), ex);
             }
+        }
+
+        // Set to a new value on each request; the value lasts until the end of the request.
+        if (validationId == null) {
+            validationId = UUID.randomUUID().toString();
         }
 
         BeanEditContext context = new BeanEditContextImpl(model.getBeanType());
@@ -221,7 +225,7 @@ public class BeanEditor
 
         environment.push(BeanEditContext.class, context);
         // TAP5-2101: Always provide a new BeanValidationContext
-        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(object));
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(object, validationId));
     }
 
     void cleanupEnvironment()
@@ -232,7 +236,7 @@ public class BeanEditor
 
     // For testing
     void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source,
-            Environment environment)
+                Environment environment)
     {
         this.resources = resources;
         this.overrides = overrides;

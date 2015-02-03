@@ -353,7 +353,7 @@ public class Form implements ClientElement, FormValidationControl
         resources.triggerEvent(EventConstants.PREPARE, context, null);
 
         // Push BeanValidationContext only after the container had a chance to prepare
-        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate, null));
 
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
@@ -509,7 +509,7 @@ public class Form implements ClientElement, FormValidationControl
                     return true;
             }
 
-            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
+            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate, null));
 
             didPushBeanValidationContext = true;
 
