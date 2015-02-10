@@ -23,6 +23,8 @@ import java.util.ServiceLoader;
 
 import javax.cache.annotation.BeanProvider;
 
+import junit.framework.TestCase;
+
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
 
@@ -33,7 +35,7 @@ import org.junit.rules.MethodRule;
  * @version $Revision$
  */
 @SuppressWarnings("deprecation")
-public class AbstractInterceptionTest
+public class AbstractInterceptionTest extends TestCase
 {
     private static final BeanProvider beanProvider;
 
