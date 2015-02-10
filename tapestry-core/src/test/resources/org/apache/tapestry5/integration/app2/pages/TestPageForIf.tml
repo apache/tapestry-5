@@ -23,4 +23,10 @@
           <p id="8">hey.</p>
       </t:parameter>
   </t:if>
+  <!-- TAP5-2450 -->
+  <t:loop source="[true,false]" value="var:value">
+    <div t:type="if" test="var:value">
+      <p id="9">foo</p>
+    </div>
+  </t:loop>
 </html>

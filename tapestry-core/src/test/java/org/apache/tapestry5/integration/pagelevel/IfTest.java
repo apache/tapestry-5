@@ -34,6 +34,7 @@ public class IfTest extends Assert
         assertNotNull(doc.getElementById("3"));
         assertNotNull(doc.getElementById("5"));
         assertNotNull(doc.getElementById("8"));
+        assertNotNull(doc.getElementById("9"));
         assertNull(doc.getElementById("2"));
         assertNull(doc.getElementById("4"));
         assertNull(doc.getElementById("6"));
