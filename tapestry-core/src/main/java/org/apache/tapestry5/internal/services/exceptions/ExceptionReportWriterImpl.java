@@ -67,7 +67,7 @@ public class ExceptionReportWriterImpl implements ExceptionReportWriter
             };
 
     /**
-     * A little closure that understands how to write a key/value pair represening a property.
+     * A little closure that understands how to write a key/value pair representing a property.
      */
     interface PropertyWriter
     {
@@ -234,7 +234,7 @@ public class ExceptionReportWriterImpl implements ExceptionReportWriter
             }
             if (!request.getParameterNames().isEmpty())
             {
-                writer.print("%nParameters:%n");
+                writer.printf("%nParameters:%n");
                 for (String name : request.getParameterNames())
                 {
                     // TODO: Support multi-value parameters
