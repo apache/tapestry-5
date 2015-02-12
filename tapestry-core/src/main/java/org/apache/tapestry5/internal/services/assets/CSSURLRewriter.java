@@ -147,9 +147,11 @@ public class CSSURLRewriter extends DelegatingSRS
         {
             String url = matcher.group(2); // the string inside the quotes
 
-            // When the URL starts with a slash, there's no need to rewrite it (this is actually rare in Tapestry
-            // as you want to use relative URLs to leverage the asset pipeline.
-            if (completeURLPattern.matcher(url).find())
+            // When the URL starts with a slash or a scheme (e.g. http: or data:) , there's no need
+            // to rewrite it (this is actually rare in Tapestry as you want to use relative URLs to
+            // leverage the asset pipeline.
+            Matcher completeURLMatcher = completeURLPattern.matcher(url);
+            if (completeURLMatcher.find() && !("asset:".equals(completeURLMatcher.group(1))))
             {
                 String queryParameters = matcher.group(3);
 
