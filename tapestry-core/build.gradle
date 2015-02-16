@@ -22,7 +22,7 @@ dependencies {
 
     provided "javax.servlet:servlet-api:${versions.servletapi}"
 
-    compile "commons-codec:commons-codec:1.5"
+    compile "commons-codec:commons-codec:1.10"
 
     testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
