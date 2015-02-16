@@ -14,12 +14,9 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.Map;
-
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.plastic.FieldConduit;
 
@@ -44,5 +41,8 @@ public interface ParameterConduit extends FieldConduit<Object>
      */
     boolean isBound();
 
-    void init(PerThreadValue conduitStates);
+    /**
+     * Resets the conduit, clearing any <em>temporarily</em> cached data (from a non-invariant {@link Binding}).
+     */
+    void reset();
 }

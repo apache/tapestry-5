@@ -22,7 +22,6 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
@@ -39,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
-import java.util.Map;
 
 /**
  * Responsible for identifying parameters via the {@link org.apache.tapestry5.annotations.Parameter} annotation on
@@ -75,13 +73,16 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
     private final TypeCoercer typeCoercer;
 
+    private final PerthreadManager perThreadManager;
+
     public ParameterWorker(ComponentClassCache classCache, BindingSource bindingSource,
-                           ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer)
+                           ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer, PerthreadManager perThreadManager)
     {
         this.classCache = classCache;
         this.bindingSource = bindingSource;
         this.defaultProvider = defaultProvider;
         this.typeCoercer = typeCoercer;
+        this.perThreadManager = perThreadManager;
     }
 
     private final Comparator<PlasticField> byPrincipalThenName = new Comparator<PlasticField>()
@@ -173,6 +174,8 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
                 final Class fieldType = classCache.forName(fieldTypeName);
 
+                final PerThreadValue<ParameterState> stateValue = perThreadManager.createValue();
+
                 // Rely on some code generation in the component to set the default binding from
                 // the field, or from a default method.
 
@@ -188,8 +191,6 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                     boolean loaded = false;
 
                     private boolean invariant = false;
-
-                    PerThreadValue<Map<String, ParameterState>> states;
 
                     {
                         // Inform the ComponentResources about the parameter conduit, so it can be
@@ -207,18 +208,13 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
                     private ParameterState getState()
                     {
-                        Map<String, ParameterState> map = states.get();
-                        if (map == null) {
-                            map = CollectionFactory.newMap();
-                            states.set(map);
-                        }
-                        ParameterState state = map.get(parameterName);
+                        ParameterState state = stateValue.get();
 
                         if (state == null)
                         {
                             state = new ParameterState();
                             state.value = defaultValue;
-                            map.put(parameterName, state);
+                            stateValue.set(state);
                         }
 
                         return state;
@@ -451,10 +447,6 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         parameterBinding = new LiteralBinding(null, "default " + parameterName, defaultValue);
                     }
 
-                    @Override
-                    public void init(PerThreadValue threadLocalStorage) {
-                        states = (PerThreadValue<Map<String, ParameterState>>)threadLocalStorage;
-                    }
 
                 };
             }
