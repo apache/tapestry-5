@@ -1,6 +1,8 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.util.CaseInsensitiveMap
+
+import spock.lang.Issue;
 import spock.lang.Specification
 
 class CaseInsensitiveMapSpec extends Specification {
@@ -299,5 +301,26 @@ class CaseInsensitiveMapSpec extends Specification {
     expect:
 
     copy == map
+  }
+  
+  @Issue('https://issues.apache.org/jira/browse/TAP5-2452')
+  def "Modifications to key set are not allowed"(){
+    setup:
+    def map = new CaseInsensitiveMap<String>()
+    map.put('1', '1')
+    map.put('2', '2')
+    map.put('3', '3')
+    def keysToRetain = ['3', '4', '5']
+    expect:
+    map.keySet().size() == 3
+    map.keySet() == ['1', '2', '3'] as Set
+    when:
+    map.keySet().retainAll(keysToRetain)
+    then:
+    thrown(UnsupportedOperationException)
+    when:
+    map.keySet().remove("Zaphod")
+    then:
+    thrown(UnsupportedOperationException)
   }
 }

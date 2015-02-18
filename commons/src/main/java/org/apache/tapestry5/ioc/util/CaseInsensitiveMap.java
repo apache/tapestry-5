@@ -29,7 +29,8 @@ import java.util.*;
  */
 public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Serializable
 {
-    private static final long serialVersionUID = 3362718337611953298L;
+
+    private static final long serialVersionUID = -3162531976817110908L;
 
     private static final int NULL_HASH = Integer.MIN_VALUE;
 
@@ -91,9 +92,17 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             return value == this.value || (value != null && value.equals(this.value));
         }
+
+        @Override
+        public String toString() {
+          StringBuilder builder = new StringBuilder();
+          builder.append("CIMEntry [key=").append(key).append(", value=").append(value).append("]");
+          return builder.toString();
+        }
+
     }
 
-    private class EntrySetIterator implements Iterator
+    private class EntrySetIterator implements Iterator<Entry<String, V>>
     {
         int expectedModCount = modCount;
 
@@ -108,7 +117,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         }
 
         @Override
-        public Object next()
+        public Entry<String, V> next()
         {
             check();
 
@@ -135,13 +144,17 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             if (expectedModCount != modCount) throw new ConcurrentModificationException();
         }
+
+        @Override
+        public String toString() {
+           return "EntrySetIterator, current key: "+entries[current].key;
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    private class EntrySet extends AbstractSet
+    private class EntrySet extends AbstractSet<Entry<String, V>>
     {
         @Override
-        public Iterator iterator()
+        public Iterator<Entry<String, V>> iterator()
         {
             return new EntrySetIterator();
         }
@@ -163,6 +176,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             if (!(o instanceof Map.Entry)) return false;
 
+            @SuppressWarnings("rawtypes")
             Map.Entry e = (Map.Entry) o;
 
             Position position = select(e.getKey());
@@ -175,6 +189,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             if (!(o instanceof Map.Entry)) return false;
 
+            @SuppressWarnings("rawtypes")
             Map.Entry e = (Map.Entry) o;
 
             Position position = select(e.getKey());
@@ -352,7 +367,6 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         return size;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public V put(String key, V value)
     {
@@ -379,13 +393,54 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         return select(key).remove();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<Map.Entry<String, V>> entrySet()
     {
         if (entrySet == null) entrySet = new EntrySet();
 
         return entrySet;
+    }
+
+    @Override
+    public Set<String> keySet() {
+
+        AbstractSet<String> set = new AbstractSet<String>() {
+
+          @Override
+          public Iterator<String> iterator() {
+
+            final Iterator<java.util.Map.Entry<String, V>> entrySetIterator = entrySet().iterator();
+
+            return new Iterator<String>() {
+              @Override
+              public boolean hasNext() {
+                return entrySetIterator.hasNext();
+              }
+              @Override
+              public String next() {
+                String nextKey = entrySetIterator.next().getKey();
+                return nextKey;
+              }
+
+              @Override
+              public void remove() {
+                throw new UnsupportedOperationException("Modifications to the key set are not allowed.");
+              }
+            };
+          }
+
+          @Override
+          public boolean contains(Object o) {
+            return containsKey(o);
+          }
+
+          @Override
+          public int size() {
+            return size;
+          }
+        };
+
+        return Collections.unmodifiableSet(set);
     }
 
     private Position select(Object key)
@@ -416,7 +471,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             cursor = (low + high) >> 1;
 
-            CIMEntry e = entries[cursor];
+            CIMEntry<V> e = entries[cursor];
 
             if (e.hashCode < hashCode)
             {
