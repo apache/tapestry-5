@@ -18,7 +18,6 @@ project.ext.versions = [
     hibernate: "4.3.6.Final",
     groovy: "2.0.6",
     slf4j: "1.7.10",
-    wro4j: "1.7.0",
     geb: "0.10.0",
     selenium: "2.44.0"
 ]
