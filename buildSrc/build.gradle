@@ -6,6 +6,13 @@ repositories {
 
 
 dependencies {
-    compile "ro.isdc.wro4j:wro4j-extensions:1.7.4"
+    compile ("ro.isdc.wro4j:wro4j-extensions:1.7.7"){
+      exclude group: 'org.jruby'
+      exclude module: 'spring-web'
+      exclude module: 'closure-compiler'
+      exclude module: 'gmaven-runtime-1.7'
+      exclude module: 'less4j'
+    }
+    compile "org.webjars:coffee-script:1.9.0"
     gradleApi()
 }
