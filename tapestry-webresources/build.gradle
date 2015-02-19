@@ -4,7 +4,7 @@ dependencies {
     compile project(":tapestry-core")
     compile "com.github.sommeri:less4j:1.8.1"
     compile "com.google.javascript:closure-compiler:v20131014"
-    compile "org.mozilla:rhino:1.7R4"
+    compile "org.mozilla:rhino:1.7R5"
 
     testCompile project(":tapestry-runner")
     testCompile "org.gebish:geb-spock:${versions.geb}"
