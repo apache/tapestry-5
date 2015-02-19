@@ -57,6 +57,6 @@ class WebResourcesSpec extends GebReportingSpec {
 
         then:
 
-        $(".demo").jquery.css("background-color") == "rgb(179, 179, 255)"
+        $(".demo").css("background-color") == "rgba(179, 179, 255, 1)"
     }
 }
