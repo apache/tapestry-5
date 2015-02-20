@@ -31,7 +31,7 @@ public interface Schedule
      * Computes the next execution time for a job.
      *
      * @param previousExecution time of previous execution (in system clock millis)
-     * @return time of next execution (in system clock millis)
+     * @return time of next execution (in system clock millis) or a value <=0 to cancel the job's execution
      */
     long nextExecution(long previousExecution);
 }
