@@ -397,8 +397,33 @@ dependencies {
     meta aggregateJavadoc.outputs.files
 }
 
+task combinedJacocoReport(type:JacocoReport){
+  dependsOn = subprojects.test
+  additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+  sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+  classDirectories = files(subprojects.sourceSets.main.output)
+  executionData = files(subprojects.jacocoTestReport.executionData)
+  jacocoClasspath = files(subprojects.jacocoTestReport.jacocoClasspath)
+  reports {
+      html {
+        enabled = true
+        destination = "$buildDir/reports/jacoco"
+      }
+      xml.enabled = false
+      csv.enabled = false
+  }
+  onlyIf = {
+      true
+  }
+  doFirst {
+      executionData = files(executionData.findAll {
+          it.exists()
+      })
+  }
+}
+
 task continuousIntegration {
-    dependsOn subprojects.build, aggregateJavadoc, subprojects.jacocoTestReport
+    dependsOn subprojects.build, aggregateJavadoc, combinedJacocoReport
     description "Task executed on Jenkins CI server after SVN commits"
 }
 
