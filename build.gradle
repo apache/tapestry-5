@@ -398,12 +398,13 @@ dependencies {
 }
 
 task combinedJacocoReport(type:JacocoReport){
-  dependsOn = subprojects.test
-  additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-  sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-  classDirectories = files(subprojects.sourceSets.main.output)
-  executionData = files(subprojects.jacocoTestReport.executionData)
-  jacocoClasspath = files(subprojects.jacocoTestReport.jacocoClasspath)
+  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart'}
+  dependsOn = subprojectsToConsider.test
+  additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
+  sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
+  classDirectories = files(subprojectsToConsider.sourceSets.main.output)
+  executionData = files(subprojectsToConsider.jacocoTestReport.executionData)
+  jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
   reports {
       html {
         enabled = true
