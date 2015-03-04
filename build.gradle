@@ -143,7 +143,6 @@ subprojects {
 
     configurations {
         provided
-        deployerJars
     }
 
     apply plugin: "java"
@@ -174,8 +173,6 @@ subprojects {
     eclipse.classpath.plusConfigurations += [configurations.provided]
 
     dependencies {
-
-        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
 
         testRuntime "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     }
