@@ -14,9 +14,8 @@ project.ext.versions = [
     testng: "6.5.2",
     easymock: "3.0",
     servletapi: "2.5",
-    spock: "0.7-groovy-2.0",
+    spock: "1.0-groovy-2.4",
     hibernate: "4.3.6.Final",
-    groovy: "2.0.6",
     slf4j: "1.7.10",
     geb: "0.10.0",
     selenium: "2.45.0"
@@ -175,7 +174,6 @@ subprojects {
     eclipse.classpath.plusConfigurations += [configurations.provided]
 
     dependencies {
-        testCompile "org.codehaus.groovy:groovy-all:${versions.groovy}"
 
         deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
 
