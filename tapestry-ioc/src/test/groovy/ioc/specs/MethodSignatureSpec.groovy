@@ -35,7 +35,7 @@ class MethodSignatureSpec extends Specification {
     where:
 
     firstClass  | secondClass       | methodName
-    Object      | Boolean           | "hashCode"
+    Object      | Boolean           | "notify"
     String      | StringBuilder     | "charAt"
     ObjectInput | ObjectInputStream | "close"
   }
