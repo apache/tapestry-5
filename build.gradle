@@ -11,8 +11,8 @@ apply from: "md5.gradle"
 project.ext.versions = [
     jetty: "7.6.11.v20130520",
     tomcat: "6.0.30",
-    testng: "6.5.2",
-    easymock: "3.0",
+    testng: "6.8.21",
+    easymock: "3.3.1",
     servletapi: "2.5",
     spock: "1.0-groovy-2.4",
     hibernate: "4.3.6.Final",
