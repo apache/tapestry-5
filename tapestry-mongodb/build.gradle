@@ -8,8 +8,6 @@ dependencies {
 
     testCompile group: 'org.jongo', name: 'jongo', version: '0.3'
 
-    testCompile "org.spockframework:spock-core:${versions.spock}"
-
     testCompile "de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28"
 }
 

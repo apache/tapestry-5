@@ -15,7 +15,6 @@ dependencies {
 
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
-    testCompile "org.spockframework:spock-core:${versions.spock}"
     testCompile "commons-lang:commons-lang:2.6"
 
     provided "org.testng:testng:${versions.testng}", { transitive = false }

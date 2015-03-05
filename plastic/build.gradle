@@ -2,7 +2,6 @@ description = "High-level runtime transformations of Java classes"
 
 dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
-	testCompile "org.spockframework:spock-core:$versions.spock"
 
 }
 
