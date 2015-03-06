@@ -633,8 +633,8 @@ public class Grid implements GridModel, ClientElement
      */
     public void reset()
     {
-        setCurrentPage(1);
         sortModel.clear();
+        setCurrentPage(1);
     }
 
     /**
