@@ -4,8 +4,6 @@ import t5build.*
 
 description = "Central module for Tapestry, containing all core services and components"
 
-apply plugin: 'jetty'
-
 project.ext {
     antlrSource = "src/main/antlr"
     mainGeneratedDir = "src/main/generated"
@@ -62,9 +60,4 @@ jar {
     from("src/main/filtered-resources") {
         filter(ReplaceTokens, tokens: [version: project.version])
     }
-}
-
-task runTestApp1(type: JettyRun) {
-  webAppSourceDirectory= file('src/test/app1')
-  classpath += project.sourceSets.test.runtimeClasspath
 }
