@@ -10,6 +10,8 @@ project.ext {
     testGeneratedDir = "src/test/generated"
 }
 
+clean.delete mainGeneratedDir, testGeneratedDir
+
 dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
