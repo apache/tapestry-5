@@ -657,10 +657,10 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     constructor: (@jqxhr, data) ->
 
-      @status = jqxhr.status
-      @statusText = jqxhr.statusText
+      @status = @jqxhr.status
+      @statusText = @jqxhr.statusText
       @json = data # Mostly right?  Need a content type check?
-      @text = jqxhr.responseText
+      @text = @jqxhr.responseText
 
     # Retrieves a response header by name
     header: (name) ->
