@@ -27,4 +27,9 @@ jar {
 
 test {
   useJUnit()
+
+  // those tests do not work with JDK 6 (java.lang.UnsupportedClassVersionError)
+  exclude '**/InterceptionUsingDefaultCacheNameTest.class',
+   '**/InterceptionCacheNameOnEachMethodTest.class',
+   '**/InterceptionUsingCacheConfigTest.class'
 }
