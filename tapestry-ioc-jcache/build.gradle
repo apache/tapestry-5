@@ -5,8 +5,6 @@ description = "JCache (JSR 107) integration for Tapestry-IoC"
 
 //apply plugin: JavaPlugin
 
-buildDir = 'target/gradle-build'
-       
 project.ext.libraryVersions = [
     jcache: '1.0.0',
 ]
