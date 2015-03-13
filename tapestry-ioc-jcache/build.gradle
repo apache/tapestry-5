@@ -19,8 +19,12 @@ dependencies {
     testRuntime "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
 }
 
-jar {	
-	manifest {	
+jar {
+	manifest {
 		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
 	}
+}
+
+test {
+  useJUnit()
 }
