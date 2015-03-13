@@ -27,6 +27,9 @@ define
     # to true to indicate a validation exception occured, and the form submission should be prevented.
     validate: "t5:form:validate"
 
+    # Triggered after fields and form have been validated, when there are field or form validation exceptions.
+    validateInError: "t5:form:validateInError"
+
     # Triggered after `validate` (when there are no prior validation exceptions), to allow certain elements
     # to configure themselves immediately before the form is submitted. This exists primarily for components such
     # as FormFragment, which will enable or disable a hidden field to match the visibility of the fragment.
