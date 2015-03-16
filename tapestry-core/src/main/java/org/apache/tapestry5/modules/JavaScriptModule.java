@@ -117,7 +117,7 @@ public class JavaScriptModule
                                                 String provider)
     {
         configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
-        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.7.0.js"));
+        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.8.2.js"));
 
         if (provider.equals("prototype"))
         {
