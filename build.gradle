@@ -608,7 +608,7 @@ boolean checkJDK() {
 }
 
 task updateBootstrap << {
-  def bootstrapVersion = '3.3.2'
+  def bootstrapVersion = '3.3.4'
   def target = new File(temporaryDir, 'bootstrap.zip')
   ant.get(src: "https://github.com/twbs/bootstrap/archive/v${bootstrapVersion}.zip", dest: target)
 
