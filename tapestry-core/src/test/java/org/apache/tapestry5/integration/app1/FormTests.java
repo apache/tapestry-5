@@ -1230,4 +1230,15 @@ public class FormTests extends App1TestCase
         assertTextPresent("This parameter is not allowed to be null.");
     }
 
+    /** TAP5-2467 **/
+    @Test
+    public void validate_in_error_event() {
+        openLinks("Validate in error Event");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("validate-in-error");
+
+        assertTextPresent("Validate in error");
+    }
 }

@@ -585,7 +585,10 @@ public class Index
 
                     new Item("gridwithsubmitwithcontextdemo", "Grid with Submit with context", "A grid whose rows contain a Submit component with context"),
 
-                    new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null")
+                    new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null"),
+
+                    new Item("validateInErrorEvent", "Validate in error Event", "A form that trigger validate in " +
+                            "error event on submit when textfield is empty")
             );
 
     static

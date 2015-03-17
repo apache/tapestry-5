@@ -1,0 +1,6 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<t:form>
+    <t:textfield value="value" validate="required"/>
+    <t:submit/>
+</t:form>
+</html>
