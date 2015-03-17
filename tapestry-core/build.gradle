@@ -25,6 +25,8 @@ dependencies {
     compile "commons-codec:commons-codec:1.10"
 
     testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+
+    testRuntime 'com.google.inject:guice:3.0'
 }
 
 task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
