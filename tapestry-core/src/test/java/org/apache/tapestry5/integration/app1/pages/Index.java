@@ -15,7 +15,6 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -30,7 +29,6 @@ import java.util.*;
 /**
  * Have to start somewhere!
  */
-@Import(module="index")
 public class Index
 {
     @Persist(PersistenceConstants.FLASH)
