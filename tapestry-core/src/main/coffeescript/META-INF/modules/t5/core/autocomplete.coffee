@@ -40,4 +40,9 @@ define ["./dom", "./ajax", "underscore", "jquery", "./utils", "./typeahead"],
         minLength: spec.minChars
         dataset
 
+      # don't validate the "tt-hint" input field created by Typeahead (fix for TAP5-2440)
+      $field.prev(".tt-hint").removeAttr("data-validation data-optionality data-required-message")
+
+      return
+
     exports = init
