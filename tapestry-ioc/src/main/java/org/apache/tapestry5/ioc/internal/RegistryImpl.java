@@ -379,7 +379,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private Logger loggerForBuiltinService(String serviceId)
     {
-        return loggerSource.getLogger(TapestryIOCModule.class + "." + serviceId);
+        return loggerSource.getLogger(TapestryIOCModule.class.getName() + "." + serviceId);
     }
 
     private <T> void addBuiltin(final String serviceId, final Class<T> serviceInterface, T service)
