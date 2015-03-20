@@ -342,6 +342,8 @@ public class Index
                             "handling of remove and reorder parameters"),
 
                     new Item("EmptyGrid", "Empty Grid Demo", "show table for empty data sources"),
+                    
+                    new Item("GridEarlyPagingDemo", "Grid Early Paging", "set a Grid's current page before rendering"),
 
                     new Item("protected", "Protected Page",
                             "Demonstrate result of non-void return from a page's activate method"),

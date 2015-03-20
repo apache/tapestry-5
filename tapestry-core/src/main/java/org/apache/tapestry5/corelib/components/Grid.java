@@ -224,7 +224,6 @@ public class Grid implements GridModel, ClientElement
     @Parameter(value = "defaultPaginationModel")
     private GridPaginationModel paginationModel;
 
-    @Property
     @Persist
     private GridPaginationModel defaultPaginationModel;
 
@@ -352,8 +351,6 @@ public class Grid implements GridModel, ClientElement
         {
             assert InternalUtils.isNonBlank(columnId);
 
-            setupPaginationModel();
-
             if (columnId.equals(paginationModel.getSortColumnId()))
             {
                 setSortAscending(!getSortAscending());
@@ -381,7 +378,6 @@ public class Grid implements GridModel, ClientElement
 
         public void clear()
         {
-            setupPaginationModel();
             paginationModel.setSortColumnId(null);
             paginationModel.setSortAscending(null);
         }
@@ -455,9 +451,6 @@ public class Grid implements GridModel, ClientElement
 
     Object setupRender()
     {
-
-        setupPaginationModel();
-
         if (formSupport != null)
         {
             formSupport.store(this, SETUP_DATA_SOURCE);
@@ -477,12 +470,14 @@ public class Grid implements GridModel, ClientElement
         zone = null;
     }
 
-    private void setupPaginationModel()
+    public GridPaginationModel getDefaultPaginationModel()
     {
-        if (paginationModel == null)
+        if (defaultPaginationModel == null)
         {
-            paginationModel = new GridPaginationModelImpl();
+            defaultPaginationModel = new GridPaginationModelImpl();
         }
+
+        return defaultPaginationModel;
     }
 
     void setupDataSource()

@@ -366,6 +366,18 @@ public class GridTests extends App1TestCase
         assertTextPresent(" Deleted Studying Stones");
 
     }
+    
+    /**
+     * TAP5-2437
+     */
+    @Test
+    public void set_grid_current_page_before_first_render()
+    {
+        openLinks("Grid Early Paging");
+
+        assertTextPresent("Walking On Broken Glass");
+
+    }
 
 
 }
