@@ -33,12 +33,13 @@ import org.apache.tapestry5.jcache.internal.CachePutMethodAdvice;
 import org.apache.tapestry5.jcache.internal.CacheRemoveAllMethodAdvice;
 import org.apache.tapestry5.jcache.internal.CacheRemoveMethodAdvice;
 import org.apache.tapestry5.jcache.internal.CacheResultMethodAdvice;
+import org.apache.tapestry5.plastic.MethodAdvice;
 import org.jsr107.ri.annotations.CacheContextSource;
 import org.jsr107.ri.annotations.DefaultCacheKeyGenerator;
 import org.jsr107.ri.annotations.DefaultCacheResolverFactory;
 
 /**
- * Tapestry-IoC module that 
+ * Tapestry-IoC module that
  */
 public final class JCacheModule
 {
@@ -49,7 +50,7 @@ public final class JCacheModule
 
     /**
      * Declares some services.
-     * 
+     *
      * @param binder
      *            a {@link ServiceBinder}.
      */
@@ -62,27 +63,32 @@ public final class JCacheModule
 
     /**
      * Applies the advice to the services.
-     * 
+     *
      * @param receiver
      *            a {@link MethodAdviceReceiver}.
      * @param objectLocator
      *            an {@link ObjectLocator}.
      */
     @Match("*")
-    public static void advise(MethodAdviceReceiver receiver, ObjectLocator objectLocator)
+    public static void adviseCache(MethodAdviceReceiver receiver, ObjectLocator objectLocator)
     {
-        advise(CachePut.class, objectLocator.autobuild(CachePutMethodAdvice.class), receiver);
-        advise(CacheRemoveAll.class, objectLocator.autobuild(CacheRemoveAllMethodAdvice.class),
+        advise(CachePut.class, objectLocator, CachePutMethodAdvice.class, receiver);
+        advise(CacheRemoveAll.class, objectLocator, CacheRemoveAllMethodAdvice.class,
                 receiver);
-        advise(CacheRemove.class, objectLocator.autobuild(CacheRemoveMethodAdvice.class), receiver);
-        advise(CacheResult.class, objectLocator.autobuild(CacheResultMethodAdvice.class), receiver);
+        advise(CacheRemove.class, objectLocator, CacheRemoveMethodAdvice.class, receiver);
+        advise(CacheResult.class, objectLocator, CacheResultMethodAdvice.class, receiver);
     }
 
-    private static void advise(Class<? extends Annotation> annotationClass,
-            CacheMethodAdvice advice, MethodAdviceReceiver methodAdviceReceiver)
+    private static void advise(Class<? extends Annotation> annotationClass, ObjectLocator objectLocator,
+            Class<? extends CacheMethodAdvice> adviceClass, MethodAdviceReceiver methodAdviceReceiver)
     {
+        // TAP5-2466: create the advice on-demand to avoid recursion issues
+        MethodAdvice advice = null;
+
         if (methodAdviceReceiver.getClassAnnotationProvider().getAnnotation(annotationClass) != null)
         {
+            advice = build(objectLocator, adviceClass);
+
             methodAdviceReceiver.adviseAllMethods(advice);
         }
         else
@@ -91,10 +97,19 @@ public final class JCacheModule
             {
                 if (methodAdviceReceiver.getMethodAnnotation(method, annotationClass) != null)
                 {
+                    if(advice== null)
+                    {
+                        advice = build(objectLocator, adviceClass);
+                    }
+
                     methodAdviceReceiver.adviseMethod(method, advice);
                 }
             }
         }
     }
 
+    private static CacheMethodAdvice build(ObjectLocator objectLocator, Class<? extends CacheMethodAdvice> advice)
+    {
+        return objectLocator.autobuild(advice);
+    }
 }
