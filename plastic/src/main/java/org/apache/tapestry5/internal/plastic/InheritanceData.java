@@ -137,9 +137,15 @@ public class InheritanceData
      * Combines a method name and its desc (which describes parameter types and return value) to form
      * a value, which is how methods are tracked.
      */
-    private String toValue(String name, String desc)
+    private static String toValue(String name, String desc)
     {
-        return name + ":" + desc;
+        // TAP5-2268: ignore return-type to avoid methods with the same number (and type) of parameters but different
+        //            return-types which is illegal in Java.
+        // desc is something like "(I)Ljava/lang/String;", which means: takes an int, returns a String. We strip
+        // everything after the parameter list.
+        int endOfParameterSpecIdx = desc.indexOf(')');
+
+        return name + ":" + desc.substring(0, endOfParameterSpecIdx+1);
     }
 
     /**
