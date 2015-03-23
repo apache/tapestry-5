@@ -91,7 +91,7 @@ public class AppModule
                 {
                     long elapsed = System.currentTimeMillis() - startTime;
 
-                    log.info(String.format("Request time: %d ms", elapsed));
+                    log.info("Request time: {} ms", elapsed);
                 }
             }
         };
