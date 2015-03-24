@@ -109,6 +109,10 @@ public class Checklist extends AbstractField
                 checkbox.attribute("checked", "checked");
             }
 
+            if (isDisabled()) {
+                writer.attributes("disabled", "disabled");
+            }
+
             writer.write(model.getLabel());
             writer.end();
 

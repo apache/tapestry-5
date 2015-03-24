@@ -494,6 +494,8 @@ public class FormTests extends App1TestCase
 
                         "//div[@class='palette-selected']//select",
 
+                        "//input[@name='checklist']",
+
                         "//input[@id='submit_0']"};
 
         for (String path : paths)
