@@ -319,7 +319,7 @@ task aggregateJavadoc(type: Javadoc) {
     maxMemory "512m"
     destinationDir file("$buildDir/documentation/javadocs")
 
-    def tapestryStylesheet = isJDK7() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
+    def tapestryStylesheet = isJDKAfter6() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
 
     configure(options) {
         splitIndex true
@@ -579,8 +579,8 @@ boolean isWindows() {
     System.properties['os.name'].toLowerCase().contains('windows')
 }
 
-boolean isJDK7() {
-    System.properties['java.version'].startsWith("1.7.")
+boolean isJDKAfter6() {
+    ! System.properties['java.version'].matches('1\\.[5|6]\\..*')
 }
 
 // Check JDK version to prevent VU#225657 see:
