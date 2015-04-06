@@ -17,36 +17,34 @@ import org.apache.tapestry5.SymbolConstants;
 @Import(module="bootstrap/collapse")
 public class Layout
 {
-	@Inject
-	private ComponentResources resources;
+  @Inject
+  private ComponentResources resources;
 
-	/**
-	 * The page title, for the <title> element and the <h1> element.
-	 */
-	@Property
-	@Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
-	private String title;
+  /**
+   * The page title, for the <title> element and the <h1> element.
+   */
+  @Property
+  @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
+  private String title;
 
-	@Property
-	private String pageName;
+  @Property
+  private String pageName;
 
-	@Property
-	@Inject
-	@Symbol(SymbolConstants.APPLICATION_VERSION)
-	private String appVersion;
+  @Property
+  @Inject
+  @Symbol(SymbolConstants.APPLICATION_VERSION)
+  private String appVersion;
 
+  public String getClassForPageName()
+  {
+    return resources.getPageName().equalsIgnoreCase(pageName)
+        ? "active"
+        : null;
+  }
 
-
-	public String getClassForPageName()
-	{
-		return resources.getPageName().equalsIgnoreCase(pageName)
-				? "active"
-				: null;
-	}
-
-	public String[] getPageNames()
-	{
-		return new String[]{"Index", "About", "Contact"};
-	}
+  public String[] getPageNames()
+  {
+    return new String[]{"Index", "About", "Contact"};
+  }
 
 }

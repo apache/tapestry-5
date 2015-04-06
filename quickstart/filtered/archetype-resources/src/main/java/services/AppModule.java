@@ -33,21 +33,22 @@ public class AppModule
     }
 
     public static void contributeFactoryDefaults(
-            MappedConfiguration<String, Object> configuration)
+        MappedConfiguration<String, Object> configuration)
     {
-        // The application version is incorporated into URLs for most assets. Web
-        // browsers will cache assets because of the far future expires header.
-    	// If existing assets change (or if the Tapestry version changes) you
-    	// should also change this number, to force the browser to download new
-    	// versions. This overrides Tapesty's default (a random hexadecimal
-    	// number), but may be further overriden by DevelopmentModule or QaModule 
-    	// by adding the same key in the contributeApplicationDefaults method.
+        // The values defined here (as factory default overrides) are themselves
+        // overridden with application defaults by DevelopmentModule and QaModule.
+
+        // The application version is primarily useful as it appears in
+        // any exception reports (HTML or textual).
         configuration.override(SymbolConstants.APPLICATION_VERSION, "${version}");
-		configuration.override(SymbolConstants.PRODUCTION_MODE, false);
+
+        // This is something that should be removed when going to production, but is useful
+        // in the early stages of development.
+        configuration.override(SymbolConstants.PRODUCTION_MODE, false);
     }
 
     public static void contributeApplicationDefaults(
-            MappedConfiguration<String, Object> configuration)
+        MappedConfiguration<String, Object> configuration)
     {
         // Contributions to ApplicationDefaults will override any contributions to
         // FactoryDefaults (with the same key). Here we're restricting the supported
@@ -55,6 +56,10 @@ public class AppModule
         // you can extend this list of locales (it's a comma separated series of locale names;
         // the first locale name is the default when there's no reasonable match).
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
+
+              // You should change the passphrase immediately; the HMAC passphrase is used to secure
+        // the hidden field data stored in forms to encrypt and digitally sign client-side data.
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "change this immediately");
     }
 
 	/**
@@ -64,21 +69,13 @@ public class AppModule
 	@ApplicationDefaults
 	public static void setupEnvironment(MappedConfiguration<String, Object> configuration)
 	{
+        // Support for jQuery is new in Tapestry 5.4 and will become the only supported
+        // option in 5.5.
 		configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
-//		configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:mybootstrap");
+		configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "context:mybootstrap");
 		configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
 	}
 
-	/*
-	// This will override the bundled bootstrap version and will compile it at runtime
-	@Contribute(JavaScriptStack.class)
-	@Core
-	public static void overrideBootstrapCSS(OrderedConfiguration<StackExtension> configuration)
-	{
-		configuration.override("bootstrap.css",
-				new StackExtension(StackExtensionType.STYLESHEET, "context:mybootstrap/css/bootstrap.css"), "before:tapestry.css");
-	}
-	*/
 
     /**
      * This is a service definition, the service will be named "TimingFilter". The interface,
@@ -103,7 +100,7 @@ public class AppModule
         return new RequestFilter()
         {
             public boolean service(Request request, Response response, RequestHandler handler)
-                    throws IOException
+            throws IOException
             {
                 long startTime = System.currentTimeMillis();
 
@@ -131,9 +128,10 @@ public class AppModule
      * from the same module.  Without @Local, there would be an error due to the other service(s)
      * that implement RequestFilter (defined in other modules).
      */
-    public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-                                         @Local
-                                         RequestFilter filter)
+    @Contribute(RequestHandler.class)
+    public void addTimingFilter(OrderedConfiguration<RequestFilter> configuration,
+     @Local
+     RequestFilter filter)
     {
         // Each contribution to an ordered configuration has a name, When necessary, you may
         // set constraints to precisely control the invocation order of the contributed filter

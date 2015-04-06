@@ -20,19 +20,8 @@ repositories {
         name "JBoss"
         url "http://repository.jboss.org/nexus/content/groups/public/"
     }
-    
-    // For stable versions of the tapx libraries
-    maven {
-        name "HLS"
-        url "http://howardlewisship.com/repository/"
-    }
-    
-    // For non-stable versions of the tapx libraries
-    maven {
-        name "HLS Snapshots"
-        url "http://howardlewisship.com/snapshot-repository/"
-    }
-    
+        
+
     // For access to Apache Staging (Preview) packages
     maven {
         name "Apache Staging"
@@ -67,8 +56,10 @@ dependencies {
     // Uncomment this to add support for file uploads:
     // compile "org.apache.tapestry:tapestry-upload:@tapestryReleaseVersion@"
 
-    // Uncomment this to add support resource minification and runtime compilation:
-    // compile "org.apache.tapestry:tapestry-wro4j:@tapestryReleaseVersion@"
+    // CoffeeScript & Less support, plus resource minification:
+    compile "org.apache.tapestry:tapestry-webresources:@tapestryReleaseVersion@"
+
+    test "org.apache.tapestry:tapestry-test:@tapestryReleaseVersion@"
 
     // Log implementation choose one:
     // Log4j 1.x
@@ -96,7 +87,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.6'
+    gradleVersion = '2.3'
 }
 
 // TODO: Configure execution mode for jettyRun task
