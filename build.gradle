@@ -328,7 +328,7 @@ task aggregateJavadoc(type: Javadoc) {
         windowTitle "Tapestry API - ${project.version}"
         header "Tapestry API - ${project.version}"
         docTitle "Tapestry API - ($project.version)"
-        bottom '${project.version} - Copyright &copy; 2003-2014 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
+        bottom '${project.version} - Copyright &copy; 2003-2015 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
         use = true // 'use' seems to be a reserved word for the DSL
         links "http://download.oracle.com/javase/6/docs/api/"
         links "http://download.oracle.com/javaee/6/api/"
