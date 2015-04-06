@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,7 +28,7 @@ public interface TryCatchBlock
      * Ends the block (if not already ended) and inserts a catch block for the named exception.
      * The InstructionBuilder is returned so that the code for handling the exception can be added. The exception object
      * will be on top of the stack. This should be called after {@link #addTry(InstructionBuilderCallback)}.
-     * <p>
+     *
      * Note: no attempt is made currently to sort the handlers; for example adding a catch for java.lang.Exception first
      * will mean that more specific exception handlers added later will never be invoked.
      * 

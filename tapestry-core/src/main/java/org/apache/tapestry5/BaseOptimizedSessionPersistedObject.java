@@ -1,5 +1,3 @@
-// Copyright 2008-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,11 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Base implementation of
  * {@link org.apache.tapestry5.OptimizedSessionPersistedObject}. Subclasses
  * should invoke {@link #markDirty()} after the internal state of the object changes.
- * <p>
+ *
  * Due to the concurrent nature of session attributes it's important that markDirty occurs <strong>after</strong>
  * the object has been changed. If the change occurs before the object has been mutated it's possible that another
  * thread may re-store the object before the changes are actually made!
- * <p>
+ *
  * @since 5.1.1.0
  */
 public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSessionPersistedObject, Serializable

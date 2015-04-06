@@ -15,12 +15,12 @@ package org.apache.tapestry5;
 /**
  * Defines a field within a form.  Fields have a <a href="http://www.w3.org/TR/html4/interact/forms.html#control-name">control
  * name</a> that is used when rendering and, later, when the form is submitted, to identify the query parameter.
- * <p/>
+ *
  * Timing is important, as components may render multiple times, due to looping and other factors. Generally, a
  * component's {@link #getControlName()} will only be accurate after it has rendered.  In some cases, when generating
  * JavaScript for example, it is necessary to {@linkplain org.apache.tapestry5.services.Heartbeat#defer(Runnable) wait
  * until the end of the current Heartbeat} to ensure that all components have had their chance to render.
- * <p/>
+ *
  * Most Fields also implement {@link org.apache.tapestry5.Field2}, which was introduced to bridge a gap related to
  * re-rendering a form as part of an Ajax request.
  */

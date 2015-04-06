@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,7 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Generates a &lt;label&gt; element for a particular field. It writes the CSS class "control-label".
- * <p/>
+ *
  * A Label will render its body, if it has one. However, in most cases it will not have a body, and will render its
  * {@linkplain org.apache.tapestry5.Field#getLabel() field's label} as its body. Remember, however, that it is the
  * field label that will be used in any error messages. The Label component allows for client- and server-side

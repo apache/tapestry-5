@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ public interface TypeCoercer
      * conversion will be to the equivalent wrapper type. In some cases, the TypeCoercer will need to search for an
      * appropriate coercion, and may even combine existing coercions to form new ones; in those cases, the results of
      * the search are cached.
-     * <p/>
+     *
      * The TypeCoercer also caches the results of a coercion search.
      * 
      * @param <S>
@@ -47,7 +45,7 @@ public interface TypeCoercer
 
     /**
      * Given a source and target type, computes the coercion that will be used.
-     * <p>
+     *
      * Note: holding the returned coercion past the time when {@linkplain #clearCache() the cache is cleared} can cause
      * a memory leak, especially in the context of live reloading (wherein holding a reference to a single class make
      * keep an entire ClassLoader from being reclaimed).

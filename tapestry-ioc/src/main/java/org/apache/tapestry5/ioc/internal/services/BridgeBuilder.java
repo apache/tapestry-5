@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -132,7 +130,7 @@ public class BridgeBuilder<S, F>
     /**
      * Finds a matching method in filterMethods for the given service method. A matching method has the same signature
      * as the service interface method, but with an additional parameter matching the service interface itself.
-     * <p/>
+     *
      * The matching method signature from the list of filterMethods is removed and code generation strategies for making
      * the two methods call each other are added.
      */

@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,7 +25,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
  * Generates a render request link to some other page in the application. If an activation context is supplied (as the
  * context parameter), then the context values will be encoded into the URL. If no context is supplied, then the target
  * page itself will supply the context via a passivate event.
- * <p/>
+ *
  * Pages are not required to have an activation context. When a page does have an activation context, the value
  * typically represents the identity of some object displayed or otherwise manipulated by the page.
  *

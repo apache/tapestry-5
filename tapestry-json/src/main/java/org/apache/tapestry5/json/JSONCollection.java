@@ -1,5 +1,3 @@
-// Copyright 2010, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,9 +26,9 @@ public abstract class JSONCollection implements Serializable
 {
     /**
      * Converts this JSON collection into a parsable string representation.
-     * <p/>
+     *
      * Warning: This method assumes that the data structure is acyclical.
-     * <p>
+     *
      * Starting in release 5.2, the result will be pretty printed for readability.
      * 
      * @return a printable, displayable, portable, transmittable representation of the object, beginning with

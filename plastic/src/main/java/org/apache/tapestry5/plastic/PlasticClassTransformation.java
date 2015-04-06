@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +31,7 @@ public interface PlasticClassTransformation<T>
      * Terminates the class transformation process, finishes any final bookkeeping, and
      * returns an object used to instantiate the transformed class. Once this method is invoked,
      * no other methods of the {@link PlasticClass} (or related objects) can be invoked.
-     * <p>
+     *
      * The returned ClassInstantiator has an empty {@link InstanceContext} map. Use
      * {@link ClassInstantiator#with(Class, Object)} to create a new ClassInstantiator with new InstanceContext entries.
      */

@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -63,7 +61,7 @@ public interface DocumentLinker
      * of the page (in a full page render) and collected as the "script" property of the partial page render response.
      * The JavaScript is executed after the page loads (or in an Ajax update, after external JavaScript libraries are
      * loaded and the DOM is updated).
-     * <p/>
+     *
      * This method may be called multiple times for the same priority and the script will be accumulated.
      *
      * @param priority

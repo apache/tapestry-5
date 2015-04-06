@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,11 +12,10 @@
 
 package org.apache.tapestry5.jpa;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
+import java.util.List;
 
 /**
  * Responsible for creating an EntityManager as needed.
@@ -28,24 +25,24 @@ import javax.persistence.spi.PersistenceUnitInfo;
 public interface EntityManagerSource
 {
     /**
-     * Creates an <code>EntityManager</code> for the given persistence unit name.
+     * Creates an EntityManager for the given persistence unit name.
      *
-     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     * @param persistenceUnitName the name of a persistence unit as defined in {@code persistence.xml}
      * @return  EntityManager for the given persistence unit name
      */
     EntityManager create(String persistenceUnitName);
 
     /**
-     * Gets the <code>EntityManagerFactory</code> for the given persistence unit name, creating it as necessary.
+     * Gets the EntityManagerFactory for the given persistence unit name, creating it as necessary.
      *
-     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     * @param persistenceUnitName the name of a persistence unit as defined in {@code persistence.xml}
      *
      * @return EntityManagerFactory for the given persistence unit name
      */
     EntityManagerFactory getEntityManagerFactory(String persistenceUnitName);
 
     /**
-     * Get the list of {@linkplain PersistenceUnitInfo} parsed from <code>persistence.xml<code>.
+     * Get the list of {@linkplain PersistenceUnitInfo} parsed from {@code persistence.xml}.
      *
      * @return list of PersistenceUnitInfos
      */

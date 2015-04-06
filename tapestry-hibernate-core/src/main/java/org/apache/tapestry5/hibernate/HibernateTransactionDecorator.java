@@ -1,5 +1,3 @@
-// Copyright 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ package org.apache.tapestry5.hibernate;
  * Declared exceptions will also {@linkplain org.apache.tapestry5.hibernate.HibernateSessionManager#commit() commit the
  * transaction}; runtime exceptions will {@linkplain org.apache.tapestry5.hibernate.HibernateSessionManager#abort() the
  * transaction}.
- * <p/>
+ *
  * It is recommended that you switch from the use of decoration to the use of advice; use the {@link
  * org.apache.tapestry5.hibernate.HibernateTransactionAdvisor} (from a service advisor method) instead.
  */

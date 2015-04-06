@@ -29,47 +29,29 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.xml;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.transform.*;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
 /**
  * Processor is a command line tool that can be used for bytecode waving
  * directed by XSL transformation.
- * <p>
+ *
  * In order to use a concrete XSLT engine, system property
  * <tt>javax.xml.transform.TransformerFactory</tt> must be set to one of the
  * following values.
@@ -791,7 +773,7 @@ public class Processor {
      * {@link java.net.ContentHandlerFactory ContentHandlerFactory}. This is
      * useful for running XSLT engine against large XML document that will
      * hardly fit into the memory all together.
-     * <p>
+     *
      * TODO use complete path for subdocumentRoot
      */
     private static final class InputSlicingHandler extends DefaultHandler {
@@ -895,7 +877,7 @@ public class Processor {
      * useful for running XSLT engine against large XML document that will
      * hardly fit into the memory all together.
      * 
-     * <p>
+     *
      * TODO use complete path for subdocumentRoot
      */
     private static final class OutputSlicingHandler extends DefaultHandler {

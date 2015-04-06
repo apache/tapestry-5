@@ -29,21 +29,17 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.commons;
 
+import org.apache.tapestry5.internal.plastic.asm.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.internal.plastic.asm.Handle;
-import org.apache.tapestry5.internal.plastic.asm.Label;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-
 /**
  * A {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor} to insert before, after and around
  * advices in methods and constructors.
- * <p>
+ *
  * The behavior for constructors is like this:
  * <ol>
  * 

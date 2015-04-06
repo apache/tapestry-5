@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,7 +23,7 @@ import org.apache.tapestry5.services.Request;
 /**
  * Allows the default {@link Link} for a page render request to be replaced.
  * This is a service, but also the contribution to the service, as a chain of command.
- * <p>
+ *
  * A contributed implementation of this interface is expected to identify which requests it wants to transform. The
  * {@link #transformPageRenderLink(Link, PageRenderRequestParameters)} method can return a {@link Link} that is allowed
  * to differ from Tapestry normal default. Later, when that request is triggered,
@@ -53,7 +51,7 @@ public interface PageRenderLinkTransformer
      * {@link #transformPageRenderLink(Link, PageRenderRequestParameters)}. The transformer
      * is also responsible for identifying the locale in the request (as part of the path, or as a
      * query parameter or cookie) and setting the locale for the request.
-     * <p>
+     *
      * This method will be invoked from the {@link PageRenderDispatcher} and a non-null value returned from this method
      * will prevent the default {@link ComponentEventLinkEncoder#decodePageRenderRequest(Request)} method from being
      * invoked.

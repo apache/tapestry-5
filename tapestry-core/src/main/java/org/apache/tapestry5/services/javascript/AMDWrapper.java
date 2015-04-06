@@ -1,5 +1,3 @@
-// Copyright 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,14 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.util.VirtualResource;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,25 +30,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.internal.util.VirtualResource;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
 /**
  * Used to wrap plain JavaScript libraries as AMD modules. The underlying
  * resource is transformed before it is sent to the client.
- * <p>
+ *
  * This is an alternative to configuring RequireJS module shims for the
  * libraries. As opposed to shimmed libraries, the modules created using the
  * AMDWrapper can be added to JavaScript stacks.
- * <p>
+ *
  * If the library depends on global variables, these can be added as module
  * dependencies. For a library that expects jQuery to be available as
- * <code>$<code>, the wrapper should be setup calling <code>require("jQuery", "$")<code>
+ * <code>$</code>, the wrapper should be setup calling <code>require("jQuery", "$")</code>
  * on the respective wrapper.
  *
  * @since 5.4

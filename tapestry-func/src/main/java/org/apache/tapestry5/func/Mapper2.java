@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +14,7 @@ package org.apache.tapestry5.func;
 
 /**
  * A generalization of {@link Mapper} for a two-input function.
- * <p>
+ *
  * This was converted from to an interface from an abstract base class in 5.3.
  */
 public interface Mapper2<A, B, C>

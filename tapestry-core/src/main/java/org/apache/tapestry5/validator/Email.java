@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * A validator that checks if a given string is well-formed email address. This validator is not configurable.
- * <p/>
+ *
  * Starting with release 5.4, this validator also performs client-side validation.
  */
 public class Email extends AbstractValidator<Void, String>

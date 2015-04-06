@@ -23,11 +23,11 @@ import java.util.Locale;
 
 /**
  * Used to find or create an {@link org.apache.tapestry5.Asset} with a given path.
- * <p/>
+ *
  * Assets are defined with a domain, and the domain is indicated by a prefix. The two builtin domains are "context:"
  * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
  * a JAR, such as a component library). Other domains can be defined via contributions to the AssetSource service.
- * <p/>
+ *
  * Since 5.1.0.0, is is preferred that
  * {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.ioc.Resource)} return an instance
  * of {@link org.apache.tapestry5.Asset2}.
@@ -40,7 +40,7 @@ public interface AssetSource
      * <em>or</em> it may have a prefix, such as "context:" or "classpath:", in which case it is treated as a complete
      * path within the indicated domain. The resulting Resource is then localized (to the provided Locale) and returned
      * as an Asset.
-     * <p/>
+     *
      * The AssetSource caches its results, so a single Asset instance may be shared among many different components.
      *
      * @param baseResource
@@ -129,7 +129,7 @@ public interface AssetSource
      * This is the preferred location in 5.4, with compatibility for 5.3 that allows assets to be stored on the classpath
      * alongside Java classes and server-only resources such as templates and message catalogs.
      *
-     * <p/>
+     *
      * When resolving a resource in a component that is subclass, the point of injection is the class which contains
      * the injecting annotation (e.g., {@link org.apache.tapestry5.ioc.annotations.Inject} with {@link org.apache.tapestry5.annotations.Path},
      * or {@link org.apache.tapestry5.annotations.Import}). In other words, the library name for the library containing the class,

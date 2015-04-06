@@ -326,6 +326,7 @@ public class AssetsModule
      * <dt>AppCatalog</dt>
      * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
      * <dt>
+     *     </dl>
      *
      * @since 5.2.0
      */

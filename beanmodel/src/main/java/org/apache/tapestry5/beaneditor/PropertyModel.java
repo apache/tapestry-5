@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,8 +18,8 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 /**
  * Part of a {@link org.apache.tapestry5.beaneditor.BeanModel} that defines the attributes of a single property of a
  * bean.
- * <p/>
- * <p/>
+ *
+ *
  * A PropertyModel is also an {@link AnnotationProvider}, as long as the {@link org.apache.tapestry5.PropertyConduit} is
  * non-null.  When there is no property conduit, then {@link org.apache.tapestry5.ioc.AnnotationProvider#getAnnotation(Class)}
  * will return null.

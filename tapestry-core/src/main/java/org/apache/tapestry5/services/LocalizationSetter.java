@@ -1,5 +1,3 @@
-// Copyright 2006, 2009, 2010, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,16 +12,16 @@
 
 package org.apache.tapestry5.services;
 
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It will try to honor it
  * but there is no guarantee that it will be used as is.
- * <p/>
+ *
  * Localization is controlled by the {@link org.apache.tapestry5.SymbolConstants#SUPPORTED_LOCALES} symbol.
  */
 public interface LocalizationSetter
@@ -34,7 +32,7 @@ public interface LocalizationSetter
      * to the provided locale, if supported, or to the default locale). If the locale name is supported, it will also
      * set the {@link org.apache.tapestry5.services.PersistentLocale} (which may affect how page and event links are
      * generated, to persist the selected locale across requests).
-     * <p/>
+     *
      * Note that locale names <strong>are</strong> case sensitive.
      * 
      * @param localeName

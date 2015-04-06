@@ -1,5 +1,3 @@
-// Copyright 2006, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,12 +19,12 @@ import java.util.Map;
 /**
  * A service implementation builder that operates around a {@link StrategyRegistry}, implementing a version of the Gang
  * of Four Strategy pattern.
- * <p/>
+ *
  * The constructed service is configured with a number of adapters (that implement the same service interface). Method
  * invocations on the service are routed to one of the adapters.
- * <p/>
+ *
  * The first parameter of each method is used to select the appropriate adapter.
- * <p/>
+ *
  * The ideal interface for use with this builder has only one method.
  */
 public interface StrategyBuilder

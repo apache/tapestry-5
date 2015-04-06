@@ -1,5 +1,3 @@
-//  Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +17,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Provides some assistance in determining <em>where</em> to place a hidden field based on standard (X)HTML elements.
- * <p/>
+ *
  * The service works based on a mapped service contribution; keys are the element names, values area {@link
  * org.apache.tapestry5.services.RelativeElementPosition}.
  */

@@ -1,5 +1,3 @@
-// Copyright 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
  * are static or instance methods on module classes prefixed with "advise". When a service is realized, a list of
  * matching AdvisorDefs is generated, then ordered, and from each a {@link org.apache.tapestry5.ioc.ServiceAdvisor} is
  * obtained and invoked.
- * <p/>
+ *
  * Note: service decorators (via {@link org.apache.tapestry5.ioc.def.DecoratorDef} are applied <em>around</em> the
  * interceptor generated via service advisors, (for compatibility with Tapestry 5.0). In general, you should use service
  * decoration or service advice, not both.

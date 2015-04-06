@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +24,7 @@ import java.util.List;
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
  * path portion, an optional anchor, and a set of query parameters. A request for a link will ultimately be recognized
  * by a {@link org.apache.tapestry5.services.Dispatcher}.
- * <p/>
+ *
  * Query parameter values are kept separate from the path portion to support encoding those values into hidden form
  * fields (where appropriate).
  */
@@ -44,11 +42,11 @@ public interface Link
     /**
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
-     * <p/>
-     * <p>Use this method only when you are sure the parameter has only one value. If the parameter might have more than
+     *
+     * Use this method only when you are sure the parameter has only one value. If the parameter might have more than
      * one value, use {@link #getParameterValues}.
-     * <p/>
-     * <p>If you use this method with a multivalued parameter, the value returned is equal to the first value in the
+     *
+     * If you use this method with a multivalued parameter, the value returned is equal to the first value in the
      * array returned by <code>getParameterValues</code>.
      *
      * @return a string representing the single value of the named parameter
@@ -138,7 +136,7 @@ public interface Link
      * Returns the absolute URL, which includes the scheme, hostname and possibly port (as per
      * {@link BaseURLSource#getBaseURL(boolean)}).
      * By default, the scheme is chosen to match the {@linkplain Request#isSecure() security} of the current request.
-     * <p/>
+     *
      * Note: the semantics of this method changed between Tapestry 5.1 and 5.2. Most code should use toString() or
      * {@link #toURI()} (which are equivalent) instead.
      *

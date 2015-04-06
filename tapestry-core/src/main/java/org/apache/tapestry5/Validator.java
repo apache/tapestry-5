@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.apache.tapestry5.services.FormSupport;
 /**
  * Used by a {@link Field} to enforce a <strong>constraint</strong> related to a form submission. Validators themselves
  * are stateless singletons.
- * <p/>
+ *
  * Validators are usually encapsulated inside a {@link FieldValidator}.
  *
  * @see FieldValidationSupport

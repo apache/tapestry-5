@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,10 +22,10 @@ import org.apache.tapestry5.json.JSONObject;
  * This allows components, pages, mixins and services to configure Require.JS dynamically in a
  * per-request basis by using the
  * {@link JavaScriptSupport#addModuleConfigurationCallback(ModuleConfigurationCallback)} method.
- * <p/>
+ *
  * Note that RequireJS is only configured during a full page render; on Ajax requests, RequireJS
  * will already be loaded and configured.
- * <p/>
+ *
  *
  * @see JavaScriptSupport#addModuleConfigurationCallback(ModuleConfigurationCallback)
  * @since 5.4

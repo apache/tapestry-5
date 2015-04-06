@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,7 +26,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate within a
  * {@link RadioContainer} (normally, the {@link RadioGroup} component).
- * <p/>
+ *
  * If the value parameter is not bound, then the default value is a property of the container component whose name
  * matches the Radio component's id.
  *

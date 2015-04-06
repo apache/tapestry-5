@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.slf4j.Logger;
  * Service that can create a logging interceptor that wraps around a service implementation (or interceptor). The
  * interceptor works with the service's log to log, at debug level, method entry (with arguments), method exit (with
  * return value, if any) as well as any thrown exceptions.
- * <p/>
+ *
  * This represents the Tapestry 5.0 decorator approach; for Tapestry 5.1 you may want to use the {@link
  * org.apache.tapestry5.ioc.services.LoggingAdvisor} in conjunction with a service advisor method.
  */

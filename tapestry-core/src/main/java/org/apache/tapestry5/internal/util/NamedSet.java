@@ -29,7 +29,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  * This is optimized to use less memory (than a {@link CaseInsensitiveMap} (it uses a singly-liked list),
  * though the cost of a lookup is more expensive. However, this is a good match against many of the structures inside
  * a page instance, where most lookups occur only during page constructions, and the number of values is often small.
- * <p/>
+ *
  * Each NameSet has its own {@link ReadWriteLock}.
  *
  * @param <T>

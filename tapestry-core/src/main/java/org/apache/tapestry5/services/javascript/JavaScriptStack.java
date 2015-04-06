@@ -26,17 +26,17 @@ import java.util.List;
  * and the may be no libraries in the core stack by Tapestry 5.5). Other component libraries may
  * define additional stacks for related sets of resources, for example, to bundle together some portion
  * of the ExtJS or YUI libraries.
- * <p/>
+ *
  * The JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
  * client as a single URL (identifying the stack by name). The individual JavaScript  assets are combined into a single virtual
  * asset, which is then streamed to the client. The individual JavaScript libraries, or the combined virtual library,
  * may be {@linkplain SymbolConstants#MINIFICATION_ENABLED minimized} and the content (both compressed and
  * uncompressed) cached.
- * <p/>
+ *
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
  * of the JavaScript library or stylesheet assets are localized). They will generally need to inject the
  * {@link AssetSource} service as well.
- * <p/>
+ *
  * The {@link ExtensibleJavaScriptStack} is the best way to create new stacks.
  *
  * @see ThreadLocale

@@ -106,7 +106,7 @@ public class JavaScriptModule
      * <dt>jquery</dt>
      * <dd>Added if the infrastructure provider is "jquery".</dd>
      * </dl>
-     * <p/>
+     *
      * User modules may replace or extend this list.
      */
     @Contribute(JavaScriptStack.class)

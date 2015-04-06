@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,12 +23,12 @@ import org.apache.tapestry5.runtime.Component;
 /**
  * A component that does not do any rendering of its own, but will delegate to some other object that can do rendering.
  * This other object may be a component or a {@link Block} (among other things).
- * <p>
+ *
  * This component may also be used to create inline components. For each informal parameter the value will be stored as a 
  * render variable. To create an inline component, create a block
  * and use Delegate multiple times in the template to render the block passing parameters to Delegate. In the block body
  * reference the render variables using the "var:" binding prefix and the name of the parameter.
- * <p>
+ *
  * Note that the default binding prefix for informal parameter values is "literal".
  * 
  * @tapestrydoc

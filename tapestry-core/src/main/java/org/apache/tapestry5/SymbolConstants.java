@@ -40,7 +40,7 @@ public class SymbolConstants
      * Indicates whether Tapestry is running in production mode or developer mode. This affects a large
      * number of Tapestry behaviors related to performance and security, including how exceptions are
      * reported, whether far-future expire headers are emitted, whether JavaScript files may be combined,
-     * whether JSON is compressed, whether component field & parameter values are shadowed to instance
+     * whether JSON is compressed, whether component field and parameter values are shadowed to instance
      * variables (to assist with debugging), and more.
      */
     public static final String PRODUCTION_MODE = "tapestry.production-mode";
@@ -134,7 +134,7 @@ public class SymbolConstants
      * Version number of the application. Prior to 5.4, this version number was integrated into asset URLs. Starting
      * with 5.4, a checksum of the individual asset's content is used instead, and this version number is only used
      * for documentation purposes; it appears in the default exception report page, for example.
-     * <p/>
+     *
      * The default value is "0.0.1".  In 5.3 and earlier, the default value was a random hexadecimal string.
      *
      * @see AssetDispatcher
@@ -282,7 +282,7 @@ public class SymbolConstants
      * If "true", then resources (individually or when aggregated into stacks) will be minimized via the
      * {@link ResourceMinimizer} service. If "false", then minification is disabled. Tracks production mode
      * (minification is normally disabled in development mode).
-     * <p/>
+     *
      * Note that Tapestry's default implementation of {@link ResourceMinimizer} does nothing; minification is provided
      * by add-on libraries.
      *
@@ -294,9 +294,9 @@ public class SymbolConstants
      * If "true" then at the end of each request the
      * {@link org.apache.tapestry5.services.SessionPersistedObjectAnalyzer} will be called on each session persisted
      * object that was accessed during the request.
-     * <p/>
+     *
      * This is provided as a performance enhancement for servers that do not use clustered sessions.
-     * <p/>
+     *
      * The default is {@code true}, to preserve 5.2 behavior. For non-clustered applications (the majority), this value should be
      * overridden to {@code false}. A future release of Tapestry may change the default.
      *
@@ -309,14 +309,14 @@ public class SymbolConstants
      * URLs in the context under the context root; by setting this to the name of a folder, the T5 URLs will be inside that folder only, and should
      * match a corresponding entry in the {@code web.xml} configuration file.  This is useful when running multiple servlets within the same web application (such as when migrating
      * from Tapestry 4 or some other framework, to Tapestry 5).
-     * <p>Effectively, if this symbol is set to a value, that folder name will be placed after the context path
+     * Effectively, if this symbol is set to a value, that folder name will be placed after the context path
      * (typically "/") and before the locale, page name, or other prefix.  For example, if this symbol is set to "app", the {@code web.xml <url-pattern>} should be set to {@code /app/*}, and Tapestry will
      * only be in invoked by the servlet container for requests inside the virtual {@code app} folder.
-     * <p/>
+     *
      * This also affects the search for page templates (which are allowed within the web context). When set to a non-blank value, page templates are searched for in the folder, rather than in the root context.
-     * <p/>
+     *
      * The default value is the empty string, which preserves Tapestry 5.2 behavior (and continues to be appropriate for most applications).
-     * <p/>
+     *
      * Note that while Tapestry is case-insensitive, the servlet container is not, so the configured value must exactly match
      * the folder name inside the {@code <url-parameter>} value, including case.
      *
@@ -336,7 +336,7 @@ public class SymbolConstants
      * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
      * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
      * It may contain slashes, but should not begin or end with one.
-     * <p/>
+     *
      * The default is "assets".
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
@@ -346,7 +346,7 @@ public class SymbolConstants
      * Prefix used for all module resources. This may contain slashes, but should not being or end with one.
      * Tapestry will create two {@link org.apache.tapestry5.services.Dispatcher}s from this: one for normal
      * modules, the other for GZip compressed modules (by appending ".gz" to this value).
-     * <p/>
+     *
      * The default is "modules".
      *
      * @since 5.4
@@ -390,7 +390,7 @@ public class SymbolConstants
      * as a {@link org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration} to provide a specific implementation
      * of the {@code t5/core/dom} module. Tapestry 5.4 directly supports "prototype" or "jquery".  To support
      * other foundation frameworks, override this symbol value and supply your own module configuration.
-     * <p/>
+     *
      * In Tapestry 5.4, this defaults to "prototype" for compatibility with 5.3. This will likely change in
      * 5.5 to default to "jquery". At some point in the future, Prototype support will no longer be present.
      *
@@ -415,7 +415,7 @@ public class SymbolConstants
      * If true (the default), then Tapestry will automatically include the "core" stack in all
      * pages.
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2169
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2169">TAP5-2169</a>
      * @since 5.4
      */
     public static final String INCLUDE_CORE_STACK = "tapestry.include-core-stack";
@@ -426,7 +426,7 @@ public class SymbolConstants
      * {@linkplain BeanEditForm} and {@linkplain BeanEditor}
      * components surrounding the label and the field. The default value is <code>form-group</code>.
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2182
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2182">TAP5-2182</a>
      * @since 5.4
      */
     public static final String FORM_GROUP_WRAPPER_CSS_CLASS = "tapestry.form-group-wrapper-css-class";
@@ -437,7 +437,7 @@ public class SymbolConstants
      * If this symbol is null or an empty string, no element will be generated surrouding the
      * form field. The default value is the empty string (no wrapping).
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2182
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2182">TAP5-2182</a>
      * @see #FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS
      * @since 5.4
      */
@@ -449,7 +449,7 @@ public class SymbolConstants
      * when {@linkplain #FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME} is not set to null or the empty string.
      * The default value is the empty string (no CSS class added).
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2182
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2182">TAP5-2182</a>
      * @since 5.4
      */
     public static final String FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS = "tapestry.form-group-form-field-wrapper-element-css-class";
@@ -460,7 +460,7 @@ public class SymbolConstants
      * {@linkplain BeanEditForm} and {@linkplain BeanEditor}
      * components. The default value is <code>control-label</code>.
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2182
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2182">TAP5-2182</a>
      * @since 5.4
      */
     public static final String FORM_GROUP_LABEL_CSS_CLASS = "tapestry.form-group-label-css-class";
@@ -469,7 +469,7 @@ public class SymbolConstants
      * Defines the CSS class that will be given to form field components which are
      * {@linkplain AbstractField} subclasses. The default value is <code>form-control</code>.
      *
-     * @see https://issues.apache.org/jira/browse/TAP5-2182
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-2182">TAP5-2182</a>
      * @since 5.4
      */
     public static final String FORM_FIELD_CSS_CLASS = "tapestry.form-field-css-class";
@@ -486,7 +486,7 @@ public class SymbolConstants
      * The directory to which exception report files should be written. The default is appropriate
      * for development: {@code build/exceptions}, and should be changed for production.
      *
-     * @see org.apache.tapestry5.services.exceptions.ExceptionReporter
+     * @see org.apache.tapestry5.services.ExceptionReporter
      * @since 5.4
      */
 

@@ -29,36 +29,36 @@ import java.util.Collection;
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
  * selection; the one on the left is the list of "available" elements, the one on the right is "selected". Elements can
  * be moved between the lists by clicking a button, or double clicking an option (and eventually, via drag and drop).
- * <p/>
+ *
  * The items in the available list are kept ordered as per {@link SelectModel} order. When items are moved from the
  * selected list to the available list, they items are inserted back into their proper positions.
- * <p/>
+ *
  * The Palette may operate in normal or re-orderable mode, controlled by the reorder parameter.
- * <p/>
+ *
  * In normal mode, the items in the selected list are kept in the same "natural" order as the items in the available
  * list.
- * <p/>
+ *
  * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In addition, two extra
  * buttons appear to move items up and down within the selected list.
- * <p/>
+ *
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the columns, etc. By default,
  * the &lt;select&gt; element's widths are 200px, and it is common to override this to a specific value:
- * <p/>
+ *
  * <pre>
  * &lt;style&gt;
  *   DIV.palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
- * <p/>
+ *
  * You'll want to ensure that both &lt;select&gt; in each column is the same width, otherwise the display will update
  * poorly as options are moved from one column to the other.
- * <p/>
+ *
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by many browsers, and are not
  * fully handled on the client side.
- * <p/>
+ *
  * For an alternative component that can be used for similar purposes, see
  * {@link Checklist}.
- * <p>Starting in 5.4, the selected parameter may be any kind of collection, but is typically a List if the Palette is configured for re-ordering,
+ * Starting in 5.4, the selected parameter may be any kind of collection, but is typically a List if the Palette is configured for re-ordering,
  * and a Set if order does not matter (though it is common to use a List in the latter case as well). Also, starting in 5.4,
  * the Palette is compatible with the {@link org.apache.tapestry5.validator.Required} validator (on both client and server-side), and
  * triggers new events that allows the application to veto a proposed changed to the selection (see the {@code t5/core/events} module).
@@ -129,7 +129,7 @@ public class Palette extends AbstractField
      * The list of selected values from the {@link org.apache.tapestry5.SelectModel}. This will be updated when the form
      * is submitted. If the value for the parameter is null, a new list will be created, otherwise the existing list
      * will be cleared. If unbound, defaults to a property of the container matching this component's id.
-     * <p/>
+     *
      * Prior to Tapestry 5.4, this allowed null, and a list would be created when the form was submitted. Starting
      * with 5.4, the selected list may not be null, and it need not be a list (it may be, for example, a set).
      */

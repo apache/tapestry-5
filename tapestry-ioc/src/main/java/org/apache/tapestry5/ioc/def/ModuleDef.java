@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -51,7 +49,7 @@ public interface ModuleDef
     /**
      * Returns the class that will be instantiated. Annotated instance methods of this class are invoked to build
      * services, to decorate/intercept services, and make contributions to other services.
-     * <p/>
+     *
      * Note: this name is maintained for compatibilty; the term "module builder" is now just "module class".
      */
     Class getBuilderClass();

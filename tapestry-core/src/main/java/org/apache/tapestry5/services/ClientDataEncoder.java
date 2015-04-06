@@ -1,5 +1,3 @@
-// Copyright 2009, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import java.io.ObjectInputStream;
  * A service used when a component or service needs to encode some amount of data on the client as a string. The string
  * may be a query parameter, hidden form field, or a portion of a URL.  The default implementation converts the object
  * output stream into a Base64 string.
- * <p/>
+ *
  * Starting in release 5.3.6, the encoded data incorporates an HMAC (hash based message authentication code) signature,
  * as a prefix. HMAC requires a secret key, configured using the
  * {@link org.apache.tapestry5.SymbolConstants#HMAC_PASSPHRASE} symbol.

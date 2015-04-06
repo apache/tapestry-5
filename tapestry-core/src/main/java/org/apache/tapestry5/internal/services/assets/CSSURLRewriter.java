@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
  * CSS file will change (which would ordinarily break relative URLs), and for changing the relative directories of
  * the CSS file and the image assets it may refer to (useful for incorporating a hash of the resource's content into
  * the exposed URL).
- * <p/>
- * <p/>
+ *
+ *
  * One potential problem with URL rewriting is the way that URLs for referenced resources are generated; we are
  * somewhat banking on the fact that referenced resources are non-compressable images.
  *

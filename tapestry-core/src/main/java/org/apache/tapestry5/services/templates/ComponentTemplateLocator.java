@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,7 +23,7 @@ import java.util.Locale;
 /**
  * Chain-of-command interface used to locate page and component templates. Contributions to this service support
  * alternate naming schemes for template files, or alternate locations in which to search for template files.
- * <p/>
+ *
  * This service was introduced in Tapestry 5.2, but deprecated in Tapestry 5.3. It is utilized by the default
  * implementation of {@link org.apache.tapestry5.services.pageload.ComponentResourceLocator}.
  *

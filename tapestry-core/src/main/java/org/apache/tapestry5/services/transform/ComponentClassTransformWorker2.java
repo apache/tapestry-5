@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +20,7 @@ import org.apache.tapestry5.plastic.PlasticClass;
 /**
  * Interface for a set of objects that can perform transformation of component classes. Implementations should
  * be thread safe and ideally stateless (all necessary state can be stored inside the {@link PlasticClass}).
- * <p/>
+ *
  * The ComponentClassTransformWorker service uses an ordered configuration of these works as a {@linkplain ChainBuilder
  * chain of command}.
  *

@@ -17,9 +17,9 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 /**
  * Used to perform a pre-load of pages, at startup time. This helps ensure that the first actual
  * request is processed promptly.
- * <p/>
+ *
  * The configuration is simply the logical names of pages to load initially.
- * <p/>
+ *
  * Pages are loaded in the default locale (the first locale listed in
  * {@link org.apache.tapestry5.SymbolConstants#SUPPORTED_LOCALES}). This ensures that the majority
  * of class loading and transformation, template parsing, and so forth occurs immediately (loading

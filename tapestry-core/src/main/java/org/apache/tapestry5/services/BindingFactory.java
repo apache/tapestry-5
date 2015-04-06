@@ -1,5 +1,3 @@
-// Copyright 2006 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +24,7 @@ public interface BindingFactory
 {
     /**
      * Creates a new binding instance.
-     * <p/>
+     *
      * The binding represents a connection between the container and the component (the component is usually the child
      * of the component, though in a few cases, it is the component itself). In most cases, the expression is evaluated
      * in terms of the resources of the <em>container</em> and the component is ignored.

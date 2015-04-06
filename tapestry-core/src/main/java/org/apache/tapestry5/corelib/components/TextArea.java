@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost always bound to a string,
  * but this is not an absolute requirement.  Since the component accepts informal parameters, the rows and cols attribute may
  * be set that way (there is not a formal parameter).
- * <p/>
+ *
  * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  *

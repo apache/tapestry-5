@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * A mixin that can be placed on a clickable component, such as {@link org.apache.tapestry5.corelib.components.LinkSubmit},
  * and will raise a confirmation dialog when the element is clicked.
- * <p/>
+ * 
  * Due to conflicts between jQuery (as used by Bootstrap's JavaScript library) and Prototype, this mixin does not operate
  * when the {@linkplain org.apache.tapestry5.SymbolConstants#JAVASCRIPT_INFRASTRUCTURE_PROVIDER JavaScript infrastructure provider}
  * is "prototype".

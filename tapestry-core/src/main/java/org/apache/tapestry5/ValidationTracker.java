@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,16 +19,16 @@ import java.util.List;
 /**
  * Tracks information related to user input validations. This information is: <ul> <li>The input values provided by the
  * user. <li>Any validation exceptions associated with input fields. </ul>
- * <p/>
+ *
  * The tracker must differentiate between components (which will implement the {@link Field} interfaces) and fields. It
  * is a one to many relationship, because each field may be called upon to render itself multiple times within a
  * request, because of {@link Loop} or other similar components.
- * <p/>
+ *
  * Internally, the tracker indexes its information in terms of the {@linkplain Field#getControlName() control name} for
  * each rendering of the component (the mechanics of Tapestry ensures that this is unique within the form).
- * <p/>
+ *
  * Validation trackers must be serializable, as they will almost always be stored into the HttpSession.
- * <p/>
+ *
  * Trackers are used by only a single form within a single page; they are not threadsafe.
  */
 public interface ValidationTracker

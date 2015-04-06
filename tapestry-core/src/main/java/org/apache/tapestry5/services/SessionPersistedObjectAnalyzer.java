@@ -1,5 +1,3 @@
-// Copyright 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,11 +16,11 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Analyzes a session-persisted object, specifically to see if it is dirty or not.
- * <p/>
+ *
  * This service is provided to support applications which store mutable session attributes where the
  * session is replicated to a slower medium (e.g. RDMBS, Cluster, etc) this can help alleviate excessive writes
  * to the session store while ensuring changes are propagated.
- * <p/>
+ *
  * The service implementation uses a mapped configuration to form a
  * {@linkplain org.apache.tapestry5.ioc.services.StrategyBuilder strategy} based on object type. The service may be
  * injected using the {@link org.apache.tapestry5.ioc.annotations.Primary} marker annotation.
@@ -36,7 +34,7 @@ public interface SessionPersistedObjectAnalyzer<T>
 {
     /**
      * Atomically check and reset the dirty state of the session persisted object.
-     * <p/>
+     *
      * The implementer should take consideration for the fact that session attributes are accessed concurrently. A
      * naive check/set algorithm may allow changes to go un-noticed.
      *

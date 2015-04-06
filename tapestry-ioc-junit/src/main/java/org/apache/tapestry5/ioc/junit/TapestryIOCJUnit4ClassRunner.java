@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,14 +25,14 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * <p>
+ *
  * A JUnit4ClassRunner to help with Tapestry IOC integration tests. The test
  * runner requires a registry configuration to be defined in a {@link Registry}
  * annotation. A {@link RegistryShutdownType} can be specified to configure the
  * lifecycle of the test registry and it's services
- * </p>
+ *
  * 
- * <p>
+ *
  * {@link org.apache.tapestry5.ioc.junit.ModuleDef}s can be added to the
  * {@link org.apache.tapestry5.ioc.Registry} by annotating a factory method(s)
  * with {@link ModuleDef}. These {@link ModuleDef} factory methods must be
@@ -44,12 +42,12 @@ import org.junit.runners.model.Statement;
  * <li>take zero arguments</li>
  * <li>return a subclass of {@link org.apache.tapestry5.ioc.junit.ModuleDef}</li>
  * </ul>
- * </p>
+ *
  * 
- * <p>
+ *
  * Any services defined in the registry can be {@link Inject}ed into the test
  * class to be used during testing.
- * </p>
+ *
  */
 public class TapestryIOCJUnit4ClassRunner extends BlockJUnit4ClassRunner {
 	private final TestRegistryManager registryManager;

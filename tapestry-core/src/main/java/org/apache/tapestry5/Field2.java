@@ -16,12 +16,12 @@ package org.apache.tapestry5;
  * Due to how control names and client ids are allocated inside during an Ajax request, it is difficult to
  * to connect input data and field validation errors to the fields, since the control name and client id are different
  * during the processing of the submitted form data and during the subsequent render. Starting in 5.4, the
- * key used to identify a field inside the {@link org.apache.tapestry5.ValidationTracker is this new validation id,
+ * key used to identify a field inside the {@link ValidationTracker} is this new validation id,
  * which is assigned on first read.
- * <p/>
- * If a field inplements {@link org.apache.tapestry5.Field} but not Field2, then the control name is used as the
+ *
+ * If a field implements {@link Field} but not Field2, then the control name is used as the
  * validation id (which will work correctly during non-Ajax requests).
- * <p/>
+ *
  * This assumes a "flat" field structure, where a given component renders only once (not multiple times, inside
  * a {@link org.apache.tapestry5.corelib.components.Loop}.
  *

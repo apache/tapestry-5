@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,14 +15,14 @@ package org.apache.tapestry5.ioc;
 /**
  * Object passed into a service contributor method that allows the method provide contributed values to the service's
  * configuration.
- * <p/>
+ *
  * A service can <em>collect</em> contributions in three different ways:
  * <ul>
  * <li>As an un-ordered collection of values</li>
  * <li>As an ordered list of values (where each value has a unique id, pre-requisites and post-requisites)</li>
  * <li>As a map of keys and values
  * </ul>
- * <p/>
+ *
  * The service defines the <em>type</em> of contribution, in terms of a base class or service interface. Contributions
  * must be compatible with the type, or be {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercable} to the type.
  *
@@ -37,8 +35,8 @@ public interface OrderedConfiguration<T>
      * Adds an ordered object to a service's contribution. Each object has an id (which must be unique). Optionally,
      * pre-requisites (a list of ids that must precede this object) and post-requisites (ids that must follow) can be
      * provided.
-     * <p/>
-     * <p>If no constraints are supplied, then an implicit constraint is supplied: after the previously
+     *
+     * If no constraints are supplied, then an implicit constraint is supplied: after the previously
      * contributed id <em>within the same contribution method</em>.
      *
      * @param id          a unique id for the object; the id will be fully qualified with the contributing module's id

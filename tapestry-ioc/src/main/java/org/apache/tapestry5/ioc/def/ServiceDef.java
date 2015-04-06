@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -66,7 +64,7 @@ public interface ServiceDef
     /**
      * Returns the lifecycle defined for the service. This is indicated by adding a
      * {@link org.apache.tapestry5.ioc.annotations.Scope} annotation to the service builder method for the service.
-     * <p/>
+     *
      * Services that are not proxied will ignore their scope; such services are always treated as singletons.
      *
      * @see ServiceLifecycle

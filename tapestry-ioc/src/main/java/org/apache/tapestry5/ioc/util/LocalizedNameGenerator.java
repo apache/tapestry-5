@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,19 +12,19 @@
 
 package org.apache.tapestry5.ioc.util;
 
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
-
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Generates name variations for a given file name or path and a locale. The name variations
  * are provided in most-specific to least-specific order, so for a path of "Base.ext" and a Locale
  * of "en_US", the generated names would be "Base_en_US.ext", "Base_en.ext", "Base.ext".
- * <p>
+ *
  * Implements Iterable, so a LocalizedNameGenerator may be used directly in a for loop.
- * <p/>
+ *
  * This class is not threadsafe.
  * 
  * @since 5.3

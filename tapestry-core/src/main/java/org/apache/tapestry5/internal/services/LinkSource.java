@@ -50,7 +50,7 @@ public interface LinkSource
      * Creates a render link for the page. If an activation context is supplied then that context is built into the URI.
      * If no activation context is supplied, then the activation context is obtained from the page itself, by triggering
      * a passivate event on its root component.
-     * <p/>
+     *
      * When the activationContext is an empty array, the targeted page is checked to see if it can provide an activation
      * context. This is accomplished by triggering a "passivate" event on the targeted page. If the override parameter
      * is true, this will not occur (even when the activation context is empty).

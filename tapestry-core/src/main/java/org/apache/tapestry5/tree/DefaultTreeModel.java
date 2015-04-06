@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,7 +25,7 @@ import java.util.Map;
 /**
  * A default implementation of TreeModel that starts with a {@link ValueEncoder} (for the element to string conversion),
  * a {@link TreeModelAdapter}, and a list of root nodes.
- * <p/>
+ *
  * This implementation is <em>not</em> thread safe.
  *
  * @param <T>

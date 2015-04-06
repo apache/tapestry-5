@@ -1,5 +1,3 @@
-// Copyright 2010, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,20 +12,17 @@
 
 package org.apache.tapestry5.annotations;
 
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
+import org.apache.tapestry5.internal.transform.OnEventWorker;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.services.Request;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry5.internal.transform.OnEventWorker;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.Request;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Annotation that may be placed on parameters of event handler methods.
@@ -36,7 +31,7 @@ import org.apache.tapestry5.services.Request;
  * from ordinary context parameters (extracted from the Request path). Typically, this is used when
  * client-side JavaScript adds a query parameter to a request to communicate some information from the client
  * side to the server side.
- * <p>
+ *
  * Individual fields may also be directly mapped to query parameters using the {@link ActivationRequestParameter} annotation.
  * 
  * @since 5.2.0

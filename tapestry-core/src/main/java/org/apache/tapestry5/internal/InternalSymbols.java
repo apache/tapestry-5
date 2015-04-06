@@ -34,7 +34,7 @@ public class InternalSymbols
      * Comma-separated list of pre-allocated Form component control names. Basically, this exists to
      * work around name collisions on the client side. Starting in 5.3, these names are
      * also pre-allocated as ids.
-     * <p/>
+     *
      *
      * @since 5.2.0
      */

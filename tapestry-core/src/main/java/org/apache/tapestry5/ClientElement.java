@@ -1,5 +1,3 @@
-// Copyright 2007, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * id}, typically used in the generation of client-side (JavaScript) logic. For components, the client id will be null
  * or inaccurate until after the component has rendered itself. Inside of any kind of loop, the clientId property is
  * only accurate just after the component has rendered, and before it renders again.
- * <p/>
+ *
  * Some components must be configured to provide a client id. In many cases, the client id matches the component's
  * {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through
  * {@link JavaScriptSupport#allocateClientId(String)} to ensure uniqueness.

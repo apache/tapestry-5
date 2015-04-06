@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,13 +28,13 @@ import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 /**
  * The Dynamic component allows a component to render itself differently at different times, by making use of
  * an external template file.
- * <p>
+ *
  * The content of the template file replaces the Dynamic component entirely with one exception: certain elements will be
  * replaced with {@linkplain Block}s passed to the Dynamic component as informal parameters; this is triggered by
  * <strong>id</strong> of the element. When the id attribute has the prefix {@code param:}, the remainder is the name of
  * a Block parameter. There are no limitations on what can appear inside such a Block: text, components, forms, even the
  * {@literal <t:body/>} directive.
- * <p>
+ *
  * Dynamic templates emulate how expansions work in standard Tapestry templates: Expansions (the <code>${ ... }</code>
  * syntax) can appear in attribute values or interspersed in element text. This allows container properties, messages,
  * assets, and so forth to be referenced within the external template. It should be noted that such access is quite a

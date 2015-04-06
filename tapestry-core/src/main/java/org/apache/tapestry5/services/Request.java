@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import java.util.Locale;
 /**
  * Generic version of {@link javax.servlet.http.HttpServletRequest}, used to encapsulate the Servlet API version, and to
  * help bridge the differences between Servlet API and Porlet API.
- * <p/>
+ *
  * The Request service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
  * thread's request.
  */
@@ -81,10 +79,10 @@ public interface Request
      * Returns the value of the specified request header as a <code>long</code> value that represents a
      * <code>Date</code> object. Use this method with headers that contain dates, such as <code>If-Modified-Since</code>
      * .
-     * <p/>
+     *
      * The date is returned as the number of milliseconds since January 1, 1970 GMT. The header name is case
      * insensitive.
-     * <p/>
+     *
      * If the request did not have a header of the specified name, this method returns -1. If the header can't be
      * converted to a date, the method throws an <code>IllegalArgumentException</code>.
      *

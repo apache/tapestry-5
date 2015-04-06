@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
  * enclosed Element, Text and Comment nodes.
- * <p/>
+ *
  * TODO: Support for CDATA nodes. Do we need Entity nodes?
  */
 public final class Element extends Node

@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,16 +15,16 @@ package org.apache.tapestry5.ioc;
 /**
  * Object passed into a service contributor method that allows the method provide contributed values to the service's
  * configuration.
- * <p/>
+ *
  * A service can <em>collect</em> contributions in three different ways:
  * <ul>
  * <li>As an un-ordered collection of values</li>
  * <li>As an ordered list of values (where each value has a unique id, pre-requisites and post-requisites)</li>
  * <li>As a map of keys and values
  * </ul>
- * <p/>
+ *
  * This implementation is used for un-ordered configuration data.
- * <p/>
+ *
  * The service defines the <em>type</em> of contribution, in terms of a base class or service interface. Contributions
  * must be compatible with the type.
  */

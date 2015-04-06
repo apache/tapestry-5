@@ -1,5 +1,3 @@
-// Copyright 2008-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,7 +38,7 @@ import org.slf4j.Logger;
  * form is submitted (e.g., the hidden form field is disabled);
  * alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
- * <p/>
+ *
  * The client-side element will now listen to two new events defined by client-side constants:
  * <dl>
  * <dt>core/events.formfragment.changeVisibility or Tapestry.CHANGE_VISIBILITY_EVENT</dt>

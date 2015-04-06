@@ -1,5 +1,3 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,10 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
@@ -28,7 +29,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * (so it will be unique on the client side) and is available after the component
  * renders using {@link #getClientId()}. The Any component has no template of its
  * own but does render its body, if any.
- * <p>
+ *
  * Some common uses are:
  * <ul>
  * 
@@ -73,7 +74,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * when the new component should support informal parameters or needs a dynamically
  * generated client ID:
  * 
- * <pre>public class MyComponent extends Any { ... }
+ * <pre>public class MyComponent extends Any { ... }</pre>
  * </li>
  * </ul>
  * 

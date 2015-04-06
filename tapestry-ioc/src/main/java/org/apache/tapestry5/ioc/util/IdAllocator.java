@@ -1,5 +1,3 @@
-// Copyright 2004, 2005, 2006, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,18 +12,18 @@
 
 package org.apache.tapestry5.ioc.util;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
 /**
  * Used to "uniquify" names within a given context. A base name is passed in, and the return value is the base name, or
  * the base name extended with a suffix to make it unique.
- * <p/>
+ *
  * This class is not threadsafe.
  */
 

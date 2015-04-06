@@ -29,7 +29,6 @@ import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -44,12 +43,12 @@ import java.util.Map.Entry;
  * servlet spec's standard error handling, the default exception handler allows configuring handlers for specific types of
  * exceptions. The error-page/exception-type configuration in web.xml does not work in Tapestry application as errors are
  * wrapped in Tapestry's exception types (see {@link OperationException} and {@link ComponentEventException} ).
- * <p/>
+ *
  * Configurations are flexible. You can either contribute a {@link ExceptionHandlerAssistant} to use arbitrary complex logic
  * for error handling or a page class to render for the specific exception. Additionally, exceptions can carry context for the
- * error page. Exception context is formed either from the name of Exception (e.g. SmtpNotRespondingException -> ServiceFailure mapping
+ * error page. Exception context is formed either from the name of Exception (e.g. SmtpNotRespondingException {@code ->} ServiceFailure mapping
  * would render a page with URL /servicefailure/smtpnotresponding) or they can implement {@link ContextAwareException} interface.
- * <p/>
+ *
  * If no configured exception type is found, the default exception page {@link SymbolConstants#EXCEPTION_REPORT_PAGE} is rendered.
  * This fallback exception page must implement the {@link org.apache.tapestry5.services.ExceptionReporter} interface.
  */
@@ -130,7 +129,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     /**
      * Handles the exception thrown at some point the request was being processed
-     * <p/>
+     *
      * First checks if there was a specific exception handler/page configured for this exception type, it's super class or super-super class.
      * Renders the default exception page if none was configured.
      *

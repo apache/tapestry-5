@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,11 +20,11 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 /**
  * A service that acts as a chain-of-command over a number of {@link org.apache.tapestry5.ioc.ObjectProvider}, but
  * allows for the case where no object may be provided.
- * <p/>
+ *
  * This service is itself a key part of Tapestry's general injection mechanism; it is used when instantiating a service
  * implementation instance, invoking module methods (service builder, decorator, or contribution methods), when
  * {@linkplain ObjectLocator#autobuild(Class) autobuilding} objects of any type.
- * <p/>
+ *
  * As of Tapestry 5.3, the MasterObjectProvider allows injection of {@link org.apache.tapestry5.ioc.OperationTracker} as a
  * special case (not based on a contributed ObjectProvider).
  */
@@ -37,7 +35,7 @@ public interface MasterObjectProvider
      * Provides an object based on an expression. The process of providing objects occurs within a particular
      * <em>context</em>, which will typically be a service builder method, service contributor method, or service
      * decorator method. The locator parameter provides access to the services visible <em>to that context</em>.
-     * <p/>
+     *
      * When the value is required and no {@link ObjectProvider} provided a non-null value, then {@link
      * ObjectLocator#getService(Class, Class[])}  is invoked (with no marker annotations),
      * to provide a uniquely matching service, or throw a failure exception

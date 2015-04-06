@@ -965,7 +965,7 @@ public class CoreBehaviorsTests extends App1TestCase
 
     /**
      * TAPESTRY-2078
-     * <p/>
+     *
      * Update 4/29/11: Not sure this is necessary as exceptions seem to be reported properly without the old heroics.
      */
     @Test

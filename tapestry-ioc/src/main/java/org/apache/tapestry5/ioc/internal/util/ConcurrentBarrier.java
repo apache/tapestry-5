@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -51,7 +49,7 @@ public class ConcurrentBarrier
      * Invokes the object after acquiring the read lock (if necessary). If invoked when the read lock has not yet been
      * acquired, then the lock is acquired for the duration of the call. If the lock has already been acquired, then the
      * status of the lock is not changed.
-     * <p/>
+     *
      * TODO: Check to see if the write lock is acquired and <em>not</em> acquire the read lock in that situation.
      * Currently this code is not re-entrant. If a write lock is already acquired and the thread attempts to get the
      * read lock, then the thread will hang. For the moment, all the uses of ConcurrentBarrier are coded in such a way
@@ -216,7 +214,7 @@ public class ConcurrentBarrier
      * @param runnable    Runnable object to execute inside the write lock.
      * @param timeout     Time to wait for write lock.
      * @param timeoutUnit Units of timeout.
-     * @return true if lock was obtained & runnabled executed. False otherwise.
+     * @return true if lock was obtained and the runnable executed, or false otherwise.
      */
     public boolean tryWithWrite(final Runnable runnable, long timeout, TimeUnit timeoutUnit)
     {

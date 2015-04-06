@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,7 +15,7 @@ package org.apache.tapestry5.internal.webresources;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 
 /**
- * Creates ResourceTransformer around a named {@link org.apache.tapestry5.webresources.services.ResourceProcessor}.
+ * Wraps a {@link ResourceTransformer} to provide additional features such as caching.
  *
  * @see org.apache.tapestry5.services.assets.StreamableResourceSource
  * @since 5.4
@@ -38,7 +36,6 @@ public interface ResourceTransformerFactory
      * @param cacheMode
      *         Indicates if and how the compiled content should be cached (in development mode only)
      * @return transformer
-     * @see org.apache.tapestry5.webresources.services.ResourceProcessorSource
      */
     ResourceTransformer createCompiler(String contentType, String sourceName, String targetName, ResourceTransformer transformer, CacheMode cacheMode);
 

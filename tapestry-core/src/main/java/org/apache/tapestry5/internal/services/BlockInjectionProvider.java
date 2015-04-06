@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +31,7 @@ import org.apache.tapestry5.services.transform.InjectionProvider2;
  * fields containing the injected Block from the template. The annotation's value is the id of the
  * block to inject; if
  * omitted, the block id is deduced from the field id.
- * <p/>
+ *
  * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation, Inject, with a
  * different interpretation.
  */

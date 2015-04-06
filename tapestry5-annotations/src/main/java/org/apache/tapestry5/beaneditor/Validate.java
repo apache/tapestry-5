@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,18 +12,15 @@
 
 package org.apache.tapestry5.beaneditor;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.BEAN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry5.ioc.annotations.UseWith;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Used to attach validation constraints directly to a property (either the getter or the setter method). The annotation
@@ -33,7 +28,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
  * separated from the type by an equals size (i.e., "maxlength=30"). In addition, the value may include
  * validator macros.
- * <p/>
+ *
  * May be placed on any getter or setter method, or on the matching field.
  * 
  * @see Translate

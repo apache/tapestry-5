@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,9 +15,9 @@ package org.apache.tapestry5.func;
 /**
  * Used when filtering a collection of objects of a given type; the predicate is passed
  * each object in turn, and returns true to include the object in the result collection.
- * <p>
+ *
  * The {@link F} class includes a number of Predicate factory methods.
- * <p>
+ *
  * This was converted from a abstract base class to an interface in 5.3.
  * 
  * @since 5.2.0

@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * {@link Form} is rendered, and updated when the form is submitted). TextField
  * is generally used with string values, but other values are acceptable, as long as they can be freely converted back
  * and forth to strings.
- * <p/>
+ *
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  *

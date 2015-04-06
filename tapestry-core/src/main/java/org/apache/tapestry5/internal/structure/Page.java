@@ -26,7 +26,7 @@ import org.slf4j.Logger;
  * Represents a unique page within the application. Pages are part of the <em>internal</em> structure of a Tapestry
  * application; end developers who refer to "page" are really referring to the {@link #getRootComponent() root
  * component} of the actual page.
- * <p/>
+ *
  * Starting in release 5.2, the nature of pages changed considerably. Pages are no longer pooled instances. Instead,
  * pages are shared instances (per locale) but all internal <em>mutable</em> state is stored inside
  * {@link PerthreadManager}. Page construction time is considered to extend past the
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * other mechanisms). At best, we can be assured that the entire page construction phase is protected by a single
  * synchronized block (but not on the page itself). An ideal system would build the page bottom to top so that all
  * assignments could take place in constructors, assigning to final fields. Maybe some day.
- * <p/>
+ *
  * The Page object is never visible to end-user code, though it exposes an interface ({@link PageLifecycleCallbackHub} that
  * {@linkplain org.apache.tapestry5.ComponentResources#getPageLifecycleCallbackHub() is}).
  */
@@ -108,13 +108,13 @@ public interface Page extends PageLifecycleCallbackHub
      * Invoked to inform the page that it is being detached from the current request. This occurs
      * just before the page
      * is returned to the page pool.
-     * <p/>
+     *
      * A page may be clean or dirty. A page is dirty if its dirty count is greater than zero (meaning that, during the
      * render of the page, some components did not fully render), or if any of its listeners throw an exception from
      * containingPageDidDetach().
-     * <p/>
+     *
      * The page pool should discard pages that are dirty, rather than store them into the pool.
-     * <p/>
+     *
      * Under Tapestry 5.2 and pool-less pages, the result is ignored; all mutable state is expected to be discarded
      * automatically from the {@link PerthreadManager}. A future release of Tapestry will likely convert this method to
      * type void.
@@ -128,7 +128,7 @@ public interface Page extends PageLifecycleCallbackHub
      * Invoked to inform the page that it is attached to the current request. This occurs when a
      * page is first referenced within a request. If the page was created from scratch for this request, the call
      * to {@link #loaded()} will preceded the call to {@link #attached()}.
-     * <p/>
+     *
      * First all listeners have {@link PageLifecycleListener#restoreStateBeforePageAttach()} invoked, followed by
      * {@link PageLifecycleListener#containingPageDidAttach()}.
      */

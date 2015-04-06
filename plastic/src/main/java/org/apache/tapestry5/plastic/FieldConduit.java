@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,9 +16,9 @@ package org.apache.tapestry5.plastic;
  * A {@link FieldConduit} is an object that effectively <em>replaces</em> the field in the instantiated object.
  * All reads and writes of the field are replaced with invocations on the conduit. Once a field's access is replaced
  * with a conduit, the field itself is no longer used. The conduit will even see initializations of the field.
- * <p>
+ *
  * In Aspect Oriented Programming terms, a FieldConduit allows you to advise read and write access to the field.
- * <p>
+ *
  * If a field has both a FieldConduit and a {@link FieldHandle}, then the methods of the FieldHandle will be connected
  * to the methods of the FieldConduit.
  */

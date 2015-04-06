@@ -29,31 +29,17 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
-import java.io.FileInputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
-import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Label;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.TypePath;
-import org.apache.tapestry5.internal.plastic.asm.TypeReference;
+import org.apache.tapestry5.internal.plastic.asm.*;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.Analyzer;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.BasicValue;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.Frame;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.SimpleVerifier;
+
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * A {@link ClassVisitor} that checks that its methods are properly used. More
@@ -63,7 +49,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.analysis.SimpleVerifier;
  * <tt>visitField(ACC_PUBLIC, "i", "I", null)</tt> <tt>visitField(ACC_PUBLIC,
  * "i", "D", null)</tt> will <i>not</i> be detected by this class adapter.
  * 
- * <p>
+ *
  * <code>CheckClassAdapter</code> can be also used to verify bytecode
  * transformations in order to make sure transformed bytecode is sane. For
  * example:
@@ -86,7 +72,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.analysis.SimpleVerifier;
  * JVM does, but it run data flow analysis for the code of each method and
  * checks that expectations are met for each method instruction.
  * 
- * <p>
+ *
  * If method bytecode has errors, assertion text will show the erroneous
  * instruction number and dump of the failed method with information about
  * locals and stack slot for each instruction. For example (format is -
@@ -117,7 +103,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.analysis.SimpleVerifier;
  * initialized. You can also see that at the beginning of the method (code
  * inserted by the transformation) variable 2 is initialized.
  * 
- * <p>
+ *
  * Note that when used like that, <code>CheckClassAdapter.verify()</code> can
  * trigger additional class loading, because it is using
  * <code>SimpleVerifier</code>.
@@ -164,7 +150,7 @@ public class CheckClassAdapter extends ClassVisitor {
 
     /**
      * Checks a given class.
-     * <p>
+     *
      * Usage: CheckClassAdapter &lt;binary class name or class file name&gt;
      * 
      * @param args

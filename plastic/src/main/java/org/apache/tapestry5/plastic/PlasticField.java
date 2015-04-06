@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +14,7 @@ package org.apache.tapestry5.plastic;
 
 /**
  * Represents a field of a class being {@linkplain PlasticClass transformed}.
- * <p>
+ *
  * No methods of this object should be invoked after the class transformation is completed.
  */
 public interface PlasticField extends AnnotationAccess
@@ -104,7 +102,7 @@ public interface PlasticField extends AnnotationAccess
      * Intercepts all access to the field, replacing such access with calls on the conduit. Even access via
      * the FieldHandle will instead delegate to the conduit. Once a conduit is provided, it is not possible
      * to inject a value into the field.
-     * <p>
+     *
      * Normally, once a conduit is in place, the field will never be actually read or written. This is problematic for
      * debugging, so {@link TransformationOption#FIELD_WRITEBEHIND} is useful when operating in a non-production mode.
      *

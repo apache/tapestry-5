@@ -86,13 +86,13 @@ public class AppModule
      * RequestHandler service configuration. Tapestry IoC is responsible for passing in an
      * appropriate Logger instance. Requests for static resources are handled at a higher level, so
      * this filter will only be invoked for Tapestry related requests.
-     * <p/>
-     * <p/>
+     *
+     *
      * Service builder methods are useful when the implementation is inline as an inner class
      * (as here) or require some other kind of special initialization. In most cases,
      * use the static bind() method instead.
-     * <p/>
-     * <p/>
+     *
+     *
      * If this method was named "build", then the service id would be taken from the
      * service interface and would be "RequestFilter".  Since Tapestry already defines
      * a service named "RequestFilter" we use an explicit service id that we can reference

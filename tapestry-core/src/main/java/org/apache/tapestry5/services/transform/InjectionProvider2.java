@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,7 +21,7 @@ import org.apache.tapestry5.plastic.PlasticField;
  * Provides some form of injection when the value for an {@link org.apache.tapestry5.ioc.annotations.Inject} annotation is
  * present. In this case, the provider is responsible for determining the value to be injected from the field name and
  * field type.
- * <p/>
+ * 
  * This interface will be used as part of a {@link org.apache.tapestry5.ioc.services.ChainBuilder chain of command}.
  */
 @UsesOrderedConfiguration(InjectionProvider2.class)

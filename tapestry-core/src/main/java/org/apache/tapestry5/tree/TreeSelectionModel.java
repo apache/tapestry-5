@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,7 @@ package org.apache.tapestry5.tree;
  * Tracks which <em>leaf</em> nodes of a {@link TreeModel} are currently selected. The {@linkplain DefaultTreeSelectionModel default
  * implementation} simply stores a set of {@linkplain TreeNode#getId() unique node
  * ids} to identify selected nodes. The selection model is updated whenever the user clicks on the label for a leaf node.
- * <p/>
+ *
  * In the future, new methods may be added that will support selection of folders as well as leafs, and define the rules for
  * how selections and de-selections propagate down to children or up to parents.
  *

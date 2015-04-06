@@ -49,7 +49,7 @@ import java.util.Map;
  * There's still a lot of room to beef up {@link org.apache.tapestry5.internal.pageload.ComponentAssembler} and
  * {@link org.apache.tapestry5.internal.pageload.EmbeddedComponentAssembler} to perform more static analysis, but
  * that may no longer be necessary, given the switch to shared (non-pooled) pages in 5.2.
- * <p/>
+ *
  * Loading a page involves a recursive process of creating
  * {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}s: for the root component, then down the tree for
  * each embedded component. A ComponentAssembler is largely a collection of
@@ -58,7 +58,7 @@ import java.util.Map;
  * matching parameters to bindings, is done as part of the one-time construction of the ComponentAssembler. The end
  * result removes a huge amount of computational redundancy that was present in Tapestry 5.0, but to understand this,
  * you need to split your mind into two phases: construction (of the ComponentAssemblers) and assembly.
- * <p/>
+ *
  * And truly, <em>This is the Tapestry Heart, This is the Tapestry Soul...</em>
  */
 public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource

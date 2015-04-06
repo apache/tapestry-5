@@ -1,5 +1,3 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,7 +26,7 @@ import java.util.Map.Entry;
  * are initially
  * created
  * using {@link #flow(Collection)} and {@link #flow(Object...)}.
- * <p/>
+ *
  * F will be used a bit, thus it has a short name (for those who don't like static imports). It provides a base set of
  * Predicate, Mapper and Reducer factories. A good development pattern for applications is to provide a similar,
  * application-specific, set of such factories.
@@ -466,7 +464,7 @@ public class F
 
     /**
      * Creates an <em>infinite</em> series of numbers.
-     * <p/>
+     *
      * Attempting to get the {@linkplain Flow#count()} of the series will form an infinite loop.
      */
     public static Flow<Integer> series(int start, final int delta)

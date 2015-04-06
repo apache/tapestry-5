@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,7 +41,7 @@ public interface MethodInvocation extends MethodInvocationResult, AnnotationAcce
      * Overrides the return value of the method. The value provided will be cast to the actual return type
      * (or, if the return type is a primitive value, the value will be cast to the corresponding wrapper type and then
      * converted to a primitive).
-     * <p>
+     *
      * Overriding the return value clears any checked exception.
      * 
      * @param returnValue

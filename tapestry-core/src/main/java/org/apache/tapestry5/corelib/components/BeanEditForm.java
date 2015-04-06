@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,12 +26,12 @@ import org.apache.tapestry5.services.BeanModelSource;
  * property (text field, checkbox, drop down list) determined from the property type (or by other means, such as an
  * annotation), and the order and validation for the properties determined from annotations on the property's getter and
  * setter methods.
- * <p/>
+ *
  * You may add block parameters to the component; when the name matches (case insensitive) the name of a property, then
  * the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you to
  * override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
- * <p/>
+ *
  * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
  * events of a Form.
  *

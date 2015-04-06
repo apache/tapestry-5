@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.PropertyOutputContext;
  * such a component and its container, as the container may provide messages in its message catalog needed by the {@link
  * Block}s that render the values. In addition, the component may be passed Block parameters that are output overrides
  * for specified properties.
- * <p/>
+ * 
  * Subclasses will implement a <code>beginRender()</code> method that invokes {@link #renderPropertyValue(MarkupWriter,
  * String)}.
  *

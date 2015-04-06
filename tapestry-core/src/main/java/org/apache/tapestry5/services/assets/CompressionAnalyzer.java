@@ -17,9 +17,9 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 /**
  * Identifies which content types are compressable. In general, content types are assumed to be compressable. The
  * configuration of the service identifies exceptions, which are usually image file formats.
- * <p/>
+ *
  * The configuration maps content types to boolean values (true for compressable).
- * <p/>
+ *
  * Since 5.4, the contributed values may also be a wild-card such as "image/*" (that is, the subtype
  * may be a '*' to match any content type with the same top-level type).
  *

@@ -41,7 +41,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns a string consisting of the logical name of the containing page, and the {@link #getNestedId() nested id}
      * of this component, separated by a colon. I.e., "MyPage:foo.bar.baz". For a page, returns just the page's name.
-     * <p/>
+     *
      * This value is often used to obtain an equivalent component instance in a later request.
      * 
      * @see org.apache.tapestry5.services.ComponentSource#getComponent(String)
@@ -74,7 +74,7 @@ public interface ComponentResourcesCommon extends Locatable
      * container, and so on. When a matching event handler method is located, it is invoked. If the method returns a
      * value, the value is passed to the callback (if callback is null, then it is an error for a method to return a
      * non-null value).
-     * <p/>
+     *
      * Resolution of event type to event handler methods is case insensitive.
      * 
      * @param eventType

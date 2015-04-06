@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,13 +20,13 @@ import org.apache.tapestry5.ioc.util.StrategyRegistry;
  * A source for {@link org.apache.tapestry5.Translator}s, either by name or by property type. The source knows
  * about two sets of translators: the <em>standard</em> translators contributed directly to the service
  * and the <em>alternate</em> translators, contributed to the {@link TranslatorAlternatesSource} service.
- * <p/>
+ *
  * Each contributed translator must have a unique {@linkplain org.apache.tapestry5.Translator#getName() name}.
- * <p>
+ *
  * Generally, Translators are matched by type (i.e., the type matching a particular property that will be read or
  * updated). Contributions to this service use a {@link StrategyRegistry} to match by type. Translators can also be
  * selected by name. The {@link TranslatorAlternatesSource} service configuration is often used for this purpose.
- * <p>
+ *
  * The contribution key must match the {@linkplain Translator#getType() translator type}.
  */
 @UsesMappedConfiguration(key=Class.class, value=Translator.class)

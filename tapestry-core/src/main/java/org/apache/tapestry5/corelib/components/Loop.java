@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,29 +12,17 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.BeginRender;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A basic looping component; loops over a number of items (provided by its source parameter), rendering its body for each
@@ -46,12 +32,12 @@ import org.apache.tapestry5.services.Heartbeat;
  * (which stores the individual values looped over, or via a {@link ValueEncoder}, just the value's ids), and
  * 'iteration' (which just stores indexes to the values within the source parameter, which means that the source
  * parameter will be accessed during the form submission).
- * <p>
+ *
  * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end
  * {@linkplain Heartbeat heartbeats}, and stores state for each value in the source parameter (either as full objects
  * when the encoder parameter is not bound, or as client-side objects when there is an encoder). For a Loop that doesn't
  * need to be aware of the enclosing Form (if any), the formState parameter should be bound to 'none'.
- * <p/>
+ *
  * When the Loop is used inside a Form, it will generate an
  * {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES} event to inform its container what values were
  * submitted and in what order; this can allow the container to pre-load the values in a single batch form external

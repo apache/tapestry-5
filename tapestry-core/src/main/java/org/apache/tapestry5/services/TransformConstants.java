@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,7 +26,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * Constants used by implementations {@link ComponentClassTransformWorker2}.
- * <p/>
+ *
  * Note: render phase methods on transformed components will not be invoked <em>unless</em>
  * {@linkplain org.apache.tapestry5.model.MutableComponentModel#addRenderPhase(Class) the component model is updated to
  * identify the use of the corresponding render phase}. This represents an optimization introduced in Tapestry 5.1.

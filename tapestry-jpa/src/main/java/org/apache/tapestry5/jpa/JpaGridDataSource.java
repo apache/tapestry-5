@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,8 @@
 
 package org.apache.tapestry5.jpa;
 
-import java.util.List;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.SortConstraint;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -22,9 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-
-import org.apache.tapestry5.grid.GridDataSource;
-import org.apache.tapestry5.grid.SortConstraint;
+import java.util.List;
 
 /**
  * A simple implementation of {@link org.apache.tapestry5.grid.GridDataSource} based on a
@@ -32,9 +29,9 @@ import org.apache.tapestry5.grid.SortConstraint;
  * entity class. This implementation does support multiple
  * {@link org.apache.tapestry5.grid.SortConstraint sort
  * constraints}.
- * <p/>
+ *
  * This class is <em>not</em> thread-safe; it maintains internal state.
- * <p/>
+ *
  * Typically, an instance of this object is created fresh as needed (that is, it is not stored
  * between requests).
  *

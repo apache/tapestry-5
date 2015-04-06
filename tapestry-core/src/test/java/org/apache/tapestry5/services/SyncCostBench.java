@@ -1,5 +1,3 @@
-// Copyright 2006 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,23 +14,24 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
 
-import static java.lang.String.format;
-import static java.lang.System.out;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static java.lang.String.format;
+import static java.lang.System.out;
 
 /**
  * Tests single-thread synchronization overhead using different techniques. Note that we're fudging things a bit by
  * getting a read lock for a write operation .... it's just that I'm more concerned about read locks (which will be very
  * common) than about write locks (very rare). Another concern is that hotspot is going to mess up our synchronization
  * when it see we're not really doing anything multi-threaded.
- * <p/>
+ *
  * The results show that using the {@link org.apache.tapestry5.internal.annotations.Concurrent} aspect (which used a
  * {@link java.util.concurrent.locks.ReentrantReadWriteLock} under the covers) is about 4x as expensive as just using
  * the synchronized keyword. There are some anomolous results ... for example, ReadWriteLockRunner is consistently
  * slower than ReadWriteLockAspectRunner (one would expect it to be the other way around ... must be something about how
  * AspectJ weaves the code ... and it's use of static methods in many cases).
- * <p/>
+ *
  * Well, the Concurrent aspect is gone, replaced with the {@link ConcurrentBarrier} utility.
  */
 public class SyncCostBench

@@ -507,8 +507,8 @@ public final class TapestryModule
      * <dd>Support for the {@link HeartbeatDeferred} annotation, which defers method invocation to the end of the {@link Heartbeat}
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
+     * <dt>Operation</dt> <dd>Support for the {@link Operation} method annotation</dd>
      * </dl>
-     * <dd>Operation</dt> <dd>Support for the {@link Operation} method annotation</dd></dd>
      */
     @Contribute(ComponentClassTransformWorker2.class)
     @Primary
@@ -769,6 +769,7 @@ public final class TapestryModule
      * applications</dd>
      * <dt>GZip</dt>
      * <dd>Handles GZIP compression of response streams (if supported by client)</dd>
+     * </dl>
      */
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
 
@@ -1157,7 +1158,7 @@ public final class TapestryModule
      * Builds the PropBindingFactory as a chain of command. The terminator of
      * the chain is responsible for ordinary
      * property names (and property paths).
-     * <p/>
+     *
      * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See <a
      * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no longer any built-in
      * contributions to the configuration.
@@ -1600,7 +1601,7 @@ public final class TapestryModule
      * <dt>{@link org.apache.tapestry5.ajax.MultiZoneUpdate}</dt>
      * <dd>Sends a single JSON response to update the content of multiple zones
      * </dl>
-     * <p/>
+     *
      * In most cases, when you want to support a new type, you should convert it to one of the built-in supported types
      * (such as {@link RenderCommand}. You can then inject the master AjaxComponentEventResultProcessor (use the
      * {@link Ajax} marker annotation) and delegate to it.
@@ -2238,7 +2239,7 @@ public final class TapestryModule
 
     /**
      * Contributes strategies accessible via the {@link NullFieldStrategySource} service.
-     * <p/>
+     *
      * <dl>
      * <dt>default</dt>
      * <dd>Does nothing, nulls stay null.</dd>
@@ -2255,9 +2256,9 @@ public final class TapestryModule
     /**
      * Determines positioning of hidden fields relative to other elements (this
      * is needed by {@link org.apache.tapestry5.corelib.components.FormFragment} and others.
-     * <p/>
+     *
      * For elements input, select, textarea and label the hidden field is positioned after.
-     * <p/>
+     *
      * For elements p, div, li and td, the hidden field is positioned inside.
      */
     public static void contributeHiddenFieldLocationRules(

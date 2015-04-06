@@ -1,5 +1,3 @@
-// Copyright 2006, 2007 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,9 +17,9 @@ package org.apache.tapestry5.ioc;
  * org.apache.tapestry5.ioc.Registry}. Instead of using a just the service id to gain access to a service within the
  * Registry, object providers in different flavors are capable of vending, or even creating, objects of disparate types
  * from disparate sources.
- * <p/>
+ *
  * Object providers are consulted in a strict order, and the first non-null result is taken.
- * <p/>
+ *
  * In many cases, an object provider searches for additional annotations on the element (usually a parameter, or perhaps
  * a field) for which a value is required.
  */

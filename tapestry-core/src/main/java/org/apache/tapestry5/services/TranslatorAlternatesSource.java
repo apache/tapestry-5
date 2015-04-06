@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,16 +12,16 @@
 
 package org.apache.tapestry5.services;
 
-import java.util.Map;
-
 import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
+import java.util.Map;
 
 /**
  * This service is used by {@link TranslatorSource} to specify {@link Translator} <em>alternates</em>: translators that
  * are used when specified explicitly by name. These translators may overlap the standard translators
  * by type (thus requiring a separate configuration).
- * <p>
+ *
  * Translators contributed to this configuration must have names that do not overlap the standard translators. Further,
  * the contribution key must match the {@linkplain Translator#getName() translator name}.
  * 

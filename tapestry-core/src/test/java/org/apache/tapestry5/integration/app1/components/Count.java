@@ -1,5 +1,3 @@
-// Copyright 2006, 2007 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.internal.util.IntegerRange;
 
 /**
  * A component that can count up or count down.
- * <p/>
+ *
  * This is useful as a demonstration; now that the prop binding supports {@link IntegerRange integer ranges}, it's much
  * less necessary.
  */

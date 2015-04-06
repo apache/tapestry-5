@@ -25,10 +25,10 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 /**
  * Method annotation used for methods that should be invoked when the page is detached at the end of a request, before
  * it is returned to the page pool for later reuse.
- * <p/>
+ *
  * PageDetached methods should take no parameters and return void. They must either have this annotation, or be named
  * "pageDetached".
- * <p/>
+ *
  * To be clear: methods with this annotation (or name) are still invoked even in Tapestry 5.2, which does away with the
  * page pool.
  *

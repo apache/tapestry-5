@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,19 +12,19 @@
 
 package org.apache.tapestry5.util;
 
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
+import java.util.Map;
+
 /**
  * A {@link org.apache.tapestry5.ioc.services.Coercion} for converting strings into an instance of a particular
  * enumerated type. The {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
- * <p>
+ *
  * Moved from tapestry-core to tapestry-ioc in release 5.3, but kept in same package for compatibility.
  * Moved tapestry-ioc to commons in release 5.4, but kept in same package for compatibility.
  * 

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -122,7 +120,7 @@ public interface MutableComponentModel extends ComponentModel
     void addEventHandler(String eventType);
 
     /**
-     * Relevant for pages only, identifies that the component handle {@link org.apache.tapestry5.EventConstants.ACTIVATE}
+     * Relevant for pages only, identifies that the component handle {@link org.apache.tapestry5.EventConstants#ACTIVATE}
      * events supporting one of the three special case for catch all rules:
      * <ul>
      *     <li><code>{@link java.lang.Object}[]</code></li>

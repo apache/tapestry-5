@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import java.util.Arrays;
  * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type, parameter types and
  * exception types. Actual Method objects are tied to a particular class, and don't compare well with other otherwise
  * identical Methods from other classes or interface; MethodSignatures are distinct from classes and compare well.
- * <p/>
+ *
  * Because the intended purpose is to compare methods from interfaces (which are always public and abstract) we don't
  * bother to actually track the modifiers. In addition, at this time, MethodSignature <em>does not distinguish between
  * instance and static methods</em>.

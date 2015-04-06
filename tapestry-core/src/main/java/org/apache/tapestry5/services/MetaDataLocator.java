@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * containment hierarchy (to the component's container, and the container's container, and so on). If <em>that</em>
  * proves unfruitful, a system of defaults is provided by configuration and matched against the containing page's
  * logical name.
- * <p/>
+ *
  * Finally, if no metadata is available, then {@link org.apache.tapestry5.ioc.services.SymbolSource#valueForSymbol(String)}
  * is used to obtain a value. Generally speaking, if you are going to use this service to look up meta data, your should
  * also make a contribution to the FactoryDefaults service; otherwise, you risk a runtime exception if a meta-data key

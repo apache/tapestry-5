@@ -1,5 +1,3 @@
-// Copyright 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -42,7 +40,7 @@ public interface ComponentEventLinkEncoder
     /**
      * Creates a link that encapsulates a component event request, including <em>{@link
      * org.apache.tapestry5.services.PersistentLocale} (if set)</em>.
-     * <p>
+     *
      * Forms:
      * <ul>
      * <li>/context/pagename:eventname -- event on the page, no action context</li>
@@ -53,15 +51,15 @@ public interface ComponentEventLinkEncoder
      * <li>/context/pagename.bar.baz:eventname/foo/gnu -- event on component bar.baz within the page with action context
      * "foo" , "gnu"</li>
      * </ul>
-     * <p/>
+     *
      * The persistent locale may be placed in between the context name and the page name, i.e., "/context/fr/SomePage".
-     * <p/>
+     *
      * In many cases the context name is blank, so the path begins with a "/" and then the locale name or page name.
-     * <p/>
+     *
      * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create". The context
      * portion isn't the concern of this code, since {@link org.apache.tapestry5.services.Request#getPath()} will
      * already have stripped that off. We can act as if the context is always "/" (the path always starts with a slash).
-     * <p/>
+     *
      * Passes the resulting Link through the {@link ComponentEventLinkTransformer} chain of command, returning the
      * result.
      * 

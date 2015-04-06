@@ -121,11 +121,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * <td>*firefox</td>
      * <td>Command string used to launch the browser, as defined by Selenium</td>
      * </tr>
+     * <caption>Options and defaults</caption>
      * </table>
-     * <p/>
+     *
      * Tests in the <em>beforeStartup</em> group will be run before the start of Selenium. This can be used to
      * programmatically override the above parameter values.
-     * <p/>
+     *
      * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
      * the {@link ITestContext} to see if the necessary keys are already present).
      *
@@ -386,7 +387,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Returns the base URL for the application. This is of the typically <code>http://localhost:9999/</code> (i.e., it
      * includes a trailing slash).
-     * <p/>
+     *
      * Generally, you should use {@link #openLinks(String...)} to start from your application's home page.
      */
     public String getBaseURL()
@@ -1612,7 +1613,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
      * (it is not assured that the element will be visible).
-     * <p/>
+     *
      * This implementation only works if the application provides a function onto the
      * window object:  "testSupport.findCSSMatchCount()" which accepts a CSS rule and returns the number
      * of matching elements.
@@ -1647,8 +1648,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     /**
      * Waits for the element to be removed from the DOM.
-     * <p/>
-     * <p/>
+     *
+     *
      * This implementation depends on window being extended with testSupport.isNotVisible().
      *
      * @param elementId

@@ -1,5 +1,3 @@
-// Copyright 2007, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,9 @@
 
 package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry5.annotations.InjectContainer;
-import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.InjectContainer;
 
 /**
  * Forces a client element to render its client id by ensuring that
@@ -24,7 +22,7 @@ import org.apache.tapestry5.ClientElement;
  * is called. This is sometimes needed because, by design, most components (those that
  * implement {@link ClientElement}) only render a client-side ID if their getClientId
  * method is called sometime during the server-side DOM render.
- * <p/>
+ *
  * See the {@link org.apache.tapestry5.corelib.components.Any Any} component
  * for an example of use.
  * 

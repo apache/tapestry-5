@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,8 +25,8 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * Used to inject a symbol value, via a symbol name. This is used much like {@link
  * org.apache.tapestry5.ioc.annotations.Value} annotation, except that symbols are not expanded ... the entire value is
  * a symbol name. This allows the annotation to reference a public constant variable.
- * <p/>
- * <p/>
+ *
+ *
  * The injected value may be coerced from string to an alternate type (defined by the field or parameter to which
  * the @Symbol annotation is attached). For better control, use the {@link IntermediateType} annotation as well, which
  * allows the string to be coerced to an alternate type before being coerced a second time to the field or parameter type.

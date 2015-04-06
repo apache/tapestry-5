@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,9 +19,9 @@ import java.util.List;
 /**
  * Provides the information necessary to build a user interface to view, create or edit an instance of a particular
  * type.
- * <p/>
+ *
  * BeanModels are not thread-safe, they are also not serializable.
- * <p/>
+ *
  * Here, and in {@link org.apache.tapestry5.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
  * However, a full {@linkplain org.apache.tapestry5.services.PropertyConduitSource#create(Class, String) property
  * expression} may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}.
@@ -160,7 +158,7 @@ public interface BeanModel<T>
 
     /**
      * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
-     * <<removed>>.
+     * removed.
      *
      * @param propertyNames the names of properties to be retained
      * @return the model for further modifications

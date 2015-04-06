@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,12 +27,12 @@ import java.util.Date;
 /**
  * Used to present a date, formatted in the time zone of the client browser.
  * This is based on the <a href="http://momentjs.com/">Moment</a> JavaScript library.
- * <p/>
+ *
  * If the value parameter is non-null, then this component will render an element
  * wrapping the value (formatted in ISO-8601). The element will match the template element,
  * or a "span" if the template did not provide an element. Informal parameters will be rendered
  * into the element.
- * <p/>
+ *
  * When a date is rendered, it is rendered in an element, used to specify the client-side formatting.
  * The element's content will be the ISO-8601 format. The client-side will
  * immediately rewrite the content to the formatted value, in the client browser's time

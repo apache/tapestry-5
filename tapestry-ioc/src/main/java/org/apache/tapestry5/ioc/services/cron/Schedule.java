@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +29,7 @@ public interface Schedule
      * Computes the next execution time for a job.
      *
      * @param previousExecution time of previous execution (in system clock millis)
-     * @return time of next execution (in system clock millis) or a value <=0 to cancel the job's execution
+     * @return time of next execution (in system clock millis) or a value &lt;= 0 to cancel the job's execution
      */
     long nextExecution(long previousExecution);
 }

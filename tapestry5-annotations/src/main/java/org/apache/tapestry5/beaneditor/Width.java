@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,17 +13,18 @@
 package org.apache.tapestry5.beaneditor;
 
 import org.apache.tapestry5.ioc.annotations.UseWith;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 import java.lang.annotation.*;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 
 /**
  * Defines the desired width of the field used to edit the property.  Note that width (generally equivalent to the size
  * attribute of an HTML &lt;input&gt; element) is only used for presentation; validation must be used to actually
  * enforce a maximum input length.
- * <p/>
- * <p/>
+ *
+ *
  * May be placed on an getter or setter method, or on the matching field.
  */
 @Target({ ElementType.FIELD, ElementType.METHOD })

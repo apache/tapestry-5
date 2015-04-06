@@ -1,5 +1,3 @@
-// Copyright 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import java.util.Map;
  * A mapping from <em>client-side zone ids</em> to objects that can render the content for that zone on the client. An
  * event handler method may instantiate an instance and chain together a series of calls to {@link #add(String, Object)}
  * , and return the final result.
- * <p/>
+ *
  * Remember that client-side element ids may not match server-side component ids, especially once Ajax is added to the
  * mix. Because of this, it is highly recommended that the client-side logic gather the actual component ids and include
  * those in the Ajax request, to ensure that the server generates updates that the client can process. Better yet, use

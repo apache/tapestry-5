@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import java.io.IOException;
 
 /**
  * Handles a invocation related to rendering out a pages complete content.
- * <p/>
+ *
  * The PageRenderRequestHandler service is an extensible {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder
  * pipeline}.
  */

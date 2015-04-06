@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +24,7 @@ public interface ComponentEventCallback<T>
      * Invoked to handle a non-null event handler method result. The handler should determine whether the value is
      * acceptable, and throw an exception if not. Any thrown exception will be wrapped to identify the component and
      * method from which the value was returned.
-     * <p/>
+     *
      * Boolean values are <em>not</em> passed to the callback. Booleans are used to indicate that the event has been
      * handled (true, meaning the event is handled and aborted) or that a further search for handlers should continue
      * (false, meaning the event was not handled, is not aborted, and the search up the component hierarchy for event

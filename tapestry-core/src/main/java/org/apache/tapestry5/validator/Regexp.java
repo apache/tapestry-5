@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * Enforces that the input matches a provided regular expression.
- * <p/>
+ *
  * Starting in 5.4, this always writes the pattern and title attribute, even when client validation is not enabled.
  * The title attribute is used specially by modern browsers, in concert with pattern.
  */

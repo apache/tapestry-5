@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,9 +17,9 @@ import java.util.List;
 
 /**
  * Organizes all {@link org.apache.tapestry5.ioc.services.PropertyAdapter}s for a particular class.
- * <p/>
+ *
  * Only provides access to <em>simple</em> properties. Indexed properties are ignored.
- * <p/>
+ *
  * When accessing properties by name, the case of the name is ignored.
  */
 public interface ClassPropertyAdapter

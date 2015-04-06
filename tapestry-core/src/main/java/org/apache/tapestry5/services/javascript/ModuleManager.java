@@ -1,5 +1,3 @@
-// Copyright 2012-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +20,7 @@ import java.util.List;
 
 /**
  * Responsible for managing access to the JavaScript modules.
- * <p/>
+ *
  * The configuration of the service allows overrides of the default search path; the configuration keys
  * are module names, and the configuration values are the {@link JavaScriptModuleConfiguration} definitions for those module names.
  * This is primarily used to wrap non-AMD compliant libraries for use with RequireJS (via contributed {@link JavaScriptModuleConfiguration}s).

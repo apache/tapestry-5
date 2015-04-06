@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,12 +23,12 @@ import java.util.List;
  * Flows are <em>lazy</em>: filtering, mapping, and concatenating flows will do so with no, or a
  * minimum, of evaluation. However, converting a Flow into a {@link List} (or other collection) will
  * force a realization of the entire flow.
- * <p>
+ *
  * In some cases, a flow may be an infinite, lazily evaluated sequence. Operations that iterate over all elements (such
  * as {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite loops.
- * <p>
+ *
  * Using flows allows for a very fluid interface.
- * <p>
+ *
  * Flows are initially created using {@link F#flow(java.util.Collection)}, {@link F#flow(Object...)} or
  * {@link F#flow(Iterable)}.
  * 
@@ -51,8 +49,8 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
     <X, Y> Flow<Y> map(Mapper2<T, X, Y> mapper, Flow<? extends X> flow);
 
     /**
-     * Given a {@link Mapper} that maps a T to a Flow<X>, this method will lazily concatenate
-     * all the output flows into a single Flow<X>.
+     * Given a {@link Mapper} that maps a T to a {@code Flow<X>}, this method will lazily concatenate
+     * all the output flows into a single {@code Flow<X>}.
      */
     <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper);
 
@@ -79,7 +77,7 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
      * values of the Flow.
      * 
      * @throws ClassCastException
-     *             if type <T> does not extend {@link Comparable}
+     *             if type T does not extend {@link Comparable}
      */
     Flow<T> sort();
 
@@ -87,7 +85,7 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
      * Zips this Flow together with another flow to form a Flow of {@link Tuple}s. The resulting
      * flow is the length of the shorter of the two input flows. Zipping flows together is a lazy
      * operation.
-     * <p>
+     *
      * The elements of this flow become the {@linkplain Tuple#first} value in each Tuple, the elements of the other flow
      * become the {@linkplain Tuple#second} value in each Tuple.
      * 

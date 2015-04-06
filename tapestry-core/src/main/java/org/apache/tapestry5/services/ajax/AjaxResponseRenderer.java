@@ -19,7 +19,7 @@ import org.apache.tapestry5.services.PartialMarkupRendererFilter;
  * Manages the rendering of a partial page render as part of an Ajax response. This replaces
  * the {@link org.apache.tapestry5.ajax.MultiZoneUpdate} introduced in Tapestry 5.1. Much of the API is used to
  * queue behaviors that take effect when {@linkplain org.apache.tapestry5.services.PartialMarkupRenderer partial markup rendering takes place}.
- * <p/>
+ *
  * The implementation of this class provides {@link org.apache.tapestry5.services.PartialMarkupRendererFilter} to
  * the {@link org.apache.tapestry5.internal.services.PageRenderQueue}.
  *

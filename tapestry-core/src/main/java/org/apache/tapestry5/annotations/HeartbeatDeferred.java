@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,29 +12,27 @@
 
 package org.apache.tapestry5.annotations;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
+import org.apache.tapestry5.internal.transform.HeartbeatDeferredWorker;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.services.Heartbeat;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry5.internal.transform.HeartbeatDeferredWorker;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.services.Heartbeat;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Marks a component method as deferred until the end of the {@link Heartbeat}. This
  * is only allowed on void methods that do not throw exceptions. The invocation is captured
  * and will execute at the end of the current Heartbeat.
- * <p>
+ *
  * This annotation should be used with care, since deferring the invocation can change its semantics. For example, the
  * value stored in instance variables may change between the time the method is invoked and the time it eventually
  * executes. Likewise, runtime exceptions thrown by the method can not be caught by the invoking method.
- * <p>
+ *
  * Annotated methods must return void, and not declare any checked exceptions.
  * 
  * @since 5.2.0

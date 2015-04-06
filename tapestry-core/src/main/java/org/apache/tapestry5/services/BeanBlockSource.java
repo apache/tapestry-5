@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,10 +20,10 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
  * org.apache.tapestry5.corelib.components.Grid} component), or to edit the properties of a bean (used by the {@link
  * org.apache.tapestry5.corelib.components.BeanEditForm} component). Contributions to this service (a configuration of
  * {@link BeanBlockContribution}s) define what properties may be editted.
- * <p/>
+ *
  * Blocks are accessed in terms of a <strong>data type</strong> a string that identifies the type of data to be editted,
  * such as "string", "date", "boolean", etc.
- * <p/>
+ *
  * Tapestry contributes a number of default data types and corresponding edit and display blocks. The {@link
  * org.apache.tapestry5.services.BeanBlockOverrideSource} service allows these to be overridden.
  *

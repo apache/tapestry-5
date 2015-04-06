@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
 /**
- * <p>Applied to a {@link org.apache.tapestry5.Field}, this provides the outer layers of markup to correctly
+ * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer layers of markup to correctly
  * render text fields, selects, and textareas using Bootstrap:
  * an outer {@code <div class="field-group">} containing a {@code <label class="control-label">} and the field itself.
  * Actually, the class attribute of the div is defined by the  
@@ -35,8 +33,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
  * <code>field-group</code> and <code>control-label</code> are the default values. 
  * As with the {@link org.apache.tapestry5.corelib.components.Label} component, the {@code for} attribute is set (after the field itself
  * renders).
- * </p>
- * <p>
+ *
+ *
  * You can also use the {@link SymbolConstants#FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME} symbol
  * to optionally wrap the input field in an element and {@link SymbolConstants#FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS}
  * to give it a CSS class. This is useful for Bootstrap form-horizontal forms.
@@ -44,11 +42,11 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
  * {@link SymbolConstants#FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS} to <code>col-sm-10</code>
  * and {@link SymbolConstants#FORM_GROUP_LABEL_CSS_CLASS} to <code>col-sm-2</code>
  * will generate labels 2 columns wide and form fields 10 columns wide.
- * </p>
- * <p>
+ *
+ *
  * This component is not appropriate for radio buttons or checkboxes as they use a different class on the outermost element
  * ("radio" or "checkbox") and next the element inside the {@code <label>}.
- * </p>
+ *
  *
  * @tapestrydoc
  * @since 5.4

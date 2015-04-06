@@ -1,5 +1,3 @@
-// Copyright 2030 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import java.io.IOException;
  * enabled.
  * The default implementation is to respond with a 404 NOT FOUND.
  *
- * @see http://issues.apache.org/jira/browse/TAP5-2070
+ * @see <a href="http://issues.apache.org/jira/browse/TAP5-2070">TAP5-2070</a>
  * @see org.apache.tapestry5.annotations.UnknownActivationContextCheck
  * @see org.apache.tapestry5.services.HttpError
  *

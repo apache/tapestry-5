@@ -2363,7 +2363,7 @@ class MethodWriter extends MethodVisitor {
      * 32765. This, in turn, may require to increase the size of another jump
      * instruction, and so on... All these operations are handled automatically
      * by this method.
-     * <p>
+     *
      * <i>This method must be called after all the method that is being built
      * has been visited</i>. In particular, the {@link Label Label} objects used
      * to construct the method are no longer valid after this method has been
@@ -2843,7 +2843,7 @@ class MethodWriter extends MethodVisitor {
 
     /**
      * Computes the future value of a bytecode offset.
-     * <p>
+     *
      * Note: it is possible to have several entries for the same instruction in
      * the <tt>indexes</tt> and <tt>sizes</tt>: two entries (index=a,size=b) and
      * (index=a,size=b') are equivalent to a single entry (index=a,size=b+b').

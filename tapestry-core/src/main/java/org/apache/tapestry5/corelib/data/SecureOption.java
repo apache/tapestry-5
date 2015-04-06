@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,6 +11,9 @@
 // limitations under the License.
 
 package org.apache.tapestry5.corelib.data;
+
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.corelib.components.Select;
 
 /**
  * Possible values of the "secure" parameter for components that use a
@@ -41,5 +42,5 @@ public enum SecureOption
      * persist a custom SelectModel across a form submission or recreate it
      * when the form is submitted). 
      */
-    AUTO;
+    AUTO
 }

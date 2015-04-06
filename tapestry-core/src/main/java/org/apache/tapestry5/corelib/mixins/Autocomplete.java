@@ -28,11 +28,11 @@ import java.util.List;
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on
  * Twttter <a href="http://twitter.github.io/typeahead.js/">typeahead.js</a> version 0.10.5.
- * <p/>
+ * 
  * The container is responsible for providing an event handler for event "providecompletions". The context will be the
  * partial input string sent from the client. The return value should be an array or list of completions, in
  * presentation order. e.g.
- * <p/>
+ * 
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
  * {

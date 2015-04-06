@@ -1,5 +1,3 @@
-// Copyright 2009-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +31,7 @@ import java.io.IOException;
  * ...") and an Ajax request then supplies the component's true body. This
  * results in much faster page loads. You can
  * even nest these!
- * <p/>
+ *
  * The component simply does not render its body on initial render. On the subsequent action event request, it fires a
  * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to inform the container about the (optional)
  * event context. The event handler method may return a renderable object; if not then the component's body is rendered

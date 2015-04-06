@@ -1,5 +1,3 @@
-// Copyright 2008, 2009, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import java.lang.annotation.*;
 /**
  * Annotation used with field injection when the desired injection value is a resource (such as a service id, service
  * configuration, or logger) and not an object obtained from the {@link org.apache.tapestry5.ioc.services.MasterObjectProvider}.
- * <p/>
+ *
  * In Tapestry 5.3, the logic for this was changed so that it is treated the same as {@link Inject}. This reflects what people usually want.
  *
  * @deprecated Deprecated in Tapestry 5.3, to be removed in a later release. Use {@link Inject} instead.

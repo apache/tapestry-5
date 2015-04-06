@@ -19,10 +19,6 @@ import org.apache.tapestry5.ioc.ObjectCreator;
  * Manages per-thread data, and provides a way for listeners to know when such data should be cleaned up. Typically,
  * data is cleaned up at the end of the request (in a web application). Tapestry IoC has any number of objects that need
  * to know when this event occurs, so that they can clean up any per-thread/per-request state.
- * <p/>
- * Due to <a href="https://issues.apache.org/jira/browse/TAPESTRY-2141">TAPESTRY-2141<a> (and the underlying JDK 1.5 bug
- * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5025230">5025230</a>), this service has expanded to
- * manage per-thread data (not just end-of-request listeners).
  */
 public interface PerthreadManager
 {
@@ -57,8 +53,8 @@ public interface PerthreadManager
     <T> PerThreadValue<T> createValue();
 
     /**
-     * Return {@link org.apache.tapestry5.ioc.ObjectCreator}, which for each thread,
-     * the first call will use the delegate {@link org.apache.tapestry5.ioc.ObjectCreator} to create
+     * Return {@link ObjectCreator}, which for each thread,
+     * the first call will use the delegate {@link ObjectCreator} to create
      * an instance, and later calls will reuse the same per-thread instance. The instance is stored in the
      * {@link org.apache.tapestry5.ioc.services.PerthreadManager} and will be released at the end of the request.
      *

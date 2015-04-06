@@ -1,5 +1,3 @@
-// Copyright 2007-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -37,11 +35,11 @@ import java.util.Locale;
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
  * clients can simply type into a text field.
- * <p/>
+ *
  * One aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
  * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
  * the popup). Weird and inefficient, but easier than writing client-side JavaScript for that purpose.
- * <p/>
+ *
  * Tapestry's DateField component is a wrapper around <a
  * href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX DatePicker</a>.
  *

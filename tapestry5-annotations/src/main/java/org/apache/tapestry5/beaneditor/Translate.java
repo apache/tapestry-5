@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,23 +12,20 @@
 
 package org.apache.tapestry5.beaneditor;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.BEAN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry5.ioc.annotations.UseWith;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Used to attach the name of a Translator used to convert the associated property between server-side and
  * client-side representations.
- * <p/>
+ *
  * May be placed on any getter or setter method, or on the matching field.
  * 
  * @see Validate

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,14 +23,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Static factory methods to ease the creation of new collection types (when using generics). Most of these method
  * leverage the compiler's ability to match generic types by return value. Typical usage (with a static import):
- * <p/>
+ *
  * <pre>
  * Map&lt;Foo, Bar&gt; map = newMap();
  * </pre>
- * <p/>
- * <p/>
+ *
+ *
  * This is a replacement for:
- * <p/>
+ *
  * <pre>
  * Map&lt;Foo, Bar&gt; map = new HashMap&lt;Foo, Bar&gt;();
  * </pre>

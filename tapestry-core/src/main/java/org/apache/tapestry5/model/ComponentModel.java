@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,10 +12,11 @@
 
 package org.apache.tapestry5.model;
 
-import org.apache.tapestry5.annotations.MixinAfter;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -36,8 +35,8 @@ public interface ComponentModel
      * Returns the name of the library that defines this component; this may be the empty string for
      * an application page or component, or will be a name of a library (possibly including "core" for built-in
      * components).
-     * Library names are defined by the {@link org.apache.tapestry5.services.LibraryMapping} contributions
-     * to the {@link org.apache.tapestry5.services.ComponentClassResolver} service.
+     * Library names are defined by the {@link LibraryMapping} contributions
+     * to the {@link ComponentClassResolver} service.
      *
      * @return library name containing the component, or empty string for application components
      * @since 5.4
@@ -65,7 +64,7 @@ public interface ComponentModel
 
     /**
      * Returns the ids of all embedded components defined within the component class (via the {@link
-     * org.apache.tapestry5.annotations.Component} annotation), including those defined by any super-class.
+     * Component} annotation), including those defined by any super-class.
      */
     List<String> getEmbeddedComponentIds();
 
@@ -185,8 +184,7 @@ public interface ComponentModel
 
     /**
      * Returns a set of all the render phases that this model (including parent models) that are handled. Render phases
-     * are represented by the corresponding annotation ({@link org.apache.tapestry5.annotations.BeginRender}, {@link
-     * org.apache.tapestry5.annotations.AfterRender}, etc.).
+     * are represented by the corresponding annotation ({@link BeginRender}, {@link AfterRender}, etc.).
      *
      * @return set of classes
      * @since 5.0.19, 5.1.0.0
@@ -213,13 +211,12 @@ public interface ComponentModel
     String[] getOrderForMixin(String mixinClassName);
 
     /**
-     * Relevant for pages only, indicates that the component handle the {@link org.apache.tapestry5.EventConstants.ACTIVATE}
+     * Relevant for pages only, indicates that the component handle the {@link EventConstants#ACTIVATE}
      * events with a catch all rules
      *
+     * @return true if the page implements catch all rules for the activate event context, or false otherwise
+     * @see MutableComponentModel#doHandleActivationEventContext()
      * @since 5.4
-     * @see {@link MutableComponentModel.doHandleActivationEventContext()}
-     * @return <code>true</code> in case the page implement a catch all rules for the activate event context,
-     * <code>false</code> otherwise
      */
     boolean handleActivationEventContext();
 }

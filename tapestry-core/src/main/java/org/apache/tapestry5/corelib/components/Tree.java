@@ -34,10 +34,10 @@ import java.util.List;
  * by the component is provided as a {@link TreeModel}. A secondary model, the {@link TreeExpansionModel}, is used
  * to track which nodes have been expanded. The optional {@link TreeSelectionModel} is used to track node selections (as currently
  * implemented, only leaf nodes may be selected).
- * <p/>
+ *
  * Tree is <em>not</em> a form control component; all changes made to the tree on the client
  * (expansions, collapsing, and selections) are propagated immediately back to the server.
- * <p/>
+ *
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  *
  * @tapestrydoc

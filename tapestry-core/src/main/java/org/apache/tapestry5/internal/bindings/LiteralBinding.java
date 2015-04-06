@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,8 +18,8 @@ import org.apache.tapestry5.ioc.Location;
  * Binding type for literal, immutable values. Literal bindings are {@linkplain org.apache.tapestry5.Binding#isInvariant()
  * invariant}; any value provided by a LiteralBinding, even if {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer#coerce(Object,
  * Class) coerced}, will be cached aggresively by Tapestry cmponent.
- * <p/>
- * <p>LiteralBindings are often used for literal string values supplied in-line in the component template, but is used
+ *
+ * LiteralBindings are often used for literal string values supplied in-line in the component template, but is used
  * for many other things as well, any kind of fixed, read-only value.
  */
 public class LiteralBinding extends AbstractBinding

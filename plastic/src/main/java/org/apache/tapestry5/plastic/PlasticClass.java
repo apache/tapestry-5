@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,15 +22,15 @@ import java.util.Set;
  * for an imperative style of development: the PlasticClass is provided to other objects; they can query it
  * for relevant fields or methods, and invoke methods that modify the class in various ways. Ultimately, the
  * end result is a {@link ClassInstantiator} used to create instances of the fully instrumented and transformed class.
- * <p/>
+ *
  * The terminology is that a class that is being transformed is "plastic", but the end result is a normal concrete class
  * (albeit in a different class loader).
- * <p/>
+ *
  * Implements {@link AnnotationAccess} to provide access to annotations on the type itself.
- * <p/>
+ *
  * This class is expressly <em>not thread safe</em>; only a single thread should be responsible for operating on a
  * PlasticClass.
- * <p/>
+ *
  * TODO: what about annotation inheritance?
  */
 @SuppressWarnings("rawtypes")
@@ -113,7 +111,7 @@ public interface PlasticClass extends AnnotationAccess
      * implemented in a <em>transformed</em> super class, the the default behavior is to invoke that method and return
      * its value. Otherwise, the default behavior is to ignore parameters and return 0, false, or null. Void methods
      * will invoke the super-class implementation (if it exists) and return no value.
-     * <p/>
+     *
      * It is allowed for the method description to indicate an abstract method; however the abstract flag will be
      * removed, and a non-abstract method will be created.
      *
@@ -126,7 +124,7 @@ public interface PlasticClass extends AnnotationAccess
     /**
      * Returns an existing method declared in this class, or introduces a new method into this class.
      * The method is created with default behavior.
-     * <p/>
+     *
      * It is allowed for the method description to indicate an abstract method; however the abstract flag will be
      * removed, and a non-abstract method will be created.
      *
@@ -140,7 +138,7 @@ public interface PlasticClass extends AnnotationAccess
     /**
      * A convenience that creates a {@link MethodDescription} from the Method and introduces that. This is often
      * invoked when walking the methods of an interface and introducing each of those methods.
-     * <p/>
+     *
      * Introduced methods are always concrete, not abstract. The abstract flag on the method modifiers will always be
      * stripped off, which is handy when {@linkplain #introduceInterface(Class) introducing methods from an interface}.
      *
