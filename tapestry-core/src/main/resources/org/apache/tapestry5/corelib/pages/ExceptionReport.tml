@@ -41,28 +41,12 @@
                     <div class="panel-footer">
 
                         <div class="btn-toolbar btn-group-xs">
-                            <t:if test="failurePage">
-                                <t:pagelink page="prop:failurePage" class="btn btn-default">Go to page
-                                    <strong>${failurePage}</strong>
-                                </t:pagelink>
-                                <t:if test="showReload">
-                                    <t:actionlink t:id="reloadFirst" parameters="{'loadPage': failurePage}"
-                                                  context="reloadContext" class="btn btn-default">Go to page
-                                        <strong>${failurePage}</strong>
-                                        (with reload)
-                                    </t:actionlink>
-                                </t:if>
-                            </t:if>
-                            <a href="/" class="btn btn-default">Go to
-                                <strong>${rootURL}</strong>
-                            </a>
-                            <t:if test="showReload">
-                                <t:actionLink t:id="reloadRoot" class="btn btn-default">
-                                    Go to
-                                    <strong>${rootURL}</strong>
-                                    (with reload)
-                                </t:actionLink>
-                            </t:if>
+                            <t:loop source="actionLinks" value="actionLink">
+                                <a href="${actionLink.uri}" class="btn btn-default">
+                                    <t:outputRaw value="actionLink.label"/>
+                                </a>
+                            </t:loop>
+
                         </div>
                     </div>
                     <t:if test="showReload">
