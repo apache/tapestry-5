@@ -1,0 +1,24 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+
+    <h1>Zone Form Demo</h1>
+
+    <t:zone t:id="zone" simpleids="true">
+
+        <t:form zone="^" t:id="form">
+
+            <t:errors globalonly="true"/>
+
+            <t:textfield t:id="handle" t:mixins="formgroup" placeholder="Id of user to rate"/>
+
+            <t:textfield t:id="rating" t:mixins="formgroup" placeholder="Rating"/>
+
+            <div class="row">
+                <t:submit class="btn btn-primary" value="Rate User"/>
+            </div>
+
+        </t:form>
+
+
+    </t:zone>
+
+</html>
