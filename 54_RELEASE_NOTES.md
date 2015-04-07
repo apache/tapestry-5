@@ -50,8 +50,9 @@ Prior versions of Tapestry created cacheable URLs for Assets that incorporated t
 Assets were served with a far-future expires header: the client browser would not even need to check to see
 if the asset had changed.
 
-Unfortunately, when any asset changed in a new deployment of the application, the version number needed to
-change, resulting in all assets being downloaded (because the application version number in their URLs changed).
+Unfortunately, when any asset changed in a new deployment of the application, the version number of the entire
+application needed to change, resulting in *all* assets being downloaded 
+(because the application version number in their URLs changed).
 
 In this release, individual assets are given a URL containing a checksum based on the asset's content. When the underlying
 file is changed, the asset will be served with the new URL, but unchanged assets will not be affected. This means
@@ -99,8 +100,8 @@ mode (but disabled in production mode):
 - Re-render the current page with component rendering comments
 - Reset the current page's persistent state
 - Kill (invalidate) any HttpSession
-- Open the T5 Dashboard in a new window
-- Reload component classes
+- Open the T5 Dashboard in a new tab
+- Force the reload of component classes
 
 ## T5Dashboard Page
 
@@ -146,12 +147,15 @@ never, or always.
 
 # Breaking Changes:
 
+## Java 1.6 required
+
+As of version 5.4, Tapestry requires Java 1.6 at least.
+
 ## clientId required for Ajax field decoration
 
 Applications that perform server-side validation of form control data (such as TextField) *as part of
-an Ajax Zone update* must now
-set the clientId parameter of the TextField in order for client-side validation decoration and error messages
-to appear.
+an Ajax Zone update* should bind the Zone's simpleIds parameter to true. This disables the injection of a per-request
+unique id into allocated client-side ids and client-side control names.
 
 Non-Ajax requests are not affected.  Client-side validation is not affected. Only the rare case where validation
 only occurs on the server is affected; Tapestry has lost the ability to coordinate the Tapestry-generated id
@@ -199,7 +203,11 @@ resurface in the future as a CSS expression, but is currently not supported.
 
 ## ExceptionReport Page
 
-The default exception report page has been modified to display a list of threads.
+The default exception report page has been improved dramatically:
+- Formatting improvements, care of Bootstrap
+- New links at the top of the page, to reload the failed page, or back to the root
+- In development mode, additional links to reload pages after clearing the component cache
+- A list of all threads, including their status
 
 ## Page Suffix for Page Names
 
@@ -235,7 +243,7 @@ properties to the global JavaScript window object, rather than assume that the c
 
 Only a limited number of properties exported in the `T5` and `Tapestry` namespaces (on the client) still exist; enough
 to continue to support the `T5.initializers` approach to page initialization that was used in Tapestry 5.3 and earlier.
-These will be eliminated in Tapestry 5.5.
+These will be eliminated entirely in Tapestry 5.5.
 
 ## New method on ResourceTransformer
 
@@ -287,12 +295,19 @@ Support for validating fields on blur (i.e., when tabbing out of a field) has be
 the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated
 identically to SUBMIT.
 
+## Page loading mask
+
+Tapestry now adds a "page loading mask" to the page; this mask will dim the browser window and add a spinning
+"wait cursor" until all JavaScript on the page has been loaded and initialized. The mask prevents all interaction
+with the page.
+
+CSS animations are used to fade in the mask after a short period of time; this makes the mask less obtrusive.
+
 ## Wait-for-page logic removed
 
 Tapestry 5.3 contained client-side code that attempted to prevent Ajax requests until after the page had loaded;
 this was based on the function `Tapestry.waitForPage()`.  Server components no longer make use of this function, and the function
-itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
-the page initialization has completed may be implemented in the future.
+itself now does nothing. 
 
 However, once initial page initialization has occurred, the attribute `data-page-initialized` on the root HTML element
 is set to "true". In many cases, automated tests should be updated to wait for this attribute to be set after loading
@@ -379,7 +394,7 @@ need to provide a "prepare" event handler to initialize the property before it i
 ## Autocomplete Mixin
 
 The Autocomplete mixin has been rewritten to use Twitter typeahead.js (0.10.5); this implies it will also force jQuery onto the page,
-to support the  typeahead.js library. In addition, typeahead.js does not support multiple
+to support the typeahead.js library. In addition, typeahead.js does not support multiple
 tokens, so this behavior (available in prior releases) has been removed.
 
 ## RenderNotification Mixin
@@ -459,13 +474,9 @@ The Grid component no longer emits CSS class names, instead it renders data attr
 such as `data-grid-row="first"`, `data-grid-property="title"`, etc. These attributes may still be referenced using CSS rules
 where desired.
 
-## Java 1.6 required
-
-As of version 5.4, Tapestry requires Java 1.6 at least.
-
 ## ValueEncoder Changes
 
-The automatic ValueEncoder from String to any Number type, or ti Boolean have
+The automatic ValueEncoder from String to any Number type, or to Boolean have
 changed slightly. An empty input string is encoded to a null rather than being passed through
 the type coercer. This reflects the desire that a submitted value (in a URL or a form) that is blank
 is the same as no value: null.
@@ -487,4 +498,4 @@ interfaces that used a String content type have been changed to use the ContentT
 
 The FormInjector component was removed; it was intended for use only inside the AjaxFormLoop component
 (which was rewritten in 5.4 and no longer uses FormInjector). FormInjector was not widely used elsewhere, if 
-is was used at all.
+it was used at all.
