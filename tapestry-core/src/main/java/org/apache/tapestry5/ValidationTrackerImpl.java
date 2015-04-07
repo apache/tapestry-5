@@ -70,12 +70,6 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
 
     private String getKey(Field field)
     {
-        if (field instanceof Field2)
-        {
-            Field2 field2 = (Field2) field;
-            return field2.getValidationId();
-        }
-
         return field.getControlName();
     }
 

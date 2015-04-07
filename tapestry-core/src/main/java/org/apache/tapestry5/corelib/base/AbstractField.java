@@ -30,7 +30,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * Provides initialization of the clientId and elementName properties. In addition, adds the {@link RenderInformals},
@@ -39,7 +38,7 @@ import java.util.UUID;
  * @tapestrydoc
  */
 @SupportsInformalParameters
-public abstract class AbstractField implements Field2
+public abstract class AbstractField implements Field
 {
     /**
      * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
@@ -362,28 +361,5 @@ public abstract class AbstractField implements Field2
             return;
 
         beanValidationContext.setCurrentProperty(null);
-    }
-
-    /**
-     * The validation id is used by Tapestry to coordinate an incoming request (with input for fields,
-     * an validation errors) with a render of the form containing a field. Normally, a validationId is assigned
-     * on first access and persists for the remainder of the request; however the {@link org.apache.tapestry5.corelib.components.BeanEditor}
-     * (or rather, the components used by the BeanEditor) may need to override this as the same fields render and re-render
-     * multiple times in the same request.
-     *
-     * @since 5.4
-     */
-    @Parameter
-    private String validationId;
-
-    @Override
-    public String getValidationId()
-    {
-        if (validationId == null)
-        {
-            validationId = UUID.randomUUID().toString();
-        }
-
-        return validationId;
     }
 }
