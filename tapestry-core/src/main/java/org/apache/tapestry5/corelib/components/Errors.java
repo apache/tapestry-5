@@ -48,7 +48,7 @@ public class Errors
 
     /**
      * If true, then only errors global to the form (unassociated with any specific field) are
-     * presented. By default all errors (associated with fields, or not) are presented; with unassoicated
+     * presented. By default all errors (associated with fields, or not) are presented; with unassociated
      * errors presented first.
      *
      * @since 5.4
