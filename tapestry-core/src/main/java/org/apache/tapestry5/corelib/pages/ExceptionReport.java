@@ -205,7 +205,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
                         linkSource.createPageRenderLinkWithContext(failurePage, pac),
                         "Go to page <strong>%s</strong>", failurePage);
 
-                if (! productionMode)
+                if (!productionMode)
                 {
                     add(links,
                             resources.createEventLink("reloadFirst", pac).addParameter("loadPage", failurePage),
@@ -216,22 +216,21 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
             {
                 // Ignore.
             }
+        }
 
-            links.add(new ActionLink(rootURL,
-                    String.format("Go to <strong>%s</strong>", rootURL)));
+        links.add(new ActionLink(rootURL,
+                String.format("Go to <strong>%s</strong>", rootURL)));
 
 
-            if (! productionMode) {
-                add(links,
-                        resources.createEventLink("reloadFirst"),
-                        "Go to <strong>%s</strong> (with reload)", rootURL);
-
-            }
+        if (!productionMode)
+        {
+            add(links,
+                    resources.createEventLink("reloadFirst"),
+                    "Go to <strong>%s</strong> (with reload)", rootURL);
         }
 
         return links;
     }
-
 
 
     Object onReloadFirst(EventContext reloadContext)
