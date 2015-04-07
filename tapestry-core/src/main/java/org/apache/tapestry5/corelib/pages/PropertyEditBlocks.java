@@ -19,7 +19,6 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.corelib.components.*;
-import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.BeanBlockContribution;
@@ -40,96 +39,56 @@ public class PropertyEditBlocks
     @Environmental
     private PropertyEditContext context;
 
-    @Environmental
-    private BeanValidationContext validationContext;
-
-    public String getValidationId()
-    {
-        return validationContext.getEditorValidationId() + "-" + context.getPropertyId();
-    }
-
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "translate=prop:textFieldTranslator",
-                    "validate=prop:textFieldValidator",
-                    "validationId=validationId",
-                    "clientId=prop:context.propertyId",
-                    "annotationProvider=context",
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context",
                     "ensureClientIdUnique=true"})
     private TextField textField;
 
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "translate=prop:numberFieldTranslator",
-                    "validate=prop:numberFieldValidator",
-                    "validationId=validationId",
-                    "clientId=prop:context.propertyId",
-                    "annotationProvider=context",
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:numberFieldTranslator", "validate=prop:numberFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context",
                     "ensureClientIdUnique=true"})
     private TextField numberField;
 
 
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "encoder=valueEncoderForProperty",
-                    "validationId=validationId",
-                    "model=selectModelForProperty",
-                    "validate=prop:selectValidator",
-                    "clientId=prop:context.propertyId",
-                    "ensureClientIdUnique=true"})
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
+                    "model=selectModelForProperty", "validate=prop:selectValidator",
+                    "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
     private Select select;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "validationId=validationId",
-                    "clientId=prop:context.propertyId",
-                    "ensureClientIdUnique=true"})
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
     private Checkbox checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "clientId=prop:context.propertyid",
-                    "validate=prop:dateFieldValidator",
-                    "ensureClientIdUnique=true"})
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
+                    "validate=prop:dateFieldValidator", "ensureClientIdUnique=true"})
     private DateField dateField;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "clientId=prop:context.propertyid",
-                    "validate=prop:calendarFieldValidator",
-                    "validationId=validationId",
-                    "ensureClientIdUnique=true"})
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
+                    "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true"})
     private DateField calendarField;
 
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
-                    "translate=prop:passwordFieldTranslator",
-                    "validate=prop:passwordFieldValidator",
-                    "validationId=validationId",
-                    "clientId=prop:context.propertyId",
-                    "annotationProvider=context",
-                    "ensureClientIdUnique=true"})
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:passwordFieldTranslator", "validate=prop:passwordFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context", "ensureClientIdUnique=true"})
     private PasswordField passwordField;
 
     @Component(
-            parameters = {"value=context.propertyValue",
-                    "label=prop:context.label",
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
                     "translate=prop:textAreaTranslator",
-                    "validationId=validationId",
-                    "validate=prop:textAreaValidator",
-                    "clientId=prop:context.propertyId",
-                    "annotationProvider=context",
-                    "ensureClientIdUnique=true"})
+                    "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
+                    "annotationProvider=context", "ensureClientIdUnique=true"})
     private TextArea textArea;
 
 

@@ -14,21 +14,17 @@ package org.apache.tapestry5.internal;
 
 public class BeanValidationContextImpl implements BeanValidationContext
 {
-    private final Object bean;
-
-    private final String editorValidationId;
-
+    private Object bean;
     private String currentProperty;
 
-    public BeanValidationContextImpl(Object bean, String editorValidationId)
+    public BeanValidationContextImpl(Object bean)
     {
         this.bean = bean;
-        this.editorValidationId = editorValidationId;
     }
 
     public Class getBeanType()
     {
-        return bean == null ? null : bean.getClass();
+        return bean==null?null:bean.getClass();
     }
 
     public Object getBeanInstance()
@@ -36,18 +32,14 @@ public class BeanValidationContextImpl implements BeanValidationContext
         return bean;
     }
 
-    public String getCurrentProperty()
+    public String getCurrentProperty() 
     {
         return currentProperty;
     }
 
-    public void setCurrentProperty(String propertyName)
+    public void setCurrentProperty(String propertyName) 
     {
         this.currentProperty = propertyName;
     }
 
-    public String getEditorValidationId()
-    {
-        return editorValidationId;
-    }
 }

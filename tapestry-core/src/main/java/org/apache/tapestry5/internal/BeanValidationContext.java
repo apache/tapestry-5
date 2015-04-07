@@ -13,7 +13,7 @@ package org.apache.tapestry5.internal;
 
 /**
  * Defines a context for validating beans.
- *
+ * 
  * @since 5.2.0
  */
 public interface BeanValidationContext
@@ -22,29 +22,21 @@ public interface BeanValidationContext
      * Returns the type of the object to validate. This method is needed for client side validation.
      */
     Class getBeanType();
-
+    
     /**
      * Return the object to validate.
      */
     Object getBeanInstance();
-
+    
     /**
      * Returns name of the property to validate. The current name is overwritten by every form field.
      */
     String getCurrentProperty();
-
+    
     /**
      * Sets name of the property to validate.
-     *
-     * @param propertyName
-     *         name of the property
+     * 
+     * @param propertyName name of the property
      */
     void setCurrentProperty(String propertyName);
-
-    /**
-     * Returns a validation id that should be used as a prefix for any fields inside a {@link org.apache.tapestry5.corelib.components.BeanEditor}.
-     *
-     * @since 5.4
-     */
-    String getEditorValidationId();
 }
