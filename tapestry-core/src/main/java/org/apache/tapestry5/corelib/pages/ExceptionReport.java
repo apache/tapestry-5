@@ -208,7 +208,8 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
                 if (!productionMode)
                 {
                     add(links,
-                            resources.createEventLink("reloadFirst", pac).addParameter("loadPage", failurePage),
+                            resources.createEventLink("reloadFirst", pac).addParameter("loadPage",
+                                    urlEncoder.encode(failurePage)),
                             "Go to page <strong>%s</strong> (with reload)", failurePage);
                 }
 
