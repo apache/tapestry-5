@@ -280,6 +280,13 @@ public abstract class AbstractResource extends LockSupport implements Resource
         {
             return null;
         }
+        if ("jar".equals(url.getProtocol())){
+            // TAP5-2448: make sure that the URL does not reference a directory
+            if (new URL(url.toString() + "/") != null)
+            {
+                throw new IOException("Cannot open a steam for a resource that references a directory inside a JAR file (" + url + ").");
+            }
+        }
 
         return new BufferedInputStream(url.openStream());
     }

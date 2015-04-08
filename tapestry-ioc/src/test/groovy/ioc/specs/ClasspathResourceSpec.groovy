@@ -2,6 +2,8 @@ package ioc.specs
 
 import org.apache.commons.lang3.SystemUtils
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource
+
+import spock.lang.Issue;
 import spock.lang.Specification
 
 class ClasspathResourceSpec extends Specification {
@@ -250,6 +252,19 @@ class ClasspathResourceSpec extends Specification {
         expect:
 
         r.forFile("../foo/bar").toString() == "classpath:foo/bar"
+    }
+    
+    @Issue('TAP5-2448')
+    def "Cannot open a stream for a directory resource within a JAR file"() {
+      setup:
+      ClasspathResource r = new ClasspathResource('org/slf4j/spi')
+      
+      when:
+      r.openStream()
+      
+      then:
+      IOException e = thrown()
+      e.message.contains 'Cannot open a steam for a resource that references a directory inside a JAR file'
     }
 
 }
