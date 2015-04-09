@@ -7,6 +7,7 @@
 
         <t:textfield t:id="title" t:mixins="autocomplete,formgroup" maxSuggestions="10" size="60"/>
         <t:textfield t:id="withContext" t:mixins="autocomplete,formgroup" context="context"/>
+        <t:textfield t:id="required" t:mixins="autocomplete,formgroup" validate="required"/>
 
         <div class="form-actions">
             <input type="submit" class="btn btn-primary" value="Show Track"/>
