@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Locale;
 
@@ -281,10 +283,33 @@ public abstract class AbstractResource extends LockSupport implements Resource
             return null;
         }
         if ("jar".equals(url.getProtocol())){
-            // TAP5-2448: make sure that the URL does not reference a directory
-            if (new URL(url.toString() + "/") != null)
+
+            URLClassLoader classLoaderWithJar = null;
+
+            try
             {
-                throw new IOException("Cannot open a steam for a resource that references a directory inside a JAR file (" + url + ").");
+
+                // TAP5-2448: make sure that the URL does not reference a directory
+                String urlAsString = url.toString();
+
+                int indexOfExclamationMark = url.toString().indexOf('!');
+
+                String jarFile = urlAsString.substring(4, indexOfExclamationMark);
+                String resourceInJar = urlAsString.substring(indexOfExclamationMark + 2);
+
+                classLoaderWithJar = new URLClassLoader(new URL[]{ new URL(jarFile) });
+
+                boolean isDirectory = classLoaderWithJar.getResource(resourceInJar + "/") != null;
+
+                classLoaderWithJar.close();
+
+                if (isDirectory)
+                {
+                    throw new IOException("Cannot open a steam for a resource that references a directory inside a JAR file (" + url + ").");
+                }
+            } finally
+            {
+                IOUtils.closeQuietly(classLoaderWithJar);
             }
         }
 

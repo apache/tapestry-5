@@ -253,18 +253,30 @@ class ClasspathResourceSpec extends Specification {
 
         r.forFile("../foo/bar").toString() == "classpath:foo/bar"
     }
-    
+
     @Issue('TAP5-2448')
     def "Cannot open a stream for a directory resource within a JAR file"() {
       setup:
       ClasspathResource r = new ClasspathResource('org/slf4j/spi')
-      
+
       when:
       r.openStream()
-      
+
       then:
       IOException e = thrown()
       e.message.contains 'Cannot open a steam for a resource that references a directory inside a JAR file'
+    }
+
+    @Issue('TAP5-2448')
+    def "Can open a stream for a file resource within a JAR file"() {
+      setup:
+      ClasspathResource r = new ClasspathResource('org/slf4j/helpers/Util.class')
+
+      when:
+      r.openStream()
+
+      then:
+      notThrown(IOException)
     }
 
 }
