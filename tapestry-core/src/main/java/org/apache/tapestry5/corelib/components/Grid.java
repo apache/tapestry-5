@@ -468,6 +468,10 @@ public class Grid implements GridModel, ClientElement
         // if an inPlace Grid is rendered inside a Loop, be sure to generate a new wrapper
         // zone for each iteration (TAP5-2256)
         zone = null;
+
+        // If grid is rendered inside a Loop. be sure to generate a new data model for
+        // each iteration (TAP5-2470)
+        dataModel = null;
     }
 
     public GridPaginationModel getDefaultPaginationModel()
@@ -506,8 +510,6 @@ public class Grid implements GridModel, ClientElement
         int startIndex = (effectiveCurrentPage - 1) * rowsPerPage;
 
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
-
-        dataModel = null;
 
         cachingSource.prepare(startIndex, endIndex, sortModel.getSortConstraints());
     }

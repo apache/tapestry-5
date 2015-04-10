@@ -222,6 +222,9 @@ public class Index
                     new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
                             "Grid inside a Form using the ValueEncoder option"),
 
+                    new Item("GridFormWithInitialSortMixinDemo", "Grid Form With Initial Sort Mixin Demo",
+                            "Grid inside a Form using the InitialSort mixin"),
+
                     new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
                             "Show that DateField component works correctly inside AjaxFormLoop"),
 
@@ -333,6 +336,8 @@ public class Index
                     new Item("pageloadeddemo", "PageLoaded Demo", "shows that page lifecycle methods are invoked"),
 
                     new Item("griddemo", "Grid Demo", "default Grid component"),
+
+                    new Item("GridInLoopDemo", "Grid In Loop Demo", "Grid inside loop with different model on each iteration"),
 
                     new Item("nullgrid", "Null Grid", "handling of null source for Grid"),
 

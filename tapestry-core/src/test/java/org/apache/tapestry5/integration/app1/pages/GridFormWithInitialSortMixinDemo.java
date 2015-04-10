@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.annotations.Property;
-
-public class InplaceGridInLoopDemo extends GridDemo {
-
-  @Property
-  protected int index;
-
-  public String getContainerClass() {
-    return "grid" + index;
-  }
+public class GridFormWithInitialSortMixinDemo extends GridFormDemo
+{
 }

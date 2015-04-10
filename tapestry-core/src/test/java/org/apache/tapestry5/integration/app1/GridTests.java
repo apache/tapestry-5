@@ -220,6 +220,59 @@ public class GridTests extends App1TestCase
     }
 
     /**
+     * TAP5-2470
+     */
+    @Test
+    public void grid_inside_form_with_initial_sort_mixin()
+    {
+        openLinks("Grid Form With Initial Sort Mixin Demo", "reset", "2");
+
+        // The first input field is the form's hidden field.
+
+        // Note the difference: same data sorted differently (there's a default
+        // sort).
+
+        assertFieldValue("title", "ToDo # 14");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 15", "ToDo # 16", "ToDo # 17", "ToDo # 18");
+
+        type("title_0", "Cure Cancer");
+        select("urgency_0", "Top Priority");
+
+        type("title_1", "Pay Phone Bill");
+        select("urgency_1", "Low");
+
+        clickAndWait(SUBMIT);
+
+        // Because of the sort, the updated items shift to page #1
+
+        clickAndWait("link=1");
+
+        assertFieldValue("title", "Cure Cancer");
+        assertFieldValue("title_0", "Pay Phone Bill");
+
+        assertFieldValue("urgency", "HIGH");
+        assertFieldValue("urgency_0", "LOW");
+    }
+
+    /**
+     * TAP5-2470
+     */
+    @Test
+    public void change_model_of_grid_in_a_loop()
+    {
+        openLinks("Grid In Loop Demo", "reset the Grids");
+
+        for (int i = 0; i < 5; i++)
+        {
+            String locator = String.format("grid%d", i + 1);
+            //Starting with 6 columns every iteration should result to one less column
+            int expected = 6 - i;
+            String count = getEval("window.document.getElementById('" + locator + "').rows[0].cells.length");
+            assertEquals(count, Integer.toString(expected), String.format("Expected %d columns.",expected));
+        }
+    }
+
+    /**
      * TAPESTRY-2021
      */
     @Test
@@ -347,7 +400,6 @@ public class GridTests extends App1TestCase
         assertAttribute("css=.grid1 th[data-grid-property='title']/@data-grid-column-sort", "ascending");
         assertAttribute("css=.grid2 th[data-grid-property='album']/@data-grid-column-sort", "ascending");
         assertAttribute("css=.grid2 th[data-grid-property='title']/@data-grid-column-sort", "sortable");
-
 
     }
 
