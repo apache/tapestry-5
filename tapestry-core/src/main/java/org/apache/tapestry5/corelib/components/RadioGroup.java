@@ -160,6 +160,11 @@ public class RadioGroup implements Field
 
     private void processSubmission()
     {
+
+        if (disabled)
+        {
+            return;
+        }
         String rawValue = request.getParameter(controlName);
 
         tracker.recordInput(this, rawValue);

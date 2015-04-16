@@ -93,4 +93,14 @@ public class DisabledFields
     {
         return new StringValueEncoder();
     }
+
+    public Object getRadioGroupValue()
+    {
+        return null;
+    }
+
+    public void setRadioGroupValue(String value)
+    {
+        throw new IllegalStateException("This should not happen");
+    }
 }
