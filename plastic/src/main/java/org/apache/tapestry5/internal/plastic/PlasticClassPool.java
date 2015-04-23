@@ -521,7 +521,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             final String internalNewClassNameinternalName = PlasticInternalUtils.toInternalName(newClassName);
             final String internalBaseClassName = PlasticInternalUtils.toInternalName(baseClassName);
-            newClassNode.visit(V1_5, ACC_PUBLIC, internalNewClassNameinternalName, null, internalBaseClassName, null);
+            newClassNode.visit(PlasticConstants.DEFAULT_VERSION_OPCODE, ACC_PUBLIC, internalNewClassNameinternalName, null, internalBaseClassName, null);
             
             ClassNode implementationClassNode = null;
             

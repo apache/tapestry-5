@@ -67,7 +67,7 @@ class MethodAdviceManager
 
         invocationClassNode = new ClassNode();
 
-        invocationClassNode.visit(org.apache.tapestry5.internal.plastic.asm.Opcodes.V1_5, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, plasticClass.nameCache.toInternalName(invocationClassName),
+        invocationClassNode.visit(PlasticConstants.DEFAULT_VERSION_OPCODE, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, plasticClass.nameCache.toInternalName(invocationClassName),
                 null, PlasticClassImpl.ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME, new String[]
                 {plasticClass.nameCache.toInternalName(MethodInvocation.class)});
 
