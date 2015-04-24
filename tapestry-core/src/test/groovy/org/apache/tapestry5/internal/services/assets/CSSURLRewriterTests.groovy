@@ -139,7 +139,7 @@ body {
         def asset = newMock Asset
 
         expect(
-            assetSource.getAsset(resource, "asset:context:images/back.png", null)
+            assetSource.getAsset(resource, "context:images/back.png", null)
         ).andReturn asset
 
         expect(asset.toClientURL()).andReturn "/ctx/images/back.png"

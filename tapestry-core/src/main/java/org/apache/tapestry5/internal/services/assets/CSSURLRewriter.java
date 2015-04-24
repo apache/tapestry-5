@@ -151,7 +151,9 @@ public class CSSURLRewriter extends DelegatingSRS
             // to rewrite it (this is actually rare in Tapestry as you want to use relative URLs to
             // leverage the asset pipeline.
             Matcher completeURLMatcher = completeURLPattern.matcher(url);
-            if (completeURLMatcher.find() && !("asset:".equals(completeURLMatcher.group(1))))
+            boolean matchFound = completeURLMatcher.find();
+            boolean isAssetUrl = matchFound && "asset:".equals(completeURLMatcher.group(1));
+            if (matchFound && !isAssetUrl)
             {
                 String queryParameters = matcher.group(3);
 
@@ -164,6 +166,12 @@ public class CSSURLRewriter extends DelegatingSRS
                 // considered a real change, since all such variations are valid.
                 appendReplacement(matcher, output, url);
                 continue;
+            }
+
+            if (isAssetUrl)
+            {
+                // strip away the "asset:" prefix
+                url = url.substring(6);
             }
 
             Asset asset = assetSource.getAsset(baseResource, url, null);
