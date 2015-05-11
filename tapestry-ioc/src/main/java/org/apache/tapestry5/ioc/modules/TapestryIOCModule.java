@@ -32,6 +32,7 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -90,9 +91,9 @@ public final class TapestryIOCModule
     {
         final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
 
-        for (String name : configuration.keySet())
+        for (Entry<String, ServiceLifecycle> entry : configuration.entrySet())
         {
-            lifecycles.put(name, InternalUtils.toServiceLifecycle2(configuration.get(name)));
+            lifecycles.put(entry.getKey(), InternalUtils.toServiceLifecycle2(entry.getValue()));
         }
 
         return new ServiceLifecycleSource()

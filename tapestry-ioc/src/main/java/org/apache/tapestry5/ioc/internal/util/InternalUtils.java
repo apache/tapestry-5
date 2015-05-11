@@ -1582,7 +1582,7 @@ public class InternalUtils
     /**
      * @since 5.3.1, 5.4
      */
-    public static Mapper<ObjectCreator, Object> CREATE_OBJECT = new Mapper<ObjectCreator, Object>()
+    public final static Mapper<ObjectCreator, Object> CREATE_OBJECT = new Mapper<ObjectCreator, Object>()
     {
         @Override
         public Object map(ObjectCreator element)

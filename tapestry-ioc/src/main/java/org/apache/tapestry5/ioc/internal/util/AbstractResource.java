@@ -30,7 +30,7 @@ import java.util.Locale;
  */
 public abstract class AbstractResource extends LockSupport implements Resource
 {
-    private class Localization
+    private static class Localization
     {
         final Locale locale;
 

@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.Map.Entry;
 
 @SuppressWarnings("all")
 public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyProvider
@@ -1074,8 +1075,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             markers.add(Local.class);
         }
 
-        for (Class marker : markerToServiceDef.keySet())
+        for (Entry<Class, List<ServiceDef2>> entry : markerToServiceDef.entrySet())
         {
+            Class marker = entry.getKey();
             if (provider.getAnnotation(marker) == null)
             {
                 continue;
@@ -1083,7 +1085,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             markers.add(marker);
 
-            matches.retainAll(markerToServiceDef.get(marker));
+            matches.retainAll(entry.getValue());
 
             if (matches.isEmpty())
             {
@@ -1297,27 +1299,27 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             
             this.delegates = delegates;
             
-            for (ServiceDef serviceDef : mapped.keySet())
+            for (Entry<ServiceDef, Map> entry : mapped.entrySet())
             {
                 for (ServiceConfigurationListener delegate : delegates)
                 {
-                    delegate.onMappedConfiguration(serviceDef, Collections.unmodifiableMap(mapped.get(serviceDef)));
+                    delegate.onMappedConfiguration(entry.getKey(), Collections.unmodifiableMap(entry.getValue()));
                 }
             }
 
-            for (ServiceDef serviceDef : unordered.keySet())
+            for (Entry<ServiceDef, Collection> entry : unordered.entrySet())
             {
                 for (ServiceConfigurationListener delegate : delegates)
                 {
-                    delegate.onUnorderedConfiguration(serviceDef, Collections.unmodifiableCollection(unordered.get(serviceDef)));
+                    delegate.onUnorderedConfiguration(entry.getKey(), Collections.unmodifiableCollection(entry.getValue()));
                 }
             }
 
-            for (ServiceDef serviceDef : ordered.keySet())
+            for (Entry<ServiceDef, List> entry : ordered.entrySet())
             {
                 for (ServiceConfigurationListener delegate : delegates)
                 {
-                    delegate.onOrderedConfiguration(serviceDef, Collections.unmodifiableList(ordered.get(serviceDef)));
+                    delegate.onOrderedConfiguration(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
                 }
             }
             

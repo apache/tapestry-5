@@ -64,7 +64,7 @@ public class BasicTypeCoercions
             @Override
             public Double coerce(String input)
             {
-                return new Double(input);
+                return Double.valueOf(input);
             }
         });
 
@@ -103,7 +103,7 @@ public class BasicTypeCoercions
             @Override
             public Long coerce(String input)
             {
-                return new Long(input);
+                return Long.valueOf(input);
             }
         });
 
