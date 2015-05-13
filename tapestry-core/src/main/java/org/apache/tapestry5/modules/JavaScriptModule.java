@@ -346,7 +346,7 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
 
-                                        @Path("${tapestry.asset.root}/moment-2.10.2.js")
+                                        @Path("${tapestry.asset.root}/moment-2.10.3.js")
                                         Resource moment,
 
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/transition.js")
