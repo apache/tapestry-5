@@ -75,10 +75,8 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
 
     public <T> boolean exists(Class<T> ssoClass)
     {
-        String key = buildKey(ssoClass);
-
         Session session = request.getSession(false);
 
-        return session != null && session.getAttribute(key) != null;
+        return session != null && session.getAttribute(buildKey(ssoClass)) != null;
     }
 }
