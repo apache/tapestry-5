@@ -129,12 +129,11 @@ public final class IdAllocator
 
         Map<String, NameGenerator> mapCopy = CollectionFactory.newMap();
 
-        for (String key : generatorMap.keySet())
+        for (Map.Entry<String, NameGenerator> entry : generatorMap.entrySet())
         {
-            NameGenerator original = generatorMap.get(key);
-            NameGenerator copy = transformMap.get(original);
+            NameGenerator copy = transformMap.get(entry.getValue());
 
-            mapCopy.put(key, copy);
+            mapCopy.put(entry.getKey(), copy);
         }
 
         return new IdAllocator(namespace, mapCopy);
