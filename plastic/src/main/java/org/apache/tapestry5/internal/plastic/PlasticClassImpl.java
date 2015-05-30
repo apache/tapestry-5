@@ -335,88 +335,121 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         return annotationAccess.getAnnotation(annotationType);
     }
+    
+    private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, MethodNode implementationMethodNode)
+    {
+        // visits the method attributes
+        int i, j, n;
+        if (implementationMethodNode.annotationDefault != null)
+        {
+            AnnotationVisitor av = methodNode.visitAnnotationDefault();
+            AnnotationNode.accept(av, null, implementationMethodNode.annotationDefault);
+            if (av != null)
+            {
+                av.visitEnd();
+            }
+        }
+        n = implementationMethodNode.visibleAnnotations == null ? 0 : implementationMethodNode.visibleAnnotations.size();
+        for (i = 0; i < n; ++i)
+        {
+            AnnotationNode an = implementationMethodNode.visibleAnnotations.get(i);
+            an.accept(methodNode.visitAnnotation(an.desc, true));
+        }
+        n = implementationMethodNode.invisibleAnnotations == null ? 0 : implementationMethodNode.invisibleAnnotations.size();
+        for (i = 0; i < n; ++i)
+        {
+            AnnotationNode an = implementationMethodNode.invisibleAnnotations.get(i);
+            an.accept(methodNode.visitAnnotation(an.desc, false));
+        }
+        n = implementationMethodNode.visibleParameterAnnotations == null
+                ? 0
+                : implementationMethodNode.visibleParameterAnnotations.length;
+        for (i = 0; i < n; ++i)
+        {
+            List<?> l = implementationMethodNode.visibleParameterAnnotations[i];
+            if (l == null)
+            {
+                continue;
+            }
+            for (j = 0; j < l.size(); ++j)
+            {
+                AnnotationNode an = (AnnotationNode) l.get(j);
+                an.accept(methodNode.visitParameterAnnotation(i, an.desc, true));
+            }
+        }
+        n = implementationMethodNode.invisibleParameterAnnotations == null
+                ? 0
+                : implementationMethodNode.invisibleParameterAnnotations.length;
+        for (i = 0; i < n; ++i)
+        {
+            List<?> l = implementationMethodNode.invisibleParameterAnnotations[i];
+            if (l == null)
+            {
+                continue;
+            }
+            for (j = 0; j < l.size(); ++j)
+            {
+                AnnotationNode an = (AnnotationNode) l.get(j);
+                an.accept(methodNode.visitParameterAnnotation(i, an.desc, false));
+            }
+        }
+
+        methodNode.visitEnd();
+
+    }
+    
 
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
         {
 
-            for (MethodNode implementationNode : source.methods)
+        	MethodNode candidate = null;
+
+            for (MethodNode implementationMethodNode : source.methods)
             {
-                // Find corresponding method in the implementation class MethodNode
-                if (methodNode.name.equals(implementationNode.name) && methodNode.desc.equals(implementationNode.desc))
+            	
+                // Find corresponding methods in the implementation class MethodNode
+                if (methodNode.name.equals(implementationMethodNode.name) && 
+//                		methodNode.parameters.size() == implementationMethodNode.parameters.size() &&
+                		// We don't want synthetic methods.
+                		((implementationMethodNode.access & Opcodes.ACC_SYNTHETIC) == 0) 
+                		/*methodNode.desc.equals(implementationMethodNode.desc)*/)
                 {
-
-                    // Copied and adapted from MethodNode.accept(). We want annotation info, but not code nor attributes
-                    // Otherwise, we get ClassFormatError (Illegal exception table range) later
-
-                    // visits the method attributes
-                    int i, j, n;
-                    if (implementationNode.annotationDefault != null)
-                    {
-                        AnnotationVisitor av = methodNode.visitAnnotationDefault();
-                        AnnotationNode.accept(av, null, implementationNode.annotationDefault);
-                        if (av != null)
-                        {
-                            av.visitEnd();
-                        }
-                    }
-                    n = implementationNode.visibleAnnotations == null ? 0 : implementationNode.visibleAnnotations.size();
-                    for (i = 0; i < n; ++i)
-                    {
-                        AnnotationNode an = implementationNode.visibleAnnotations.get(i);
-                        an.accept(methodNode.visitAnnotation(an.desc, true));
-                    }
-                    n = implementationNode.invisibleAnnotations == null ? 0 : implementationNode.invisibleAnnotations.size();
-                    for (i = 0; i < n; ++i)
-                    {
-                        AnnotationNode an = implementationNode.invisibleAnnotations.get(i);
-                        an.accept(methodNode.visitAnnotation(an.desc, false));
-                    }
-                    n = implementationNode.visibleParameterAnnotations == null
-                            ? 0
-                            : implementationNode.visibleParameterAnnotations.length;
-                    for (i = 0; i < n; ++i)
-                    {
-                        List<?> l = implementationNode.visibleParameterAnnotations[i];
-                        if (l == null)
-                        {
-                            continue;
-                        }
-                        for (j = 0; j < l.size(); ++j)
-                        {
-                            AnnotationNode an = (AnnotationNode) l.get(j);
-                            an.accept(methodNode.visitParameterAnnotation(i, an.desc, true));
-                        }
-                    }
-                    n = implementationNode.invisibleParameterAnnotations == null
-                            ? 0
-                            : implementationNode.invisibleParameterAnnotations.length;
-                    for (i = 0; i < n; ++i)
-                    {
-                        List<?> l = implementationNode.invisibleParameterAnnotations[i];
-                        if (l == null)
-                        {
-                            continue;
-                        }
-                        for (j = 0; j < l.size(); ++j)
-                        {
-                            AnnotationNode an = (AnnotationNode) l.get(j);
-                            an.accept(methodNode.visitParameterAnnotation(i, an.desc, false));
-                        }
-                    }
-
-                    methodNode.visitEnd();
-
-                    break;
-
+                	if (candidate == null)
+                	{
+                		candidate = implementationMethodNode;
+                	}
+                	// Generics implementation. Two methods with same name: The one which isn't a bridge is the one we're looking for.
+                	else 
+                	{
+                		if (isBridge(candidate))
+                		{
+                			candidate = implementationMethodNode;
+                		}
+                	}
+                	
                 }
 
             }
-
+            
+            if (candidate != null)
+            {
+            	addMethodAndParameterAnnotationsFromExistingClass(methodNode, candidate);
+            }
+            
         }
 
     }
+
+    /** 
+     * Tells whether a given method is a bridge one or not.
+     * Notice the flag for bridge method is the same as volatile field. Java 6 doesn't have
+     * Modifiers.isBridge(), so we use a workaround.
+     */
+	private static boolean isBridge(MethodNode methodNode) {
+		return Modifier.isVolatile(methodNode.access);
+	}
 
     @Override
     public PlasticClass proxyInterface(Class interfaceType, PlasticField field)
