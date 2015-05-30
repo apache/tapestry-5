@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * Represents an HTTP content type. Allows to set various elements like the MIME type, the character set, and other
  * parameters. This is similar to a number of other implementations of the same concept in JAF, etc. We have created
  * this simple implementation to avoid including the whole libraries.
- * <p/>
+ *
  * As of Tapestry 5.4, this is now an immutable data type.
  */
 public final class ContentType

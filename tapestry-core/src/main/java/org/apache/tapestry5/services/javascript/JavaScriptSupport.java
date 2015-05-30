@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,17 +26,17 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * The JavaScriptSupport environmental is very stateful, accumulating JavaScript stacks, libraries and initialization
  * code until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
  * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
- * <p/>
+ *
  * JavaScriptSupport is normally accessed within a component by using the {@link Environmental} annotation on a
  * component field. In addition, JavaScriptSupport may also be accessed as a service (the service
  * {@linkplain EnvironmentalShadowBuilder internally delegates to the current environmental instance}), which is useful
  * for service-layer objects.
- * <p/>
+ *
  * The term "import" is used on many methods to indicate that the indicated resource (stack, library or stylesheet) will
  * only be added to the final cocument once, even when there are repeated calls.
- * <p/>
+ *
  * The name is slightly a misnomer, since there's a side-line of {@linkplain #importStylesheet(StylesheetLink)} as well.
- * <p/>
+ *
  * JavaScriptSupport works equally well inside an Ajax request that produces a JSON-formatted partial page update response.
  *
  * @see org.apache.tapestry5.internal.services.DocumentLinker
@@ -213,7 +211,7 @@ public interface JavaScriptSupport
      * {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation} in enabled, the stack will be represented by
      * a single virtual URL; otherwise the individual asset URLs of the stack
      * will be added to the document.
-     * <p/>
+     *
      * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      *
      * @param stackName
@@ -224,7 +222,7 @@ public interface JavaScriptSupport
 
     /**
      * Import a Javascript library with an arbitrary URL.
-     * <p/>
+     *
      * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      */
     JavaScriptSupport importJavaScriptLibrary(String libraryURL);
@@ -248,11 +246,11 @@ public interface JavaScriptSupport
      * (optionally) de-reference a function exported by the module (or, treat the module as exporting a single
      * implicit function). The function will be invoked. Use the returned {@link Initialization} to specify the function name
      * to invoke, and the parameters to pass to the function.
-     * <p/>
+     *
      * In some cases, a module exports no functions, but performs some initialization (typically, adding document-level
      * event handlers), in which case a call to require() is sufficient. In cases where the module, or a function
      * within the module, are invoked with no parameters, the calls will be collapsed into a single invocation.
-     * <p/>
+     *
      * If the module is part of a {@linkplain org.apache.tapestry5.services.javascript.JavaScriptStack#getModules() JavaScript stack},
      * then the stack will be imported; this is important when {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation is enabled},
      * but also ensures that libraries in the stack are loaded before the module (for cases where the

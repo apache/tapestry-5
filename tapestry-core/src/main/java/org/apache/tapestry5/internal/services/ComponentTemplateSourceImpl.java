@@ -169,7 +169,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     /**
      * Resolves the component name to a localized {@link Resource} (using the {@link ComponentTemplateLocator} chain of
      * command service). The localized resource is used as the key to a cache of {@link ComponentTemplate}s.
-     * <p/>
+     *
      * If a template doesn't exist, then the missing ComponentTemplate is returned.
      */
     public ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale)

@@ -34,7 +34,7 @@ import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.*
  * SAX-based template parser logic, taking a {@link Resource} to a Tapestry
  * template file and returning
  * a {@link ComponentTemplate}.
- * <p/>
+ *
  * Earlier versions of this code used the StAX (streaming XML parser), but that
  * was really, really bad for Google App Engine. This version uses SAX under the
  * covers, but kind of replicates the important bits of the StAX API as
@@ -339,27 +339,27 @@ public class SaxTemplateParser
 
     /**
      * Processes an element through to its matching end tag.
-     * <p/>
+     *
      * An element can be:
-     * <p/>
+     *
      * a Tapestry component via &lt;t:type&gt;
-     * <p/>
+     *
      * a Tapestry component via t:type="type" and/or t:id="id"
-     * <p/>
+     *
      * a Tapestry component via a library namespace
-     * <p/>
+     *
      * A parameter element via &lt;t:parameter&gt;
-     * <p/>
+     *
      * A parameter element via &lt;p:name&gt;
-     * <p/>
+     *
      * A &lt;t:remove&gt; element (in the 5.1 schema)
-     * <p/>
+     *
      * A &lt;t:content&gt; element (in the 5.1 schema)
-     * <p/>
+     *
      * A &lt;t:block&gt; element
-     * <p/>
+     *
      * The body &lt;t:body&gt;
-     * <p/>
+     *
      * An ordinary element
      */
     void element(TemplateParserState initialState)

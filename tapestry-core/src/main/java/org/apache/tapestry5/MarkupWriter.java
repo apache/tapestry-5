@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,7 +33,7 @@ public interface MarkupWriter
      * Begins a new element as a child of the current element. The new element becomes the current element. The new
      * Element is returned and can be directly manipulated (possibly at a later date). Optionally, attributes for the
      * new element can be specified directly.
-     * <p/>
+     *
      *
      * @param name       the name of the element to create
      * @param attributes an even number of values, alternating names and values

@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * A method of a {@linkplain PlasticClass transformed class}.
- * <p/>
+ *
  * No methods of this object should be invoked after the class transformation is
  * {@linkplain PlasticClassTransformation#createInstantiator() completed}.
  */
@@ -40,9 +40,9 @@ public interface PlasticMethod extends AnnotationAccess
     /**
      * Clears the instructions for this method, and creates a new empty InstructionBuilder so that the implementation of
      * the method can be specified. This may be considered a kind of last resort when no other approach is sufficient.
-     * <p/>
+     *
      * If the method is currently abstract, it will have its abstract flag cleared.
-     * <p/>
+     *
      * If the method has advice, the advice is <em>not</em> lost but will instead wrap around the new method
      * implementation.
      *
@@ -58,12 +58,12 @@ public interface PlasticMethod extends AnnotationAccess
      * through the MethodAdvice <em>in the order they are added</em>. Each piece of advice will receive the
      * {@link MethodInvocation} and should invoke {@link MethodInvocation#proceed()} to pass control to the next piece
      * of advice (and ultimately, to the actual method invocation).
-     * <p/>
+     *
      * If a method implementation is changed, using {@link #changeImplementation(InstructionBuilderCallback)}, that
      * change will be honored, but the logic will only be invoked at the end of the chain of MethodAdvice. Internally, a
      * new method is created with the same parameters, exceptions, return type and implementation (bytecode) as the
      * advised method, <em>then</em> the advised method's implementation is changed.
-     * <p/>
+     *
      * Note additionally that a recursive method invocation will still invoke the MethodAdvice chain on each recursive
      * call (this is an intended side-effect of copying the exact bytecode of the method implementation.
      *

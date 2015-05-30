@@ -100,7 +100,7 @@ public final class StylesheetLink
             container.raw(String.format("\n<!--[if %s]>\n", options.condition));
         }
 
-        String rel = options.ajaxInsertionPoint ? "stylesheet t-ajax-insertion-point" : "stylesheet";
+        String rel = options.ajaxInsertionPoint ? "stylesheet ajax-insertion-point" : "stylesheet";
 
         container.element("link",
                 "href", getURL(),

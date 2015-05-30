@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,15 +26,15 @@ import java.util.Locale;
 /**
  * Abstract class for a variety of components that render some variation of a text field. Most of the hooks for user
  * input validation are in this class.
- * <p/>
+ * 
  * In particular, all subclasses support the "toclient" and "parseclient" events. These two events allow the normal
  * {@link Translator} (specified by the translate parameter, but often automatically derived by Tapestry) to be
  * augmented.
- * <p/>
+ * 
  * If the component container (i.e., the page) provides an event handler method for the "toclient" event, and that
  * handler returns a non-null string, that will be the string value sent to the client. The context passed to the event
  * handler method is t he current value of the value parameter.
- * <p/>
+ * 
  * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
  * and may provide a non-null value as the parsed value. Returning null allows the normal translator to operate. The
  * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
@@ -162,7 +160,7 @@ public abstract class AbstractTextField extends AbstractField
      * Invoked from {@link #begin(MarkupWriter)} to write out the element and attributes (typically, &lt;input&gt;). The
      * {@linkplain AbstractField#getControlName() controlName} and {@linkplain AbstractField#getClientId() clientId}
      * properties will already have been set or updated.
-     * <p/>
+     * 
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
      * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
      *

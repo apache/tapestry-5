@@ -15,6 +15,8 @@ task compileCoffeeScript(type: CompileCoffeeScript) {
     outputDir "src/main/generated/compiled-coffeescript"
 }
 
+clean.delete 'src/main/generated'
+
 sourceSets {
     main {
         output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)

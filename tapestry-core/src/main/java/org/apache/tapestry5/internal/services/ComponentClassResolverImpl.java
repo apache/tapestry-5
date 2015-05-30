@@ -414,11 +414,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         Data newData = new Data();
 
-        for (String prefix : libraryNameToPackageNames.keySet())
+        for (Map.Entry<String, List<String>> entry : libraryNameToPackageNames.entrySet())
         {
-            List<String> packages = libraryNameToPackageNames.get(prefix);
+            List<String> packages = entry.getValue();
 
-            String folder = prefix + "/";
+            String folder = entry.getKey() + "/";
 
             for (String packageName : packages)
             {
@@ -693,9 +693,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
 
-        for (String folder : libraryNameToPackageNames.keySet())
+        for (Map.Entry<String, List<String>> entry : libraryNameToPackageNames.entrySet())
         {
-            List<String> packageNames = libraryNameToPackageNames.get(folder);
+            String folder = entry.getKey();
+
+            List<String> packageNames = entry.getValue();
 
             String packageName = findCommonPackageNameForFolder(folder, packageNames);
 

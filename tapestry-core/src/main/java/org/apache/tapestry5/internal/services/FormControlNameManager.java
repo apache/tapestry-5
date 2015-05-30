@@ -34,8 +34,6 @@ public interface FormControlNameManager
     /**
      * Tells whether a given name is reserved.
      *
-     * @param string
-     * @return
      */
     boolean isReserved(String name);
 

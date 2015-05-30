@@ -162,7 +162,7 @@ public final class RegistryBuilder
         } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s", classname,
-                    ExceptionUtils.toMessage(ex), ex));
+                    ExceptionUtils.toMessage(ex)), ex);
         }
 
         return this;

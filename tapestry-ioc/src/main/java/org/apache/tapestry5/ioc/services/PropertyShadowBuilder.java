@@ -1,5 +1,3 @@
-// Copyright 2006 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,7 @@ package org.apache.tapestry5.ioc.services;
  * Creates a "shadow" of a property of an object. The shadow has the same type as the property, and delegates all method
  * invocations to the property. Each method invocation on the shadow re-acquires the value of the property from the
  * underlying object and delegates to the current value of the property.
- * <p/>
+ *
  * Typically, the object in question is another service, one with the "perthread" service lifecycle. This allows a
  * global singleton to shadow a value that is specific to the current thread (and therefore, the current request).
  */

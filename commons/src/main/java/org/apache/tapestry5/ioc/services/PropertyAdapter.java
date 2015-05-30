@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,7 +21,7 @@ import java.lang.reflect.Method;
  * Provides access to a single property within a class. Acts as an {@link org.apache.tapestry5.ioc.AnnotationProvider};
  * when searching for annotations, the read method (if present) is checked first, followed by the write method, followed
  * by the underlying field (when the property name matches the field name).
- * <p/>
+ *
  * Starting in release 5.2, this property may actually be a public field. In 5.3, it may be a public static field.
  *
  * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter

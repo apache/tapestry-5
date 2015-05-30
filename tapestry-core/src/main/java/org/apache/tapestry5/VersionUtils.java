@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ public class VersionUtils
      * Reads a version number from a properties file on the classpath.  These files are generally created by Gradle.  For
      * example, tapestry-core's properties file is <code>META-INF/gradle/org.apache.tapestry/tapestry-core/pom.properties</code>.
      * The Gradle generated properties files include the version and possibly others properties.
-     * <p/>
+     *
      * The resource is located using the Thread's context class loader.
      *
      * @param resourcePath the complete path to the resource, including a leading slash.

@@ -1,7 +1,9 @@
 package org.apache.tapestry5.plastic
 
+import spock.lang.Issue
 import testannotations.Property
 import testsubjects.AccessorsAlreadyExistSubject
+import testsubjects.AccessorsAlreadyExistSubject2;
 import testsubjects.CreateAccessorsSubject
 import testsubjects.GenericCreateAccessorsSubject
 
@@ -86,6 +88,19 @@ class FieldPropertyMethodCreation extends AbstractPlasticSpecification
         def e = thrown(IllegalArgumentException)
 
         assert e.message == "Unable to create new accessor method public java.lang.String getValue() on class testsubjects.AccessorsAlreadyExistSubject as the method is already implemented."
+    }
+
+    @Issue('https://issues.apache.org/jira/browse/TAP5-2268')
+    def "create getter that already exists with different return type"() {
+      when:
+
+      withAccessors(AccessorsAlreadyExistSubject2, PropertyAccessType.READ_ONLY)
+
+      then:
+
+      def e = thrown(IllegalArgumentException)
+
+      assert e.message == "Unable to create new accessor method public int getValue() on class testsubjects.AccessorsAlreadyExistSubject2 as the method is already implemented."
     }
 
     def "create setter that already exists"() {

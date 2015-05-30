@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,10 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @param <T>
+ * @param T
  *         the type of data in the flow
- * @param <FT>
- *         the type of flow (either Flow<T> or ZippedFlow<Tuple<T, ?>)
+ * @param FT
+ *         the type of flow (either {@code Flow<T>} or {@code ZippedFlow<Tuple<T, ?>})
  * @since 5.3
  */
 public interface FlowOperations<T, FT> extends Iterable<T>
@@ -42,7 +40,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
 
     /**
      * Applies the worker to each element in the Flow, then returns the flow for further behaviors.
-     * <p/>
+     *
      * Each is a non-lazy operation; it will fully realize the values of the Flow.
      */
     FT each(Worker<? super T> worker);
@@ -114,7 +112,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
     /**
      * Returns a new Flow with the elements in the collection appended to this Flow. This is a lazy
      * operation.
-     * <p/>
+     *
      * Note that the type of this method changed from {@code List} to {@link Collection} in Tapestry 5.4. This
      * is considered a compatible change.
      *
@@ -128,7 +126,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
      * and the first element from the Flow. The result is captured as the accumulator and passed
      * to the Reducer with the next value from the Flow, and so on. The final accumulator
      * value is returned. If the flow is empty, the initial value is returned.
-     * <p/>
+     *
      * Reducing is a non-lazy operation; it will fully realize the values of the Flow.
      */
     <A> A reduce(Reducer<A, T> reducer, A initial);

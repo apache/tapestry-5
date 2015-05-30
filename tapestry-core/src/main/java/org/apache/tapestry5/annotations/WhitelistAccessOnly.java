@@ -1,5 +1,3 @@
-// Copyright 2011, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,7 +25,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Identifies a page that should only be accessed from clients on the whitelist. This is used for
  * the  built-in {@link org.apache.tapestry5.corelib.pages.T5Dashboard} page, but can also be used in application pages.
- * <p/>
+ *
  * Tapestry does its best to make a request to a whitelist-only page that is accessed from a client not on the whitelist
  * appear to behave as if the page does not exist at all.
  *

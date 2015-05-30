@@ -123,7 +123,7 @@ public class Upload extends AbstractField
     {
         formSupport.setEncodingType(MULTIPART_ENCTYPE);
 
-        writer.element("input", "type", "file", "name", getControlName(), "id", getClientId());
+        writer.element("input", "type", "file", "name", getControlName(), "id", getClientId(), "class", cssClass);
 
         validate.render(writer);
 

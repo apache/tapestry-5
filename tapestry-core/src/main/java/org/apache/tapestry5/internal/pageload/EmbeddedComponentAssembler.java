@@ -1,5 +1,3 @@
-// Copyright 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -36,10 +34,10 @@ interface EmbeddedComponentAssembler extends Locatable
      * the latter case, the mixinId is validated (to ensure it exists). In addition, a special mixinid that matches the
      * component's class name can be used; this is necessary to disambiguate informal parameters of the component from formal mixin parameters
      * (where an unqualified name would be bound to the mixin's parameter).
-     * <p/>
+     *
      * If the name of the parameter does not match a formal parameter of the component (or mixin) and the component (or
      * mixin) does not support informal parameters, then null is returned.
-     * <p/>
+     *
      * This method should only be called at page-assembly time as it requires some data that is collected during
      * ComponentAssembly construction in order to handle published parameters of embedded components.
      *

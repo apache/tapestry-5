@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,11 +17,12 @@ import org.apache.tapestry5.ioc.ServiceLifecycle;
 import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
 
 /**
  * An optional annotation that may be placed on a service building method of a module, or on the implementation class
@@ -32,7 +31,7 @@ import java.lang.annotation.Target;
  * a service implementation to a single thread or request. Modules may define new scopes. Each scope should have a
  * corresponding {@link ServiceLifecycle} implementation. The linkage from scope name to service lifecycle occurs via a
  * contribution to the {@link ServiceLifecycleSource} service configuration.
- * <p/>
+ *
  * The annotation may also be placed directly on a service implementation class, when using service binding (via
  * the {@link ServiceBinder}).
  *

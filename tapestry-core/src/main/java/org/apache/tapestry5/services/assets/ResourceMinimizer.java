@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,15 +12,15 @@
 
 package org.apache.tapestry5.services.assets;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
+import java.io.IOException;
 
 /**
  * Certain kinds of resources can be minimized: this primarily refers to JavaScript and CSS, both of which contain
  * whitespace, comments and other features that can be reduced.
- * <p>
+ *
  * The service configuration maps a MIME content type (e.g., "text/javascript") to an appropriate implementation of this
  * interface. The master service has the @{@link Primary} marker interface.
  * 

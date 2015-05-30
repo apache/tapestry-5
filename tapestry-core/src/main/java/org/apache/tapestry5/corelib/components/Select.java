@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. Any validation
  * decorations will go around the entire &lt;select&gt; element.
- * <p/>
+ *
  * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to convert between
  * server-side values and unique client-side strings. In some cases, a {@link ValueEncoder} can be generated automatically from
  * the type of the value parameter. The {@link ValueEncoderSource} service provides an encoder in these situations; it

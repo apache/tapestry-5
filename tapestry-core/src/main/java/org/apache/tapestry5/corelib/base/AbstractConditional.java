@@ -64,10 +64,9 @@ public abstract class AbstractConditional
 
         String elementName = resources.getElementName();
 
-        renderTag = enabled && elementName != null;
-
-        if (renderTag)
+        if (enabled && elementName != null)
         {
+            renderTag = true;
             writer.element(elementName);
             resources.renderInformalParameters(writer);
         }
@@ -89,6 +88,7 @@ public abstract class AbstractConditional
         if (renderTag)
         {
             writer.end();
+            renderTag = false;
         }
     }
 

@@ -1,5 +1,3 @@
-// Copyright 2007, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -87,7 +85,6 @@ public interface ServiceBindingOptions
      * module will sometimes provide a set of default marker annotations for all services within the module, this method
      * allows that default to be extended.
      *
-     * @param <T>
      * @param marker one or more markers to add
      * @return this binding options, for further configuration
      */

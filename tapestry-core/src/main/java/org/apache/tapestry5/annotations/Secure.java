@@ -1,5 +1,3 @@
-// Copyright 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,18 +13,19 @@
 package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A marker annotation that indicates that the page in question may only be accessed via HTTPS.
- * <p>
+ *
  * Normally, this annotation is ignored in development mode and only used in production mode. This can be changed
  * via the {@link SymbolConstants#SECURE_ENABLED} configuration symbol. 
  *

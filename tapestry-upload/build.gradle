@@ -3,7 +3,7 @@ description = "File Upload component, with supporting services"
 dependencies {
   compile project(':tapestry-core')
   compile "commons-fileupload:commons-fileupload:1.3.1"
-  compile "commons-io:commons-io:2.2"
+  compile "commons-io:commons-io:2.4"
   provided "javax.servlet:servlet-api:${versions.servletapi}"
 
   testCompile project(':tapestry-test')

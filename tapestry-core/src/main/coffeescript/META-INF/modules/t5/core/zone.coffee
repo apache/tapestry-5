@@ -47,7 +47,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
 
       return zone
 
-    dom.onDocument "click", "a[data-update-zone]", ->
+    dom.onDocument "click", "a[data-update-zone]", (event) ->
 
       element = @closest "[data-update-zone]"
 
@@ -59,7 +59,8 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       if zone
         zone.trigger events.zone.refresh,  url: element.attr "href"
 
-      return false
+      event.nativeEvent.preventDefault()
+      return
 
     dom.onDocument "submit", "form[data-update-zone]", ->
 
@@ -121,7 +122,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
         success: (response) ->
           zone.trigger events.zone.update, content: response.json?.content
 
-    dom.onDocument "click", "a[data-async-trigger]", ->
+    dom.onDocument "click", "a[data-async-trigger]", (event)->
       link = @closest 'a[data-async-trigger]'
 
       link.addClass "ajax-update"
@@ -129,7 +130,9 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       ajax (link.attr "href"),
         complete: -> link.removeClass "ajax-update"
 
-      return false # cancel click event
+      event.nativeEvent.preventDefault()
+
+      return
 
     # Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
     # performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.

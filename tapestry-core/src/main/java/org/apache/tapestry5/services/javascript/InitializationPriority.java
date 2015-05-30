@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ public enum InitializationPriority
      * Provided JavaScript will be executed immediately (it is not deferred until the page loads). Execution occur via
      * JavaScript's {@code eval}, and occurs once all {@linkplain JavaScriptSupport#importJavaScriptLibrary(org.apache.tapestry5.Asset) JavaScript libraries}
      * (but not modules) for the page have been loaded.
-     * <p/>
+     *
      *
      * @deprecated Deprecated in 5.4; this is now treated as "earlier than {@linkplain #EARLY early}".
      */

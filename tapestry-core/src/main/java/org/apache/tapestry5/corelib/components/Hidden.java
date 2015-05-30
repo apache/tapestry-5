@@ -1,5 +1,3 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,7 +28,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Used to record a page property as a value into the form. The value is encoded
  * when the form is rendered, then decoded after the form is submitted back to
  * the server, and the "value" parameter updated.
- * <p/>
+ *
  * The encoding and decoding is done via a {@link org.apache.tapestry5.ValueEncoder},
  * therefore you must either bind the "encoder" parameter to a ValueEncoder or
  * use an entity type for the "value" parameter for which Tapestry can provide a

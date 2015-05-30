@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -40,7 +38,7 @@ public class PlasticUtils
      * Returns a string that can be used as part of a Java identifier and is unique
      * for this JVM. Currently returns a hexadecimal string and initialized by
      * System.nanoTime() (but both those details may change in the future).
-     * <p>
+     *
      * Note that the returned value may start with a numeric digit, so it should be used as a <em>suffix</em>, not
      * <em>prefix</em> of a Java identifier.
      * 

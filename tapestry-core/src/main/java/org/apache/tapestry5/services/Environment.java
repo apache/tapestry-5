@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +17,7 @@ import java.util.NoSuchElementException;
 /**
  * Provides access to environment objects, which are almost always provided to enclosed components by enclosing
  * components. Environmental services are a form of very late binding.
- * <p/>
+ *
  * The Environment acts like a collection of stacks. Each stack contains environmental objects of a given type. Most
  * often, a stack has zero or one elements, but on occasion, a particular component will push an override onto the stack
  * for the benefit of the components it encloses.

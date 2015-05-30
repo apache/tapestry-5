@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,19 +12,19 @@
 
 package org.apache.tapestry5;
 
-import java.io.Serializable;
-
 import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.PageRenderLinkSource;
+
+import java.io.Serializable;
 
 /**
  * A way of capturing the name of a page and the page activation context so that, at a future date,
  * the page can be invoked with that data. This kind of callback is very useful when creating more
  * complicated workflows, where access to a page is "interrupted" with some operation before
  * returning (via a callback) to the original flow.
- * <p>
+ *
  * Since the callback is serializable, it can be stored in the session.
  * 
  * @since 5.2.0

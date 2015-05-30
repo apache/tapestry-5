@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,20 +17,20 @@ import org.testng.annotations.AfterMethod;
 
 /**
  * Manages a set of EasyMock mock objects. Used as a base class for test cases.
- * <p/>
+ *
  * Extends from {@link org.testng.Assert} to bring in all the public static assert methods without requiring extra
  * imports.
- * <p/>
+ *
  * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em> mock control is used for
  * all mock objects. Standard mocks do not care about the exact order in which methods are invoked, though they are as
  * rigorous as strict mocks when checking that parameters are the correct values.
- * <p/>
+ *
  * This base class is created with the intention of use within a TestNG test suite; if using JUnit, you can get the same
  * functionality using {@link MockTester}.
- * <p/>
+ *
  * This class is thread safe (it uses a thread local to store the mock control). In theory, this should allow TestNG to
  * execute tests in parallel.
- * <p>
+ *
  * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
  * to ensure backwards compatibility.
  * 

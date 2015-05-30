@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import junit.framework.AssertionFailedError;
 import org.apache.tapestry5.services.URLEncoder;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -88,7 +87,7 @@ public class URLEncoderImplTest extends Assert
         try
         {
             encoder.decode(input);
-            throw new AssertionFailedError("This code should not be reachable.");
+            Assert.fail("This code should not be reachable.");
         }
         catch (IllegalArgumentException ex)
         {

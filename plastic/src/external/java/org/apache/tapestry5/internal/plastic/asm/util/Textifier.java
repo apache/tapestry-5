@@ -29,20 +29,13 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
+import org.apache.tapestry5.internal.plastic.asm.*;
+import org.apache.tapestry5.internal.plastic.asm.signature.SignatureReader;
+
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.Handle;
-import org.apache.tapestry5.internal.plastic.asm.Label;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.TypePath;
-import org.apache.tapestry5.internal.plastic.asm.TypeReference;
-import org.apache.tapestry5.internal.plastic.asm.signature.SignatureReader;
 
 /**
  * A {@link Printer} that prints a disassembled view of the classes it visits.
@@ -172,7 +165,7 @@ public class Textifier extends Printer {
 
     /**
      * Prints a disassembled view of the given class to the standard output.
-     * <p>
+     *
      * Usage: Textifier [-debug] &lt;binary class name or class file name &gt;
      *
      * @param args

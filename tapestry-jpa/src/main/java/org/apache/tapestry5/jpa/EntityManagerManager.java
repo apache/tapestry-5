@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,15 +12,14 @@
 
 package org.apache.tapestry5.jpa;
 
-import java.util.Map;
-
 import javax.persistence.EntityManager;
+import java.util.Map;
 
 /**
  * Manages <code>EntityManager</code>s for the current thread.
  * An <code>EntityManager</code> is created as needed and closed at the end of each request.
  *
- * <p/>
+ *
  *
  * The implementation of this service is per-thread.
  *
@@ -31,15 +28,15 @@ import javax.persistence.EntityManager;
 public interface EntityManagerManager
 {
     /**
-     * Gets the active <code>EntityManager</code> for this request, creating it as necessary.
+     * Gets the active EntityManager for this request, creating it as necessary.
      *
-     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     * @param persistenceUnitName the name of a persistence unit as defined in {@code persistence.xml}
      * @return EntityManager for the persistence unit,
      */
     EntityManager getEntityManager(String persistenceUnitName);
 
     /**
-     * Gets all active <code>EntityManager</code>s for this request, creating them as necessary.
+     * Gets all active EntityManagers for this request, creating them as necessary.
      *
      * @return Map in which persistence unit names are associated with EntityManagers
      */

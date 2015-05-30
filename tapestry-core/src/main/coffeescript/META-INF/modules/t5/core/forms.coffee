@@ -141,6 +141,10 @@ define ["./events", "./dom", "underscore"],
             # focus on it.
             focusField.focus() if focusField
 
+            # Trigger an event to inform that form validation results in error
+            where = -> "triggering validation in error event"
+            @trigger events.form.validateInError
+
             # Cancel the original submit event when there's an error
             return false
 

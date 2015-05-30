@@ -32,18 +32,18 @@ import java.util.Iterator;
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop}
  * component that adds Ajax support to handle adding new rows and removing
  * existing rows dynamically.
- * <p/>
+ *
  * This component expects that the values being iterated over are entities that
  * can be identified via a {@link org.apache.tapestry5.ValueEncoder}, therefore
  * you must either bind the "encoder" parameter to a ValueEncoder or use an
  * entity type for the "value" parameter for which Tapestry can provide a
  * ValueEncoder automatically.
- * <p/>
+ *
  * Works with {@link org.apache.tapestry5.corelib.components.AddRowLink} and
  * {@link org.apache.tapestry5.corelib.components.RemoveRowLink} components.
- * <p/>
+ *
  * The addRow event will receive the context specified by the context parameter.
- * <p/>
+ *
  * The removeRow event will receive the client-side value for the row being iterated.
  *
  * @tapestrydoc

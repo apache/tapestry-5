@@ -22,7 +22,10 @@ import org.apache.tapestry5.ioc.services.cron.PeriodicJob;
 import org.apache.tapestry5.ioc.services.cron.Schedule;
 import org.slf4j.Logger;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -358,6 +361,8 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         try
         {
             jobLock.lock();
+            // TAP5-2455
+            Set<Job> jobsToCancel = null;
 
             for (Job job : jobs)
             {
@@ -368,12 +373,26 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 
                 long jobNextExecution = job.getNextExecution();
 
-                if (jobNextExecution <= now)
+                if (jobNextExecution <= 0)
+                {
+                    if (jobsToCancel == null)
+                    {
+                        jobsToCancel = new HashSet<PeriodicExecutorImpl.Job>();
+                    }
+                    jobsToCancel.add(job);
+                } else if (jobNextExecution <= now)
                 {
                     job.start();
                 } else
                 {
                     nextExecution = Math.min(nextExecution, jobNextExecution);
+                }
+            }
+            if (jobsToCancel != null)
+            {
+                for (Job job : jobsToCancel)
+                {
+                    job.cancel();
                 }
             }
         } finally

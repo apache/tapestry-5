@@ -1,0 +1,20 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+<h1>Grid in a Loop Demo</h1>
+
+<t:loop source="1..5" value="index">
+        <table id="${containerclass}" t:type="grid" t:id="grid" source="tracks" row="track" rowsPerPage="5" t:model="model" t:mixins="initialSort" t:InitialSort.column="rating">
+            <t:parameter name="ratingheader">
+                <t:actionlink t:id="sortRating">Sort Rating</t:actionlink>
+            </t:parameter>
+            <t:parameter name="ratingcell">
+                <t:outputRating rating="track.rating"/>
+            </t:parameter>
+        </table>
+</t:loop>
+
+<p>
+    [<t:actionlink t:id="reset">reset the Grids</t:actionlink>]
+</p>
+
+</html>

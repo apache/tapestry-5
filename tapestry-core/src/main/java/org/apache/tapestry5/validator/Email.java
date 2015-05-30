@@ -1,5 +1,3 @@
-// Copyright 2008, 2012, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,12 +25,15 @@ import java.util.regex.Pattern;
 
 /**
  * A validator that checks if a given string is well-formed email address. This validator is not configurable.
- * <p/>
+ *
  * Starting with release 5.4, this validator also performs client-side validation.
  */
 public class Email extends AbstractValidator<Void, String>
 {
-    
+
+    // The client-side uses a similar RE, but converts the input to lower case before applying the pattern.
+    // See validation.coffee.
+
     private static final Pattern PATTERN = Pattern
             .compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
     
@@ -53,8 +54,8 @@ public class Email extends AbstractValidator<Void, String>
 
             writer.attributes(
                     DataConstants.VALIDATION_ATTRIBUTE, true,
-                    "data-validate-regexp", PATTERN.pattern(),
-                    "data-regexp-message", formatter.toString());
+                    "data-validate-email", true,
+                    "data-email-message", formatter.toString());
         }
         
         if (html5Support.isHtml5SupportEnabled()) {

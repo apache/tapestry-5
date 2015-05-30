@@ -35,4 +35,7 @@ https://github.com/twitter/typeahead.js
 This product includes Moment.js, distributed under the MIT License.
 https://github.com/moment/moment
 
+This product includes typeahead.js-bootstrap3.less, distributed under the MIT License.
+https://github.com/hyspace/typeahead.js-bootstrap3.less
+
 

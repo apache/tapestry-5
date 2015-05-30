@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +30,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * Renders a dropdown menu of useful options when developing. By default, the DevTool is disabled (invisible)
  * during production.
- * <p/>
+ *
  * The DevTool provides the following options:
  * <ul>
  * <li>Reset the page state, discarding any persistent page properties</li>
@@ -42,7 +40,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <li>Reload all pages and components: classes, messages, templates</li>
  * <li>Open the T5 Dashboard page in a new window</li>
  * </ul>
- * <p/>
+ *
  * Note that due to conflicts between Prototype and jQuery, the dev tool is hidden after selecting an item from the menu.
  *
  * @tapestrydoc

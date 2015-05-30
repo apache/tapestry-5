@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,7 +41,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns a string consisting of the logical name of the containing page, and the {@link #getNestedId() nested id}
      * of this component, separated by a colon. I.e., "MyPage:foo.bar.baz". For a page, returns just the page's name.
-     * <p/>
+     *
      * This value is often used to obtain an equivalent component instance in a later request.
      * 
      * @see org.apache.tapestry5.services.ComponentSource#getComponent(String)
@@ -76,7 +74,7 @@ public interface ComponentResourcesCommon extends Locatable
      * container, and so on. When a matching event handler method is located, it is invoked. If the method returns a
      * value, the value is passed to the callback (if callback is null, then it is an error for a method to return a
      * non-null value).
-     * <p/>
+     *
      * Resolution of event type to event handler methods is case insensitive.
      * 
      * @param eventType
@@ -196,27 +194,6 @@ public interface ComponentResourcesCommon extends Locatable
      * the page name and nested component id) will be encoded into a URL. A request for the URL will
      * {@linkplain #triggerEvent(String, Object[], org.apache.tapestry5.ComponentEventCallback)} trigger} the named
      * event on the
-     * component.
-     * 
-     * @param eventType
-     *            the type of event to be triggered. Event types should be Java identifiers (contain only
-     *            letters, numbers and the underscore).
-     * @param forForm
-     *            if true, the link will be used as the eventType for an HTML form submission, which may affect
-     *            what information is encoded into the link
-     * @param context
-     *            additional objects to be encoded into the path portion of the link; each is converted to a
-     *            string and URI encoded
-     * @return link object for the callback
-     * @deprecated Use {@link #createEventLink(String, Object[])} instead
-     */
-    Link createActionLink(String eventType, boolean forForm, Object... context);
-
-    /**
-     * Creates a component event request link as a callback for this component. The event type and context (as well as
-     * the page name and nested component id) will be encoded into a URL. A request for the URL will
-     * {@linkplain #triggerEvent(String, Object[], org.apache.tapestry5.ComponentEventCallback)} trigger} the named
-     * event on the
      * component. This is only used for form submission events, as extra data may be encoded in the form as hidden
      * fields.
      * 
@@ -229,41 +206,4 @@ public interface ComponentResourcesCommon extends Locatable
      * @return link object for the callback
      */
     Link createFormEventLink(String eventType, Object... context);
-
-    /**
-     * Creates a page render request link to render a specific page.
-     * 
-     * @param pageName
-     *            the logical name of the page to link to
-     * @param override
-     *            if true, the context is used even if empty (normally, the target page is allowed to passivate,
-     *            providing a context, when the provided context is empty)
-     * @param context
-     *            the activation context for the page. If omitted, the activation context is obtained from the
-     *            target page
-     * @return link for a render request to the targeted page
-     * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(String)} or
-     *             {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(String, Object[])}
-     *             instead
-     */
-    Link createPageLink(String pageName, boolean override, Object... context);
-
-    /**
-     * Creates a page render request link to render a specific page. Using a page class, rather than a page name, is
-     * more refactoring safe (in the even the page is renamed or moved).
-     * 
-     * @param pageClass
-     *            identifies the page to link to
-     * @param override
-     *            if true, the context is used even if empty (normally, the target page is allowed to passivate,
-     *            providing a context, when the provided context is empty)
-     * @param context
-     *            the activation context for the page. If omitted, the activation context is obtained from the
-     *            target page
-     * @return link for a render request to the targeted page
-     * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(Class)} or
-     *             {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(Class, Object[])}
-     *             instead
-     */
-    Link createPageLink(Class pageClass, boolean override, Object... context);
 }

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,14 +26,14 @@ import java.util.Map;
  * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
  * application or inside a <em>mapped package</em>. Page names often appear inside URLs, and component types often
  * appear in component templates (when specifying the type of an embedded component).
- * <p/>
+ *
  * The service is configured using a collection of {@link LibraryMapping}s. Each mapping maps a prefix, such as "core"
  * to a root package name, such as "org.apache.tapestry5.corelib". The root package is expected to have sub-packages:
  * "pages", "components", "mixins" and "base" ("base" is for base classes).
- * <p/>
+ *
  * The resolver performs a search of the classpath (via {@link ClassNameLocator}), to build up a set of case-insensitive
  * maps from logical page name, component type, or mixin type to fully qualified class name.
- * <p/>
+ *
  * Certain ambiguities occur if mapped packages overlap, either in terms of the the prefixes or the package names. Keep
  * things clearly separate to avoid lookup problems.
  */
@@ -130,7 +128,7 @@ public interface ComponentClassResolver
     /**
      * A mapping from virtual folder name to a package name (used for converting classpath {@link Asset}s
      * to client URLs). This is derived from the contributed {@link LibraryMapping}s.
-     * <p/>
+     *
      * It is allowed to contribute multiple root packages as a single folder name. In this case, the best common package
      * name is used. For example, if both <code>com.example.main</code> and <code>com.example.extras</code> is mapped to
      * folder "example", then the package mapping for "example" will be <code>com.example</code>.

@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -27,10 +25,10 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * be placed on a class, in which case importing will occur as part of the {@link SetupRender} render phase.
  * Alternately, the annotation maybe placed on any method (though typically it will be placed on a render phase
  * method) and the import operations will be associated of that method.
- * <p/>
+ *
  * Use of this annotation is translated into invocations against the {@link org.apache.tapestry5.services.javascript.JavaScriptSupport}
  * environmental; all imports there will implicitly import the core stack.
- * <p/>
+ *
  * Assets are localized during the {@link org.apache.tapestry5.runtime.PageLifecycleAdapter#containingPageDidLoad()} lifecycle
  * method.
  *
@@ -75,7 +73,7 @@ public @interface Import
      * term is the library name (or "app" for the application), e.g. <code>flash/gordon</code> would map to the file
      * <code>META-INF/modules/flash/gordon.js</code>.  Alternately a function name can be included, after a colon seperator.
      * e.g., <code>flash/gordon:setup</code>.
-     * <p/>
+     *
      * Module initializations specified this way may not have an parameters, so they are typically doing single-use
      * setup.
      *

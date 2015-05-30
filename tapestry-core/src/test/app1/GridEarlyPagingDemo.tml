@@ -1,0 +1,10 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Grid Demo</h1>
+
+    <table t:type="grid" t:id="grid" source="tracks">
+
+    </table>
+
+
+</html>

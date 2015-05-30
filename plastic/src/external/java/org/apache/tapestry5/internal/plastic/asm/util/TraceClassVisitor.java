@@ -29,24 +29,18 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
-import java.io.PrintWriter;
+import org.apache.tapestry5.internal.plastic.asm.*;
 
-import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
-import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.TypePath;
+import java.io.PrintWriter;
 
 /**
  * A {@link ClassVisitor} that prints the classes it visits with a
  * {@link Printer}. This class visitor can be used in the middle of a class
  * visitor chain to trace the class that is visited at a given point in this
  * chain. This may be useful for debugging purposes.
- * <p>
+ *
  * The trace printed when visiting the <tt>Hello</tt> class is the following:
- * <p>
+ *
  * <blockquote>
  * 
  * <pre>
@@ -64,7 +58,7 @@ import org.apache.tapestry5.internal.plastic.asm.TypePath;
  * </pre>
  * 
  * </blockquote> where <tt>Hello</tt> is defined by:
- * <p>
+ *
  * <blockquote>
  * 
  * <pre>

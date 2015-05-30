@@ -1,5 +1,3 @@
-// Copyright 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,11 +26,11 @@ import java.util.Date;
  * Used to present an interval value using Moment.js's from() or fromNow() functions. The interval
  * is determined in terms of a start and end date; either (but not both) may be omitted, in which
  * case the client will dynamically update the element.  In that case, the value will live update, approximately every second.
- * <p/>
+ *
  * This component will render an empty element. The element will match the template element,
  * or a "span" if the template did not provide an element. Informal parameters will be rendered
  * into the element.
- * <p/>
+ *
  * When the end date is after the start date, the rendered text will be prefixed with "in".
  * When the end date precedes the start date, the rendered text will be suffixed with "ago".
  * The plain parameter is used to turn off the prefix or suffix.

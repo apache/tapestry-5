@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -138,7 +136,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @param parameterName
      *        used to select the parameter (case is ignored)
      * @return the generic type of the bound parameter, or null if the parameter is not bound
-     * @see Binding#getBindingGenericType()
+     * @see Binding#getBindingType()
      */
     Type getBoundGenericType(String parameterName);
 

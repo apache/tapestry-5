@@ -1,5 +1,3 @@
-// Copyright 2007-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,6 +18,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -37,11 +36,11 @@ import java.util.Locale;
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
  * clients can simply type into a text field.
- * <p/>
+ *
  * One aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
  * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
  * the popup). Weird and inefficient, but easier than writing client-side JavaScript for that purpose.
- * <p/>
+ *
  * Tapestry's DateField component is a wrapper around <a
  * href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX DatePicker</a>.
  *
@@ -68,12 +67,22 @@ public class DateField extends AbstractField
      */
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private DateFormat format;
-    
+
+    /**
+     * Allows the type of field to be output; normally this is "text", but can be updated to "date" or "datetime"
+     * as per the HTML 5 specification.
+     *
+     * @since 5.4
+     */
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL, value = "text")
+    private String type;
+
     /**
      * When the <code>format</code> parameter isn't used, this parameter defines whether the
      * <code>DateFormat</code> created by this component will be lenient or not.
      * The default value of this parameter is the value of the {@link SymbolConstants#LENIENT_DATE_FORMAT}
      * symbol.
+     *
      * @see DateFormat#setLenient(boolean)
      * @see SymbolConstants#LENIENT_DATE_FORMAT
      * @since 5.4
@@ -95,7 +104,7 @@ public class DateField extends AbstractField
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
-    
+
     /**
      * Icon used for the date field trigger button. This was used in Tapestry 5.3 and earlier and is now ignored.
      *
@@ -118,7 +127,7 @@ public class DateField extends AbstractField
 
     @Inject
     private DeprecationWarning deprecationWarning;
-    
+
     @Inject
     @Symbol(SymbolConstants.LENIENT_DATE_FORMAT)
     private boolean lenientDateFormatSymbolValue;
@@ -144,7 +153,7 @@ public class DateField extends AbstractField
             String pattern = simpleDateFormat.toPattern();
 
             String revised = pattern.replaceAll("([^y])yy$", "$1yyyy");
-            
+
             final SimpleDateFormat revisedDateFormat = new SimpleDateFormat(revised);
             revisedDateFormat.setLenient(lenient);
             return revisedDateFormat;
@@ -160,8 +169,9 @@ public class DateField extends AbstractField
     {
         return defaultProvider.defaultValidatorBinding("value", resources);
     }
-    
-    final boolean defaultLenient() {
+
+    final boolean defaultLenient()
+    {
         return lenientDateFormatSymbolValue;
     }
 
@@ -235,9 +245,9 @@ public class DateField extends AbstractField
             writer.attributes("class", "input-group");
         }
 
-        writer.element("input",
+        Element field = writer.element("input",
 
-                "type", hideTextField ? "hidden" : "text",
+                "type", type,
 
                 "class", cssClass,
 
@@ -246,6 +256,11 @@ public class DateField extends AbstractField
                 "id", clientId,
 
                 "value", value);
+
+        if (hideTextField)
+        {
+            field.attribute("class", "hide");
+        }
 
         writeDisabled(writer);
 

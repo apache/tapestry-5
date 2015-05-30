@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * replaced, the value is the replacement.
  *
  * @since 5.4
- * @see org.apache.tapestry5.services.ComponentClassResolver.
+ * @see org.apache.tapestry5.services.ComponentClassResolver
  */
 @UsesMappedConfiguration(key = Class.class, value = Class.class)
 public interface ComponentOverride

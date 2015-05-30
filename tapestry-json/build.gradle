@@ -3,7 +3,6 @@ description = "Repackaged, improved (and tested) version of code originally from
 dependencies {
 
     provided project(':tapestry-ioc')
-    testCompile "org.spockframework:spock-core:${versions.spock}"
 }
 
 test {

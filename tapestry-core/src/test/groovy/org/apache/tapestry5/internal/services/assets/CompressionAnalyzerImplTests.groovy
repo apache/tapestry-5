@@ -38,4 +38,11 @@ class CompressionAnalyzerImplTests extends Assert  {
 
         assertEquals false, ca.isCompressable("image/png")
     }
+
+    @Test
+    void most_specific_match_wins() {
+        def ca = new CompressionAnalyzerImpl(["image/*": false, "image/svg" : true])
+
+        assertEquals true, ca.isCompressable("image/svg")
+    }
 }

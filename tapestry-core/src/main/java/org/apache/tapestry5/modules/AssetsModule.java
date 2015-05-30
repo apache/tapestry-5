@@ -217,6 +217,7 @@ public class AssetsModule
      * <li>image/jpeg</li>
      * <li>image/gif</li>
      * <li>image/png</li>
+     * <li>image/svg+xml</li>
      * <li>application/x-shockwave-flash</li>
      * <li>application/font-woff</li>
      * <li>application/x-font-ttf</li>
@@ -227,6 +228,7 @@ public class AssetsModule
     public void disableCompressionForImageTypes(MappedConfiguration<String, Boolean> configuration)
     {
         configuration.add("image/*", false);
+        configuration.add("image/svg+xml", true);
         configuration.add("application/x-shockwave-flash", false);
         configuration.add("application/font-woff", false);
         configuration.add("application/x-font-ttf", false);
@@ -324,6 +326,7 @@ public class AssetsModule
      * <dt>AppCatalog</dt>
      * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
      * <dt>
+     *     </dl>
      *
      * @since 5.2.0
      */

@@ -26,10 +26,10 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * Method annotation used for methods that should be invoked when the page is first attached to a request. This is
  * useful for initializations that should occur on each request that involves the page. Often, such initializations will
  * be balanced by cleanups when the page is detached.
- * <p/>
+ *
  * PageAttached methods should take no parameters and return void. They must either have this annotation, or be named
  * "pageAttached".
- * <p/>
+ *
  * To be clear: methods with this annotation (or name) are still invoked even in Tapestry 5.2, which does away with
  * the page pool.
  *

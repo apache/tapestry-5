@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,25 +17,25 @@ package org.apache.tapestry5;
  * strings (typically IDs) and back. This mechanism is widely used in Tapestry
  * to allow you to work more seamlessly with objects rather than manually
  * managing the encoding and decoding process throughout your application.
- * <p/>
+ *
  * Tapestry uses a ValueEncoder when generating an
  * {@link org.apache.tapestry5.EventContext} as part of a URL, and when
  * components (such as {@link org.apache.tapestry5.corelib.components.Select})
  * need to generate unique client-side strings to be rendered within form
  * elements.
- * <p/>
+ *
  * Tapestry can automatically generate ValueEncoders for enums as well as
  * Collections of any object types for which a coercion can be found from a
  * formatted String, such as primitives, primitive wrappers, Dates, Calendars,
  * "name=value" strings, and any types for which a {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer
  * custom type coercion} has been contributed.
- * <p/>
+ *
  * Custom ValueEncoder implementations will need to be supplied for entity type
  * objects. In such cases the {@link #toClient(Object)} method typically returns
  * an object's database primary key, and the {@link #toValue(String)}
  * re-acquires the corresponding entity object, perhaps by doing a database
  * lookup by that ID.
- * <p/>
+ *
  * Some optional modules, such as Tapestry's own Hibernate and JPA modules, can
  * automatically create a ValueEncoder for each of your entity types and then
  * configure Tapestry to use them whenever a ValueEncoder is needed for those

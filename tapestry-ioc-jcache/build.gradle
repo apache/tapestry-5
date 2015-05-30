@@ -5,8 +5,6 @@ description = "JCache (JSR 107) integration for Tapestry-IoC"
 
 //apply plugin: JavaPlugin
 
-buildDir = 'target/gradle-build'
-       
 project.ext.libraryVersions = [
     jcache: '1.0.0',
 ]
@@ -21,8 +19,17 @@ dependencies {
     testRuntime "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
 }
 
-jar {	
-	manifest {	
+jar {
+	manifest {
 		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
 	}
+}
+
+test {
+  useJUnit()
+
+  // those tests do not work with JDK 6 (java.lang.UnsupportedClassVersionError)
+  exclude '**/InterceptionUsingDefaultCacheNameTest.class',
+   '**/InterceptionCacheNameOnEachMethodTest.class',
+   '**/InterceptionUsingCacheConfigTest.class'
 }

@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,8 +20,8 @@ import org.apache.tapestry5.json.JSONObject;
  * Defines an Ajax-oriented partial page render, wherein a render of a portion of a page occurs, and the content is
  * stored into a key ("content") of a {@link org.apache.tapestry5.json.JSONObject}, which is sent to the client side as
  * the final response.  Client-side JavaScript receives this reply and uses it to update a portion of the page.
- * <p/>
- * <p/>
+ *
+ *
  * The PartialMarkupRenderer service takes an ordered configuration of {@link PartialMarkupRendererFilter}s.  It can be
  * selected using the {@link org.apache.tapestry5.ioc.annotations.Primary} marker annotation.
  */

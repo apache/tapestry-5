@@ -1,5 +1,3 @@
-// Copyright 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,17 +20,17 @@ import java.util.Locale;
 public class LocaleUtils
 {
     /**
-     * <p>Converts a String to a Locale.</p> <p/> <p>This method takes the string format of a locale and creates the
-     * locale object from it.</p> <p/>
+     * Converts a String to a Locale.  This method takes the string format of a locale and creates the
+     * locale object from it.
      * <pre>
      *   LocaleUtils.toLocale("en")         = new Locale("en", "")
      *   LocaleUtils.toLocale("en_GB")      = new Locale("en", "GB")
      *   LocaleUtils.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")   (#)
      * </pre>
-     * <p/> <p>(#) The behaviour of the JDK variant constructor changed between JDK1.3 and JDK1.4. In JDK1.3, the
+     *  (#) The behaviour of the JDK variant constructor changed between JDK1.3 and JDK1.4. In JDK1.3, the
      * constructor upper cases the variant, in JDK1.4, it doesn't. Thus, the result from getVariant() may vary depending
-     * on your JDK.</p> <p/> <p>This method validates the input strictly. The language code must be lowercase. The
-     * country code must be uppercase. The separator must be an underscore. The length must be correct. </p>
+     * on your JDK.  This method validates the input strictly. The language code must be lowercase. The
+     * country code must be uppercase. The separator must be an underscore. The length must be correct.
      *
      * @param input the locale String to convert, null returns null
      * @return a Locale, null if null input

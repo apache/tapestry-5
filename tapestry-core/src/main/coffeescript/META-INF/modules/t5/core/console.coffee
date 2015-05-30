@@ -1,5 +1,3 @@
-# Copyright 2012-2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,7 +16,14 @@
 define ["./dom", "underscore", "./bootstrap"],
   (dom, _, { glyph }) ->
 
-    nativeConsole = {}
+    nativeConsole = null
+
+    try
+      # FireFox will throw an exception if you even access the console object and it does
+      # not exist. Wow!
+      nativeConsole = window.console or {}
+    catch e
+
     floatingConsole = null
     messages = null
 
@@ -52,13 +57,6 @@ define ["./dom", "underscore", "./bootstrap"],
           #{glyph icon} #{label}
         </button>
       """
-
-
-    try
-      # FireFox will throw an exception if you even access the console object and it does
-      # not exist. Wow!
-      nativeConsole = console
-    catch e
 
     # _internal_: displays the message inside the floating console, creating the floating
     # console as needed.
@@ -153,12 +151,16 @@ define ["./dom", "underscore", "./bootstrap"],
 
           return unless forceFloating
 
-        if _.isFunction consolefn
+        if window.console and (_.isFunction consolefn)
           # Use the available native console, calling it like an instance method
-          consolefn.call console, message
-        else
-          # And IE just has to be different. The properties of console are callable, like functions,
-          # but aren't proper functions that work with `call()` either.
+          consolefn.call window.console, message
+          return
+
+        # And IE just has to be different. The properties of console are callable, like functions,
+        # but aren't proper functions that work with `call()` either.
+        # On IE8, the console object is undefined unless debugging tools are enabled.
+        # In that case, nativeConsole will be an empty object.
+        if consolefn
           consolefn message
 
         return
@@ -172,13 +174,16 @@ define ["./dom", "underscore", "./bootstrap"],
       # in production mode).
       debugEnabled: (document.documentElement.getAttribute "data-debug-enabled")?
 
+    noop = ->
+
     # When debugging is not enabled, then the debug function becomes a no-op.
     exports.debug =
       if exports.debugEnabled
         # If native console available, go for it.  IE doesn't have debug, so we use log instead.
-        level "debug", (nativeConsole.debug or nativeConsole.log)
+        # Add a special noop case for IE8, since IE8 is just crazy.
+        level "debug", (nativeConsole.debug or nativeConsole.log or noop)
       else
-        ->
+        noop
 
     # This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
     # and/or Selenium, it is very useful to present debugging data right on the page.

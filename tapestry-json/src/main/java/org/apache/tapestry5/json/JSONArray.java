@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -45,16 +43,16 @@ import java.util.List;
  * accessing the values by index, and {@code put} methods for adding or replacing values. The values can be any of
  * these types: {@code Boolean}, {@code JSONArray}, {@code JSONObject}, {@code Number},
  * {@code String}, or the {@code JSONObject.NULL object}.
- * <p/>
+ *
  * The constructor can convert a JSON text into a Java object. The {@code toString} method converts to JSON text.
- * <p/>
+ *
  * A {@code get} method returns a value if one can be found, and throws an exception if one cannot be found. An
  * {@code opt} method returns a default value instead of throwing an exception, and so is useful for obtaining
  * optional values.
- * <p/>
+ *
  * The generic {@code get()} and {@code opt()} methods return an object which you can cast or query for type.
  * There are also typed {@code get} and {@code opt} methods that do type checking and type coersion for you.
- * <p/>
+ *
  * The texts produced by the {@code toString} methods strictly conform to JSON syntax rules. The constructors are
  * more forgiving in the texts they will accept:
  * <ul>
@@ -104,7 +102,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Create a new array, and adds all values fro the iterable to the array (using {@link #putAll(Iterable)}.
-     * <p/>
+     *
      * This is implemented as a static method so as not to break the semantics of the existing {@link #JSONArray(Object...)} constructor.
      * Adding a constructor of type Iterable would change the meaning of <code>new JSONArray(new JSONArray())</code>.
      *

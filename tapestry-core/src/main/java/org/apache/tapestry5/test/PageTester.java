@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -42,7 +40,7 @@ import java.util.Map;
  * You can ask it to render a certain page and check the DOM object created. You can also ask it to click on a link
  * element in the DOM object to get the next page. Because no servlet container is required, it is very fast and you
  * can directly debug into your code in your IDE.
- * <p/>
+ *
  * When using the PageTester in your tests, you should add the {@code org.apache.tapestry:tapestry-test-constants}
  * module as a dependency.
  */

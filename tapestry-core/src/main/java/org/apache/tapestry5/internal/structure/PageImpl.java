@@ -19,7 +19,7 @@ import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
@@ -75,7 +75,7 @@ public class PageImpl implements Page
      * first needed,
      * discarded at the end of the request.
      */
-    private final PerThreadValue<PersistentFieldBundle> fieldBundle;
+    private final ObjectCreator<PersistentFieldBundle> fieldBundle;
 
     private static final Pattern SPLIT_ON_DOT = Pattern.compile("\\.");
 
@@ -96,7 +96,13 @@ public class PageImpl implements Page
         this.selector = selector;
         this.persistentFieldManager = persistentFieldManager;
 
-        fieldBundle = perThreadManager.createValue();
+        fieldBundle = perThreadManager.createValue(new ObjectCreator<PersistentFieldBundle>() {
+            @Override
+            public PersistentFieldBundle createObject() {
+                return PageImpl.this.persistentFieldManager.gatherChanges(PageImpl.this.name);
+            }
+        });
+
 
         exactParameterCountMatch = metaDataLocator.findMeta(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, name, Boolean.class);
     }
@@ -262,12 +268,7 @@ public class PageImpl implements Page
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (!fieldBundle.exists())
-        {
-            fieldBundle.set(persistentFieldManager.gatherChanges(name));
-        }
-
-        return fieldBundle.get().getValue(nestedId, fieldName);
+        return fieldBundle.createObject().getValue(nestedId, fieldName);
     }
 
     public void discardPersistentFieldChanges()

@@ -46,12 +46,12 @@ public class TapestryConstants
     /**
      * Name of a request attribute that contains an {@link org.apache.tapestry5.ioc.IOOperation}
      * used to render the response. The operation should return void.
-     * <p/>
+     *
      * Implementations of {@link org.apache.tapestry5.services.ComponentEventResultProcessor}
      * will store a response rendering operation into the request; the operation, if present,
      * will be executed as the first filter inside the
      * {@link org.apache.tapestry5.services.ComponentRequestHandler} pipeline.
-     * <p/>
+     *
      * This approach is recommended for any "complex" rendering that involves components or pages.
      * It is optional for other types.
      *

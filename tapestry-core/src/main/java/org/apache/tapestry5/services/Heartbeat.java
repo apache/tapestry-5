@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.annotations.HeartbeatDeferred;
  * component may add a command to be executed "{@linkplain #end() at the end of the heartbeat}". The classic example of
  * this is a Label and the field it labels; since we don't know which order the two will render, we can't tell if the
  * field's id is correct until after both have rendered.
- * <p/>
+ *
  * The Heartbeat is injected into components via the {@link org.apache.tapestry5.annotations.Environmental} annotation.
  */
 public interface Heartbeat

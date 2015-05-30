@@ -1,5 +1,3 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,7 +22,7 @@ import java.util.List;
 /**
  * Extra assertions on top of the standard set, packaged as a base class for easy referencing in tests. Also,
  * utilities for instantiation objects and setting and reading private fields of those objects.
- * <p>
+ *
  * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
  * to ensure backwards compatibility.
  * 

@@ -1,5 +1,3 @@
-// Copyright 2006 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -25,7 +23,7 @@ public interface RenderCommand
      * Invoked on an object to request that it render itself. This involves a mix of invoking methods on the writer, and
      * queueing up additional commands (often, representing children of the object that was invoked) to perform
      * additional rendering.
-     * <p/>
+     *
      * In this way, rendering is a tail recursive algorithm, but is not implemented using tail recursion.
      */
     void render(MarkupWriter writer, RenderQueue queue);

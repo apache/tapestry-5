@@ -1,5 +1,3 @@
-// Copyright 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +17,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 /**
  * Used globally to track what compatibility traits are enabled.  By default, in Tapestry 5.4,
  * all traits are enabled unless explicitly disabled. This behavior may change in Tapestry 5.5.
- * <p/>
+ *
  * The configuration allows traits to be explicitly enabled or disabled.
  *
  * @since 5.4

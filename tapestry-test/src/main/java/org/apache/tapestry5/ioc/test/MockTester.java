@@ -1,5 +1,3 @@
-// Copyright 2007, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +20,7 @@ import org.easymock.IMocksControl;
  * suite. A <em>single</em> standard mock control is used for all mock instances. The control does not care about
  * execution order, but will balk at any unexpected method invocations. This class is thread safe (it used a thread
  * local to store the mock control).
- * <p>
+ *
  * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
  * to ensure backwards compatibility.
  * @deprecated In 5.4, with no replacement

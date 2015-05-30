@@ -29,18 +29,12 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
+import org.apache.tapestry5.internal.plastic.asm.*;
+
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.Handle;
-import org.apache.tapestry5.internal.plastic.asm.Label;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.TypePath;
 
 /**
  * A {@link Printer} that prints the ASM code to generate the classes if visits.
@@ -116,7 +110,7 @@ public class ASMifier extends Printer {
     /**
      * Prints the ASM source code to generate the given class to the standard
      * output.
-     * <p>
+     *
      * Usage: ASMifier [-debug] &lt;binary class name or class file name&gt;
      * 
      * @param args

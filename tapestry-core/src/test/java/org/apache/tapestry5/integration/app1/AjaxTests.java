@@ -26,9 +26,22 @@ public class AjaxTests extends App1TestCase
 
         // And that's as far as we can go currently, because
         // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
-        
+
         // also test Autocomplete with context
-        
+
+    }
+
+    @Test
+    // TAP5-2440
+    public void autocomplete_mixin_on_required_field()
+    {
+        openLinks("Autocomplete Mixin Demo");
+
+        type("required", "foo");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("required: foo");
     }
 
     @Test
@@ -202,7 +215,7 @@ public class AjaxTests extends App1TestCase
 
         assertText("sum", "0.0");
     }
-    
+
     @Test
     public void remove_ajaxformloop_values_using_buttons_with_nested_elements()
     {

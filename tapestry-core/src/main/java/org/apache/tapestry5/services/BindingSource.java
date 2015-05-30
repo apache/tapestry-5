@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +29,7 @@ public interface BindingSource
      * BindingFactory}, which receives the description, the expression (after the prefix), and the location. If the
      * prefix doesn't exist, or if there's no prefix, then the factory for the default prefix (often "literal") is used
      * (and passed the full prefix).
-     * <p/>
+     *
      * The binding represents a connection between the container and the component (the component is usually the child
      * of the container, though in a few cases, it is the component itself). In most cases, the expression is evaluated
      * in terms of the resources of the <em>container</em> and the component is ignored.

@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,12 +17,12 @@ import org.apache.tapestry5.dom.Element;
 /**
  * An object responsible for performing decorations around fields and field labels. The decorator is notified at
  * intervals by the fields and labels.
- * <p/>
+ *
  * In most western languages (written left to right) the label will render before the field, so the properties of the
  * Field may not be set yet (or may reflect a previous looping's rendering). It may be necessary to {@linkplain
  * org.apache.tapestry5.services.Heartbeat#defer(Runnable)} defer any rendering} until after the Label and the Field have
  * both had their change to initialize and render.
- * <p/>
+ *
  * Modern HTML and CSS, especially under HTML5 and CSS3, really makes this pointless; it is possible to handle all
  * of these issues directly in the client. ValidationDecorator will be supported in Tapestry 5.4,
  * but the default implementation will be changed to do nothing.

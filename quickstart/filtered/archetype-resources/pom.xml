@@ -25,14 +25,11 @@
         </dependency>
 
 
-        <!-- Uncomment this to add support resource minification and runtime compilation -->
-        <!--
         <dependency>
             <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-yuicompressor</artifactId>
+            <artifactId>tapestry-webresources</artifactId>
             <version>${D}{tapestry-release-version}</version>
         </dependency>
-        -->
 
         <!-- Uncomment this to add support for file uploads: -->
         <!--
@@ -50,13 +47,6 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${D}{testng-release-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>${D}{easymock-release-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -137,6 +127,11 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
 
     <repositories>
 
+      <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+
         <!-- This repository is only needed when the Tapestry version is a preview release, rather
              than a final release. -->
         <repository>
@@ -149,7 +144,6 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <tapestry-release-version>@tapestryReleaseVersion@</tapestry-release-version>
         <servlet-api-release-version>@servletApiReleaseVersion@</servlet-api-release-version>
         <testng-release-version>@testngReleaseVersion@</testng-release-version>
-        <easymock-release-version>@easymockReleaseVersion@</easymock-release-version>
         <slf4j-release-version>@slf4jReleaseVersion@</slf4j-release-version>
 
     </properties>

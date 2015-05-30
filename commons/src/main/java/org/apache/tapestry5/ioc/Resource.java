@@ -21,7 +21,7 @@ import java.util.Locale;
  * Represents a resource on the server that may be used for server side processing, or may be exposed to the client
  * side. Generally, this represents an abstraction on top of files on the class path and files stored in the web
  * application context.
- * <p/>
+ *
  * Resources are often used as map keys; they should be immutable and should implement hashCode() and equals().
  */
 public interface Resource
@@ -30,7 +30,7 @@ public interface Resource
     /**
      * Returns true if the resource exists; if a stream to the content of the file may be opened. A resource exists
      * if {@link #toURL()} returns a non-null value. Starting in release 5.3.4, the result of this is cached.
-     * <p/>
+     *
      * Starting in 5.4, some "virtual resources", may return true even though {@link #toURL()} returns null.
      *
      * @return true if the resource exists, false if it does not
@@ -71,7 +71,7 @@ public interface Resource
     /**
      * Returns a Resource based on a relative path, relative to the folder containing the resource. Understands the "."
      * (current folder) and ".." (parent folder) conventions, and treats multiple sequential slashes as a single slash.
-     * <p/>
+     *
      * Virtual resources (resources fabricated at runtime) return themselves.
      */
     Resource forFile(String relativePath);
@@ -94,14 +94,14 @@ public interface Resource
 
     /**
      * Returns the file portion of the Resource path, everything that follows the final forward slash.
-     * <p/>
+     *
      * Starting in 5.4, certain kinds of "virtual resources" may return null here.
      */
     String getFile();
 
     /**
      * Return the path (the combination of folder and file).
-     * <p/>
+     *
      * Starting in 5.4, certain "virtual resources", may return an arbitrary value here.
      */
     String getPath();

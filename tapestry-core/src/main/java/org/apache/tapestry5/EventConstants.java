@@ -1,5 +1,3 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,7 +12,6 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentSource;
@@ -169,7 +166,9 @@ public class EventConstants
     /**
      * Event triggered by an {@link org.apache.tapestry5.corelib.mixins.Autocomplete} mixin to
      * request completions of
-     * the current input. The context is the partial string provided by the client.
+     * the current input. The first value in the context is the input string; additional values
+     * in the context parameter of the {@link org.apache.tapestry5.corelib.mixins.Autocomplete}
+     * component.
      *
      * @since 5.1.0.4
      */

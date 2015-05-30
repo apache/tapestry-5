@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -255,11 +253,11 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
      * Here's the real meat; we do a search of the space to find coercions, or a system of
      * coercions, that accomplish
      * the desired coercion.
-     * <p/>
+     *
      * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance lists could be
      * cached. Further, there's probably more ways to early prune the search. However, even with dozens or perhaps
      * hundreds of tuples, I suspect the search will still grind to a conclusion quickly.
-     * <p/>
+     *
      * The order of operations should help ensure that the most efficient tuple chain is located. If you think about how
      * tuples are added to the queue, there are two factors: size (the number of steps in the coercion) and
      * "class distance" (that is, number of steps up the inheritance hiearchy). All the appropriate 1 step coercions
@@ -267,7 +265,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
      * in class distance order. By the time we reach some of those, we'll have begun queueing up the 3 step coercions, and
      * so forth, until we run out of input tuples we can use to fabricate multi-step compound coercions, or reach a
      * final response.
-     * <p/>
+     *
      * This does create a good number of short lived temporary objects (the compound tuples), but that's what the GC is
      * really good at.
      *

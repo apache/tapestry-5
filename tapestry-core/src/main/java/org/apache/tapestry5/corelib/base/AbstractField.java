@@ -120,7 +120,7 @@ public abstract class AbstractField implements Field
      * bound (or null) and {@link org.apache.tapestry5.services.javascript.JavaScriptSupport#allocateClientId(org.apache.tapestry5.ComponentResources)}
      * is used to generate a unique client-id based on the component's id. In some cases, when creating client-side
      * behaviors, it is useful to explicitly set a unique id for an element using this parameter.
-     * <p/>
+     * 
      * Certain values, such as "submit", "method", "reset", etc., will cause client-side conflicts and are not allowed; using such will
      * cause a runtime exception.
      */
@@ -131,10 +131,10 @@ public abstract class AbstractField implements Field
      * A rarely used option that indicates that the actual client id should start with the clientId parameter (if non-null)
      * but should still pass that Id through {@link org.apache.tapestry5.services.javascript.JavaScriptSupport#allocateClientId(String)}
      * to generate the final id.
-     * <p/>
+     * 
      * An example of this are the components used inside a {@link org.apache.tapestry5.corelib.components.BeanEditor} which
      * will specify a clientId (based on the property name) but still require that it be unique.
-     * <p/>
+     * 
      * Defaults to false.
      *
      * @since 5.4
@@ -194,7 +194,7 @@ public abstract class AbstractField implements Field
 
         assignedClientId = allocateClientId();
 
-        String controlName = formSupport.allocateControlName(assignedClientId);
+        String controlName = formSupport.allocateControlName(resources.getId());
 
         formSupport.storeAndExecute(this, new Setup(controlName));
         formSupport.store(this, PROCESS_SUBMISSION_ACTION);

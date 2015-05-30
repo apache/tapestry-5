@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 /**
  * Provides access to user defined lifecycles (beyond the two built-in lifecycles: "singleton" and "primitive"). The
  * user defined lifecycles are contributed into the service's configuration.
- * <p/>
+ *
  * Note that the default scope {@linkplain org.apache.tapestry5.ioc.ScopeConstants#DEFAULT "singleton"} is special and
  * not a contribution.
  */

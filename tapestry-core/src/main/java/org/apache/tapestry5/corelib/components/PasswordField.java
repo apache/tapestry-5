@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * A version of {@link TextField}, but rendered out as an &lt;input type="password"&gt; element. Further, the output
  * value for a PasswordField is always blank.  When the value provided to the PasswordField is blank, it does not update
  * its property (care should be taken that the "required" validator not be used in that case).
- * <p/>
+ *
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  * 

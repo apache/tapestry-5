@@ -45,4 +45,16 @@ class AjaxGroovyTests extends App1TestCase {
         assertText "css=#target > p", "You submitted the form."
     }
 
+    @Test
+    void ajax_form_validation() {
+        openLinks "Ajax Validation"
+
+        click SUBMIT
+
+        waitForAjaxRequestsToComplete()
+
+        assertText "css=.form-group.has-error .help-block", "Server-side validation error."
+
+    }
+
 }

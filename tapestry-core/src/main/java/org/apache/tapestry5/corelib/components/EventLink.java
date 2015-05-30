@@ -1,5 +1,3 @@
-// Copyright 2008, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,11 +20,11 @@ import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
 
 /**
  * A close relative of {@link org.apache.tapestry5.corelib.components.ActionLink} except in two ways.
- * <p/>
+ *
  * First, the event that it triggers is explicitly controlled, rather than always "action".
- * <p/>
+ *
  * Second, the event is triggered in its container.
- * <p/>
+ *
  * This allows slightly shorter URLs but also allows multiple components within the same container to generate identical
  * URLs for common actions.
  * @tapestrydoc

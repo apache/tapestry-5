@@ -1,5 +1,3 @@
-// Copyright 2010-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,11 +27,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * Must be enclosed by a
  * {@link org.apache.tapestry5.corelib.components.Form} component and assumes the field and the Error component
  * are enclosed by a {@code <div class="form-group">}.
- * <p/>
+ *
  * It is acceptable to include multiple Errors components for a single field; this is sometimes necessary
  * when creating a responsive layout - which should probably ensure that only one of the Errors is
  * visible at any time.
- * <p/>
+ *
  * Errors is optional, and Tapestry's client-side logic will do a reasonable job of placing a help block
  * dynamically when a validation error must be presented; this component is intended for use when the default logic
  * doesn't place the help block in the right spot.

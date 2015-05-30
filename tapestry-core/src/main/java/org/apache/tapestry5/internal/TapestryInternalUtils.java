@@ -268,7 +268,7 @@ public class TapestryInternalUtils
 
     /**
      * Converts an enum to a label string, allowing for overrides from a message catalog.
-     * <p/>
+     *
      * <ul>
      * <li>As key <em>prefix</em>.<em>name</em> if present. Ex: "ElementType.LOCAL_VARIABLE"
      * <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".

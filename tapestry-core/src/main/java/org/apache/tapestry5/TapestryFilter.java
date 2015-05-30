@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -38,14 +36,14 @@ import java.io.IOException;
  * that are relevant to Tapestry, and lets the servlet container handle the rest. It is also
  * responsible for
  * initializing Tapestry.
- * <p/>
+ *
  * The application is primarily configured via context-level init parameters.
- * <p/>
+ *
  * <dl>
  * <dt>tapestry.app-package</dt>
  * <dd>The application package (used to search for pages, components, etc.)</dd>
  * </dl>
- * <p/>
+ *
  * In addition, a JVM system property affects configuration: <code>tapestry.execution-mode</code>
  * (with default value "production"). This property is a comma-separated list of execution modes.
  * For each mode, an additional init parameter is checked for:

@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.StreamPageContent;
 
 import java.util.*;
@@ -56,6 +57,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+                    new Item("ZoneFormDemo", "Zone Form Decoration", "Fields inside an Ajax-updatd Form are still decorated properly."),
+
                     new Item("AjaxValidationDemo", "Ajax Validation", "Demonstrated proper integration of server-side validation and client-side field decoration."),
 
                     new Item("OverrideEventHandlerDemo", "Event Handler Override Demo", "Event Handler methods overridden by sub-classes invoke base-class correctly."),
@@ -64,14 +67,14 @@ public class Index
 
                     new Item("MissingRequiredARP", "Missing Query Parameter for @ActivationRequestParameter", "Activating a page with a required @ActivationRequestParameter, but no matching query parameter, is an error."),
 
-                    new Item ("DateFieldValidationDemo", "DateField Validation Demo",
+                    new Item("DateFieldValidationDemo", "DateField Validation Demo",
                             "Use of DateField component when client validation is disabled."),
 
                     new Item("MixinParameters54", "Strict Mixin Parameters", "In the 5.4 DTD, Parameter Mixins must be qualified with the mixin id."),
 
                     new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
 
-                    new Item ("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
+                    new Item("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
 
                     new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),
 
@@ -128,7 +131,7 @@ public class Index
 
                     new Item("PACMultipleAnnotationDemo", "PageActivationContext Multiple Demo",
                             "Demonstrates multiple @PageActivationContext fields."),
-                            
+
                     new Item("PublicFieldAccessDemo", "Public Field Access Demo", "Demonstrates TAP5-1222 fix"),
 
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",
@@ -218,6 +221,9 @@ public class Index
 
                     new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
                             "Grid inside a Form using the ValueEncoder option"),
+
+                    new Item("GridFormWithInitialSortMixinDemo", "Grid Form With Initial Sort Mixin Demo",
+                            "Grid inside a Form using the InitialSort mixin"),
 
                     new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
                             "Show that DateField component works correctly inside AjaxFormLoop"),
@@ -331,6 +337,8 @@ public class Index
 
                     new Item("griddemo", "Grid Demo", "default Grid component"),
 
+                    new Item("GridInLoopDemo", "Grid In Loop Demo", "Grid inside loop with different model on each iteration"),
+
                     new Item("nullgrid", "Null Grid", "handling of null source for Grid"),
 
                     new Item("gridsetdemo", "Grid Set Demo", "handling of Set sources for Grid"),
@@ -341,6 +349,8 @@ public class Index
                             "handling of remove and reorder parameters"),
 
                     new Item("EmptyGrid", "Empty Grid Demo", "show table for empty data sources"),
+                    
+                    new Item("GridEarlyPagingDemo", "Grid Early Paging", "set a Grid's current page before rendering"),
 
                     new Item("protected", "Protected Page",
                             "Demonstrate result of non-void return from a page's activate method"),
@@ -575,16 +585,19 @@ public class Index
                     new Item("PartialTemplateRendererDemo", "PartialTemplateRenderer Demo", "Shows some examples of rendering blocks and components to a String using PartialTemplateRenderer"),
 
                     new Item("nested/PageThatThrowsException", "Reload on nested page", "Tests a page reload from a nested page's exception report"),
-                    
+
                     new Item("inplacegridinloopdemo", "In-Place Grid in a Loop Demo", "In-place grid in a loop"),
-                    
+
                     new Item("GenericTypeDemo", "Generic bound type demo", "Tests that generic type info is available for generic bindings"),
 
                     new Item("FormFieldClientIdParameterDemo", "Form Field clientId Parameter Demo", "Shows and tests how to explicitly set the id of a form field component"),
 
                     new Item("gridwithsubmitwithcontextdemo", "Grid with Submit with context", "A grid whose rows contain a Submit component with context"),
 
-                    new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null")
+                    new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null"),
+
+                    new Item("validateInErrorEvent", "Validate in error Event", "A form that trigger validate in " +
+                            "error event on submit when textfield is empty")
             );
 
     static
@@ -600,6 +613,9 @@ public class Index
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private PageRenderLinkSource linkSource;
 
     @Property
     private String key;
@@ -629,7 +645,7 @@ public class Index
 
     public Link getInjectDemoLink()
     {
-        return resources.createPageLink(InjectDemo.class, false);
+        return linkSource.createPageRenderLink(InjectDemo.class);
     }
 
     public List getDemoContext()

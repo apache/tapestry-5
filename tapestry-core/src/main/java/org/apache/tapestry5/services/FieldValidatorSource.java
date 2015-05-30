@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -33,7 +31,7 @@ public interface FieldValidatorSource
     /**
      * Creates the validator. The error message associated with the field validator usually comes from the
      * global message catalog (using the validator's {@link Validator#getMessageKey() message key}). However,
-     * if the container component of the field defines a message key <code><i>id</i>-<i>validator</i> (where id is the simple
+     * if the container component of the field defines a message key <code><i>id</i>-<i>validator</i></code> (where id is the simple
      * id of the field component, and validator is the validatorType), then that message is used instead. This allows
      * you to override the message for a particular validation of a particular field.
      * 
@@ -50,7 +48,7 @@ public interface FieldValidatorSource
 
     /**
      * Full featured version of {@link #createValidator(Field, String, String)} used in situations where the container
-     * of the field is not necesarrilly the place to look for override messages, and the id of the field is not the key
+     * of the field is not necessarily the place to look for override messages, and the id of the field is not the key
      * to use when checking. The {@link BeanEditForm} is an example of this.
      * 
      * @param field
@@ -76,7 +74,7 @@ public interface FieldValidatorSource
     /**
      * Creates a set of validators. The specification is a string used to identify and configure the individual
      * validators. The specification is a comma-separated list of terms. Each term is a validator type name and an
-     * optional constraint value (seperated by an equals sign).
+     * optional constraint value (separated by an equals sign).
      * 
      * @param field
      * @param specification

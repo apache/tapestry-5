@@ -1,5 +1,3 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,8 +17,8 @@ import java.lang.annotation.*;
 /**
  * A documentation-only interface placed on service interfaces for services which have a {@linkplain
  * org.apache.tapestry5.ioc.MappedConfiguration mapped configuration}, to identify the type of key (often, a String),
- * and type ofcontribution.
- * <p/>
+ * and type of contribution.
+ *
  * Remember that when the key type is String, the map will be case-insensitive.
  */
 @Target(ElementType.TYPE)

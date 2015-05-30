@@ -929,7 +929,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         ClassNode shimClassNode = new ClassNode();
 
-        shimClassNode.visit(V1_5, ACC_PUBLIC | ACC_FINAL, shimClassName, null, HANDLE_SHIM_BASE_CLASS_INTERNAL_NAME,
+        shimClassNode.visit(PlasticConstants.DEFAULT_VERSION_OPCODE, ACC_PUBLIC | ACC_FINAL, shimClassName, null, HANDLE_SHIM_BASE_CLASS_INTERNAL_NAME,
                 null);
 
         implementConstructor(shimClassNode);

@@ -1,5 +1,3 @@
-// Copyright 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -90,12 +88,12 @@ public class GenericsUtils
 
     /**
      * Resolves the type parameter based on the context of the containingType.
-     * <p/>
+     *
      * {@link java.lang.reflect.TypeVariable} will be unwrapped to the type argument resolved form the class
      * hierarchy. This may be something other than a simple Class if the type argument is a ParameterizedType for
-     * instance (e.g. List&lt;E>; List&lt;Map&lt;Long, String>>, E would be returned as a ParameterizedType with the raw
+     * instance (e.g. {@code List<E>; List<Map<Long, String>>}, E would be returned as a ParameterizedType with the raw
      * type Map and type arguments Long and String.
-     * <p/>
+     *
      *
      * @param type
      *          the generic type (ParameterizedType, GenericArrayType, WildcardType, TypeVariable) to be resolved
@@ -136,9 +134,9 @@ public class GenericsUtils
      * Determines if the suspected super type is assignable from the suspected sub type.
      *
      * @param suspectedSuperType
-     *          e.g. GenericDAO&lt;Pet, String>
+     *          e.g. {@code GenericDAO<Pet, String>}
      * @param suspectedSubType
-     *          e.g. PetDAO extends GenericDAO&lt;Pet,String>
+     *          e.g. {@code PetDAO extends GenericDAO<Pet,String>}
      * @return
      *          true if (sourceType)targetClass is a valid cast
      */
@@ -241,10 +239,10 @@ public class GenericsUtils
     /**
      * Get the class represented by the reflected type.
      * This method is lossy; You cannot recover the type information from the class that is returned.
-     * <p/>
+     *
      * {@code TypeVariable} the first bound is returned. If your type variable extends multiple interfaces that information
      * is lost.
-     * <p/>
+     *
      * {@code WildcardType} the first lower bound is returned. If the wildcard is defined with upper bounds
      * then {@code Object} is returned.
      *
@@ -316,24 +314,24 @@ public class GenericsUtils
     /**
      * Method to resolve a TypeVariable to its most
      * <a href="http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#112582">reifiable</a> form.
-     * <p/>
-     * <p/>
+     *
+     *
      * How to resolve a TypeVariable:<br/>
      * All of the TypeVariables defined by a generic class will be given a Type by any class that extends it. The Type
      * given may or may not be reifiable; it may be another TypeVariable for instance.
-     * <p/>
+     *
      * Consider <br/>
      * <i>class Pair&gt;A,B> { A getA(){...}; ...}</i><br/>
      * <i>class StringLongPair extends Pair&gt;String, Long> { }</i><br/>
-     * <p/>
+     *
      * To resolve the actual return type of Pair.getA() you must first resolve the TypeVariable "A".
      * We can do that by first finding the index of "A" in the Pair.class.getTypeParameters() array of TypeVariables.
-     * <p/>
+     *
      * To get to the Type provided by StringLongPair you access the generics information by calling
      * StringLongPair.class.getGenericSuperclass; this will be a ParameterizedType. ParameterizedType gives you access
      * to the actual type arguments provided to Pair by StringLongPair. The array is in the same order as the array in
      * Pair.class.getTypeParameters so you can use the index we discovered earlier to extract the Type; String.class.
-     * <p/>
+     *
      * When extracting Types we only have to consider the superclass hierarchy and not the interfaces implemented by
      * the class. When a class implements a generic interface it must provide types for the interface and any generic
      * methods implemented from the interface will be re-defined by the class with its generic type variables.

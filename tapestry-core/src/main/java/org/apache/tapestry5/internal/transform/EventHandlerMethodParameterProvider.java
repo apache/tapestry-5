@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.apache.tapestry5.runtime.ComponentEvent;
  * Supplies one parameter value when invoking a component event handler method. In general,
  * this involves extracting a value form the event's context and coercing it to a type
  * appropriate to the parameter.
- * <p/>
+ *
  * These values are accumulated and used to invoke the event handler method.
  *
  * @since 5.2.0

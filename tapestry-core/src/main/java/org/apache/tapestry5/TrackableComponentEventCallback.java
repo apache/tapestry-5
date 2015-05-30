@@ -1,5 +1,3 @@
-// Copyright 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,11 +12,11 @@
 
 package org.apache.tapestry5;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.Traditional;
+
+import java.io.IOException;
 
 /**
  * Extends {@link ComponentEventCallback} with a way to determine if the underlying event has been aborted
@@ -26,7 +24,7 @@ import org.apache.tapestry5.services.Traditional;
  * is a wrapper around either the {@linkplain Traditional traditional} or
  * {@linkplain org.apache.tapestry5.services.Ajax ajax} versions of the {@link ComponentEventResultProcessor}
  * service, i.e., they allow for a navigational result.
- * <p>
+ *
  * Instances of this are made available via the {@link Environmental} annotation.
  * 
  * @since 5.2.0

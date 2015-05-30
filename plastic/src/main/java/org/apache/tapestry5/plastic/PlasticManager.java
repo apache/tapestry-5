@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,14 +12,14 @@
 
 package org.apache.tapestry5.plastic;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
-
 import org.apache.tapestry5.internal.plastic.Lockable;
 import org.apache.tapestry5.internal.plastic.NoopDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassPool;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
@@ -224,7 +222,7 @@ public class PlasticManager implements PlasticClassListenerHub
      * @param callback
      *            used to configure the new class
      * @return the instantiator, which allows instances of the new class to be created
-     * @see #createProxyTransformation(Class)
+     * @see #createProxyTransformation(Class, Class)
      */
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {

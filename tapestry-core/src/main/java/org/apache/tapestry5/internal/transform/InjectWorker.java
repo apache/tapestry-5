@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,7 +28,7 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
 /**
  * Performs injection triggered by any field annotated with the {@link org.apache.tapestry5.ioc.annotations.Inject}
  * annotation or the {@link javax.inject.Inject} annotation.
- * <p/>
+ *
  * The implementation of this worker mostly delegates to a chain of command of {@link InjectionProvider2}.
  */
 public class InjectWorker implements ComponentClassTransformWorker2

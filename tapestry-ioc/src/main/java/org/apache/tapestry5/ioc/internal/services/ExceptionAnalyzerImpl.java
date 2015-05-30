@@ -29,7 +29,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
      * A tuple used to communicate up a lavel both the exception info
      * and the next exception in the stack.
      */
-    private class ExceptionData
+    private static class ExceptionData
     {
         final ExceptionInfo exceptionInfo;
         final Throwable cause;

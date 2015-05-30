@@ -49,6 +49,12 @@
     <t:palette t:id="palette" selected="values" disabled="true" encoder="encoder"
                model="literal:Fred,Barney,Wilma,Betty"/>
 
+    <t:checklist t:id="checklist" selected="values" disabled="true" encoder="encoder"
+               model="literal:Fred,Barney,Wilma,Betty"/>
+
+    <t:radiogroup t:id="radiogroup" value="radiogroupvalue" disabled="true">
+        <t:radio value="literal:value1" />
+    </t:radiogroup>
 
     <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
     <input class="btn btn-default" type="submit" value="Continue"/>

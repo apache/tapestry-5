@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,7 @@ import java.util.List;
 
 /**
  * Defines the possible options and option groups for a &lt;select&gt; [X]HTML element.
- * <p/>
+ *
  * Primarily used by the {@link org.apache.tapestry5.corelib.components.Select} component, but potentially used by
  * anything similar, that needs to present a list of options to the user. Generally paired with a {@link
  * org.apache.tapestry5.ValueEncoder} to create client-side representations of server-side values.

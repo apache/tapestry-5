@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +20,7 @@ import org.hibernate.cfg.Configuration;
 /**
  * Responsible for creating a Hibernate session as needed. Internally, is responsible for Hibernate {@link
  * Configuration}, resulting in a {@link SessionFactory}.
- * <p/>
+ *
  * The service's configuration is a {@linkplain org.apache.tapestry5.ioc.services.ChainBuilder chain of command} of
  * configurator objects.
  */

@@ -14,24 +14,26 @@ package org.apache.tapestry5.services;
 
 /**
  * Interface implemented by a page used for reporting exceptions.
- * <p/>
+ *
  * Alternately,  implemented by services to report request handling exceptions. This is invoked <em>before</em> the exception report page is rendered.
  * The default implementation converts the exception into a well formatted text file, with content similar to the default
  * {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page, and stores this file on the file system.
- * <p/>
+ *
  * Exception report files are stored beneath a root directory, with intermediate folders for the day (e.g., "2014-06-02"), hour, and minute.
- * <p/>
+ *
  * Directories are created as necessary; however, there is nothing in place to delete these exceptions reports.
  *
  * @see org.apache.tapestry5.SymbolConstants#EXCEPTION_REPORTS_DIR
  * @see org.apache.tapestry5.services.RequestExceptionHandler
+ * @see org.apache.tapestry5.services.ExceptionReportWriter
  */
 public interface ExceptionReporter
 {
     /**
      * Used to communicate to the page what exception is to be reported.
      *
-     * @param exception runtime exception thrown during processing of the request
+     * @param exception
+     *         runtime exception thrown during processing of the request
      */
     void reportException(Throwable exception);
 }

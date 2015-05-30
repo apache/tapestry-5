@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 /**
  * An object which will perform rendering of a page (or portion of a page).  This interface exists to be filtered via
  * {@link org.apache.tapestry5.services.MarkupRendererFilter}.
- * <p/>
+ *
  * The MarkupRenderer service takes an ordered configuration of {@link org.apache.tapestry5.services.MarkupRendererFilter}s,
  * which are used for ordinary page rendering (as opposed to {@linkplain org.apache.tapestry5.services.PartialMarkupRenderer
  * partial page rendering} for Ajax requests). The MarkupRenderer service may be selected using the

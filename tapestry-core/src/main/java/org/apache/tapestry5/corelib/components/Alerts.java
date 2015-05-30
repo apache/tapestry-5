@@ -28,14 +28,13 @@ import org.apache.tapestry5.services.compatibility.DeprecationWarning;
  * Renders out an empty {@code <div>} element and provides JavaScript initialization to make the element
  * the container for alerts. After rendering markup (and initialization JavaScript), it
  * {@linkplain org.apache.tapestry5.alerts.AlertStorage#dismissNonPersistent() removes all non-persistent alerts}.
- * <p/>
+ *
  * Alerts are created using the {@link org.apache.tapestry5.alerts.AlertManager} service.
  *
  * @tapestrydoc
  * @since 5.3
  */
 @SupportsInformalParameters
-@Import(stack = "core")
 public class Alerts extends BaseClientElement
 {
 

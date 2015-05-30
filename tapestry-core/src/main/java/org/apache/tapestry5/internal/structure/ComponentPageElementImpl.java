@@ -1,5 +1,3 @@
-// Copyright 2006-2014  The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -47,13 +45,13 @@ import java.util.*;
  * Implements {@link RenderCommand} and represents a component within an overall page. Much of a
  * component page
  * element's behavior is delegated to user code, via a {@link org.apache.tapestry5.runtime.Component} instance.
- * <p/>
+ *
  * Once instantiated, a ComponentPageElement should be registered as a
  * {@linkplain org.apache.tapestry5.internal.structure.Page#addLifecycleListener(org.apache.tapestry5.runtime.PageLifecycleListener)
  * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
  * by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}. There's still a bit of refactoring in this
  * class (and its many inner classes) that can improve overall efficiency.
- * <p/>
+ *
  * Modified for Tapestry 5.2 to adjust for the no-pooling approach (shared instances with externalized mutable state).
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement
@@ -1243,24 +1241,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return elementResources.createComponentEventLink(coreResources, eventType, false, context);
     }
 
-    public Link createActionLink(String eventType, boolean forForm, Object... context)
-    {
-        return elementResources.createComponentEventLink(coreResources, eventType, forForm, context);
-    }
-
     public Link createFormEventLink(String eventType, Object... context)
     {
         return elementResources.createComponentEventLink(coreResources, eventType, true, context);
-    }
-
-    public Link createPageLink(String pageName, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageName, override, context);
-    }
-
-    public Link createPageLink(Class pageClass, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageClass, override, context);
     }
 
     protected RenderPhaseEvent createRenderEvent(RenderQueue queue)

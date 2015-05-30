@@ -20,57 +20,57 @@ import java.util.Date;
  */
 public class Index
 {
-	@Inject
-	private Logger logger;
+  @Inject
+  private Logger logger;
 
-	@Inject
-	private AjaxResponseRenderer ajaxResponseRenderer;
+  @Inject
+  private AjaxResponseRenderer ajaxResponseRenderer;
 
-	@Property
-	@Inject
-	@Symbol(SymbolConstants.TAPESTRY_VERSION)
-	private String tapestryVersion;
+  @Property
+  @Inject
+  @Symbol(SymbolConstants.TAPESTRY_VERSION)
+  private String tapestryVersion;
 
-	@InjectPage
-	private About about;
+  @InjectPage
+  private About about;
 
-	@Inject
-	private Block block;
-
-
-	// Handle call with an unwanted context
-	Object onActivate(EventContext eventContext)
-	{
-		return eventContext.getCount() > 0 ?
-				new HttpError(404, "Resource not found") :
-				null;
-	}
+  @Inject
+  private Block block;
 
 
-	Object onActionFromLearnMore()
-	{
-		about.setLearn("LearnMore");
-
-		return  about;
-	}
-
-	@Log
-	void onComplete()
-	{
-		logger.info("Complete call on Index page");
-	}
-
-	@Log
-	void onAjax()
-	{
-		logger.info("Ajax call on Index page");
-
-		ajaxResponseRenderer.addRender("middlezone", block);
-	}
+  // Handle call with an unwanted context
+  Object onActivate(EventContext eventContext)
+  {
+    return eventContext.getCount() > 0 ?
+        new HttpError(404, "Resource not found") :
+        null;
+  }
 
 
-	public Date getCurrentTime()
-	{
-		return new Date();
-	}
+  Object onActionFromLearnMore()
+  {
+    about.setLearn("LearnMore");
+
+    return about;
+  }
+
+  @Log
+  void onComplete()
+  {
+    logger.info("Complete call on Index page");
+  }
+
+  @Log
+  void onAjax()
+  {
+    logger.info("Ajax call on Index page");
+
+    ajaxResponseRenderer.addRender("middlezone", block);
+  }
+
+
+  public Date getCurrentTime()
+  {
+    return new Date();
+  }
 }

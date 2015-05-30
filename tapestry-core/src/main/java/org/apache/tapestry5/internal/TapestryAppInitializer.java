@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,9 +30,9 @@ import java.util.List;
  * This class is used to build the {@link Registry}. The Registry contains
  * {@link org.apache.tapestry5.ioc.modules.TapestryIOCModule} and {@link TapestryModule}, any
  * modules identified by {@link #addModules(Class[])} )}, plus the application module.
- * <p/>
+ *
  * The application module is optional.
- * <p/>
+ *
  * The application module is identified as <em>package</em>.services.<em>appName</em>Module, where
  * <em>package</em> and the <em>appName</em> are specified by the caller.
  */

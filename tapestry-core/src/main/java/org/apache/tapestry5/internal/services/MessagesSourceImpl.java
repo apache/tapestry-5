@@ -1,5 +1,3 @@
-// Copyright 2006-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,11 +33,11 @@ import java.util.Map;
  * them, in accordance with extension rules and locale. This represents code that was refactored out of
  * {@link ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as
  * a utility. Composition trumps inheritance!
- * <p/>
+ *
  * The message catalog for a component is the combination of all appropriate properties files for the component, plus
  * any keys inherited form base components and, ultimately, the application global message catalog. At some point we
  * should add support for per-library message catalogs.
- * <p/>
+ *
  * Message catalogs are read using the UTF-8 character set. This is tricky in JDK 1.5; we read the file into memory then
  * feed that bytestream to Properties.load().
  */

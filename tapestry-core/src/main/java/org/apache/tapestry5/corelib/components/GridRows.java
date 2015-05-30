@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -43,13 +41,13 @@ import java.util.List;
 
 /**
  * Renders out a series of rows within the table.
- * <p/>
+ *
  * Inside a {@link Form}, a series of row index numbers are stored into the form
  * ( {@linkplain FormSupport#store(Object, ComponentAction) as
  * ComponentActions}). This can be a problem in situations where the data set
  * can shift between the form render and the form submission, with a risk of
  * applying changes to the wrong objects.
- * <p/>
+ *
  * For this reason, when using GridRows inside a Form, you should generally
  * provide a {@link org.apache.tapestry5.ValueEncoder} (via the encoder
  * parameter), or use an entity type for the "row" parameter for which

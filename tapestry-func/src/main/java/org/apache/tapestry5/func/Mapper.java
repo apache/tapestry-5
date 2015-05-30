@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,7 +15,7 @@ package org.apache.tapestry5.func;
 /**
  * Interface for operation {@link Flow#map(Mapper)} to define how Flow elements are mapped from one type
  * to another (or otherwise transformed).
- * <p>
+ *
  * This changed in 5.3 from an abstract base class to an interface.
  * 
  * @since 5.2.0

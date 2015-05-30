@@ -24,7 +24,7 @@ import java.io.IOException;
  * Handler for asset requests, which expose some kind of {@link Asset} to
  * the user agent (i.e., the client web browser). When contributed to the {@link AssetDispatcher} service,
  * the contributed key is a handler id (such as "meta/core").
- * <p/>
+ *
  * An example request path might be <code>/assets/meta/core/dd8d73ac51dbab28caaec4865d302bf2/deselect.png</code>.
  * The handler id would be
  * <code>meta/core</code>, the {@linkplain AssetChecksumGenerator checksum of the resource content} is the
@@ -43,11 +43,11 @@ public interface AssetRequestHandler
      * (via {@link Response#getOutputStream(String)}) or an error response
      * (via {@link Response#sendError(int, String)}). It is the handler's responsibility to allow
      * for client-side caching (possibly sending an {@link HttpServletResponse#SC_NOT_MODIFIED} response).
-     * <p/>
+     *
      * The handler should return true if it provided a response. If the handler returns false, this indicates that the
      * extra path did not identify a known asset (virtual or otherwise) and the AssetDispatcher service should send a
      * {@link HttpServletResponse#SC_NOT_FOUND} response.
-     * <p/>
+     *
      * Starting in Tapestry 5.4, the handler is informed by the {@link org.apache.tapestry5.services.AssetRequestDispatcher}
      * whether or not the content should be compressed (this is determined based on information in the URL).
      *

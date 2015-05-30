@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -35,7 +33,7 @@ public interface InternalComponentResourcesCommon
 
     /**
      * Used during construction of the page to identify the binding for a particular parameter.
-     * <p/>
+     *
      */
     void bindParameter(String parameterName, Binding binding);
 

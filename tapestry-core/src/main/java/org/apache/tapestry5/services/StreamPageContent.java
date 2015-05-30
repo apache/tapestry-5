@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,11 +17,11 @@ package org.apache.tapestry5.services;
  * of a particular page without causing a redirect to that page; the rendering takes place as part
  * of the original component event request, thus forming the opposite of Tapestry's normal
  * redirect-after-event behavior.
- * <p>
+ *
  * The page will be activated using the provided page activation context (or an empty page activation
  * context). Starting with 5.3, the page activation step can be bypassed. Rendering occurs using
  * the standard {@link PageRenderRequestHandler} pipeline.
- * </p>
+ *
  *
  * @since 5.2.0
  */

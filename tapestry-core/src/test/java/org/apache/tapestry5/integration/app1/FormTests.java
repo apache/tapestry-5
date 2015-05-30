@@ -209,7 +209,7 @@ public class FormTests extends App1TestCase
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
     }
-    
+
     // TAP5-2197
     @Test
     public void datefield_leniency()
@@ -218,19 +218,19 @@ public class FormTests extends App1TestCase
 
         type("asteroidImpact", "00/00/0000");
         type("lenient", "00/00/0000");
-        
+
         clickAndWait(SUBMIT);
-        
+
         // By default, DateField is not lenient anymore
         assertText("css=div.x-impact p.help-block", "Date value '00/00/0000' is not parseable.");
-        
+
         // But this one is configured as such by setting the "lenient" parameter to true.
         assertFalse(isElementPresent("css=div.x-lenient p.help-block"));
 
         // Check whether a String coerced to a DateFormat results in a lenient or not instance
         // according to the SymbolConstants.LENIENT_DATE_FORMAT symbol (default false)
         assertText("coercedStringToDateFormatLenient", "false");
-        
+
     }
 
     // TAP5-1057
@@ -377,8 +377,8 @@ public class FormTests extends App1TestCase
         click("css=div.labelPopup a");
 
         waitForCondition("!selenium.isElementPresent('css=div.labelPopup')", PAGE_LOAD_TIMEOUT);
-        //It's basically impossible to express "wait until the popup doesn't disappear" 
-        //Instead, we take advantage of knowing that the datepicker disappears with this bug /almost/ 
+        //It's basically impossible to express "wait until the popup doesn't disappear"
+        //Instead, we take advantage of knowing that the datepicker disappears with this bug /almost/
         //immediately after picking the month label, so we sleep the test for a few seconds to provide
         //ammple time for the bug to manifest.
 
@@ -494,6 +494,11 @@ public class FormTests extends App1TestCase
 
                         "//div[@class='palette-selected']//select",
 
+                        "//input[@name='checklist']",
+
+                        // TAP5-2078
+                        "//input[@name='radiogroup']",
+
                         "//input[@id='submit_0']"};
 
         for (String path : paths)
@@ -504,6 +509,11 @@ public class FormTests extends App1TestCase
         }
 
         assertAttribute("css=div.palette .btn@disabled", "disabled");
+
+        //TAP5-2078
+        clickAndWait("//input[@value='Continue']");
+
+        assertFalse(isTextPresent("This should not happen"));
     }
 
     /**
@@ -865,7 +875,7 @@ public class FormTests extends App1TestCase
         assertText("name-value", "Betty");
         assertText("last-clicked", "Barney");
     }
-    
+
     /**
      * TAP5-2183
      */
@@ -1063,26 +1073,26 @@ public class FormTests extends App1TestCase
     public void create_select_model_from_objects() throws Exception
     {
         openLinks("SelectModel from objects");
-        
+
         select("track", "label=The Calling");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("Selected track: The Calling, Synaesthetic");
     }
-    
+
     @Test
     public void create_select_model_coercion() throws Exception
     {
         openLinks("SelectModel coercion");
-        
+
         select("track", "label=The Calling");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("Selected track: The Calling, Synaesthetic");
     }
-    
+
     @Test
     public void validation_macro() throws Exception
     {
@@ -1145,7 +1155,7 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("Selected colors: [Blue, Red]");
     }
-    
+
     @Test
     public void checkFormLinkParameters() throws Exception
     {
@@ -1154,7 +1164,7 @@ public class FormTests extends App1TestCase
 
         clickAndWait("link=SetValue");
         assertTextPresent("Result = '!@#$%^&*()_+='");
-        
+
         clickAndWait(SUBMIT);
         assertTextPresent("Result = '!@#$%^&*()_+='");
     }
@@ -1181,34 +1191,34 @@ public class FormTests extends App1TestCase
     public void form_fields_client_id_parameter()
     {
         final String[] clientIds = {"clientId-0", "clientId-1"};
-        
+
         openLinks("Form Field clientId Parameter Demo");
-        
+
         for (int i = 0; i < 4; i++) {
-        
+
             for (String clientId : clientIds)
             {
                 assertTrue(selenium.isElementPresent(clientId));
             }
-            
+
             click("updateZone");
             waitForAjaxRequestsToComplete();
-            
+
         }
-        
+
     }
-    
+
     /** TAP5-2301 */
     @Test
     public void select_context() {
-        
+
         openLinks("MultiZone Update inside a Form");
         selenium.select("selectValue1", "label=3 pre ajax");
         waitForAjaxRequestsToComplete();
         assertEquals(
                 "4 post ajax, number 013, retention policy RUNTIME",
                 selenium.getText("//select[@id='selectValue2']/option"));
-        
+
     }
 
     /** TAP5-1815. In this webapp, HTML5 support is disabled, so we check whether it actually is disabled */
@@ -1230,4 +1240,15 @@ public class FormTests extends App1TestCase
         assertTextPresent("This parameter is not allowed to be null.");
     }
 
+    /** TAP5-2467 **/
+    @Test
+    public void validate_in_error_event() {
+        openLinks("Validate in error Event");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("validate-in-error");
+
+        assertTextPresent("Validate in error");
+    }
 }

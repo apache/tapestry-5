@@ -40,42 +40,27 @@
 
                     <div class="panel-footer">
 
-                        <div class="btn-toolbar col-md-12">
+                        <div class="btn-toolbar btn-group-xs">
+                            <t:loop source="actionLinks" value="actionLink">
+                                <a href="${actionLink.uri}" class="btn btn-default">
+                                    <t:outputRaw value="actionLink.label"/>
+                                </a>
+                            </t:loop>
 
-                            <t:if test="failurePage">
-                                <t:pagelink page="prop:failurePage" class="btn btn-default">Go to page
-                                    <strong>${failurePage}</strong>
-                                </t:pagelink>
-                                <t:actionlink t:id="reloadFirst" parameters="{'loadPage': failurePage}"
-                                              context="reloadContext" class="btn btn-default">Go to page
-                                    <strong>${failurePage}</strong>
-                                    (with reload)
-                                </t:actionlink>
-                            </t:if>
-                            <a href="/" class="btn btn-default">Go to
-                                <strong>${rootURL}</strong>
-                            </a>
-                            <t:actionLink t:id="reloadRoot" class="btn btn-default">
-                                Go to
-                                <strong>${rootURL}</strong>
-                                (with reload)
-                            </t:actionLink>
                         </div>
                     </div>
+                    <t:if test="showReload">
+                        <div class="panel-footer">
+                            <p><strong>with reload</strong>: Force a reload of component
+                                classes. This is often necessary
+                                after fixing a class that previously failed to compile due to errors.
+                            </p>
+                        </div>
+                    </t:if>
                 </t:if>
             </div>
 
             <t:if test="! productionMode">
-
-                <t:if test="showActions">
-
-                    <p class="help-text col-md-12"><strong>with reload</strong>: Force a reload of component
-                        classes. This is
-                        often
-                        necessary
-                        after fixing a class that previously failed to compile due to errors.
-                    </p>
-                </t:if>
 
                 <t:exceptiondisplay exception="rootException"/>
 
@@ -97,16 +82,15 @@
                 <h3>Threads</h3>
 
                 <table class="table table-condensed table-hover table-striped exception-report-threads">
-                    <thread>
+                    <thead>
                         <tr>
                             <th>Thread Name</th>
                             <th>Group Name</th>
                             <th>State</th>
                             <th>Flags</th>
                         </tr>
-                    </thread>
+                    </thead>
                     <tbody>
-
                         <tr t:type="loop" source="threads" value="thread" class="${thread.className}">
                             <td class="thread-name">${thread.name}</td>
                             <td>${thread.group?.name}</td>

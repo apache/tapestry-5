@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,7 +19,7 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
 /**
  * Collects details about zone usage for efficient initialization of the client side objects. This has grown to include
  * the client-side behavior associated with {@link org.apache.tapestry5.corelib.components.FormFragment}s.
- * <p/>
+ *
  * This interface is only kept for binary compatibility in Tapestry 5.4; the implementation no longer does anything but
  * throw exceptions and will be removed in 5.5.
  *
@@ -48,7 +46,7 @@ public interface ClientBehaviorSupport
 
     /**
      * Sets the client-side onclick handler for an &lt;a&gt; element to perform an Ajax update of a zone.
-     * <p/>
+     *
      * Starting in Tapestry 5.4, this can be accomplished by adding a "data-update-zone" attribute
      * to the element.  The attribute value may be {@code ^} or the id of the zone's client element.
      *
@@ -95,7 +93,7 @@ public interface ClientBehaviorSupport
     /**
      * Adds a new client-side Tapestry.FormFragment object. FormFragment's are used to make parts of a client-side form
      * visible or invisible, which involves interactions with both the server-side and client-side validation.
-     * <p/>
+     *
      * <strong>This implementation has been removed in 5.4; it throws an {@link UnsupportedOperationException}.</strong>
      *
      * @param clientId

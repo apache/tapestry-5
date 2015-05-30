@@ -1,5 +1,3 @@
-// Copyright 2006, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,10 +21,10 @@ import java.io.IOException;
 public interface RequestExceptionHandler
 {
     /**
-     * Reponsible for handling the error <em>in some way</em> and providing <em>some response</em> to the client. A
+     * Responsible for handling the error <em>in some way</em> and providing <em>some response</em> to the client. A
      * default implementation may render an error response page.
-     * <p/>
-     * <p/>
+     *
+     *
      * The handler is also responsible for setting the response status and the X-Tapestry-ErrorMessage response header.
      * These are very important in Ajax requests to allow the client-side logic to detect the error and present it to
      * the user.

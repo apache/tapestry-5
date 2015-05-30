@@ -1,5 +1,3 @@
-// Copyright 2006 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,7 @@ import java.util.List;
 
 /**
  * An analysis of an exception (including nested exceptions).
- * <p/>
+ *
  * TODO: Make serializable and/or convert to XML format.
  */
 public interface ExceptionAnalysis

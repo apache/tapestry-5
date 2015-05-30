@@ -32,7 +32,7 @@ import java.util.List;
  * {@link ServiceBinder#bind(Class, Class)} and {@link ServiceBindingOptions#withMarker(Class...)} to construct the
  * service, then use the marker annotation to inject the service when contributing the service into to the
  * {@link JavaScriptStackSource}.
- * <p/>
+ *
  * A limitation of this implementation is that the contributed assets are not localized at all.
  *
  * @see StackExtension

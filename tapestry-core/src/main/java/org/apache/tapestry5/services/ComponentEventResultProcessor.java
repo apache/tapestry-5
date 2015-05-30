@@ -1,5 +1,3 @@
-// Copyright 200-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import java.io.IOException;
 
 /**
  * Responsible for handling the return value provided by a component event handler method.
- * <p/>
+ *
  * There are two services built into Tapestry that implement this interface: ComponentEventResultProcessor (used for
  * ordinary page-oriented requests, and distinguished by the @{@link org.apache.tapestry5.services.Traditional}
  * and/or @{@link org.apache.tapestry5.ioc.annotations.Primary} marker annotations) and
@@ -35,7 +33,7 @@ public interface ComponentEventResultProcessor<T>
 {
     /**
      * For a given, non-null return value from a component event method, construct and send a response.
-     * <p/>
+     *
      * Starting in release 5.4, it is recommended that for any response that involves Tapestry pages or components,
      * the implementation should create an {@link org.apache.tapestry5.ioc.IOOperation} to do the rendering, and
      * add the operation to the {@link org.apache.tapestry5.services.Request} as attribute

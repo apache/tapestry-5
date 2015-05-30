@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,9 +19,9 @@ import java.lang.reflect.Method;
  * created with a friendlier API that focuses on Java type names (names as they would appear in Java source) rather than
  * JVM descriptors or internal names. In some limited cases, types may be specified as Java Class instances as well.
  * In addition, there is good support for primitive type boxing and unboxing.
- * <p/>
+ *
  * Most methods return the same instance of InstructionBuilder, allowing for a "fluid" API.
- * <p/>
+ *
  * More complex functionality, such as {@linkplain #startTryCatch(TryCatchCallback)
  * try/catch blocks}, is more like a DSL (domain specific language), and is based on callbacks. This looks better in
  * Groovy and will be more reasonable once JDK 1.8 closures are available; in the meantime, it means some deeply nested
@@ -433,7 +431,7 @@ public interface InstructionBuilder
      * Simplified version of {@link #when(Condition, WhenCallback)} that
      * simply executes the callback code when the condition is true and does nothing
      * if the condition is false (the more general case).
-     * <p/>
+     *
      * The testing opcodes all pop the value off the stack, so this is usually preceded by {@link #dupe(int) dupe(0)}.
      *
      * @param condition to evaluate

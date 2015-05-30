@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,7 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Marker annotation placed on a service builder method to indicate that the service should be eagerly loaded: realized
  * as if a service method had been invoked. Service realization invokes the service builder method and applys any
  * decorators to the service.
- * <p/>
+ *
  * This annotation may also be placed directly on a service implementation class, when using autobuilding via the {@link
  * org.apache.tapestry5.ioc.ServiceBinder}.
  *

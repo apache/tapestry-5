@@ -1,5 +1,3 @@
-// Copyright 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,10 +21,10 @@ import java.util.List;
  * Used to define a <a href="http://requirejs.org/docs/api.html#config-shim">module shim</a>, used to adapt non-AMD JavaScript libraries
  * to operate like proper modules.  This information is used to build up a list of dependencies for the contributed JavaScript module,
  * and to identify the resource to be streamed to the client.
- * <p/>
+ *
  * Instances of this class are contributed to the {@link ModuleManager} service;  the contribution key is the module name
  * (typically, a single word).
- * <p/>
+ *
  * In some cases, an instance may be created and contributed to override a default module; if the module has no dependencies,
  * exports, or initExpression (that is, if it is a proper AMD module, where such dependencies are provided inside
  * the module itself), then no client-side shim configuration will be written for the module, but requests for the
@@ -111,7 +109,7 @@ public final class JavaScriptModuleConfiguration
      * Used as an alternative to {@linkplain #exports(String)}, this allows a short expression to be specified; the
      * expression is used to initialize, clean up, and (usually) return the module's export value. For Underscore, this
      * would be "_.noConflict()".  If the expression returns null, then the exports value is used.
-     * <p/>
+     *
      * In RequireJS 2.1.1 (the version shipped with Tapestry, currently), an init function is not invoked unless
      * the shim also defines an exports. See <a href="https://github.com/jrburke/requirejs/issues/517">RequireJS issue 517</a>.
      * At this time, you should specify {@link #exports} even if you provide a {@link #initializeWith(String)}}.

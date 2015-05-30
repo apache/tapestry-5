@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import org.apache.tapestry5.ioc.Messages;
 /**
  * Used by a component to create a default {@link org.apache.tapestry5.beaneditor.BeanModel} for a particular bean
  * class. Also provides support to the model by generating validation information for individual fields.
- * <p/>
+ *
  * BeanModels are the basis for the {@link org.apache.tapestry5.corelib.components.BeanEditor} and {@link
  * org.apache.tapestry5.corelib.components.Grid} comopnents.
  *
@@ -34,7 +32,7 @@ public interface BeanModelSource
      * overridden with the {@link org.apache.tapestry5.beaneditor.ReorderProperties} annotation. The labels for the
      * properties are derived from the property names, but if the component's message catalog has keys of the form
      * <code>propertyName-label</code>, then those will be used instead.
-     * <p/>
+     *
      * Models are <em>mutable</em>, so they are not cached, a fresh instance is created each time.
      *
      * @param beanClass                class of object to be edited

@@ -1,5 +1,3 @@
-// Copyright 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,37 +12,21 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Array;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.*;
 import org.apache.tapestry5.internal.plastic.asm.commons.JSRInlinerAdapter;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
+
+import java.io.*;
+import java.lang.reflect.Array;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("rawtypes")
 public class PlasticInternalUtils
@@ -154,7 +136,7 @@ public class PlasticInternalUtils
      * <li>boolean --&gt; Z
      * <li>
      * <li>java.lang.Integer --&gt; Ljava/lang/Integer;</li>
-     * <li>char[] -->&gt; [C</li>
+     * <li>char[] --&gt; [C</li>
      * <li>java.lang.String[][] --&gt; [[java/lang/String;
      * </ul>
      */

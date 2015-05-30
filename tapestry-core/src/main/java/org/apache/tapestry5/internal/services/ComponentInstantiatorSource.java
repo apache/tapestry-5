@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,14 +19,14 @@ import org.apache.tapestry5.services.transform.ControlledPackageType;
 /**
  * Creates {@link org.apache.tapestry5.internal.services.Instantiator}s for components, based on component class name.
  * This will involve transforming the component's class before it is loaded.
- * <p/>
+ *
  * In addition, a source acts as an event hub for {@link org.apache.tapestry5.services.InvalidationListener}s, so that
  * any information derived from loaded classes can be discarded and rebuilt when classes change.
- * <p/>
+ *
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is
  * discarded, along with any instances derived from those classes. A new class loader is created, and then invalidation
  * events are fired to listeners.
- * <p/>
+ *
  * Starting in Tapestry 5.3, the packages that are loaded are controlled by a configuration that maps package names to
  * {@link ControlledPackageType}s.
  */

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ import java.util.Map;
  * <dt>component classes
  * <dd>{@link org.apache.tapestry5.services.ComponentClasses} marker annotation
  * </dl>
- * <p/>
+ *
  * Starting in Tapestry 5.3, these services are disabled in production (it does nothing).
  *
  * @since 5.1.0.0

@@ -1,5 +1,3 @@
-// Copyright 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -32,7 +30,7 @@ public class IOCSymbols
      * threads in the pool, tasks will be placed in the queue. If the queue is empty, more threads
      * may be created (up to the {@linkplain #THREAD_POOL_MAX_SIZE maximum pool size}). If the queue is full and
      * all threads have been created, the task is rejected.
-     * <p>
+     *
      * The default is 100.
      * 
      * @since 5.3

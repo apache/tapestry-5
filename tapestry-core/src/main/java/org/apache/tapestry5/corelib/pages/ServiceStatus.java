@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ import java.util.List;
 
 /**
  * Page used to see the status of all services defined by the {@link Registry}.
- * <p/>
+ *
  * TODO: Add filters to control which services are displayed
  */
 @UnknownActivationContextCheck(false)

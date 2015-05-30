@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,10 +28,10 @@ import org.apache.tapestry5.services.BeanModelSource;
  * &lt;dl&gt; element containing a series of &lt;dt&gt;/&lt;dd&gt; pairs. The property label is used as the &lt;dt&gt;
  * and the property value (formatted as per the datatype) is the &lt;dd&gt;. Only properties that have a known data type
  * are displayed.
- * <p/>
+ *
  * The property id is used as the class attribute of the &lt;dt&gt; and &lt;dd&gt; element, allowing CSS customization
  * per property. This does not occur when lean is bound to true.
- * <p/>
+ *
  * The outer &lt;dl&gt; element has the CSS class "t-beandisplay".
  * 
  * @see org.apache.tapestry5.beaneditor.DataType

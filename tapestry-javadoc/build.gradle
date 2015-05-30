@@ -5,8 +5,6 @@ dependencies {
   compile "commons-lang:commons-lang:2.6"
   compile files(getTools())
   
-  testCompile "org.spockframework:spock-core:${versions.spock}"
-  
 }
 
 /** Returns the tools.jar/classes.jar of the Java runtime. */

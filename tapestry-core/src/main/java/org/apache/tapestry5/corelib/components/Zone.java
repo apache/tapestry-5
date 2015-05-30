@@ -31,14 +31,14 @@ import org.slf4j.Logger;
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects. A
  * Zone renders out as a &lt;div&gt; element (or whatever is specified in the template) and may have content initially,
  * or may only get its content as a result of client side activity.
- * <p/>
+ *
  * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set triggers a
  * series of client-side behaviors, and an Ajax request to the server.
- * <p/>
+ *
  * The server side event handler can return a {@link org.apache.tapestry5.Block} or a component to render as the new
  * content on the client side. Often, re-rendering the Zone's {@linkplain #getBody() body} is useful. Multiple
  * client-side zones may be updated via the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} service.
- * <p/>
+ *
  * You will often want to specify the id parameter of the Zone, in addition to its Tapestry component id; this "locks
  * down" the client-side id, so the same value is used even in later partial renders of the page (essential if the Zone
  * is nested inside another Zone). When you specify the client-side id, it is used exactly as provided (meaning that you
@@ -46,15 +46,15 @@ import org.slf4j.Logger;
  * the page). Failure to provide an explicit id results in a new, and non-predictable, id being generated for each
  * partial render, which will often result in client-side failures to locate the element to update when the Zone is
  * triggered.
- * <p/>
+ *
  * In some cases, you may want to know (on the server side) the client id of the zone that was updated; this is passed
  * as part of the Ajax request, as the {@link QueryParameterConstants#ZONE_ID} parameter. An example use of this would
  * be to provide new content into a Zone that updates the same Zone, when the Zone's client-side id is dynamically
  * allocated (rather than statically defined). In most cases, however, the programmer is responsible for assigning a
  * specific client-side id, via the id parameter.
- * <p/>
+ *
  * A Zone starts and stops a {@link Heartbeat} when it renders (both normally, and when re-rendering).
- * <p/>
+ *
  * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
  * <code>core/events:zone.didUpdate</code> can be used to listen to the event.
  *

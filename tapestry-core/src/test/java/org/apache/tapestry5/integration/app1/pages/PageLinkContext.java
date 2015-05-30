@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,8 +12,8 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +21,7 @@ import java.util.List;
 public class PageLinkContext
 {
     @Inject
-    private ComponentResources resources;
+    private PageRenderLinkSource pageRenderLinkSource;
 
     public List getComputedContext()
     {
@@ -42,6 +40,6 @@ public class PageLinkContext
 
     Object onActionFromNullContext()
     {
-        return resources.createPageLink("target", true, new Object[] {null});
+        return pageRenderLinkSource.createPageRenderLinkWithContext("target", new Object[]{null});
     }
 }

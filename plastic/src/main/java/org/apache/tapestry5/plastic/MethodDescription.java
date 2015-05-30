@@ -1,5 +1,3 @@
-// Copyright 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,11 +12,11 @@
 
 package org.apache.tapestry5.plastic;
 
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-
-import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 
 /**
  * Describes a {@link PlasticMethod} in terms of a method name, a set of modifiers
@@ -26,14 +24,14 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
  * and types of checked exceptions. Types are represented as Java source names:
  * either names of primitives ("void", "byte", "long") or fully qualified class names ("java.lang.Object",
  * "java.lang.Runnable"). ASM refers to this as "class name".
- * <p>
+ *
  * MethodDescriptions are immutable, and properly implement equals() and hashCode(); they are often used as keys in
  * Maps.
- * <p>
+ *
  * The natural sort order for a MethodDescription is ascending order by method name, then descending order by number of
  * parameters (for the same name). Sort order is not currently specified for overrides of the same method with the same
  * number of parameters.
- * <p>
+ *
  * TODO: Handling generic types.
  */
 public class MethodDescription implements Comparable<MethodDescription>

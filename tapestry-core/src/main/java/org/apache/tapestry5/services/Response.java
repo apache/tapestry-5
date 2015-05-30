@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,8 +21,8 @@ import java.io.PrintWriter;
 
 /**
  * API agnostic wrapper for generating a response. Bridges the gaps between the Servlet API and the Portlet API.
- * <p/>
- * <p/>
+ *
+ *
  * The Response service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
  * thread's response object.
  */
@@ -81,7 +79,7 @@ public interface Response
      * "text/html", leaving cookies and other headers unmodified. If an error-page declaration has been made for the web
      * application corresponding to the status code passed in, it will be served back in preference to the suggested msg
      * parameter.
-     * <p/>
+     *
      * If the response has already been committed, this method throws an IllegalStateException. After using this method,
      * the response should be considered to be committed and should not be written to.
      * 

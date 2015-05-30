@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,13 +18,13 @@ import org.apache.tapestry5.ioc.ServiceResources;
 
 /**
  * Definition of a service decorator, which (by default) is derived from a service decorator method.
- * <p/>
+ *
  * A note on decorator scheduling. The scheduling is based on the desired order of <em>behavior</em>. Thus, if logging
  * should occur before security checks, and security checks should occur before transaction management, then the desired
  * decorator order is Logging, Security, Transactions. This might be specified as having Security occur after Logging,
  * and Transactions occur after Security. It might also be specified by having Logging ordered "before:*", and
  * Transactions ordered "after:*" with no specified scheduling for Security.
- * <p/>
+ *
  * Once this order is established, decorators are <em>applied</em> in reverse order. Each decorator's job is to create
  * an <em>interceptor</em> for the service, that delegates to the next implementation. This implies that the decorators
  * are executed last to first. In the above example, the core service implementation would be passed to the Transaction
@@ -35,11 +33,11 @@ import org.apache.tapestry5.ioc.ServiceResources;
  * resulting in the Logging interceptor. Thus at runtime, the Logging interceptor will execute first, then delegate to
  * the Security interceptor, which would delegate to the Transaction interceptor, which would finally delegate to the
  * core service implementation.
- * <p/>
+ *
  * Service decorators are part of the initial version of Tapestry IoC.  Starting in release 5.1, their use has been
  * deprecated, in favor of {@link org.apache.tapestry5.ioc.AdvisorDef}, which is based on {@link
  * org.apache.tapestry5.ioc.services.AspectInterceptorBuilder}.
- * <p/>
+ *
  * Note: service decorators are applied <em>around</em> the interceptor generated via any {@link
  * org.apache.tapestry5.ioc.AdvisorDef}s (for compatibility with Tapestry 5.0). In general, you should use service
  * decoration or service advice, not both.

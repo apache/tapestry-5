@@ -1,5 +1,3 @@
-// Copyright 2006, 2007 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +17,7 @@ import org.apache.tapestry5.services.Session;
 
 /**
  * A strategy for storing persistent page properties into the {@link Session session}.
- * <p/>
+ *
  * Builds attribute names as: <code>state:<em>page-name</em>:<em>component-id</em>:<em>field-name</em></code>
  */
 

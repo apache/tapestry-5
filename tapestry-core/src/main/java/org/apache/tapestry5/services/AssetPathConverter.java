@@ -1,5 +1,3 @@
-// Copyright 2009, 2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,7 +16,7 @@ package org.apache.tapestry5.services;
  * Converts the {@linkplain org.apache.tapestry5.Asset#toClientURL() path (or URI) of an asset} into a new format. This
  * is the <em>hook</em> needed to make use of a <a href="http://en.wikipedia.org/wiki/Content_Delivery_Network">Content
  * Delivery Network</a>.
- * <p/>
+ *
  * The default implementation of this is <em>identity</em>, the URI is passed through unchanged. Using a contribution to
  * the {@link org.apache.tapestry5.ioc.services.ServiceOverride} service, you may override the default implementation.
  *

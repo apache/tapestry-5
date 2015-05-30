@@ -50,38 +50,38 @@ import java.net.URLDecoder;
 /**
  * An HTML form, which will enclose other components to render out the various
  * types of fields.
- * <p>
+ *
  * A Form triggers many notification events. When it renders, it triggers a
  * {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER} notification, followed by a
- * {@link EventConstants#PREPARE} notification.</p>
- * <p>
+ * {@link EventConstants#PREPARE} notification.
+ *
  * When the form is submitted, the component triggers several notifications: first a
  * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the page to update its
- * state as necessary to prepare for the form submission.</p>
- * <p>
+ * state as necessary to prepare for the form submission.
+ *
  * The Form component then determines if the form was cancelled (see {@link org.apache.tapestry5.corelib.SubmitMode#CANCEL}). If so,
- * a {@link EventConstants#CANCELED} event is triggered.</p>
- * <p>
+ * a {@link EventConstants#CANCELED} event is triggered.
+ *
  * Next come notifications to contained components (or more accurately, the execution of stored {@link ComponentAction}s), to allow each component to retrieve and validate
  * submitted values, and update server-side properties.  This is based on the {@code t:formdata} query parameter,
  * which contains serialized object data (generated when the form initially renders).
- * </p>
- * <p>Once the form data is processed, the next step is to trigger the
+ *
+ * Once the form data is processed, the next step is to trigger the
  * {@link EventConstants#VALIDATE}, which allows for cross-form validation. After that, either a
  * {@link EventConstants#SUCCESS} OR {@link EventConstants#FAILURE} event (depending on whether the
  * {@link ValidationTracker} has recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners
- * that care only about form submission, regardless of success or failure.</p>
- * <p>
+ * that care only about form submission, regardless of success or failure.
+ *
  * For all of these notifications, the event context is derived from the <strong>context</strong> component parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
  * values encoded into the form are used).
- * </p>
- * <p>
+ *
+ *
  * While rendering, or processing a Form submission, the Form component places a {@link FormSupport} object into the {@linkplain Environment environment},
  * so that enclosed components can coordinate with the Form component. It also places a {@link ValidationTracker} into the environment during both render and submission.
  * During submission it also pushes a {@link Heartbeat} into the environment, which is {@link org.apache.tapestry5.services.Heartbeat#end() ended} just before
  * {@linkplain FormSupport#defer(Runnable) deferred FormSupport operations} are executed.
- * </p>
+ *
  *
  * @tapestrydoc
  * @see BeanEditForm
@@ -409,7 +409,7 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
      * this Form.
-     * <p/>
+     *
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      *
      * @param clientId
@@ -596,9 +596,9 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} after the
      * {@link org.apache.tapestry5.EventConstants#SUBMIT} or {@link org.apache.tapestry5.EventConstants#FAILURE} event has been triggered.
-     * <p/>
+     *
      * This method will be invoked regardless of whether the submit or failure event was aborted.
-     * <p/>
+     *
      * This implementation does nothing.
      *
      * @since 5.4
@@ -611,7 +611,7 @@ public class Form implements ClientElement, FormValidationControl
 
     /**
      * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} before any other setup.
-     * <p/>
+     *
      * This implementation does nothing.
      *
      * @param context
@@ -627,9 +627,9 @@ public class Form implements ClientElement, FormValidationControl
      * A hook invoked from {@link #onAction(org.apache.tapestry5.EventContext)} after the
      * {@link org.apache.tapestry5.EventConstants#VALIDATE} event has been triggered, and
      * before the {@link #tracker} has been {@linkplain org.apache.tapestry5.ValidationTracker#clear() cleared}.
-     * <p/>
+     *
      * Only invoked if the valiate event did not abort (that is, the no event handler method returned a value).
-     * <p/>
+     *
      * This implementation does nothing.
      *
      * @since 5.4

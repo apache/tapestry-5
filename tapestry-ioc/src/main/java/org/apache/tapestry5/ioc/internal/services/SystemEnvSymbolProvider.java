@@ -36,9 +36,9 @@ public class SystemEnvSymbolProvider implements SymbolProvider
         {
             Map<String, String> env = System.getenv();
 
-            for (String key : env.keySet())
+            for (Map.Entry<String, String> entry : env.entrySet())
             {
-                symbols.put("env." + key, env.get(key));
+                symbols.put("env." + entry.getKey(), entry.getValue());
             }
         }
 

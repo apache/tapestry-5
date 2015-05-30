@@ -1,5 +1,3 @@
-// Copyright (c) 2011. The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,7 +13,6 @@
 package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.annotations.AfterRender;
@@ -30,7 +27,7 @@ import org.slf4j.Logger;
 /**
  * A mixin that instruments the outer {@link org.apache.tapestry5.corelib.components.Form} on which
  * component the focus should be activated.
- * <p/>
+ * 
  * This is meant to be used only with {@link org.apache.tapestry5.corelib.components.Form} component.
  *
  * @since 5.3

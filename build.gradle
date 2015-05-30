@@ -11,16 +11,14 @@ apply from: "md5.gradle"
 project.ext.versions = [
     jetty: "7.6.11.v20130520",
     tomcat: "6.0.30",
-    testng: "6.5.2",
-    easymock: "3.0",
+    testng: "6.8.21",
+    easymock: "3.3.1",
     servletapi: "2.5",
-    spock: "0.7-groovy-2.0",
+    spock: "1.0-groovy-2.3",
     hibernate: "4.3.6.Final",
-    groovy: "2.0.6",
-    slf4j: "1.7.7",
-    wro4j: "1.7.0",
-    geb: "0.9.2",
-    selenium: "2.44.0"
+    slf4j: "1.7.12",
+    geb: "0.10.0",
+    selenium: "2.45.0"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
@@ -36,7 +34,7 @@ project.version = tapestryVersion()
 def tapestryVersion() {
 
     def major = "5.4"
-    def minor = "-beta-24"
+    def minor = "-beta-33"
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
     // When building normally, or for a release, no suffix is desired.
@@ -62,10 +60,15 @@ project.ext {
     deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
     deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
-    canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+    canDeploy = [deployUsernameProperty, deployPasswordProperty, "apacheArchivesFolder"].every { project.hasProperty(it) }
 
+    // These are all deferred inside closures, to allow people without the necessary values in their
+    // gradle.properties to build locally, just not deploy. getProperty() throws an exception if the property
+    // is not present.
     deployUsername = { getProperty(deployUsernameProperty) }
     deployPassword = { getProperty(deployPasswordProperty) }
+
+    archiveDeployFolder = { getProperty("apacheArchivesFolder") }
 }
 
 sonar {
@@ -140,13 +143,13 @@ subprojects {
 
     configurations {
         provided
-        deployerJars
     }
 
     apply plugin: "java"
     apply plugin: "groovy" // mostly for testing
     apply plugin: "maven"  // for deployment
     apply plugin: "project-report"
+    apply plugin: "jacoco"
 
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
@@ -170,11 +173,17 @@ subprojects {
     eclipse.classpath.plusConfigurations += [configurations.provided]
 
     dependencies {
-        testCompile "org.codehaus.groovy:groovy-all:${versions.groovy}"
-
-        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-
+        
+        testCompile "org.spockframework:spock-core:${versions.spock}"
+         
         testRuntime "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+    }
+
+    compileTestGroovy {
+        configure(groovyOptions.forkOptions) {
+            memoryMaximumSize = '1g'
+            jvmArgs = ['-XX:MaxPermSize=512m', '-Xms512m', '-Xmx1g']
+        }
     }
 
     test {
@@ -182,7 +191,7 @@ subprojects {
 
         options.suites("src/test/conf/testng.xml")
 
-        maxHeapSize "400M"
+        maxHeapSize "800M"
 
         // Turn off live service reloading
 
@@ -272,7 +281,7 @@ subprojects {
 
         resolutionStrategy.force "antlr:antlr:2.7.7",
             "cglib:cglib-nodep:2.2",
-            "commons-codec:commons-codec:1.8",
+            "commons-codec:commons-codec:1.10",
             "commons-io:commons-io:2.4",
             "commons-logging:commons-logging:1.1.3",
             "hsqldb:hsqldb:2.2.8",
@@ -310,7 +319,7 @@ task aggregateJavadoc(type: Javadoc) {
     maxMemory "512m"
     destinationDir file("$buildDir/documentation/javadocs")
 
-    def tapestryStylesheet = isJDK7() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
+    def tapestryStylesheet = isJDKAfter6() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
 
     configure(options) {
         splitIndex true
@@ -319,7 +328,7 @@ task aggregateJavadoc(type: Javadoc) {
         windowTitle "Tapestry API - ${project.version}"
         header "Tapestry API - ${project.version}"
         docTitle "Tapestry API - ($project.version)"
-        bottom '${project.version} - Copyright &copy; 2003-2014 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
+        bottom '${project.version} - Copyright &copy; 2003-2015 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
         use = true // 'use' seems to be a reserved word for the DSL
         links "http://download.oracle.com/javase/6/docs/api/"
         links "http://download.oracle.com/javaee/6/api/"
@@ -385,13 +394,39 @@ dependencies {
     meta aggregateJavadoc.outputs.files
 }
 
+task combinedJacocoReport(type:JacocoReport){
+  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart'}
+  dependsOn = subprojectsToConsider.test
+  additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
+  sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
+  classDirectories = files(subprojectsToConsider.sourceSets.main.output)
+  executionData = files(subprojectsToConsider.jacocoTestReport.executionData)
+  jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
+  reports {
+      html {
+        enabled = true
+        destination = "$buildDir/reports/jacoco"
+      }
+      xml.enabled = false
+      csv.enabled = false
+  }
+  onlyIf = {
+      true
+  }
+  doFirst {
+      executionData = files(executionData.findAll {
+          it.exists()
+      })
+  }
+}
+
 task continuousIntegration {
-    dependsOn subprojects.build, aggregateJavadoc, subprojects.uploadPublished
+    dependsOn subprojects.build, aggregateJavadoc, combinedJacocoReport
     description "Task executed on Jenkins CI server after SVN commits"
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.4'
     description "Regenerates the Gradle Wrapper files"
 }
 
@@ -505,29 +540,34 @@ if (canDeploy) {
         }
     }
 
-    task uploadArtifacts(type: Scp) {
+    // This requires that you have the apacheArchivesFolder property configured in your
+    // ~/.gradle/gradle.properties. The folder should be a Subversion workspace for
+    // https://dist.apache.org/repos/dist/dev/tapestry
+    // after the build, you must manually add the new files to the workspace (using "svn add")
+    // then commit ("svn commit").
+
+    // The files will be visible in https://dist.apache.org/repos/dist/dev/tapestry/, allowing
+    // committers to download and verify them.
+
+    // After a successful release vote, the files can be moved to a second Subversion workspace
+    // for https://dist.apache.org/repos/dist/release/tapestry. Adding the files and committing
+    // there will publish them to http://www.apache.org/dist/tapestry ... and from there
+    // to all Apache mirrors (after about a 24 hour delay).
+
+    task copyArchives(type: Copy) {
         group "Release artifact"
-        description "Uploads top-level artifacts to people.apache.org, along with MD5 checksums and PGP signatures (if signing is enabled)"
+        description "Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 checksums and PGP signatures (if signing is enabled)"
 
-        source files(generateMD5Checksums, configurations.uploads.allArtifacts.files)
+        destinationDir file(archiveDeployFolder())
 
-        host "people.apache.org"
-        userName deployUsername()
-        password deployPassword()
-
-        // The destination folder at people.apache.org needs to already exist.
-        destination "public_html/tapestry-releases"
-
-        doFirst {
-            logger.info "Uploading the following files to people.apache.org (as user '${userName}'):"
-            source.files.each { logger.info "  $it" }
-        }
+        from generateMD5Checksums
+        from configurations.uploads.allArtifacts.files
     }
 
     task generateRelease {
-        dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadArtifacts
+        dependsOn subprojects.uploadPublished, copyArchives
         group "Release artifact"
-        description "Generates and uploads a final release to Apache Nexus"
+        description "Generates and uploads a final release to Apache Nexus and copies archives for deployment"
     }
 }
 
@@ -539,8 +579,8 @@ boolean isWindows() {
     System.properties['os.name'].toLowerCase().contains('windows')
 }
 
-boolean isJDK7() {
-    System.properties['java.version'].startsWith("1.7.")
+boolean isJDKAfter6() {
+    ! System.properties['java.version'].matches('1\\.[5|6]\\..*')
 }
 
 // Check JDK version to prevent VU#225657 see:
@@ -568,7 +608,7 @@ boolean checkJDK() {
 }
 
 task updateBootstrap << {
-  def bootstrapVersion = '3.3.1'
+  def bootstrapVersion = '3.3.4'
   def target = new File(temporaryDir, 'bootstrap.zip')
   ant.get(src: "https://github.com/twbs/bootstrap/archive/v${bootstrapVersion}.zip", dest: target)
 

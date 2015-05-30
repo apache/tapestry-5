@@ -27,7 +27,6 @@ import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 import javax.servlet.http.Cookie;
-
 import java.util.Map;
 
 /**
@@ -103,7 +102,7 @@ public class InternalModule
      * <dl>
      * <dt>LinkDecoration (instance of {@link LinkDecorationListener})</dt>
      * <dd>Triggers events for notifications about links</dd>
-     * <dl>
+     * </dl>
      *
      * @since 5.2.0
      */

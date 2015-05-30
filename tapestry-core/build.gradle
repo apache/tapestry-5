@@ -10,6 +10,8 @@ project.ext {
     testGeneratedDir = "src/test/generated"
 }
 
+clean.delete mainGeneratedDir, testGeneratedDir
+
 dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
@@ -20,9 +22,11 @@ dependencies {
 
     provided "javax.servlet:servlet-api:${versions.servletapi}"
 
-    compile "commons-codec:commons-codec:1.5"
+    compile "commons-codec:commons-codec:1.10"
 
     testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+
+    testRuntime 'com.google.inject:guice:3.0'
 }
 
 task preprocessCoffeeScript(type: PreprocessCoffeeScript) {

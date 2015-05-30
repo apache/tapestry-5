@@ -12,7 +12,9 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
@@ -78,9 +80,6 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     @Property
     private String propertyName;
 
-    @Property
-    private String failurePage;
-
     @Inject
     private RequestGlobals requestGlobals;
 
@@ -108,6 +107,29 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     @Property
     private ThreadInfo thread;
 
+    @Inject
+    private ComponentResources resources;
+
+    private String failurePage;
+
+    /**
+     * A link the user may press to perform an action (e.g., "Reload page").
+     */
+    public static class ActionLink
+    {
+        public final String uri, label;
+
+
+        public ActionLink(String uri, String label)
+        {
+            this.uri = uri;
+            this.label = label;
+        }
+    }
+
+    @Property
+    private ActionLink actionLink;
+
     public class ThreadInfo implements Comparable<ThreadInfo>
     {
         public final String className, name, state, flags;
@@ -132,35 +154,94 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
+    /**
+     * Returns true for normal, non-XHR requests. Links (to the failure page, or to root page) are only
+     * presented if showActions is true.
+     */
     public boolean isShowActions()
     {
-        return failurePage != null && !request.isXHR();
+        return !request.isXHR();
+    }
+
+    /**
+     * Returns true in development mode; enables the "with reload" actions.
+     */
+    public boolean isShowReload()
+    {
+        return !productionMode;
     }
 
     public void reportException(Throwable exception)
     {
         rootException = exception;
 
+        rootURL = baseURLSource.getBaseURL(request.isSecure());
+
+        // Capture this now ... before the gears are shifted around to make ExceptionReport the active page.
         failurePage = (request.getAttribute(InternalConstants.ACTIVE_PAGE_LOADED) == null)
                 ? null
                 : requestGlobals.getActivePageName();
-
-        rootURL = baseURLSource.getBaseURL(request.isSecure());
     }
 
-    public Object[] getReloadContext()
+    private static void add(List<ActionLink> links, Link link, String format, Object... arguments)
     {
-        return pageActivationContextCollector.collectPageActivationContext(failurePage);
+        String label = String.format(format, arguments);
+        links.add(new ActionLink(link.toURI(), label));
     }
 
-    Object onActionFromReloadFirst(EventContext reloadContext)
+    public List<ActionLink> getActionLinks()
+    {
+        List<ActionLink> links = CollectionFactory.newList();
+
+        if (failurePage != null)
+        {
+
+            try
+            {
+
+                Object[] pac = pageActivationContextCollector.collectPageActivationContext(failurePage);
+
+                add(links,
+                        linkSource.createPageRenderLinkWithContext(failurePage, pac),
+                        "Go to page <strong>%s</strong>", failurePage);
+
+                if (!productionMode)
+                {
+                    add(links,
+                            resources.createEventLink("reloadFirst", pac).addParameter("loadPage",
+                                    urlEncoder.encode(failurePage)),
+                            "Go to page <strong>%s</strong> (with reload)", failurePage);
+                }
+
+            } catch (Throwable t)
+            {
+                // Ignore.
+            }
+        }
+
+        links.add(new ActionLink(rootURL,
+                String.format("Go to <strong>%s</strong>", rootURL)));
+
+
+        if (!productionMode)
+        {
+            add(links,
+                    resources.createEventLink("reloadFirst"),
+                    "Go to <strong>%s</strong> (with reload)", rootURL);
+        }
+
+        return links;
+    }
+
+
+    Object onReloadFirst(EventContext reloadContext)
     {
         reloadHelper.forceReload();
 
         return linkSource.createPageRenderLinkWithContext(urlEncoder.decode(request.getParameter("loadPage")), reloadContext);
     }
 
-    Object onActionFromReloadRoot() throws MalformedURLException
+    Object onReloadRoot() throws MalformedURLException
     {
         reloadHelper.forceReload();
 

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2010, 2011, 2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -96,27 +94,24 @@ public interface ObjectLocator
      * dependencies will be injected into the parameters of the constructor and into private fields marked with the
      * {@link Inject} annotation. There are two cases: constructing a service implementation, and constructing
      * an arbitrary object. In the former case, many <em>service resources</em> are also available for injection, not
-     * just dependencies or objects provided via
-     * {@link MasterObjectProvider#provide(Class, AnnotationProvider, ObjectLocator, boolean)}.
+     * just dependencies or objects provided via the MasterObjectProvider service.
      *
      * @param <T>
      * @param clazz the type of object to instantiate
      * @return the instantiated instance
      * @throws RuntimeException if the autobuild fails
-     * @see MasterObjectProvider
      */
     <T> T autobuild(Class<T> clazz);
 
     /**
      * Preferred version of {@link #autobuild(Class)} that tracks the operation using
-     * {@link OperationTracker#invoke(String, Invokable)}.
+     * {@link org.apache.tapestry5.ioc.OperationTracker#invoke(String, org.apache.tapestry5.ioc.Invokable)}.
      *
      * @param <T>
-     * @param description description used with {@link OperationTracker}
+     * @param description description used with {@link org.apache.tapestry5.ioc.OperationTracker}
      * @param clazz       the type of object to instantiate
      * @return the instantiated instance
      * @throws RuntimeException if the autobuild fails
-     * @see MasterObjectProvider
      * @since 5.2.0
      */
     <T> T autobuild(String description, Class<T> clazz);
@@ -127,7 +122,7 @@ public interface ObjectLocator
      * proxy to prevent service construction cycles, particularly when contributing (directly or indirectly) to the
      * {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} (which is itself at the heart
      * of autobuilding).
-     * <p/>
+     *
      * If the class file for the class is a file on the file system (not a file packaged in a JAR), then the proxy will
      * <em>autoreload</em>: changing the class file will result in the new class being reloaded and re-instantiated
      * (with dependencies).

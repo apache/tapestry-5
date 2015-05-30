@@ -36,13 +36,13 @@ import java.util.List;
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
  * sub-components are statically wired to the Grid, as it provides access to the data and other models that they need.
- * <p/>
+ *
  * A Grid may operate inside a {@link org.apache.tapestry5.corelib.components.Form}. By overriding the cell renderers of
  * properties, the default output-only behavior can be changed to produce a complex form with individual control for
  * editing properties of each row. There is a big caveat here: if the order of rows provided by
  * the {@link org.apache.tapestry5.grid.GridDataSource} changes between render and form submission, then there's the
  * possibility that data will be applied to the wrong server-side objects.
- * <p/>
+ *
  * For this reason, when using Grid and Form together, you should generally
  * provide the Grid with a {@link org.apache.tapestry5.ValueEncoder} (via the
  * encoder parameter), or use an entity type for the "row" parameter for which
@@ -224,7 +224,6 @@ public class Grid implements GridModel, ClientElement
     @Parameter(value = "defaultPaginationModel")
     private GridPaginationModel paginationModel;
 
-    @Property
     @Persist
     private GridPaginationModel defaultPaginationModel;
 
@@ -352,8 +351,6 @@ public class Grid implements GridModel, ClientElement
         {
             assert InternalUtils.isNonBlank(columnId);
 
-            setupPaginationModel();
-
             if (columnId.equals(paginationModel.getSortColumnId()))
             {
                 setSortAscending(!getSortAscending());
@@ -381,7 +378,6 @@ public class Grid implements GridModel, ClientElement
 
         public void clear()
         {
-            setupPaginationModel();
             paginationModel.setSortColumnId(null);
             paginationModel.setSortAscending(null);
         }
@@ -455,9 +451,6 @@ public class Grid implements GridModel, ClientElement
 
     Object setupRender()
     {
-
-        setupPaginationModel();
-
         if (formSupport != null)
         {
             formSupport.store(this, SETUP_DATA_SOURCE);
@@ -475,14 +468,20 @@ public class Grid implements GridModel, ClientElement
         // if an inPlace Grid is rendered inside a Loop, be sure to generate a new wrapper
         // zone for each iteration (TAP5-2256)
         zone = null;
+
+        // If grid is rendered inside a Loop. be sure to generate a new data model for
+        // each iteration (TAP5-2470)
+        dataModel = null;
     }
 
-    private void setupPaginationModel()
+    public GridPaginationModel getDefaultPaginationModel()
     {
-        if (paginationModel == null)
+        if (defaultPaginationModel == null)
         {
-            paginationModel = new GridPaginationModelImpl();
+            defaultPaginationModel = new GridPaginationModelImpl();
         }
+
+        return defaultPaginationModel;
     }
 
     void setupDataSource()
@@ -511,8 +510,6 @@ public class Grid implements GridModel, ClientElement
         int startIndex = (effectiveCurrentPage - 1) * rowsPerPage;
 
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
-
-        dataModel = null;
 
         cachingSource.prepare(startIndex, endIndex, sortModel.getSortConstraints());
     }
@@ -633,8 +630,8 @@ public class Grid implements GridModel, ClientElement
      */
     public void reset()
     {
-        setCurrentPage(1);
         sortModel.clear();
+        setCurrentPage(1);
     }
 
     /**

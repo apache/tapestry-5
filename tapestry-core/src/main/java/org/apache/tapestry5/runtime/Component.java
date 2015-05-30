@@ -1,5 +1,3 @@
-// Copyright 2006, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,10 +20,10 @@ import org.apache.tapestry5.annotations.OnEvent;
  * many different events. This interface is part of the public API for Tapestry, but is <em>not</em> expected to be
  * directly implemented by component classes; it should only be implemented as part of the component class
  * transformation process.
- * <p/>
+ *
  * Most of the methods are related to render phases; see the corresponding annotations and component rendering
  * documentation to see how they relate to each other.
- * <p/>
+ *
  * Starting in 5.3 this interface no longer implements {@link PageLifecycleListener}. Normally, this would be an incompatible
  * change, but Component is not supposed to be directly implemented by user code.
  */

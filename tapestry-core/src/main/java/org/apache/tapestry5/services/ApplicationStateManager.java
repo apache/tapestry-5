@@ -1,5 +1,3 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -21,11 +19,11 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * Responsible for managing <em>session state objects</em>, objects which persist between requests, but are not tied to
  * any individual page or component. SSOs are also created on demand. SSOs are typically stored in the session, so that
  * they are specific to a particular client.
- * <p/>
+ *
  * The term "Application" is a hold-over from Tapestry 5.0, which used the @ApplicationState (deprecated and deleted)
  * annotation, and called them "ASOs" (Application State Objects). This service would be better named
  * "SessionStateManager" (but renaming it would cause backwards compatibility issues).
- * <p/>
+ *
  * Tapestry has a built-in default strategy for storing SSOs (in the session) and instantiating them. If desired,
  * contributions to the service configuration can override the default behavior, either specifying an alternate storage
  * strategy, or an alternate {@linkplain org.apache.tapestry5.services.ApplicationStateCreator creation strategy}.

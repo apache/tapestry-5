@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,11 +12,11 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+
+import java.util.Map;
 
 /**
  * A wrapper around a Map that provides the {@link org.apache.tapestry5.ioc.MappedConfiguration} interface, and provides
@@ -28,9 +26,9 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
  * <li>If the key has previously been stored (by some other {@link org.apache.tapestry5.ioc.def.ContributionDef}, then a
  * warning is logged</li>
  * </ul>
- * <p/>
+ *
  * When a warning is logged, the key/value pair is not added to the delegate.
- * <p/>
+ *
  * Handles instantiation of instances.
  * 
  * @param <K>

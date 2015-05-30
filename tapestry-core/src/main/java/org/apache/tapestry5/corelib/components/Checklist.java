@@ -1,5 +1,3 @@
-// Copyright 2011-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -29,7 +27,7 @@ import java.util.Set;
 
 /**
  * A list of checkboxes, allowing selection of multiple items in a list.
- * <p/>
+ *
  * For an alternative component that can be used for similar purposes, see
  * {@link Palette}.
  *
@@ -107,6 +105,10 @@ public class Checklist extends AbstractField
             if (getSelected().contains(model.getValue()))
             {
                 checkbox.attribute("checked", "checked");
+            }
+
+            if (isDisabled()) {
+                writer.attributes("disabled", "disabled");
             }
 
             writer.write(model.getLabel());

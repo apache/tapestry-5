@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
  * CSS file will change (which would ordinarily break relative URLs), and for changing the relative directories of
  * the CSS file and the image assets it may refer to (useful for incorporating a hash of the resource's content into
  * the exposed URL).
- * <p/>
- * <p/>
+ *
+ *
  * One potential problem with URL rewriting is the way that URLs for referenced resources are generated; we are
  * somewhat banking on the fact that referenced resources are non-compressable images.
  *
@@ -147,9 +147,13 @@ public class CSSURLRewriter extends DelegatingSRS
         {
             String url = matcher.group(2); // the string inside the quotes
 
-            // When the URL starts with a slash, there's no need to rewrite it (this is actually rare in Tapestry
-            // as you want to use relative URLs to leverage the asset pipeline.
-            if (completeURLPattern.matcher(url).find())
+            // When the URL starts with a slash or a scheme (e.g. http: or data:) , there's no need
+            // to rewrite it (this is actually rare in Tapestry as you want to use relative URLs to
+            // leverage the asset pipeline.
+            Matcher completeURLMatcher = completeURLPattern.matcher(url);
+            boolean matchFound = completeURLMatcher.find();
+            boolean isAssetUrl = matchFound && "asset:".equals(completeURLMatcher.group(1));
+            if (matchFound && !isAssetUrl)
             {
                 String queryParameters = matcher.group(3);
 
@@ -162,6 +166,12 @@ public class CSSURLRewriter extends DelegatingSRS
                 // considered a real change, since all such variations are valid.
                 appendReplacement(matcher, output, url);
                 continue;
+            }
+
+            if (isAssetUrl)
+            {
+                // strip away the "asset:" prefix
+                url = url.substring(6);
             }
 
             Asset asset = assetSource.getAsset(baseResource, url, null);

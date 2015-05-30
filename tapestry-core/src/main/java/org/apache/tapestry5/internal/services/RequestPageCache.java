@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,10 +18,10 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 /**
  * Per-thread service that caches page instances for the duration of the request, and is also responsible for tracking
  * the active page (the page which will ultimately render the response).
- * <p/>
+ *
  * Since {@link org.apache.tapestry5.internal.structure.Page} is internal, most user-code should use the
  * {@link org.apache.tapestry5.services.ComponentSource} service instead.
- * <p>
+ *
  * Starting in 5.2, page instances are shared (with externalized mutable state), not pooled, but the cache is still
  * useful for managing the page's {@linkplain PageLifecycleListener lifecycle}.
  */

@@ -30,7 +30,7 @@ import java.util.Locale;
  */
 public abstract class AbstractResource extends LockSupport implements Resource
 {
-    private class Localization
+    private static class Localization
     {
         final Locale locale;
 
@@ -279,6 +279,24 @@ public abstract class AbstractResource extends LockSupport implements Resource
         if (url == null)
         {
             return null;
+        }
+        if ("jar".equals(url.getProtocol())){
+
+
+            // TAP5-2448: make sure that the URL does not reference a directory
+            String urlAsString = url.toString();
+
+            int indexOfExclamationMark = url.toString().indexOf('!');
+
+            String resourceInJar = urlAsString.substring(indexOfExclamationMark + 2);
+
+            boolean isDirectory = Thread.currentThread().getContextClassLoader().getResource(resourceInJar + "/") != null;
+
+            if (isDirectory)
+            {
+                throw new IOException("Cannot open a steam for a resource that references a directory inside a JAR file (" + url + ").");
+            }
+            
         }
 
         return new BufferedInputStream(url.openStream());

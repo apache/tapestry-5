@@ -31,7 +31,7 @@ public interface JavaScriptStackAssembler
      * Obtains the {@link org.apache.tapestry5.services.javascript.JavaScriptStack} by name, and then
      * uses the {@link org.apache.tapestry5.services.assets.StreamableResourceSource} service to
      * obtain the assets, which are combined together.
-     * <p/>
+     *
      * Expects the {@linkplain org.apache.tapestry5.services.LocalizationSetter#setNonPersistentLocaleFromLocaleName(String) non-persistent locale} to be set before invoking!
      */
     StreamableResource assembleJavaScriptResourceForStack(String stackName, boolean compress, JavaScriptAggregationStrategy javascriptAggregationStrategy) throws IOException;

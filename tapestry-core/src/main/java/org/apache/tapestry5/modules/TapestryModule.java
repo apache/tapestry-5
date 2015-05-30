@@ -38,6 +38,7 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.internal.services.exceptions.ExceptionReportWriterImpl;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
@@ -99,7 +100,6 @@ import org.slf4j.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -378,6 +378,7 @@ public final class TapestryModule
         binder.bind(DateUtilities.class, DateUtilitiesImpl.class);
         binder.bind(PartialTemplateRenderer.class, PartialTemplateRendererImpl.class);
         binder.bind(ExceptionReporter.class, ExceptionReporterImpl.class);
+        binder.bind(ExceptionReportWriter.class, ExceptionReportWriterImpl.class);
         binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
         binder.bind(Html5Support.class, Html5SupportImpl.class);
     }
@@ -506,8 +507,8 @@ public final class TapestryModule
      * <dd>Support for the {@link HeartbeatDeferred} annotation, which defers method invocation to the end of the {@link Heartbeat}
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
+     * <dt>Operation</dt> <dd>Support for the {@link Operation} method annotation</dd>
      * </dl>
-     * <dd>Operation</dt> <dd>Support for the {@link Operation} method annotation</dd></dd>
      */
     @Contribute(ComponentClassTransformWorker2.class)
     @Primary
@@ -768,6 +769,7 @@ public final class TapestryModule
      * applications</dd>
      * <dt>GZip</dt>
      * <dd>Handles GZIP compression of response streams (if supported by client)</dd>
+     * </dl>
      */
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
 
@@ -1156,7 +1158,7 @@ public final class TapestryModule
      * Builds the PropBindingFactory as a chain of command. The terminator of
      * the chain is responsible for ordinary
      * property names (and property paths).
-     * <p/>
+     *
      * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See <a
      * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no longer any built-in
      * contributions to the configuration.
@@ -1599,7 +1601,7 @@ public final class TapestryModule
      * <dt>{@link org.apache.tapestry5.ajax.MultiZoneUpdate}</dt>
      * <dd>Sends a single JSON response to update the content of multiple zones
      * </dl>
-     * <p/>
+     *
      * In most cases, when you want to support a new type, you should convert it to one of the built-in supported types
      * (such as {@link RenderCommand}. You can then inject the master AjaxComponentEventResultProcessor (use the
      * {@link Ajax} marker annotation) and delegate to it.
@@ -1706,8 +1708,13 @@ public final class TapestryModule
      * <dt>PageNameMeta (since 5.4)</dt>
      * <dd>Renders a {@code <meta/>} tag describing the active page name (development mode only)</dd>
      * <dt>ImportCoreStack (since 5.4) </dt>
-     * <dd>Imports to "core" stack (necessary to get the Bootstrap CSS, if nothing else).</dd>
+     * <dd>Imports the "core" stack (necessary to get the Bootstrap CSS, if nothing else).</dd>
      * </dl>
+     *
+     * @see org.apache.tapestry5.SymbolConstants#OMIT_GENERATOR_META
+     * @see org.apache.tapestry5.SymbolConstants#PRODUCTION_MODE
+     * @see org.apache.tapestry5.SymbolConstants#INCLUDE_CORE_STACK
+     * @see org.apache.tapestry5.SymbolConstants#ENABLE_PAGELOADING_MASK
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
@@ -2232,7 +2239,7 @@ public final class TapestryModule
 
     /**
      * Contributes strategies accessible via the {@link NullFieldStrategySource} service.
-     * <p/>
+     *
      * <dl>
      * <dt>default</dt>
      * <dd>Does nothing, nulls stay null.</dd>
@@ -2249,9 +2256,9 @@ public final class TapestryModule
     /**
      * Determines positioning of hidden fields relative to other elements (this
      * is needed by {@link org.apache.tapestry5.corelib.components.FormFragment} and others.
-     * <p/>
+     *
      * For elements input, select, textarea and label the hidden field is positioned after.
-     * <p/>
+     *
      * For elements p, div, li and td, the hidden field is positioned inside.
      */
     public static void contributeHiddenFieldLocationRules(
@@ -2717,7 +2724,7 @@ public final class TapestryModule
         configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
         configuration.add("TapestryCore", new TapestryCoreComponentLibraryInfoSource());
     }
-    
+
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource
     {
@@ -2727,9 +2734,9 @@ public final class TapestryModule
             ComponentLibraryInfo info = null;
             if (libraryMapping.libraryName.equals("core"))
             {
-            
+
                 info = new ComponentLibraryInfo();
-                
+
                 // the information above will probably not change in the future, or change very 
                 // infrequently, so I see no problem in hardwiring them here.
                 info.setArtifactId("tapestry-core");
@@ -2743,18 +2750,17 @@ public final class TapestryModule
                 info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
                 info.setHomepageUrl("http://tapestry.apache.org");
                 info.setLibraryMapping(libraryMapping);
-                
+
                 final InputStream inputStream = TapestryModule.class.getResourceAsStream(
                         "/META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties");
-                
+
                 if (inputStream != null)
                 {
                     Properties properties = new Properties();
                     try
                     {
                         properties.load(inputStream);
-                    }
-                    catch (IOException e)
+                    } catch (IOException e)
                     {
                         throw new RuntimeException(e);
                     }

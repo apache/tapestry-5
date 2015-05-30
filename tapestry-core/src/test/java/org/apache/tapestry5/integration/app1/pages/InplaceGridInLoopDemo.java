@@ -19,7 +19,7 @@ import org.apache.tapestry5.annotations.Property;
 public class InplaceGridInLoopDemo extends GridDemo {
 
   @Property
-  private int index;
+  protected int index;
 
   public String getContainerClass() {
     return "grid" + index;

@@ -1,5 +1,3 @@
-// Copyright 2006-2014 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,7 +26,7 @@ import java.util.List;
 /**
  * Provides support to components enclosed by a form when the form is rendering (allowing the components to registry
  * form submit callback commands), and also during form submission time.
- * <p/>
+ *
  * TODO: Most methods should only be invokable depending on whether the form is rendering or processing a submission.
  */
 public class FormSupportImpl implements InternalFormSupport, Locatable

@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AutocompleteDemo
@@ -43,17 +44,25 @@ public class AutocompleteDemo
     @Property
     private String withContext;
 
+    @Persist
+    @Property
+    private String required;
+
     @Inject
     private AlertManager alertManager;
-    
+
     public Object[] getContext() {
         return new Object[] {1, RetentionPolicy.RUNTIME, AnnotationUseContext.MIXIN};
     }
-    
+
     List onProvideCompletionsFromWithContext(String partial, Integer integer,
             RetentionPolicy retentionPolicy, AnnotationUseContext annotationUseContext) {
         return Arrays.asList(String.format("%s : %03d, %s, %s", partial,
                 integer, retentionPolicy, annotationUseContext));
+    }
+
+    List onProvideCompletionsFromRequired(String partial) {
+        return Collections.singletonList("foo");
     }
 
     List onProvideCompletionsFromTitle(String partialTitle) throws Exception
@@ -84,6 +93,7 @@ public class AutocompleteDemo
     void onSuccess() {
         alertManager.alert(Duration.SINGLE, Severity.INFO, String.format("Title: %s", title));
         alertManager.alert(Duration.SINGLE, Severity.INFO, String.format("With context: %s", withContext));
+        alertManager.alert(Duration.SINGLE, Severity.INFO, String.format("required: %s", required));
     }
 
 }

@@ -1,5 +1,3 @@
-// Copyright 2007-2013 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -50,18 +48,18 @@ import java.util.*;
  * values into a JSON text using the <code>put</code> and <code>toString</code> methods. A <code>get</code> method
  * returns a value if one can be found, and throws an exception if one cannot be found. An <code>opt</code> method
  * returns a default value instead of throwing an exception, and so is useful for obtaining optional values.
- * <p/>
+ *
  * The generic <code>get()</code> and <code>opt()</code> methods return an object, which you can cast or query for type.
  * There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coersion for you.
- * <p/>
+ *
  * The <code>put</code> methods adds values to an object. For example,
- * <p/>
+ *
  * <pre>
  * myString = new JSONObject().put(&quot;JSON&quot;, &quot;Hello, World!&quot;).toString();
  * </pre>
- * <p/>
+ *
  * produces the string <code>{"JSON": "Hello, World"}</code>.
- * <p/>
+ *
  * The texts produced by the <code>toString</code> methods strictly conform to the JSON syntax rules. The constructors
  * are more forgiving in the texts they will accept:
  * <ul>
@@ -71,19 +69,19 @@ import java.util.*;
  * contain leading or trailing spaces, and if they do not contain any of these characters: <code>{ }
  * [ ] / \ : , = ; #</code> and if they do not look like numbers and if they are not the reserved words
  * <code>true</code>, <code>false</code>, or <code>null</code>.</li>
- * <li>Keys can be followed by <code>=</code> or <code>=></code> as well as by <code>:</code>.</li>
+ * <li>Keys can be followed by <code>=</code> or {@code =>} as well as by {@code :}.</li>
  * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as well as by <code>,</code>
  * <small>(comma)</small>.</li>
  * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or <code>0x-</code> <small>(hex)</small> prefix.</li>
  * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
  * </ul>
- * <hr/>
- * <p/>
+ * <hr>
+ *
  * This class, and the other related classes, have been heavily modified from the original source, to fit Tapestry
  * standards and to make use of JDK 1.5 features such as generics. Further, since the interest of Tapestry is primarily
  * constructing JSON (and not parsing it), many of the non-essential methods have been removed (since the original code
  * came with no tests).
- * <p/>
+ *
  * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allows the exact
  * output to be controlled; useful when a JSONObject is being used as a configuration object, and must contain values
  * that are not simple data, such as an inline function (making the result not JSON).
@@ -175,7 +173,7 @@ public final class JSONObject extends JSONCollection
      * Constructs a new JSONObject using a series of String keys and object values.
      * Object values sholuld be compatible with {@link #put(String, Object)}. Keys must be strings
      * (toString() will be invoked on each key).
-     * <p/>
+     *
      * Prior to release 5.4, keysAndValues was type String...; changing it to Object... makes
      * it much easier to initialize a JSONObject in a single statement, which is more readable.
      *
@@ -305,8 +303,7 @@ public final class JSONObject extends JSONCollection
      * @param value
      *         An object to be accumulated under the key.
      * @return this.
-     * @throws {@link
-     *         RuntimeException} If the value is an invalid number or if the key is null.
+     * @throws RuntimeException if the value is an invalid number or if the key is null.
      */
     public JSONObject accumulate(String key, Object value)
     {
@@ -696,8 +693,8 @@ public final class JSONObject extends JSONCollection
     }
 
     /**
-     * Produce a string in double quotes with backslash sequences in all the right places. A backslash will be inserted
-     * within </, allowing JSON text to be delivered in HTML. In JSON text, a string cannot contain a control character
+     * Produce a string in double quotes with backslash sequences in all the right places,
+     * allowing JSON text to be delivered in HTML. In JSON text, a string cannot contain a control character
      * or an unescaped quote or backslash.
      *
      * @param string

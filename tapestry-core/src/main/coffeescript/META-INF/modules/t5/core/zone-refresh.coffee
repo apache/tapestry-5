@@ -34,11 +34,14 @@ define ["./events", "./dom", "./console"],
 
       # Whenever the zone updates, we can clear the executing flag.
 
-      zone.on events.zone.didUpdate, -> executing = false
+      zone.on events.zone.didUpdate, ->
+        executing = false
+        return
 
       cleanUp = ->
         window.clearInterval intervalId
         zone = null
+        return
 
       handler = ->
         # Don't clog things up if the response rate is too slow

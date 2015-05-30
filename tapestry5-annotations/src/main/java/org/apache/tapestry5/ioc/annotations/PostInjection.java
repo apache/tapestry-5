@@ -1,5 +1,3 @@
-// Copyright 2008, 2009, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,7 +20,7 @@ import java.lang.annotation.*;
  * after field injection. It should be placed on a <strong>public method</strong>. Any return value from the method is
  * ignored. The order of invocation for classes with multiple marked methods (including methods inherited from
  * super-classes) is not, at this time, defined.
- * <p/>
+ *
  * Tapestry also honors the {@link javax.annotation.PostConstruct} annotation, and treats it identically to
  * PostInjection. This is both more flexible than PostConstruct (in that methods may have parameters, and multiple methods
  * may be annotated) but also falls short (Tapestry will only seek out public methods).

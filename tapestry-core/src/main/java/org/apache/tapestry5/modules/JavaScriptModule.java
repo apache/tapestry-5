@@ -106,7 +106,7 @@ public class JavaScriptModule
      * <dt>jquery</dt>
      * <dd>Added if the infrastructure provider is "jquery".</dd>
      * </dl>
-     * <p/>
+     *
      * User modules may replace or extend this list.
      */
     @Contribute(JavaScriptStack.class)
@@ -117,7 +117,7 @@ public class JavaScriptModule
                                                 String provider)
     {
         configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
-        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.7.0.js"));
+        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.8.3.js"));
 
         if (provider.equals("prototype"))
         {
@@ -343,10 +343,10 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
 
-                                        @Path("${tapestry.asset.root}/typeahead-0.9.3.js")
+                                        @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
 
-                                        @Path("${tapestry.asset.root}/moment-2.8.4.js")
+                                        @Path("${tapestry.asset.root}/moment-2.10.3.js")
                                         Resource moment,
 
                                         @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/transition.js")

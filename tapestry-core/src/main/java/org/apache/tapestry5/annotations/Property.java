@@ -1,5 +1,3 @@
-// Copyright 2008, 2009 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,20 +12,21 @@
 
 package org.apache.tapestry5.annotations;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Annotation for fields for which accessor methods (getters and setters) should be created.  This can help when
  * defining the kind of placeholder properties often used in components, though the disadvantage is that you can't
  * access the fields in a unit test, and you may get compiler warnings about unused private variables.
- * <p/>
+ *
  * The annotation <em>will not</em> overwrite an existing getter or setter method; if you put a Property annotation on a
  * field that already has a getter or a setter you will see a runtime exception.
  */

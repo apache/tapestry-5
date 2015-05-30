@@ -1,5 +1,3 @@
-// Copyright 2007, 2008 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,7 +18,7 @@ import java.util.Collection;
 
 /**
  * Contains a set of contributed package names from which to load entities.
- * <p/>
+ *
  * The service's configuration is the names of Java packages to search for Hibernate entities.
  */
 @UsesConfiguration(String.class)

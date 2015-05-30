@@ -35,7 +35,7 @@ import java.io.InputStream;
  * Part of a Captcha based authentication scheme; a KaptchaImage generates a new
  * text image whenever it <em>renders</em> and can provide the previously
  * rendered text subsequently (it is stored persistently in the session).
- * <p/>
+ *
  * The component renders an {@code <img>} tag, including width and height attributes. Other attributes
  * come from informal parameters.
  *

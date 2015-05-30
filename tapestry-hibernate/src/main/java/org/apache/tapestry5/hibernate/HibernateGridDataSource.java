@@ -1,5 +1,3 @@
-// Copyright 2008, 2010 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,8 +12,6 @@
 
 package org.apache.tapestry5.hibernate;
 
-import java.util.List;
-
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 import org.hibernate.Criteria;
@@ -23,13 +19,15 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 
+import java.util.List;
+
 /**
  * A simple implementation of {@link org.apache.tapestry5.grid.GridDataSource} based on a Hibernate Session and a known
  * entity class.  This implementation does support multiple {@link org.apache.tapestry5.grid.SortConstraint sort
  * constraints}; however it assumes a direct mapping from sort constraint property to Hibernate property.
- * <p/>
+ *
  * This class is <em>not</em> thread-safe; it maintains internal state.
- * <p/>
+ *
  * Typically, an instance of this object is created fresh as needed (that is, it is not stored between requests).
  */
 public class HibernateGridDataSource implements GridDataSource

@@ -1,5 +1,3 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,15 +21,15 @@ import java.util.List;
  * filter interface: the filter interface is a variant of the service interface, where each method has an additional
  * parameter that is an instance of the service interface. Typically, this service parameter (often named "delegate") is
  * either the first or the last parameter of each method.
- * <p/>
+ *
  * The implementation of a filter method is expected to pass all of its parameters to the service instance passed into
  * it.
- * <p/>
+ *
  * The interesting thing is that there may be multiple filters in the pipeline. A fabricated "bridge" object (that
  * implements the service interface) is created to let each filter invoke methods on the next filter down the pipeline.
  * This simplifies the model for creating pipelines, as each filter is coded as if it was directly "in front of" the
  * terminator. In fact, it may be indirectly invoking methods on the next filter in the pipeline via a bridge instance.
- * <p/>
+ *
  * The builder is fairly smart about matching up service interface methods to filter interface methods, but keeping it
  * simple is also a good idea.  By convention, the final parameter of each filter method is the delegate object (the bridge or terminator).
  */
