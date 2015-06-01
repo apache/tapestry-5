@@ -634,6 +634,8 @@ public class SaxTemplateParser
                     // parse is aborted, leaving
                     // tokens with just tokens defined inside <t:content>.
 
+                    processTextBuffer(newState);
+
                     active = false;
 
                     break;

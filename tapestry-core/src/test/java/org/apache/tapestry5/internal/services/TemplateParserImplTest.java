@@ -1058,4 +1058,26 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         return builder.toString();
     }
+
+    @Test
+    public void text_from_content_not_dropped() {
+        List<TemplateToken> tokens = tokens("content-TAP5-2109.tml");
+
+        System.out.println(tokens);
+
+        assertEquals(tokens.size(), 4);
+
+        TextToken t0 = get(tokens, 0);
+
+        assertEquals(t0.text.trim(), "BEGIN");
+
+        StartComponentToken t1 = get(tokens, 1);
+        assertEquals(t1.getComponentType(), "somecomponent");
+
+        EndElementToken t2 = get(tokens, 2);
+
+        TextToken t3 = get(tokens, 3);
+
+        assertEquals(t3.text.trim(), "END");
+    }
 }
