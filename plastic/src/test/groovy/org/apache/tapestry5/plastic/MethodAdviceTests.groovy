@@ -336,4 +336,48 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
         m.isOverride() == true
     }
 
+    def "ignores Error and RuntimeException in throws declaration"() {
+
+        def mgr = createMgr({ PlasticClass pc ->
+            def methods = pc.getMethodsWithAnnotation(MethodAnnotation)
+
+            methods.each { PlasticMethod m ->
+                m.addAdvice({ MethodInvocation iv ->
+                    iv.proceed()
+                } as MethodAdvice)
+            }
+        } as PlasticClassTransformer)
+
+        when:
+
+        def o = mgr.getClassInstantiator(testsubjects.DeclaredExceptions.name).newInstance()
+
+        o.throwsRuntime()
+
+        then:
+
+        def e = thrown(RuntimeException)
+
+        e.message == "throwsRuntime";
+
+        when:
+
+        o.throwsError()
+
+        then:
+
+        e = thrown(Error)
+
+        e.message == "throwsError"
+
+        when:
+
+        o.throwsException()
+
+        then:
+
+        e = thrown(Exception)
+
+        e.message == "throwsException"
+    }
 }
