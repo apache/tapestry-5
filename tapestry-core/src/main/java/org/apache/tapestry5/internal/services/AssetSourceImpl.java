@@ -32,6 +32,7 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,16 +40,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("all")
 public class AssetSourceImpl extends LockSupport implements AssetSource
 {
-    
+
     private final List<String> EXTERNAL_URL_PREFIXES = Arrays.asList(
-            AssetConstants.HTTP, AssetConstants.HTTPS, AssetConstants.PROTOCOL_RELATIVE, AssetConstants.FTP); 
-    
+            AssetConstants.HTTP, AssetConstants.HTTPS, AssetConstants.PROTOCOL_RELATIVE, AssetConstants.FTP);
+
     private final StrategyRegistry<AssetFactory> registry;
 
     private final ThreadLocale threadLocale;
@@ -64,20 +64,20 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
     private final AtomicBoolean firstWarning = new AtomicBoolean(true);
 
     private final OperationTracker tracker;
-    
+
     private final Request request;
-    
+
     private final Map<String, AssetFactory> configuration;
 
-    public AssetSourceImpl(ThreadLocale threadLocale, 
+    public AssetSourceImpl(ThreadLocale threadLocale,
 
-            Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker)
+                           Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker)
     {
         this(threadLocale, configuration, symbolSource, logger, tracker, null);
     }
 
-    
-    public AssetSourceImpl(ThreadLocale threadLocale, 
+
+    public AssetSourceImpl(ThreadLocale threadLocale,
 
                            Map<String, AssetFactory> configuration, SymbolSource symbolSource, Logger logger, OperationTracker tracker, Request request)
     {
@@ -147,8 +147,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
         assert InternalUtils.isNonBlank(path);
 
-        return tracker.invoke(String.format("Resolving '%s' for component %s", path, resources.getCompleteId()
-        ),
+        return tracker.invoke(String.format("Resolving '%s' for component %s", path, resources.getCompleteId()),
                 new Invokable<Asset>()
                 {
                     public Asset invoke()
@@ -167,29 +166,26 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
                             final String prefix = dotx >= 0 ? expanded.substring(0, dotx) : AssetConstants.PROTOCOL_RELATIVE;
                             if (EXTERNAL_URL_PREFIXES.contains(prefix))
                             {
-                                
+
                                 String url;
-                                if (prefix.equals(AssetConstants.PROTOCOL_RELATIVE)) 
+                                if (prefix.equals(AssetConstants.PROTOCOL_RELATIVE))
                                 {
                                     url = (request != null && request.isSecure() ? "https:" : "http:") + expanded;
                                     url = url.replace("//:", "//");
-                                }
-                                else
+                                } else
                                 {
                                     url = expanded;
                                 }
-                                
+
                                 try
                                 {
                                     UrlResource resource = new UrlResource(new URL(url));
                                     return new UrlAsset(url, resource);
-                                }
-                                catch (MalformedURLException e)
+                                } catch (MalformedURLException e)
                                 {
                                     throw new RuntimeException(e);
                                 }
-                            }
-                            else
+                            } else
                             {
                                 return getAssetInLocale(resources.getBaseResource(), expanded, resources.getLocale());
                             }
@@ -370,10 +366,29 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
     private Asset getLocalizedAssetFromResource(Resource unlocalized, Locale locale)
     {
-        Resource localized = locale == null ? unlocalized : unlocalized.forLocale(locale);
+        final Resource localized;
+        if (locale == null)
+        {
+            localized = unlocalized;
+        } else
+        {
+            Reference<Asset> reference = cache.get(unlocalized);
+            if (reference != null)
+            {
+                Asset asset = reference.get();
+                if (asset != null)
+                {
+                    unlocalized = asset.getResource(); // Prefer resource from cache to use its cache
+                }
+            }
+
+            localized = unlocalized.forLocale(locale);
+        }
 
         if (localized == null || !localized.exists())
+        {
             throw new RuntimeException(String.format("Unable to locate asset '%s' (the file does not exist).", unlocalized));
+        }
 
         return getAssetForResource(localized);
     }
