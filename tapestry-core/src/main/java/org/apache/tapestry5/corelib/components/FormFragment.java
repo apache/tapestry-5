@@ -164,11 +164,20 @@ public class FormFragment implements ClientElement
                 "id", clientId,
                 "data-component-type", "core/FormFragment");
 
+        if (alwaysSubmit) {
+            element.attribute("data-always-submit", "true");
+        }
+
         resources.renderInformalParameters(writer);
 
         if (!visible)
         {
             element.attribute("style", "display: none;");
+
+            if (!alwaysSubmit)
+            {
+                javascriptSupport.require("t5/core/form-fragment").invoke("hide").with(clientId);
+            }
         }
 
         componentActions = new ComponentActionSink(logger, clientDataEncoder);
@@ -222,16 +231,7 @@ public class FormFragment implements ClientElement
 
                 "name", Form.FORM_DATA,
 
-
                 "value", componentActions.getClientData());
-
-        if (!alwaysSubmit)
-        {
-            // Make it possible for the FormFragment to locate the hidden field, even if
-            // FormFragments get nested in some complex way.  When the always submit option
-            // is enabled, there's no need for the hidden field to be locatable.
-            hidden.attributes("data-for-fragment", clientId);
-        }
 
         writer.end(); // div
 

@@ -1,5 +1,3 @@
-# Copyright 2012, 2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,21 +18,31 @@ define ["underscore", "./dom", "./events", "./forms"],
 
     SELECTOR = "[data-component-type='core/FormFragment']"
 
-    # When any form fires the prepareForSubmit event, check to see if
-    # any form fragments are contained within, and give them a chance
-    # to enabled/disable their hidden field.
-    dom.onDocument events.form.prepareForSubmit, "form", (event) ->
+    REENABLE = "data-re-enable-when-fragment-visible"
 
-      fragments = @find SELECTOR
+    disableInputFields = (fragment) ->
 
-      _.each fragments, (frag) ->
+      # This is an example of where the t5/core/dom abstraction label is problematic,
+      # as this is very inefficient vs. the native jQuery approach.
+      for field in fragment.find "input:not(:disabled)"
+        field.attr "disabled", true
+        field.attr REENABLE, true
 
-        fragmentId = frag.attr "id"
+    renableInputFields = (fragment) ->
 
-        hidden = frag.findFirst "input[type=hidden][data-for-fragment='#{fragmentId}']"
+      for field in fragment.find "input[#{REENABLE}]"
+        field.attr "disabled", null
+        field.attr REENABLE, null
 
-        # If found (e.g., not alwaysSubmit), then enable/disable the field.
-        hidden && hidden.attr "disabled", not frag.deepVisible()
+    updateFields = (fragment, makeVisible) ->
+
+      # This is a server side option that says the content of the fragment should always be submitted,
+      # even if the fragment is not currently visible.
+      return if fragment.attr "data-always-submit"
+
+      f = if makeVisible then renableInputFields else disableInputFields
+
+      f fragment
 
     # Again, a DOM event to make the FormFragment visible or invisible; this is useful
     # because of the didShow/didHide events ... but we're really just seeing the evolution
@@ -45,9 +53,18 @@ define ["underscore", "./dom", "./events", "./forms"],
 
         this[if makeVisible then "show" else "hide"]()
 
+        updateFields this, makeVisible
+
         @trigger events.element[if makeVisible then "didShow" else "didHide"]
 
         return false
+
+    # When a FormFragment is initially rendered as hidden, then we need to do some
+    # book-keeping on the client side.
+    hide = (id) ->
+      field = dom(id)
+
+      updateFields field, false
 
     # Initializes a trigger for a FormFragment
     #
@@ -72,4 +89,4 @@ define ["underscore", "./dom", "./events", "./forms"],
         trigger.on "click", update
 
     # Module exports:
-    { linkTrigger }
+    { linkTrigger, hide }
