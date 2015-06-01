@@ -1061,7 +1061,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
     @Test
     public void text_from_content_not_dropped() {
-        List<TemplateToken> tokens = tokens("content-TAP5-2109.tml");
+        List<TemplateToken> tokens = tokens("TAP5-2109.tml");
 
         System.out.println(tokens);
 
