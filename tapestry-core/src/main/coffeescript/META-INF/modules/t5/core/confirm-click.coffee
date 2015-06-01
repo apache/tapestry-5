@@ -70,7 +70,8 @@ define ["jquery", "./events", "./dom", "bootstrap/modal"],
       runDialog
         title: $this.attr "data-confirm-title"
         message: $this.attr "data-confirm-message"
-        okLabel: $this.attr "data-confirm-label"
+        okLabel: $this.attr "data-confirm-label-ok"
+        cancelLabel: $this.attr "data-confirm-label-cancel"
         ok: ->
           $this.attr "data-confirm-state", "confirmed"
           # In the case of an Ajax update, or a button, this is enough. In the case of a simple link,
