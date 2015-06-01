@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,6 +12,12 @@
 
 package org.apache.tapestry5;
 
-public interface ContextAwareException {
+/**
+ * An interface implemented by exceptions that get special handling in the default {@link org.apache.tapestry5.services.RequestExceptionHandler}
+ * service.
+ */
+public interface ContextAwareException
+{
+    /** @returns A page activation context for reporting the exception. */
     Object[] getContext();
 }
