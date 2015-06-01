@@ -17,11 +17,13 @@ import com.google.javascript.jscomp.Compiler;
 import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.webresources.WebResourcesSymbols;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -42,16 +44,20 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
     private final Request request;
+    private final CompilationLevel compilationLevel;
 
     static
     {
         Compiler.setLoggingLevel(Level.SEVERE);
     }
 
-    public GoogleClosureMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, Request request)
+    public GoogleClosureMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, Request request,
+                                  @Symbol(WebResourcesSymbols.COMPILATION_LEVEL)
+                                  CompilationLevel compilationLevel)
     {
         super(logger, tracker, checksumGenerator, "text/javascript");
         this.request = request;
+        this.compilationLevel = compilationLevel;
     }
 
     @Override
@@ -66,6 +72,9 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
         // Don't bother to pool the Compiler
 
         CompilerOptions options = new CompilerOptions();
+
+        compilationLevel.setOptionsForCompilationLevel(options);
+
         options.setCodingConvention(new ClosureCodingConvention());
         options.setOutputCharset(OUTPUT_CHARSET);
         options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES, CheckLevel.WARNING);

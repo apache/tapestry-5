@@ -14,6 +14,7 @@ package org.apache.tapestry5.webresources.modules;
 
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.core.parser.AntlrException;
+import com.google.javascript.jscomp.CompilationLevel;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.webresources.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -56,6 +57,7 @@ public class WebResourcesModule
     public static void setupDefaultCacheDirectory(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(WebResourcesSymbols.CACHE_DIR, "${java.io.tmpdir}/tapestry-asset-cache");
+        configuration.add(WebResourcesSymbols.COMPILATION_LEVEL, CompilationLevel.WHITESPACE_ONLY);
     }
 
 
