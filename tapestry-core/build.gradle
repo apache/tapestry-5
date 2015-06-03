@@ -5,7 +5,6 @@ import t5build.*
 description = "Central module for Tapestry, containing all core services and components"
 
 project.ext {
-    antlrSource = "src/main/antlr"
     mainGeneratedDir = "src/main/generated"
     testGeneratedDir = "src/test/generated"
 }
