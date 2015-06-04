@@ -1,5 +1,3 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,9 +12,29 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.services.RequestExceptionHandler;
+
 import java.io.IOException;
 import java.util.List;
 
-public interface ExceptionHandlerAssistant {
-    public Object handleRequestException(Throwable exception, List<Object> exceptionContext) throws IOException;
+/**
+ * A contribution to the default {@link RequestExceptionHandler} service, this is mapped to an exception class,
+ * allowing class specific (based on an inheritance search) handling of an exception.
+ *
+ * @see ContextAwareException
+ */
+public interface ExceptionHandlerAssistant
+{
+    /**
+     * Handles the exception, returning a page class or link to redirect to.
+     *
+     * @param exception
+     *         the exception as thrown
+     * @param exceptionContext
+     *         a page activation context that is derived from the root-most exception
+     * @return either a page class or a {@link Link}; a page will be redirected to, with the exception context
+     * as the page activation context
+     * @throws IOException
+     */
+    Object handleRequestException(Throwable exception, List<Object> exceptionContext) throws IOException;
 }

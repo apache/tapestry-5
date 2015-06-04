@@ -1,5 +1,3 @@
-# Copyright 2012-2013 The Apache Software Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,54 +14,51 @@
 #
 # Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["./dom", "underscore"],
-  (dom, _) ->
-    container = null
-    iframe = null
-    iframeDocument = null
+define ["./dom"], (dom) ->
 
-    write = (content) ->
-      # Clear current content:
-      iframeDocument.open()
-      # Write new content:
-      iframeDocument.write content
-      iframeDocument.close()
+  write = (container, content) ->
+    iframe = (container.findFirst "iframe").element
 
-    clear = ->
-      write ""
-      container.hide()
-      return false
+    # See http://xkr.us/articles/dom/iframe-document/
 
-    create = ->
-      return if container
+    iframeDocument = iframe.contentWindow or iframe.contentDocument
+    if iframeDocument.document
+      iframeDocument = iframeDocument.document
 
-      container = dom.create
-        class: "exception-container"
-        """
-          <iframe> </iframe>
-          <div>
-            <button class="pull-right btn btn-primary">
-              <i class="icon-remove icon-white"></i>
-              Close
-            </button>
-          </div>
-        """
+    # Clear current content:
+    iframeDocument.open()
+    # Write new content:
+    iframeDocument.write content
+    iframeDocument.close()
 
-      dom.body.append container.hide()
+  clear = ->
+    container = @closest '.exception-container'
+    container.remove()
+    return false
 
-      iframe = (container.findFirst "iframe").element
+  create = ->
 
-      # See http://xkr.us/articles/dom/iframe-document/
+    container = dom.create
+      class: "exception-container"
+      """
+        <iframe> </iframe>
+        <div>
+          <button class="pull-right btn btn-primary">
+            <i class="icon-remove icon-white"></i>
+            Close
+          </button>
+        </div>
+      """
 
-      iframeDocument = iframe.contentWindow or iframe.contentDocument
-      if iframeDocument.document
-        iframeDocument = iframeDocument.document
+    dom.body.append container.hide()
 
-      container.on "click", "button", clear
+    container.on "click", "button", clear
+    container
 
-    # Export single function:
+  # Export single function:
 
-    (exceptionContent) ->
-      create()
-      write exceptionContent
-      container.show()
+  (exceptionContent) ->
+    container = create()
+    write container, exceptionContent
+    container.show()
+    return

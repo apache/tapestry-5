@@ -21,4 +21,13 @@ public class WebResourcesSymbols
      * It is common to set this to {@code target/asset-cache} during development.
      */
     public static final String CACHE_DIR = "tapestry.compiled-asset-cache-dir";
+
+    /**
+     * Defines the level at which the Google Closure compiler operations, as per
+     * {@link com.google.javascript.jscomp.CompilationLevel}.  The default is "WHITESPACE_ONLY", though
+     * "SIMPLE_OPTIMIZATIONS" should also work. Advanced optimizations will likely not work, as Tapestry's more
+     * incremental approach to JavaScript (including the use of jQuery and jQuery plugins) is not compatible
+     * with Closure.
+     */
+    public static final String COMPILATION_LEVEL  = "tapestry.closure-compiler-level";
 }

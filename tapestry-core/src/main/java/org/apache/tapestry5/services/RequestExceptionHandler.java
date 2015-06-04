@@ -12,12 +12,20 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ExceptionHandlerAssistant;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 import java.io.IOException;
 
 /**
  * Service invoked when an uncaught exception occurs. The error handler is responsible for providing a response to the
  * user to describe the error.
+ *
+ * The default implementation accepts the configuration, which maps an exception class to a corresponding helper.
+ * The helper is either an instance of {@link ExceptionHandlerAssistant} or is a Class for a page that will be redirected
+ * to, to present the exception.
  */
+@UsesMappedConfiguration(key = Class.class, value = Object.class)
 public interface RequestExceptionHandler
 {
     /**
@@ -29,7 +37,8 @@ public interface RequestExceptionHandler
      * These are very important in Ajax requests to allow the client-side logic to detect the error and present it to
      * the user.
      *
-     * @param exception uncaught exception to be reported
+     * @param exception
+     *         uncaught exception to be reported
      * @throws IOException
      */
     void handleRequestException(Throwable exception) throws IOException;

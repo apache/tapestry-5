@@ -69,7 +69,7 @@ class MethodAdviceManager
 
         invocationClassNode.visit(PlasticConstants.DEFAULT_VERSION_OPCODE, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, plasticClass.nameCache.toInternalName(invocationClassName),
                 null, PlasticClassImpl.ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME, new String[]
-                {plasticClass.nameCache.toInternalName(MethodInvocation.class)});
+                        {plasticClass.nameCache.toInternalName(MethodInvocation.class)});
 
         constructorTypes = createFieldsAndConstructor();
 
@@ -341,18 +341,21 @@ class MethodAdviceManager
 
                 for (String exceptionName : description.checkedExceptionTypes)
                 {
-                    block.addCatch(exceptionName, new InstructionBuilderCallback()
+                    if (plasticClass.pool.isCheckedException(exceptionName))
                     {
-                        @Override
-                        public void doBuild(InstructionBuilder builder)
+                        block.addCatch(exceptionName, new InstructionBuilderCallback()
                         {
-                            builder.loadThis().swap();
-                            builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class,
-                                    "setCheckedException", Exception.class);
+                            @Override
+                            public void doBuild(InstructionBuilder builder)
+                            {
+                                builder.loadThis().swap();
+                                builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class,
+                                        "setCheckedException", Exception.class);
 
-                            builder.returnResult();
-                        }
-                    });
+                                builder.returnResult();
+                            }
+                        });
+                    }
                 }
             }
         });

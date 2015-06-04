@@ -207,7 +207,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                 OutputStream os = response.getOutputStream("application/json;charset=UTF-8");
 
                 JSONObject reply = new JSONObject();
-                reply.in(InternalConstants.PARTIAL_KEY).put("redirectURL", link.toAbsoluteURI());
+                reply.in(InternalConstants.PARTIAL_KEY).put("redirectURL", link.toRedirectURI());
 
                 os.write(reply.toCompactString().getBytes("UTF-8"));
 

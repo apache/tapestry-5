@@ -37,13 +37,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings("rawtypes")
 public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticClassListenerHub
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlasticClassPool.class); 
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlasticClassPool.class);
+
     final PlasticClassLoader loader;
 
     private final PlasticManagerDelegate delegate;
 
     private final Set<String> controlledPackages;
+
+    private final Map<String, Boolean> checkedExceptionCache = new HashMap<String, Boolean>();
 
 
     // Would use Deque, but that's added in 1.6 and we're still striving for 1.5 code compatibility.
@@ -95,7 +97,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     private final Map<String, FieldInstrumentations> instrumentations = PlasticInternalUtils.newMap();
 
     private final Map<String, String> transformedClassNameToImplementationClassName = PlasticInternalUtils.newMap();
-    
+
 
     private final FieldInstrumentations placeholder = new FieldInstrumentations(null);
 
@@ -106,10 +108,14 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * Creates the pool with a set of controlled packages; all classes in the controlled packages are loaded by the
      * pool's class loader, and all top-level classes in the controlled packages are transformed via the delegate.
      *
-     * @param parentLoader       typically, the Thread's context class loader
-     * @param delegate           responsible for end stages of transforming top-level classes
-     * @param controlledPackages set of package names (note: retained, not copied)
-     * @param options            used when transforming classes
+     * @param parentLoader
+     *         typically, the Thread's context class loader
+     * @param delegate
+     *         responsible for end stages of transforming top-level classes
+     * @param controlledPackages
+     *         set of package names (note: retained, not copied)
+     * @param options
+     *         used when transforming classes
      */
     public PlasticClassPool(ClassLoader parentLoader, PlasticManagerDelegate delegate, Set<String> controlledPackages,
                             Set<TransformationOption> options)
@@ -454,16 +460,20 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
         instrumentations.put(classNode.name, new FieldInstrumentations(classNode.superName));
-        
+
         // TODO: check whether second parameter should really be null
-        return createTransformation(baseClassName, classNode, null, false); 
+        return createTransformation(baseClassName, classNode, null, false);
     }
 
     /**
-     * @param baseClassName class from which the transformed class extends
-     * @param classNode     node for the class
-     * @param implementationClassNode     node for the implementation class. May be null.
-     * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
+     * @param baseClassName
+     *         class from which the transformed class extends
+     * @param classNode
+     *         node for the class
+     * @param implementationClassNode
+     *         node for the implementation class. May be null.
+     * @param proxy
+     *         if true, the class is a new empty class; if false an existing class that's being transformed
      * @throws ClassNotFoundException
      */
     private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode, ClassNode implementationClassNode, boolean proxy)
@@ -489,7 +499,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * Constructs a class node by reading the raw bytecode for a class and instantiating a ClassNode
      * (via {@link ClassReader#accept(org.apache.tapestry5.internal.plastic.asm.ClassVisitor, int)}).
      *
-     * @param className fully qualified class name
+     * @param className
+     *         fully qualified class name
      * @return corresponding ClassNode
      */
     public ClassNode constructClassNodeFromBytecode(String className)
@@ -509,10 +520,11 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return PlasticInternalUtils.readBytecodeForClass(parentClassLoader, className, true);
     }
 
-    public PlasticClassTransformation createTransformation(String baseClassName, String newClassName) {
+    public PlasticClassTransformation createTransformation(String baseClassName, String newClassName)
+    {
         return createTransformation(baseClassName, newClassName, null);
     }
-    
+
     public PlasticClassTransformation createTransformation(String baseClassName, String newClassName, String implementationClassName)
     {
         try
@@ -522,9 +534,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             final String internalNewClassNameinternalName = PlasticInternalUtils.toInternalName(newClassName);
             final String internalBaseClassName = PlasticInternalUtils.toInternalName(baseClassName);
             newClassNode.visit(PlasticConstants.DEFAULT_VERSION_OPCODE, ACC_PUBLIC, internalNewClassNameinternalName, null, internalBaseClassName, null);
-            
+
             ClassNode implementationClassNode = null;
-            
+
             if (implementationClassName != null)
             {
                 // When decorating or advising a service, implementationClassName is the name
@@ -534,25 +546,27 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
                 // for each proxy, even a proxy around a proxy.
                 if (transformedClassNameToImplementationClassName.containsKey(implementationClassName))
                 {
-                    implementationClassName = 
+                    implementationClassName =
                             transformedClassNameToImplementationClassName.get(implementationClassName);
                 }
-                
-                if (!implementationClassName.startsWith("com.sun.proxy")) {
-                
-                    try {
+
+                if (!implementationClassName.startsWith("com.sun.proxy"))
+                {
+
+                    try
+                    {
                         implementationClassNode = readClassNode(implementationClassName);
-                    }
-                    catch (IOException e) {
-                        LOGGER.warn(String.format("Unable to load class %s as the implementation of service %s", 
+                    } catch (IOException e)
+                    {
+                        LOGGER.warn(String.format("Unable to load class %s as the implementation of service %s",
                                 implementationClassName, baseClassName));
                         // Go on. Probably a proxy class
                     }
-                    
+
                 }
-                
+
                 transformedClassNameToImplementationClassName.put(newClassName, implementationClassName);
-                
+
             }
 
             return createTransformation(baseClassName, newClassNode, implementationClassNode, true);
@@ -561,14 +575,14 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             throw new RuntimeException(String.format("Unable to create class %s as sub-class of %s: %s", newClassName,
                     baseClassName, PlasticInternalUtils.toMessage(ex)), ex);
         }
-        
+
     }
 
     private ClassNode readClassNode(String className) throws IOException
     {
         return readClassNode(className, getClassLoader());
     }
-    
+
     static ClassNode readClassNode(String className, ClassLoader classLoader) throws IOException
     {
         ClassNode classNode = new ClassNode();
@@ -580,7 +594,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         bis.close();
         classReader.accept(classNode, 0);
         return classNode;
-        
+
     }
 
     public ClassInstantiator getClassInstantiator(String className)
@@ -738,4 +752,31 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         instrumentations.get(classInternalName).write.put(fieldName, fi);
     }
 
+    boolean isCheckedException(String exceptionName)
+    {
+        Boolean cached = checkedExceptionCache.get(exceptionName);
+
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        try
+        {
+            Class asClass = getClassLoader().loadClass(exceptionName);
+
+
+            boolean checked = !(Error.class.isAssignableFrom(asClass) ||
+                    RuntimeException.class.isAssignableFrom(asClass));
+
+            checkedExceptionCache.put(exceptionName, checked);
+
+            return checked;
+        } catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 }
+
+
