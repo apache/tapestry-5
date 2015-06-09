@@ -18,7 +18,7 @@ project.ext.versions = [
     hibernate: "4.3.6.Final",
     slf4j: "1.7.12",
     geb: "0.10.0",
-    selenium: "2.45.0"
+    selenium: "2.46.0"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
