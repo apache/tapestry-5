@@ -20,9 +20,6 @@ package org.apache.tapestry5;
  * component's {@link #getControlName()} will only be accurate after it has rendered.  In some cases, when generating
  * JavaScript for example, it is necessary to {@linkplain org.apache.tapestry5.services.Heartbeat#defer(Runnable) wait
  * until the end of the current Heartbeat} to ensure that all components have had their chance to render.
- *
- * Most Fields also implement {@link org.apache.tapestry5.Field2}, which was introduced to bridge a gap related to
- * re-rendering a form as part of an Ajax request.
  */
 public interface Field extends ClientElement
 {
