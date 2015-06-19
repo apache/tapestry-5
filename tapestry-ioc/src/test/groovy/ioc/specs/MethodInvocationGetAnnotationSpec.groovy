@@ -5,6 +5,7 @@ import org.apache.tapestry5.ioc.annotations.Advise
 import org.apache.tapestry5.ioc.internal.AdviceModule
 import org.apache.tapestry5.ioc.internal.AnnotatedServiceInterface
 import org.apache.tapestry5.ioc.internal.DecoratorModule
+import org.apache.tapestry5.ioc.internal.NonAnnotatedGenericSetServiceInterface
 import org.apache.tapestry5.ioc.internal.NonAnnotatedServiceInterface
 import org.apache.tapestry5.ioc.internal.TestAdvice
 
@@ -16,7 +17,7 @@ import org.apache.tapestry5.ioc.internal.TestAdvice
  * @see TestAdvice
  */
 class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
-
+    
   def "MethodAdvice.getAnnotation() and getMethod() in service decoration"() {
     when:
 
@@ -62,11 +63,27 @@ class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
     def annotatedService = registry.getService AnnotatedServiceInterface
     def annotatedResult = annotatedService.execute(0);
     def annotatedMethod = annotatedService.getClass().getMethod("execute", int.class);
+
+    def nonAnnotatedGenSetService = registry.getService NonAnnotatedGenericSetServiceInterface.class
     
+    def nonAnnotatedGenSetResult1 = nonAnnotatedGenSetService.execute1(0)
+    def nonAnnotatedGenSetMethod1 = nonAnnotatedGenSetService.getClass().getMethod("execute1", int.class)
+    
+    def nonAnnotatedGenSetResult2 = nonAnnotatedGenSetService.execute2("execute2")
+    // We need to look for a method that accept Object instead of string (maybe because of generics...)
+    def nonAnnotatedGenSetMethod2 = nonAnnotatedGenSetService.getClass().getMethod("execute2", Object.class)
+    
+    def nonAnnotatedGenSetResult3 = nonAnnotatedGenSetService.execute3(0)
+    def nonAnnotatedGenSetMethod3 = nonAnnotatedGenSetService.getClass().getMethod("execute3", int.class)
+
+    def nonAnnotatedGenSetResult4 = nonAnnotatedGenSetService.execute2("execute2")
+    // We need to look for a method that accept Object instead of string (maybe because of generics...)
+    def nonAnnotatedGenSetMethod4 = nonAnnotatedGenSetService.getClass().getMethod("execute2", Object.class, String.class)
+
     then:
     nonAnnotatedMethod != null
     nonAnnotatedMethod.getAnnotation(Advise.class) != null
-    nonAnnotatedMethod.getAnnotation(Advise.class).id().equals("id")
+    nonAnnotatedMethod.getAnnotation(Advise.class).id() == "id"
     nonAnnotatedMethod.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
     nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class) != null
     nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class).value().equals("reorder")
@@ -77,9 +94,32 @@ class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
     annotatedMethod.getAnnotation(Advise.class).id().equals("id")
     annotatedMethod.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
     annotatedService.getClass().getAnnotation(ReorderProperties.class) != null
-    annotatedService.getClass().getAnnotation(ReorderProperties.class).value().equals("reorder")
+    annotatedService.getClass().getAnnotation(ReorderProperties.class).value() == "reorder"
     annotatedResult == TestAdvice.ANNOTATION_FOUND
 
+    nonAnnotatedGenSetMethod1 != null
+    nonAnnotatedGenSetMethod1.getAnnotation(Advise.class) != null
+    nonAnnotatedGenSetMethod1.getAnnotation(Advise.class).id() == "id"
+    nonAnnotatedGenSetMethod1.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
+    nonAnnotatedGenSetResult1 == TestAdvice.ANNOTATION_FOUND
+
+    nonAnnotatedGenSetMethod2 != null
+    nonAnnotatedGenSetMethod2.getAnnotation(Advise.class) != null
+    nonAnnotatedGenSetMethod2.getAnnotation(Advise.class).id() == "id"
+    nonAnnotatedGenSetMethod2.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
+    nonAnnotatedGenSetResult2 == TestAdvice.ANNOTATION_FOUND
+
+    nonAnnotatedGenSetMethod3 != null
+    nonAnnotatedGenSetMethod3.getAnnotation(Advise.class) != null
+    nonAnnotatedGenSetMethod3.getAnnotation(Advise.class).id() == "id"
+    nonAnnotatedGenSetMethod3.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
+    nonAnnotatedGenSetResult3 == TestAdvice.ANNOTATION_FOUND
+
+    nonAnnotatedGenSetMethod4 != null
+    nonAnnotatedGenSetMethod4.getAnnotation(Advise.class) != null
+    nonAnnotatedGenSetMethod4.getAnnotation(Advise.class).id() == "id"
+    nonAnnotatedGenSetMethod4.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
+    nonAnnotatedGenSetResult4 == TestAdvice.ANNOTATION_FOUND
   }
 
 }

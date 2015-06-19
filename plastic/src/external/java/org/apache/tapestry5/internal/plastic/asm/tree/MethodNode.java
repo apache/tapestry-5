@@ -29,6 +29,7 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -835,4 +836,11 @@ public class MethodNode extends MethodVisitor {
         }
         mv.visitEnd();
     }
+
+	@Override
+	public String toString() {
+		return "MethodNode [name=" + name + ", bridge=" + Modifier.isVolatile(access)
+				+ ", desc=" + desc + "]";
+	}
+    
 }

@@ -24,6 +24,8 @@ public class AdviceModule
     {
         binder.bind(NonAnnotatedServiceInterface.class, NonAnnotatedServiceInterfaceImpl.class);
         binder.bind(AnnotatedServiceInterface.class, AnnotatedServiceInterfaceImpl.class);
+        binder.bind(NonAnnotatedGenericSetServiceInterface.class,
+                NonAnnotatedGenericSetServiceImpl.class);
     }
 
     @Advise(serviceInterface = NonAnnotatedServiceInterface.class)
@@ -38,4 +40,9 @@ public class AdviceModule
         methodAdviceReceiver.adviseAllMethods(new TestAdvice());
     }
 
+    @Advise(serviceInterface = NonAnnotatedGenericSetServiceInterface.class)
+    public static void adviseNonAnnotatedGenericSetServiceInterface(
+            final MethodAdviceReceiver methodAdviceReceiver) {
+        methodAdviceReceiver.adviseAllMethods(new TestAdvice());
+    }
 }

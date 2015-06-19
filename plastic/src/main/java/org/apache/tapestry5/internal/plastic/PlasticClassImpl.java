@@ -20,10 +20,13 @@ import org.apache.tapestry5.plastic.*;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("all")
 public class PlasticClassImpl extends Lockable implements PlasticClass, InternalPlasticClassTransformation, Opcodes
@@ -398,40 +401,121 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     }
     
+    private static String getParametersDesc(MethodNode methodNode) {
+        return methodNode.desc.substring(methodNode.desc.indexOf('(') + 1, methodNode.desc.lastIndexOf(')'));
+    }
+
+    private static MethodNode findExactMatchMethod(MethodNode methodNode, ClassNode source) {
+
+    	MethodNode found = null;
+    	
+    	final String methodDescription = getParametersDesc(methodNode);
+    	
+        for (MethodNode implementationMethodNode : source.methods)
+        {
+        	
+            final String implementationMethodDescription = getParametersDesc(implementationMethodNode);
+            if (methodNode.name.equals(implementationMethodNode.name) && 
+            		// We don't want synthetic methods.
+            		((implementationMethodNode.access & Opcodes.ACC_SYNTHETIC) == 0)
+            		&& (methodDescription.equals(implementationMethodDescription))) 
+            {
+            	found = implementationMethodNode;
+            	break;
+            }
+        }
+        
+        return found;
+
+    }
+    
+    private static List<Class> getJavaParameterTypes(MethodNode methodNode) {
+        final ClassLoader classLoader = PlasticInternalUtils.class.getClassLoader();
+        Type[] parameterTypes = Type.getArgumentTypes(methodNode.desc);
+    	List<Class> list = new ArrayList<Class>();
+    	for (Type type : parameterTypes)
+        {
+            try
+            {
+                list.add(PlasticInternalUtils.toClass(classLoader, type.getClassName()));
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new RuntimeException(e); // shouldn't happen anyway
+            }
+        }
+    	return list;
+    }
+    
+    /**
+     * Returns the first method which matches the given methodNode.
+     * FIXME: this may not find the correct method if the correct one is declared after
+     * another in which all parameters are supertypes of the parameters of methodNode.
+     * To solve this, we would need to dig way deeper than we have time for this.
+     * @param methodNode
+     * @param classNode
+     * @return
+     */
+    private static MethodNode findGenericMethod(MethodNode methodNode, ClassNode classNode)
+    {
+
+        MethodNode found = null;
+
+        List<Class> parameterTypes = getJavaParameterTypes(methodNode);
+
+        for (MethodNode implementationMethodNode : classNode.methods)
+        {
+
+            if (methodNode.name.equals(implementationMethodNode.name))
+            {
+
+                final List<Class> implementationParameterTypes = getJavaParameterTypes(implementationMethodNode);
+
+                if (parameterTypes.size() == implementationParameterTypes.size())
+                {
+
+                    boolean matches = true;
+                    for (int i = 0; i < parameterTypes.size(); i++)
+                    {
+                        final Class implementationParameterType = implementationParameterTypes.get(i);
+						final Class parameterType = parameterTypes.get(i);
+						if (!parameterType.isAssignableFrom(implementationParameterType)) {
+                            matches = false;
+                            break;
+                        }
+                        
+                    }
+
+                    if (matches && !isBridge(implementationMethodNode))
+                    {
+                        found = implementationMethodNode;
+                        break;
+                    }
+                    
+                }
+
+            }
+
+        }
+
+        return found;
+
+    }
 
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
         {
 
-        	MethodNode candidate = null;
+        	MethodNode candidate = findExactMatchMethod(methodNode, source);
 
-            for (MethodNode implementationMethodNode : source.methods)
-            {
-            	
-                // Find corresponding methods in the implementation class MethodNode
-                if (methodNode.name.equals(implementationMethodNode.name) && 
-//                		methodNode.parameters.size() == implementationMethodNode.parameters.size() &&
-                		// We don't want synthetic methods.
-                		((implementationMethodNode.access & Opcodes.ACC_SYNTHETIC) == 0) 
-                		/*methodNode.desc.equals(implementationMethodNode.desc)*/)
-                {
-                	if (candidate == null)
-                	{
-                		candidate = implementationMethodNode;
-                	}
-                	// Generics implementation. Two methods with same name: The one which isn't a bridge is the one we're looking for.
-                	else 
-                	{
-                		if (isBridge(candidate))
-                		{
-                			candidate = implementationMethodNode;
-                		}
-                	}
-                	
-                }
-
-            }
+        	final String parametersDesc = getParametersDesc(methodNode);
+        	
+        	// candidate will be null when the method has generic parameters
+        	if (candidate == null && parametersDesc.trim().length() > 0) 
+        	{
+        		candidate = findGenericMethod(methodNode, source);
+        	}
             
             if (candidate != null)
             {
@@ -843,8 +927,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (!isOverride)
         {
+        	addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
             addMethodAndParameterAnnotationsFromExistingClass(methodNode, interfaceClassNode);
-            addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
         }
 
         if (isOverride)
