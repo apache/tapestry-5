@@ -414,4 +414,10 @@ public class ClassNode extends ClassVisitor {
         // visits end
         cv.visitEnd();
     }
+
+	@Override
+	public String toString() {
+		return "ClassNode [name=" + name + "]";
+	}
+	
 }

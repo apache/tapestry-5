@@ -401,6 +401,79 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     }
     
+    private static void removeDuplicatedAnnotations(MethodNode node)
+    {
+    	
+    	removeDuplicatedAnnotations(node.visibleAnnotations);
+    	removeDuplicatedAnnotations(node.invisibleAnnotations);
+    	
+    	if (node.visibleParameterAnnotations != null)
+    	{
+	    	for (List<AnnotationNode> list : node.visibleParameterAnnotations)
+	    	{
+	    		removeDuplicatedAnnotations(list);
+	    	}
+    	}
+    	
+    	if (node.invisibleParameterAnnotations != null)
+    	{
+	    	for (List<AnnotationNode> list : node.invisibleParameterAnnotations)
+	    	{
+	    		removeDuplicatedAnnotations(list);
+	    	}
+    	}
+    	
+    }
+
+    private static void removeDuplicatedAnnotations(ClassNode node)
+    {
+    	removeDuplicatedAnnotations(node.visibleAnnotations, true);
+    	removeDuplicatedAnnotations(node.invisibleAnnotations, true);
+    }
+    
+    private static void removeDuplicatedAnnotations(List<AnnotationNode> list) {
+    	removeDuplicatedAnnotations(list, false);
+    }
+    
+    private static void removeDuplicatedAnnotations(List<AnnotationNode> list, boolean reverse) {
+    	
+    	if (list != null)
+    	{
+    	
+	    	final Set<String> annotations = new HashSet<String>();
+	    	final List<AnnotationNode> toBeRemoved = new ArrayList<AnnotationNode>();
+	    	final List<AnnotationNode> toBeIterated;
+	    	
+	    	if (reverse) 
+	    	{
+	    		toBeIterated = new ArrayList<AnnotationNode>(list);
+	    		Collections.reverse(toBeIterated);
+	    	}
+	    	else {
+	    		toBeIterated = list;
+	    	}
+	    	
+	    	for (AnnotationNode annotationNode : toBeIterated) 
+	    	{
+				if (annotations.contains(annotationNode.desc))
+				{
+					toBeRemoved.add(annotationNode);
+				}
+				else
+				{
+					annotations.add(annotationNode.desc);
+				}
+			}
+	    	
+	    	for (AnnotationNode annotationNode : toBeRemoved) 
+	    	{
+				list.remove(annotationNode);
+			}
+	    	
+    	}
+    	
+    }
+
     private static String getParametersDesc(MethodNode methodNode) {
         return methodNode.desc.substring(methodNode.desc.indexOf('(') + 1, methodNode.desc.lastIndexOf(')'));
     }
@@ -501,7 +574,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return found;
 
     }
-
+    
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
@@ -558,6 +631,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         lock();
 
         addClassAnnotations(implementationClassNode);
+        removeDuplicatedAnnotations(classNode);
 
         createShimIfNeeded();
 
@@ -929,6 +1003,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
         	addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
             addMethodAndParameterAnnotationsFromExistingClass(methodNode, interfaceClassNode);
+            removeDuplicatedAnnotations(methodNode);
         }
 
         if (isOverride)

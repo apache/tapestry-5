@@ -39,5 +39,11 @@ public class NonAnnotatedServiceInterfaceImpl implements NonAnnotatedServiceInte
         return null;
 
     }
+    
+    @Advise(id = "right")
+    public String duplicatedAnnotation(@IntermediateType(String.class) String parameter)
+    {
+        return null;
+    }
 
 }

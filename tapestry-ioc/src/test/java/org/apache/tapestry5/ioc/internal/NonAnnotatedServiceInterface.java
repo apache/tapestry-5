@@ -13,12 +13,20 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.beaneditor.ReorderProperties;
+import org.apache.tapestry5.ioc.annotations.Advise;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+
 /**
- * Service definition without any annotations so we can test copying the service implementation
+ * Service definition so we can test copying the service implementation
  * annotations, both in class and methods, to the service proxy.
  */
+@ReorderProperties("wrong") // no meaning, just for testing whether the proxy will have it
 public interface NonAnnotatedServiceInterface {
 
     public String execute(int i);
+    
+    @Advise(id = "wrong")
+    public String duplicatedAnnotation(@IntermediateType(Object.class) String parameter);
     
 }

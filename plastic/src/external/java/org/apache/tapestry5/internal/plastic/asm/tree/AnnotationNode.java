@@ -228,4 +228,10 @@ public class AnnotationNode extends AnnotationVisitor {
             }
         }
     }
+
+	@Override
+	public String toString() {
+		return "AnnotationNode [desc=" + desc + ", values=" + values + "]";
+	}
+    
 }

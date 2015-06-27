@@ -2,6 +2,7 @@ package ioc.specs
 
 import org.apache.tapestry5.beaneditor.ReorderProperties
 import org.apache.tapestry5.ioc.annotations.Advise
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.internal.AdviceModule
 import org.apache.tapestry5.ioc.internal.AnnotatedServiceInterface
 import org.apache.tapestry5.ioc.internal.DecoratorModule
@@ -37,7 +38,7 @@ class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
     nonAnnotatedMethod.getAnnotation(Advise.class).id().equals("id")
     nonAnnotatedMethod.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
     nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class) != null
-    nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class).value().equals("reorder") 
+    nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class).value() == "reorder" 
 	nonAnnotatedResult == TestAdvice.ANNOTATION_FOUND
     
     annotatedMethod != null
@@ -59,6 +60,7 @@ class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
     def nonAnnotatedService = registry.getService NonAnnotatedServiceInterface.class
     def nonAnnotatedResult = nonAnnotatedService.execute(0);
     def nonAnnotatedMethod = nonAnnotatedService.getClass().getMethod("execute", int.class);
+    def duplicatedAnnotationMethod = nonAnnotatedService.getClass().getMethod("duplicatedAnnotation", String.class);
 
     def annotatedService = registry.getService AnnotatedServiceInterface
     def annotatedResult = annotatedService.execute(0);
@@ -89,9 +91,15 @@ class MethodInvocationGetAnnotationSpec extends AbstractRegistrySpecification {
     nonAnnotatedService.getClass().getAnnotation(ReorderProperties.class).value().equals("reorder")
     nonAnnotatedResult == TestAdvice.ANNOTATION_FOUND
     
+    duplicatedAnnotationMethod != null
+    duplicatedAnnotationMethod.getAnnotation(Advise.class) != null
+    duplicatedAnnotationMethod.getAnnotation(Advise.class).id() == "right"
+    duplicatedAnnotationMethod.getParameterAnnotations()[0].length > 0
+    ((IntermediateType) duplicatedAnnotationMethod.getParameterAnnotations()[0][0]).value() == String.class
+
     annotatedMethod != null
     annotatedMethod.getAnnotation(Advise.class) != null
-    annotatedMethod.getAnnotation(Advise.class).id().equals("id")
+    annotatedMethod.getAnnotation(Advise.class).id() == "id"
     annotatedMethod.getAnnotation(Advise.class).serviceInterface() == NonAnnotatedServiceInterface.class
     annotatedService.getClass().getAnnotation(ReorderProperties.class) != null
     annotatedService.getClass().getAnnotation(ReorderProperties.class).value() == "reorder"
