@@ -23,6 +23,4 @@ sourceSets {
     }
 }
 
-test.enabled=false
-
 jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule'
