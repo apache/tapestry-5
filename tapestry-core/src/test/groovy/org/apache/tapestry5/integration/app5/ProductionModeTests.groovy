@@ -12,6 +12,8 @@ class ProductionModeTests extends TapestryCoreTestCase {
     void invalid_component_id_is_404() {
         openBaseURL()
 
+        openLinks "reset session"
+
         assertTitle "Default Layout"
 
         open "${baseURL}index.missing"
