@@ -271,4 +271,17 @@ public class AjaxTests extends App1TestCase
         waitForElementToAppear("content2");
         assertText("content2", "Music Library");
     }
+
+    /**
+     * TAP5-2458
+     */
+    @Test
+    public void redirect_from_page_activation_method()
+    {
+        openLinks("OnActivateRedirect Demo");
+
+        clickAndWait("link");
+
+        assertText("message", "Redirected from XHR");
+    }
 }

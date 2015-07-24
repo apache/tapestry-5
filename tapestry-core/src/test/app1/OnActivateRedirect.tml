@@ -1,0 +1,6 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  Message: <span id="message">${message}</span>
+
+  <t:actionlink id="link" async="true">perform AJAX request</t:actionlink>
+</html>

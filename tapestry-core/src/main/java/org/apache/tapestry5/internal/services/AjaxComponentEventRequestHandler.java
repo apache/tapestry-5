@@ -87,11 +87,11 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         queue.setRenderingPage(activePage);
 
+        request.setAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME, parameters.getActivePageName());
+
         if (pageActivator.activatePage(activePage.getRootElement().getComponentResources(), parameters
                 .getPageActivationContext(), interceptor))
             return;
-
-        request.setAttribute(InternalConstants.PAGE_NAME_ATTRIBUTE_NAME, parameters.getActivePageName());
 
         Page containerPage = cache.get(parameters.getContainingPageName());
 

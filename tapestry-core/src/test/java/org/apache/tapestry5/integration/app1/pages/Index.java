@@ -597,8 +597,12 @@ public class Index
                     new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null"),
 
                     new Item("validateInErrorEvent", "Validate in error Event", "A form that trigger validate in " +
-                            "error event on submit when textfield is empty")
-            );
+                            "error event on submit when textfield is empty"),
+
+                    new Item("onactivateredirect", "OnActivateRedirect Demo", "A page that redirects to itself from"
+                        + " its activation method")
+
+                );
 
     static
     {
