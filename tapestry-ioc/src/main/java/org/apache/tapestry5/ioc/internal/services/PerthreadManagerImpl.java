@@ -46,7 +46,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private final AtomicInteger uuidGenerator = new AtomicInteger();
 
-    private final AtomicBoolean shutdown = new AtomicBoolean();
+    private volatile boolean shutdown = false;
 
     public PerthreadManagerImpl(Logger logger)
     {
@@ -63,7 +63,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             public void run()
             {
                 cleanup();
-                shutdown.set(true);
+                shutdown = true;
             }
         });
     }
@@ -73,7 +73,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         // This is a degenerate case; it may not even exist; but if during registry shutdown somehow code executes
         // that attempts to create new values or add new listeners, those go into a new map instance that is
         // not referenced (and so immediately GCed).
-        if (shutdown.get())
+        if (shutdown)
         {
             return CollectionFactory.newMap();
         }
@@ -155,25 +155,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     <T> ObjectCreator<T> createValue(final Object key, final ObjectCreator<T> delegate)
     {
-        return new ObjectCreator<T>()
-        {
-            public T createObject()
-            {
-                Map map = getPerthreadMap();
-                T storedValue = (T) map.get(key);
-
-                if (storedValue != null)
-                {
-                    return (storedValue == NULL_VALUE) ? null : storedValue;
-                }
-
-                T newValue = delegate.createObject();
-
-                map.put(key, newValue == null ? NULL_VALUE : newValue);
-
-                return newValue;
-            }
-        };
+        return new DefaultObjectCreator<T>(key, delegate);
     }
 
     public <T> ObjectCreator<T> createValue(ObjectCreator<T> delegate)
@@ -183,48 +165,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     <T> PerThreadValue<T> createValue(final Object key)
     {
-        return new PerThreadValue<T>()
-        {
-            @Override
-            public T get()
-            {
-                return get(null);
-            }
-
-            @Override
-            public T get(T defaultValue)
-            {
-                Map map = getPerthreadMap();
-
-                Object storedValue = map.get(key);
-
-                if (storedValue == null)
-                {
-                    return defaultValue;
-                }
-
-                if (storedValue == NULL_VALUE)
-                {
-                    return null;
-                }
-
-                return (T) storedValue;
-            }
-
-            @Override
-            public T set(T newValue)
-            {
-                getPerthreadMap().put(key, newValue == null ? NULL_VALUE : newValue);
-
-                return newValue;
-            }
-
-            @Override
-            public boolean exists()
-            {
-                return getPerthreadMap().containsKey(key);
-            }
-        };
+        return new DefaultPerThreadValue(key);
     }
 
     @Override
@@ -256,6 +197,86 @@ public class PerthreadManagerImpl implements PerthreadManager
         } finally
         {
             cleanup();
+        }
+    }
+
+    private final class DefaultPerThreadValue<T> implements PerThreadValue<T>
+    {
+        private final Object key;
+
+        DefaultPerThreadValue(final Object key)
+        {
+            this.key = key;
+
+        }
+        @Override
+        public T get()
+        {
+            return get(null);
+        }
+
+        @Override
+        public T get(T defaultValue)
+        {
+            Map map = getPerthreadMap();
+
+            Object storedValue = map.get(key);
+
+            if (storedValue == null)
+            {
+                return defaultValue;
+            }
+
+            if (storedValue == NULL_VALUE)
+            {
+                return null;
+            }
+
+            return (T) storedValue;
+        }
+
+        @Override
+        public T set(T newValue)
+        {
+            getPerthreadMap().put(key, newValue == null ? NULL_VALUE : newValue);
+
+            return newValue;
+        }
+
+        @Override
+        public boolean exists()
+        {
+            return getPerthreadMap().containsKey(key);
+        }
+    }
+
+    private final class DefaultObjectCreator<T> implements ObjectCreator<T>
+    {
+
+        private final Object key;
+        private final ObjectCreator<T> delegate;
+
+        DefaultObjectCreator(final Object key, final ObjectCreator<T> delegate)
+        {
+            this.key = key;
+            this.delegate = delegate;
+        }
+
+        public T createObject()
+        {
+            Map map = getPerthreadMap();
+            T storedValue = (T) map.get(key);
+
+            if (storedValue != null)
+            {
+                return (storedValue == NULL_VALUE) ? null : storedValue;
+            }
+
+            T newValue = delegate.createObject();
+
+            map.put(key, newValue == null ? NULL_VALUE : newValue);
+
+            return newValue;
         }
     }
 }
