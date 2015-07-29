@@ -93,6 +93,7 @@ public abstract class AbstractMarkupModel implements MarkupModel
     {
         assert content != null;
         int length = content.length(), tokenStart = 0, i = 0;
+        builder.ensureCapacity(builder.length() + length);
         String delimiter;
         for (; i < length; i++)
         {
