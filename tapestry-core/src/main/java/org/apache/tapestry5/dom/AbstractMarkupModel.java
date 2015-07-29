@@ -92,9 +92,9 @@ public abstract class AbstractMarkupModel implements MarkupModel
     public void encodeQuoted(String content, StringBuilder builder)
     {
         assert content != null;
-        int length = content.length();
-
-        for (int i = 0; i < length; i++)
+        int length = content.length(), tokenStart = 0, i = 0;
+        String delimiter;
+        for (; i < length; i++)
         {
             char ch = content.charAt(i);
 
@@ -102,28 +102,27 @@ public abstract class AbstractMarkupModel implements MarkupModel
             {
                 case '<':
 
-                    builder.append("&lt;");
-                    continue;
+                    delimiter = "&lt;";
+                    break;
 
                 case '>':
 
-                    builder.append("&gt;");
-                    continue;
+                    delimiter = "&gt;";
+                    break;
 
                 case '&':
 
-                    builder.append("&amp;");
-                    continue;
+                    delimiter = "&amp;";
+                    break;
 
                 case '"':
 
                     if (!useApostropheForAttributes)
                     {
-                        builder.append("&quot;");
-                        continue;
+                        delimiter = "&quot;";
+                        break;
                     }
 
-                    builder.append(ch);
                     continue;
 
                 case '\'':
@@ -131,17 +130,32 @@ public abstract class AbstractMarkupModel implements MarkupModel
                     if (useApostropheForAttributes)
                     {
                         //TAP5-714
-                        builder.append("&#39;");
-                        continue;
+                        delimiter = "&#39;";
+                        break;
                     }
 
 
-                    // Fall through
+                    continue;
+
 
                 default:
 
-                    builder.append(ch);
+                    continue;
             }
+
+            if (tokenStart != i)
+            {
+                builder.append(content.subSequence(tokenStart, i));
+            }
+
+            builder.append(delimiter);
+
+            tokenStart = i + 1;
+        }
+
+        if (tokenStart != length)
+        {
+            builder.append(content.subSequence(tokenStart, length));
         }
     }
 }
