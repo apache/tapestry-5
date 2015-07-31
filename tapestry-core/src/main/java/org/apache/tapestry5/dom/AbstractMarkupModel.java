@@ -17,15 +17,17 @@ package org.apache.tapestry5.dom;
 public abstract class AbstractMarkupModel implements MarkupModel
 {
     private final boolean useApostropheForAttributes;
+    private final char attributeQuoteChar;
 
     protected AbstractMarkupModel(boolean useApostropheForAttributes)
     {
         this.useApostropheForAttributes = useApostropheForAttributes;
+        this.attributeQuoteChar = useApostropheForAttributes ? '\'' : '"';
     }
 
     public char getAttributeQuote()
     {
-        return useApostropheForAttributes ? '\'' : '"';
+        return attributeQuoteChar;
     }
 
     /**
