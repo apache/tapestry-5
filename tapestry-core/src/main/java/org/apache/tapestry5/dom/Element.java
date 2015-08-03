@@ -21,7 +21,6 @@ import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
@@ -41,10 +40,6 @@ public final class Element extends Node
     private Attribute firstAttribute;
 
     private final Document document;
-
-    private static final Pattern SPACES = Pattern.compile("\\s+");
-
-    private static final String[] EMPTY_ARRAY = new String[0];
 
     /**
      * URI of the namespace which contains the element. A quirk in XML is that the element may be in a namespace it
@@ -961,7 +956,6 @@ public final class Element extends Node
      *
      * @return unmodifiable list of children nodes
      */
-    @SuppressWarnings("unchecked")
     public List<Node> getChildren()
     {
         List<Node> result = CollectionFactory.newList();
