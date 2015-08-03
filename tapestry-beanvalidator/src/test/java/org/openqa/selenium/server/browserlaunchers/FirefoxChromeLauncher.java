@@ -83,7 +83,6 @@ public class FirefoxChromeLauncher extends AbstractBrowserLauncher {
     try {
       homePage = new ChromeUrlConvert().convert(url);
       profilePath = makeCustomProfile(homePage);
-      populateCustomProfileDirectory(profilePath);
 
       log.info("Launching Firefox...");
       process = prepareCommand(
@@ -95,27 +94,6 @@ public class FirefoxChromeLauncher extends AbstractBrowserLauncher {
       process.executeAsync();
     } catch (IOException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  private void populateCustomProfileDirectory(String profilePath) {
-    /*
-     * The first time we launch Firefox with an empty profile directory, Firefox will launch itself,
-     * populate the profile directory, then kill/relaunch itself, so our process handle goes out of
-     * date. So, the first time we launch Firefox, we'll start it up at an URL that will immediately
-     * shut itself down.
-     */
-    CommandLine command = prepareCommand(browserInstallation.launcherFilePath(),
-        "-profile", profilePath
-        );
-    command.setDynamicLibraryPath(browserInstallation.libraryPath());
-    log.info("Preparing Firefox profile...");
-    command.execute();
-    try {
-      waitForFullProfileToBeCreated(20 * 1000);
-    } catch (RuntimeException e) {
-      command.destroy();
-      throw e;
     }
   }
 
@@ -279,28 +257,6 @@ public class FirefoxChromeLauncher extends AbstractBrowserLauncher {
     int exitValue = process.destroy();
     if (exitValue == 0) {
       log.warning("Firefox seems to have ended on its own (did we kill the real browser???)");
-    }
-  }
-
-  /**
-   * Wait for one of the Firefox-generated files to come into existence, then wait for Firefox to
-   * exit
-   *
-   * @param timeout the maximum amount of time to wait for the profile to be created
-   */
-  private void waitForFullProfileToBeCreated(long timeout) {
-    // This will be a characteristic file in the profile
-    File testFile = new File(customProfileDir, "extensions.ini");
-    long start = System.currentTimeMillis();
-    for (; System.currentTimeMillis() < start + timeout;) {
-
-      Sleeper.sleepTight(500);
-      if (testFile.exists()) {
-        break;
-      }
-    }
-    if (!testFile.exists()) {
-      throw new RuntimeException("Timed out waiting for profile to be created!");
     }
   }
 
