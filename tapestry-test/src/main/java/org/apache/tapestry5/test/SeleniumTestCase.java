@@ -186,8 +186,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                 "   contextPath: " + contextPath + sep +
                 String.format("         ports: %d / %d", port, sslPort) + sep +
                 "  browserStart: " + browserStartCommand + sep +
-                "       baseURL: " + baseURL + sep +
-                "       tempDir: " + System.getProperty("java.io.tmpdir"));
+                "       baseURL: " + baseURL);
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
@@ -200,7 +199,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
         }
 
-        seleniumServer.getConfiguration().setDebugMode(true);
         seleniumServer.start();
 
 
