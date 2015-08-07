@@ -119,6 +119,9 @@ public class OperationTrackerImpl implements OperationTracker
         } catch (Error ex)
         {
             return handleError(ex);
+        } catch (IOException ex)
+        {
+            return logAndRethrow(ex);
         } finally
         {
             handleFinally();
@@ -128,7 +131,6 @@ public class OperationTrackerImpl implements OperationTracker
     private void handleFinally()
     {
         operations.pop();
-
         // We've finally backed out of the operation stack ... but there may be more to come!
 
         if (operations.isEmpty())
@@ -174,6 +176,20 @@ public class OperationTrackerImpl implements OperationTracker
     }
 
     private <T> T logAndRethrow(RuntimeException ex)
+    {
+        if (!logged)
+        {
+            String[] trace = log(ex);
+
+            logged = true;
+
+            throw new OperationException(ex, trace);
+        }
+
+        throw ex;
+    }
+
+    private <T> T logAndRethrow(IOException ex) throws IOException
     {
         if (!logged)
         {
