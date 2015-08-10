@@ -40,6 +40,19 @@
             </div>
         </div>
     </t:radiogroup>
+    
+    <!-- see TAP5-1760 -->
+    <t:radiogroup t:id="department2" t:validate="required">
+        <div class="well">
+          <div class="radio">
+              <label>
+                  <t:radio t:id="radio3" value="literal:ACCOUNTING"/>
+                  Accounting
+              </label>
+          </div>
+        </div>
+
+    </t:radiogroup>
 
     <input class="btn btn-primary" type="submit" value="Update"/>
     <t:actionlink class="btn btn-default" t:id="reset">reset</t:actionlink>

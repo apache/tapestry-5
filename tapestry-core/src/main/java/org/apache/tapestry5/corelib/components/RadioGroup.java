@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
@@ -28,7 +29,7 @@ import org.apache.tapestry5.services.Request;
 /**
  * A wrapper component around some number of {@link Radio} components, used to organize the selection and define the
  * property to be edited. Examples of its use are in the {@link Radio} documentation.
- * 
+ *
  * @tapestrydoc
  */
 @Events(EventConstants.VALIDATE)
@@ -68,7 +69,7 @@ public class RadioGroup implements Field
      * selected Radio componnent's "value" parameter) into unique client-side
      * strings (typically IDs) and back. Note: this parameter may be OMITTED if
      * Tapestry is configured to provide a ValueEncoder automatically for the
-     * type of property bound to the "value" parameter. 
+     * type of property bound to the "value" parameter.
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder encoder;
@@ -95,6 +96,9 @@ public class RadioGroup implements Field
 
     @Inject
     private Request request;
+
+    @Inject
+    private TypeCoercer typeCoercer;
 
     @Environmental
     private ValidationTracker tracker;
@@ -195,6 +199,8 @@ public class RadioGroup implements Field
 
         final String selectedValue = submittedValue != null ? submittedValue : encoder.toClient(value);
 
+        final Class<?> boundType = resources.getBoundType("value");
+
         environment.push(RadioContainer.class, new RadioContainer()
         {
             public String getControlName()
@@ -207,17 +213,24 @@ public class RadioGroup implements Field
                 return disabled;
             }
 
+            private Object getObjectAsCorrectType(Object val)
+            {
+              if (val != null && boundType != null && !boundType.isAssignableFrom(val.getClass()))
+              {
+                  return typeCoercer.coerce(val, boundType);
+              }
+              return val;
+            }
+
             @SuppressWarnings("unchecked")
             public String toClient(Object value)
             {
-                // TODO: Ensure that value is of the expected type?
-
-                return encoder.toClient(value);
+                return encoder.toClient(getObjectAsCorrectType(value));
             }
 
             public boolean isSelected(Object value)
             {
-                return TapestryInternalUtils.isEqual(encoder.toClient(value), selectedValue);
+                return TapestryInternalUtils.isEqual(encoder.toClient(getObjectAsCorrectType(value)), selectedValue);
             }
         });
 
@@ -251,7 +264,7 @@ public class RadioGroup implements Field
      * Returns null; the radio group does not render as a tag and so doesn't have an id to share. RadioGroup implements
      * {@link org.apache.tapestry5.Field} only so it can interact with the
      * {@link org.apache.tapestry5.ValidationTracker}.
-     * 
+     *
      * @return null
      */
     public String getClientId()
