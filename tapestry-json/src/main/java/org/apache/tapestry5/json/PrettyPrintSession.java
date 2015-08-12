@@ -67,7 +67,7 @@ class PrettyPrintSession implements JSONPrintSession
     {
         if (position != Position.MARGIN)
         {
-            writer.write("\n");
+            writer.write('\n');
             position = Position.MARGIN;
         }
 
@@ -97,7 +97,7 @@ class PrettyPrintSession implements JSONPrintSession
     {
         if (position == Position.CONTENT)
         {
-            writer.print(" ");
+            writer.print(' ');
         }
     }
 
