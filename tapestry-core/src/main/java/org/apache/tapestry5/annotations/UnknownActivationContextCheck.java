@@ -25,7 +25,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * A marker annotation that indicates that the page in question may only be accessed with a exact actvation context.
+ * A marker annotation that indicates that the page in question may only be accessed with a exact activation context.
  *
  * @see org.apache.tapestry5.MetaDataConstants#UNKNOWN_ACTIVATION_CONTEXT_CHECK
  * @since 5.4
