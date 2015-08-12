@@ -234,16 +234,16 @@ class Constant {
     void write(final ClassWriter cw) {
         switch (type) {
         case 'I':
-            cw.newConst(new Integer(intVal));
+            cw.newConst(intVal);
             break;
         case 'J':
-            cw.newConst(new Long(longVal));
+            cw.newConst(longVal);
             break;
         case 'F':
-            cw.newConst(new Float(floatVal));
+            cw.newConst(floatVal);
             break;
         case 'D':
-            cw.newConst(new Double(doubleVal));
+            cw.newConst(doubleVal);
             break;
         case 'S':
             cw.newConst(strVal1);

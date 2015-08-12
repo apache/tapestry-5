@@ -37,6 +37,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
  * @author Bing Ran
  * @author Eric Bruneton
  */
+@SuppressWarnings("serial")
 public class AnalyzerException extends Exception {
 
     public final AbstractInsnNode node;

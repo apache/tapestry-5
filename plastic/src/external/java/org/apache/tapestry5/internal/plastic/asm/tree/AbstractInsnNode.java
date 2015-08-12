@@ -134,7 +134,7 @@ public abstract class AbstractInsnNode {
      * number nodes). This list is a list of {@link TypeAnnotationNode} objects.
      * May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.TypeAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.TypeAnnotationNode
      * @label visible
      */
     public List<TypeAnnotationNode> visibleTypeAnnotations;
@@ -145,7 +145,7 @@ public abstract class AbstractInsnNode {
      * number nodes). This list is a list of {@link TypeAnnotationNode} objects.
      * May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.TypeAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.TypeAnnotationNode
      * @label invisible
      */
     public List<TypeAnnotationNode> invisibleTypeAnnotations;

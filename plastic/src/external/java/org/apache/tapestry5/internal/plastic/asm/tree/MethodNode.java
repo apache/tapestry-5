@@ -88,7 +88,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime visible annotations of this method. This list is a list of
      * {@link AnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.AnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode
      * @label visible
      */
     public List<AnnotationNode> visibleAnnotations;
@@ -97,7 +97,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime invisible annotations of this method. This list is a list of
      * {@link AnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.AnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode
      * @label invisible
      */
     public List<AnnotationNode> invisibleAnnotations;
@@ -106,7 +106,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime visible type annotations of this method. This list is a list
      * of {@link TypeAnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.TypeAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.TypeAnnotationNode
      * @label visible
      */
     public List<TypeAnnotationNode> visibleTypeAnnotations;
@@ -115,7 +115,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime invisible type annotations of this method. This list is a
      * list of {@link TypeAnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.TypeAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.TypeAnnotationNode
      * @label invisible
      */
     public List<TypeAnnotationNode> invisibleTypeAnnotations;
@@ -124,7 +124,7 @@ public class MethodNode extends MethodVisitor {
      * The non standard attributes of this method. This list is a list of
      * {@link Attribute} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.Attribute
+     * @associates org.apache.tapestry5.internal.plastic.asm.Attribute
      */
     public List<Attribute> attrs;
 
@@ -142,7 +142,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime visible parameter annotations of this method. These lists are
      * lists of {@link AnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.AnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode
      * @label invisible parameters
      */
     public List<AnnotationNode>[] visibleParameterAnnotations;
@@ -151,7 +151,7 @@ public class MethodNode extends MethodVisitor {
      * The runtime invisible parameter annotations of this method. These lists
      * are lists of {@link AnnotationNode} objects. May be <tt>null</tt>.
      * 
-     * @associates org.objectweb.asm.tree.AnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode
      * @label visible parameters
      */
     public List<AnnotationNode>[] invisibleParameterAnnotations;
@@ -160,7 +160,7 @@ public class MethodNode extends MethodVisitor {
      * The instructions of this method. This list is a list of
      * {@link AbstractInsnNode} objects.
      * 
-     * @associates org.objectweb.asm.tree.AbstractInsnNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode
      * @label instructions
      */
     public InsnList instructions;
@@ -169,7 +169,7 @@ public class MethodNode extends MethodVisitor {
      * The try catch blocks of this method. This list is a list of
      * {@link TryCatchBlockNode} objects.
      * 
-     * @associates org.objectweb.asm.tree.TryCatchBlockNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.TryCatchBlockNode
      */
     public List<TryCatchBlockNode> tryCatchBlocks;
 
@@ -187,7 +187,7 @@ public class MethodNode extends MethodVisitor {
      * The local variables of this method. This list is a list of
      * {@link LocalVariableNode} objects. May be <tt>null</tt>
      * 
-     * @associates org.objectweb.asm.tree.LocalVariableNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.LocalVariableNode
      */
     public List<LocalVariableNode> localVariables;
 
@@ -195,7 +195,7 @@ public class MethodNode extends MethodVisitor {
      * The visible local variable annotations of this method. This list is a
      * list of {@link LocalVariableAnnotationNode} objects. May be <tt>null</tt>
      * 
-     * @associates org.objectweb.asm.tree.LocalVariableAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.LocalVariableAnnotationNode
      */
     public List<LocalVariableAnnotationNode> visibleLocalVariableAnnotations;
 
@@ -203,7 +203,7 @@ public class MethodNode extends MethodVisitor {
      * The invisible local variable annotations of this method. This list is a
      * list of {@link LocalVariableAnnotationNode} objects. May be <tt>null</tt>
      * 
-     * @associates org.objectweb.asm.tree.LocalVariableAnnotationNode
+     * @associates org.apache.tapestry5.internal.plastic.asm.tree.LocalVariableAnnotationNode
      */
     public List<LocalVariableAnnotationNode> invisibleLocalVariableAnnotations;
 
@@ -323,6 +323,7 @@ public class MethodNode extends MethodVisitor {
     }
 
     @Override
+    @SuppressWarnings("serial")
     public AnnotationVisitor visitAnnotationDefault() {
         return new AnnotationNode(new ArrayList<Object>(0) {
             @Override
@@ -370,6 +371,7 @@ public class MethodNode extends MethodVisitor {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public AnnotationVisitor visitParameterAnnotation(final int parameter,
             final String desc, final boolean visible) {
         AnnotationNode an = new AnnotationNode(desc);

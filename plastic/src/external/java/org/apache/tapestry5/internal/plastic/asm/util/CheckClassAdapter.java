@@ -79,9 +79,9 @@ import java.util.*;
  * insnNumber locals : stack):
  * 
  * <pre>
- * org.objectweb.asm.tree.analysis.AnalyzerException: Error at instruction 71: Expected I, but found .
- *   at org.objectweb.asm.tree.analysis.Analyzer.analyze(Analyzer.java:289)
- *   at org.objectweb.asm.util.CheckClassAdapter.verify(CheckClassAdapter.java:135)
+ * org.apache.tapestry5.internal.plastic.asm.tree.analysis.AnalyzerException: Error at instruction 71: Expected I, but found .
+ *   at org.apache.tapestry5.internal.plastic.asm.tree.analysis.Analyzer.analyze(Analyzer.java:289)
+ *   at org.apache.tapestry5.internal.plastic.asm.util.CheckClassAdapter.verify(CheckClassAdapter.java:135)
  * ...
  * remove()V
  * 00000 LinkedBlockingQueue$Itr . . . . . . . .  :
@@ -255,26 +255,26 @@ public class CheckClassAdapter extends ClassVisitor {
         for (int j = 0; j < method.instructions.size(); ++j) {
             method.instructions.get(j).accept(mv);
 
-            StringBuffer s = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             Frame<BasicValue> f = frames[j];
             if (f == null) {
-                s.append('?');
+                sb.append('?');
             } else {
                 for (int k = 0; k < f.getLocals(); ++k) {
-                    s.append(getShortName(f.getLocal(k).toString()))
+                    sb.append(getShortName(f.getLocal(k).toString()))
                             .append(' ');
                 }
-                s.append(" : ");
+                sb.append(" : ");
                 for (int k = 0; k < f.getStackSize(); ++k) {
-                    s.append(getShortName(f.getStack(k).toString()))
+                    sb.append(getShortName(f.getStack(k).toString()))
                             .append(' ');
                 }
             }
-            while (s.length() < method.maxStack + method.maxLocals + 1) {
-                s.append(' ');
+            while (sb.length() < method.maxStack + method.maxLocals + 1) {
+                sb.append(' ');
             }
             pw.print(Integer.toString(j + 100000).substring(1));
-            pw.print(" " + s + " : " + t.text.get(t.text.size() - 1));
+            pw.print(" " + sb + " : " + t.text.get(t.text.size() - 1));
         }
         for (int j = 0; j < method.tryCatchBlocks.size(); ++j) {
             method.tryCatchBlocks.get(j).accept(mv);

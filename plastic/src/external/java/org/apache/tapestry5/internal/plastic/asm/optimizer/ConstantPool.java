@@ -42,6 +42,8 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
  */
 public class ConstantPool extends HashMap<Constant, Constant> {
 
+    private static final long serialVersionUID = 1L;
+
     private final Constant key1 = new Constant();
 
     private final Constant key2 = new Constant();
