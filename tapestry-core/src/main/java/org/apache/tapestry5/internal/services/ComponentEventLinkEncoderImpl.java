@@ -486,7 +486,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         {
             return null;
         }
-
         String canonicalized = componentClassResolver.canonicalizePageName(pageName);
 
         // If the page is only visible to the whitelist, but the request is not on the whitelist, then
@@ -495,12 +494,18 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         {
             return null;
         }
+        try
+        {
+            EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
 
-        EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
+            boolean loopback = request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
 
-        boolean loopback = request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
-
-        return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
+            return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
+        } catch (IllegalArgumentException e)
+        {
+            // TAP5-2436
+            return null;
+        }
     }
 
     private boolean isWhitelistOnlyAndNotValid(String canonicalized)

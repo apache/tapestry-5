@@ -478,4 +478,35 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    // TAP5-2436
+    public void illegal_activation_context_leads_to_http_404() throws Exception
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
+
+        train_getPath(request, "/foo/pageid=123");
+        train_setLocaleFromLocaleName(ls, "foo", false);
+
+        train_isPageName(resolver, "foo/pageid=123", false);
+        train_isPageName(resolver, "foo", false);
+        train_isPageName(resolver, "", true);
+
+        train_canonicalizePageName(resolver, "", "Index");
+
+        replay();
+
+        ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                response, null, null, null, true, null, "", metaDataLocator, null);
+
+        PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
+
+        assertNull(parameters);
+
+        verify();
+    }
 }
