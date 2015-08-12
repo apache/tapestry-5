@@ -81,7 +81,7 @@ public class IOCTestCase extends TestBase
         for (String line : lines)
         {
             result.append(line);
-            result.append("\n");
+            result.append('\n');
         }
 
         return result.toString();

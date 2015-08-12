@@ -294,7 +294,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
             buffer.append(line);
 
-            buffer.append("\n");
+            buffer.append('\n');
         }
 
         in.close();

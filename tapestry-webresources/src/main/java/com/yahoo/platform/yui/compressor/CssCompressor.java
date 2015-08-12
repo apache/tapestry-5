@@ -358,7 +358,7 @@ public class CssCompressor {
             for (i = 0; i < rgbcolors.length; i++) {
                 int val = Integer.parseInt(rgbcolors[i]);
                 if (val < 16) {
-                    hexcolor.append("0");
+                    hexcolor.append('0');
                 }
 
                 // If someone passes an RGB value that's too big to express in two characters, round down.

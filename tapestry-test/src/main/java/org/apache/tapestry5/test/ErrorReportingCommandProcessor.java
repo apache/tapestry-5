@@ -40,7 +40,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
 
         builder.append("Selenium failure processing command ");
         builder.append(command);
-        builder.append("(");
+        builder.append('(');
 
         for (int i = 0; i < args.length; i++)
         {
@@ -61,9 +61,9 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
             if (logs != null && logs.length() > 0)
             {
 
-                builder.append("\n");
+                builder.append('\n');
                 builder.append(BORDER);
-                builder.append("\n");
+                builder.append('\n');
 
                 builder.append(logs);
             }

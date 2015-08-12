@@ -62,9 +62,9 @@ public class Attribute
 
     void render(MarkupModel model, StringBuilder builder, Map<String, String> namespaceURIToPrefix)
     {
-        builder.append(" ");
+        builder.append(' ');
         builder.append(element.toPrefixedName(namespaceURIToPrefix, namespace, name));
-        builder.append("=");
+        builder.append('=');
         builder.append(model.getAttributeQuote());
         model.encodeQuoted(value, builder);
         builder.append(model.getAttributeQuote());

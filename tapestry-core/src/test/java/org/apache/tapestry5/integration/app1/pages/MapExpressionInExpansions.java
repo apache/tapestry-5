@@ -32,15 +32,15 @@ public class MapExpressionInExpansions
         for (Map.Entry entry : value.entrySet())
         {
             builder.append(entry.getKey())
-                   .append(":")
+                   .append(':')
                    .append(entry.getValue())
-                   .append(",");
+                   .append(',');
         }
 
         if (builder.length() > 1)
             builder.deleteCharAt(builder.length()-1);
 
-        builder.append("}");
+        builder.append('}');
 
         return builder.toString();
     }

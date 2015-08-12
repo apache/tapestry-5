@@ -128,7 +128,7 @@ public final class ComponentResourceSelector
         {
             builder.append(sep);
             builder.append(e.getKey().getName());
-            builder.append("=");
+            builder.append('=');
             builder.append(e.getValue().toString());
 
             sep = ", ";

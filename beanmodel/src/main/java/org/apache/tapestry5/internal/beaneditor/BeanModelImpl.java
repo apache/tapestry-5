@@ -282,7 +282,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
             sep = ", ";
         }
 
-        builder.append("]");
+        builder.append(']');
 
         return builder.toString();
     }

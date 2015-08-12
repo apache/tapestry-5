@@ -231,7 +231,7 @@ public class LinkImpl implements Link
                     // encoded if it is not known to be URL safe.
 
                     builder.append(name);
-                    builder.append("=");
+                    builder.append('=');
                     builder.append(value);
 
                     sep = "&";

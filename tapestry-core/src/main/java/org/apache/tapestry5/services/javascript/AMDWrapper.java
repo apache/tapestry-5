@@ -186,7 +186,7 @@ public class AMDWrapper {
             {
                 sb.append("\nreturn ");
                 sb.append(returnExpression);
-                sb.append(";");
+                sb.append(';');
             }
             sb.append("\n});");
             trailerStream = toInputStream(sb);

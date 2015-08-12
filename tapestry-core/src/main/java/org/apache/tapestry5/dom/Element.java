@@ -377,7 +377,7 @@ public final class Element extends Node
 
         String prefixedElementName = toPrefixedName(localNamespacePrefixToURI, namespace, name);
 
-        builder.append("<").append(prefixedElementName);
+        builder.append('<').append(prefixedElementName);
 
         // Output order used to be alpha sorted, but now it tends to be the inverse
         // of the order in which attributes were added.
@@ -402,10 +402,10 @@ public final class Element extends Node
 
             if (!prefix.equals(""))
             {
-                builder.append(":").append(prefix);
+                builder.append(':').append(prefix);
             }
 
-            builder.append("=");
+            builder.append('=');
             builder.append(markupModel.getAttributeQuote());
 
             markupModel.encodeQuoted(namespace, builder);

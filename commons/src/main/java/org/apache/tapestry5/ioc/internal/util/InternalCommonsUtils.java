@@ -209,9 +209,9 @@ public class InternalCommonsUtils {
         StringBuilder buffer = new StringBuilder();
     
         buffer.append(method.getDeclaringClass().getName());
-        buffer.append(".");
+        buffer.append('.');
         buffer.append(method.getName());
-        buffer.append("(");
+        buffer.append('(');
     
         for (int i = 0; i < method.getParameterTypes().length; i++)
         {
@@ -223,7 +223,7 @@ public class InternalCommonsUtils {
             buffer.append(name);
         }
     
-        return buffer.append(")").toString();
+        return buffer.append(')').toString();
     }
 
     /**

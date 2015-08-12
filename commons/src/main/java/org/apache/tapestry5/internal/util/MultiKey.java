@@ -78,7 +78,7 @@ public final class MultiKey
             first = false;
         }
 
-        builder.append("]");
+        builder.append(']');
 
         return builder.toString();
     }

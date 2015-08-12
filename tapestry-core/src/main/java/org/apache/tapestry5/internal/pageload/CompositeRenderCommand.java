@@ -84,6 +84,6 @@ class CompositeRenderCommand implements RenderCommand
             comma = true;
         }
 
-        return builder.append("]").toString();
+        return builder.append(']').toString();
     }
 }

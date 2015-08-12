@@ -45,9 +45,9 @@ public class StartElementToken extends TemplateToken implements RenderCommand
     {
         StringBuilder builder = new StringBuilder("Start[");
 
-        if (namespaceURI != null && namespaceURI.length() > 0) builder.append(namespaceURI).append(" ");
+        if (namespaceURI != null && namespaceURI.length() > 0) builder.append(namespaceURI).append(' ');
 
-        builder.append(name).append("]");
+        builder.append(name).append(']');
 
         return builder.toString();
     }

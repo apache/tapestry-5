@@ -119,7 +119,7 @@ public class NameCache
             builder.append(toDesc(argumentType));
         }
 
-        builder.append(")").append(toDesc(returnType));
+        builder.append(')').append(toDesc(returnType));
 
         return builder.toString();
     }

@@ -896,8 +896,8 @@ public class ASMifier extends Printer {
     public ASMifier visitTypeAnnotation(final String method, final int typeRef,
             final TypePath typePath, final String desc, final boolean visible) {
         buf.setLength(0);
-        buf.append("{\n").append("av0 = ").append(name).append(".")
-                .append(method).append("(");
+        buf.append("{\n").append("av0 = ").append(name).append('.')
+                .append(method).append('(');
         buf.append(typeRef);
         buf.append(", TypePath.fromString(\"").append(typePath).append("\"), ");
         appendConstant(desc);

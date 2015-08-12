@@ -117,6 +117,6 @@ public class ClientLocalizationMessageResource extends VirtualResource
 
     private void write(StringBuilder builder, String name, Object value)
     {
-        builder.append(name).append("=").append(value).append("\n");
+        builder.append(name).append('=').append(value).append('\n');
     }
 }

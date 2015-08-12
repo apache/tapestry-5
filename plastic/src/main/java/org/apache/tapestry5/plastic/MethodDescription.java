@@ -188,9 +188,9 @@ public class MethodDescription implements Comparable<MethodDescription>
         // as modifiers. We'll have to see.
 
         if (modifiers != 0)
-            builder.append(Modifier.toString(modifiers)).append(" ");
+            builder.append(Modifier.toString(modifiers)).append(' ');
 
-        builder.append(returnType).append(" ").append(methodName).append("(");
+        builder.append(returnType).append(' ').append(methodName).append('(');
 
         String sep = "";
 
@@ -202,10 +202,10 @@ public class MethodDescription implements Comparable<MethodDescription>
             sep = ", ";
         }
 
-        builder.append(")");
+        builder.append(')');
 
         if (genericSignature != null)
-            builder.append(" <").append(genericSignature).append(">");
+            builder.append(" <").append(genericSignature).append('>');
 
         sep = " throws ";
 
@@ -228,7 +228,7 @@ public class MethodDescription implements Comparable<MethodDescription>
      */
     public String toShortString()
     {
-        StringBuilder builder = new StringBuilder(methodName).append("(");
+        StringBuilder builder = new StringBuilder(methodName).append('(');
 
         String sep = "";
 
@@ -239,6 +239,6 @@ public class MethodDescription implements Comparable<MethodDescription>
             sep = ", ";
         }
 
-        return builder.append(")").toString();
+        return builder.append(')').toString();
     }
 }

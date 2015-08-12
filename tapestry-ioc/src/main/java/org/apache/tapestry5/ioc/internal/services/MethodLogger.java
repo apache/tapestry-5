@@ -69,7 +69,7 @@ public final class MethodLogger
             convert(buffer, invocation.getParameter(i));
         }
 
-        buffer.append(")");
+        buffer.append(')');
 
         logger.debug(buffer.toString());
     }

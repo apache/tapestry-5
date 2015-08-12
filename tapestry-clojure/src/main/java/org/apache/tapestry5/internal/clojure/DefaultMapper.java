@@ -57,7 +57,7 @@ public class DefaultMapper implements MethodToFunctionSymbolMapper
             int end = matchResult.end();
 
             builder.append(name.substring(lastx, start + 1));
-            builder.append("-");
+            builder.append('-');
             // TODO: An acronym (such as "URL") should not be lower cased here.
             builder.append(name.substring(end - 1, end).toLowerCase());
 

@@ -116,7 +116,7 @@ public final class StylesheetOptions
             sep = " ";
         }
 
-        return builder.append("]").toString();
+        return builder.append(']').toString();
     }
 
     @Override

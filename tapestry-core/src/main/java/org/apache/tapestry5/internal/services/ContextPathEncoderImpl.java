@@ -72,7 +72,7 @@ public class ContextPathEncoderImpl implements ContextPathEncoder
             String urlEncoded = encodeValue(raw);
 
             if (i > 0)
-                output.append("/");
+                output.append('/');
 
             output.append(urlEncoded);
         }

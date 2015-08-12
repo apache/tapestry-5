@@ -31,7 +31,7 @@ public class PathConstructorImpl implements PathConstructor
         if (applicationFolder.length() > 0)
         {
             b.append(applicationFolder);
-            b.append("/");
+            b.append('/');
         }
 
         dispatchPrefix = b.toString();

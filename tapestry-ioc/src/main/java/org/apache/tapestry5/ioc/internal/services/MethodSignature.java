@@ -177,9 +177,9 @@ public class MethodSignature
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(PlasticUtils.toTypeName(returnType));
-        buffer.append(" ");
+        buffer.append(' ');
         buffer.append(name);
-        buffer.append("(");
+        buffer.append('(');
 
         for (int i = 0; i < InternalUtils.size(parameterTypes); i++)
         {
@@ -189,7 +189,7 @@ public class MethodSignature
             buffer.append(PlasticUtils.toTypeName(parameterTypes[i]));
         }
 
-        buffer.append(")");
+        buffer.append(')');
 
         int _exceptionCount = InternalUtils.size(exceptionTypes);
         String _exceptionNames[] = new String[_exceptionCount];
@@ -224,17 +224,17 @@ public class MethodSignature
     public String getUniqueId()
     {
         StringBuilder buffer = new StringBuilder(name);
-        buffer.append("(");
+        buffer.append('(');
 
         for (int i = 0; i < InternalUtils.size(parameterTypes); i++)
         {
             if (i > 0)
-                buffer.append(",");
+                buffer.append(',');
 
             buffer.append(PlasticUtils.toTypeName(parameterTypes[i]));
         }
 
-        buffer.append(")");
+        buffer.append(')');
 
         return buffer.toString();
     }

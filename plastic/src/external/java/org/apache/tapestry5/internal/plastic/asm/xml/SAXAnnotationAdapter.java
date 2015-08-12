@@ -115,14 +115,14 @@ public final class SAXAnnotationAdapter extends AnnotationVisitor {
         if (start != null) {
             StringBuffer value = new StringBuffer(start[0]);
             for (int i = 1; i < start.length; ++i) {
-                value.append(" ").append(start[i]);
+                value.append(' ').append(start[i]);
             }
             att.addAttribute("", "start", "start", "", value.toString());
         }
         if (end != null) {
             StringBuffer value = new StringBuffer(end[0]);
             for (int i = 1; i < end.length; ++i) {
-                value.append(" ").append(end[i]);
+                value.append(' ').append(end[i]);
             }
             att.addAttribute("", "end", "end", "", value.toString());
         }
@@ -130,7 +130,7 @@ public final class SAXAnnotationAdapter extends AnnotationVisitor {
             StringBuffer value = new StringBuffer();
             value.append(index[0]);
             for (int i = 1; i < index.length; ++i) {
-                value.append(" ").append(index[i]);
+                value.append(' ').append(index[i]);
             }
             att.addAttribute("", "index", "index", "", value.toString());
         }

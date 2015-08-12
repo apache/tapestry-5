@@ -174,7 +174,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
             @Override
             public String createObject()
             {
-                StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
+                StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append('(');
                 String sep = "";
 
                 for (Class parameterType : constructor.getParameterTypes())
@@ -185,7 +185,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                     sep = ", ";
                 }
 
-                builder.append(")");
+                builder.append(')');
 
                 return builder.toString();
             }

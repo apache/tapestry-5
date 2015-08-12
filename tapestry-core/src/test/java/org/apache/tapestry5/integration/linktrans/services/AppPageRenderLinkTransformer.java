@@ -81,9 +81,9 @@ public class AppPageRenderLinkTransformer implements PageRenderLinkTransformer
         Locale locale = persistentLocale.get();
 
         if (locale != null)
-            path.append("/").append(locale.toString());
+            path.append('/').append(locale.toString());
 
-        path.append("/");
+        path.append('/');
 
         // Cheating: we know there's exactly one value in the context.
 

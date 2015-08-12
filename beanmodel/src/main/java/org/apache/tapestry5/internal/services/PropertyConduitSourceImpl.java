@@ -1548,7 +1548,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
     private static String toUniqueId(Method method)
     {
-        StringBuilder builder = new StringBuilder(method.getName()).append("(");
+        StringBuilder builder = new StringBuilder(method.getName()).append('(');
         String sep = "";
 
         for (Class parameterType : method.getParameterTypes())
@@ -1559,7 +1559,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
             sep = ",";
         }
 
-        return builder.append(")").toString();
+        return builder.append(')').toString();
     }
     
 }

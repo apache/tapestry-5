@@ -163,9 +163,9 @@ public final class ContentType
 
         for (String parameterName : getParameterNames())
         {
-            buffer.append(";");
+            buffer.append(';');
             buffer.append(parameterName);
-            buffer.append("=");
+            buffer.append('=');
             buffer.append(parameters.get(parameterName));
         }
 

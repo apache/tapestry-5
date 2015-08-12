@@ -93,7 +93,7 @@ public class StartComponentToken extends TemplateToken
         add(builder, "mixins", mixins);
 
         builder.insert(0, "StartComponentToken[");
-        builder.append("]");
+        builder.append(']');
 
         return builder.toString();
     }
@@ -104,10 +104,10 @@ public class StartComponentToken extends TemplateToken
             return;
 
         if (builder.length() > 0)
-            builder.append(" ");
+            builder.append(' ');
 
         builder.append(label);
-        builder.append("=");
+        builder.append('=');
         builder.append(value);
     }
 

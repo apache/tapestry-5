@@ -143,7 +143,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         {
             StringBuilder builder = new StringBuilder("PeriodicJob[#").append(jobId);
 
-            builder.append(", (").append(name).append(")");
+            builder.append(", (").append(name).append(')');
 
             if (executing)
             {
@@ -158,7 +158,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
                 builder.append(String.format(", next execution %Tk:%<TM:%<TS+%<TL", nextExecution));
             }
 
-            return builder.append("]").toString();
+            return builder.append(']').toString();
         }
 
         /**

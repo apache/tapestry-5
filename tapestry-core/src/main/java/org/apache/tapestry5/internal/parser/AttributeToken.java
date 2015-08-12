@@ -50,9 +50,9 @@ public class AttributeToken extends TemplateToken implements RenderCommand
     {
         StringBuilder builder = new StringBuilder("Attribute[");
 
-        if (namespaceURI.length() > 0) builder.append(namespaceURI).append(" ");
+        if (namespaceURI.length() > 0) builder.append(namespaceURI).append(' ');
 
-        builder.append(name).append("=").append(value).append("]");
+        builder.append(name).append('=').append(value).append(']');
 
         return builder.toString();
     }

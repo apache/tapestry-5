@@ -102,7 +102,7 @@ public class ParameterDescription
 
                 if (seeTag.referencedMemberName() != null)
                 {
-                    builder.append("#");
+                    builder.append('#');
                     builder.append(StringEscapeUtils.escapeHtml(seeTag.referencedMemberName()));
                 }
             }

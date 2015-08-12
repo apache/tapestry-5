@@ -96,7 +96,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         @Override
         public String toString() {
           StringBuilder builder = new StringBuilder();
-          builder.append("CIMEntry [key=").append(key).append(", value=").append(value).append("]");
+          builder.append("CIMEntry [key=").append(key).append(", value=").append(value).append(']');
           return builder.toString();
         }
 

@@ -307,10 +307,10 @@ public class PlasticInternalUtils
 
         for (int i = 0; i < depth; i++)
         {
-            builder.append("[");
+            builder.append('[');
         }
 
-        builder.append("L").append(javaName).append(";");
+        builder.append('L').append(javaName).append(';');
 
         return Class.forName(builder.toString(), true, loader);
     }

@@ -179,7 +179,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         if (!hasComponentId || !eventType.equals(EventConstants.ACTION))
         {
-            builder.append(":");
+            builder.append(':');
             builder.append(encodePageName(eventType));
         }
 

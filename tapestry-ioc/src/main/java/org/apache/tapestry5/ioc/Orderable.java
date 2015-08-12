@@ -68,13 +68,13 @@ public class Orderable<T>
 
         for (String c : constraints)
         {
-            buffer.append(" ");
+            buffer.append(' ');
             buffer.append(c);
         }
 
-        buffer.append(" ");
+        buffer.append(' ');
         buffer.append(target.toString());
-        buffer.append("]");
+        buffer.append(']');
 
         return buffer.toString();
     }

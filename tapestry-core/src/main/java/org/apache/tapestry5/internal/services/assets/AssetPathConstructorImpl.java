@@ -76,13 +76,13 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         builder.append(prefix);
         builder.append(virtualFolder);
-        builder.append("/");
+        builder.append('/');
 
         // The 'z' prefix indicates a compressed resource.
 
         if (resource.getCompression() == CompressionStatus.COMPRESSED)
         {
-            builder.append("z");
+            builder.append('z');
         }
 
         builder.append(resource.getChecksum());

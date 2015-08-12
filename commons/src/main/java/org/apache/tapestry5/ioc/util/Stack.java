@@ -150,7 +150,7 @@ public class Stack<E>
             builder.append(String.valueOf(items[i]));
         }
 
-        builder.append("]");
+        builder.append(']');
 
         return builder.toString();
     }

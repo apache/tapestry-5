@@ -53,7 +53,7 @@ public class Tuple<A, B>
 
         extendDescription(builder);
 
-        return builder.append(")").toString();
+        return builder.append(')').toString();
     }
 
     /**

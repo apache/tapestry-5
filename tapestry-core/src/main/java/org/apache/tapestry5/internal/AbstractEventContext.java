@@ -47,6 +47,6 @@ public abstract class AbstractEventContext implements EventContext
             sep = ", ";
         }
 
-        return builder.append(">").toString();
+        return builder.append('>').toString();
     }
 }

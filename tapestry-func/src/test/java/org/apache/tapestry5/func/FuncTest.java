@@ -64,7 +64,7 @@ public class FuncTest extends BaseFuncTest
             public void work(String value)
             {
                 if (buffer.length() > 0)
-                    buffer.append(" ");
+                    buffer.append(' ');
 
                 buffer.append(value);
             }
@@ -88,7 +88,7 @@ public class FuncTest extends BaseFuncTest
             public void work(String value)
             {
                 if (buffer.length() > 0)
-                    buffer.append(" ");
+                    buffer.append(' ');
 
                 buffer.append(value);
             }
@@ -119,7 +119,7 @@ public class FuncTest extends BaseFuncTest
             public void work(String value)
             {
                 if (buffer.length() > 0)
-                    buffer.append(" ");
+                    buffer.append(' ');
 
                 buffer.append(value);
             }
@@ -141,7 +141,7 @@ public class FuncTest extends BaseFuncTest
             public void work(String value)
             {
                 if (buffer.length() > 0)
-                    buffer.append(" ");
+                    buffer.append(' ');
 
                 buffer.append(value);
             }
@@ -152,9 +152,9 @@ public class FuncTest extends BaseFuncTest
             @Override
             public void work(String value)
             {
-                buffer.append("(");
+                buffer.append('(');
                 buffer.append(value.length());
-                buffer.append(")");
+                buffer.append(')');
             }
         };
 

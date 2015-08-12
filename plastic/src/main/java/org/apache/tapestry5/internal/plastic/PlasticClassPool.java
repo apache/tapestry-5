@@ -636,7 +636,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
                     sep = ", ";
                 }
 
-                String message = b.append(".").toString();
+                String message = b.append('.').toString();
 
                 throw new IllegalArgumentException(message);
             }

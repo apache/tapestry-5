@@ -58,7 +58,7 @@ class DependencyNode<T>
             first = false;
         }
 
-        buffer.append("]");
+        buffer.append(']');
 
         return buffer.toString();
     }
