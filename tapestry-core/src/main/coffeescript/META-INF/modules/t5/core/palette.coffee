@@ -39,7 +39,7 @@ define ["./dom", "underscore", "./events"],
 
         @valueToOrderIndex = {}
 
-        _.each @available.element.options, (option, i) =>
+        for option,i in @available.element.options
           @valueToOrderIndex[option.value] = i
 
         # This occurs even when the palette is disabled, to present the
@@ -55,7 +55,8 @@ define ["./dom", "underscore", "./events"],
         values = JSON.parse @hidden.value()
         valueToPosition = {}
 
-        _.each values, (v, i) -> valueToPosition[v] = i
+        for v, i in values
+          valueToPosition[v] = i
 
         e = @available.element
 
@@ -79,7 +80,7 @@ define ["./dom", "underscore", "./events"],
         @updateButtons()
 
       updateHidden: ->
-        values = _.pluck(@selected.element.options, "value")
+        values = (option.value for option in @selected.element.options)
         @hidden.value JSON.stringify values
 
       bindEvents: ->
@@ -132,14 +133,16 @@ define ["./dom", "underscore", "./events"],
       doMoveUp: ->
         options = _.toArray @selected.element.options
 
-        movers = _.filter options, isSelected
+        groups = _.partition options, isSelected
+
+        movers = groups[0]
 
         # The element before the first selected element is the pivot; all the selected elements will
         # move before the pivot. If there is no pivot, the elements are shifted to the front of the list.
         firstMoverIndex = _.first(movers).index
         pivot = options[firstMoverIndex - 1]
 
-        options = _.reject options, isSelected
+        options = groups[1]
 
         splicePos = if pivot then _.indexOf options, pivot else 0
 
@@ -154,14 +157,16 @@ define ["./dom", "underscore", "./events"],
       doMoveDown: ->
         options = _.toArray @selected.element.options
 
-        movers = _.filter options, isSelected
+        groups = _.partition options, isSelected
+
+        movers = groups[0]
 
         # The element after the last selected element is the pivot; all the selected elements will
         # move after the pivot. If there is no pivot, the elements are shifted to the end of the list.
-        lastMoverIndex = _.last(movers).index
+        lastMoverIndex = movers[-1..-1][0].index
         pivot = options[lastMoverIndex + 1]
 
-        options = _.reject options, isSelected
+        options = groups[1]
 
         splicePos = if pivot then _.indexOf(options, pivot) + 1 else options.length
 
