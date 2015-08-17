@@ -281,5 +281,24 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
                 getText(String.format(locatorTemplate, "minValue")));
 
     }
+    
+    //TAP5-1981
+    @Test
+    public void validate_with_radiogroup() throws Exception
+    {
+        openLinks("Radio Group with Validation");
+        
+        click("//div[@class='test1']/form/input[@value='3']");
+
+        clickAndWait("//div[@class='test1']/form/input[@type='submit']");
+
+        assertTextPresent("Radiogroup requires a value no larger than 2.");
+
+        click("//div[@class='test2']/form/input[@value='3']");
+
+        clickAndWait("//div[@class='test2']/form/div/div/input[@type='submit']");
+
+        assertTextPresent("Group2 must be less than or equal to 2");
+    }
 
 }

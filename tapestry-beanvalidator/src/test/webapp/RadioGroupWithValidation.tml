@@ -1,0 +1,32 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+      xmlns:p="tapestry:parameter">
+    <body>
+     	<div class="test1">
+	     	<h1>test 1</h1>
+	        <t:form>
+	
+				<t:errors/>
+	            <t:RadioGroup value="bean.number" validate="max=2">
+	                <t:radio value="1"/>1<br/>
+	                <t:radio value="2"/>2<br/>
+					<t:radio value="3"/>3<br/>
+				</t:RadioGroup>
+	
+				<t:submit/>
+	        </t:form>
+		</div>
+     	<div class="test2">
+		
+			<h1>test 2</h1>
+			<t:BeanEditForm object="bean">
+				<p:number>
+					<t:comp t:id="group2">
+						<t:radio value="1"/>1<br/>
+						<t:radio value="2"/>2<br/>
+						<t:radio value="3"/>3<br/>
+					</t:comp>
+				</p:number>
+			</t:BeanEditForm>
+		</div>
+    </body>
+</html>

@@ -170,19 +170,20 @@ public class RadioGroup implements Field
             return;
         }
         String rawValue = request.getParameter(controlName);
+        Object convertedValue = encoder.toValue(rawValue);
 
         tracker.recordInput(this, rawValue);
         try
         {
             if (validate != null)
-                fieldValidationSupport.validate(rawValue, resources, validate);
+                fieldValidationSupport.validate(convertedValue, resources, validate);
         }
         catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }
 
-        value = encoder.toValue(rawValue);
+        value = convertedValue;
     }
 
     /**

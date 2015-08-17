@@ -32,6 +32,9 @@
             </li>            
             <li>
                 <t:pagelink page="NestedObjectDemo" t:context="true">NestedObject Demo (client validation enabled)</t:pagelink>
+            </li>
+            <li>
+            	<t:pagelink page="RadioGroupWithValidation">Radio Group with Validation</t:pagelink>
             </li>            
         </ul>
     </body>
