@@ -62,9 +62,26 @@ public class StrategyBuilderImpl implements StrategyBuilder
             {
                 final PlasticField registryField = plasticClass.introduceField(StrategyRegistry.class, "registry")
                         .inject(registry);
+                Class<?> interfaceSelectorType = null;
 
                 for (final Method method : interfaceType.getMethods())
                 {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 0)
+                    {
+                        throw new IllegalArgumentException("Invalid method "  + method
+                            + ", when using the strategy pattern, every method must take at least the selector as its parameter");
+                    }
+                    Class<?> methodSelectorType = parameterTypes[0];
+                    if (interfaceSelectorType == null)
+                    {
+                        interfaceSelectorType = methodSelectorType;
+                    } else if (!interfaceSelectorType.equals(methodSelectorType))
+                    {
+                        throw new IllegalArgumentException("Conflicting method definition "  + method
+                            + ", expecting a parameter of type " + interfaceSelectorType + " as the first argument");
+
+                    }
                     plasticClass.introduceMethod(new MethodDescription(method), new InstructionBuilderCallback()
                     {
                         @Override

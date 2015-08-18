@@ -1,6 +1,8 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.services.StrategyBuilder
+
+import spock.lang.Issue;
 import spock.lang.Shared
 
 
@@ -64,6 +66,31 @@ class StrategyBuilderImplSpec extends AbstractSharedRegistrySpecification {
     RuntimeException e = thrown()
 
     e.message == "No adapter from type void to type ioc.specs.KindOf is available."
+  }
+  
+  interface Provider {
+    Object provide()
+  }
+  
+  interface Provider2 {
+    Object provide(String arg)
+    Object provide2(Integer arg)
+  }
+  
+  @Issue('TAP5-1813')
+  def "interface methods are checked for selector parameter"(){
+    when:
+    StrategyBuilder builder = getService StrategyBuilder
+    Provider provider = builder.build Provider, [:]
+    then:
+    IllegalArgumentException e = thrown()
+    e.message.contains 'every method must take at least the selector as its parameter'
+    when:
+    Provider2 provider2 = builder.build Provider2, [:]
+    then:
+    IllegalArgumentException e2 = thrown()
+    e2.message.contains 'expecting a parameter of type class java.lang.String as the first argument'
+   
   }
 
 }
