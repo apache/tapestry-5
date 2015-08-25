@@ -671,10 +671,10 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     constructor: (@res) ->
 
-      @status = res.status
-      @statusText = res.statusText
-      @json = res.responseJSON
-      @text = res.responseText
+      @status = @res.status
+      @statusText = @res.statusText
+      @json = @res.responseJSON
+      @text = @res.responseText
 
     # Retrieves a response header by name
     header: (name) ->
