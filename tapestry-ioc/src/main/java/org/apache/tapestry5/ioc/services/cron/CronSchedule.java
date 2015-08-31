@@ -18,6 +18,7 @@ import org.apache.tapestry5.ioc.internal.services.cron.CronExpression;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class CronSchedule implements Schedule
 {
@@ -25,9 +26,15 @@ public class CronSchedule implements Schedule
 
     public CronSchedule(String cronExpression)
     {
+        this(cronExpression, TimeZone.getDefault());
+    }
+
+    public CronSchedule(String cronExpression, TimeZone timeZone)
+    {
         try
         {
             this.cron = new CronExpression(cronExpression);
+            this.cron.setTimeZone(timeZone);
         } catch (ParseException e)
         {
             throw new RuntimeException(e);
