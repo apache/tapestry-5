@@ -97,8 +97,25 @@ public class EnumSelectModelTest extends TapestryTestCase
 
         verify();
     }
+    
+    @Test
+    //TAP5-2495
+    public void error_on_invalid_class()
+    {
+        Messages messages = mockMessages();
 
-    private void checkOption(List<OptionModel> options, int i, String label, Stooge value)
+        replay();
+        Class c = String.class;
+        try {
+          SelectModel model = new EnumSelectModel(c, messages);
+          fail("should have thrown an exception");
+        } catch (IllegalArgumentException e){
+          assertMessageContains(e, "not an enum class");
+        }
+        verify();
+    }
+
+    private void checkOption(final List<OptionModel> options, final int i, final String label, final Stooge value)
     {
         OptionModel model = options.get(i);
 

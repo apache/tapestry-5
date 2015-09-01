@@ -172,6 +172,12 @@ public class PropertyEditBlocks
     @SuppressWarnings("unchecked")
     public SelectModel getSelectModelForProperty()
     {
-        return new EnumSelectModel(context.getPropertyType(), context.getContainerMessages());
+        Class propertyType = context.getPropertyType();
+        if (!Enum.class.isAssignableFrom(propertyType))
+        {
+            throw new IllegalStateException("Cannot create a select model for property " + context.getPropertyId()
+              + ". The property type is " + propertyType + " which is not an enum class.");
+        }
+        return new EnumSelectModel(propertyType, context.getContainerMessages());
     }
 }

@@ -45,6 +45,11 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
     {
         assert enumClass != null;
         assert messages != null;
+        if (!Enum.class.isAssignableFrom(enumClass))
+        {
+            throw new IllegalArgumentException("Cannot create " + this.getClass().getSimpleName()
+                + " from " + enumClass.getName() + ", not an enum class.");
+        }
         String prefix = enumClass.getSimpleName();
 
         for (T value : values)
