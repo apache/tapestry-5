@@ -40,7 +40,7 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
         if (value == null)
             return null;
 
-        return value.name();
+        return typeCoercer.coerce(value, String.class);
     }
 
     public E toValue(String clientValue)

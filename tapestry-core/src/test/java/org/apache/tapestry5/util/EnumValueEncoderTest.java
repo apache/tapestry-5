@@ -17,9 +17,14 @@ package org.apache.tapestry5.util;
 import java.util.List;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.services.TypeCoercerImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.testng.annotations.Test;
+
 
 public class EnumValueEncoderTest extends InternalBaseTestCase
 {
@@ -32,9 +37,10 @@ public class EnumValueEncoderTest extends InternalBaseTestCase
     // TAP5-1331
     public void valid_values_can_be_retrieved_from_exception()
     {
-        TypeCoercer typeCoercer = getService(TypeCoercer.class); 
+        TypeCoercer typeCoercer = getService(TypeCoercer.class);
         EnumValueEncoder<Stooge> encoder = new EnumValueEncoder<Stooge>(typeCoercer, Stooge.class);
-        try{
+        try
+        {
           encoder.toValue("Foo");
           fail();
         } catch (RuntimeException e){
@@ -45,5 +51,37 @@ public class EnumValueEncoderTest extends InternalBaseTestCase
           assertTrue(availableValues.contains("LARRY"));
           assertTrue(availableValues.contains("CURLY_JOE"));
         }
-    }   
+    }
+
+    @Test
+    // TAP5-2496
+    public void roundtrip_with_custom_coercer()
+    {
+
+        CoercionTuple<Stooge, String> stoogeToString = CoercionTuple.create(Stooge.class, String.class, new Coercion<Stooge, String>(){
+            @Override
+            public String coerce(Stooge input) {
+                return String.valueOf(input.ordinal());
+            }
+        });
+
+        CoercionTuple<String, Stooge> stringToStooge = CoercionTuple.create(String.class, Stooge.class, new Coercion<String, Stooge>(){
+
+            @Override
+            public Stooge coerce(String input) {
+                return Stooge.values()[Integer.parseInt(input)];
+            }
+
+        });
+
+        TypeCoercer typeCoercer =  new TypeCoercerImpl(CollectionFactory.newList(stoogeToString, stringToStooge));
+
+
+        EnumValueEncoder<Stooge> encoder = new EnumValueEncoder<Stooge>(typeCoercer, Stooge.class);
+        Stooge serverValue = Stooge.LARRY;
+        String clientValue = encoder.toClient(serverValue);
+        Stooge convertedBack = encoder.toValue(clientValue);
+        assertEquals(convertedBack, serverValue);
+
+    }
 }
