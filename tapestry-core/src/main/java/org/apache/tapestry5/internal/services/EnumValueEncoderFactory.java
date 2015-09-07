@@ -23,7 +23,10 @@ import org.apache.tapestry5.util.EnumValueEncoder;
  * Factory that provides a configured instance of {@link EnumValueEncoder}.
  *
  * @param <E>
+ * @deprecated this class is superseded by {@link TypeCoercedValueEncoderFactory} and 
+ * scheduled to be removed in Tapestry 5.5
  */
+@Deprecated
 public class EnumValueEncoderFactory<E extends Enum<E>> implements ValueEncoderFactory<E>
 {
     private final TypeCoercer typeCoercer;

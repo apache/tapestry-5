@@ -1953,7 +1953,6 @@ public final class TapestryModule
     {
         configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
         configuration.add(String.class, new StringValueEncoder());
-        configuration.addInstance(Enum.class, EnumValueEncoderFactory.class);
     }
 
     /**
