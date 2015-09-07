@@ -74,7 +74,7 @@ public class EnumValueEncoderTest extends InternalBaseTestCase
 
         });
 
-        TypeCoercer typeCoercer =  new TypeCoercerImpl(CollectionFactory.newList(stoogeToString, stringToStooge));
+        TypeCoercer typeCoercer =  new TypeCoercerImpl(CollectionFactory.<CoercionTuple, CoercionTuple>newList(stoogeToString, stringToStooge));
 
 
         EnumValueEncoder<Stooge> encoder = new EnumValueEncoder<Stooge>(typeCoercer, Stooge.class);
