@@ -59,9 +59,14 @@ public class TriggerFragment
     @HeartbeatDeferred
     void beginRender()
     {
+        String fragmentId = fragment.getClientId();
+        if (fragmentId == null)
+        {
+            throw new IllegalStateException("The fragment has returned a null client-side ID");
+        }
         JSONObject spec = new JSONObject(
                 "triggerId", container.getClientId(),
-                "fragmentId", fragment.getClientId());
+                "fragmentId", fragmentId);
 
         if (invert)
         {
