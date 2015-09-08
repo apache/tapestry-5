@@ -156,7 +156,7 @@ public class FormFragment implements ClientElement
     {
         FormSupport formSupport = environment.peekRequired(FormSupport.class);
 
-        clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
+        String clientId = getClientId();
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
@@ -241,6 +241,10 @@ public class FormFragment implements ClientElement
 
     public String getClientId()
     {
+        if (clientId == null)
+        {
+            clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
+        }
         return clientId;
     }
 }

@@ -600,7 +600,9 @@ public class Index
                             "error event on submit when textfield is empty"),
 
                     new Item("onactivateredirect", "OnActivateRedirect Demo", "A page that redirects to itself from"
-                        + " its activation method")
+                        + " its activation method"),
+
+                    new Item("BeanEditorWithFormFragmentDemo", "Bean Editor With Form Fragment Demo", "TriggerFragment mixin used inside a BeanEditor")
 
                 );
 
