@@ -237,6 +237,8 @@ public class FormFragment implements ClientElement
 
 
         environment.pop(FormSupport.class);
+
+        clientId = null;
     }
 
     public String getClientId()

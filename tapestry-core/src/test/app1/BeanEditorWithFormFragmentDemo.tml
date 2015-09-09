@@ -2,18 +2,20 @@
 <h1>Bean Editor With Form Fragment Demo</h1>
 
 	<t:form>
-		<t:beaneditor object="job"
-			include="title,canBeDoneRemotely">
-			<p:canBeDoneRemotely>
-				<t:checkbox t:id="canBeDoneRemotely" value="job.canBeDoneRemotely"
-					t:mixins="triggerfragment" TriggerFragment.fragment="jobAddress" TriggerFragment.invert="true"/>
-				<t:label for="canBeDoneRemotely" />
-			</p:canBeDoneRemotely>
-		</t:beaneditor>
-
-		<t:formfragment t:id="jobAddress" visible="!job.canBeDoneRemotely">
-			<t:beaneditor object="job" include="address" />
-		</t:formfragment>
+		<t:loop source="literal:[1,2]">
+			<t:beaneditor object="job"
+				include="title,canBeDoneRemotely">
+				<p:canBeDoneRemotely>
+					<t:checkbox t:id="canBeDoneRemotely" value="job.canBeDoneRemotely"
+						t:mixins="triggerfragment" TriggerFragment.fragment="jobAddress" TriggerFragment.invert="true"/>
+					<t:label for="canBeDoneRemotely" />
+				</p:canBeDoneRemotely>
+			</t:beaneditor>
+	
+			<t:formfragment t:id="jobAddress" visible="!job.canBeDoneRemotely">
+				<t:beaneditor object="job" include="address" />
+			</t:formfragment>
+		</t:loop>
 	</t:form>
 
 </html>
