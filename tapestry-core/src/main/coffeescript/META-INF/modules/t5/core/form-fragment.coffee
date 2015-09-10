@@ -72,14 +72,20 @@ define ["underscore", "./dom", "./events", "./forms"],
     # * spec.fragmentId - id of FormFragment element
     # * spec.invert - (optional) if true, then checked trigger hides (not shows) the fragment
     linkTrigger = (spec) ->
+      unless spec.triggerId? then throw new Error "Incomplete parameters, triggerId is null"
+      unless spec.fragmentId? then throw new Error "Incomplete parameters, fragmentId is null"
       trigger = dom spec.triggerId
+      fragment = dom spec.fragmentId
+      if fragment is null
+        throw new Error "Invalid configuration, fragment with id #{spec.fragmentId} not found"
+
       invert = spec.invert or false
 
       update = ->
         checked = trigger.element.checked
         makeVisible = checked isnt invert
 
-        (dom spec.fragmentId).trigger events.formfragment.changeVisibility,  visible: makeVisible
+        fragment.trigger events.formfragment.changeVisibility,  visible: makeVisible
 
         return
 
