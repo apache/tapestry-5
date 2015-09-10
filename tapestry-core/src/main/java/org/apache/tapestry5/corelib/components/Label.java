@@ -80,8 +80,12 @@ public class Label
     {
         String fieldId = field.getClientId();
 
-        labelElement.forceAttributes("for", fieldId);
+        if (fieldId == null)
+        {
+            throw new IllegalStateException("The field has returned a null client-side ID");
+        }
 
+        labelElement.forceAttributes("for", fieldId);
         decorator.insideLabel(field, labelElement);
     }
 
