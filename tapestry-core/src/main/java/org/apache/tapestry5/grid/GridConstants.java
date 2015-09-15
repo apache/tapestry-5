@@ -19,12 +19,16 @@ public class GridConstants
     /**
      * CSS class for the first column or the first row. May be applied to a &lt;th&gt; (in the &lt;thead&gt;) or a
      * &lt;tr&gt; (in the &lt;tbody&gt;).
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String FIRST_CLASS = "t-first";
 
     /**
      * CSS class for the last column or the last row. May be applied to a &lt;th&gt; (in the &lt;thead&gt;) or a
      * &lt;tr&gt; (in the &lt;tbody&gt;).
+     * 
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     public static final String LAST_CLASS = "t-last";
 
