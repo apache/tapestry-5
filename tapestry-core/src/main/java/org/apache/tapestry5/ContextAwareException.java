@@ -18,6 +18,6 @@ package org.apache.tapestry5;
  */
 public interface ContextAwareException
 {
-    /** @returns A page activation context for reporting the exception. */
+    /** @return A page activation context for reporting the exception. */
     Object[] getContext();
 }
