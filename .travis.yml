@@ -13,3 +13,5 @@ script: ./gradlew -Dci=true continuousIntegration
 cache:
   directories:
   - $HOME/.gradle
+
+sudo: false
