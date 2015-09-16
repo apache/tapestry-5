@@ -186,7 +186,7 @@ subprojects {
         }
     }
 
-    test {
+    tasks.withType(Test) {
         useTestNG()
 
         options.suites("src/test/conf/testng.xml")
@@ -422,7 +422,7 @@ task combinedJacocoReport(type:JacocoReport){
 }
 
 task continuousIntegration {
-    dependsOn subprojects.build, aggregateJavadoc, combinedJacocoReport
+    dependsOn subprojects.build, testWithPrototype, aggregateJavadoc, combinedJacocoReport
     description "Task executed on Jenkins CI server after SVN commits"
 }
 

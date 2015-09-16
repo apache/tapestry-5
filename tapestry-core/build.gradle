@@ -70,3 +70,7 @@ task runTestApp1(type:JavaExec) {
   args "-d", "src/test/app1", "-p", "8080"
   classpath += project.sourceSets.test.runtimeClasspath
 }
+
+task testWithPrototype(type:Test) {
+  systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
+}
