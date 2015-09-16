@@ -520,15 +520,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
     deepVisible: ->
-      cursor = this
-      while cursor
-        return false unless cursor.visible()
-        cursor = cursor.parent()
-
-        return true if cursor and cursor.element is document.body
-
-      # Bound not reached, meaning that the Element is not currently attached to the DOM.
-      return false
+      element = this.element
+      element.offsetWidth > 0 && element.offsetHeight > 0
 
     # Fires a named event, passing an optional _memo_ object to event handler functions. This must support
     # common native events (exact list TBD), as well as custom events (in Prototype, custom events must have
