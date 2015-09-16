@@ -1,6 +1,6 @@
 # ## t5/core/confirm-click
 #
-# Support for the Tapestry Confirm mixin, and for running confirmation dialogs programatically.
+# Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
 # Note that this does not function correctly when Prototype is present.
 
 define ["jquery", "./events", "./dom", "bootstrap/modal"],
@@ -57,7 +57,7 @@ define ["jquery", "./events", "./dom", "bootstrap/modal"],
         $dialog.find(".modal-footer .btn").first().focus()
 
     # Support for the Confirm mixin
-    $("body").on "click", "[data-confirm-message]:not(.disabled)", ->
+    $("body").on "click", "[data-confirm-message]:not(.disabled)", (event)->
 
       $this = $(this)
 
@@ -82,9 +82,9 @@ define ["jquery", "./events", "./dom", "bootstrap/modal"],
       # Cancel the original click event
       return false
 
-    dom.onDocument "click", "a[data-confirm-message]:not(.disabled)", ->
+    ($ document.body).on "click", "a[data-confirm-message]:not(.disabled)", ->
 
-      # Order of event handlers on an element is not predicatable. From testing, I found this could happen.
+      # Order of event handlers on an element is not predictable. From testing, I found this could happen.
       # A bit ugly.
       return if @attr "data-update-zone"
 
