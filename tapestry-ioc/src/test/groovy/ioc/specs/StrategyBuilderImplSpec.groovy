@@ -89,7 +89,7 @@ class StrategyBuilderImplSpec extends AbstractSharedRegistrySpecification {
     Provider2 provider2 = builder.build Provider2, [:]
     then:
     IllegalArgumentException e2 = thrown()
-    e2.message.contains 'expecting a parameter of type class java.lang.String as the first argument'
+    e2.message.contains 'expecting the first argument of every method to have the same type'
    
   }
 

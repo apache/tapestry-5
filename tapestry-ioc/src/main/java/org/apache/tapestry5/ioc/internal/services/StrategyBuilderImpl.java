@@ -78,8 +78,8 @@ public class StrategyBuilderImpl implements StrategyBuilder
                         interfaceSelectorType = methodSelectorType;
                     } else if (!interfaceSelectorType.equals(methodSelectorType))
                     {
-                        throw new IllegalArgumentException("Conflicting method definition "  + method
-                            + ", expecting a parameter of type " + interfaceSelectorType + " as the first argument");
+                        throw new IllegalArgumentException("Conflicting method definitions,"
+                            + " expecting the first argument of every method to have the same type");
 
                     }
                     plasticClass.introduceMethod(new MethodDescription(method), new InstructionBuilderCallback()
