@@ -1,11 +1,10 @@
 # ## t5/core/confirm-click
 #
 # Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
-# Note that this does not function correctly when Prototype is present.
 
-define ["jquery", "./events", "./dom", "bootstrap/modal"],
+define ["jquery", "./events", "bootstrap/modal"],
 
-  ($, events, dom) ->
+  ($, events) ->
 
     # Runs a modal dialog, invoking a callback if the user selects the OK option. On any form of cancel,
     # there is no callback.
