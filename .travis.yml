@@ -15,3 +15,7 @@ cache:
   - $HOME/.gradle
 
 sudo: false
+
+notifications:
+  email:
+    - dev@tapestry.apache.org
