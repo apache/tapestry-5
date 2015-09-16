@@ -82,15 +82,17 @@ define ["jquery", "./events", "./dom", "bootstrap/modal"],
       # Cancel the original click event
       return false
 
-    ($ document.body).on "click", "a[data-confirm-message]:not(.disabled)", ->
+    ($ document).on "click", "a[data-confirm-message]:not(.disabled)", (event) ->
+
+      target = $ event.target
 
       # Order of event handlers on an element is not predictable. From testing, I found this could happen.
       # A bit ugly.
-      return if @attr "data-update-zone"
+      return if target.attr "data-update-zone"
 
       # See note above; this replicates the default behavior of a link element that is lost because
       # of the
-      window.location.href = @attr "href"
+      window.location.href = target.attr "href"
       return false
 
     # Exports:
