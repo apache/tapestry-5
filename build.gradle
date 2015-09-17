@@ -205,7 +205,11 @@ subprojects {
         if (continuousIntegrationBuild){
           // Travis runs our builds with TERM=dumb and kills it if we don't produce any
           // output for 10 minutes, so we log some task execution progress 
-        
+
+          testLogging {
+            exceptionFormat "full"
+          }
+
           def numberOfTestsExecuted = 0
           afterTest { descriptor, result->
             numberOfTestsExecuted++
