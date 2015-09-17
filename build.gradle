@@ -191,14 +191,14 @@ subprojects {
 
         options.suites("src/test/conf/testng.xml")
 
-        maxHeapSize "1G"
+        maxHeapSize "600M"
 
         // Turn off live service reloading
 
         systemProperties["tapestry.service-reloading-enabled"] = "false"
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
-        jvmArgs("-XX:MaxPermSize=512m", "-Dfile.encoding=UTF-8")
+        jvmArgs("-XX:MaxPermSize=256m", "-Dfile.encoding=UTF-8")
 
         environment.LANG = 'en_US.UTF-8'
         
