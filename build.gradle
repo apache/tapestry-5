@@ -201,6 +201,19 @@ subprojects {
         jvmArgs("-XX:MaxPermSize=512m", "-Dfile.encoding=UTF-8")
 
         environment.LANG = 'en_US.UTF-8'
+        
+        if (continuousIntegrationBuild){
+          // Travis runs our builds with TERM=dumb and kills it if we don't produce any
+          // output for 10 minutes, so we log some task execution progress 
+        
+          def numberOfTestsExecuted = 0
+          afterTest { descriptor, result->
+            numberOfTestsExecuted++
+            if (numberOfTestsExecuted % 100 == 0){
+              logger.lifecycle "$numberOfTestsExecuted tests executed"
+            }
+          }
+        }
     }
 
     jar {
