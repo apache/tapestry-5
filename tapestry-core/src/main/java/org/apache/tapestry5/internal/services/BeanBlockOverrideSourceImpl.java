@@ -39,8 +39,14 @@ public class BeanBlockOverrideSourceImpl implements BeanBlockOverrideSource
         for (BeanBlockContribution contribution : configuration)
         {
             Map<String, BeanBlockContribution> map = contribution.isEdit() ? edit : display;
+            String dataType = contribution.getDataType();
 
-            map.put(contribution.getDataType(), contribution);
+            BeanBlockContribution previousValue = map.put(dataType, contribution);
+            if (previousValue != null)
+            {
+                throw new IllegalArgumentException("The BeanBlockOverrideSource configuration contains multiple "
+                    + (contribution.isEdit() ? "edit" : "display") + " block overrides for data type '" + dataType+ "'.");
+            }
         }
     }
 

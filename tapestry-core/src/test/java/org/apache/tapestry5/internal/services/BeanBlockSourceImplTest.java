@@ -18,6 +18,7 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.*;
 import org.testng.annotations.Test;
 
@@ -183,6 +184,26 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
         assertSame(actual, block);
 
         verify();
+    }
+    
+    @Test
+    // TAP5-2506
+    public void conflicting_bean_block_overrides()
+    {
+        RequestPageCache cache = mockRequestPageCache();
+        Collection<BeanBlockContribution> configuration = CollectionFactory.newList();
+        configuration.add(new DisplayBlockContribution("foo", "page1", "bar"));
+        configuration.add(new DisplayBlockContribution("foo", "page2", "baz"));
+        try {
+            new BeanBlockOverrideSourceImpl(cache, configuration);
+            unreachable();
+        } catch(IllegalArgumentException ex)
+        {
+            assertEquals(
+              ex.getMessage(),
+              "The BeanBlockOverrideSource configuration contains multiple display block overrides for data type 'foo'.");
+
+        }
     }
 
     protected final void train_getBlock(Page page, String blockId, Block block)
