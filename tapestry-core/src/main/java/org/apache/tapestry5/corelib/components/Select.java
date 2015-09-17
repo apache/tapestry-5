@@ -258,7 +258,7 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(final List<Context> context,
+    Object onChange(final List<Object> context,
                     @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue)
             throws ValidationException
     {
