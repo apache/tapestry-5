@@ -65,12 +65,10 @@ define ["./dom", "./events", "./console", "./ajax"],
           # Create a new element with the same type (usually "div") and class as this element.
           # It will contain the new content.
 
-          newElement = """
-              <#{insertionPoint.element.tagName} class="#{insertionPoint.element.className}"
-                data-container-type="#{FRAGMENT_TYPE}">
-                #{content}
-                </#{insertionPoint.element.tagName}>
-              """
+          newElement = dom.create insertionPoint.element.tagName,
+                                  'class': insertionPoint.element.className, 'data-container-type': FRAGMENT_TYPE,
+                                  content
+
 
           insertionPoint.insertBefore newElement
 
