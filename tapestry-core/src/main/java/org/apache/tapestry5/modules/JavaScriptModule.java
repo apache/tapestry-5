@@ -214,15 +214,21 @@ public class JavaScriptModule
                                               OperationTracker tracker,
                                               ResourceStreamer resourceStreamer,
                                               PathConstructor pathConstructor,
+                                              JavaScriptStackSource javaScriptStackSource,
+                                              JavaScriptStackPathConstructor javaScriptStackPathConstructor,
                                               @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
-                                              String modulePathPrefix)
+                                              String modulePathPrefix,
+                                              @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
+                                              String assetPathPrefix)
     {
         configuration.add("Modules",
-                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor, modulePathPrefix, false),
+                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
+                    javaScriptStackSource, javaScriptStackPathConstructor, modulePathPrefix, assetPathPrefix, false),
                 "after:Asset", "before:ComponentEvent");
 
         configuration.add("ComnpressedModules",
-                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor, modulePathPrefix, true),
+                new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
+                    javaScriptStackSource, javaScriptStackPathConstructor, modulePathPrefix, assetPathPrefix, true),
                 "after:Modules", "before:ComponentEvent");
     }
 

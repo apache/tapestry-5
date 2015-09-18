@@ -12,20 +12,27 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,25 +50,41 @@ public class ModuleDispatcher implements Dispatcher
 
     private final OperationTracker tracker;
 
+    private final JavaScriptStackSource javaScriptStackSource;
+
+    private final JavaScriptStackPathConstructor javaScriptStackPathConstructor;
+
     private final String requestPrefix;
+
+    private final String stackPathPrefix;
 
     private final boolean compress;
 
     private final Set<ResourceStreamer.Options> omitExpiration = EnumSet.of(ResourceStreamer.Options.OMIT_EXPIRATION);
 
+    private Map<String, String> moduleNameToStackName;
+
+
     public ModuleDispatcher(ModuleManager moduleManager,
                             ResourceStreamer streamer,
                             OperationTracker tracker,
                             PathConstructor pathConstructor,
+                            JavaScriptStackSource javaScriptStackSource,
+                            JavaScriptStackPathConstructor javaScriptStackPathConstructor,
                             String prefix,
+                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
+                            String assetPrefix,
                             boolean compress)
     {
         this.moduleManager = moduleManager;
         this.streamer = streamer;
         this.tracker = tracker;
+        this.javaScriptStackSource = javaScriptStackSource;
+        this.javaScriptStackPathConstructor = javaScriptStackPathConstructor;
         this.compress = compress;
 
         requestPrefix = pathConstructor.constructDispatchPath(compress ? prefix + ".gz" : prefix) + "/";
+        stackPathPrefix = pathConstructor.constructDispatchPath(assetPrefix, RequestConstants.STACK_FOLDER) + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -72,7 +95,7 @@ public class ModuleDispatcher implements Dispatcher
         {
             String extraPath = path.substring(requestPrefix.length());
 
-            if (! handleModuleRequest(extraPath))
+            if (!handleModuleRequest(extraPath, response))
             {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("No module for path '%s'.", extraPath));
             }
@@ -84,7 +107,7 @@ public class ModuleDispatcher implements Dispatcher
 
     }
 
-    private boolean handleModuleRequest(String extraPath) throws IOException
+    private boolean handleModuleRequest(String extraPath, Response response) throws IOException
     {
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
         // to be a hierarchy of static JavaScript files here. In reality, we may be cross-compiling CoffeeScript to
@@ -105,6 +128,22 @@ public class ModuleDispatcher implements Dispatcher
 
         final String moduleName = extraPath.substring(0, dotx);
 
+        String stackName = findStackForModule(moduleName);
+
+        if (stackName != null)
+        {
+            List<String> libraryUrls = javaScriptStackPathConstructor.constructPathsForJavaScriptStack(stackName);
+            if (libraryUrls.size() == 1)
+            {
+                String firstUrl = libraryUrls.get(0);
+                if (firstUrl.startsWith(stackPathPrefix))
+                {
+                    response.sendRedirect(firstUrl);
+                    return true;
+                }
+            }
+        }
+
         return tracker.perform(String.format("Streaming %s %s",
                 compress ? "compressed module" : "module",
                 moduleName), new IOOperation<Boolean>()
@@ -123,5 +162,29 @@ public class ModuleDispatcher implements Dispatcher
                 return false;
             }
         });
+    }
+
+    private String findStackForModule(String moduleName)
+    {
+        return getModuleNameToStackName().get(moduleName);
+    }
+
+    private Map<String, String> getModuleNameToStackName()
+    {
+
+        if (moduleNameToStackName == null)
+        {
+            moduleNameToStackName = CollectionFactory.newMap();
+
+            for (String stackName : javaScriptStackSource.getStackNames())
+            {
+                for (String moduleName : javaScriptStackSource.getStack(stackName).getModules())
+                {
+                    moduleNameToStackName.put(moduleName, stackName);
+                }
+            }
+        }
+
+        return moduleNameToStackName;
     }
 }
