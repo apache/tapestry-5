@@ -29,9 +29,13 @@ import org.apache.tapestry5.services.FormSupport;
  * 
  * @tapestrydoc
  */
-@Events({ "BeginSubmit", "AfterSubmit" })
+@Events({ SubmitNotifier.BEGIN_SUBMIT_EVENT, SubmitNotifier.AFTER_SUBMIT_EVENT })
 public class SubmitNotifier
 {
+
+    public static final String BEGIN_SUBMIT_EVENT = "BeginSubmit";
+    public static final String AFTER_SUBMIT_EVENT = "AfterSubmit";
+
     private static final class TriggerEvent implements ComponentAction<SubmitNotifier>
     {
         private final String eventType;
@@ -62,12 +66,12 @@ public class SubmitNotifier
 
     void beginRender()
     {
-        formSupport.store(this, new TriggerEvent("BeginSubmit"));
+        formSupport.store(this, new TriggerEvent(BEGIN_SUBMIT_EVENT));
     }
 
     void afterRender()
     {
-        formSupport.store(this, new TriggerEvent("AfterSubmit"));
+        formSupport.store(this, new TriggerEvent(AFTER_SUBMIT_EVENT));
     }
 
     private void trigger(String eventType)
