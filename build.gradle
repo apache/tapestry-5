@@ -137,6 +137,10 @@ dependencies {
 }
 
 subprojects {
+
+    def jdkVersion = System.properties['java.version']
+    def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
+    
     version = parent.version
 
     group = "org.apache.tapestry"
@@ -182,7 +186,10 @@ subprojects {
     compileTestGroovy {
         configure(groovyOptions.forkOptions) {
             memoryMaximumSize = '1g'
-            jvmArgs = ['-XX:MaxPermSize=512m', '-Xms512m', '-Xmx1g']
+            jvmArgs = ['-Xms512m', '-Xmx1g']
+            if (specifyMaxPermSize){
+              jvmArgs << '-XX:MaxPermSize=512m'
+            }
         }
     }
 
@@ -190,15 +197,19 @@ subprojects {
         useTestNG()
 
         options.suites("src/test/conf/testng.xml")
-
-        maxHeapSize "600M"
+        if (specifyMaxPermSize){
+          maxHeapSize "400M"
+          jvmArgs("-XX:MaxPermSize=200m")
+        }else{
+          maxHeapSize "600M"
+        }
 
         // Turn off live service reloading
 
         systemProperties["tapestry.service-reloading-enabled"] = "false"
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
-        jvmArgs("-XX:MaxPermSize=256m", "-Dfile.encoding=UTF-8")
+        jvmArgs("-Dfile.encoding=UTF-8")
 
         environment.LANG = 'en_US.UTF-8'
         
