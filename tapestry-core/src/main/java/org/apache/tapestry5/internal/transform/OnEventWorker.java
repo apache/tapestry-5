@@ -69,6 +69,24 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         }
     };
 
+    private final static Predicate<PlasticMethod> IS_EVENT_HANDLER = new Predicate<PlasticMethod>()
+    {
+      public boolean accept(PlasticMethod method)
+      {
+          return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
+      }
+
+      private boolean hasCorrectPrefix(PlasticMethod method)
+      {
+          return method.getDescription().methodName.startsWith("on");
+      }
+
+      private boolean hasAnnotation(PlasticMethod method)
+      {
+          return method.hasAnnotation(OnEvent.class);
+      }
+  };
+
     class ComponentIdValidator
     {
         final String componentId;
@@ -399,23 +417,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
     private Flow<PlasticMethod> matchEventHandlerMethods(PlasticClass plasticClass)
     {
-        return F.flow(plasticClass.getMethods()).filter(new Predicate<PlasticMethod>()
-        {
-            public boolean accept(PlasticMethod method)
-            {
-                return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
-            }
-
-            private boolean hasCorrectPrefix(PlasticMethod method)
-            {
-                return method.getDescription().methodName.startsWith("on");
-            }
-
-            private boolean hasAnnotation(PlasticMethod method)
-            {
-                return method.hasAnnotation(OnEvent.class);
-            }
-        });
+        return F.flow(plasticClass.getMethods()).filter(IS_EVENT_HANDLER);
     }
 
 
