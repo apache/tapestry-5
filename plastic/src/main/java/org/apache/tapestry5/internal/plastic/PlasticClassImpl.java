@@ -194,6 +194,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
+        int lastIndexOfDot = className.lastIndexOf('.');
+
+        String packageName = lastIndexOfDot > -1 ? className.substring(0, lastIndexOfDot) : "";
 
         fieldInstrumentations = new FieldInstrumentations(classNode.superName);
 
@@ -202,7 +205,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         this.parentInheritanceData = parentInheritanceData;
 
-        inheritanceData = parentInheritanceData.createChild();
+        inheritanceData = parentInheritanceData.createChild(packageName);
 
         for (String interfaceName : classNode.interfaces)
         {
@@ -239,7 +242,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             {
                 if (isInheritableMethod(node))
                 {
-                    inheritanceData.addMethod(node.name, node.desc);
+                    inheritanceData.addMethod(node.name, node.desc, node.access == 0);
                 }
 
                 methodNames.add(node.name);
@@ -261,7 +264,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             if (isInheritableMethod(node))
             {
-                inheritanceData.addMethod(node.name, node.desc);
+                inheritanceData.addMethod(node.name, node.desc, node.access == 0);
             }
 
             methodNames.add(node.name);
@@ -338,7 +341,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         return annotationAccess.getAnnotation(annotationType);
     }
-    
+
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, MethodNode implementationMethodNode)
     {
         // visits the method attributes
@@ -400,78 +403,78 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         methodNode.visitEnd();
 
     }
-    
+
     private static void removeDuplicatedAnnotations(MethodNode node)
     {
-    	
-    	removeDuplicatedAnnotations(node.visibleAnnotations);
-    	removeDuplicatedAnnotations(node.invisibleAnnotations);
-    	
-    	if (node.visibleParameterAnnotations != null)
-    	{
-	    	for (List<AnnotationNode> list : node.visibleParameterAnnotations)
-	    	{
-	    		removeDuplicatedAnnotations(list);
-	    	}
-    	}
-    	
-    	if (node.invisibleParameterAnnotations != null)
-    	{
-	    	for (List<AnnotationNode> list : node.invisibleParameterAnnotations)
-	    	{
-	    		removeDuplicatedAnnotations(list);
-	    	}
-    	}
-    	
+
+        removeDuplicatedAnnotations(node.visibleAnnotations);
+        removeDuplicatedAnnotations(node.invisibleAnnotations);
+
+        if (node.visibleParameterAnnotations != null)
+        {
+            for (List<AnnotationNode> list : node.visibleParameterAnnotations)
+            {
+                removeDuplicatedAnnotations(list);
+            }
+        }
+
+        if (node.invisibleParameterAnnotations != null)
+        {
+            for (List<AnnotationNode> list : node.invisibleParameterAnnotations)
+            {
+                removeDuplicatedAnnotations(list);
+            }
+        }
+
     }
 
     private static void removeDuplicatedAnnotations(ClassNode node)
     {
-    	removeDuplicatedAnnotations(node.visibleAnnotations, true);
-    	removeDuplicatedAnnotations(node.invisibleAnnotations, true);
+        removeDuplicatedAnnotations(node.visibleAnnotations, true);
+        removeDuplicatedAnnotations(node.invisibleAnnotations, true);
     }
-    
+
     private static void removeDuplicatedAnnotations(List<AnnotationNode> list) {
-    	removeDuplicatedAnnotations(list, false);
+        removeDuplicatedAnnotations(list, false);
     }
-    
+
     private static void removeDuplicatedAnnotations(List<AnnotationNode> list, boolean reverse) {
-    	
-    	if (list != null)
-    	{
-    	
-	    	final Set<String> annotations = new HashSet<String>();
-	    	final List<AnnotationNode> toBeRemoved = new ArrayList<AnnotationNode>();
-	    	final List<AnnotationNode> toBeIterated;
-	    	
-	    	if (reverse) 
-	    	{
-	    		toBeIterated = new ArrayList<AnnotationNode>(list);
-	    		Collections.reverse(toBeIterated);
-	    	}
-	    	else {
-	    		toBeIterated = list;
-	    	}
-	    	
-	    	for (AnnotationNode annotationNode : toBeIterated) 
-	    	{
-				if (annotations.contains(annotationNode.desc))
-				{
-					toBeRemoved.add(annotationNode);
-				}
-				else
-				{
-					annotations.add(annotationNode.desc);
-				}
-			}
-	    	
-	    	for (AnnotationNode annotationNode : toBeRemoved) 
-	    	{
-				list.remove(annotationNode);
-			}
-	    	
-    	}
-    	
+
+        if (list != null)
+        {
+
+            final Set<String> annotations = new HashSet<String>();
+            final List<AnnotationNode> toBeRemoved = new ArrayList<AnnotationNode>();
+            final List<AnnotationNode> toBeIterated;
+
+            if (reverse)
+            {
+                toBeIterated = new ArrayList<AnnotationNode>(list);
+                Collections.reverse(toBeIterated);
+            }
+            else {
+                toBeIterated = list;
+            }
+
+            for (AnnotationNode annotationNode : toBeIterated)
+            {
+                if (annotations.contains(annotationNode.desc))
+                {
+                    toBeRemoved.add(annotationNode);
+                }
+                else
+                {
+                    annotations.add(annotationNode.desc);
+                }
+            }
+
+            for (AnnotationNode annotationNode : toBeRemoved)
+            {
+                list.remove(annotationNode);
+            }
+
+        }
+
     }
 
     private static String getParametersDesc(MethodNode methodNode) {
@@ -480,33 +483,33 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private static MethodNode findExactMatchMethod(MethodNode methodNode, ClassNode source) {
 
-    	MethodNode found = null;
-    	
-    	final String methodDescription = getParametersDesc(methodNode);
-    	
+        MethodNode found = null;
+
+        final String methodDescription = getParametersDesc(methodNode);
+
         for (MethodNode implementationMethodNode : source.methods)
         {
-        	
+
             final String implementationMethodDescription = getParametersDesc(implementationMethodNode);
-            if (methodNode.name.equals(implementationMethodNode.name) && 
-            		// We don't want synthetic methods.
-            		((implementationMethodNode.access & Opcodes.ACC_SYNTHETIC) == 0)
-            		&& (methodDescription.equals(implementationMethodDescription))) 
+            if (methodNode.name.equals(implementationMethodNode.name) &&
+                    // We don't want synthetic methods.
+                    ((implementationMethodNode.access & Opcodes.ACC_SYNTHETIC) == 0)
+                    && (methodDescription.equals(implementationMethodDescription)))
             {
-            	found = implementationMethodNode;
-            	break;
+                found = implementationMethodNode;
+                break;
             }
         }
-        
+
         return found;
 
     }
-    
+
     private static List<Class> getJavaParameterTypes(MethodNode methodNode) {
         final ClassLoader classLoader = PlasticInternalUtils.class.getClassLoader();
         Type[] parameterTypes = Type.getArgumentTypes(methodNode.desc);
-    	List<Class> list = new ArrayList<Class>();
-    	for (Type type : parameterTypes)
+        List<Class> list = new ArrayList<Class>();
+        for (Type type : parameterTypes)
         {
             try
             {
@@ -517,9 +520,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 throw new RuntimeException(e); // shouldn't happen anyway
             }
         }
-    	return list;
+        return list;
     }
-    
+
     /**
      * Returns the first method which matches the given methodNode.
      * FIXME: this may not find the correct method if the correct one is declared after
@@ -551,12 +554,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     for (int i = 0; i < parameterTypes.size(); i++)
                     {
                         final Class implementationParameterType = implementationParameterTypes.get(i);
-						final Class parameterType = parameterTypes.get(i);
-						if (!parameterType.isAssignableFrom(implementationParameterType)) {
+                        final Class parameterType = parameterTypes.get(i);
+                        if (!parameterType.isAssignableFrom(implementationParameterType)) {
                             matches = false;
                             break;
                         }
-                        
+
                     }
 
                     if (matches && !isBridge(implementationMethodNode))
@@ -564,7 +567,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                         found = implementationMethodNode;
                         break;
                     }
-                    
+
                 }
 
             }
@@ -574,39 +577,40 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return found;
 
     }
-    
+
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, ClassNode source)
     {
         if (source != null)
         {
 
-        	MethodNode candidate = findExactMatchMethod(methodNode, source);
+            MethodNode candidate = findExactMatchMethod(methodNode, source);
 
-        	final String parametersDesc = getParametersDesc(methodNode);
-        	
-        	// candidate will be null when the method has generic parameters
-        	if (candidate == null && parametersDesc.trim().length() > 0) 
-        	{
-        		candidate = findGenericMethod(methodNode, source);
-        	}
-            
+            final String parametersDesc = getParametersDesc(methodNode);
+
+            // candidate will be null when the method has generic parameters
+            if (candidate == null && parametersDesc.trim().length() > 0)
+            {
+                candidate = findGenericMethod(methodNode, source);
+            }
+
             if (candidate != null)
             {
-            	addMethodAndParameterAnnotationsFromExistingClass(methodNode, candidate);
+                addMethodAndParameterAnnotationsFromExistingClass(methodNode, candidate);
             }
-            
+
         }
 
     }
 
-    /** 
+    /**
      * Tells whether a given method is a bridge one or not.
      * Notice the flag for bridge method is the same as volatile field. Java 6 doesn't have
      * Modifiers.isBridge(), so we use a workaround.
      */
-	private static boolean isBridge(MethodNode methodNode) {
-		return Modifier.isVolatile(methodNode.access);
-	}
+    private static boolean isBridge(MethodNode methodNode)
+    {
+        return Modifier.isVolatile(methodNode.access);
+    }
 
     @Override
     public PlasticClass proxyInterface(Class interfaceType, PlasticField field)
@@ -976,7 +980,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (isInheritableMethod(methodNode))
         {
-            inheritanceData.addMethod(methodNode.name, methodNode.desc);
+            inheritanceData.addMethod(methodNode.name, methodNode.desc, methodNode.access == 0);
         }
     }
 
@@ -1001,7 +1005,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (!isOverride)
         {
-        	addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
+            addMethodAndParameterAnnotationsFromExistingClass(methodNode, implementationClassNode);
             addMethodAndParameterAnnotationsFromExistingClass(methodNode, interfaceClassNode);
             removeDuplicatedAnnotations(methodNode);
         }

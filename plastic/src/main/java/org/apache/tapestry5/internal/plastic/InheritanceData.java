@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,18 +23,21 @@ public class InheritanceData
 {
     private final InheritanceData parent;
 
+    private final String packageName;
+
     private final Set<String> methodNames = PlasticInternalUtils.newSet();
-    private final Set<String> methods = PlasticInternalUtils.newSet();
+    private final Map<String, Boolean> methods = PlasticInternalUtils.newMap();
     private final Set<String> interfaceNames = PlasticInternalUtils.newSet();
 
-    public InheritanceData()
+    public InheritanceData(String packageName)
     {
-        this(null);
+        this(null, packageName);
     }
 
-    private InheritanceData(InheritanceData parent)
+    private InheritanceData(InheritanceData parent, String packageName)
     {
         this.parent = parent;
+        this.packageName = packageName;
     }
 
     /**
@@ -50,11 +54,13 @@ public class InheritanceData
      * Returns a new MethodBundle that represents the methods of a child class
      * of this bundle. The returned bundle will always be {@linkplain #isTransformed() transformed}.
      *
+     * @param packageName
+     *         the package that the child class will be created in
      * @return new method bundle
      */
-    public InheritanceData createChild()
+    public InheritanceData createChild(String packageName)
     {
-        return new InheritanceData(this);
+        return new InheritanceData(this, packageName);
     }
 
     /**
@@ -65,16 +71,33 @@ public class InheritanceData
      *         name of method
      * @param desc
      *         describes the parameters and return value of the method
+     * @param samePackageOnly
+     *         whether the method can only be overridden in classes that are in the same package
      */
-    public void addMethod(String name, String desc)
+    public void addMethod(String name, String desc, boolean samePackageOnly)
     {
-        methods.add(toValue(name, desc));
+        methods.put(toValue(name, desc), samePackageOnly);
         methodNames.add(name);
     }
 
 
     /**
-     * Returns true if a transformed parent class contains an implementation of, or abstract placeholder for, the method.
+     * Returns true if this class or a transformed parent class contains an implementation of,
+     * or abstract placeholder for, the method.
+     *
+     * @param name
+     *         method name
+     * @param desc
+     *         method descriptor
+     * @return true if this class or a base class implements the method (including abstract methods)
+     */
+    public boolean isImplemented(String name, String desc)
+    {
+        return checkForMethod(toValue(name, desc), this);
+    }
+
+    /**
+     * Returns true if the method is an override of a base class method
      *
      * @param name
      *         method name
@@ -82,20 +105,32 @@ public class InheritanceData
      *         method descriptor
      * @return true if a base class implements the method (including abstract methods)
      */
-    public boolean isImplemented(String name, String desc)
+    public boolean isOverride(String name, String desc)
     {
-        return checkForMethod(toValue(name, desc));
+        return checkForMethod(toValue(name, desc), parent);
     }
 
-    private boolean checkForMethod(String value)
+    private boolean checkForMethod(String value, InheritanceData cursor)
     {
-        InheritanceData cursor = this;
+
+        String thisPackageName = packageName;
 
         while (cursor != null)
         {
-            if (cursor.methods.contains(value))
+            if (cursor.methods.containsKey(value))
             {
-                return true;
+                boolean mustBeInSamePackage = cursor.methods.get(value);
+
+                if (!mustBeInSamePackage)
+                {
+                    return true;
+                }
+                boolean isInSamePackage = thisPackageName.equals(cursor.packageName);
+
+                if (isInSamePackage)
+                {
+                    return true;
+                }
             }
 
             cursor = cursor.parent;

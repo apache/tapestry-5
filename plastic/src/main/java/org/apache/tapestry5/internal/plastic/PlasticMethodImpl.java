@@ -79,7 +79,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
     {
         plasticClass.check();
 
-        return plasticClass.parentInheritanceData.isImplemented(node.name, node.desc);
+        return plasticClass.inheritanceData.isOverride(node.name, node.desc);
     }
 
     @Override

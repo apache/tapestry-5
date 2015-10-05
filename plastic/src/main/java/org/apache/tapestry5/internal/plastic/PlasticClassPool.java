@@ -58,7 +58,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      */
     private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newMap();
 
-    private final InheritanceData emptyInheritanceData = new InheritanceData();
+    private final InheritanceData emptyInheritanceData = new InheritanceData(null);
 
     private final StaticContext emptyStaticContext = new StaticContext();
 
