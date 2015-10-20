@@ -162,11 +162,11 @@ subprojects {
 
     sourceSets {
         main {
-            compileClasspath += [configurations.provided]
+            compileClasspath += configurations.provided
         }
         test {
-            compileClasspath += [configurations.provided]
-            runtimeClasspath += [configurations.provided]
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
         }
     }
 
