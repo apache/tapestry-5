@@ -362,19 +362,19 @@ public class JavaScriptModule
         configuration.add("underscore", new JavaScriptModuleConfiguration(underscoreShim));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
 
-        configuration.add("bootstrap/transition", new JavaScriptModuleConfiguration(transition).dependsOn("jquery"));
+        configuration.add("bootstrap/transition", new AMDWrapper(transition).require("jquery", "$").asJavaScriptModuleConfiguration());
 
         for (String name : new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
                 "scrollspy", "tab", "tooltip"})
         {
             Resource lib = transition.forFile(name + ".js");
 
-            configuration.add("bootstrap/" + name, new JavaScriptModuleConfiguration(lib).dependsOn("bootstrap/transition"));
+            configuration.add("bootstrap/" + name, new AMDWrapper(lib).require("bootstrap/transition").asJavaScriptModuleConfiguration());
         }
 
         Resource popover = transition.forFile("popover.js");
 
-        configuration.add("bootstrap/popover", new JavaScriptModuleConfiguration(popover).dependsOn("bootstrap/tooltip"));
+        configuration.add("bootstrap/popover", new AMDWrapper(popover).require("bootstrap/tooltip").asJavaScriptModuleConfiguration());
 
         configuration.add("t5/core/typeahead", new JavaScriptModuleConfiguration(typeahead).dependsOn("jquery"));
 
