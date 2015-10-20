@@ -162,7 +162,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         }
     };
 
-    private final static Pattern DEFINE = Pattern.compile("\\bdefine\\s*\\((?=\\s*\\[)");
+    private final static Pattern DEFINE = Pattern.compile("\\bdefine\\s*\\((?!\\s*['\"])");
 
     private static class ModuleReader implements StreamableReader
     {

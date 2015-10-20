@@ -25,10 +25,25 @@ class ModuleReaderTest extends TestBase {
       assertEquals(transformed, '''define("constants-module",[], function(){
   return "constant";
 });''')
-           
+
     }
 
     @Test
+    // TAP5-2511
+    void "convert anonymous define without dependencies into named define"() {
+      def moduleContent = '''define(function(){
+  return "constant";
+});'''
+      ModuleReader moduleReader = new ModuleReader("constants-module")
+      def transformed = moduleReader.transform(moduleContent)
+      assertEquals(transformed, '''define("constants-module",function(){
+  return "constant";
+});''')
+
+    }
+
+    @Test
+    // TAP5-2511
     void "named define calls are not modified"() {
       def moduleContent = '''define("foobar", [], function(){
   return "constant";
@@ -38,7 +53,7 @@ class ModuleReaderTest extends TestBase {
       assertEquals(transformed, '''define("foobar", [], function(){
   return "constant";
 });''')
-           
+
     }
-   
+
 }
