@@ -162,9 +162,9 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         }
     };
 
-    private final static Pattern DEFINE = Pattern.compile("\\bdefine\\s*\\(");
+    private final static Pattern DEFINE = Pattern.compile("\\bdefine\\s*\\((?=\\s*\\[)");
 
-    private class ModuleReader implements StreamableReader
+    private static class ModuleReader implements StreamableReader
     {
         final String moduleName;
 
@@ -177,7 +177,12 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
         {
             String content = getContent(resource);
 
-            return DEFINE.matcher(content).replaceFirst("define(\"" + moduleName + "\",");
+            return transform(content);
+        }
+
+        public String transform(String moduleContent)
+        {
+            return DEFINE.matcher(moduleContent).replaceFirst("define(\"" + moduleName + "\",");
         }
     }
 
