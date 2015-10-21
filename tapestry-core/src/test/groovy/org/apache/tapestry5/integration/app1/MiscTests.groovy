@@ -78,8 +78,10 @@ class MiscTests extends App1TestCase {
     @Test
     void timeinterval_component() {
         openLinks "TimeInterval Demo", "English"
+        def timeSincePrevRenderText = getText("time-since-prev-render")
+        def timeSincePrevRenderIntervalEnd = getAttribute("time-since-prev-render@data-timeinterval-end")
 
-        assert getText("time-since-prev-render").endsWith(" ago")
+        assert timeSincePrevRenderText.endsWith(" ago"), "Time since previous render ($timeSincePrevRenderText) does not end with ' ago', the interval ends at $timeSincePrevRenderIntervalEnd"
         assert getText("jacob-age").contains("years")
         assert getText("jacob-vote").startsWith("in ")
     }
