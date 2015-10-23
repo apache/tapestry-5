@@ -182,7 +182,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
     {
         builder.setLength(baseNameLength);
 
-        if (state == LC || state == LCV || state == L)
+        if (state == LC || state == LCV || state == L || state == LV)
         {
             builder.append('_');
             builder.append(language);
