@@ -183,3 +183,5 @@ define
     # boolean. The fragment will show or hide itself if necessary (triggering the `element.didShow` or
     # `element.didHide` event).
     changeVisibility: "t5:fragment:change-visibility"
+  # Event to scan inserted DOM content for components to initialize (see t5/core/dom:scanner)
+  initializeComponents : "t5:initializeComponents"

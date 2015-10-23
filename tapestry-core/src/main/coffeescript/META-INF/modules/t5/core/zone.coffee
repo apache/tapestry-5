@@ -102,6 +102,7 @@ define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
       unless content is undefined
         @update content
 
+      @trigger events.initializeComponents
       @trigger events.zone.didUpdate
 
     dom.onDocument events.zone.refresh, (event) ->

@@ -284,4 +284,31 @@ public class AjaxTests extends App1TestCase
 
         assertText("message", "Redirected from XHR");
     }
+
+    /**
+     * TAP5-2397
+     */
+    @Test
+    public void add_datefield_in_ajaxformloop()
+    {
+        openLinks("DateField inside AjaxFormLoop");
+
+        click("link=Add row");
+
+        waitForAjaxRequestsToComplete();
+
+        // now the datefield module is loaded and dom.scanner has been invoked
+        // the second insertion is problematic
+
+        click("css=.glyphicon-minus-sign");
+
+        click("link=Add row");
+
+        waitForAjaxRequestsToComplete();
+
+        click("css=.glyphicon-calendar");
+
+        assertTextPresent("Today");
+
+    }
 }

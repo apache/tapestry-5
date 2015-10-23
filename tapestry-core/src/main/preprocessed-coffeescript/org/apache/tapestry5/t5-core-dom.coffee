@@ -813,7 +813,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     if scanners is null
       scanners = []
-      exports.body.on events.zone.didUpdate, ->
+      exports.body.on events.initializeComponents, ->
         f this for f in scanners
         return
 

@@ -72,9 +72,13 @@ define ["./dom", "./events", "./console", "./ajax"],
 
           insertionPoint.insertBefore newElement
 
+          # Initialize components inside the new row
+          newElement.trigger events.initializeComponents
+
           # Trigger this event, to inform the world that the zone-like new element has been updated
           # with content.
           insertionPoint.trigger events.zone.didUpdate
+
           return
 
       return false
