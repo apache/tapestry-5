@@ -34,7 +34,7 @@ project.version = tapestryVersion()
 def tapestryVersion() {
 
     def major = "5.4"
-    def minor = "-beta-39"
+    def minor = "-rc-2"
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
     // When building normally, or for a release, no suffix is desired.
