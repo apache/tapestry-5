@@ -2,7 +2,7 @@
 
     <h1>Zone Form Demo</h1>
 
-    <t:zone t:id="zone">
+    <t:zone t:id="zone" simpleids="true">
 
         <t:form zone="^" t:id="form">
 

@@ -97,10 +97,10 @@ class AlertsTests extends App1TestCase {
     void ajax_update_and_remove() {
         openLinks "Alerts Demo", "Reset Alerts Storage"
 
-        def severitySelector = "css=#ajax select[name='select_0']"
-        def durationSelector = "css=#ajax select[name='select_1']"
-        def messageSelector = "css=#ajax input[name='textField']"
-        def markupSelector = "css=#ajax input[name='checkboxField']"
+        def severitySelector = "css=#ajax select[name='severity_0']"
+        def durationSelector = "css=#ajax select[name='duration_0']"
+        def messageSelector = "css=#ajax input[name='message_0']"
+        def markupSelector = "css=#ajax input[name='markup_0']"
 
         select severitySelector, "Error"
         select durationSelector, "Until Dismissed"

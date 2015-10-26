@@ -194,7 +194,7 @@ public abstract class AbstractField implements Field
 
         assignedClientId = allocateClientId();
 
-        String controlName = formSupport.allocateControlName(resources.getId());
+        String controlName = formSupport.allocateControlName(assignedClientId);
 
         formSupport.storeAndExecute(this, new Setup(controlName));
         formSupport.store(this, PROCESS_SUBMISSION_ACTION);
