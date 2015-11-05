@@ -32,7 +32,12 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
     days.push days.shift()
 
     monthsLabels = (messages "date-symbols.months").split ","
-    daysLabels = _.map days, (name) -> name.substr(0, 1).toLowerCase()
+    abbreviateWeekDay = (name) -> name.substr(0, 1).toLowerCase()
+    locale = (document.documentElement.getAttribute("data-locale")) || "en"
+    if locale.indexOf 'zh' is 0
+      # TAP5-1886, Chinese weekdays cannot be abbreviated using the first character
+      abbreviateWeekDay = (name) -> name.substr(name.length-1)
+    daysLabels = (abbreviateWeekDay name for name in days)
     todayLabel = messages "core-datefield-today"
     noneLabel = messages "core-datefield-none"
 
