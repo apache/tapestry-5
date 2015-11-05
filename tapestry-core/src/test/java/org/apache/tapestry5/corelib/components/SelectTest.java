@@ -16,6 +16,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -30,6 +32,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;
@@ -481,7 +484,7 @@ public class SelectTest extends InternalBaseTestCase
     /**
      * Utility for testing the "secure" option with various values and model
      * states. This avoids a lot of redundant test setup code.
-     * 
+     *
      * @param withModel whether there should be a model to test against
      * @param secureOption which "secure" option to test
      * @param expectedError the expected error message, nor null if no error
@@ -497,10 +500,35 @@ public class SelectTest extends InternalBaseTestCase
         Request request = mockRequest();
         Messages messages = mockMessages();
         FieldValidationSupport fvs = mockFieldValidationSupport();
+        TypeCoercer typeCoercer = mockTypeCoercer();
+        InternalComponentResources resources = mockInternalComponentResources();
+        Binding selectModelBinding = mockBinding();
 
         expect(request.getParameter("xyz")).andReturn("MAC");
 
         expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
+
+        expect(resources.getBinding("model")).andReturn(selectModelBinding);
+
+        final Holder<SelectModel> modelHolder = Holder.create();
+
+        expect(typeCoercer.coerce(EasyMock.or(EasyMock.isA(SelectModel.class), EasyMock.isNull()), EasyMock.eq(SelectModel.class)))
+        .andAnswer(new IAnswer<SelectModel>() {
+
+          @Override
+          public SelectModel answer() throws Throwable {
+            return modelHolder.get();
+          }
+        });
+
+
+        expect(selectModelBinding.get()).andAnswer(new IAnswer<SelectModel>() {
+
+          @Override
+          public SelectModel answer() throws Throwable {
+            return modelHolder.get();
+          }
+        });
 
         Select select = new Select();
 
@@ -509,7 +537,7 @@ public class SelectTest extends InternalBaseTestCase
         // when not failing we will expect to call the fvs.validate method
         if (expectedError == null)
         {
-            fvs.validate(Platform.MAC, null, null);
+            fvs.validate(Platform.MAC, resources, null);
         }
         else
         {
@@ -517,20 +545,21 @@ public class SelectTest extends InternalBaseTestCase
         }
 
         replay();
-        
-        SelectModel model = null;
+
         if (withModel)
         {
-            model = new EnumSelectModel(Platform.class, messages);
+          modelHolder.put(new EnumSelectModel(Platform.class, messages));
         }
 
         set(select, "encoder", encoder);
-        set(select, "model", model);
+        set(select, "model", modelHolder.get());
         set(select, "request", request);
         set(select, "secure", secureOption);
         set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
         set(select, "tracker", tracker);
         set(select, "fieldValidationSupport", fvs);
+        set(select, "typeCoercer", typeCoercer);
+        set(select, "resources", resources);
 
         select.processSubmission("xyz");
 
@@ -551,31 +580,61 @@ public class SelectTest extends InternalBaseTestCase
         Request request = mockRequest();
         Messages messages = mockMessages();
         FieldValidationSupport fvs = mockFieldValidationSupport();
+        TypeCoercer typeCoercer = mockTypeCoercer();
+        InternalComponentResources resources = mockInternalComponentResources();
+        Binding selectModelBinding = mockBinding();
+
 
         expect(request.getParameter("xyz")).andReturn("5");
 
         expect(messages.contains(EasyMock.anyObject(String.class))).andReturn(false).anyTimes();
 
+        expect(resources.getBinding("model")).andReturn(selectModelBinding);
+
+        final Holder<SelectModel> modelHolder = Holder.create();
+
+        expect(typeCoercer.coerce(EasyMock.or(EasyMock.isA(SelectModel.class), EasyMock.isNull()), EasyMock.eq(SelectModel.class)
+        ))
+        .andAnswer(new IAnswer<SelectModel>() {
+
+          @Override
+          public SelectModel answer() throws Throwable {
+            return modelHolder.get();
+          }
+        });
+
+
+        expect(selectModelBinding.get()).andAnswer(new IAnswer<SelectModel>() {
+
+          @Override
+          public SelectModel answer() throws Throwable {
+            return modelHolder.get();
+          }
+        });
+
+
         Select select = new Select();
 
         tracker.recordInput(select, "5");
 
-        fvs.validate(5, null, null);
+        fvs.validate(5, resources, null);
 
         replay();
 
         // TAP5-2184 is triggered by the automatic String->SelectModel coercion, because the OptionModel
         // values are Strings even if the desired property type is not (Integer, here). Select has a little
         // hack to run the model values through the ValueEncoder for comparison.
-        SelectModel model = getService(TypeCoercer.class).coerce("1,5,10,20", SelectModel.class);
+        modelHolder.put(getService(TypeCoercer.class).coerce("1,5,10,20", SelectModel.class));
 
         set(select, "encoder", encoder);
-        set(select, "model", model);
+        set(select, "model", modelHolder.get());
         set(select, "request", request);
         set(select, "secure", SecureOption.ALWAYS);
         set(select, "beanValidationDisabled", true); // Disable BeanValidationContextSupport
         set(select, "tracker", tracker);
         set(select, "fieldValidationSupport", fvs);
+        set(select, "typeCoercer", typeCoercer);
+        set(select, "resources", resources);
 
         select.processSubmission("xyz");
 
