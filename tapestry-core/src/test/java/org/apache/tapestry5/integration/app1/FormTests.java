@@ -1251,4 +1251,17 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("Validate in error");
     }
+
+    // TAP5-2204
+    @Test
+    public void select_model_with_auto_security_and_non_persistent_model() throws Exception
+    {
+        openLinks("Select Demo");
+
+        select("month", "label=August");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected month: August");
+    }
 }

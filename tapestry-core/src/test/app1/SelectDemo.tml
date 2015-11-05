@@ -10,6 +10,12 @@
 				model="literal:Red,Green,Blue" />
 
 		</p>
+		<p>
+			<t:label for="month" />
+			:
+			<t:select t:id="month" blankOption="always"
+				model="monthModel" secure="auto" />
+		</p>
 
 		<p>
 			<t:submit value="literal:Submit" />
@@ -17,5 +23,6 @@
 	</t:form>
 
 	<p> Selected color: ${color}</p>
+	<p> Selected month: ${month}</p>
 
 </t:border>

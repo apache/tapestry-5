@@ -13,8 +13,12 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.SelectModelImpl;
 
 public class SelectDemo
 {
@@ -22,5 +26,31 @@ public class SelectDemo
     @Property
     @Persist
     private String color;
+
+    @Property
+    @Persist
+    private String month;
+
+    @Property
+    @Persist(PersistenceConstants.FLASH)
+    private SelectModel monthModel;
+
+
+    void setupRender(){
+      monthModel = new SelectModelImpl(
+          new OptionModelImpl("January", "January"),
+          new OptionModelImpl("February", "February"),
+          new OptionModelImpl("March", "March"),
+          new OptionModelImpl("April", "April"),
+          new OptionModelImpl("May", "May"),
+          new OptionModelImpl("June", "June"),
+          new OptionModelImpl("July", "July"),
+          new OptionModelImpl("August", "August"),
+          new OptionModelImpl("Semptember", "Semptember"),
+          new OptionModelImpl("October", "October"),
+          new OptionModelImpl("November", "November"),
+          new OptionModelImpl("December", "December")
+          );
+    }
 
 }
