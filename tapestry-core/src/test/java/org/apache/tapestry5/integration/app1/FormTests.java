@@ -1264,4 +1264,16 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("Selected month: August");
     }
+    
+    @Test
+    // TAP5-2490
+    public void select_with_url_encoded_context() throws Exception
+    {
+        openLinks("Select Demo");
+
+        select("number", "label=2");
+
+        assertTextPresent("Selected number: 2");
+        assertTextPresent("Selected number context: 23");
+    }
 }
