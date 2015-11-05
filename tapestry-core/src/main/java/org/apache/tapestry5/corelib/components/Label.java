@@ -19,7 +19,9 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Generates a &lt;label&gt; element for a particular field. It writes the CSS class "control-label".
@@ -46,6 +48,13 @@ public class Label
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
+
+    @Inject
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    private boolean productionMode;
 
     /**
      * If true, then the body of the label element (in the template) is ignored. This is used when a designer places a
@@ -80,9 +89,12 @@ public class Label
     {
         String fieldId = field.getClientId();
 
-        if (fieldId == null)
+        if (!productionMode && fieldId == null)
         {
-            throw new IllegalStateException("The field has returned a null client-side ID");
+            // TAP5-2500
+            String warningText = "The Label component " + resources.getCompleteId()
+              + " is linked to a Field that failed to return a clientId. The 'for' attibute will not be rendered.";
+            javaScriptSupport.require("t5/core/console").invoke("warn").with(warningText);
         }
 
         labelElement.forceAttributes("for", fieldId);
