@@ -8,6 +8,7 @@
 			:
 			<t:select t:id="color" validate="required" blankOption="always"
 				model="literal:Red,Green,Blue" />
+
 		</p>
 		<p>
 			<t:label for="month" />
@@ -23,21 +24,5 @@
 
 	<p> Selected color: ${color}</p>
 	<p> Selected month: ${month}</p>
-	
-	<t:zone>
-		<t:form>
-	
-			<p>
-				<t:label for="number" />
-				:
-				<t:select t:id="number" zone="^"
-					model="numbermodel" context="numbercontext" encoder="numberencoder" />
-			</p>
-	
-		</t:form>
-		
-		<p> Selected number: ${number}</p>
-		<p> Selected number context: ${selectedNumberContext}</p>
-	</t:zone>
 
 </t:border>

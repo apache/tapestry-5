@@ -20,7 +20,6 @@ import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
@@ -264,7 +263,7 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(final EventContext context,
+    Object onChange(final List<Object> context,
                     @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue)
             throws ValidationException
     {
@@ -272,11 +271,11 @@ public class Select extends AbstractField
 
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
 
-        Object[] newContext = new Object[context.getCount() + 1];
+        Object[] newContext = new Object[context.size() + 1];
         newContext[0] = newValue;
         for (int i = 1; i < newContext.length; i++)
         {
-            newContext[i] = encoder.toValue(context.get(String.class, i - 1));
+            newContext[i] = context.get(i - 1);
         }
 
 
