@@ -18,6 +18,7 @@ import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.internal.AbstractEventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
@@ -263,7 +264,7 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(final List<Object> context,
+    Object onChange(final EventContext context,
                     @RequestParameter(value = "t:selectvalue", allowBlank = true) final String selectValue)
             throws ValidationException
     {
@@ -271,15 +272,25 @@ public class Select extends AbstractField
 
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
 
-        Object[] newContext = new Object[context.size() + 1];
-        newContext[0] = newValue;
-        for (int i = 1; i < newContext.length; i++)
-        {
-            newContext[i] = context.get(i - 1);
-        }
 
+        EventContext newContext = new AbstractEventContext() {
 
-        this.resources.triggerEvent(EventConstants.VALUE_CHANGED, newContext, callback);
+          @Override
+          public int getCount() {
+            return context.getCount() + 1;
+          }
+
+          @Override
+          public <T> T get(Class<T> desiredType, int index) {
+            if (index == 0)
+            {
+                return typeCoercer.coerce(newValue, desiredType);
+            }
+            return context.get(desiredType, index-1);
+          }
+        };
+
+        this.resources.triggerContextEvent(EventConstants.VALUE_CHANGED, newContext, callback);
 
         this.value = newValue;
 

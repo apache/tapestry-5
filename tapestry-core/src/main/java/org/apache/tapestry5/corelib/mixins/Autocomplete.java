@@ -14,6 +14,7 @@ package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.internal.AbstractEventContext;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -130,8 +131,8 @@ public class Autocomplete
         jsSupport.require("t5/core/autocomplete").with(spec);
     }
 
-    Object onAutocomplete(List<String> context, @RequestParameter("t:input")
-                          String input)
+    Object onAutocomplete(final EventContext context, @RequestParameter("t:input")
+                          final String input)
     {
         final Holder<List> matchesHolder = Holder.create();
 
@@ -151,19 +152,25 @@ public class Autocomplete
             }
         };
 
-        Object[] newContext;
-        if (context.size() == 0) {
-            newContext = new Object[] {input};
-        }
-        else {
-            newContext = new Object[context.size() + 1];
-            newContext[0] = input;
-            for (int i = 1; i < newContext.length; i++) {
-                newContext[i] = context.get(i - 1);
+        EventContext newContext = new AbstractEventContext() {
+
+          @Override
+          public int getCount() {
+            return context.getCount() + 1;
+          }
+
+          @Override
+          public <T> T get(Class<T> desiredType, int index) {
+            if (index == 0)
+            {
+                return coercer.coerce(input, desiredType);
             }
-        }
+            return context.get(desiredType, index-1);
+          }
+        };
+
         
-        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, newContext, callback);
+        resources.triggerContextEvent(EventConstants.PROVIDE_COMPLETIONS, newContext, callback);
 
         JSONObject reply = new JSONObject();
 

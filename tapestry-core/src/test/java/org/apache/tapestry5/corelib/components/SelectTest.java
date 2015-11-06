@@ -13,6 +13,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.corelib.components.SelectTest.Platform;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.dom.XMLMarkupModel;
@@ -21,6 +22,8 @@ import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.URLEventContext;
+import org.apache.tapestry5.internal.services.ContextValueEncoderImpl;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -28,11 +31,14 @@ import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.util.EnumSelectModel;
+import org.apache.tapestry5.util.EnumValueEncoder;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.easymock.IArgumentMatcher;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;
@@ -644,4 +650,85 @@ public class SelectTest extends InternalBaseTestCase
 
     }
 
+    @Test
+    public void context_that_needs_to_be_encoded() throws Exception
+    {
+
+        ValueEncoderSource valueEncoderSource = mockValueEncoderSource();
+
+        TypeCoercer typeCoercer = getService(TypeCoercer.class);
+
+        ContextValueEncoder contextValueEncoder = new ContextValueEncoderImpl(valueEncoderSource);
+
+        ValueEncoder<Platform> platformEncoder = new ValueEncoder<SelectTest.Platform>() {
+
+          @Override
+          public Platform toValue(String clientValue) {
+            return Platform.valueOf(clientValue.substring(10));
+          }
+
+          @Override
+          public String toClient(Platform value) {
+            return "Platform: "+value.name();
+          }
+        };
+
+        InternalComponentResources resources = mockInternalComponentResources();
+        expect(valueEncoderSource.getValueEncoder(Platform.class)).andReturn(platformEncoder).anyTimes();
+        expect(valueEncoderSource.getValueEncoder(String.class)).andReturn(new StringValueEncoder()).anyTimes();
+
+        expect(resources.triggerContextEvent(EasyMock.eq(EventConstants.VALUE_CHANGED), eqEventContext(null, Platform.LINUX), EasyMock.isA(ComponentEventCallback.class))).andReturn(true);
+
+
+        Select select = new Select();
+
+        set(select, "resources", resources);
+        set(select, "encoder", new StringValueEncoder());
+        set(select, "typeCoercer", typeCoercer);
+
+        replay();
+
+        select.onChange(new URLEventContext(contextValueEncoder, new String[]{platformEncoder.toClient(Platform.LINUX)}), null);
+
+        verify();
+    }
+
+    private static EventContext eqEventContext(final Object ... expectedContext)
+    {
+      EasyMock.reportMatcher(new IArgumentMatcher() {
+
+        @Override
+        public boolean matches(Object argument)
+        {
+          EventContext context = (EventContext) argument;
+          for (int i = 0; i < expectedContext.length; i++)
+          {
+            Object expected = expectedContext[i];
+            Class expectedClass = expected == null ? Object.class : expected.getClass();
+
+            if (!TapestryInternalUtils.isEqual(context.get(expectedClass, i), expected))
+            {
+                return false;
+            }
+          }
+          return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer buffer)
+        {
+          buffer.append("expected event context [");
+          for (int i = 0; i < expectedContext.length; i++)
+          {
+            if (i != 0)
+            {
+              buffer.append(", ");
+            }
+            buffer.append(expectedContext[i]);
+          }
+          buffer.append("]");
+        }
+      });
+      return null;
+    }
 }
