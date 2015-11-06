@@ -1480,7 +1480,7 @@ public class CoreBehaviorsTests extends App1TestCase
         assertSourcePresent("<![CDATA[< & >]]>");
     }
 
-    @Test
+    @Test(enabled=false)
     public void secure_page_access()
     {
         openLinks("Secure Page Demo");
@@ -1653,7 +1653,7 @@ public class CoreBehaviorsTests extends App1TestCase
     /**
      * TAP5-1080
      */
-    @Test
+    @Test(enabled=false)
     public void context_lost_on_secure_page_redirect()
     {
         open("/securepage/mycontext");
