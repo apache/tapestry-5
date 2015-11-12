@@ -294,7 +294,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
 
             if (isDirectory)
             {
-                throw new IOException("Cannot open a steam for a resource that references a directory inside a JAR file (" + url + ").");
+                throw new IOException("Cannot open a stream for a resource that references a directory inside a JAR file (" + url + ").");
             }
             
         }

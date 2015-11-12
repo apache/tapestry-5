@@ -264,7 +264,7 @@ class ClasspathResourceSpec extends Specification {
 
       then:
       IOException e = thrown()
-      e.message.contains 'Cannot open a steam for a resource that references a directory inside a JAR file'
+      e.message.contains 'Cannot open a stream for a resource that references a directory inside a JAR file'
     }
 
     @Issue('TAP5-2448')
