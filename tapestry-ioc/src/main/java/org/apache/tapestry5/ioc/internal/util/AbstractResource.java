@@ -286,7 +286,7 @@ public abstract class AbstractResource extends LockSupport implements Resource
             // TAP5-2448: make sure that the URL does not reference a directory
             String urlAsString = url.toString();
 
-            int indexOfExclamationMark = url.toString().indexOf('!');
+            int indexOfExclamationMark = urlAsString.indexOf('!');
 
             String resourceInJar = urlAsString.substring(indexOfExclamationMark + 2);
 
