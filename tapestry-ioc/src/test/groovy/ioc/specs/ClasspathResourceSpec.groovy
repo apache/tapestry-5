@@ -286,13 +286,13 @@ class ClasspathResourceSpec extends Specification {
     def "Can open a stream for a file resource within a JAR file that has a duplicate on the classpath"() {
       setup:
       def currentCl = Thread.currentThread().contextClassLoader 
+      def resourcePath = 'META-INF/maven/org.slf4j/slf4j-api/pom.xml'
       
-      def loadedURLs = currentCl.ucp.path
-      def slf4jApiFirst = loadedURLs.sort{!it.toString().contains('slf4j-api')}
-      
-      ClassLoader cl = new URLClassLoader(slf4jApiFirst as URL[], null, AccessController.getContext())
+      def resourceURLs = currentCl.findResources resourcePath
+      def slf4jApiURL = resourceURLs.find{it.toString().contains('.jar!')} 
+      ClassLoader cl = new URLClassLoader(slf4jApiURL as URL[], null, AccessController.getContext()) 
      
-      ClasspathResource r = new ClasspathResource(cl, '/META-INF/maven/org.slf4j/slf4j-api/pom.xml')
+      ClasspathResource r = new ClasspathResource(cl, resourcePath)
 
       when:
       r.openStream()
