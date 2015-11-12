@@ -290,7 +290,7 @@ class ClasspathResourceSpec extends Specification {
       
       def resourceURLs = currentCl.findResources resourcePath
       def slf4jApiURL = resourceURLs.find{it.toString().contains('.jar!')} 
-      ClassLoader cl = new URLClassLoader(slf4jApiURL as URL[], null, AccessController.getContext()) 
+      ClassLoader cl = new URLClassLoader(slf4jApiURL as URL[], (ClassLoader) null)
      
       ClasspathResource r = new ClasspathResource(cl, resourcePath)
 
