@@ -1,7 +1,10 @@
 package ioc.specs
 
+import java.security.AccessController;
+
 import org.apache.commons.lang3.SystemUtils
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource
+import org.slf4j.Logger;
 
 import spock.lang.Issue;
 import spock.lang.Specification
@@ -279,4 +282,23 @@ class ClasspathResourceSpec extends Specification {
       notThrown(IOException)
     }
 
+    @Issue('TAP5-2517')
+    def "Can open a stream for a file resource within a JAR file that has a duplicate on the classpath"() {
+      setup:
+      def currentCl = Thread.currentThread().contextClassLoader 
+      
+      def loadedURLs = currentCl.ucp.path
+      def slf4jApiFirst = loadedURLs.sort{!it.toString().contains('slf4j-api')}
+      
+      ClassLoader cl = new URLClassLoader(slf4jApiFirst as URL[], null, AccessController.getContext())
+     
+      ClasspathResource r = new ClasspathResource(cl, '/META-INF/maven/org.slf4j/slf4j-api/pom.xml')
+
+      when:
+      r.openStream()
+      then:
+      notThrown(IOException)
+     
+    }
+    
 }

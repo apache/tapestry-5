@@ -1,0 +1,2 @@
+This is a test file for TAP5-2517.
+See ioc.specs.ClasspathResourceSpec.Can open a stream for a file resource within a JAR file that has a duplicate on the classpath()

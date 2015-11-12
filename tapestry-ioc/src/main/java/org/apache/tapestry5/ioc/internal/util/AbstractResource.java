@@ -290,7 +290,9 @@ public abstract class AbstractResource extends LockSupport implements Resource
 
             String resourceInJar = urlAsString.substring(indexOfExclamationMark + 2);
 
-            boolean isDirectory = Thread.currentThread().getContextClassLoader().getResource(resourceInJar + "/") != null;
+            URL directoryResource = Thread.currentThread().getContextClassLoader().getResource(resourceInJar + "/");
+
+            boolean isDirectory = directoryResource != null && "jar".equals(directoryResource.getProtocol());
 
             if (isDirectory)
             {
