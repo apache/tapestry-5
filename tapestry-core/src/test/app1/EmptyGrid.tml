@@ -11,6 +11,7 @@
    		<table t:type="Grid" source="source" renderTableIfEmpty="true" model="model"/>
    	</t:if>
     
+    <table t:type="Grid" source="source" renderTableIfEmpty="true" model="model" empty="No data, dude!"/>
     
     <div>
         <t:eventlink event="removemodel" class="btn">Remove the Grid's model</t:eventlink>

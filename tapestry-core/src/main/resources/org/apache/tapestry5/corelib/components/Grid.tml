@@ -10,7 +10,7 @@
             </t:if>
             <t:if test="!dataSource.availableRows">
                 <tr>
-                    <td colspan="${numberOfProperties}"><t:delegate to="block:empty"/></td>
+                    <td colspan="${numberOfProperties}"><t:delegate to="prop:empty"/></td>
                 </tr>
             </t:if>
         </tbody>

@@ -173,6 +173,7 @@ public class Grid implements GridModel, ClientElement
     //@Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.GRID_EMPTY_BLOCK,
     @Parameter(value = "block:empty",
             defaultPrefix = BindingConstants.LITERAL)
+    @Property(write = false)
     private Block empty;
 
     /**
