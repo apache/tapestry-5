@@ -62,17 +62,25 @@ public class XMLTokenStream
 
         private Location getLocation()
         {
-            int line = locator.getLineNumber();
-
-            if (currentLine != line)
-                cachedLocation = null;
-
-            if (cachedLocation == null)
+            if (locator == null)
             {
-                // lineOffset accounts for the extra line when a doctype is injected. The line number reported
-                // from the XML parser inlcudes the phantom doctype line, the lineOffset is used to subtract one
-                // to get the real line number.
-                cachedLocation = new LocationImpl(resource, line + lineOffset);
+                if (cachedLocation == null)
+                {
+                    cachedLocation = new LocationImpl(resource);
+                }
+            } else {
+                int line = locator.getLineNumber();
+
+                if (currentLine != line)
+                    cachedLocation = null;
+
+                if (cachedLocation == null)
+                {
+                    // lineOffset accounts for the extra line when a doctype is injected. The line number reported
+                    // from the XML parser inlcudes the phantom doctype line, the lineOffset is used to subtract one
+                    // to get the real line number.
+                    cachedLocation = new LocationImpl(resource, line + lineOffset);
+                }
             }
 
             return cachedLocation;
@@ -311,10 +319,11 @@ public class XMLTokenStream
         reader.setEntityResolver(handler);
         reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
 
-        InputStream stream = openStream();
+        InputStream stream = null;
 
         try
         {
+            stream = openStream();
             reader.parse(new InputSource(stream));
         } catch (IOException ex)
         {
@@ -345,7 +354,7 @@ public class XMLTokenStream
     private InputStream openStream() throws IOException
     {
         InputStream rawStream = resource.openStream();
-        
+
         String transformationEncoding = "UTF8";
 
         InputStreamReader rawReader = new InputStreamReader(rawStream, transformationEncoding);
@@ -430,7 +439,7 @@ public class XMLTokenStream
 
     private XMLToken token()
     {
-        return tokens.get(cursor);
+        return cursor == -1 ? null : tokens.get(cursor);
     }
 
     /**

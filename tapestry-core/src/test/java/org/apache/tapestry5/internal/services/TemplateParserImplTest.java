@@ -17,6 +17,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.AbstractResource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -26,9 +27,14 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.String.format;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * This is used to test the template parser ... and in some cases, the underlying behavior of the SAX APIs.
@@ -1079,5 +1085,49 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         TextToken t3 = get(tokens, 3);
 
         assertEquals(t3.text.trim(), "END");
+    }
+
+    @Test
+    //TAP5-2516
+    public void resource_that_throws_exception() throws Exception
+    {
+
+        Resource resource = new AbstractResource("throwfoo") {
+
+          @Override
+          public URL toURL() {
+            return null;
+          }
+
+          @Override
+          public boolean exists() {
+            return true;
+          }
+
+          @Override
+          protected Resource newResource(String path) {
+            return null;
+          }
+
+          @Override
+          public InputStream openStream() throws IOException {
+            throw new IOException("foo");
+          }
+        };
+
+
+        try
+        {
+            getParser().parseTemplate(resource);
+            unreachable();
+        } catch (RuntimeException ex)
+        {
+            if (ex.getCause() instanceof TapestryException && ex.getCause().getCause() instanceof IOException)
+            {
+                assertMessageContains(ex, "foo");
+            } else {
+                throw ex;
+            }
+        }
     }
 }
