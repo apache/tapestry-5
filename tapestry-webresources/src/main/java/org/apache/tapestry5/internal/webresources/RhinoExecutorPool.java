@@ -69,7 +69,7 @@ public class RhinoExecutorPool
         return createExecutor();
     }
 
-    private synchronized void put(RhinoExecutor executor)
+    private void put(RhinoExecutor executor)
     {
         executors.add(executor);
     }
