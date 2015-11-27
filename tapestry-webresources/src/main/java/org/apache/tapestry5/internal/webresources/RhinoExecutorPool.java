@@ -17,10 +17,8 @@ package org.apache.tapestry5.internal.webresources;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
-import org.apache.tapestry5.ioc.util.Stack;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeFunction;
@@ -31,6 +29,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Manages a pool of initialized {@link RhinoExecutor} instances.  The instances are initialized for a particular
@@ -41,7 +41,7 @@ public class RhinoExecutorPool
 
     private final List<Resource> scripts;
 
-    private final Stack<RhinoExecutor> executors = CollectionFactory.newStack();
+    private final Queue<RhinoExecutor> executors = new ConcurrentLinkedQueue<RhinoExecutor>();
 
     private final ContextFactory contextFactory = new ContextFactory();
 
@@ -57,20 +57,21 @@ public class RhinoExecutorPool
      *
      * @return executor
      */
-    public synchronized RhinoExecutor get()
+    public RhinoExecutor get()
     {
 
-        if (executors.isEmpty())
+        RhinoExecutor executor = executors.poll();
+        if (executor != null)
         {
-            return createExecutor();
+            return executor;
         }
 
-        return executors.pop();
+        return createExecutor();
     }
 
     private synchronized void put(RhinoExecutor executor)
     {
-        executors.push(executor);
+        executors.add(executor);
     }
 
     private RhinoExecutor createExecutor()
