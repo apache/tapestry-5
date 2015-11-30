@@ -28,7 +28,7 @@ public class DateUtilitiesImpl implements DateUtilities
 {
     private static final TimeZone tz = TimeZone.getTimeZone("UTC");
 
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     {
         df.setTimeZone(tz);

@@ -21,7 +21,9 @@ define ["./dom", "./moment"],
 
   ATTR = "data-timeinterval"
 
-  toMoment = (s) -> if s then moment s else moment()
+  DEFAULT_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ'
+
+  toMoment = (s) -> if s then (moment s, DEFAULT_FORMAT) else moment()
 
   updateElement = (el) ->
     start = toMoment el.attr "data-timeinterval-start"
