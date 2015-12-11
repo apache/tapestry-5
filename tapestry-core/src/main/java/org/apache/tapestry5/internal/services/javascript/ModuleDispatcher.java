@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +56,8 @@ public class ModuleDispatcher implements Dispatcher
 
     private final JavaScriptStackPathConstructor javaScriptStackPathConstructor;
 
+    private final LocalizationSetter localizationSetter;
+
     private final String requestPrefix;
 
     private final String stackPathPrefix;
@@ -64,13 +68,13 @@ public class ModuleDispatcher implements Dispatcher
 
     private Map<String, String> moduleNameToStackName;
 
-
     public ModuleDispatcher(ModuleManager moduleManager,
                             ResourceStreamer streamer,
                             OperationTracker tracker,
                             PathConstructor pathConstructor,
                             JavaScriptStackSource javaScriptStackSource,
                             JavaScriptStackPathConstructor javaScriptStackPathConstructor,
+                            LocalizationSetter localizationSetter,
                             String prefix,
                             @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
                             String assetPrefix,
@@ -81,6 +85,7 @@ public class ModuleDispatcher implements Dispatcher
         this.tracker = tracker;
         this.javaScriptStackSource = javaScriptStackSource;
         this.javaScriptStackPathConstructor = javaScriptStackPathConstructor;
+        this.localizationSetter = localizationSetter;
         this.compress = compress;
 
         requestPrefix = pathConstructor.constructDispatchPath(compress ? prefix + ".gz" : prefix) + "/";
@@ -95,7 +100,9 @@ public class ModuleDispatcher implements Dispatcher
         {
             String extraPath = path.substring(requestPrefix.length());
 
-            if (!handleModuleRequest(extraPath, response))
+            Locale locale = request.getLocale();
+
+            if (!handleModuleRequest(locale, extraPath, response))
             {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("No module for path '%s'.", extraPath));
             }
@@ -107,7 +114,7 @@ public class ModuleDispatcher implements Dispatcher
 
     }
 
-    private boolean handleModuleRequest(String extraPath, Response response) throws IOException
+    private boolean handleModuleRequest(Locale locale, String extraPath, Response response) throws IOException
     {
         // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
         // to be a hierarchy of static JavaScript files here. In reality, we may be cross-compiling CoffeeScript to
@@ -132,6 +139,7 @@ public class ModuleDispatcher implements Dispatcher
 
         if (stackName != null)
         {
+            localizationSetter.setNonPersistentLocaleFromLocaleName(locale.toString());
             List<String> libraryUrls = javaScriptStackPathConstructor.constructPathsForJavaScriptStack(stackName);
             if (libraryUrls.size() == 1)
             {

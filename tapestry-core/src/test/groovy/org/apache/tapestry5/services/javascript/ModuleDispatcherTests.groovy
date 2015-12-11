@@ -4,6 +4,7 @@ import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathCons
 import org.apache.tapestry5.internal.services.javascript.ModuleDispatcher
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.test.TestBase
+import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PathConstructor
 import org.apache.tapestry5.services.Request
 import org.apache.tapestry5.services.Response
@@ -22,19 +23,21 @@ class ModuleDispatcherTests extends TestBase {
         def pc = newMock PathConstructor
         def javaScriptStackSource = newMock JavaScriptStackSource
         def javaScriptStackPathConstructor = newMock JavaScriptStackPathConstructor
+        def localizationSetter = newMock LocalizationSetter
 
 
         expect(pc.constructDispatchPath("modules")).andReturn("/modules")
         expect(pc.constructDispatchPath("assets", "stack")).andReturn("/assets/stack")
 
         expect(request.path).andReturn(path)
+        expect(request.locale).andReturn(Locale.US)
 
         expect(response.sendError(EasyMock.eq(HttpServletResponse.SC_NOT_FOUND), EasyMock.notNull()))
 
         replay()
 
         def handler = new ModuleDispatcher(null, null, new QuietOperationTracker(), pc,
-          javaScriptStackSource, javaScriptStackPathConstructor, "modules", "assets", false)
+          javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, "modules", "assets", false)
 
         assert handler.dispatch(request, response) == true
 
@@ -60,12 +63,14 @@ class ModuleDispatcherTests extends TestBase {
         def pc = newMock PathConstructor
         def javaScriptStackSource = newMock JavaScriptStackSource
         def javaScriptStackPathConstructor = newMock JavaScriptStackPathConstructor
+        def localizationSetter = newMock LocalizationSetter
 
 
         expect(pc.constructDispatchPath("modules")).andReturn("/modules")
         expect(pc.constructDispatchPath("assets", "stack")).andReturn("/assets/stack")
 
         expect(request.path).andReturn("/modules/foo/bar.js")
+        expect(request.locale).andReturn(Locale.US)
 
         expect(manager.findResourceForModule("foo/bar")).andReturn null
 
@@ -76,7 +81,7 @@ class ModuleDispatcherTests extends TestBase {
         replay()
 
         def handler = new ModuleDispatcher(manager, null, new QuietOperationTracker(), pc,
-          javaScriptStackSource, javaScriptStackPathConstructor, "modules", "assets", false)
+          javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, "modules", "assets", false)
 
         assert handler.dispatch(request, response) == true
 
@@ -94,23 +99,26 @@ class ModuleDispatcherTests extends TestBase {
         def stack = newMock JavaScriptStack
         def javaScriptStackSource = newMock JavaScriptStackSource
         def javaScriptStackPathConstructor = newMock JavaScriptStackPathConstructor
+        def localizationSetter = newMock LocalizationSetter
 
 
         expect(pc.constructDispatchPath("modules")).andReturn("/modules")
         expect(pc.constructDispatchPath("assets", "stack")).andReturn("/assets/stack")
 
         expect(request.path).andReturn("/modules/foo/bar.js")
+        expect(request.locale).andReturn(Locale.US)
 
         expect(javaScriptStackSource.getStackNames()).andReturn(["default"])
         expect(javaScriptStackSource.getStack("default")).andReturn(stack)
         expect(stack.getModules()).andReturn(["foo/bar"])
+        expect(localizationSetter.setNonPersistentLocaleFromLocaleName("en_US"))
         expect(javaScriptStackPathConstructor.constructPathsForJavaScriptStack("default")).andReturn(["/assets/stack/default.js"])
         expect(response.sendRedirect("/assets/stack/default.js"))
 
         replay()
 
         def handler = new ModuleDispatcher(manager, null, new QuietOperationTracker(), pc,
-          javaScriptStackSource, javaScriptStackPathConstructor, "modules", "assets", false)
+          javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, "modules", "assets", false)
 
         assert handler.dispatch(request, response) == true
 

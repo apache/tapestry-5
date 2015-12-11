@@ -216,6 +216,7 @@ public class JavaScriptModule
                                               PathConstructor pathConstructor,
                                               JavaScriptStackSource javaScriptStackSource,
                                               JavaScriptStackPathConstructor javaScriptStackPathConstructor,
+                                              LocalizationSetter localizationSetter,
                                               @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
                                               String modulePathPrefix,
                                               @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
@@ -223,12 +224,14 @@ public class JavaScriptModule
     {
         configuration.add("Modules",
                 new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
-                    javaScriptStackSource, javaScriptStackPathConstructor, modulePathPrefix, assetPathPrefix, false),
+                    javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, modulePathPrefix,
+                    assetPathPrefix, false),
                 "after:Asset", "before:ComponentEvent");
 
         configuration.add("ComnpressedModules",
                 new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
-                    javaScriptStackSource, javaScriptStackPathConstructor, modulePathPrefix, assetPathPrefix, true),
+                    javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, modulePathPrefix,
+                    assetPathPrefix, true),
                 "after:Modules", "before:ComponentEvent");
     }
 
