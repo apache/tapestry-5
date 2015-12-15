@@ -60,7 +60,7 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
 
     class Controller
       constructor: (@container) ->
-        @field = @container.findFirst "input"
+        @field = @container.findFirst 'input:not([name="t:formdata"])'
         @trigger = @container.findFirst "button"
 
         @trigger.on "click", =>
