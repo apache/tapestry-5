@@ -473,6 +473,12 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
             CIMEntry<V> e = entries[cursor];
 
+            if (e == null)
+            {
+                // TAP5-2520
+                throw new ConcurrentModificationException();
+            }
+
             if (e.hashCode < hashCode)
             {
                 low = cursor + 1;
