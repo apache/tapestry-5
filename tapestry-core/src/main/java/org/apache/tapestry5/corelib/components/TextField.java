@@ -31,7 +31,7 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
 public class TextField extends AbstractTextField
 {
     /**
-     * Sets the type attribute of the {@code <input>} element. The default is "text", but this can be overriden
+     * Sets the type attribute of the {@code <input>} element. The default is "text", but this can be overridden
      * when using <a href="http://www.w3.org/TR/html5/the-input-element.html">HTML5</a> types such as "number".
      */
     @Parameter(allowNull = false, value = "text", defaultPrefix = BindingConstants.LITERAL)
