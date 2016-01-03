@@ -12,5 +12,6 @@ test-output
 temp-testng*.xml
 build/
 .gradle
+.groovy
 *~
 \#*
