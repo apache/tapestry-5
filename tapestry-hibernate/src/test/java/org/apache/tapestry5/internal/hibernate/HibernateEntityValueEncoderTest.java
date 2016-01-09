@@ -19,8 +19,6 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.hibernate.Session;
-import org.hibernate.mapping.Property;
-import org.hibernate.mapping.RootClass;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -59,14 +57,10 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
 
         replay();
 
-        RootClass persistentClass = new RootClass();
-        Property idProperty = new Property();
-        idProperty.setName("id");
-        persistentClass.setIdentifierProperty(idProperty);
         SampleEntity entity = new SampleEntity();
 
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
-                SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
+                SampleEntity.class, "id", session, access, typeCoercer, logger);
 
         assertNull(encoder.toClient(entity));
 
@@ -85,14 +79,10 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
 
         replay();
 
-        RootClass persistentClass = new RootClass();
-        Property idProperty = new Property();
-        idProperty.setName("id");
-        persistentClass.setIdentifierProperty(idProperty);
         SampleEntity entity = new SampleEntity();
 
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
-                SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
+                SampleEntity.class, "id", session, access, typeCoercer, logger);
 
         assertNull(encoder.toValue("12345"));
 
@@ -107,13 +97,8 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
 
         replay();
 
-        RootClass persistentClass = new RootClass();
-        Property idProperty = new Property();
-        idProperty.setName("id");
-        persistentClass.setIdentifierProperty(idProperty);
-
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
-                SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
+                SampleEntity.class, "id", session, access, typeCoercer, logger);
 
         try
         {
