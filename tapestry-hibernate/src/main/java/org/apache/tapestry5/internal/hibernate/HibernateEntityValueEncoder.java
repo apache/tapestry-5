@@ -21,7 +21,6 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.hibernate.Session;
-import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.slf4j.Logger;
 
@@ -39,7 +38,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
     private final Logger logger;
 
-    public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
+    public HibernateEntityValueEncoder(Class<E> entityClass, String identifierPropertyName, Session session,
                                        PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
     {
         this.entityClass = entityClass;
@@ -47,9 +46,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         this.typeCoercer = typeCoercer;
         this.logger = logger;
 
-        Property property = persistentClass.getIdentifierProperty();
-
-        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(property.getName());
+        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(identifierPropertyName);
     }
 
     @Override
