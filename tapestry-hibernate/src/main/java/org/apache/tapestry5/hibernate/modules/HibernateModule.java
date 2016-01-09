@@ -42,7 +42,6 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
 import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
-import org.hibernate.mapping.PersistentClass;
 
 import java.util.Iterator;
 
@@ -91,12 +90,9 @@ public class HibernateModule
         if (!provideEncoders)
             return;
 
-        org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
-        Iterator<PersistentClass> mappings = config.getClassMappings();
-        while (mappings.hasNext())
+        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata().values())
         {
-            final PersistentClass persistentClass = mappings.next();
-            final Class entityClass = persistentClass.getMappedClass();
+            final Class entityClass = classMetadata.getMappedClass();
 
             if (entityClass != null)
             {
@@ -105,7 +101,7 @@ public class HibernateModule
                     @Override
                     public ValueEncoder create(Class type)
                     {
-                        return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,
+                        return new HibernateEntityValueEncoder(entityClass, classMetadata.getIdentifierPropertyName(), session, propertyAccess,
                                 typeCoercer, loggerSource.getLogger(entityClass));
                     }
                 };
@@ -161,15 +157,10 @@ public class HibernateModule
 
         if (!entitySessionStatePersistenceStrategyEnabled)
             return;
-
-        org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
-        Iterator<PersistentClass> mappings = config.getClassMappings();
-        while (mappings.hasNext())
+    
+        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata().values())
         {
-
-            final PersistentClass persistentClass = mappings.next();
-            final Class entityClass = persistentClass.getMappedClass();
-
+            final Class entityClass = classMetadata.getMappedClass();
             configuration.add(entityClass, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
         }
     }
