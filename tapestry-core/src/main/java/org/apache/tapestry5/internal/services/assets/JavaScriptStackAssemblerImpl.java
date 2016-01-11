@@ -26,6 +26,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final boolean minificationEnabled;
 
-    private final Map<String, StreamableResource> cache = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, StreamableResource> cache = Collections.synchronizedMap(CollectionFactory.newCaseInsensitiveMap());
 
     private class Parameters
     {
