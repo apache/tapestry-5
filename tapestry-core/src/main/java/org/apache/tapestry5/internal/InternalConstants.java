@@ -202,7 +202,7 @@ public final class InternalConstants
 
     /**
      * Name of request parameter that suppresses the logic that injects a random-ish namespace into allocated ids when rending partial page
-     * responses. This, of course, requires a lot of testing to ensure that there are no resulting name classes,
+     * responses. This, of course, requires a lot of testing to ensure that there are no resulting name clashes,
      * and should not be used inside Zones containing an {@link org.apache.tapestry5.corelib.components.AjaxFormLoop}.
      *
      * @since 5.4
