@@ -277,25 +277,31 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
             int newSize = size + 1;
 
-            if (newSize == entries.length)
+            try
             {
-                // Time to expand!
+                if (newSize == entries.length)
+                {
+                    // Time to expand!
 
-                int newCapacity = (size * 3) / 2 + 1;
+                    int newCapacity = (size * 3) / 2 + 1;
 
-                CIMEntry<V>[] newEntries = new CIMEntry[newCapacity];
+                    CIMEntry<V>[] newEntries = new CIMEntry[newCapacity];
 
-                System.arraycopy(entries, 0, newEntries, 0, cursor);
+                    System.arraycopy(entries, 0, newEntries, 0, cursor);
 
-                System.arraycopy(entries, cursor, newEntries, cursor + 1, size - cursor);
+                    System.arraycopy(entries, cursor, newEntries, cursor + 1, size - cursor);
 
-                entries = newEntries;
-            }
-            else
+                    entries = newEntries;
+                }
+                else
+                {
+                    // Open up a space for the new entry
+                    System.arraycopy(entries, cursor, entries, cursor + 1, size - cursor);
+                }
+            } catch (ArrayIndexOutOfBoundsException e)
             {
-                // Open up a space for the new entry
-
-                System.arraycopy(entries, cursor, entries, cursor + 1, size - cursor);
+                // TAP5-2526
+                throw new ConcurrentModificationException();
             }
 
             CIMEntry<V> newEntry = new CIMEntry<V>(key, hashCode, newValue);
@@ -467,31 +473,38 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
         int cursor;
 
-        while (low <= high)
+        try
         {
-            cursor = (low + high) >> 1;
-
-            CIMEntry<V> e = entries[cursor];
-
-            if (e == null)
+            while (low <= high)
             {
-                // TAP5-2520
-                throw new ConcurrentModificationException();
-            }
+                cursor = (low + high) >> 1;
 
-            if (e.hashCode < hashCode)
-            {
-                low = cursor + 1;
-                continue;
-            }
+                CIMEntry<V> e = entries[cursor];
 
-            if (e.hashCode > hashCode)
-            {
-                high = cursor - 1;
-                continue;
-            }
+                if (e == null)
+                {
+                    // TAP5-2520
+                    throw new ConcurrentModificationException();
+                }
 
-            return tunePosition(key, hashCode, cursor);
+                if (e.hashCode < hashCode)
+                {
+                    low = cursor + 1;
+                    continue;
+                }
+
+                if (e.hashCode > hashCode)
+                {
+                    high = cursor - 1;
+                    continue;
+                }
+
+                return tunePosition(key, hashCode, cursor);
+            }
+        } catch (ArrayIndexOutOfBoundsException e)
+        {
+            // TAP5-2526
+            throw new ConcurrentModificationException();
         }
 
         return new Position(low, false);
