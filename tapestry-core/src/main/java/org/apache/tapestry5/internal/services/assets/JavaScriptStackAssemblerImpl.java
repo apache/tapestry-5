@@ -52,7 +52,7 @@ public class JavaScriptStackAssemblerImpl implements JavaScriptStackAssembler
 
     private final boolean minificationEnabled;
 
-    private final Map<String, StreamableResource> cache = Collections.synchronizedMap(CollectionFactory.newCaseInsensitiveMap());
+    private final Map<String, StreamableResource> cache = Collections.synchronizedMap(CollectionFactory.<StreamableResource>newCaseInsensitiveMap());
 
     private class Parameters
     {
