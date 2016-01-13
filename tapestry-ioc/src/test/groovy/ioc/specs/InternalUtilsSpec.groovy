@@ -123,6 +123,8 @@ class InternalUtilsSpec extends Specification {
     ["barney"]                      | "barney"                       | "single value"
     ["fred", "barney", "wilma"]     | "fred, barney, wilma"          | "multiple values"
     ["fred", "barney", "", "wilma"] | "fred, barney, (blank), wilma" | "empty string converted to '(blank)'"
+    ["fred", null ]                 | "fred, null"                   | "list with null values"
+    [ null ]                        | "null"                         | "list with a single null value" //TAP5-2529
   }
 
   @Unroll

@@ -265,7 +265,7 @@ public class InternalCommonsUtils {
                 return "";
     
             case 1:
-                return elements.get(0).toString();
+                return String.valueOf(elements.get(0));
     
             default:
     
