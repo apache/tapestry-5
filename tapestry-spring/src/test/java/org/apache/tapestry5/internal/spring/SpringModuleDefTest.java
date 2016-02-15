@@ -20,6 +20,8 @@ import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.spring.SpringConstants;
 import org.apache.tapestry5.spring.SpringTestCase;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.Test;
@@ -32,16 +34,31 @@ public class SpringModuleDefTest extends SpringTestCase
     public void load_application_context_externally()
     {
         ServletContext servletContext = mockServletContext();
+        ConfigurableListableBeanFactory beanFactory = newMock(
+                ConfigurableListableBeanFactory.class);
         ConfigurableWebApplicationContext ac = newMock(ConfigurableWebApplicationContext.class);
         Runnable fred = mockRunnable();
         Runnable barney = mockRunnable();
+        Runnable arnold = mockRunnable();
+        BeanDefinition fredBeanDef = newMock(BeanDefinition.class);
+        BeanDefinition barneyBeanDef = newMock(BeanDefinition.class);
+        BeanDefinition arnoldBeanDef = newMock(BeanDefinition.class);
 
         ServiceBuilderResources resources = mockServiceBuilderResources();
 
         train_getInitParameter(servletContext, SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, "true");
 
         train_getAttribute(servletContext, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ac);
-        expect(ac.getBeanDefinitionNames()).andReturn(new String[] {"fred", "&barney"});
+        expect(ac.getBeanFactory()).andReturn(beanFactory);
+        expect(ac.getBeanDefinitionNames()).andReturn(new String[] { "fred", "&barney", "arnold" });
+
+        expect(fredBeanDef.isAbstract()).andReturn(false);
+        expect(barneyBeanDef.isAbstract()).andReturn(false);
+        expect(arnoldBeanDef.isAbstract()).andReturn(true);
+
+        expect(beanFactory.getBeanDefinition("fred")).andReturn(fredBeanDef);
+        expect(beanFactory.getBeanDefinition("&barney")).andReturn(barneyBeanDef);
+        expect(beanFactory.getBeanDefinition("arnold")).andReturn(arnoldBeanDef);
 
         replay();
 
@@ -89,6 +106,8 @@ public class SpringModuleDefTest extends SpringTestCase
         sd = moduleDef.getServiceDef("barney");
 
         assertSame(sd.createServiceCreator(null).createObject(), barney);
+
+        assertNull(moduleDef.getServiceDef("arnold"));
     }
 
     @Test

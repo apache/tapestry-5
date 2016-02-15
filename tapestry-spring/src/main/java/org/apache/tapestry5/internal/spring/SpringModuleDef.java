@@ -27,8 +27,9 @@ import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.SpringConstants;
-import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -159,11 +160,26 @@ public class SpringModuleDef implements ModuleDef
 
     private void addServiceDefsForSpringBeans(ApplicationContext context)
     {
+        ConfigurableListableBeanFactory beanFactory = null;
+        if (context instanceof ConfigurableApplicationContext)
+        {
+            beanFactory = ((ConfigurableApplicationContext) context).getBeanFactory();
+        }
+
         for (final String beanName : context.getBeanDefinitionNames())
         {
-            String trueName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
+            boolean isAbstract = false;
+            if (beanFactory != null)
+            {
+                isAbstract = beanFactory.getBeanDefinition(beanName).isAbstract();
+            }
 
-            services.put(trueName, new SpringBeanServiceDef(trueName, context));
+            if (!isAbstract)
+            {
+                String trueName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
+
+                services.put(trueName, new SpringBeanServiceDef(trueName, context));
+            }
         }
     }
 
