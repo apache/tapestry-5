@@ -56,34 +56,48 @@ public class ExceptionReporterImpl implements ExceptionReporter
                 "exception-%tY%<tm%<td-%<tH%<tM%<tS-%<tL.%d.txt", date,
                 uid.getAndIncrement());
 
-        File folder;
+        File folder = getOutputFolder(date);
 
         try
         {
-            if (restrictive)
+            if (! restrictive)
             {
-                // Good luck with this; all exceptions written to a single folder.
-                folder = logDir;
-            } else
-            {
-                String folderName = String.format("%tY-%<tm-%<td/%<tH/%<tM", date);
-                folder = new File(logDir, folderName);
-
                 folder.mkdirs();
             }
-
             File log = new File(folder, fileName);
-
             writeExceptionToFile(exception, log);
 
             logger.warn(String.format("Wrote exception report to %s", toURI(log)));
         } catch (Exception ex)
         {
-            logger.error(String.format("Unable to write exception report %s: %s",
-                    fileName, ExceptionUtils.toMessage(ex)));
+            logger.error(String.format("Unable to write exception report %s at %s: %s",
+                    fileName, folder.getAbsolutePath(), ExceptionUtils.toMessage(ex)));
 
             logger.error("Original exception:", exception);
         }
+    }
+
+    /**
+     * Get the path of the directory in which the exception report file(s) should
+     * be written. Except in "restrictive" environments like GAE, this is a
+     * dated sub-directory of the one specified in the
+     * tapestry.exception-reports-dir symbol.
+     * 
+     * @param date the date to be used if a dated directory is needed
+     * @return the File object representing the folder
+     */
+    private File getOutputFolder(Date date)
+    {
+        if (restrictive)
+        {
+            // Good luck with this; all exceptions written to a single folder.
+            return logDir;
+        } else
+        {
+            String folderName = String.format("%tY-%<tm-%<td/%<tH/%<tM", date);
+            return new File(logDir, folderName);
+        }
+
     }
 
     private String toURI(File file)
