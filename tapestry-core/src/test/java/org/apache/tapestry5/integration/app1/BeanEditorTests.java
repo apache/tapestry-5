@@ -202,6 +202,12 @@ public class BeanEditorTests extends App1TestCase
         assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
     }
     
+    @Test
+    public void object_editor_test() {
+        openLinks("Object Editor Demo");
+        assertTextPresent("Street");
+    }
+    
     /** TAP5-991 */
     public void bean_display_enum_value_from_messages()
     {

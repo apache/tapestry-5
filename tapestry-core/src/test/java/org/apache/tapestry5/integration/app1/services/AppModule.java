@@ -11,25 +11,9 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.integration.app1.data.Entity;
-import org.apache.tapestry5.integration.app1.data.ToDoItem;
-import org.apache.tapestry5.integration.app1.data.Track;
-import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Value;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.pageload.PagePreloader;
-import org.apache.tapestry5.services.pageload.PreloaderMode;
-import org.apache.tapestry5.services.security.ClientWhitelist;
-import org.apache.tapestry5.services.security.WhitelistAnalyzer;
-import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
-import org.slf4j.Logger;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -39,9 +23,44 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.Address;
+import org.apache.tapestry5.integration.app1.data.Entity;
+import org.apache.tapestry5.integration.app1.data.Person;
+import org.apache.tapestry5.integration.app1.data.Pet;
+import org.apache.tapestry5.integration.app1.data.ToDoItem;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Value;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.EditBlockContribution;
+import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueLabelProvider;
+import org.apache.tapestry5.services.pageload.PagePreloader;
+import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.security.ClientWhitelist;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.slf4j.Logger;
 
 /**
  * I was just dying to see how fast requests are!
@@ -362,5 +381,18 @@ public class AppModule
         configuration.add("core/exceptionreport");
         configuration.add("core/t5dashboard");
     }
+    
+
+	public static void contributeDefaultDataTypeAnalyzer(
+			@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) 
+	{
+    	configuration.add(Address.class, "address");
+    }
+
+	@Contribute(BeanBlockSource.class)
+    public static void provideDefaultBeanBlocks(Configuration<BeanBlockContribution> configuration) 
+	{
+		configuration.add( new EditBlockContribution("address", "PropertyEditBlocks", "object"));
+	}
 
 }

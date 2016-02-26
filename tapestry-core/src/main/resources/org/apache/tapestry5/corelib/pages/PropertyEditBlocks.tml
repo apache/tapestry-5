@@ -40,4 +40,8 @@
     <t:block id="longtext">
         <textarea t:id="textarea" t:mixins="formgroup"/>
     </t:block>
+
+    <t:block id="object">
+        <t:beanEditor object="context.propertyValue" model="model"/>
+	</t:block>
 </div>

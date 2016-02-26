@@ -605,8 +605,9 @@ public class Index
                     new Item("onactivateredirect", "OnActivateRedirect Demo", "A page that redirects to itself from"
                         + " its activation method"),
 
-                    new Item("BeanEditorWithFormFragmentDemo", "Bean Editor With Form Fragment Demo", "TriggerFragment mixin used inside a BeanEditor")
+                    new Item("BeanEditorWithFormFragmentDemo", "Bean Editor With Form Fragment Demo", "TriggerFragment mixin used inside a BeanEditor"),
 
+                    new Item("ObjectEditorDemo","Object Editor Demo","Edit Bean with address objects")
                 );
 
     static

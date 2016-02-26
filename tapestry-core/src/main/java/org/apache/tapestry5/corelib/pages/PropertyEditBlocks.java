@@ -18,11 +18,19 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.corelib.components.*;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.corelib.components.Checkbox;
+import org.apache.tapestry5.corelib.components.DateField;
+import org.apache.tapestry5.corelib.components.PasswordField;
+import org.apache.tapestry5.corelib.components.Select;
+import org.apache.tapestry5.corelib.components.TextArea;
+import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
@@ -179,5 +187,14 @@ public class PropertyEditBlocks
               + ". The property type is " + propertyType + " which is not an enum class.");
         }
         return new EnumSelectModel(propertyType, context.getContainerMessages());
+    }
+
+    @Inject
+    private BeanModelSource beanModelSource;
+
+    @SuppressWarnings("unchecked")
+    public BeanModel<?> getModel()
+    {
+            return beanModelSource.createEditModel(context.getPropertyType(), context.getContainerMessages());
     }
 }
