@@ -24,12 +24,43 @@ import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * This mixin triggers event notifcations to identify when it enters
- * the {@link BeginRender} and {@link AfterRender} render phases.
- * The {@link MarkupWriter} is passed as the event context. The most common use of this
- * is to handle the "afterRender" event to generate client-side JavaScript for content
- * just rendered via a {@link Block} (this is a common Ajax use case related to partial
- * page rendering).
+ * This mixin triggers <em>component event</em> notifications when the
+ * attached component enters its {@link BeginRender} and {@link AfterRender}
+ * render phases. A common use of this is to handle the "afterRender"
+ * event to generate client-side JavaScript for content just rendered via a
+ * {@link Block} (this is a common Ajax use case related to partial page
+ * rendering). Since AJAX requests don't trigger afterRender or beforeRender
+ * render phase events in the containing component or page, this mixin provides
+ * a way of accessing those events as component events.
+ * <p>
+ * An example using the {@link org.apache.tapestry5.corelib.components.Any Any}
+ * component within a zone:
+ * <pre>
+ * &lt;div t:type="Zone" id="myZone"&gt;
+ *     &lt;t:any t:mixins="RenderNotification"&gt;
+ *              &lt;!-- zone content -&gt;
+ *      &lt;/div&gt;
+ * &lt;/div&gt;
+ * </pre>
+ * The {@link MarkupWriter} is passed as the event context to your event handler
+ * method(s), so your corresponding component or page class might look like:
+ * <pre>
+ * void onBeginRenderFromMyZone(MarkupWriter writer)
+ * {
+ *     writer.element("p");
+ *     writer.write("before item render");
+ *     writer.end();
+ * }
+
+ * void onAfterRenderFromMyZone(MarkupWriter writer)
+ * {
+ *     writer.element("p");
+ *     writer.write("after item render");
+ *     writer.end();
+ * }
+ * </pre>
+ * As an alternative, see the {@link org.apache.tapestry5.corelib.components.Trigger Trigger}
+ * component, which does something similar but as a component rather than a mixin.
  * 
  * @since 5.2.0
  * @tapestrydoc
