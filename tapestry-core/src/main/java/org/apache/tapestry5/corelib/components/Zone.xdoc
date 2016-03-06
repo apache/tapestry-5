@@ -15,7 +15,7 @@
 
 ]]></source>
 
-                <p>It's pretty standard to bind the id parameter of a zone; the zone parameter of ActionLink
+                <p> It's pretty standard to bind the id parameter of a zone; the zone parameter of ActionLink
                     and Form are the<em>client-side element id</em>, not the component id. They are often,
                     but not always, the same. Binding the id parameter ensures that a particular, fixed value
                     is used.
@@ -62,7 +62,19 @@ public class ZoneDemo
 
 
             </subsection>
+            <subsection name="Configuring the Zone Component in the AppModule class">
+                <p>
+                     It is possible to configure the show and update parameters of the Zone component in the AppModule class of your application. All your Zone components will use this default configuration until you define a value for one of these parameters.
+                </p>
+                <source><![CDATA[
+public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+{
+  configuration.add(ComponentParameterConstants.ZONE_SHOW_METHOD, "show");
 
+  configuration.add(ComponentParameterConstants.ZONE_SHOW_METHOD, "highlight");
+}
+]]></source>
+            </subsection>
 
         </section>
     </body>

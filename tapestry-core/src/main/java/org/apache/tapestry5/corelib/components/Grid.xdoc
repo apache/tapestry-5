@@ -297,7 +297,21 @@ delete-label=Delete user?]]></source>
                 </p>
 
             </subsection>
+            <subsection name="Configuring the Grid Component in the AppModule class">
+                <p>
+                     It is possible to configure the rowsPerPage, pagerPosition and tableClass parameters of the Grid component in the AppModule class of your application. All your Grid components will use this default configuration until you define a value for one of these parameters.
+                </p>
+                <source><![CDATA[
+public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+{
+  configuration.add(GridConstants.ROWS_PER_PAGE, "show");
 
+  configuration.add(GridConstants.PAGER_POSITION, "bottom");
+
+  configuration.add(GridConstants.TABLE_CLASS, "t-data-grid");
+}
+]]></source>
+            </subsection>
         </section>
 
 
