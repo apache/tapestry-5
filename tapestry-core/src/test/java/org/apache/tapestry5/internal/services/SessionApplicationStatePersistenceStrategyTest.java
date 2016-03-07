@@ -22,6 +22,8 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.testng.annotations.Test;
 
+import spock.lang.Issue;
+
 public class SessionApplicationStatePersistenceStrategyTest extends InternalBaseTestCase
 {
     @SuppressWarnings("unchecked")
@@ -67,6 +69,27 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
     @SuppressWarnings("unchecked")
     @Test
+    @Issue("TAP5-2537")
+    public void check_exists_with_invalid_session()
+    {
+        Request request = mockRequest();
+        Session session = mockSession();
+        Class asoClass = ReadOnlyBean.class;
+
+        train_getSession(request, false, session);
+        train_isInvalidated(session, true);
+
+        replay();
+
+        ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        assertFalse(strategy.exists(asoClass));
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
     public void get_aso_needs_to_be_created()
     {
         Request request = mockRequest();
@@ -78,6 +101,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         // First for exists()
         train_getSession(request, false, session);
+        train_isInvalidated(session, false);
         train_getAttribute(session, key, null);
 
         // Second for get()
@@ -93,6 +117,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         // Then for exists() after
         train_getSession(request, false, session);
+        train_isInvalidated(session, false);
         train_getAttribute(session, key, aso);
 
         replay();

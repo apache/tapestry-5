@@ -77,6 +77,6 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
     {
         Session session = request.getSession(false);
 
-        return session != null && session.getAttribute(buildKey(ssoClass)) != null;
+        return session != null && !session.isInvalidated() && session.getAttribute(buildKey(ssoClass)) != null;
     }
 }
