@@ -42,9 +42,7 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
 import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
-import org.hibernate.mapping.PersistentClass;
-
-import java.util.Iterator;
+import org.hibernate.metadata.ClassMetadata;
 
 /**
  * Supplements the services defined by {@link org.apache.tapestry5.hibernate.modules.HibernateCoreModule} with additional
@@ -83,20 +81,21 @@ public class HibernateModule
      * back then the entity can be coerced.
      */
     @SuppressWarnings("unchecked")
-    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
-                                                    boolean provideEncoders, final HibernateSessionSource sessionSource, final Session session,
-                                                    final TypeCoercer typeCoercer, final PropertyAccess propertyAccess, final LoggerSource loggerSource)
+    public static void contributeValueEncoderSource(
+            MappedConfiguration<Class, ValueEncoderFactory> configuration,
+            @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS) boolean provideEncoders,
+            final HibernateSessionSource sessionSource, final Session session,
+            final TypeCoercer typeCoercer, final PropertyAccess propertyAccess,
+            final LoggerSource loggerSource)
     {
         if (!provideEncoders)
             return;
 
-        org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
-        Iterator<PersistentClass> mappings = config.getClassMappings();
-        while (mappings.hasNext())
+        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata()
+                .values())
         {
-            final PersistentClass persistentClass = mappings.next();
-            final Class entityClass = persistentClass.getMappedClass();
+            final Class entityClass = classMetadata.getMappedClass();
+            final String idenfierPropertyName = classMetadata.getIdentifierPropertyName();
 
             if (entityClass != null)
             {
@@ -105,8 +104,9 @@ public class HibernateModule
                     @Override
                     public ValueEncoder create(Class type)
                     {
-                        return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,
-                                typeCoercer, loggerSource.getLogger(entityClass));
+                        return new HibernateEntityValueEncoder(entityClass, idenfierPropertyName,
+                                session, propertyAccess, typeCoercer,
+                                loggerSource.getLogger(entityClass));
                     }
                 };
 
@@ -162,14 +162,9 @@ public class HibernateModule
         if (!entitySessionStatePersistenceStrategyEnabled)
             return;
 
-        org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
-        Iterator<PersistentClass> mappings = config.getClassMappings();
-        while (mappings.hasNext())
+        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata().values())
         {
-
-            final PersistentClass persistentClass = mappings.next();
-            final Class entityClass = persistentClass.getMappedClass();
-
+            final Class entityClass = classMetadata.getMappedClass();
             configuration.add(entityClass, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
         }
     }
