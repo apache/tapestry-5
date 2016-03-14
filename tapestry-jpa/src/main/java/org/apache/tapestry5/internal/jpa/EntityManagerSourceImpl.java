@@ -14,6 +14,20 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
+import javax.persistence.spi.PersistenceProviderResolver;
+import javax.persistence.spi.PersistenceProviderResolverHolder;
+import javax.persistence.spi.PersistenceUnitInfo;
+
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
@@ -24,21 +38,12 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.jpa.*;
+import org.apache.tapestry5.jpa.EntityManagerSource;
+import org.apache.tapestry5.jpa.JpaConstants;
+import org.apache.tapestry5.jpa.JpaSymbols;
+import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.slf4j.Logger;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceProviderResolver;
-import javax.persistence.spi.PersistenceProviderResolverHolder;
-import javax.persistence.spi.PersistenceUnitInfo;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public class EntityManagerSourceImpl implements EntityManagerSource
 {
@@ -185,11 +190,18 @@ public class EntityManagerSourceImpl implements EntityManagerSource
         EntityManagerFactory emf = entityManagerFactories.get(persistenceUnitName);
 
         if (emf == null)
-        {
-            emf = createEntityManagerFactory(persistenceUnitName);
+            synchronized (this)
+            {
+                emf = entityManagerFactories.get(persistenceUnitName);
 
-            entityManagerFactories.put(persistenceUnitName, emf);
-        }
+                if (emf == null)
+                {
+
+                    emf = createEntityManagerFactory(persistenceUnitName);
+
+                    entityManagerFactories.put(persistenceUnitName, emf);
+                }
+            }
 
         return emf;
     }
