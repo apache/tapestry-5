@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ObjectLocator;
@@ -21,13 +27,9 @@ import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 public class EntityManagerObjectProvider implements ObjectProvider
 {
-
-    private EntityManager proxy;
+    private Map<String, EntityManager> emProxyByName = new HashMap<String, EntityManager>();
 
     @Override
     public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
@@ -39,29 +41,33 @@ public class EntityManagerObjectProvider implements ObjectProvider
         return null;
     }
 
-    private synchronized EntityManager getOrCreateProxy(
-            final AnnotationProvider annotationProvider, final ObjectLocator objectLocator)
+    @SuppressWarnings(
+    { "unchecked", "rawtypes" })
+    private EntityManager getOrCreateProxy(final AnnotationProvider annotationProvider,
+            final ObjectLocator objectLocator)
     {
+        final PersistenceContext annotation = annotationProvider
+                .getAnnotation(PersistenceContext.class);
+        EntityManager proxy = emProxyByName.get(annotation.unitName());
         if (proxy == null)
-        {
-            final PlasticProxyFactory proxyFactory = objectLocator.getService("PlasticProxyFactory",
-                    PlasticProxyFactory.class);
-
-            final PersistenceContext annotation = annotationProvider
-                    .getAnnotation(PersistenceContext.class);
-
-            proxy = proxyFactory.createProxy(EntityManager.class, new ObjectCreator()
+            synchronized (this)
             {
-                @Override
-                public Object createObject()
-                {
-                    final EntityManagerManager entityManagerManager = objectLocator
-                            .getService(EntityManagerManager.class);
+                final PlasticProxyFactory proxyFactory = objectLocator.getService(
+                        "PlasticProxyFactory", PlasticProxyFactory.class);
 
-                    return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
-                }
-            }, "<EntityManagerProxy>");
-        }
+                proxy = proxyFactory.createProxy(EntityManager.class, new ObjectCreator()
+                {
+                    @Override
+                    public Object createObject()
+                    {
+                        final EntityManagerManager entityManagerManager = objectLocator
+                                .getService(EntityManagerManager.class);
+
+                        return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
+                    }
+                }, "<EntityManagerProxy>");
+                emProxyByName.put(annotation.unitName(), proxy);
+            }
 
         return proxy;
     }
