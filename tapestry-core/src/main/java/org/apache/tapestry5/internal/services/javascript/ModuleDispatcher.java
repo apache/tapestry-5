@@ -89,7 +89,7 @@ public class ModuleDispatcher implements Dispatcher
         this.compress = compress;
 
         requestPrefix = pathConstructor.constructDispatchPath(compress ? prefix + ".gz" : prefix) + "/";
-        stackPathPrefix = pathConstructor.constructDispatchPath(assetPrefix, RequestConstants.STACK_FOLDER) + "/";
+        stackPathPrefix = pathConstructor.constructClientPath(assetPrefix, RequestConstants.STACK_FOLDER) + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
