@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,7 +41,7 @@ import java.util.logging.Level;
 public class GoogleClosureMinimizer extends AbstractMinimizer
 {
 
-    private final static String OUTPUT_CHARSET = "utf-8";
+    private final static Charset OUTPUT_CHARSET = StandardCharsets.UTF_8;
 
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
@@ -83,7 +85,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
         compiler.disableThreads();
 
-        SourceFile input = SourceFile.fromInputStream(resource.toString(), resource.openStream());
+        SourceFile input = SourceFile.fromInputStream(resource.toString(), resource.openStream(), StandardCharsets.UTF_8);
 
         List<SourceFile> inputs = Collections.singletonList(input);
 
