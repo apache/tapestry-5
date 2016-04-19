@@ -109,9 +109,7 @@ allprojects {
 
 idea {
     project {
-        languageLevel = "1.6"
-        // But this is what most (all?) of the devs are actually using:
-        jdkName = "1.7"
+        languageLevel = "1.8"
     }
 }
 
@@ -155,8 +153,8 @@ subprojects {
     apply plugin: "project-report"
     apply plugin: "jacoco"
 
-    sourceCompatibility = "1.6"
-    targetCompatibility = "1.6"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
 
     // See http://jira.codehaus.org/browse/GRADLE-784
 
@@ -336,11 +334,6 @@ subprojects {
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
 task aggregateJavadoc(type: Javadoc) {
-    doFirst {
-        // Temporary: don't check on the CI server. This can be removed when the CI server is upgraded.
-        if (!continuousIntegrationBuild && !checkJDK())
-            throw new StopActionException("Update your JDK to fix VU#225657")
-    }
     dependsOn configurations.javadoc
     group "Documentation"
 
@@ -348,7 +341,7 @@ task aggregateJavadoc(type: Javadoc) {
     maxMemory "512m"
     destinationDir file("$buildDir/documentation/javadocs")
 
-    def tapestryStylesheet = isJDKAfter6() ? file("src/javadoc/stylesheet7.css") : file("src/javadoc/stylesheet.css");
+    def tapestryStylesheet = file("src/javadoc/stylesheet7.css")
 
     configure(options) {
         splitIndex true
@@ -606,34 +599,6 @@ boolean isSnapshot() {
 
 boolean isWindows() {
     System.properties['os.name'].toLowerCase().contains('windows')
-}
-
-boolean isJDKAfter6() {
-    ! System.properties['java.version'].matches('1\\.[5|6]\\..*')
-}
-
-// Check JDK version to prevent VU#225657 see:
-// http://www.oracle.com/technetwork/topics/security/javacpujun2013-1899847.html
-// http://www.kb.cert.org/vuls/id/225657
-boolean checkJDK() {
-    def jdkVersion = System.properties['java.version']
-    def match = jdkVersion =~ /_(\d+)/
-
-    if (!match.find())
-        throw new IllegalStateException("""Could not parse minor version number out of "${jdkVersion}".""")
-
-    def minor = match[0][1].toInteger()
-
-    if (jdkVersion.startsWith("1.7")) {
-        minor > 21
-    }
-    else if (jdkVersion.startsWith("1.5") || jdkVersion.startsWith("1.6")) {
-        // JDK 6 and 5 require the same minor version
-        minor > 45
-    }
-    else {
-        true
-    }
 }
 
 task updateBootstrap << {
