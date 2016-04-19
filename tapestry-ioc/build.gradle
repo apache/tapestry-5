@@ -16,6 +16,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
     testCompile "commons-lang:commons-lang:2.6"
+    testCompile "org.apache.commons:commons-lang3:3.4"
 
     provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
