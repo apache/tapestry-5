@@ -13,7 +13,7 @@ project.ext.versions = [
     tomcat: "6.0.30",
     testng: "6.8.21",
     easymock: "3.3.1",
-    servletapi: "2.5",
+    servletapi: "3.0.1",
     spock: "1.0-groovy-2.4",
     hibernate: "4.3.6.Final",
     slf4j: "1.7.21",
@@ -301,9 +301,6 @@ subprojects.each { project.evaluationDependsOn(it.name) }
 
 subprojects {
 
-    // Prefer this version, because it has source artifacts available.
-    def servletAPI = 'org.mortbay.jetty:servlet-api-2.5:6.1.11'
-
     configurations.all {
 
         resolutionStrategy.force "antlr:antlr:2.7.7",
@@ -319,15 +316,6 @@ subprojects {
             "org.yaml:snakeyaml:1.8",
             "xml-apis:xml-apis:1.4.01"
 
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-
-
-            if (details.requested.name.startsWith("servlet-api")) {
-                logger.info "Overriding dependency ${details.requested.group}:${details.requested.name}:${details.requested.version} --> $servletAPI"
-                details.useTarget servletAPI
-            }
-
-        }
     }
 }
 

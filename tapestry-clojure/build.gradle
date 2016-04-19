@@ -6,7 +6,7 @@ dependencies {
 
   // Added just to prove that it works (TAP5-1945)
   testCompile project(':tapestry-core')
-  testRuntime "javax.servlet:servlet-api:${versions.servletapi}"
+  testRuntime "javax.servlet:javax.servlet-api:${versions.servletapi}"
 }
 
 test {

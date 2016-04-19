@@ -68,7 +68,7 @@ dependencies {
     // Logback
     // runtime "ch.qos.logback:logback-classic:1.0.13"
 
-    provided "javax.servlet:servlet-api:@servletApiReleaseVersion@"
+    provided "javax.servlet:javax.servlet-api:@servletApiReleaseVersion@"
 }
 
 test {

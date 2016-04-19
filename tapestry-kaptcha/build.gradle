@@ -5,7 +5,7 @@ dependencies {
 
     compile "com.github.axet:kaptcha:0.0.8"
 
-    provided "javax.servlet:servlet-api:${versions.servletapi}"
+    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
     testCompile project(':tapestry-test')
 }

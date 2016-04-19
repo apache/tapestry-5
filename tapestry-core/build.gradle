@@ -19,7 +19,7 @@ dependencies {
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
 
-    provided "javax.servlet:servlet-api:${versions.servletapi}"
+    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
     compile "commons-codec:commons-codec:1.10"
 

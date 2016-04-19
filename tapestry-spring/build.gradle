@@ -4,7 +4,7 @@ dependencies {
   compile project(':tapestry-core')
   compile "org.springframework:spring-web:3.1.0.RELEASE"
 
-  provided "javax.servlet:servlet-api:${versions.servletapi}"
+  provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
   testCompile project(':tapestry-test')
 }
