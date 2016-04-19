@@ -99,7 +99,6 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected List<FileItem> parseRequest(HttpServletRequest request)
     {
         try
@@ -134,11 +133,10 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
 
         // First add parameters from the request
-        for (Object e : request.getParameterMap().entrySet())
+        for (Map.Entry<String, String[]> e : request.getParameterMap().entrySet())
         {
-            Map.Entry<String, String[]> ee = (Map.Entry<String, String[]>) e;
-            for (String s : ee.getValue())
-                wrapper.addParameter(ee.getKey(), s);
+            for (String s : e.getValue())
+                wrapper.addParameter(e.getKey(), s);
         }
 
         for (FileItem item : fileItems)

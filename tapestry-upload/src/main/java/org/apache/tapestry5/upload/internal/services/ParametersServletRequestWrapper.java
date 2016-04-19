@@ -43,22 +43,22 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
     }
 
     @Override
-    public Map<String, Object> getParameterMap()
+    public Map<String, String[]> getParameterMap()
     {
-        Map<String, Object> paramMap = newMap();
+        Map<String, String[]> paramMap = newMap();
 
         for (Map.Entry<String, ParameterValue> e : parameters.entrySet())
         {
             ParameterValue value = e.getValue();
 
-            paramMap.put(e.getKey(), value.isMulti() ? value.multi() : value.single());
+            paramMap.put(e.getKey(), value.multi());
         }
 
         return paramMap;
     }
 
     @Override
-    public Enumeration getParameterNames()
+    public Enumeration<String> getParameterNames()
     {
         return Collections.enumeration(parameters.keySet());
     }

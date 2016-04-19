@@ -165,7 +165,7 @@ public class ParametersServletRequestWrapperTest
 
         Map parameters = wrapper.getParameterMap();
         assertEquals(parameters.size(), 2);
-        assertEquals(parameters.get("single"), "blah");
+        assertEquals(parameters.get("single"), new String[] { "blah" });
         assertEquals((String[]) parameters.get("multi"), new String[] { "one", "two" });
 
         verify(request);
