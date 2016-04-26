@@ -48,7 +48,8 @@ public class EntityManagerObjectProvider implements ObjectProvider
     {
         final PersistenceContext annotation = annotationProvider
                 .getAnnotation(PersistenceContext.class);
-        EntityManager proxy = emProxyByName.get(annotation.unitName());
+        final String unitName = annotation == null ? null : annotation.unitName();
+        EntityManager proxy = emProxyByName.get(unitName);
         if (proxy == null)
             synchronized (this)
             {
@@ -66,7 +67,7 @@ public class EntityManagerObjectProvider implements ObjectProvider
                         return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
                     }
                 }, "<EntityManagerProxy>");
-                emProxyByName.put(annotation.unitName(), proxy);
+                emProxyByName.put(unitName, proxy);
             }
 
         return proxy;
