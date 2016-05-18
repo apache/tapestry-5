@@ -66,7 +66,7 @@ jar {
 }
 
 task runTestApp1(type:JavaExec) {
-  main = 'org.apache.tapestry5.test.Jetty7Runner'
+  main = 'org.apache.tapestry5.test.JettyRunner'
   args "-d", "src/test/app1", "-p", "8080"
   classpath += project.sourceSets.test.runtimeClasspath
 }

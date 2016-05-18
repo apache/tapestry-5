@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload;
 
-import org.apache.tapestry5.test.Jetty7Runner;
+import org.apache.tapestry5.test.JettyRunner;
 
 import java.io.File;
 
@@ -26,6 +26,6 @@ public class RunJettyUpload
 
         new File(workingDir, "target/tmp").mkdirs();
 
-        new Jetty7Runner("src/test/webapp", "/", 8080, 9999).start();
+        new JettyRunner("src/test/webapp", "/", 8080, 9999).start();
     }
 }

@@ -1,7 +1,7 @@
 package t5.webresources.tests
 
 import geb.spock.GebReportingSpec
-import org.apache.tapestry5.test.Jetty7Runner
+import org.apache.tapestry5.test.JettyRunner
 import spock.lang.Shared
 
 class WebResourcesSpec extends GebReportingSpec {
@@ -10,7 +10,7 @@ class WebResourcesSpec extends GebReportingSpec {
     def runner;
 
     def setupSpec() {
-        runner = new Jetty7Runner("src/test/webapp", "/", 8080, 8081);
+        runner = new JettyRunner("src/test/webapp", "/", 8080, 8081);
 
         runner.start()
     }

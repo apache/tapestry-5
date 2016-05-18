@@ -14,30 +14,25 @@
 
 package org.apache.tapestry5.test;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.servlets.DefaultServlet;
-import org.apache.catalina.startup.Embedded;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
 
 import java.io.File;
 
 /**
- * Launches an instance of Tomcat 6.
- * 
+ * Launches an instance of Tomcat.
+ *
  * @since 5.3
  */
-public class Tomcat6Runner implements ServletContainerRunner
+public class TomcatRunner implements ServletContainerRunner
 {
     private final String description;
     private final int port;
     private final int sslPort;
-    private Embedded tomcatServer;
+    private Tomcat tomcatServer;
 
-    public Tomcat6Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
+    public TomcatRunner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         this.port = port;
 
@@ -45,57 +40,31 @@ public class Tomcat6Runner implements ServletContainerRunner
 
         final String expandedPath = expand(webappFolder);
 
-        description = String.format("<Tomcat6Runner:%s:%s/%s (%s)", contextPath, port, sslPort, expandedPath);
+        description = String.format("<TomcatRunner:%s:%s/%s (%s)", contextPath, port, sslPort, expandedPath);
 
-        tomcatServer = new Embedded();
+        tomcatServer = new Tomcat();
 
         // Tomcat creates a folder, try to put it in an OS agnostic tmp dir
         String tmpDir = System.getProperty("java.io.tmpdir");
         String fileSeparator = System.getProperty("file.separator");
         if (!tmpDir.endsWith(fileSeparator))
             tmpDir = tmpDir + fileSeparator;
-        tomcatServer.setCatalinaHome(tmpDir + "tomcat");
+        tomcatServer.setBaseDir(tmpDir + "tomcat");
 
-        final Engine engine = tomcatServer.createEngine();
-        engine.setDefaultHost("localhost");
+        tomcatServer.addWebapp("/", expandedPath);
 
-        final Host host = tomcatServer.createHost("localhost", expandedPath);
-        engine.addChild(host);
-
-        final Context context = tomcatServer.createContext(contextPath, expandedPath);
-
-        // Without a servlet the filter will not get run.
-        final Wrapper wrapper = context.createWrapper();
-        final String name = "DefaultServlet";
-        wrapper.setName(name);
-        wrapper.setServletClass(DefaultServlet.class.getName());
-        context.addChild(wrapper);
-        context.addServletMapping("/", name);
-
-        File contextConfigFile = new File(webappFolder, "META-INF/context.xml");
-
-        if (contextConfigFile.exists())
-            context.setConfigFile(contextConfigFile.getAbsolutePath());
-
-        context.setLoader(new WebappLoader(this.getClass().getClassLoader()));
-
-        host.addChild(context);
-
-        tomcatServer.addEngine(engine);
-
-        Connector http = tomcatServer.createConnector("localhost", port, false);
-        http.setAllowTrace(true);
-        tomcatServer.addConnector(http);
+        tomcatServer.getConnector().setAllowTrace(true);
 
         // SSL support
         final File keystoreFile = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
 
         if (keystoreFile.exists())
         {
-            final Connector https = tomcatServer.createConnector("localhost", sslPort, true);
+            final Connector https = new Connector();
+            https.setPort(sslPort);
             https.setProperty("keystore", keystoreFile.getPath());
             https.setProperty("keypass", "tapestry");
-            tomcatServer.addConnector(https);
+            tomcatServer.getService().addConnector(https);
         }
 
         tomcatServer.start();
@@ -116,7 +85,7 @@ public class Tomcat6Runner implements ServletContainerRunner
         }
         catch (Exception ex)
         {
-            throw new RuntimeException("Error stopping Tomcat6 instance: " + ex.toString(), ex);
+            throw new RuntimeException("Error stopping Tomcat instance: " + ex.toString(), ex);
         }
 
         System.out.println("Tomcat instance has stopped.");
@@ -132,7 +101,7 @@ public class Tomcat6Runner implements ServletContainerRunner
      * Needed inside Maven multi-projects to expand a path relative to the module to a complete
      * path. If the path already is absolute and points to an existing directory, it will be used
      * unchanged.
-     * 
+     *
      * @param moduleLocalPath
      * @return expanded path
      * @see TapestryRunnerConstants#MODULE_BASE_DIR

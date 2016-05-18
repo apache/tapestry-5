@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.integration;
 
-import org.apache.tapestry5.test.Jetty7Runner;
+import org.apache.tapestry5.test.JettyRunner;
 
 /**
  * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to export test classes and
@@ -27,6 +27,6 @@ public class RunJetty
         String contextName = args[0];
         String path = args[1];
         
-        new Jetty7Runner(path, contextName, 9090, 8443);
+        new JettyRunner(path, contextName, 9090, 8443);
     }
 }

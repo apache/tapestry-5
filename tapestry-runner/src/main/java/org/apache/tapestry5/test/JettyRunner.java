@@ -16,15 +16,16 @@ package org.apache.tapestry5.test;
 
 import org.apache.commons.cli.*;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
 
 /**
- * Launches an instance of Jetty7.
+ * Launches an instance of Jetty.
  */
-public class Jetty7Runner implements ServletContainerRunner
+public class JettyRunner implements ServletContainerRunner
 {
     private Server jettyServer;
 
@@ -34,17 +35,17 @@ public class Jetty7Runner implements ServletContainerRunner
 
     private int sslPort;
 
-    public Jetty7Runner()
+    public JettyRunner()
     {
         // un-configured runner
     }
 
-    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
+    public JettyRunner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         configure(webappFolder, contextPath, port, sslPort).start();
     }
 
-    public Jetty7Runner configure(String webappFolder, String contextPath, int port, int sslPort) throws Exception
+    public JettyRunner configure(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         this.port = port;
 
@@ -52,7 +53,7 @@ public class Jetty7Runner implements ServletContainerRunner
 
         String expandedPath = expand(webappFolder);
 
-        description = String.format("<Jetty7Runner: %s:%s/%s (%s)", contextPath, port, sslPort, expandedPath);
+        description = String.format("<JettyRunner: %s:%s/%s (%s)", contextPath, port, sslPort, expandedPath);
 
         jettyServer = new Server(port);
 
@@ -65,15 +66,17 @@ public class Jetty7Runner implements ServletContainerRunner
 
         if (keystoreFile.exists())
         {
-            SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
+            SslContextFactory sslContextFactory = new SslContextFactory();
+
+            sslContextFactory.setKeyStorePath(keystoreFile.getAbsolutePath());
+
+            sslContextFactory.setKeyStorePassword("tapestry");
+
+            sslContextFactory.setKeyManagerPassword("tapestry");
+
+            SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
 
             sslConnector.setPort(sslPort);
-
-            sslConnector.setKeystore(keystoreFile.getPath());
-
-            sslConnector.setPassword("tapestry");
-
-            sslConnector.setKeyPassword("tapestry");
 
             jettyServer.addConnector(sslConnector);
         }
@@ -139,13 +142,13 @@ public class Jetty7Runner implements ServletContainerRunner
     }
 
     /**
-     * Main entrypoint used to run the Jetty7 instance from the command line.
+     * Main entrypoint used to run the Jetty instance from the command line.
      *
      * @since 5.4
      */
     public static void main(String[] args) throws Exception
     {
-        String commandName = Jetty7Runner.class.getName();
+        String commandName = JettyRunner.class.getName();
 
         Options options = new Options();
 
@@ -227,6 +230,6 @@ public class Jetty7Runner implements ServletContainerRunner
             System.exit(-1);
         }
 
-        new Jetty7Runner(webapp, context, httpPort, sslPort);
+        new JettyRunner(webapp, context, httpPort, sslPort);
     }
 }
