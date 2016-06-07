@@ -14,17 +14,18 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.JpaConstants;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.JpaConstants;
 
 public class JpaInternalUtils
 {
@@ -60,7 +61,7 @@ public class JpaInternalUtils
 
             for (final EntityType<?> entityType : entities)
             {
-                if (entityType.getJavaType() == entity.getClass())
+                if (entityType.getJavaType().equals(entity.getClass()))
                 {
                     if (em.contains(entity))
                     {

@@ -14,85 +14,33 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
-
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.jpa.EntityTransactionManager;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
 
 public class CommitAfterMethodAdvice implements MethodAdvice
 {
-    private final EntityManagerManager manager;
+    private EntityTransactionManager manager;
+    private String context;
 
-    public CommitAfterMethodAdvice(final EntityManagerManager manager)
+    public CommitAfterMethodAdvice(EntityTransactionManager manager, String context)
     {
         this.manager = manager;
+        this.context = context;
     }
 
     @Override
     public void advise(final MethodInvocation invocation)
     {
-    	
-    	if (invocation.hasAnnotation(CommitAfter.class))
-    	{
-    	
-			final PersistenceContext annotation = invocation.getAnnotation(PersistenceContext.class);
-	        final EntityTransaction transaction = getTransaction(annotation);
-	
-	        if (transaction != null && !transaction.isActive())
-	        {
-	            transaction.begin();
-	        }
-	
-	        try
-	        {
-	            invocation.proceed();
-	        } catch (final RuntimeException e)
-	        {
-	            if (transaction != null && transaction.isActive())
-	            {
-	                rollbackTransaction(transaction);
-	            }
-	
-	            throw e;
-	        }
-	
-	        // Success or checked exception:
-	
-	        if (transaction != null && transaction.isActive())
-	        {
-	            transaction.commit();
-	        }
-	        
-    	}
-    	else
-    	{
-    		invocation.proceed();
-    	}
-
-    }
-
-    private void rollbackTransaction(EntityTransaction transaction)
-    {
-        try
+        manager.invokeInTransaction(context, new Invokable<MethodInvocation>()
         {
-            transaction.rollback();
-        } catch (Exception e)
-        { // Ignore
-        }
+            @Override
+            public MethodInvocation invoke()
+            {
+                return invocation.proceed();
+            }
+        });
+
     }
-
-    private EntityTransaction getTransaction(PersistenceContext annotation)
-    {
-        EntityManager em = JpaInternalUtils.getEntityManager(manager, annotation);
-
-        if (em == null)
-            return null;
-
-        return em.getTransaction();
-    }
-
 }

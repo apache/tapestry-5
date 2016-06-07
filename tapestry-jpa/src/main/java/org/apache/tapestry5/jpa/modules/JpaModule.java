@@ -14,23 +14,62 @@
 
 package org.apache.tapestry5.jpa.modules;
 
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.jpa.*;
-import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.jpa.*;
-import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
-import org.slf4j.Logger;
+import java.util.Collection;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceUnitInfo;
-import java.util.Collection;
+
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
+import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
+import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
+import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
+import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.internal.jpa.EntityTransactionManagerImpl;
+import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
+import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
+import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
+import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
+import org.apache.tapestry5.internal.services.PersistentFieldManager;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Startup;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.EntityManagerSource;
+import org.apache.tapestry5.jpa.EntityTransactionManager;
+import org.apache.tapestry5.jpa.JpaEntityPackageManager;
+import org.apache.tapestry5.jpa.JpaPersistenceConstants;
+import org.apache.tapestry5.jpa.JpaSymbols;
+import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
+import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.services.ApplicationStateContribution;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.slf4j.Logger;
 
 /**
  * Defines core services for JPA support.
@@ -44,6 +83,8 @@ public class JpaModule
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
         binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withSimpleId();
         binder.bind(EntityManagerSource.class, EntityManagerSourceImpl.class);
+        binder.bind(EntityTransactionManager.class, EntityTransactionManagerImpl.class);
+
     }
 
     public static JpaEntityPackageManager buildJpaEntityPackageManager(final Collection<String> packageNames)
