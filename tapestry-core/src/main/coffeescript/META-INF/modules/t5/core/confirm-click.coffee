@@ -81,13 +81,9 @@ define ["jquery", "./events", "bootstrap/modal"],
       # Cancel the original click event
       return false
 
-    ($ document).on "click", "a[data-confirm-message]:not(.disabled)", (event) ->
+    ($ document).on "click", "a[data-confirm-message]:not(.disabled, [data-update-zone], [data-async-trigger])", (event) ->
 
       target = $ event.target
-
-      # Order of event handlers on an element is not predictable. From testing, I found this could happen.
-      # A bit ugly.
-      return if target.attr "data-update-zone"
 
       # See note above; this replicates the default behavior of a link element that is lost because
       # of the
