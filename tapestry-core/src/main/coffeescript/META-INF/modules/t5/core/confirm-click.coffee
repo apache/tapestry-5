@@ -69,6 +69,7 @@ define ["jquery", "./events", "bootstrap/modal"],
       runDialog
         title: $this.attr "data-confirm-title"
         message: $this.attr "data-confirm-message"
+        okClass: $this.attr "data-confirm-class-ok"
         okLabel: $this.attr "data-confirm-label-ok"
         cancelLabel: $this.attr "data-confirm-label-cancel"
         ok: ->
