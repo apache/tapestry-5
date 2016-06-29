@@ -49,6 +49,12 @@ public class Confirm
 
     @Environmental
     private JavaScriptSupport javaScriptSupport;
+    
+    /*
+     * The CSS class for the ok button
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String okClass;
 
     /**
      * The label for the ok button.
@@ -70,6 +76,7 @@ public class Confirm
 
             writer.attributes("data-confirm-title", title,
                     "data-confirm-message", message,
+                    "data-confirm-class-ok", okClass,
                     "data-confirm-label-ok", ok,
                     "data-confirm-label-cancel", cancel);
         }
