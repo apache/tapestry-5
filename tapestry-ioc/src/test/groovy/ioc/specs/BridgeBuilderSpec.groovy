@@ -120,7 +120,7 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
 
     then:
 
-    1 * logger.error("Method void extraFilterMethod() of filter interface org.apache.tapestry5.ioc.internal.services.ExtraFilterMethod does not have a matching method in java.io.Serializable.")
+    1 * logger.error('Method {} of filter interface {} does not have a matching method in {}.', { it.name == "extraFilterMethod" }, ExtraFilterMethod.name, Serializable.name)
 
     0 * _
   }
