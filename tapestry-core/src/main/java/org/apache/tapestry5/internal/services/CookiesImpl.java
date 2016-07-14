@@ -140,7 +140,10 @@ public class CookiesImpl implements Cookies
                     cookie.setComment(comment);
                 }
 
-                cookie.setHttpOnly(httpOnly);
+                if (httpOnly != null)
+                {
+                    cookie.setHttpOnly(httpOnly);
+                }
 
                 cookieSink.addCookie(cookie);
             }
