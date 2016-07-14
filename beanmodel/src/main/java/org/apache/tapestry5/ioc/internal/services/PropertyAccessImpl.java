@@ -100,13 +100,14 @@ public class PropertyAccessImpl implements PropertyAccess
 
             List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
-            addAll(descriptors, info.getPropertyDescriptors());
             // Introspector misses:
             // - interface methods not implemented in an abstract class (TAP5-921)
             // - default methods (TAP5-2449)
             addPropertiesFromExtendedInterfaces(forClass, descriptors);
 
             addPropertiesFromScala(forClass, descriptors);
+
+            addAll(descriptors, info.getPropertyDescriptors());
 
             return new ClassPropertyAdapterImpl(forClass, descriptors);
         }
