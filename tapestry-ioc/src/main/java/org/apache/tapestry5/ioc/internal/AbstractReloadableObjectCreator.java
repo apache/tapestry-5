@@ -84,11 +84,8 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             return;
         }
 
-        if (logger.isDebugEnabled())
-        {
-            logger.debug(String.format("Implementation class %s has changed and will be reloaded on next use.",
-                    implementationClassName));
-        }
+        logger.debug("Implementation class {} has changed and will be reloaded on next use.",
+                implementationClassName);
 
         changeTracker.clear();
 
@@ -150,7 +147,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     {
         if (logger.isDebugEnabled())
         {
-            logger.debug(String.format("%s class %s.", firstTime ? "Loading" : "Reloading", implementationClassName));
+            logger.debug("{} class {}.", firstTime ? "Loading" : "Reloading", implementationClassName);
         }
 
         loader = new PlasticClassLoader(baseClassLoader, this);
@@ -177,7 +174,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     {
         if (!classesToLoad.contains(className))
         {
-            logger.debug(String.format("Marking class %s to be (re-)loaded", className));
+            logger.debug("Marking class {} to be (re-)loaded", className);
 
             classesToLoad.add(className);
         }
@@ -192,7 +189,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     @Override
     public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
-        logger.debug(String.format("BEGIN Analyzing %s", className));
+        logger.debug("BEGIN Analyzing {}", className);
 
         Class<?> result;
 
@@ -207,7 +204,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         trackClassFileChanges(className);
 
-        logger.debug(String.format("  END Analyzing %s", className));
+        logger.debug("  END Analyzing {}", className);
 
         return result;
     }

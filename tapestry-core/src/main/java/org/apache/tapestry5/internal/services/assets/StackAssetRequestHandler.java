@@ -79,7 +79,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         if (!matcher.matches())
         {
-            logger.warn(String.format("Unable to parse '%s' as an asset stack path", extraPath));
+            logger.warn("Unable to parse '{}' as an asset stack path", extraPath);
 
             return false;
         }
@@ -99,7 +99,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler
 
         if (stack == null)
         {
-            logger.warn(String.format("JavaScript stack '%s' not found.", stackName));
+            logger.warn("JavaScript stack '{}' not found.", stackName);
             return false;
         }
 

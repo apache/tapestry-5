@@ -135,8 +135,7 @@ public class PerthreadManagerImpl implements PerthreadManager
                 callback.run();
             } catch (Exception ex)
             {
-                logger.warn(String.format("Error invoking callback %s: %s", callback, ex),
-                        ex);
+                logger.warn("Error invoking callback {}: {}", callback, ex, ex);
             }
         }
 

@@ -224,8 +224,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         // user's responsibility not to abuse the mechanism
         catch (Exception e)
         {
-            logger.warn(String.format("A new exception was thrown while trying to handle an instance of %s.",
-                    exception.getClass().getName()), e);
+            logger.warn("A new exception was thrown while trying to handle an instance of {}.",
+                    exception.getClass().getName(), e);
             // Nothing to do but delegate
             renderException(exception);
         }
@@ -233,7 +233,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private void renderException(Throwable exception) throws IOException
     {
-        logger.error(String.format("Processing of request failed with uncaught exception: %s", exception), exception);
+        logger.error("Processing of request failed with uncaught exception: {}", exception, exception);
 
         // In the case where one of the contributed rules, above, changes the behavior, then we don't report the
         // exception. This is just for exceptions that are going to be rendered, real failures.

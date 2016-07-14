@@ -123,7 +123,7 @@ public class BridgeBuilder<S, F>
         {
             MethodSignature ms = (MethodSignature) i.next();
 
-            logger.error(String.format("Method %s of filter interface %s does not have a matching method in %s.", ms, filterInterface.getName(), serviceInterface.getName()));
+            logger.error("Method {} of filter interface {} does not have a matching method in {}.", ms, filterInterface.getName(), serviceInterface.getName());
         }
     }
 
