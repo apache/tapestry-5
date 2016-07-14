@@ -116,14 +116,24 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
-    private <T> void addAll(List<T> list, T[] array)
+    private static <T> void addAll(List<T> list, T[] array)
     {
         if (array.length > 0){
             list.addAll(Arrays.asList(array));
         }
     }
 
-    private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
+    private static <T> void addInterfacesRecursively(List<Class> list, Class<?> clazz)
+    {
+        Class<?>[] interfaces = clazz.getInterfaces();
+        for (int i = 0; i < interfaces.length; i++) {
+          Class<?> iface = interfaces[i];
+          addInterfacesRecursively(list, iface);
+          list.add(iface);
+        }
+    }
+
+    private static void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
 
@@ -133,7 +143,7 @@ public class PropertyAccessImpl implements PropertyAccess
         }
         LinkedList<Class> queue = CollectionFactory.newLinkedList();
         // Seed the queue
-        addAll(queue, interfaces);
+        addInterfacesRecursively(queue, forClass);
 
         while (!queue.isEmpty())
         {
@@ -144,7 +154,6 @@ public class PropertyAccessImpl implements PropertyAccess
             // Duplicates occur and are filtered out in ClassPropertyAdapter which stores
             // a property name to descriptor map.
             addAll(descriptors, info.getPropertyDescriptors());
-            addAll(queue, c.getInterfaces());
         }
     }
 
