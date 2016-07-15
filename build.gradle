@@ -9,8 +9,8 @@ apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
 project.ext.versions = [
-    jetty: "7.6.11.v20130520",
-    tomcat: "6.0.30",
+    jetty: "8.1.19.v20160209",
+    tomcat: "7.0.70",
     testng: "6.8.21",
     easymock: "3.3.1",
     servletapi: "3.0.1",
@@ -18,7 +18,7 @@ project.ext.versions = [
     hibernate: "5.1.0.Final",
     slf4j: "1.7.21",
     geb: "0.13.1",
-    selenium: "2.53.0"
+    selenium: "2.53.1"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")

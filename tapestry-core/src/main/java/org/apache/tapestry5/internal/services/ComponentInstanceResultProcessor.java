@@ -44,7 +44,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
 
         if (resources.getContainer() != null)
         {
-            logger.warn(String.format("Component %s was returned from an event handler method, but is not a page component. The page containing the component will render the client response.", value.getComponentResources().getCompleteId()));
+            logger.warn("Component {} was returned from an event handler method, but is not a page component. The page containing the component will render the client response.", value.getComponentResources().getCompleteId());
         }
 
         resultProcessor.processResultValue(resources.getPageName());

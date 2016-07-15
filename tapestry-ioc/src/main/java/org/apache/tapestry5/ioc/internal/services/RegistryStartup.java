@@ -59,8 +59,8 @@ public class RegistryStartup implements Runnable
             {
                 // startup-failure=An exception occurred during startup: %s
 
-                logger.error(String.format("An exception occurred during startup: %s",
-                        ExceptionUtils.toMessage(ex)), ex);
+                logger.error("An exception occurred during startup: {}",
+                        ExceptionUtils.toMessage(ex), ex);
             }
         }
 

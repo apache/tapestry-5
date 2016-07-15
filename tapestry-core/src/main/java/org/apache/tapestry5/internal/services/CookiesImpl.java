@@ -123,15 +123,27 @@ public class CookiesImpl implements Cookies
             public void write()
             {
                 Cookie cookie = new Cookie(name, value);
-                
+
                 cookie.setPath(path == null ? defaultCookiePath : path);
-                
+
                 if(domain != null)
                     cookie.setDomain(domain);
-                
+
                 cookie.setMaxAge(maxAge == null ? defaultMaxAge : maxAge);
-                
+
                 cookie.setSecure(secure == null ? request.isSecure() : secure);
+
+                cookie.setVersion(version);
+
+                if (comment != null)
+                {
+                    cookie.setComment(comment);
+                }
+
+                if (httpOnly != null)
+                {
+                    cookie.setHttpOnly(httpOnly);
+                }
 
                 cookieSink.addCookie(cookie);
             }
@@ -140,11 +152,11 @@ public class CookiesImpl implements Cookies
             public void delete()
             {
                 setMaxAge(0);
-                
+
                 write();
             }
         };
-        
+
         return builder;
     }
 }

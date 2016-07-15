@@ -16,7 +16,7 @@ package org.apache.tapestry5.integration.cluster;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
-import org.apache.tapestry5.test.Jetty7Runner;
+import org.apache.tapestry5.test.JettyRunner;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.JDBCSessionIdManager;
@@ -63,9 +63,9 @@ public class ClusterTests
 
     private static final String CLEAR = "//a[contains(text(),'Clear')]";
 
-    Jetty7Runner serverA;
+    JettyRunner serverA;
 
-    Jetty7Runner serverB;
+    JettyRunner serverB;
 
     SeleniumServer seleniumServer;
     Selenium selenium;
@@ -194,9 +194,9 @@ public class ClusterTests
         selenium.waitForPageToLoad("5000");
     }
 
-    private Jetty7Runner configureClusteredJetty(String name, int port) throws Exception
+    private JettyRunner configureClusteredJetty(String name, int port) throws Exception
     {
-        Jetty7Runner runner = new Jetty7Runner();
+        JettyRunner runner = new JettyRunner();
 
         runner.configure("src/test/cluster", "", port, port + 100);
 

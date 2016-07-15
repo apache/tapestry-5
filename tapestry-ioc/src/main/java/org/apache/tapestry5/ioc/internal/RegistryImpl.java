@@ -1388,8 +1388,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             if (logger.isDebugEnabled())
             {
-                logger.debug(String.format("Service %s %s configuration: %s", 
-                        serviceDef.getServiceId(), type, configuration.toString()));
+                logger.debug("Service {} {} configuration: {}", 
+                        serviceDef.getServiceId(), type, configuration.toString());
             }
         }
         

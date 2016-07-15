@@ -345,12 +345,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         if (TOMCAT_6.equals(container))
         {
-            return new Tomcat6Runner(webAppFolder, contextPath, port, sslPort);
+            return new TomcatRunner(webAppFolder, contextPath, port, sslPort);
         }
 
         if (JETTY_7.equals(container))
         {
-            return new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
+            return new JettyRunner(webAppFolder, contextPath, port, sslPort);
         }
 
         throw new RuntimeException("Unknown servlet container: " + container);

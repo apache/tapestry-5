@@ -316,7 +316,7 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                     {
                         if (logger.isDebugEnabled())
                         {
-                            logger.debug(String.format("%s loading parameter %s", icr.getCompleteId(), parameterName));
+                            logger.debug("{} loading parameter {}", icr.getCompleteId(), parameterName);
                         }
 
                         // If it's bound at this point, that's because of an explicit binding
@@ -326,8 +326,8 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         {
                             if (logger.isDebugEnabled())
                             {
-                                logger.debug(String.format("%s parameter %s not yet bound", icr.getCompleteId(),
-                                        parameterName));
+                                logger.debug("{} parameter {} not yet bound", icr.getCompleteId(),
+                                        parameterName);
                             }
 
                             // Otherwise, construct a default binding, or use one provided from
@@ -337,8 +337,8 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
                             if (logger.isDebugEnabled())
                             {
-                                logger.debug(String.format("%s parameter %s bound to default %s", icr.getCompleteId(),
-                                        parameterName, binding));
+                                logger.debug("{} parameter {} bound to default {}", icr.getCompleteId(),
+                                        parameterName, binding);
                             }
 
                             if (binding != null)
@@ -423,8 +423,8 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
                         if (logger.isDebugEnabled())
                         {
-                            logger.debug(String.format("%s invoking method %s to obtain default for parameter %s",
-                                    icr.getCompleteId(), defaultMethodHandle, parameterName));
+                            logger.debug("{} invoking method {} to obtain default for parameter {}",
+                                    icr.getCompleteId(), defaultMethodHandle, parameterName);
                         }
 
                         MethodInvocationResult result = defaultMethodHandle.invoke(icr.getComponent());

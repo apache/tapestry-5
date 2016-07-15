@@ -63,10 +63,12 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
 
         train_getContainer(valueResources, containerResources);
 
-        train_getCompleteId(valueResources, PAGE_NAME + ":child");
+        String completeId = PAGE_NAME + ":child";
+
+        train_getCompleteId(valueResources, completeId);
 
         logger
-                .warn("Component Zoop:child was returned from an event handler method, but is not a page component. The page containing the component will render the client response.");
+                .warn("Component {} was returned from an event handler method, but is not a page component. The page containing the component will render the client response.", completeId);
 
         train_getPageName(valueResources, PAGE_NAME);
 

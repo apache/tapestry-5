@@ -392,9 +392,8 @@ public class Form implements ClientElement, FormValidationControl
                     value = URLDecoder.decode(value, "UTF-8");
                 } catch (UnsupportedEncodingException e)
                 {
-                    logger.error(String.format(
-                            "Enable to decode parameter value for parameter %s in form %s",
-                            parameterName, form.getName()), e);
+                    logger.error("Enable to decode parameter value for parameter {} in form {}",
+                            parameterName, form.getName(), e);
                 }
                 writer.element("input", "type", "hidden", "name", parameterName, "value", value);
                 writer.end();

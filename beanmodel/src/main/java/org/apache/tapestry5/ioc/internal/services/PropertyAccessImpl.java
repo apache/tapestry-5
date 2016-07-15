@@ -100,13 +100,14 @@ public class PropertyAccessImpl implements PropertyAccess
 
             List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
-            addAll(descriptors, info.getPropertyDescriptors());
-
-            // TAP5-921 - Introspector misses interface methods not implemented in an abstract class
-            if (forClass.isInterface() || Modifier.isAbstract(forClass.getModifiers()) )
-                addPropertiesFromExtendedInterfaces(forClass, descriptors);
+            // Introspector misses:
+            // - interface methods not implemented in an abstract class (TAP5-921)
+            // - default methods (TAP5-2449)
+            addPropertiesFromExtendedInterfaces(forClass, descriptors);
 
             addPropertiesFromScala(forClass, descriptors);
+
+            addAll(descriptors, info.getPropertyDescriptors());
 
             return new ClassPropertyAdapterImpl(forClass, descriptors);
         }
@@ -116,18 +117,34 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
-    private <T> void addAll(List<T> list, T[] array)
+    private static <T> void addAll(List<T> list, T[] array)
     {
-        list.addAll(Arrays.asList(array));
+        if (array.length > 0){
+            list.addAll(Arrays.asList(array));
+        }
     }
 
-    private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
+    private static <T> void addInterfacesRecursively(List<Class> list, Class<?> clazz)
+    {
+        Class<?>[] interfaces = clazz.getInterfaces();
+        for (int i = 0; i < interfaces.length; i++) {
+          Class<?> iface = interfaces[i];
+          addInterfacesRecursively(list, iface);
+          list.add(iface);
+        }
+    }
+
+    private static void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
-        LinkedList<Class> queue = CollectionFactory.newLinkedList();
 
+        Class[] interfaces = forClass.getInterfaces();
+        if (interfaces.length == 0){
+            return;
+        }
+        LinkedList<Class> queue = CollectionFactory.newLinkedList();
         // Seed the queue
-        addAll(queue, forClass.getInterfaces());
+        addInterfacesRecursively(queue, forClass);
 
         while (!queue.isEmpty())
         {
@@ -138,7 +155,6 @@ public class PropertyAccessImpl implements PropertyAccess
             // Duplicates occur and are filtered out in ClassPropertyAdapter which stores
             // a property name to descriptor map.
             addAll(descriptors, info.getPropertyDescriptors());
-            addAll(queue, c.getInterfaces());
         }
     }
 

@@ -1,5 +1,6 @@
 package ioc.specs
 
+import com.example.TestInterface
 import java.awt.Image
 import java.beans.*
 import java.lang.reflect.Method
@@ -795,5 +796,18 @@ class PropertyAccessImplSpec extends Specification {
 
   private Method findMethod(Class beanClass, String methodName) {
     return beanClass.methods.find { it.name == methodName }
+  }
+  
+ 
+  public static class TestData implements TestInterface {
+  }
+  
+  // TAP5-2449
+  def "default method is recognized"(){
+    when:
+    def pa = getPropertyAdapter(TestData, 'testString')
+    then:
+    pa != null
+    
   }
 }

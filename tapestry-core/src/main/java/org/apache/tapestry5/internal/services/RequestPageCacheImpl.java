@@ -70,7 +70,7 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
                 page.detached();
             } catch (Throwable t)
             {
-                logger.error(String.format("Error detaching page %s: %s", page, ExceptionUtils.toMessage(t)), t);
+                logger.error("Error detaching page {}: {}", page, ExceptionUtils.toMessage(t), t);
             }
         }
     }

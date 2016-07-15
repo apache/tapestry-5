@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import org.apache.tapestry5.test.Jetty7Runner
+import org.apache.tapestry5.test.JettyRunner
 
 if (this.args.length != 1) {
   fail "Expects one argument: the path to the web context to execute."
 }
 
-new Jetty7Runner(this.args[0], "/", 8080, 9999).start()
+new JettyRunner(this.args[0], "/", 8080, 9999).start()

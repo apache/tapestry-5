@@ -218,10 +218,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         @Override
         public Void invoke()
         {
-            if (logger.isDebugEnabled())
-            {
-                logger.debug(String.format("Executing job #%d (%s)", jobId, name));
-            }
+            logger.debug("Executing job #{} ({})", jobId, name);
 
             try
             {

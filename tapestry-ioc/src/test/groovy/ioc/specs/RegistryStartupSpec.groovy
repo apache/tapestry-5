@@ -49,7 +49,7 @@ class RegistryStartupSpec extends Specification {
     then:
 
     1 * r1.run() >> { throw ex }
-    1 * logger.error("An exception occurred during startup: Crunch!", ex)
+    1 * logger.error("An exception occurred during startup: {}", 'Crunch!', ex)
     1 * r2.run()
   }
 
