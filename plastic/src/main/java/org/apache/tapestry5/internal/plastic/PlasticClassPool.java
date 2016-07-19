@@ -56,7 +56,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * Maps class names to instantiators for that class name.
      * Synchronized on the loader.
      */
-    private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newMap();
+    private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newConcurrentMap();
 
     private final InheritanceData emptyInheritanceData = new InheritanceData(null);
 
@@ -599,50 +599,49 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     public ClassInstantiator getClassInstantiator(String className)
     {
-        synchronized (loader)
+        ClassInstantiator result = instantiators.get(className);
+
+        if (result == null)
         {
-            if (!instantiators.containsKey(className))
+            try
             {
-                try
-                {
-                    loader.loadClass(className);
-                } catch (ClassNotFoundException ex)
-                {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            ClassInstantiator result = instantiators.get(className);
-
-            if (result == null)
+                loader.loadClass(className);
+                result = instantiators.get(className);
+            } catch (ClassNotFoundException ex)
             {
-                // TODO: Verify that the problem is incorrect package, and not any other failure.
-
-                StringBuilder b = new StringBuilder();
-                b.append("Class '")
-                        .append(className)
-                        .append("' is not a transformed class. Transformed classes should be in one of the following packages: ");
-
-                String sep = "";
-
-                List<String> names = new ArrayList<String>(controlledPackages);
-                Collections.sort(names);
-
-                for (String name : names)
-                {
-                    b.append(sep);
-                    b.append(name);
-
-                    sep = ", ";
-                }
-
-                String message = b.append('.').toString();
-
-                throw new IllegalArgumentException(message);
+                throw new RuntimeException(ex);
             }
+        }
 
+
+        if (result != null)
+        {
             return result;
         }
+
+        // TODO: Verify that the problem is incorrect package, and not any other failure.
+
+        StringBuilder b = new StringBuilder();
+        b.append("Class '")
+                .append(className)
+                .append("' is not a transformed class. Transformed classes should be in one of the following packages: ");
+
+        String sep = "";
+
+        List<String> names = new ArrayList<String>(controlledPackages);
+        Collections.sort(names);
+
+        for (String name : names)
+        {
+            b.append(sep);
+            b.append(name);
+
+            sep = ", ";
+        }
+
+        String message = b.append('.').toString();
+
+        throw new IllegalArgumentException(message);
     }
 
     TypeCategory getTypeCategory(String typeName)

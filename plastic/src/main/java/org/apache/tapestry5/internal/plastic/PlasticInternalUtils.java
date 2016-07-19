@@ -25,6 +25,8 @@ import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,6 +196,11 @@ public class PlasticInternalUtils
     public static <K, V> Map<K, V> newMap()
     {
         return new HashMap<K, V>();
+    }
+
+    public static <K, V> ConcurrentMap<K, V> newConcurrentMap()
+    {
+        return new ConcurrentHashMap<K, V>();
     }
 
     public static <T> Set<T> newSet()
