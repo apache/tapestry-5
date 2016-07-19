@@ -85,7 +85,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     /**
      * Map from class name to Instantiator.
      */
-    private final Map<String, Instantiator> classToInstantiator = CollectionFactory.newMap();
+    private final Map<String, Instantiator> classToInstantiator = CollectionFactory.newConcurrentMap();
 
     private final Map<String, ComponentModel> classToModel = CollectionFactory.newMap();
 
@@ -200,18 +200,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         classToModel.clear();
     }
 
-    public synchronized Instantiator getInstantiator(final String className)
+    public Instantiator getInstantiator(final String className)
     {
-        Instantiator result = classToInstantiator.get(className);
-
-        if (result == null)
-        {
-            result = createInstantiatorForClass(className);
-
-            classToInstantiator.put(className, result);
-        }
-
-        return result;
+        return classToInstantiator.computeIfAbsent(className, this::createInstantiatorForClass);
     }
 
     private Instantiator createInstantiatorForClass(final String className)
