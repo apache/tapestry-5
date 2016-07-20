@@ -43,7 +43,7 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
     {
         return (T) getOrCreate(ssoClass, creator);
     }
-    
+
     protected <T> Object getOrCreate(Class<T> ssoClass, ApplicationStateCreator<T> creator)
     {
         Session session = getSession();
@@ -59,6 +59,22 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
         }
 
         return sso;
+    }
+
+    public <T> T getIfExists(Class<T> ssoClass)
+    {
+        Session session = request.getSession(false);
+
+        if (session != null)
+        {
+
+            String key = buildKey(ssoClass);
+
+            Object sso = session.getAttribute(key);
+
+            return sso != null ? (T)sso : null;
+        }
+        return null;
     }
 
     protected <T> String buildKey(Class<T> ssoClass)

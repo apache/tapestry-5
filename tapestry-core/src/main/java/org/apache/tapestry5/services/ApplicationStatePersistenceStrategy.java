@@ -40,4 +40,11 @@ public interface ApplicationStatePersistenceStrategy
      * Returns true if the SSO already exists, false if null.
      */
     <T> boolean exists(Class<T> ssoClass);
+
+    /**
+     * Returns the SSO if it exists or null.
+     */
+    default <T> T getIfExists(Class<T> ssoClass) {
+        return exists(ssoClass) ? get(ssoClass, () -> null) : null;
+    }
 }

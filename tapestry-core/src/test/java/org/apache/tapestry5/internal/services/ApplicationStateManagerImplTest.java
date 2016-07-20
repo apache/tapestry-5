@@ -196,7 +196,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
                 new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
-        train_exists(strategy, asoClass, false);
+        train_getIfExists(strategy, asoClass, null);
 
         replay();
 
@@ -222,8 +222,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
                 new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
-        train_exists(strategy, asoClass, true);
-        train_get(strategy, asoClass, creator, aso);
+        train_getIfExists(strategy, asoClass, aso);
 
         replay();
 

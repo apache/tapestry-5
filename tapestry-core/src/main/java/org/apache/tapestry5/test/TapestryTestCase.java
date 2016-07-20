@@ -354,6 +354,12 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(binding.get()).andReturn(value);
     }
 
+    protected final <T> void train_getIfExists(ApplicationStatePersistenceStrategy strategy, Class<T> asoClass,
+           T aso)
+    {
+        expect(strategy.getIfExists(asoClass)).andReturn(aso);
+    }
+
     protected void train_getAttribute(HttpSession session, String attributeName, Object value)
     {
         expect(session.getAttribute(attributeName)).andReturn(value);

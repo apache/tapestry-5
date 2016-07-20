@@ -59,6 +59,11 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         {
             return strategy.exists(ssoClass);
         }
+
+        T getIfExists()
+        {
+            return strategy.getIfExists(ssoClass);
+        }
     }
 
     /**
@@ -135,9 +140,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     public <T> T getIfExists(Class<T> ssoClass)
     {
-        ApplicationStateAdapter<T> adapter = getAdapter(ssoClass);
-
-        return adapter.exists() ? adapter.getOrCreate() : null;
+        return getAdapter(ssoClass).getIfExists();
     }
 
     public <T> void set(Class<T> ssoClass, T sso)
