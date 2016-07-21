@@ -9,24 +9,24 @@ apply plugin: 'antlr'
 buildDir = 'target/gradle-build'
 
 dependencies {
-	compile project(":plastic")
-	compile project(":tapestry5-annotations")
-	compile project(":commons")
-	compile "org.slf4j:slf4j-api:${versions.slf4j}"
-	
-	// ANTLR tool path used with the generateGrammarSource task
-	antlr "org.antlr:antlr:3.5.2"
+    compile project(":plastic")
+    compile project(":tapestry5-annotations")
+    compile project(":commons")
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
-	// Transitive will bring in the unwanted string template library as well
-	compile "org.antlr:antlr-runtime:3.5.2", {
-		exclude group: "org.antlr", module: "stringtemplate"
-	}
-    
+    // ANTLR tool path used with the generateGrammarSource task
+    antlr "org.antlr:antlr:3.5.2"
+
+    // Transitive will bring in the unwanted string template library as well
+    compile "org.antlr:antlr-runtime:3.5.2", {
+        exclude group: "org.antlr", module: "stringtemplate"
+    }
+
     testCompile "org.testng:testng:${versions.testng}", { transitive = false }
 }
 
 clean.delete generateGrammarSource.outputDirectory
 
 compileJava {
-	options.fork(memoryMaximumSize: '512m')
+    options.fork(memoryMaximumSize: '512m')
 }
