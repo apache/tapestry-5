@@ -6,7 +6,7 @@ dependencies {
   compile project(':tapestry-core')
 
   compile "javax.validation:validation-api:1.0.0.GA"
-  compile "org.hibernate:hibernate-validator:4.0.0.GA"
+  compile "org.hibernate:hibernate-validator:4.3.2.Final"
 
   testCompile project(':tapestry-test')
 }
