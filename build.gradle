@@ -590,7 +590,7 @@ boolean isWindows() {
 }
 
 task updateBootstrap << {
-  def bootstrapVersion = '3.3.5'
+  def bootstrapVersion = '3.3.7'
   def target = new File(temporaryDir, 'bootstrap.zip')
   ant.get(src: "https://github.com/twbs/bootstrap/archive/v${bootstrapVersion}.zip", dest: target)
 
