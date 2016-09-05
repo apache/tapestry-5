@@ -20,18 +20,17 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
 /**
- * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
- * href="http://www.trailsframework.org/">Trails</a> and <a href="http://beanform.sourceforge.net/">BeanForm</a> (both
- * for Tapestry 4). Generates a simple UI for editing the properties of a JavaBean, with the flavor of UI for each
+ * A component that creates an entire form for editing the properties of a particular bean (or POJO, or any object
+ * with properties). Generates a simple UI for editing the properties of the object, with the UI for each
  * property (text field, checkbox, drop down list) determined from the property type (or by other means, such as an
  * annotation), and the order and validation for the properties determined from annotations on the property's getter and
  * setter methods.
- *
- * You may add block parameters to the component; when the name matches (case insensitive) the name of a property, then
- * the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you to
+ * <p>
+ * You may add block parameters to the component; when the name matches the name of a property (case insensitively), then
+ * the corresponding Block is rendered, rather than any of the built in property editor blocks. This allows you to
  * override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
- *
+ * <p>
  * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
  * events of a Form.
  *

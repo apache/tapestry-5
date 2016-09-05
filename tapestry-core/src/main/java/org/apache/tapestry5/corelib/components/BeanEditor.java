@@ -34,9 +34,11 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
 /**
- * A component that generates a user interface for editing the properties of a bean. This is the central component of
- * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality. This component places
- * a {@link BeanEditContext} into the environment.
+ * A component that generates a user interface for editing the properties of a bean (or POJO,
+ * or any object with properties). This is the central component of the {@link BeanEditForm}
+ * component, and it utilizes the {@link PropertyEditor} component for much of its functionality.
+ * <p>
+ * This component places a {@link BeanEditContext} into the {@link Environment}.
  * 
  * @tapestrydoc
  */
