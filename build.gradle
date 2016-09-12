@@ -3,7 +3,6 @@ description = "Apache Tapestry 5 Project"
 import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: "base"
-apply plugin: "sonar"
 
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
@@ -44,11 +43,6 @@ def tapestryVersion() {
 // Let analysis.apache.org get in touch with our builds
 
 project.ext {
-    sonarUrl = System.getProperty("sonarUrl", "https://analysis.apache.org");
-    sonarDbUrl = System.getProperty("sonarDbUrl", "");
-    sonarDbUsername = System.getProperty("sonarDbUsername", "");
-    sonarDbPassword = System.getProperty("sonarDbPassword", "");
-    sonarDbDriverClassName = "com.mysql.jdbc.Driver"
 
     stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
     snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
@@ -69,18 +63,6 @@ project.ext {
     deployPassword = { getProperty(deployPasswordProperty) }
 
     archiveDeployFolder = { getProperty("apacheArchivesFolder") }
-}
-
-sonar {
-    server {
-        url = sonarUrl
-    }
-    database {
-        url = sonarDbUrl
-        driverClassName = sonarDbDriverClassName
-        username = sonarDbUsername
-        password = sonarDbPassword
-    }
 }
 
 allprojects {
