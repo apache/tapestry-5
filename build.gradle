@@ -418,7 +418,7 @@ task continuousIntegration {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14.1'
+    gradleVersion = '3.0.0'
     description "Regenerates the Gradle Wrapper files"
 }
 
