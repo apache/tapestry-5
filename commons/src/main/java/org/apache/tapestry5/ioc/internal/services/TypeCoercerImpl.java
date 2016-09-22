@@ -495,6 +495,11 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         {
             tuples = extend(tuples, new CoercionTuple(sourceType, targetType, new StringToEnumCoercion(targetType)));
         }
+        else if (Enum.class.isAssignableFrom(sourceType) && targetType == String.class)
+        {
+            // TAP5-2565
+            tuples = extend(tuples, new CoercionTuple(sourceType, targetType, (value)->((Enum) value).name()));
+        }
 
         return tuples;
     }
