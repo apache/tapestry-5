@@ -399,8 +399,14 @@ task combinedJacocoReport(type:JacocoReport){
         enabled = true
         destination = "$buildDir/reports/jacoco"
       }
-      xml.enabled = false
-      csv.enabled = false
+      xml {
+        enabled = false
+        destination = "unused"
+      }
+      csv {
+        enabled = false
+        destination = "unused"
+      }
   }
   onlyIf = {
       true
