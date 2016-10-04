@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import java.io.Serializable;
+
 /**
  * A collection of parameters that may eventually be passed to an event handler method. Includes the
  * ability to coerce
@@ -22,7 +24,7 @@ package org.apache.tapestry5;
  * @see org.apache.tapestry5.ioc.services.TypeCoercer
  * @see org.apache.tapestry5.ValueEncoder
  */
-public interface EventContext
+public interface EventContext extends Serializable
 {
     /**
      * Returns the number of parameter values that can be extracted.
