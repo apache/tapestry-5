@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.InvalidationEventHub;
-
-import javax.annotation.PostConstruct;
 
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class StringInternerImpl implements StringInterner
 {
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
-    @PostConstruct
+    @PostInjection
     public void setupInvalidation(@ComponentClasses InvalidationEventHub hub)
     {
         hub.clearOnInvalidation(cache);
