@@ -24,7 +24,6 @@ import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 public class ComponentClassCacheImpl implements ComponentClassCache
