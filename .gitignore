@@ -11,6 +11,7 @@ target
 test-output
 temp-testng*.xml
 build/
+gradle-app.setting
 .gradle
 .groovy
 *~
