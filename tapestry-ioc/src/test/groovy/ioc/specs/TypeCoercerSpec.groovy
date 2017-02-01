@@ -5,6 +5,9 @@ import org.apache.tapestry5.ioc.annotations.AnnotationUseContext
 import org.apache.tapestry5.ioc.services.TypeCoercer
 import org.apache.tapestry5.ioc.util.TimeInterval
 import org.apache.tapestry5.plastic.PlasticUtils
+
+import com.example.Animal;
+
 import spock.lang.Unroll
 
 class TypeCoercerSpec extends AbstractSharedRegistrySpecification {
@@ -97,7 +100,9 @@ class TypeCoercerSpec extends AbstractSharedRegistrySpecification {
     "mixin"                           | AnnotationUseContext | AnnotationUseContext.MIXIN
     123                               | Object[]             | [123] as Object[]
     [1, 2, 3]                         | Object[]             | [1, 2, 3] as Object[]
-
+    // TAP5-2565
+    Animal.DOG                        | String               | 'DOG'
+    'CAT'                             | Animal               | Animal.CAT
 
     inputTypeName = PlasticUtils.toTypeName(input.getClass())
     typeName = PlasticUtils.toTypeName(type)

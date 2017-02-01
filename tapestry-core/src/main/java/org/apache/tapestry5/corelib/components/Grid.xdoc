@@ -68,7 +68,7 @@ public class User
 
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
     <body>
         <h1>List Users</h1>
 
@@ -165,7 +165,7 @@ public class UserList
 
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
     <body>
         <h1>List Users</h1>
 
@@ -235,6 +235,70 @@ delete-label=Delete user?]]></source>
 
         </section>
 
+        <section name="Overriding Columns in Java">
+            <p>
+                In the previous example, we explained how to override the rendering block of an attribute, by using a Block object in the template. In this part, we will see how can we do the same thing in the Java class. 
+            </p>
+            
+             <subsection name="UserList.tml">
+
+                <p>
+                    The Grid has a PropertyOverrides parameter, which makes it possible to override the rendering block directly in the Java Class, thanks to its getOverrideBlock method. This method takes one parameter, the name of the block you want to override. We will use the same suffixes (Cell and Header). 
+                </p>
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
+    <body>
+        <h1>List Users</h1>
+
+        <t:grid t:source="users" t:overrides="propertyOverrides">
+            
+        </t:grid>
+    </body>
+</html>
+]]></source>
+
+            </subsection>
+            <subsection name="UserList.java">
+                <p>
+                    But the next question is "How to render a Block in Java ?". We will use the RenderableAsBlock class, which will convert a simple Renderable into a Block. We will use the MarkupWriter object of the render method for writing the content of the Block.
+                </p>
+                <source><![CDATA[
+public class UserList
+{
+    @Inject
+    private UserDAO userDAO;
+
+    public List<User> getUsers() { return userDAO.findAll(); }
+
+    void getPropertyOverrides()
+    {
+        return new PropertyOverrides() {
+            
+            public Messages getOverrideMessages() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+             
+            public Block getOverrideBlock(String name) {
+                
+               if(name.equalsIgnoreCase("firstNameHeader")){
+                    return new RenderableAsBlock(new Renderable() {
+                        
+                        public void render(MarkupWriter writer) {
+                            writer.write("test override");
+                        }
+                    });
+                }
+                
+                return null;
+            }
+    }  
+}]]></source>
+                <p>
+                    In this example, we have just changed the header of the firstName attribute.
+                </p>
+             </subsection>
+        </section>
 
         <section name="Notes">
 

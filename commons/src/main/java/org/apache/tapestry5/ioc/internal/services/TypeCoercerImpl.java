@@ -121,6 +121,15 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         }
     };
 
+    private static final Coercion COERCION_ENUM_TO_STRING = new Coercion<Enum, String>()
+    {
+        @Override
+        public String coerce(Enum input)
+        {
+            return input.name();
+        }
+    };
+
     public TypeCoercerImpl(Collection<CoercionTuple> tuples)
     {
         for (CoercionTuple tuple : tuples)
@@ -494,6 +503,11 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         if (sourceType == String.class && Enum.class.isAssignableFrom(targetType))
         {
             tuples = extend(tuples, new CoercionTuple(sourceType, targetType, new StringToEnumCoercion(targetType)));
+        }
+        else if (Enum.class.isAssignableFrom(sourceType) && targetType == String.class)
+        {
+            // TAP5-2565
+            tuples = extend(tuples, new CoercionTuple(sourceType, targetType, COERCION_ENUM_TO_STRING));
         }
 
         return tuples;
