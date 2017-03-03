@@ -16,8 +16,8 @@ project.ext.versions = [
     spock: "1.0-groovy-2.4",
     hibernate: "5.1.0.Final",
     slf4j: "1.7.24",
-    geb: "0.13.1",
-    selenium: "2.53.1"
+    geb: "1.1.1",
+    selenium: "3.6.0"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")

@@ -1,5 +1,6 @@
 package org.apache.tapestry5.integration.app1
 
+import org.openqa.selenium.By
 import org.testng.annotations.Test
 
 
@@ -10,9 +11,8 @@ class AjaxGroovyTests extends App1TestCase {
     void radio_buttons_in_ajax_form() {
 
         openLinks "Ajax Radio Demo"
-
-        click "css=label:contains('It')"
-        click "css=label:contains('Temp')"
+        webDriver.findElements(By.cssSelector('label')).find{it.text.contains('It')}.click()
+        webDriver.findElements(By.cssSelector('label')).find{it.text.contains('Temp')}.click()
 
         click SUBMIT
 

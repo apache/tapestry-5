@@ -16,6 +16,10 @@ package org.apache.tapestry5.integration.cluster;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
+
+import io.github.bonigarcia.wdm.FirefoxDriverManager;
+
 import org.apache.tapestry5.test.JettyRunner;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.eclipse.jetty.server.Server;
@@ -23,8 +27,7 @@ import org.eclipse.jetty.server.session.JDBCSessionIdManager;
 import org.eclipse.jetty.server.session.JDBCSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.openqa.selenium.server.RemoteControlConfiguration;
-import org.openqa.selenium.server.SeleniumServer;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -67,7 +70,6 @@ public class ClusterTests
 
     JettyRunner serverB;
 
-    SeleniumServer seleniumServer;
     Selenium selenium;
 
     @BeforeClass
@@ -78,16 +80,11 @@ public class ClusterTests
         serverA = configureClusteredJetty(SERVER_A_NAME, SERVER_A_PORT);
         serverB = configureClusteredJetty(SERVER_B_NAME, SERVER_B_PORT);
 
-        seleniumServer = new SeleniumServer();
-        seleniumServer.start();
+        FirefoxDriverManager.getInstance().setup();
+        FirefoxDriver driver = new FirefoxDriver();
 
-        String browserStartCommand = xmlTest.getParameter(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER);
-        browserStartCommand = browserStartCommand != null ? browserStartCommand : FIREFOX_BROWSER_CMD;
+        selenium = new WebDriverBackedSelenium(driver, "http://localhost:9091/");
 
-        selenium = new DefaultSelenium(
-                "localhost", RemoteControlConfiguration.DEFAULT_PORT,
-                browserStartCommand, "http://localhost:9091/"
-        );
         selenium.start();
     }
 
@@ -97,7 +94,6 @@ public class ClusterTests
         serverA.stop();
         serverB.stop();
         selenium.stop();
-        seleniumServer.stop();
     }
 
     @Test

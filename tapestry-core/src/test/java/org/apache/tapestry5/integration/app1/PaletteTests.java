@@ -15,6 +15,8 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Palette;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 /**
@@ -111,7 +113,9 @@ public class PaletteTests extends App1TestCase
          * it is possible to get into this state by creating a model with
          * disabled options.
          */
-        getEval("this.browserbot.findElement('" + AVAILABLE_OPTIONS + " option').disabled = 'disabled';");
+        WebElement option = webDriver.findElement(convertLocator(AVAILABLE_OPTIONS+" option"));
+        JavascriptExecutor js = (JavascriptExecutor) webDriver;
+        js.executeScript("arguments[0].disabled = 'disabled'", option);
 
         // causes an error in the js console but does not throw an exception
         // here. optimally, this would make the test case fail.

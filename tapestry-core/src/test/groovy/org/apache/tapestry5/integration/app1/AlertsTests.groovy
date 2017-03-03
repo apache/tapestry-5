@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.integration.app1
 
+import org.openqa.selenium.By
 import org.testng.annotations.Test
 
 /**
@@ -82,8 +83,9 @@ class AlertsTests extends App1TestCase {
         assertTextPresent "trad warn transient"
 
         // dismiss the first alert that indicates the submission type
-
-        click "css=$CONTAINER :contains('Traditional form submission') button.close"
+        webDriver.findElements(By.cssSelector(CONTAINER)).find{
+          it.text.contains('Traditional form submission')
+        }.findElement(By.cssSelector('button.close')).click()
 
         // wait for the transient alert to be automatically removed
         sleep 5000

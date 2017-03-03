@@ -27,7 +27,7 @@ class WebResourcesSpec extends GebReportingSpec {
         // Open index page
         go()
 
-        waitFor { !$("body[data-page-initialized]").empty }
+        waitFor { $('body').@'data-page-initialized' == 'true' }
 
         then:
 
@@ -42,7 +42,7 @@ class WebResourcesSpec extends GebReportingSpec {
 
         go()
 
-        waitFor { !$("body[data-page-initialized]").empty }
+        waitFor { $('body').@'data-page-initialized' == 'true' }
 
         // Because the CoffeeScript may already be pre-compiled, it can outrace the Less compilation.
         // For some reason, the navbar is invisible (at least to Selenium) until the CSS loads.
@@ -57,6 +57,6 @@ class WebResourcesSpec extends GebReportingSpec {
 
         then:
 
-        $(".demo").css("background-color") == "rgba(179, 179, 255, 1)"
+        $(".demo").css("background-color") == "rgb(179, 179, 255)"
     }
 }

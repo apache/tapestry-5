@@ -14,6 +14,8 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
 
 public class CoreBehaviorsTests extends App1TestCase
@@ -139,10 +141,10 @@ public class CoreBehaviorsTests extends App1TestCase
         openLinks("Expressions in JS Functions Demo");
 
         click("button1");
-        waitForCondition("selenium.getValue('target') == 'test1'", PAGE_LOAD_TIMEOUT);
+        waitForCondition(ExpectedConditions.attributeToBe(By.id("target"), "value", "test1"));
 
         click("button2");
-        waitForCondition("selenium.getValue('target') == '{key=test2}'", PAGE_LOAD_TIMEOUT);
+        waitForCondition(ExpectedConditions.attributeToBe(By.id("target"), "value", "{key=test2}"));
 
     }
 
@@ -1732,8 +1734,11 @@ public class CoreBehaviorsTests extends App1TestCase
         openLinks("Reload on nested page");
 
         assertTextPresent("This page throws an exception");
-
-        clickAndWait("css=a:contains('Go to page'):contains('with reload')");
+        
+        webDriver.findElements(By.cssSelector("a")).stream().filter((element) -> {
+          String text = element.getText();
+          return text.contains("Go to page") && text.contains("with reload");
+        }).findFirst().get().click();
 
         assertTextPresent("This page throws an exception");
     }
