@@ -1,103 +1,101 @@
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.tapestry5.json;
-
-/*
- * Copyright (c) 2002 JSON.org
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * The Software shall be used for Good, not Evil.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+// Note: this class was written without inspecting the non-free org.json sourcecode.
+
 /**
- * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in square brackets with
- * commas separating the values. The internal form is an object having {@code get} and {@code opt} methods for
- * accessing the values by index, and {@code put} methods for adding or replacing values. The values can be any of
- * these types: {@code Boolean}, {@code JSONArray}, {@code JSONObject}, {@code Number},
- * {@code String}, or the {@code JSONObject.NULL object}.
+ * A dense indexed sequence of values. Values may be any mix of
+ * {@link JSONObject JSONObjects}, other {@link JSONArray JSONArrays}, Strings,
+ * Booleans, Integers, Longs, Doubles, {@code null} or {@link JSONObject#NULL}.
+ * Values may not be {@link Double#isNaN() NaNs}, {@link Double#isInfinite()
+ * infinities}, or of any type not listed here.
  *
- * The constructor can convert a JSON text into a Java object. The {@code toString} method converts to JSON text.
+ * {@code JSONArray} has the same type coercion behavior and
+ * optional/mandatory accessors as {@link JSONObject}. See that class'
+ * documentation for details.
  *
- * A {@code get} method returns a value if one can be found, and throws an exception if one cannot be found. An
- * {@code opt} method returns a default value instead of throwing an exception, and so is useful for obtaining
- * optional values.
+ * <strong>Warning:</strong> this class represents null in two incompatible
+ * ways: the standard Java {@code null} reference, and the sentinel value {@link
+ * JSONObject#NULL}. In particular, {@code get} fails if the requested index
+ * holds the null reference, but succeeds if it holds {@code JSONObject.NULL}.
  *
- * The generic {@code get()} and {@code opt()} methods return an object which you can cast or query for type.
- * There are also typed {@code get} and {@code opt} methods that do type checking and type coersion for you.
- *
- * The texts produced by the {@code toString} methods strictly conform to JSON syntax rules. The constructors are
- * more forgiving in the texts they will accept:
- * <ul>
- * <li>An extra {@code ,}&nbsp;<small>(comma)</small> may appear just before the closing bracket.</li>
- * <li>The {@code null} value will be inserted when there is {@code ,}&nbsp;<small>(comma)</small> elision.</li>
- * <li>Strings may be quoted with {@code '}&nbsp;<small>(single quote)</small>.</li>
- * <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote, and if they do not
- * contain leading or trailing spaces, and if they do not contain any of these characters:
- * {@code { } [ ] / \ : , = ; #} and if they do not look like numbers and if they are not the reserved words
- * {@code true}, {@code false}, or {@code null}.</li>
- * <li>Values can be separated by {@code ;} <small>(semicolon)</small> as well as by {@code ,}
- * <small>(comma)</small>.</li>
- * <li>Numbers may have the {@code 0-} <small>(octal)</small> or {@code 0x-} <small>(hex)</small> prefix.</li>
- * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
- * </ul>
- *
- * @author JSON.org
- * @version 2
+ * Instances of this class are not thread safe.
  */
-public final class JSONArray extends JSONCollection implements Iterable<Object>
-{
+public final class JSONArray extends JSONCollection implements Iterable<Object> {
+
+    private final List<Object> values;
 
     /**
-     * The arrayList where the JSONArray's properties are kept.
+     * Creates a {@code JSONArray} with no values.
      */
-    private final List<Object> list = new ArrayList<Object>();
+    public JSONArray() {
+        values = new ArrayList<Object>();
+    }
 
     /**
-     * Construct an empty JSONArray.
+     * Creates a new {@code JSONArray} with values from the next array in the
+     * tokener.
+     *
+     * @param readFrom a tokener whose nextValue() method will yield a
+     *                 {@code JSONArray}.
+     * @throws RuntimeExeption if the parse fails or doesn't yield a
+     *                       {@code JSONArray}.
      */
-    public JSONArray()
-    {
+    JSONArray(JSONTokener readFrom) {
+        /*
+         * Getting the parser to populate this could get tricky. Instead, just
+         * parse to temporary JSONArray and then steal the data from that.
+         */
+        Object object = readFrom.nextValue(JSONArray.class);
+        if (object instanceof JSONArray) {
+            values = ((JSONArray) object).values;
+        } else {
+            throw JSON.typeMismatch(object, "JSONArray");
+        }
     }
 
-    public JSONArray(String text)
-    {
-        JSONTokener tokener = new JSONTokener(text);
-
-        parse(tokener);
+    /**
+     * Creates a new {@code JSONArray} with values from the JSON string.
+     *
+     * @param json a JSON-encoded string containing an array.
+     * @throws RuntimeExeption if the parse fails or doesn't yield a {@code
+     *                       JSONArray}.
+     */
+    public JSONArray(String json) {
+        this(new JSONTokener(json));
     }
 
-    public JSONArray(Object... values)
-    {
-        for (Object value : values)
-            put(value);
+    /**
+     * Creates a new {@code JSONArray} with values from the given primitive array.
+     *
+     * @param array The values to use.
+     * @throws RuntimeExeption if any of the values are non-finite double values (i.e. NaN or infinite)
+     */
+    public JSONArray(Object... values) {
+        this();
+        for (int i = 0; i < values.length; ++i) {
+            put(values[i]);
+        }
     }
 
     /**
@@ -115,338 +113,256 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
         return new JSONArray().putAll(iterable);
     }
 
-    @Override
-    public Iterator<Object> iterator()
-    {
-        return list.iterator();
+    /**
+     * @return Returns the number of values in this array.
+     */
+    public int length() {
+        return values.size();
     }
 
     /**
-     * Construct a JSONArray from a JSONTokener.
+     * Appends {@code value} to the end of this array.
      *
-     * @param tokenizer
-     *         A JSONTokener
-     * @throws RuntimeException
-     *         If there is a syntax error.
+     * @param value a {@link JSONObject}, {@link JSONArray}, String, Boolean,
+     *              Integer, Long, Double, or {@link JSONObject#NULL}}. May
+     *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}. Unsupported values are not permitted and will cause the
+     *              array to be in an inconsistent state.
+     * @return this array.
      */
-    JSONArray(JSONTokener tokenizer)
-    {
-        assert tokenizer != null;
-
-        parse(tokenizer);
-    }
-
-    private void parse(JSONTokener tokenizer)
-    {
-        if (tokenizer.nextClean() != '[')
-        {
-            throw tokenizer.syntaxError("A JSONArray text must start with '['");
-        }
-
-        if (tokenizer.nextClean() == ']')
-        {
-            return;
-        }
-
-        tokenizer.back();
-
-        while (true)
-        {
-            if (tokenizer.nextClean() == ',')
-            {
-                tokenizer.back();
-                list.add(JSONObject.NULL);
-            } else
-            {
-                tokenizer.back();
-                list.add(tokenizer.nextValue());
-            }
-
-            switch (tokenizer.nextClean())
-            {
-                case ';':
-                case ',':
-                    if (tokenizer.nextClean() == ']')
-                    {
-                        return;
-                    }
-                    tokenizer.back();
-                    break;
-
-                case ']':
-                    return;
-
-                default:
-                    throw tokenizer.syntaxError("Expected a ',' or ']'");
-            }
-        }
-    }
-
-    /**
-     * Get the object value associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return An object value.
-     * @throws RuntimeException
-     *         If there is no value for the index.
-     */
-    public Object get(int index)
-    {
-        return list.get(index);
-    }
-
-    /**
-     * Remove the object associated with the index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return An object removed.
-     * @throws RuntimeException
-     *         If there is no value for the index.
-     */
-    public Object remove(int index)
-    {
-        return list.remove(index);
-    }
-
-    /**
-     * Get the boolean value associated with an index. The string values "true" and "false" are converted to boolean.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return The truth.
-     * @throws RuntimeException
-     *         If there is no value for the index or if the value is not convertable to boolean.
-     */
-    public boolean getBoolean(int index)
-    {
-        Object value = get(index);
-
-        if (value instanceof Boolean)
-        {
-            return (Boolean) value;
-        }
-
-        if (value instanceof String)
-        {
-            String asString = (String) value;
-
-            if (asString.equalsIgnoreCase("false"))
-                return false;
-
-            if (asString.equalsIgnoreCase("true"))
-                return true;
-        }
-
-        throw new RuntimeException("JSONArray[" + index + "] is not a Boolean.");
-    }
-
-    /**
-     * Get the double value associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return The value.
-     * @throws IllegalArgumentException
-     *         If the key is not found or if the value cannot be converted to a number.
-     */
-    public double getDouble(int index)
-    {
-        Object value = get(index);
-
-        try
-        {
-            if (value instanceof Number)
-                return ((Number) value).doubleValue();
-
-            return Double.valueOf((String) value);
-        } catch (Exception e)
-        {
-            throw new IllegalArgumentException("JSONArray[" + index + "] is not a number.");
-        }
-    }
-
-    /**
-     * Get the int value associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return The value.
-     * @throws IllegalArgumentException
-     *         If the key is not found or if the value cannot be converted to a number. if the
-     *         value cannot be converted to a number.
-     */
-    public int getInt(int index)
-    {
-        Object o = get(index);
-        return o instanceof Number ? ((Number) o).intValue() : (int) getDouble(index);
-    }
-
-    /**
-     * Get the JSONArray associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return A JSONArray value.
-     * @throws RuntimeException
-     *         If there is no value for the index. or if the value is not a JSONArray
-     */
-    public JSONArray getJSONArray(int index)
-    {
-        Object o = get(index);
-        if (o instanceof JSONArray)
-        {
-            return (JSONArray) o;
-        }
-
-        throw new RuntimeException("JSONArray[" + index + "] is not a JSONArray.");
-    }
-
-    /**
-     * Get the JSONObject associated with an index.
-     *
-     * @param index
-     *         subscript
-     * @return A JSONObject value.
-     * @throws RuntimeException
-     *         If there is no value for the index or if the value is not a JSONObject
-     */
-    public JSONObject getJSONObject(int index)
-    {
-        Object o = get(index);
-        if (o instanceof JSONObject)
-        {
-            return (JSONObject) o;
-        }
-
-        throw new RuntimeException("JSONArray[" + index + "] is not a JSONObject.");
-    }
-
-    /**
-     * Get the long value associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return The value.
-     * @throws IllegalArgumentException
-     *         If the key is not found or if the value cannot be converted to a number.
-     */
-    public long getLong(int index)
-    {
-        Object o = get(index);
-        return o instanceof Number ? ((Number) o).longValue() : (long) getDouble(index);
-    }
-
-    /**
-     * Get the string associated with an index.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return A string value.
-     * @throws RuntimeException
-     *         If there is no value for the index.
-     */
-    public String getString(int index)
-    {
-        return get(index).toString();
-    }
-
-    /**
-     * Determine if the value is null.
-     *
-     * @param index
-     *         The index must be between 0 and length() - 1.
-     * @return true if the value at the index is null, or if there is no value.
-     */
-    public boolean isNull(int index)
-    {
-        return get(index) == JSONObject.NULL;
-    }
-
-    /**
-     * Get the number of elements in the JSONArray, included nulls.
-     *
-     * @return The length (or size).
-     */
-    public int length()
-    {
-        return list.size();
-    }
-
-    /**
-     * Append an object value. This increases the array's length by one.
-     *
-     * @param value
-     *         An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, JSONLiteral,
-     *         Long, or String, or the JSONObject.NULL singleton.
-     * @return this array
-     */
-    public JSONArray put(Object value)
-    {
-        // now testValidity checks for null values.
-        // assert value != null;
-
+    public JSONArray put(Object value) {
         JSONObject.testValidity(value);
-
-        list.add(value);
-
+        values.add(value);
         return this;
     }
 
     /**
-     * Put or replace an object value in the JSONArray. If the index is greater than the length of the JSONArray, then
-     * null elements will be added as necessary to pad it out.
+     * Same as {@link #put}, with added validity checks.
      *
-     * @param index
-     *         The subscript.
-     * @param value
-     *         The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
-     *         JSONObject, JSONString, Long, or String, or the JSONObject.NULL singeton.
-     * @return this array
-     * @throws RuntimeException
-     *         If the index is negative or if the the value is an invalid number.
+     * @param value The value to append.
      */
-    public JSONArray put(int index, Object value)
-    {
-        assert value != null;
+    void checkedPut(Object value) {
+        JSONObject.testValidity(value);
+        if (value instanceof Number) {
+            JSON.checkDouble(((Number) value).doubleValue());
+        }
 
+        put(value);
+    }
+
+    /**
+     * Sets the value at {@code index} to {@code value}, null padding this array
+     * to the required length if necessary. If a value already exists at {@code
+     * index}, it will be replaced.
+     *
+     * @param index Where to put the value.
+     * @param value a {@link JSONObject}, {@link JSONArray}, String, Boolean,
+     *              Integer, Long, Double, {@link JSONObject#NULL}, or {@code null}. May
+     *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}.
+     * @return this array.
+     * @throws RuntimeExeption If the value cannot be represented as a finite double value.
+     */
+    public JSONArray put(int index, Object value) {
         if (index < 0)
         {
             throw new RuntimeException("JSONArray[" + index + "] not found.");
         }
-
         JSONObject.testValidity(value);
-
-        if (index < length())
-        {
-            list.set(index, value);
-        } else
-        {
-            while (index != length())
-                list.add(JSONObject.NULL);
-
-            list.add(value);
+        if (value instanceof Number) {
+            // deviate from the original by checking all Numbers, not just floats & doubles
+            JSON.checkDouble(((Number) value).doubleValue());
         }
-
+        while (values.size() <= index) {
+            values.add(null);
+        }
+        values.set(index, value);
         return this;
     }
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-            return false;
+    /**
+     * Returns true if this array has no value at {@code index}, or if its value
+     * is the {@code null} reference or {@link JSONObject#NULL}.
+     *
+     * @param index Which value to check.
+     * @return true if the value is null.
+     */
+    public boolean isNull(int index) {
+        Object value = values.get(index);
+        return value == null || value == JSONObject.NULL;
+    }
 
-        if (!(obj instanceof JSONArray))
-            return false;
+    /**
+     * Returns the value at {@code index}.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if this array has no value at {@code index}, or if
+     *                       that value is the {@code null} reference. This method returns
+     *                       normally if the value is {@code JSONObject#NULL}.
+     */
+    public Object get(int index) {
+        try {
+            Object value = values.get(index);
+            if (value == null) {
+                throw new RuntimeException("Value at " + index + " is null.");
+            }
+            return value;
+        } catch (IndexOutOfBoundsException e) {
+            throw new RuntimeException("Index " + index + " out of range [0.." + values.size() + ")");
+        }
+    }
 
-        JSONArray other = (JSONArray) obj;
+    /**
+     * Removes and returns the value at {@code index}, or null if the array has no value
+     * at {@code index}.
+     *
+     * @param index Which value to remove.
+     * @return The value previously at the specified location.
+     */
+    public Object remove(int index) {
+        if (index < 0 || index >= values.size()) {
+            return null;
+        }
+        return values.remove(index);
+    }
 
-        return list.equals(other.list);
+    /**
+     * Returns the value at {@code index} if it exists and is a boolean or can
+     * be coerced to a boolean.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     *                       cannot be coerced to a boolean.
+     */
+    public boolean getBoolean(int index) {
+        Object object = get(index);
+        Boolean result = JSON.toBoolean(object);
+        if (result == null) {
+            throw JSON.typeMismatch(true, index, object, "Boolean");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists and is a double or can
+     * be coerced to a double.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     *                       cannot be coerced to a double.
+     */
+    public double getDouble(int index) {
+        Object object = get(index);
+        Double result = JSON.toDouble(object);
+        if (result == null) {
+            throw JSON.typeMismatch(true, index, object, "number");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists and is an int or
+     * can be coerced to an int.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     *                       cannot be coerced to a int.
+     */
+    public int getInt(int index) {
+        Object object = get(index);
+        Integer result = JSON.toInteger(object);
+        if (result == null) {
+            throw JSON.typeMismatch(true, index, object, "int");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists and is a long or
+     * can be coerced to a long.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     *                       cannot be coerced to a long.
+     */
+    public long getLong(int index) {
+        Object object = get(index);
+        Long result = JSON.toLong(object);
+        if (result == null) {
+            throw JSON.typeMismatch(true, index, object, "long");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists, coercing it if
+     * necessary.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if no such value exists.
+     */
+    public String getString(int index) {
+        Object object = get(index);
+        String result = JSON.toString(object);
+        if (result == null) {
+            throw JSON.typeMismatch(true, index, object, "String");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists and is a {@code
+     * JSONArray}.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value doesn't exist or is not a {@code
+     *                       JSONArray}.
+     */
+    public JSONArray getJSONArray(int index) {
+        Object object = get(index);
+        if (object instanceof JSONArray) {
+            return (JSONArray) object;
+        } else {
+            throw JSON.typeMismatch(true, index, object, "JSONArray");
+        }
+    }
+
+    /**
+     * Returns the value at {@code index} if it exists and is a {@code
+     * JSONObject}.
+     *
+     * @param index Which value to get.
+     * @return the value at the specified location.
+     * @throws RuntimeExeption if the value doesn't exist or is not a {@code
+     *                       JSONObject}.
+     */
+    public JSONObject getJSONObject(int index) {
+        Object object = get(index);
+        if (object instanceof JSONObject) {
+            return (JSONObject) object;
+        } else {
+            throw JSON.typeMismatch(true, index, object, "JSONObject");
+        }
     }
 
     @Override
+    public boolean equals(Object o) {
+        return o instanceof JSONArray && ((JSONArray) o).values.equals(values);
+    }
+
+    @Override
+    public int hashCode() {
+        // diverge from the original, which doesn't implement hashCode
+        return values.hashCode();
+    }
+
     void print(JSONPrintSession session)
     {
         session.printSymbol('[');
@@ -455,7 +371,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
         boolean comma = false;
 
-        for (Object value : list)
+        for (Object value : values)
         {
             if (comma)
                 session.printSymbol(',');
@@ -505,6 +421,15 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      */
     public List<Object> toList()
     {
-        return Collections.unmodifiableList(list);
+        return Collections.unmodifiableList(values);
     }
+
+
+    @Override
+    public Iterator<Object> iterator()
+    {
+        return values.iterator();
+    }
+
+
 }
