@@ -1,397 +1,514 @@
-// Copyright 2007 The Apache Software Foundation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.tapestry5.json;
 
-/*
- Copyright (c) 2002 JSON.org
+// Note: this class was written without inspecting the non-free org.json sourcecode.
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- The Software shall be used for Good, not Evil.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
+import java.io.IOException;
+import java.io.Reader;
 
 /**
- * A JSONTokener takes a source string and extracts characters and tokens from it. It is used by the JSONObject and
- * JSONArray constructors to parse JSON source strings.
+ * Parses a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)
+ * encoded string into the corresponding object. Most clients of
+ * this class will use only need the {@link #JSONTokener(String) constructor}
+ * and {@link #nextValue} method. Example usage: <pre>
+ * String json = "{"
+ *         + "  \"query\": \"Pizza\", "
+ *         + "  \"locations\": [ 94043, 90210 ] "
+ *         + "}";
  *
- * @author JSON.org
- * @version 2
+ * JSONObject object = (JSONObject) new JSONTokener(json).nextValue();
+ * String query = object.getString("query");
+ * JSONArray locations = object.getJSONArray("locations");</pre>
+ *
+ * <p>For best interoperability and performance use JSON that complies with
+ * RFC 4627. For legacy reasons
+ * this parser is lenient, so a successful parse does not indicate that the
+ * input string was valid JSON. All of the following syntax errors will be
+ * ignored:
+ * <ul>
+ * <li>End of line comments starting with {@code //} or {@code #} and ending
+ * with a newline character.
+ * <li>C-style comments starting with {@code /*} and ending with
+ * {@code *}{@code /}. Such comments may not be nested.
+ * <li>Strings that are unquoted or {@code 'single quoted'}.
+ * <li>Hexadecimal integers prefixed with {@code 0x} or {@code 0X}.
+ * <li>Octal integers prefixed with {@code 0}.
+ * <li>Array elements separated by {@code ;}.
+ * <li>Unnecessary array separators. These are interpreted as if null was the
+ * omitted value.
+ * <li>Key-value pairs separated by {@code =} or {@code =>}.
+ * <li>Key-value pairs separated by {@code ;}.
+ * </ul>
+ *
+ * <p>Each tokener may be used to parse a single JSON string. Instances of this
+ * class are not thread safe. Although this class is nonfinal, it was not
+ * designed for inheritance and should not be subclassed. In particular,
+ * self-use by overrideable methods is not specified. See <i>Effective Java</i>
+ * Item 17, "Design and Document or inheritance or else prohibit it" for further
+ * information.
  */
-class JSONTokener
-{
+class JSONTokener {
 
     /**
-     * The index of the next character.
+     * The input JSON.
      */
-    private int index;
+    private final String in;
 
     /**
-     * The source string being tokenized.
+     * The index of the next character to be returned by {@link #next}. When
+     * the input is exhausted, this equals the input's length.
      */
-    private final String source;
+    private int pos;
 
     /**
-     * Construct a JSONTokener from a string.
-     *
-     * @param source A source string, in JSON format.
+     * @param in JSON encoded string. Null is not permitted and will yield a
+     *           tokener that throws {@code NullPointerExceptions} when methods are
+     *           called.
      */
-    public JSONTokener(String source)
-    {
-        assert source != null;
+    JSONTokener(String in) {
+        // consume an optional byte order mark (BOM) if it exists
+        if (in != null && in.startsWith("\ufeff")) {
+            in = in.substring(1);
+        }
+        this.in = in;
+    }
 
-        index = 0;
-        this.source = source;
+    JSONTokener(Reader input) throws IOException {
+        StringBuilder s = new StringBuilder();
+        char[] readBuf = new char[102400];
+        int n = input.read(readBuf);
+        while (n >= 0) {
+            s.append(readBuf, 0, n);
+            n = input.read(readBuf);
+        }
+        in = s.toString();
+        pos = 0;
     }
 
     /**
-     * Back up one character. This provides a sort of lookahead capability, so that you can test for a digit or letter
-     * before attempting to parse the next number or identifier.
+     * Returns the next value from the input.
+     *
+     * @return a {@link JSONObject}, {@link JSONArray}, String, Boolean,
+     * Integer, Long, Double or {@link JSONObject#NULL}.
+     * @throws RuntimeException if the input is malformed.
      */
-    public void back()
-    {
-        if (index > 0)
-        {
-            index -= 1;
+     Object nextValue(Class<?> desiredType) {
+        int c = nextCleanInternal();
+        if (JSONObject.class.equals(desiredType) && c != '{'){
+            throw syntaxError("A JSONObject text must begin with '{'");
+        }
+        if (JSONArray.class.equals(desiredType) && c != '['){
+          throw syntaxError("A JSONArray text must start with '['");
+        }
+        switch (c) {
+            case -1:
+                throw syntaxError("End of input");
+
+            case '{':
+                return readObject();
+
+            case '[':
+                return readArray();
+
+            case '\'':
+            case '"':
+                return nextString((char) c);
+
+            default:
+                pos--;
+                return readLiteral();
         }
     }
 
-    /**
-     * Determine if the source string still contains characters that next() can consume.
-     *
-     * @return true if not yet at the end of the source.
-     */
-    public boolean more()
-    {
-        return index < source.length();
-    }
-
-    /**
-     * Get the next character in the source string.
-     *
-     * @return The next character, or 0 if past the end of the source string.
-     */
-    public char next()
-    {
-        if (more())
-        {
-            return source.charAt(index++);
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get the next n characters.
-     *
-     * @param n The number of characters to take.
-     * @return A string of n characters.
-     * @throws RuntimeException Substring bounds error if there are not n characters remaining in the source string.
-     */
-    public String next(int n)
-    {
-        int i = index;
-        int j = i + n;
-        if (j >= source.length())
-        {
-            throw syntaxError("Substring bounds error");
-        }
-        index += n;
-        return source.substring(i, j);
-    }
-
-    /**
-     * Get the next char in the string, skipping whitespace and comments (slashslash, slashstar, and hash).
-     *
-     * @return A character, or 0 if there are no more characters.
-     * @throws RuntimeException
-     */
-    public char nextClean()
-    {
-        for (; ;)
-        {
-            char c = next();
-            if (c == '/')
-            {
-                switch (next())
-                {
-                    case '/':
-                        do
-                        {
-                            c = next();
-                        } while (c != '\n' && c != '\r' && c != 0);
-
-                        break;
-                    case '*':
-
-                        while (true)
-                        {
-                            c = next();
-                            if (c == 0)
-                            {
-                                throw syntaxError("Unclosed comment");
-                            }
-                            if (c == '*')
-                            {
-                                if (next() == '/')
-                                {
-                                    break;
-                                }
-                                back();
-                            }
-                        }
-                        break;
-
-                    default:
-                        back();
-                        return '/';
-                }
-            }
-            else if (c == '#')
-            {
-                do
-                {
-                    c = next();
-                } while (c != '\n' && c != '\r' && c != 0);
-            }
-            else if (c == 0 || c > ' ')
-            {
-                return c;
-            }
-        }
-    }
-
-    /**
-     * Return the characters up to the next close quote character. Backslash processing is done. The formal JSON format
-     * does not allow strings in single quotes, but an implementation is allowed to accept them.
-     *
-     * @param quote The quoting character, either <code>"</code>&nbsp;<small>(double quote)</small> or
-     *              <code>'</code>&nbsp;<small>(single quote)</small>.
-     * @return A String.
-     * @throws RuntimeException Unterminated string.
-     */
-    public String nextString(char quote)
-    {
-        StringBuilder builder = new StringBuilder();
-
-        while (true)
-        {
-            char c = next();
-            switch (c)
-            {
-                case 0:
+    private int nextCleanInternal() {
+        while (pos < in.length()) {
+            int c = in.charAt(pos++);
+            switch (c) {
+                case '\t':
+                case ' ':
                 case '\n':
                 case '\r':
-                    throw syntaxError("Unterminated string");
-                case '\\':
-                    c = next();
-                    switch (c)
-                    {
-                        case 'b':
-                            builder.append('\b');
-                            break;
-                        case 't':
-                            builder.append('\t');
-                            break;
-                        case 'n':
-                            builder.append('\n');
-                            break;
-                        case 'f':
-                            builder.append('\f');
-                            break;
-                        case 'r':
-                            builder.append('\r');
-                            break;
-                        case 'u':
-                            builder.append((char) Integer.parseInt(next(4), 16));
-                            break;
-                        case 'x':
-                            builder.append((char) Integer.parseInt(next(2), 16));
-                            break;
+                    continue;
+
+                case '/':
+                    if (pos == in.length()) {
+                        return c;
+                    }
+
+                    char peek = in.charAt(pos);
+                    switch (peek) {
+                        case '*':
+                            // skip a /* c-style comment */
+                            pos++;
+                            int commentEnd = in.indexOf("*/", pos);
+                            if (commentEnd == -1) {
+                                pos = in.length();
+                                throw syntaxError("Unclosed comment");
+                            }
+                            pos = commentEnd + 2;
+                            continue;
+
+                        case '/':
+                            // skip a // end-of-line comment
+                            pos++;
+                            skipToEndOfLine();
+                            continue;
+
                         default:
-                            builder.append(c);
+                            return c;
                     }
-                    break;
+
+                case '#':
+                    /*
+                     * Skip a # hash end-of-line comment. The JSON RFC doesn't
+                     * specify this behavior, but it's required to parse
+                     * existing documents. See http://b/2571423.
+                     */
+                    skipToEndOfLine();
+                    continue;
+
                 default:
-                    if (c == quote)
-                    {
-                        return builder.toString();
-                    }
-                    builder.append(c);
+                    return c;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Advances the position until after the next newline character. If the line
+     * is terminated by "\r\n", the '\n' must be consumed as whitespace by the
+     * caller.
+     */
+    private void skipToEndOfLine() {
+        for (; pos < in.length(); pos++) {
+            char c = in.charAt(pos);
+            if (c == '\r' || c == '\n') {
+                pos++;
+                break;
             }
         }
     }
 
+    /**
+     * Returns the string up to but not including {@code quote}, unescaping any
+     * character escape sequences encountered along the way. The opening quote
+     * should have already been read. This consumes the closing quote, but does
+     * not include it in the returned string.
+     *
+     * @param quote either ' or ".
+     * @return The unescaped string.
+     * @throws RuntimeException if the string isn't terminated by a closing quote correctly.
+     */
+    private String nextString(char quote) {
+        /*
+         * For strings that are free of escape sequences, we can just extract
+         * the result as a substring of the input. But if we encounter an escape
+         * sequence, we need to use a StringBuilder to compose the result.
+         */
+        StringBuilder builder = null;
+
+        /* the index of the first character not yet appended to the builder. */
+        int start = pos;
+
+        while (pos < in.length()) {
+            int c = in.charAt(pos++);
+            if (c == quote) {
+                if (builder == null) {
+                    // a new string avoids leaking memory
+                    //noinspection RedundantStringConstructorCall
+                    return new String(in.substring(start, pos - 1));
+                } else {
+                    builder.append(in, start, pos - 1);
+                    return builder.toString();
+                }
+            }
+
+            if (c == '\\') {
+                if (pos == in.length()) {
+                    throw syntaxError("Unterminated escape sequence");
+                }
+                if (builder == null) {
+                    builder = new StringBuilder();
+                }
+                builder.append(in, start, pos - 1);
+                builder.append(readEscapeCharacter());
+                start = pos;
+            }
+        }
+
+        throw syntaxError("Unterminated string");
+    }
 
     /**
-     * Get the next value. The value can be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
-     * JSONObject.NULL object.
-     *
-     * @return An object.
-     * @throws RuntimeException If syntax error.
+     * Unescapes the character identified by the character or characters that
+     * immediately follow a backslash. The backslash '\' should have already
+     * been read. This supports both unicode escapes "u000A" and two-character
+     * escapes "\n".
      */
-    public Object nextValue()
-    {
-        char c = nextClean();
-        String s;
+    private char readEscapeCharacter() {
+        char escaped = in.charAt(pos++);
+        switch (escaped) {
+            case 'u': {
+                if (pos + 4 > in.length()) {
+                    throw syntaxError("Unterminated escape sequence");
+                }
+                String hex = in.substring(pos, pos + 4);
+                pos += 4;
+                try {
+                    return (char) Integer.parseInt(hex, 16);
+                } catch (NumberFormatException nfe) {
+                    throw syntaxError("Invalid escape sequence: " + hex);
+                }
+            }
+            case 'x': {
+              if (pos + 2 > in.length()) {
+                  throw syntaxError("Unterminated escape sequence");
+              }
+              String hex = in.substring(pos, pos + 2);
+              pos += 2;
+              try {
+                  return (char) Integer.parseInt(hex, 16);
+              } catch (NumberFormatException nfe) {
+                  throw syntaxError("Invalid escape sequence: " + hex);
+              }
 
-        switch (c)
-        {
-            case '"':
+            }
+            case 't':
+                return '\t';
+
+            case 'b':
+                return '\b';
+
+            case 'n':
+                return '\n';
+
+            case 'r':
+                return '\r';
+
+            case 'f':
+                return '\f';
+
             case '\'':
-                return nextString(c);
-            case '{':
-                back();
-                return new JSONObject(this);
-            case '[':
-                back();
-                return new JSONArray(this);
+            case '"':
+            case '\\':
+            default:
+                return escaped;
         }
+    }
 
-        /*
-         * Handle unquoted text. This could be the values true, false, or null, or it can be a
-         * number. An implementation (such as this one) is allowed to also accept non-standard
-         * forms. Accumulate characters until we reach the end of the text or a formatting
-         * character.
-         */
+    /**
+     * Reads a null, boolean, numeric or unquoted string literal value. Numeric
+     * values will be returned as an Integer, Long, or Double, in that order of
+     * preference.
+     */
+    private Object readLiteral() {
+        String literal = nextToInternal("{}[]/\\:,=;# \t\f");
 
-        StringBuffer sb = new StringBuffer();
-        char b = c;
-        while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0)
-        {
-            sb.append(c);
-            c = next();
-        }
-        back();
-
-        /*
-         * If it is true, false, or null, return the proper value.
-         */
-
-        s = sb.toString().trim();
-        if (s.equals(""))
-        {
+        if (literal.length() == 0) {
             throw syntaxError("Missing value");
-        }
-        if (s.equalsIgnoreCase("true"))
-        {
+        } else if ("null".equalsIgnoreCase(literal)) {
+            return JSONObject.NULL;
+        } else if ("true".equalsIgnoreCase(literal)) {
             return Boolean.TRUE;
-        }
-        if (s.equalsIgnoreCase("false"))
-        {
+        } else if ("false".equalsIgnoreCase(literal)) {
             return Boolean.FALSE;
         }
-        if (s.equalsIgnoreCase("null"))
-        {
-            return JSONObject.NULL;
+
+        /* try to parse as an integral type... */
+        if (literal.indexOf('.') == -1) {
+            int base = 10;
+            String number = literal;
+            if (number.startsWith("0x") || number.startsWith("0X")) {
+                number = number.substring(2);
+                base = 16;
+            } else if (number.startsWith("0") && number.length() > 1) {
+                number = number.substring(1);
+                base = 8;
+            }
+            try {
+                long longValue = Long.parseLong(number, base);
+                if (longValue <= Integer.MAX_VALUE && longValue >= Integer.MIN_VALUE) {
+                    return (int) longValue;
+                } else {
+                    return longValue;
+                }
+            } catch (NumberFormatException e) {
+                /*
+                 * This only happens for integral numbers greater than
+                 * Long.MAX_VALUE, numbers in exponential form (5e-10) and
+                 * unquoted strings. Fall through to try floating point.
+                 */
+            }
         }
 
-        /*
-         * If it might be a number, try converting it. We support the 0- and 0x- conventions. If a
-         * number cannot be produced, then the value will just be a string. Note that the 0-, 0x-,
-         * plus, and implied string conventions are non-standard. A JSON parser is free to accept
-         * non-JSON forms as long as it accepts all correct JSON forms.
-         */
-
-        if ((b >= '0' && b <= '9') || b == '.' || b == '-' || b == '+')
-        {
-            if (b == '0')
-            {
-                if (s.length() > 2 && (s.charAt(1) == 'x' || s.charAt(1) == 'X'))
-                {
-                    try
-                    {
-                        return Integer.parseInt(s.substring(2), 16);
-                    }
-                    catch (Exception e)
-                    {
-                        /* Ignore the error */
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        return Integer.parseInt(s, 8);
-                    }
-                    catch (Exception e)
-                    {
-                        /* Ignore the error */
-                    }
-                }
-            }
-            try
-            {
-                return Integer.valueOf(s);
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    return Long.valueOf(s);
-                }
-                catch (Exception f)
-                {
-                    try
-                    {
-                        return Double.valueOf(s);
-                    }
-                    catch (Exception g)
-                    {
-                        return s;
-                    }
-                }
-            }
+        /* ...next try to parse as a floating point... */
+        try {
+            return Double.valueOf(literal);
+        } catch (NumberFormatException ignored) {
         }
-        return s;
+
+        /* ... finally give up. We have an unquoted string */
+        //noinspection RedundantStringConstructorCall
+        return new String(literal); // a new string avoids leaking memory
     }
 
     /**
-     * Make a JSONException to signal a syntax error.
-     *
-     * @param message The error message.
-     * @return A JSONException object, suitable for throwing
+     * Returns the string up to but not including any of the given characters or
+     * a newline character. This does not consume the excluded character.
      */
-    RuntimeException syntaxError(String message)
-    {
-        return new RuntimeException(message + toString());
+    private String nextToInternal(String excluded) {
+        int start = pos;
+        for (; pos < in.length(); pos++) {
+            char c = in.charAt(pos);
+            if (c == '\r' || c == '\n' || excluded.indexOf(c) != -1) {
+                return in.substring(start, pos);
+            }
+        }
+        return in.substring(start);
     }
 
     /**
-     * Make a printable string of this JSONTokener.
+     * Reads a sequence of key/value pairs and the trailing closing brace '}' of
+     * an object. The opening brace '{' should have already been read.
+     */
+    private JSONObject readObject() {
+        JSONObject result = new JSONObject();
+
+        /* Peek to see if this is the empty object. */
+        int first = nextCleanInternal();
+        if (first == '}') {
+            return result;
+        } else if (first != -1) {
+            pos--;
+        }
+
+        while (true) {
+            Object name = null;
+            try {
+                name = nextValue(null);
+            } catch (RuntimeException e){
+                if (e.getMessage().equals("End of input" + this)){
+                    // hack to maintain compatibility with earlier releases of tapestry-json
+                    throw syntaxError("A JSONObject text must end with '}'");
+                }
+                throw e;
+            }
+            if (!(name instanceof String)) {
+                if (name == null) {
+                    throw syntaxError("Names cannot be null");
+                } else {
+                    throw syntaxError("Names must be strings, but " + name
+                            + " is of type " + name.getClass().getName());
+                }
+            }
+
+            /*
+             * Expect the name/value separator to be either a colon ':', an
+             * equals sign '=', or an arrow "=>". The last two are bogus but we
+             * include them because that's what the original implementation did.
+             */
+            int separator = nextCleanInternal();
+            if (separator != ':' && separator != '=') {
+                throw syntaxError("Expected a ':' after a key");
+            }
+            if (pos < in.length() && in.charAt(pos) == '>') {
+                pos++;
+            }
+
+            result.put((String) name, nextValue(null));
+
+            switch (nextCleanInternal()) {
+                case '}':
+                    return result;
+                case ';':
+                case ',':
+                    continue;
+                default:
+                    throw syntaxError("Expected a ',' or '}'");
+            }
+        }
+    }
+
+    /**
+     * Reads a sequence of values and the trailing closing brace ']' of an
+     * array. The opening brace '[' should have already been read. Note that
+     * "[]" yields an empty array, but "[,]" returns a two-element array
+     * equivalent to "[null,null]".
+     */
+    private JSONArray readArray() {
+        JSONArray result = new JSONArray();
+
+        /* to cover input that ends with ",]". */
+        boolean hasTrailingSeparator = false;
+
+        while (true) {
+            switch (nextCleanInternal()) {
+                case -1:
+                    throw syntaxError("Expected a ',' or ']'");
+                case ']':
+                    if (hasTrailingSeparator) {
+                        //result.put(null);
+                    }
+                    return result;
+                case ',':
+                case ';':
+                    /* A separator without a value first means "null". */
+                    result.put(JSONObject.NULL);
+                    hasTrailingSeparator = true;
+                    continue;
+                default:
+                    pos--;
+            }
+
+            result.put(nextValue(null));
+
+            switch (nextCleanInternal()) {
+                case ']':
+                    return result;
+                case ',':
+                case ';':
+                    hasTrailingSeparator = true;
+                    continue;
+                default:
+                    throw syntaxError("Expected a ',' or ']'");
+            }
+        }
+    }
+
+    /**
+     * Returns an exception containing the given message plus the current
+     * position and the entire input string.
      *
-     * @return " at character [myIndex] of [mySource]"
+     * @param message The message we want to include.
+     * @return An exception that we can throw.
+     */
+    private RuntimeException syntaxError(String message) {
+        return new RuntimeException(message + this);
+    }
+
+    /**
+     * Returns the current position and the entire input string.
      */
     @Override
-    public String toString()
-    {
-        return " at character " + index + " of " + source;
+    public String toString() {
+        // consistent with the original implementation
+        return " at character " + pos + " of " + in;
     }
+
 }

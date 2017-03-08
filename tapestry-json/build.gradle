@@ -1,4 +1,4 @@
-description = "Repackaged, improved (and tested) version of code originally from json.org"
+description = "Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json"
 
 dependencies {
 

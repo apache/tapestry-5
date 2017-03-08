@@ -11,7 +11,7 @@
 // limitations under the License.
 
 /**
- * Repackaged, improved (and tested) version of code originally from json.org.
+ * Repackaged, improved (and tested) version of code originally https://github.com/tdunning/open-json
  *
  * Starting in release 5.4, {@link org.apache.tapestry5.json.JSONObject} and {@link org.apache.tapestry5.json.JSONArray}
  * are serializable.
