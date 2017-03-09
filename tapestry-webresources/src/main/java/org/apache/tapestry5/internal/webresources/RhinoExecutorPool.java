@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -143,7 +144,7 @@ public class RhinoExecutorPool
                         try
                         {
                             in = script.openStream();
-                            r = new InputStreamReader(in);
+                            r = new InputStreamReader(in, StandardCharsets.UTF_8);
 
                             context.evaluateReader(scope, r, script.toString(), 1, null);
                         } catch (IOException ex)
