@@ -1,7 +1,7 @@
 require(["t5/core/dom", "t5/core/ajax", "jquery"], function (dom, ajax, $) {
 
 	function makeAjaxCall(eventName, eventElement, outputElement) {
-		ajax('action', { 
+		ajax(eventName, { 
 			element: eventElement,
 			success: function(response) {
 				outputElement.innerHTML = response.json.origin;
@@ -16,7 +16,7 @@ require(["t5/core/dom", "t5/core/ajax", "jquery"], function (dom, ajax, $) {
 		var eventElement = null;
 		if (elementId != '(no element)') {
 			eventElement = $('#' + elementId);
-		} 
+		}
 		makeAjaxCall(eventName, eventElement, td[3]);
 	});
 
