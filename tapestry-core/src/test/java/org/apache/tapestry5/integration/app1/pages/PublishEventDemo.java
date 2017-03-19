@@ -37,13 +37,13 @@ public class PublishEventDemo
     @PublishEvent
     JSONObject onAction()
     {
-        return new JSONObject("origin", "page");
+        return new JSONObject("origin", "pageAction");
     }
     
     @OnEvent("answer")
     @PublishEvent
     JSONObject answer() {
-        return new JSONObject("origin", "page");
+        return new JSONObject("origin", "pageAnswer");
     }
     
 }

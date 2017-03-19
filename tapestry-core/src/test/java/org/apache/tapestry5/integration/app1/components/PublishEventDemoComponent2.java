@@ -20,13 +20,13 @@ public class PublishEventDemoComponent2
     @PublishEvent
     JSONObject onAction()
     {
-        return new JSONObject("origin", "component");
+        return new JSONObject("origin", "componentAction2");
     }
     
     @OnEvent("answer")
     @PublishEvent
     JSONObject answer() {
-        return new JSONObject("origin", "component");
+        return new JSONObject("origin", "componentAnswer2");
     }
     
 }

@@ -4,4 +4,79 @@
 	    <t:PublishEventDemoComponent/>
 	    <t:PublishEventDemoComponent2/>
     </div>
+    <p>
+    	Results:
+    </p>
+    <table class="table table-striped">
+    	<thead>
+    		<tr>
+	    		<td>Component id</td>
+	    		<td>Event</td>
+	    		<td>Expected answer</td>
+	    		<td>Answer</td>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		<tr>
+    			<td>(no element)</td>
+    			<td>action</td>
+    			<td>pageAction</td>
+    			<td id="nullAction"></td>
+    		</tr>
+    		<tr>
+    			<td>(no element)</td>
+    			<td>answer</td>
+    			<td>pageAnswer</td>
+    			<td id="nullAnswer"></td>
+    		</tr>
+    		<tr>
+    			<td>page</td>
+    			<td>action</td>
+    			<td>pageAction</td>
+    			<td id="pageAction"></td>
+    		</tr>
+    		<tr>
+    			<td>page</td>
+    			<td>answer</td>
+    			<td>pageAnswer</td>
+    			<td id="pageAnswer"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph</td>
+    			<td>action</td>
+    			<td>pageAction</td>
+    			<td id="componentParagraphAction"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph</td>
+    			<td>answer</td>
+    			<td>pageAnswer</td>
+    			<td id="componentParagraphAnswer"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph2</td>
+    			<td>action</td>
+    			<td>componentAction2</td>
+    			<td id="componentParagraph2Action"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph2</td>
+    			<td>answer</td>
+    			<td>componentAnswer2</td>
+    			<td id="componentParagraph2Answer"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph3</td>
+    			<td>action</td>
+    			<td>componentAction2</td>
+    			<td id="componentParagraph3Action"></td>
+    		</tr>
+    		<tr>
+    			<td>componentParagraph3</td>
+    			<td>answer</td>
+    			<td>componentAnswer2</td>
+    			<td id="componentParagraph3Answer"></td>
+    		</tr>
+    	</tbody>
+    </table>
 </t:border>

@@ -922,6 +922,11 @@ define ["underscore", "./utils", "./events", "jquery"],
         throw 'dom.getEventUrl: the eventName parameter should be a string'
         
       eventName = eventName.toLowerCase()
+      
+#if jquery
+      if element instanceof jQuery
+        element = element[0];
+#end      
         
       if element is null
         element = document.getElementsByTagName('body')[0]
