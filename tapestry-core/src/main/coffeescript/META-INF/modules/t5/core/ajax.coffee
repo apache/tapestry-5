@@ -18,6 +18,8 @@
 # `options`.
 #
 # * options.method - "post", "get", etc., default: "post".
+# * options.element - if provided, the URL will be treated as a server-side event name
+#    and the actual URL to be used will be obtained from dom.getEventUrl(url, element)
 # * options.contentType - request content, defaults to "application/x-www-form-urlencoded"
 # * options.data - optional, additional key/value pairs (for the default content type)
 # * options.success - handler to invoke on success. Passed the ResponseWrapper object.
@@ -42,6 +44,9 @@ define ["./pageinit", "./dom", "./exception-frame", "./console", "underscore"],
           options.complete()
 
         return
+        
+      if options.hasOwnProperty 'element'
+        url = dom.getEventUrl(url, options.element)
 
       newOptions = _.extend {}, options,
 

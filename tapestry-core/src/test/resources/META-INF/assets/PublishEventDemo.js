@@ -1,11 +1,24 @@
 require(["t5/core/dom", "t5/core/ajax", "jquery"], function (dom, ajax, $) {
 
-    $(document).ready(function() {
-        console.log('dom.getEventURL()   : ' + dom.getEventUrl('answer', document.getElementById("page")));
-        console.log('dom.getEventURL() 1 : ' + dom.getEventUrl('answer', document.getElementById("componentParagraph")));
-        console.log('dom.getEventURL() 2 : ' + dom.getEventUrl('answer', document.getElementById("componentParagraph2")));
-        console.log('dom.getEventURL() 3 : ' + dom.getEventUrl('answer', document.getElementById("componentParagraph3")));
-    });
-    
+	function makeAjaxCall(eventName, eventElement, outputElement) {
+		ajax('action', { 
+			element: eventElement,
+			success: function(response) {
+				outputElement.innerHTML = response.json.origin;
+			} 
+		});
+	}
+	
+	$('tbody tr').each(function() {
+		var td = $(this).find('td');
+		var eventName = td[1].innerHTML;
+		var elementId = td[0].innerHTML;
+		var eventElement = null;
+		if (elementId != '(no element)') {
+			eventElement = $('#' + elementId);
+		} 
+		makeAjaxCall(eventName, eventElement, td[3]);
+	});
+
 });
 
