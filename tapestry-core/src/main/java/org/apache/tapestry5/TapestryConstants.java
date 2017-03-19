@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.annotations.PublishEvent;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 
@@ -67,5 +68,15 @@ public class TapestryConstants
      * @since 5.4
      */
     public static final String DISABLE_JAVASCRIPT_MINIMIZATION = "tapestry.disable-javascript-minimization";
+
+    /**
+     * Name of the HTML data attribute which contains information about component events
+     * published by using the {@linkplain PublishEvent} annotation
+     * in a component event handler method.
+     * 
+     * @see PublishEvent
+     * @since 5.4.2
+     */
+    public static final String COMPONENT_EVENTS_ATTRIBUTE_NAME = "data-component-events";
 
 }
