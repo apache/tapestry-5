@@ -12,15 +12,23 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.PublishEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.corelib.mixins.PublishServerSideEvents;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -28,8 +36,19 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.LocalVariable;
+import org.apache.tapestry5.plastic.LocalVariableCallback;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.Event;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
@@ -38,11 +57,6 @@ import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Provides implementations of the
@@ -151,6 +165,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         int minContextValues = 0;
 
         boolean handleActivationEventContext = false;
+        
+        final PublishEvent publishEvent;
 
         EventHandlerMethod(PlasticMethod method)
         {
@@ -165,6 +181,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
             eventType = extractEventType(methodName, onEvent);
             componentId = extractComponentId(methodName, onEvent);
+            
+            publishEvent = method.getAnnotation(PublishEvent.class);
         }
 
         void buildMatchAndInvocation(InstructionBuilder builder, final LocalVariable resultVariable)
@@ -343,9 +361,31 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         implementDispatchMethod(plasticClass, isRoot, model, eventHandlerMethods);
 
         addComponentIdValidationLogicOnPageLoad(plasticClass, eventHandlerMethods);
+        
+        addPublishEventInfo(eventHandlerMethods, model);
     }
 
-    private void addComponentIdValidationLogicOnPageLoad(PlasticClass plasticClass, Flow<EventHandlerMethod> eventHandlerMethods)
+    private void addPublishEventInfo(Flow<EventHandlerMethod> eventHandlerMethods,
+            MutableComponentModel model)
+    {
+        JSONArray publishEvents = new JSONArray();
+        for (EventHandlerMethod eventHandlerMethod : eventHandlerMethods)
+        {
+            if (eventHandlerMethod.publishEvent != null)
+            {
+                publishEvents.put(eventHandlerMethod.eventType.toLowerCase());
+            }
+        }
+        
+        // If we do have events to publish, we apply the mixin and pass
+        // event information to it.
+        if (publishEvents.length() > 0) {
+            model.addMixinClassName(PublishServerSideEvents.class.getName(), "after:*");
+            model.setMeta(InternalConstants.PUBLISH_COMPONENT_EVENTS_META, publishEvents.toString());
+        }
+    }
+
+	private void addComponentIdValidationLogicOnPageLoad(PlasticClass plasticClass, Flow<EventHandlerMethod> eventHandlerMethods)
     {
         ComponentIdValidator[] validators = extractComponentIdValidators(eventHandlerMethods);
 

@@ -906,6 +906,60 @@ define ["underscore", "./utils", "./events", "jquery"],
       events = utils.split events
 #endif
       onevent elements, events, match, handler
+      
+    # Returns the URL of a component event based on its name and an optional element
+    # or null if the event information is not found. When the element isn't passed
+    # or it's null, the event data is taken from the <body> element.
+    #
+    # * eventName - (string) name of the component event
+    # * element - (object) HTML DOM element to be used as the begining of the event data search. Optional.
+    getEventUrl = (eventName, element) ->
+
+      if not (eventName?)
+        throw 'dom.getEventUrl: the eventName parameter cannot be null'
+
+      if not _.isString eventName
+        throw 'dom.getEventUrl: the eventName parameter should be a string'
+        
+      eventName = eventName.toLowerCase()
+        
+      if element is null
+        element = document.getElementsByTagName('body')[0]
+
+      # Look for event data in itself first, then in the preceding siblings
+      # if not found
+      url = null
+  
+      while not url? and element.previousElementSibling?
+        data = getDataAttributeAsObject(element, 'component-events')
+        url = data?[eventName]?.url
+        element = element.previousElementSibling
+
+      if not url?
+    
+        # Look at parent elements recursively
+        while not url? and element.parentElement?
+          data = getDataAttributeAsObject(element, 'component-events')
+          url = data?[eventName]?.url
+          element = element.parentElement;
+      
+      return url;      
+  	    
+    # Returns the value of a given data attribute as an object.
+    # The "data-" prefix is added automatically.
+    # element - (object) HTML dom element
+    # attribute - (string) name of the data attribute without the "data-" prefix.
+    getDataAttributeAsObject = (element, attribute) ->
+    	
+#if jquery
+      value = $(element).data(attribute)
+#elseif prototype
+      value = JSON.parse($(element).readAttribute('data-' + attribute))
+      if value isnt null
+        value = JSON.parse(value)
+      else 
+        value = {} 
+#endif
 
     # onDocument() is used to add an event handler to the document object; this is used
     # for global (or default) handlers.
@@ -919,5 +973,7 @@ define ["underscore", "./utils", "./events", "jquery"],
     body: wrapElement document.body
 
     scanner: scanner
+    
+    getEventUrl : getEventUrl
 
   return exports
