@@ -88,7 +88,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     /**
      * Creates a new {@code JSONArray} with values from the given primitive array.
      *
-     * @param array The values to use.
+     * @param values The values to use.
      * @throws RuntimeException if any of the values are non-finite double values (i.e. NaN or infinite)
      */
     public JSONArray(Object... values) {
