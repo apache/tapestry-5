@@ -58,7 +58,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param readFrom a tokener whose nextValue() method will yield a
      *                 {@code JSONArray}.
-     * @throws RuntimeExeption if the parse fails or doesn't yield a
+     * @throws RuntimeException if the parse fails or doesn't yield a
      *                       {@code JSONArray}.
      */
     JSONArray(JSONTokener readFrom) {
@@ -78,7 +78,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * Creates a new {@code JSONArray} with values from the JSON string.
      *
      * @param json a JSON-encoded string containing an array.
-     * @throws RuntimeExeption if the parse fails or doesn't yield a {@code
+     * @throws RuntimeException if the parse fails or doesn't yield a {@code
      *                       JSONArray}.
      */
     public JSONArray(String json) {
@@ -89,7 +89,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * Creates a new {@code JSONArray} with values from the given primitive array.
      *
      * @param array The values to use.
-     * @throws RuntimeExeption if any of the values are non-finite double values (i.e. NaN or infinite)
+     * @throws RuntimeException if any of the values are non-finite double values (i.e. NaN or infinite)
      */
     public JSONArray(Object... values) {
         this();
@@ -161,7 +161,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
      *              infinities}.
      * @return this array.
-     * @throws RuntimeExeption If the value cannot be represented as a finite double value.
+     * @throws RuntimeException If the value cannot be represented as a finite double value.
      */
     public JSONArray put(int index, Object value) {
         if (index < 0)
@@ -197,7 +197,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if this array has no value at {@code index}, or if
+     * @throws RuntimeException if this array has no value at {@code index}, or if
      *                       that value is the {@code null} reference. This method returns
      *                       normally if the value is {@code JSONObject#NULL}.
      */
@@ -233,7 +233,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     * @throws RuntimeException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a boolean.
      */
     public boolean getBoolean(int index) {
@@ -251,7 +251,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     * @throws RuntimeException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a double.
      */
     public double getDouble(int index) {
@@ -269,7 +269,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     * @throws RuntimeException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a int.
      */
     public int getInt(int index) {
@@ -287,7 +287,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value at {@code index} doesn't exist or
+     * @throws RuntimeException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a long.
      */
     public long getLong(int index) {
@@ -305,7 +305,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if no such value exists.
+     * @throws RuntimeException if no such value exists.
      */
     public String getString(int index) {
         Object object = get(index);
@@ -322,7 +322,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value doesn't exist or is not a {@code
+     * @throws RuntimeException if the value doesn't exist or is not a {@code
      *                       JSONArray}.
      */
     public JSONArray getJSONArray(int index) {
@@ -340,7 +340,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeExeption if the value doesn't exist or is not a {@code
+     * @throws RuntimeException if the value doesn't exist or is not a {@code
      *                       JSONObject}.
      */
     public JSONObject getJSONObject(int index) {
