@@ -190,7 +190,7 @@ public class DateField extends AbstractField
         {
             Date date = format.parse(input);
 
-            response.put(RESULT, date.getTime());
+            response.put(RESULT, new SimpleDateFormat("yyyy-MM-dd").format(date));
         } catch (ParseException ex)
         {
             response.put(ERROR, ex.getMessage());
@@ -203,17 +203,16 @@ public class DateField extends AbstractField
      * Ajax event handler, used after the client-side popup completes. The client sends the date, formatted as
      * milliseconds since the epoch, to the server, which reformats it according to the server side format and returns
      * the result.
+     * @throws ParseException
      */
     JSONObject onFormat(@RequestParameter(INPUT_PARAMETER)
-                        String input)
+                        String input) throws ParseException
     {
         JSONObject response = new JSONObject();
 
         try
         {
-            long millis = Long.parseLong(input);
-
-            Date date = new Date(millis);
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(input);
 
             response.put(RESULT, format.format(date));
         } catch (NumberFormatException ex)

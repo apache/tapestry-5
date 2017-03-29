@@ -113,9 +113,9 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
 
             if reply.result
               @clearFieldError()
+              [year, month, day] = reply.result.split '-'
 
-              date = new Date()
-              date.setTime reply.result
+              date = new Date year, month-1, day
               @datePicker.setDate date
 
             if reply.error
@@ -154,10 +154,10 @@ define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker
 
         @field.addClass "ajax-wait"
 
-
+        normalizedFormat = "#{date.getFullYear()}-#{date.getMonth()+1}-#{date.getDate()}"
         ajax (@container.attr "data-format-url"),
           data:
-            input: date.getTime()
+            input: normalizedFormat
           failure: (response, message) =>
             @field.removeClass "ajax-wait"
             @fieldError message
