@@ -16,6 +16,12 @@ package org.apache.tapestry5.internal.plastic;
 
 public class PlasticClassLoader extends ClassLoader
 {
+    static
+    {
+        // TAP5-2546
+        ClassLoader.registerAsParallelCapable();
+    }
+
     private final ClassLoaderDelegate delegate;
 
     public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate)
