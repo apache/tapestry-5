@@ -26,29 +26,35 @@ public class PlasticClassLoader extends ClassLoader
     }
 
     @Override
-    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
     {
-        Class<?> loadedClass = findLoadedClass(name);
-
-        if (loadedClass != null)
-            return loadedClass;
-
-        if (delegate.shouldInterceptClassLoading(name))
+        synchronized(getClassLoadingLock(name))
         {
-            Class<?> c = delegate.loadAndTransformClass(name);
+            Class<?> loadedClass = findLoadedClass(name);
 
-            if (resolve)
-                resolveClass(c);
+            if (loadedClass != null)
+                return loadedClass;
 
-            return c;
-        } else
-        {
-            return super.loadClass(name, resolve);
+            if (delegate.shouldInterceptClassLoading(name))
+            {
+                Class<?> c = delegate.loadAndTransformClass(name);
+
+                if (resolve)
+                    resolveClass(c);
+
+                return c;
+            } else
+            {
+                return super.loadClass(name, resolve);
+            }
         }
     }
 
     public synchronized Class<?> defineClassWithBytecode(String className, byte[] bytecode)
     {
-        return defineClass(className, bytecode, 0, bytecode.length);
+        synchronized(getClassLoadingLock(className))
+        {
+            return defineClass(className, bytecode, 0, bytecode.length);
+        }
     }
 }
