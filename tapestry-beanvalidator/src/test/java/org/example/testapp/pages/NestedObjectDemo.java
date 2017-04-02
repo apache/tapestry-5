@@ -24,6 +24,7 @@ public class NestedObjectDemo
     @Inject
     private AlertManager alertManager;
     
+    @Property
     private boolean enableClientValidation;
     
     public void onActivate(boolean enableClientValidation) {
