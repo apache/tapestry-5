@@ -27,6 +27,9 @@ public class IgnoredPathsFilter implements HttpServletRequestFilter
 {
     private final Pattern[] ignoredPatterns;
 
+    // if there are no ignore patterns, just pass every request to the next item in the pipeline
+    private final boolean passThrough;
+
     public IgnoredPathsFilter(Collection<String> configuration)
     {
         ignoredPatterns = new Pattern[configuration.size()];
@@ -39,6 +42,7 @@ public class IgnoredPathsFilter implements HttpServletRequestFilter
 
             ignoredPatterns[i++] = p;
         }
+        passThrough = ignoredPatterns.length == 0;
     }
 
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
@@ -46,15 +50,18 @@ public class IgnoredPathsFilter implements HttpServletRequestFilter
     {
         // The servlet path should be "/", and path info is everything after that.
 
-        String path = request.getServletPath();
-        String pathInfo = request.getPathInfo();
-
-        if (pathInfo != null) path += pathInfo;
-
-
-        for (Pattern p : ignoredPatterns)
+        if (!passThrough)
         {
-            if (p.matcher(path).matches()) return false;
+            String path = request.getServletPath();
+            String pathInfo = request.getPathInfo();
+
+            if (pathInfo != null) path += pathInfo;
+
+
+            for (Pattern p : ignoredPatterns)
+            {
+                if (p.matcher(path).matches()) return false;
+            }
         }
 
         // Not a match, so let it go.
