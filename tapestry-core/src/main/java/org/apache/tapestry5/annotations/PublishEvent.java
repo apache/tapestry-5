@@ -53,7 +53,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * </p>
  * 
  * @since 5.4.2
- * @see https://tapestry.apache.org/ajax-and-zones.html#AjaxandZones-Invokingserver-sideeventhandlermethodsfromJavaScript
+ * @see <a href="https://tapestry.apache.org/ajax-and-zones.html#AjaxandZones-Invokingserver-sideeventhandlermethodsfromJavaScript">Invoking server-side event handler methods from JavaScript</a>
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
