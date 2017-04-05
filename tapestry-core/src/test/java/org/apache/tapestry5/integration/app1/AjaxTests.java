@@ -311,4 +311,25 @@ public class AjaxTests extends App1TestCase
         assertTextPresent("Today");
 
     }
+    
+    @Test
+    public void publishevent() throws InterruptedException
+    {
+        openLinks("@PublishEvent Demo");
+        
+        waitForAjaxRequestsToComplete();
+        
+        final String template = "//table/tbody/tr[%d]/td[%d]";
+        
+        for (int i = 1; i <= 8; i++) {
+            assertEquals("Row " + i, 
+                    getText(String.format(template, i, 3)),
+                    getText(String.format(template, i, 4)));
+        }
+
+//        // An ugly way of giving time for all the AJAX requests to finish
+//        // without adding more JavaScript for that.
+//        Thread.sleep(3000);
+    }
+    
 }
