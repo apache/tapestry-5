@@ -322,9 +322,10 @@ public class AjaxTests extends App1TestCase
         final String template = "//table/tbody/tr[%d]/td[%d]";
         
         for (int i = 1; i <= 8; i++) {
-            assertEquals("Row " + i, 
+            assertEquals(
                     getText(String.format(template, i, 3)),
-                    getText(String.format(template, i, 4)));
+                    getText(String.format(template, i, 4)),
+                    "Row " + i);
         }
 
 //        // An ugly way of giving time for all the AJAX requests to finish

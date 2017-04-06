@@ -930,6 +930,8 @@ define ["underscore", "./utils", "./events", "jquery"],
         data = getDataAttributeAsObject(element, 'component-events')
         url = data?[eventName]?.url
         element = element.parentElement;
+    
+    return url;
 
   _.extend exports,
   
