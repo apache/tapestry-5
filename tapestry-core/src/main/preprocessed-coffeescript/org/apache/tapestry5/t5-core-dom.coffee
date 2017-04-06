@@ -908,10 +908,10 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     if element is null
       element = document.body
-    else if element instanceof jQuery
-      element = element[0];
     else if element instanceof ElementWrapper
       element = element.element;
+    else if element.jquery?
+      element = element[0];
 
 
     # Look for event data in itself first, then in the preceding siblings
