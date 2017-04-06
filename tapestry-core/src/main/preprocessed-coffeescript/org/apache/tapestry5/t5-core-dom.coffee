@@ -883,7 +883,7 @@ define ["underscore", "./utils", "./events", "jquery"],
 #if jquery
     value = $(element).data(attribute)
 #elseif prototype
-    value = JSON.parse($(element).readAttribute('data-' + attribute))
+    value = $(element).readAttribute('data-' + attribute)
     if value isnt null
       value = JSON.parse(value)
     else
@@ -906,10 +906,8 @@ define ["underscore", "./utils", "./events", "jquery"],
 
     eventName = eventName.toLowerCase()
 
-#if jquery
     if element instanceof jQuery
       element = element[0];
-#endif
 
     if element is null
       element = document.getElementsByTagName('body')[0]
