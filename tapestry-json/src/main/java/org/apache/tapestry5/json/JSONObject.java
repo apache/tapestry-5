@@ -171,7 +171,7 @@ public final class JSONObject extends JSONCollection {
      * @param names    The names of the fields to copy.
      * @throws RuntimeException On internal errors. Shouldn't happen.
      */
-    public JSONObject(JSONObject copyFrom, String[] names) {
+    public JSONObject(JSONObject copyFrom, String... names) {
         this();
         for (String name : names) {
             Object value = copyFrom.opt(name);
