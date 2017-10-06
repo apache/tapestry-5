@@ -41,7 +41,7 @@ import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 
 /**
- * A {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor} with convenient methods to generate
+ * A {@link org.objectweb.asm.MethodVisitor} with convenient methods to generate
  * code. For example, using this adapter, the class below
  * 
  * <pre>
@@ -260,7 +260,7 @@ public class GeneratorAdapter extends LocalVariablesSorter {
      */
     public GeneratorAdapter(final MethodVisitor mv, final int access,
             final String name, final String desc) {
-        this(Opcodes.ASM5, mv, access, name, desc);
+        this(Opcodes.ASM6, mv, access, name, desc);
         if (getClass() != GeneratorAdapter.class) {
             throw new IllegalStateException();
         }
@@ -271,7 +271,7 @@ public class GeneratorAdapter extends LocalVariablesSorter {
      * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
+     *            of {@link Opcodes#ASM4}, {@link Opcodes#ASM5} or {@link Opcodes#ASM6}.
      * @param mv
      *            the method visitor to which this adapter delegates calls.
      * @param access

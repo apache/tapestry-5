@@ -29,18 +29,25 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
-
 import java.io.PrintWriter;
+
+import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Attribute;
+import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
+import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.TypePath;
 
 /**
  * A {@link ClassVisitor} that prints the classes it visits with a
  * {@link Printer}. This class visitor can be used in the middle of a class
  * visitor chain to trace the class that is visited at a given point in this
  * chain. This may be useful for debugging purposes.
- *
+ * <p>
  * The trace printed when visiting the <tt>Hello</tt> class is the following:
- *
+ * <p>
  * <blockquote>
  * 
  * <pre>
@@ -58,7 +65,7 @@ import java.io.PrintWriter;
  * </pre>
  * 
  * </blockquote> where <tt>Hello</tt> is defined by:
- *
+ * <p>
  * <blockquote>
  * 
  * <pre>
@@ -125,7 +132,7 @@ public final class TraceClassVisitor extends ClassVisitor {
      */
     public TraceClassVisitor(final ClassVisitor cv, final Printer p,
             final PrintWriter pw) {
-        super(Opcodes.ASM5, cv);
+        super(Opcodes.ASM6, cv);
         this.pw = pw;
         this.p = p;
     }
@@ -142,6 +149,14 @@ public final class TraceClassVisitor extends ClassVisitor {
     public void visitSource(final String file, final String debug) {
         p.visitSource(file, debug);
         super.visitSource(file, debug);
+    }
+    
+    @Override
+    public ModuleVisitor visitModule(String name, int flags,
+            String version) {
+        Printer p = this.p.visitModule(name, flags, version);
+        ModuleVisitor mv = super.visitModule(name, flags, version);
+        return new TraceModuleVisitor(mv, p);
     }
 
     @Override

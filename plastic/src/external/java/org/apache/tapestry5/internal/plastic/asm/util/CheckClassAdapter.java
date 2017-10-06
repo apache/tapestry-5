@@ -29,17 +29,32 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.util;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Attribute;
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
+import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
+import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Label;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.TypePath;
+import org.apache.tapestry5.internal.plastic.asm.TypeReference;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.Analyzer;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.BasicValue;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.Frame;
 import org.apache.tapestry5.internal.plastic.asm.tree.analysis.SimpleVerifier;
-
-import java.io.FileInputStream;
-import java.io.PrintWriter;
-import java.util.*;
 
 /**
  * A {@link ClassVisitor} that checks that its methods are properly used. More
@@ -49,7 +64,7 @@ import java.util.*;
  * <tt>visitField(ACC_PUBLIC, "i", "I", null)</tt> <tt>visitField(ACC_PUBLIC,
  * "i", "D", null)</tt> will <i>not</i> be detected by this class adapter.
  * 
- *
+ * <p>
  * <code>CheckClassAdapter</code> can be also used to verify bytecode
  * transformations in order to make sure transformed bytecode is sane. For
  * example:
@@ -72,16 +87,16 @@ import java.util.*;
  * JVM does, but it run data flow analysis for the code of each method and
  * checks that expectations are met for each method instruction.
  * 
- *
+ * <p>
  * If method bytecode has errors, assertion text will show the erroneous
  * instruction number and dump of the failed method with information about
  * locals and stack slot for each instruction. For example (format is -
  * insnNumber locals : stack):
  * 
  * <pre>
- * org.apache.tapestry5.internal.plastic.asm.tree.analysis.AnalyzerException: Error at instruction 71: Expected I, but found .
- *   at org.apache.tapestry5.internal.plastic.asm.tree.analysis.Analyzer.analyze(Analyzer.java:289)
- *   at org.apache.tapestry5.internal.plastic.asm.util.CheckClassAdapter.verify(CheckClassAdapter.java:135)
+ * org.objectweb.asm.tree.analysis.AnalyzerException: Error at instruction 71: Expected I, but found .
+ *   at org.objectweb.asm.tree.analysis.Analyzer.analyze(Analyzer.java:289)
+ *   at org.objectweb.asm.util.CheckClassAdapter.verify(CheckClassAdapter.java:135)
  * ...
  * remove()V
  * 00000 LinkedBlockingQueue$Itr . . . . . . . .  :
@@ -103,7 +118,7 @@ import java.util.*;
  * initialized. You can also see that at the beginning of the method (code
  * inserted by the transformation) variable 2 is initialized.
  * 
- *
+ * <p>
  * Note that when used like that, <code>CheckClassAdapter.verify()</code> can
  * trigger additional class loading, because it is using
  * <code>SimpleVerifier</code>.
@@ -136,6 +151,11 @@ public class CheckClassAdapter extends ClassVisitor {
      * <tt>true</tt> if the visitEnd method has been called.
      */
     private boolean end;
+    
+    /**
+     * <tt>true</tt> if the visitModule method has been called.
+     */
+    private boolean module;
 
     /**
      * The already visited labels. This map associate Integer values to Label
@@ -150,7 +170,7 @@ public class CheckClassAdapter extends ClassVisitor {
 
     /**
      * Checks a given class.
-     *
+     * <p>
      * Usage: CheckClassAdapter &lt;binary class name or class file name&gt;
      * 
      * @param args
@@ -320,7 +340,7 @@ public class CheckClassAdapter extends ClassVisitor {
      *             If a subclass calls this constructor.
      */
     public CheckClassAdapter(final ClassVisitor cv, final boolean checkDataFlow) {
-        this(Opcodes.ASM5, cv, checkDataFlow);
+        this(Opcodes.ASM6, cv, checkDataFlow);
         if (getClass() != CheckClassAdapter.class) {
             throw new IllegalStateException();
         }
@@ -331,7 +351,7 @@ public class CheckClassAdapter extends ClassVisitor {
      * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
+     *            of {@link Opcodes#ASM4}, {@link Opcodes#ASM5} or {@link Opcodes#ASM6}.
      * @param cv
      *            the class visitor to which this adapter must delegate calls.
      * @param checkDataFlow
@@ -364,8 +384,12 @@ public class CheckClassAdapter extends ClassVisitor {
                 + Opcodes.ACC_SUPER + Opcodes.ACC_INTERFACE
                 + Opcodes.ACC_ABSTRACT + Opcodes.ACC_SYNTHETIC
                 + Opcodes.ACC_ANNOTATION + Opcodes.ACC_ENUM
-                + Opcodes.ACC_DEPRECATED + 0x40000); // ClassWriter.ACC_SYNTHETIC_ATTRIBUTE
-        if (name == null || !name.endsWith("package-info")) {
+                + Opcodes.ACC_DEPRECATED + Opcodes.ACC_MODULE
+                + 0x40000); // ClassWriter.ACC_SYNTHETIC_ATTRIBUTE
+        if (name == null) {
+            throw new IllegalArgumentException("Illegal class name (null)");
+        }
+        if (!name.endsWith("package-info")) {
             CheckMethodAdapter.checkInternalName(name, "class name");
         }
         if ("java/lang/Object".equals(name)) {
@@ -406,6 +430,22 @@ public class CheckClassAdapter extends ClassVisitor {
         super.visitSource(file, debug);
     }
 
+    @Override
+    public ModuleVisitor visitModule(String name, int access, String version) {
+        checkState();
+        if (module) {
+            throw new IllegalStateException(
+                    "visitModule can be called only once.");
+        }
+        module = true;
+        if (name == null) {
+            throw new IllegalArgumentException("Illegal module name (null)");
+        }
+        checkAccess(access, Opcodes.ACC_OPEN | Opcodes.ACC_SYNTHETIC);
+        return new CheckModuleAdapter(super.visitModule(name, access, version), 
+            (access & Opcodes.ACC_OPEN) != 0);
+    }
+    
     @Override
     public void visitOuterClass(final String owner, final String name,
             final String desc) {

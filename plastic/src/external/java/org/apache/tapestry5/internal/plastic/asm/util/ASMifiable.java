@@ -34,7 +34,7 @@ import java.util.Map;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 
 /**
- * An {@link org.apache.tapestry5.internal.plastic.asm.Attribute Attribute} that can print the ASM code
+ * An {@link org.objectweb.asm.Attribute Attribute} that can print the ASM code
  * to create an equivalent attribute.
  * 
  * @author Eugene Kuleshov

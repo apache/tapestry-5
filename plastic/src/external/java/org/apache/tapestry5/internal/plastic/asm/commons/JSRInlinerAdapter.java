@@ -55,7 +55,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.TableSwitchInsnNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.TryCatchBlockNode;
 
 /**
- * A {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor} that removes JSR instructions and
+ * A {@link org.objectweb.asm.MethodVisitor} that removes JSR instructions and
  * inlines the referenced subroutines.
  * 
  * <b>Explanation of how it works</b> TODO
@@ -113,7 +113,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
     public JSRInlinerAdapter(final MethodVisitor mv, final int access,
             final String name, final String desc, final String signature,
             final String[] exceptions) {
-        this(Opcodes.ASM5, mv, access, name, desc, signature, exceptions);
+        this(Opcodes.ASM6, mv, access, name, desc, signature, exceptions);
         if (getClass() != JSRInlinerAdapter.class) {
             throw new IllegalStateException();
         }
@@ -124,7 +124,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
      * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
+     *            of {@link Opcodes#ASM4}, {@link Opcodes#ASM5} or {@link Opcodes#ASM6}.
      * @param mv
      *            the <code>MethodVisitor</code> to send the resulting inlined
      *            method code to (use <code>null</code> for none).

@@ -34,7 +34,7 @@ import java.util.Map;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 
 /**
- * An {@link org.apache.tapestry5.internal.plastic.asm.Attribute Attribute} that can print a readable
+ * An {@link org.objectweb.asm.Attribute Attribute} that can print a readable
  * representation of itself.
  * 
  * Implementations should construct readable output from an attribute data

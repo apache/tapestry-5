@@ -98,12 +98,6 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
         };
     }
 
-    /**
-     * Because of how ASM works, this should only be invoked when the array values are not
-     * primitives and not Class/Type; i.e. the inner values will be either Class/Type, enum, or
-     * nested annotations. All the arrays of strings and primitives are handled by ASM and become
-     * a single call to {@link #visit(String, Object)}.
-     */
     @Override
     public AnnotationVisitor visitArray(final String name)
     {
@@ -131,8 +125,12 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
                 // to Object[]
 
                 if (values.size() != 0)
-                    array = values.toArray((Object[]) array);
-
+                {
+                    for (int i = 0; i<values.size(); i++)
+                    {
+                        Array.set(array, i, values.get(i));
+                    }
+                }
                 outerBuilder.store(name, array);
             }
         };

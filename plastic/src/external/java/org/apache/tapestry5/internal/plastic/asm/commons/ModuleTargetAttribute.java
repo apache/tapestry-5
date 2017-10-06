@@ -27,63 +27,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.apache.tapestry5.internal.plastic.asm.optimizer;
 
-import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
+package org.apache.tapestry5.internal.plastic.asm.commons;
+
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.TypePath;
+import org.apache.tapestry5.internal.plastic.asm.ByteVector;
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.Label;
 
 /**
- * A {@link FieldVisitor} that collects the {@link Constant}s of the fields it
- * visits.
+ * ModuleTarget attribute.
+ * This attribute is specific to the OpenJDK and may change in the future.
  * 
- * @author Eric Bruneton
+ * @author Remi Forax
  */
-public class FieldConstantsCollector extends FieldVisitor {
-
-    private final ConstantPool cp;
-
-    public FieldConstantsCollector(final FieldVisitor fv, final ConstantPool cp) {
-        super(Opcodes.ASM5, fv);
-        this.cp = cp;
+public final class ModuleTargetAttribute extends Attribute {
+    public String platform;
+    
+    /**
+     * Creates an attribute with a platform name.
+     * @param platform the platform name on which the module can run.
+     */
+    public ModuleTargetAttribute(final String platform) {
+        super("ModuleTarget");
+        this.platform = platform;
     }
-
-    @Override
-    public AnnotationVisitor visitAnnotation(final String desc,
-            final boolean visible) {
-        cp.newUTF8(desc);
-        if (visible) {
-            cp.newUTF8("RuntimeVisibleAnnotations");
-        } else {
-            cp.newUTF8("RuntimeInvisibleAnnotations");
-        }
-        return new AnnotationConstantsCollector(fv.visitAnnotation(desc,
-                visible), cp);
+    
+    /**
+     * Creates an empty attribute that can be used as prototype
+     * to be passed as argument of the method
+     * {@link ClassReader#accept(org.objectweb.asm.ClassVisitor, Attribute[], int)}.
+     */
+    public ModuleTargetAttribute() {
+        this(null);
     }
-
+    
     @Override
-    public AnnotationVisitor visitTypeAnnotation(int typeRef,
-            TypePath typePath, String desc, boolean visible) {
-        cp.newUTF8(desc);
-        if (visible) {
-            cp.newUTF8("RuntimeVisibleTypeAnnotations");
-        } else {
-            cp.newUTF8("RuntimeInvisibleTypeAnnotations");
-        }
-        return new AnnotationConstantsCollector(fv.visitAnnotation(desc,
-                visible), cp);
+    protected Attribute read(ClassReader cr, int off, int len, char[] buf,
+            int codeOff, Label[] labels) {
+        String platform = cr.readUTF8(off, buf);
+        return new ModuleTargetAttribute(platform);
     }
-
+    
     @Override
-    public void visitAttribute(final Attribute attr) {
-        // can do nothing
-        fv.visitAttribute(attr);
-    }
-
-    @Override
-    public void visitEnd() {
-        fv.visitEnd();
+    protected ByteVector write(ClassWriter cw, byte[] code, int len,
+            int maxStack, int maxLocals) {
+        ByteVector v = new ByteVector();
+        int index = (platform == null)? 0: cw.newUTF8(platform);
+        v.putShort(index);
+        return v;
     }
 }
