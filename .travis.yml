@@ -23,4 +23,4 @@ notifications:
     - dev@tapestry.apache.org
 
 addons:
-  firefox: "latest"
+  firefox: "latest-esr"
