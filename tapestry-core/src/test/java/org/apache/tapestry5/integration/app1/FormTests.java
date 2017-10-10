@@ -331,7 +331,7 @@ public class FormTests extends App1TestCase
 
         assertFieldValue("asteroidImpact", "");
 
-        click(noneButton);
+        click("css=.x-impact .btn");
 
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
