@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeObject;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class CoffeeScriptCompiler implements ResourceTransformer
                                 OperationTracker tracker)
     {
 
-        executorPool = new RhinoExecutorPool(tracker, toList(mainCompiler, shim));
+        executorPool = new RhinoExecutorPool(tracker, toList(mainCompiler, shim), Context.VERSION_DEFAULT);
     }
 
     private List<Resource> toList(Resource... resources)

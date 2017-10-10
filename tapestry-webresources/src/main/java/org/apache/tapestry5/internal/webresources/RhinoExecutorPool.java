@@ -46,10 +46,13 @@ public class RhinoExecutorPool
 
     private final ContextFactory contextFactory = new ContextFactory();
 
-    public RhinoExecutorPool(OperationTracker tracker, List<Resource> scripts)
+    private final int languageVersion;
+
+    public RhinoExecutorPool(OperationTracker tracker, List<Resource> scripts, int languageVersion)
     {
         this.tracker = tracker;
         this.scripts = scripts;
+        this.languageVersion = languageVersion;
     }
 
     /**
@@ -91,6 +94,7 @@ public class RhinoExecutorPool
                         try
                         {
                             context.setOptimizationLevel(-1);
+                            context.setLanguageVersion(languageVersion);
 
                             for (Resource script : scripts)
                             {
