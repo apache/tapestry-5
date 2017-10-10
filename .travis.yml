@@ -15,6 +15,7 @@ script: ./gradlew -Dci=true continuousIntegration
 cache:
   directories:
   - $HOME/.gradle
+  - $HOME/.m2/repository/webdriver
 
 sudo: false
 
