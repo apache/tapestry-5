@@ -397,15 +397,13 @@ task combinedJacocoReport(type:JacocoReport){
   reports {
       html {
         enabled = true
-        destination = "$buildDir/reports/jacoco"
+        destination = file("$buildDir/reports/jacoco")
       }
       xml {
         enabled = false
-        destination = "unused"
       }
       csv {
         enabled = false
-        destination = "unused"
       }
   }
   onlyIf = {
@@ -424,7 +422,7 @@ task continuousIntegration {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5.1'
+    gradleVersion = '4.2'
     description "Regenerates the Gradle Wrapper files"
 }
 
