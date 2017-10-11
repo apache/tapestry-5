@@ -49,7 +49,7 @@ public class CoffeeScriptCompiler implements ResourceTransformer
                                 OperationTracker tracker)
     {
 
-        executorPool = new RhinoExecutorPool(tracker, toList(mainCompiler, shim), Context.VERSION_DEFAULT);
+        executorPool = new RhinoExecutorPool(tracker, toList(mainCompiler, shim));
     }
 
     private List<Resource> toList(Resource... resources)

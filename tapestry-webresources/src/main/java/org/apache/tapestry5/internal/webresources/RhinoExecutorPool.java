@@ -48,6 +48,11 @@ public class RhinoExecutorPool
 
     private final int languageVersion;
 
+    public RhinoExecutorPool(OperationTracker tracker, List<Resource> scripts)
+    {
+        this(tracker, scripts, Context.VERSION_DEFAULT);
+    }
+
     public RhinoExecutorPool(OperationTracker tracker, List<Resource> scripts, int languageVersion)
     {
         this.tracker = tracker;
