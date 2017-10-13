@@ -36,6 +36,12 @@ public class CollectionGridDataSource implements GridDataSource
         list = CollectionFactory.newList(collection);
     }
 
+    @Override
+    public boolean isEmpty()
+    {
+        return list.isEmpty();
+    }
+
     public int getAvailableRows()
     {
         return list.size();

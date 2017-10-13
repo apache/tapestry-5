@@ -23,6 +23,35 @@ import java.util.List;
  */
 public interface GridDataSource
 {
+
+    /**
+     * Return whether the data source is empty, i.e. does not have any rows available.
+     */
+    default public boolean isEmpty()
+    {
+        return getAvailableRows(1) == 0;
+    }
+
+    /**
+     * Return the number of rows available in the data source with an upper limit.
+     * If determining the total number of rows is expensive, this method should be overridden to provide a more
+     * efficient implementation.
+     * Please note that the default Grid pager will still determine the total number of rows, so for this to have
+     * an effect, a custom pager should be used.
+     *
+     * @param limit the upper limit
+     * @return the number of rows or {@code limit}, whichever is lower
+     */
+    default public int getAvailableRows(final int limit)
+    {
+        int availableRows = getAvailableRows();
+        if (availableRows >= limit)
+        {
+            return limit;
+        }
+        return availableRows;
+    }
+
     /**
      * Returns the number of rows available in the data source.
      */
