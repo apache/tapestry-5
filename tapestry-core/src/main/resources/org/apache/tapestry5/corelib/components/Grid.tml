@@ -5,10 +5,10 @@
     <table t:id="table">
         <thead t:id="columns"/>
         <tbody>
-            <t:if test="dataSource.availableRows">
+            <t:unless test="dataSource.empty">
                 <tr t:id="rows"/>
-            </t:if>
-            <t:if test="!dataSource.availableRows">
+            </t:unless>
+            <t:if test="dataSource.empty">
                 <tr>
                     <td colspan="${numberOfProperties}"><t:delegate to="prop:empty"/></td>
                 </tr>

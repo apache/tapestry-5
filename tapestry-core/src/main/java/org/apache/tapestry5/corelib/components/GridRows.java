@@ -268,16 +268,20 @@ public class GridRows
     {
         GridDataSource dataSource = gridModel.getDataSource();
 
-        int availableRows = dataSource.getAvailableRows();
+        int numberOfRowsRequiredToShowCurrentPage = 1 + (currentPage - 1) * rowsPerPage;
+        int numberOfRowsRequiredToFillCurrentPage = currentPage * rowsPerPage;
 
-        int maxPages = ((availableRows - 1) / rowsPerPage) + 1;
+        int availableRowsWithLimit = dataSource.getAvailableRows(numberOfRowsRequiredToFillCurrentPage);
 
         // This can sometimes happen when the number of items shifts between requests.
 
-        if (currentPage > maxPages) currentPage = maxPages;
-
+        if (numberOfRowsRequiredToShowCurrentPage > availableRowsWithLimit)
+        {
+            int maxPages = ((availableRowsWithLimit - 1) / rowsPerPage) + 1;
+            currentPage = maxPages;
+        }
         startRow = (currentPage - 1) * rowsPerPage;
-        endRow = Math.min(availableRows - 1, startRow + rowsPerPage - 1);
+        endRow = Math.min(availableRowsWithLimit - 1, startRow + rowsPerPage - 1);
 
         dataRowIndex = startRow;
 

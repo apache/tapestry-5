@@ -285,7 +285,7 @@ public class Grid implements GridModel, ClientElement
     }
 
     /**
-     * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.
+     * A version of GridDataSource that caches the availableRows and empty properties. This addresses TAPESTRY-2245.
      */
     static class CachingDataSource implements GridDataSource
     {
@@ -295,9 +295,54 @@ public class Grid implements GridModel, ClientElement
 
         private int availableRows;
 
+        private boolean emptyCached;
+
+        private boolean empty;
+
         CachingDataSource(GridDataSource delegate)
         {
             this.delegate = delegate;
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            if (!emptyCached)
+            {
+                empty = delegate.isEmpty();
+                emptyCached = true;
+                if (empty)
+                {
+                    availableRows = 0;
+                    availableRowsCached = true;
+                }
+            }
+
+            return empty;
+        }
+
+        @Override
+        public int getAvailableRows(int limit)
+        {
+            if (!availableRowsCached)
+            {
+                int result = delegate.getAvailableRows(limit);
+                if (result == 0)
+                {
+                    empty = true;
+                    emptyCached = true;
+                } else {
+                    empty = false;
+                    emptyCached = true;
+                }
+                if (result < limit) {
+                    availableRows = result;
+                    availableRowsCached = true;
+                }
+                return result;
+            } else {
+              return Math.min(availableRows, limit);
+            }
         }
 
         public int getAvailableRows()
@@ -306,6 +351,14 @@ public class Grid implements GridModel, ClientElement
             {
                 availableRows = delegate.getAvailableRows();
                 availableRowsCached = true;
+                if (availableRows == 0)
+                {
+                    empty = true;
+                    emptyCached = true;
+                } else {
+                  empty = false;
+                  emptyCached = true;
+              }
             }
 
             return availableRows;
@@ -461,7 +514,7 @@ public class Grid implements GridModel, ClientElement
 
         // If there's no rows, display the empty block placeholder.
 
-        return !renderTableIfEmpty && cachingSource.getAvailableRows() == 0 ? empty : null;
+        return !renderTableIfEmpty && cachingSource.isEmpty() ? empty : null;
     }
 
     void cleanupRender()
@@ -492,25 +545,35 @@ public class Grid implements GridModel, ClientElement
         // cached, and therefore access was very inefficient, and sorting was
         // very inconsistent during the processing of the form submission.
 
+        int effectiveCurrentPage = getCurrentPage();
+
+        int numberOfRowsRequiredToShowCurrentPage = 1 + (effectiveCurrentPage - 1) * rowsPerPage;
+        int numberOfRowsRequiredToFillCurrentPage = effectiveCurrentPage * rowsPerPage;
+
         cachingSource = new CachingDataSource(source);
+        if (pagerPosition != GridPagerPosition.NONE)
+        {
+            // We're going to render the pager, so we need to determine the total number of rows anyway.
+            // We do that eagerly here so we don't have to perform two count operations; the subsequent
+            // ones will return a cached result
+            cachingSource.getAvailableRows();
+        }
+        int availableRowsWithLimit = cachingSource.getAvailableRows(numberOfRowsRequiredToFillCurrentPage);
 
-        int availableRows = cachingSource.getAvailableRows();
-
-        if (availableRows == 0)
+        if (availableRowsWithLimit == 0)
             return;
-
-        int maxPage = ((availableRows - 1) / rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.
 
-        int effectiveCurrentPage = getCurrentPage();
-
-        if (effectiveCurrentPage > maxPage)
+        if (numberOfRowsRequiredToShowCurrentPage > availableRowsWithLimit)
+        {
+            int maxPage = ((availableRowsWithLimit - 1) / rowsPerPage) + 1;
             effectiveCurrentPage = maxPage;
+        }
 
         int startIndex = (effectiveCurrentPage - 1) * rowsPerPage;
 
-        int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
+        int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRowsWithLimit - 1);
 
         cachingSource.prepare(startIndex, endIndex, sortModel.getSortConstraints());
     }
@@ -520,7 +583,7 @@ public class Grid implements GridModel, ClientElement
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
-        if (cachingSource.getAvailableRows() == 0)
+        if (cachingSource.isEmpty())
             return !renderTableIfEmpty ? false : null;
 
         if (inPlace && zone == null)
