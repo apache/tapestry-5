@@ -210,7 +210,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
-        FirefoxDriverManager.getInstance().setup();
+        // FirefoxDriverManager.getInstance().setup();
 
         File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         DesiredCapabilities desiredCapabilities = DesiredCapabilities.firefox();
