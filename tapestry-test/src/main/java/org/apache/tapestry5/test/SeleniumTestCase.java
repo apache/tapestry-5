@@ -1308,6 +1308,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     public void type(String locator, String value)
     {
         WebElement element = webDriver.findElement(convertLocator(locator));
+        element.clear();
         element.sendKeys(value);
     }
 
