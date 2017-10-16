@@ -1307,7 +1307,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @Override
     public void type(String locator, String value)
     {
-        selenium.type(locator, value);
+        WebElement element = webDriver.findElement(convertLocator(locator));
+        element.sendKeys(value);
     }
 
     @Override
