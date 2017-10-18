@@ -574,7 +574,7 @@ public class GenericsUtils
         final boolean isSuper = wt.getLowerBounds().length > 0;
         return String.format("? %s %s",
                 isSuper ? "super" : "extends",
-                isSuper ? toString(wt.getLowerBounds()) : toString(wt.getLowerBounds()));
+                toString(wt.getLowerBounds()));
     }
 
     static String toString(Type[] types)
