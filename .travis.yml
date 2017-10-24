@@ -10,7 +10,7 @@ before_install:
 
 
 install: /bin/true
-script: travis_wait ./gradlew -Dci=true continuousIntegration
+script: ./gradlew -Dci=true continuousIntegration
 
 cache:
   directories:
