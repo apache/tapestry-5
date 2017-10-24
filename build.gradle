@@ -116,6 +116,8 @@ dependencies {
     binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
 }
 
+def isJava9 = System.properties['java.version'].startsWith('9')
+
 subprojects {
 
     def jdkVersion = System.properties['java.version']
@@ -190,6 +192,9 @@ subprojects {
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
         jvmArgs("-Dfile.encoding=UTF-8")
+        if (isJava9){
+          jvmArgs += ["--add-modules", "java.xml.ws.annotation"]
+        }
 
         environment.LANG = 'en_US.UTF-8'
         
