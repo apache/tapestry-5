@@ -14,13 +14,16 @@
 
 package org.apache.tapestry5.test;
 
-import com.thoughtworks.selenium.CommandProcessor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +31,7 @@ import java.util.Set;
 
 public class ErrorReporterImpl implements ErrorReporter
 {
-    private final CommandProcessor commandProcessor;
+    private final WebDriver webdriver;
 
     private final ITestContext testContext;
 
@@ -38,9 +41,9 @@ public class ErrorReporterImpl implements ErrorReporter
 
     private final List<File> outputPaths = new ArrayList<File>();
 
-    public ErrorReporterImpl(CommandProcessor commandProcessor, ITestContext testContext)
+    public ErrorReporterImpl(WebDriver webdriver, ITestContext testContext)
     {
-        this.commandProcessor = commandProcessor;
+        this.webdriver = webdriver;
         this.testContext = testContext;
     }
 
@@ -69,8 +72,7 @@ public class ErrorReporterImpl implements ErrorReporter
     @Override
     public void writeErrorReport(String reportText)
     {
-        String htmlSource = commandProcessor.getString("getHtmlSource", new String[]
-                {});
+        String htmlSource = webdriver.getPageSource();
 
         File dir = new File(testContext.getOutputDirectory());
 
@@ -107,9 +109,8 @@ public class ErrorReporterImpl implements ErrorReporter
 
         try
         {
-            commandProcessor.doCommand("captureEntirePageScreenshot", new String[]
-                    {capture.getAbsolutePath(), "background=white"});
-
+            byte[] screenshotBytes = ((TakesScreenshot) webdriver).getScreenshotAs(OutputType.BYTES);
+            Files.write(capture.toPath(), screenshotBytes);
             outputPaths.add(capture);
         } catch (Exception ex)
         {

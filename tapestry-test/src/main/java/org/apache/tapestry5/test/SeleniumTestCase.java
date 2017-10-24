@@ -230,7 +230,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
 
 
-        final ErrorReporterImpl errorReporter = new ErrorReporterImpl(webDriverCommandProcessor, testContext);
+        final ErrorReporterImpl errorReporter = new ErrorReporterImpl(driver, testContext);
 
         ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(webDriverCommandProcessor,
                 errorReporter);
