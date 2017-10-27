@@ -531,7 +531,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @Override
     public void check(String locator)
     {
-        selenium.check(locator);
+        WebElement element = webDriver.findElement(convertLocator(locator));
+        if (!element.isSelected())
+        {
+            ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
+            element.click();
+        }
     }
 
     @Override
