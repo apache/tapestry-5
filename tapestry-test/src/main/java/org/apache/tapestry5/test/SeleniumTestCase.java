@@ -1806,6 +1806,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         {
             return By.xpath(locator.substring(6));
         }
+        else if (locator.startsWith("id="))
+        {
+            return By.id(locator.substring(3));
+        }
         else if (locator.startsWith("//"))
         {
             return By.xpath(locator);
