@@ -37,7 +37,7 @@ public class AjaxTests extends App1TestCase
     {
         openLinks("Autocomplete Mixin Demo");
 
-        type("required", "foo");
+        typeKeys("required", "foo");
 
         clickAndWait(SUBMIT);
 
