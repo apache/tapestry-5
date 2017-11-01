@@ -87,7 +87,7 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1'
+    gradleVersion = '4.3'
 }
 
 // TODO: Configure execution mode for jettyRun task
