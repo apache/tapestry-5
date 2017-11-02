@@ -259,6 +259,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                         LOGGER.error("Selenium client shutdown failure.", e);
                     }
 
+                    LOGGER.info("Shutting down webdriver ...");
+
+                    try
+                    {
+                        webDriver.close();
+                    } catch (RuntimeException e)
+                    {
+                        LOGGER.error("Webdriver shutdown failure.", e);
+                    }
+
                     LOGGER.info("Shutting down selenium server ...");
 
                     LOGGER.info("Shutting web server ...");
