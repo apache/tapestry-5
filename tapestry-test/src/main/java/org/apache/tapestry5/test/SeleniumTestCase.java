@@ -263,7 +263,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
                     try
                     {
-                        webDriver.close();
+                        webDriver.quit();
                     } catch (RuntimeException e)
                     {
                         LOGGER.error("Webdriver shutdown failure.", e);
