@@ -17,6 +17,7 @@ import java.util.Date;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
@@ -451,7 +452,9 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("Selected department: ACCOUNTING");
 
-        webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Sales And Marketin")).findFirst().get().click();
+        WebElement salesAndMarketing = webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Sales And Marketin")).findFirst().get();
+        scrollIntoView(salesAndMarketing);
+        salesAndMarketing.click();
 
         clickAndWait(update);
 

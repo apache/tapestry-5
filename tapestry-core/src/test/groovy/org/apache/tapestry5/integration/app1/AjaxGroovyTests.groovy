@@ -12,7 +12,9 @@ class AjaxGroovyTests extends App1TestCase {
 
         openLinks "Ajax Radio Demo"
         webDriver.findElements(By.cssSelector('label')).find{it.text.contains('It')}.click()
-        webDriver.findElements(By.cssSelector('label')).find{it.text.contains('Temp')}.click()
+        def labelTemp = webDriver.findElements(By.cssSelector('label')).find{it.text.contains('Temp')}
+        scrollIntoView(labelTemp)
+        labelTemp.click()
 
         click SUBMIT
 

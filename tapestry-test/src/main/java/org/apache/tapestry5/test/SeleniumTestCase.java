@@ -544,7 +544,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         WebElement element = webDriver.findElement(convertLocator(locator));
         if (!element.isSelected())
         {
-            ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
+            scrollIntoView(element);
             element.click();
         }
     }
@@ -565,7 +565,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     public void click(String locator)
     {
         WebElement element = webDriver.findElement(convertLocator(locator));
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
+        scrollIntoView(element);
         element.click();
     }
 
@@ -1425,6 +1425,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     // ---------------------------------------------------------------------
     // End of delegate methods
     // ---------------------------------------------------------------------
+
+
+    public void scrollIntoView(WebElement element)
+    {
+        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
 
     /**
      * Formats a message from the provided arguments, which is written to System.err. In addition,
