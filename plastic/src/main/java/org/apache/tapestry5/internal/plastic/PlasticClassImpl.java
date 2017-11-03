@@ -621,11 +621,37 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         introduceInterface(interfaceType);
 
-        for (Method m : interfaceType.getMethods())
+        // TAP5-2582: avoiding adding/delegating the same method more than once
+//        for (Method m : interfaceType.getMethods())
+//        {
+//            introduceMethod(m).delegateTo(field);
+//        }
+        
+        Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
+        for (MethodSignature methodSignature : map.keySet())
         {
-            introduceMethod(m).delegateTo(field);
+            introduceMethod(map.get(methodSignature)).delegateTo(field);
         }
+        
+        return this;
+    }
+    
+    @Override
+    public PlasticClass proxyInterface(Class interfaceType, PlasticMethod method)
+    {
+        check();
 
+        assert method != null;
+
+        introduceInterface(interfaceType);
+
+        // TAP5-2582: avoiding adding/delegating the same method more than once
+        Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
+        for (MethodSignature methodSignature : map.keySet())
+        {
+            introduceMethod(map.get(methodSignature)).delegateTo(method);
+        }
+        
         return this;
     }
 
@@ -1410,7 +1436,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (!interfaceType.isInterface())
             throw new IllegalArgumentException(String.format(
-                    "Class %s is not an interface; ony interfaces may be introduced.", interfaceType.getName()));
+                    "Class %s is not an interface; only interfaces may be introduced.", interfaceType.getName()));
 
         String interfaceName = nameCache.toInternalName(interfaceType);
 
@@ -1431,20 +1457,102 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         addClassAnnotations(interfaceClassNode);
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
-
-        for (Method m : interfaceType.getMethods())
+        
+        Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
+        
+        // for (Method m : interfaceType.getMethods())
+	for (MethodSignature methodSignature : map.keySet())
         {
-            MethodDescription description = new MethodDescription(m);
+            // MethodDescription description = new MethodDescription(m);
+            final MethodDescription description = map.get(methodSignature);
 
-            if (!isMethodImplemented(description) && !isDefaultMethod(m))
+            if (!isMethodImplemented(description) && !isDefaultMethod(methodSignature.method))
             {
-                introducedMethods.add(introduceMethod(m));
+                // introducedMethods.add(introduceMethod(m));
+                introducedMethods.add(introduceMethod(description));
             }
         }
 
         interfaceClassNode = null;
 
         return introducedMethods;
+    }
+
+    private Map<MethodSignature, MethodDescription> createMethodSignatureMap(Class interfaceType) {
+	// TAP-2582: preprocessing the method list so we don't add duplicated
+        // methods, something that happens when an interface has superinterfaces
+        // and they define the same method signature.
+        // In addition, we collect all the thrown checked exceptions, just in case.
+        Map<MethodSignature, MethodDescription> map = new HashMap<MethodSignature, MethodDescription>();
+        for (Method m : interfaceType.getMethods())
+        {
+            final MethodSignature methodSignature = new MethodSignature(m);
+            final MethodDescription newMethodDescription = new MethodDescription(m);
+            if (!map.containsKey(methodSignature)) 
+            {
+		map.put(methodSignature, newMethodDescription);
+            }
+            else 
+            {
+        	if (newMethodDescription.checkedExceptionTypes != null && newMethodDescription.checkedExceptionTypes.length > 0)
+        	{
+        	    final MethodDescription methodDescription = map.get(methodSignature);
+                    final Set<String> checkedExceptionTypes = new HashSet<String>();
+                    checkedExceptionTypes.addAll(Arrays.asList(methodDescription.checkedExceptionTypes));
+                    checkedExceptionTypes.addAll(Arrays.asList(newMethodDescription.checkedExceptionTypes));
+                    map.put(methodSignature, new MethodDescription(
+                	    methodDescription, 
+                	    checkedExceptionTypes.toArray(new String[checkedExceptionTypes.size()])));
+        	}
+            }
+        }
+	return map;
+    }
+    
+    final private static class MethodSignature implements Comparable<MethodSignature>{
+	
+	final private Method method;
+	final private String name;
+	final private Class<?>[] parameterTypes;
+	
+	public MethodSignature(Method method) {
+	    this.method = method;
+	    this.name = method.getName();
+	    this.parameterTypes = method.getParameterTypes();
+	}
+
+	@Override
+	public int hashCode() {
+	    final int prime = 31;
+	    int result = 1;
+	    result = prime * result + Arrays.hashCode(parameterTypes);
+	    result = prime * result + ((name == null) ? 0 : name.hashCode());
+	    return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj)
+		return true;
+	    if (obj == null)
+		return false;
+	    if (getClass() != obj.getClass())
+		return false;
+	    MethodSignature other = (MethodSignature) obj;
+	    if (!Arrays.equals(parameterTypes, other.parameterTypes))
+		return false;
+	    if (name == null) {
+		if (other.name != null)
+		    return false;
+	    } else if (!name.equals(other.name))
+		return false;
+	    return true;
+	}
+
+	@Override
+	public int compareTo(MethodSignature o) {
+	    return method.getName().compareTo(o.method.getName());
+	}
     }
 
     @Override
