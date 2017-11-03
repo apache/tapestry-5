@@ -976,7 +976,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @Override
     public boolean isElementPresent(String locator)
     {
-        return webDriver.findElement(convertLocator(locator)) != null;
+        return !webDriver.findElements(convertLocator(locator)).isEmpty();
     }
 
     @Override
