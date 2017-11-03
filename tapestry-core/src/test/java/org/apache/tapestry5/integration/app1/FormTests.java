@@ -469,7 +469,9 @@ public class FormTests extends App1TestCase
 
         assertTextPresent("Selected position: TEMP");
 
-        webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Lifer")).findFirst().get().click();
+        WebElement lifer = webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Lifer")).findFirst().get();
+        scrollIntoView(lifer);
+        lifer.click();
 
         clickAndWait(update);
 
