@@ -461,7 +461,9 @@ public class FormTests extends App1TestCase
         assertTextPresent("Selected department: SALES_AND_MARKETING");
 
         // not in a loop ...
-        webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Temp")).findFirst().get().click();
+        WebElement temp = webDriver.findElements(By.cssSelector("label")).stream().filter(element-> element.getText().contains("Temp")).findFirst().get();
+        scrollIntoView(temp);
+        temp.click();
 
         clickAndWait(update);
 
