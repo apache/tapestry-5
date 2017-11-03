@@ -13,12 +13,9 @@
 package org.apache.tapestry5.test;
 
 import com.thoughtworks.selenium.CommandProcessor;
-import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
-
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -27,7 +24,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -980,7 +976,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @Override
     public boolean isElementPresent(String locator)
     {
-        return selenium.isElementPresent(locator);
+        return webDriver.findElement(convertLocator(locator)) != null;
     }
 
     @Override
@@ -1353,7 +1349,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected void waitForCondition(ExpectedCondition condition)
     {
-      WebDriverWait wait = new WebDriverWait(webDriver, 10);
+      waitForCondition(condition, 10l);
+    }
+
+    protected void waitForCondition(ExpectedCondition condition, long timeoutSeconds)
+    {
+      WebDriverWait wait = new WebDriverWait(webDriver, timeoutSeconds);
       wait.until(condition);
     }
 
@@ -1382,26 +1383,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             return;
         }
 
-        final long pollingStartTime = System.currentTimeMillis();
 
-        long sleepTime = 20;
+        waitForCondition(ExpectedConditions.attributeToBe(By.cssSelector("body"), "data-page-initialized", "true"), 30);
 
-        while (true)
-        {
-            if (isElementPresent("css=body[data-page-initialized='true']"))
-            {
-                return;
-            }
-
-            if ((System.currentTimeMillis() - pollingStartTime) > 30000)
-            {
-                reportAndThrowAssertionError("Page did not finish initializing after 30 seconds.");
-            }
-
-            sleep(sleepTime);
-
-            sleepTime *= 2;
-        }
     }
 
     @Override
