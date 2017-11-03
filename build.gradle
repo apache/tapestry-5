@@ -209,7 +209,7 @@ subprojects {
           def numberOfTestsExecuted = 0
           afterTest { descriptor, result->
             numberOfTestsExecuted++
-            if (numberOfTestsExecuted % 50 == 0){
+            if (numberOfTestsExecuted % 25 == 0){
               logger.lifecycle "$numberOfTestsExecuted tests executed"
             }
           }
