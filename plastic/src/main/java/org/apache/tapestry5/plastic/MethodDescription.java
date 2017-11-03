@@ -72,6 +72,21 @@ public class MethodDescription implements Comparable<MethodDescription>
     {
         this(Modifier.PUBLIC, returnType, methodName, argumentTypes, null, null);
     }
+    
+    /**
+     * Convenience constructor for copying a MethodDescription with
+     * different exception types.
+     * @since 5.4.4
+     */
+    public MethodDescription(MethodDescription description, String[] checkedExceptionTypes)
+    {
+	this.argumentTypes = description.argumentTypes;
+	this.checkedExceptionTypes = checkedExceptionTypes;
+	this.genericSignature = description.genericSignature;
+	this.methodName = description.methodName;
+	this.modifiers = description.modifiers;
+	this.returnType = description.returnType;
+    }
 
     /**
      * @param modifiers
