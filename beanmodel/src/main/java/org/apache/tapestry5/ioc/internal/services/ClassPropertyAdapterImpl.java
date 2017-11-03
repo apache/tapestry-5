@@ -41,11 +41,18 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 
         // lazy init
         Map<String, List<Method>> nonBridgeMethods = null;
-        
+
         for (PropertyDescriptor pd : descriptors)
         {
             // Indexed properties will have a null propertyType (and a non-null
             // indexedPropertyType). We ignore indexed properties.
+
+            String name = pd.getName();
+
+            if (adapters.containsKey(name))
+            {
+                continue;
+            }
 
             final Class<?> thisPropertyType = pd.getPropertyType();
             if (thisPropertyType == null)
@@ -53,7 +60,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 
             Method readMethod = pd.getReadMethod();
             Method writeMethod = pd.getWriteMethod();
-            
+
             // TAP5-1493
             if (readMethod != null && readMethod.isBridge())
             {
@@ -61,15 +68,15 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 {
                     nonBridgeMethods = groupNonBridgeMethodsByName(beanType);
                 }
-                readMethod = findMethodWithSameNameAndParamCount(readMethod, nonBridgeMethods); 
+                readMethod = findMethodWithSameNameAndParamCount(readMethod, nonBridgeMethods);
             }
-            
+
             // TAP5-1548, TAP5-1885: trying to find a getter which Introspector missed
             if (readMethod == null) {
                 final String prefix = thisPropertyType != boolean.class ? "get" : "is";
                 try
                 {
-                    Method method = beanType.getMethod(prefix + capitalize(pd.getName()));
+                    Method method = beanType.getMethod(prefix + capitalize(name));
                     final Class<?> returnType = method.getReturnType();
                     if (returnType.equals(thisPropertyType) || returnType.isInstance(thisPropertyType)) {
                         readMethod = method;
@@ -83,7 +90,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                     // getter doesn't exist.
                 }
             }
-            
+
             if (writeMethod != null && writeMethod.isBridge())
             {
                 if (nonBridgeMethods == null)
@@ -92,12 +99,12 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 }
                 writeMethod = findMethodWithSameNameAndParamCount(writeMethod, nonBridgeMethods);
             }
-            
+
             // TAP5-1548, TAP5-1885: trying to find a setter which Introspector missed
             if (writeMethod == null) {
                 try
                 {
-                    Method method = beanType.getMethod("set" + capitalize(pd.getName()), pd.getPropertyType());
+                    Method method = beanType.getMethod("set" + capitalize(name), pd.getPropertyType());
                     final Class<?> returnType = method.getReturnType();
                     if (returnType.equals(void.class)) {
                         writeMethod = method;
@@ -115,7 +122,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             Class propertyType = readMethod == null ? thisPropertyType : GenericsUtils.extractGenericReturnType(
                     beanType, readMethod);
 
-            PropertyAdapter pa = new PropertyAdapterImpl(this, pd.getName(), propertyType, readMethod, writeMethod);
+            PropertyAdapter pa = new PropertyAdapterImpl(this, name, propertyType, readMethod, writeMethod);
 
             adapters.put(pa.getName(), pa);
         }
@@ -145,7 +152,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
      * Find a replacement for the method (if one exists)
      * @param method A method
      * @param groupedMethods Methods mapped by name
-     * @return A method from groupedMethods with the same name / param count 
+     * @return A method from groupedMethods with the same name / param count
      *         (default to providedmethod if none found)
      */
     private Method findMethodWithSameNameAndParamCount(Method method, Map<String, List<Method>> groupedMethods) {
@@ -161,7 +168,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
                 }
             }
         }
-        
+
         // default to the provided method
         return method;
     }
@@ -169,7 +176,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     /**
      * Find all of the public methods that are not bridge methods and
      * group them by method name
-     * 
+     *
      * {@see Method#isBridge()}
      * @param type Bean type
      * @return

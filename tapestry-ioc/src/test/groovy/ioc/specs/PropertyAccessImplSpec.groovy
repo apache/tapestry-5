@@ -810,4 +810,27 @@ class PropertyAccessImplSpec extends Specification {
     pa != null
     
   }
+  
+  public interface IdentifiableEnum<E extends Enum<E>, ID extends Number> {
+    ID getId();
+  }
+  
+  public enum ById implements IdentifiableEnum<ById, Byte> {
+    ;
+    public Byte getId() {
+      return null
+    }
+  }
+  
+  @Issue("TAP5-2032")
+  def "create adapter for enum class with overridden methods"(){
+    given:
+    def adapter = access.getAdapter(ById)
+    when:
+    def propertyNames = adapter.propertyNames
+    then:
+    !propertyNames.empty
+  }
+  
+
 }
