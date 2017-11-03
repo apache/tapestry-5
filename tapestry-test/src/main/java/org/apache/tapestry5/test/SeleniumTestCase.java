@@ -19,6 +19,7 @@ import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -1377,15 +1378,20 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         // In a limited number of cases, a "page" is an container error page or raw HTML content
         // that does not include the body element and data-page-initialized element. In those cases,
         // there will never be page initialization in the Tapestry sense and we return immediately.
-
-        if (!isElementPresent("css=body[data-page-initialized]"))
+        try
         {
-            return;
+            WebElement body = webDriver.findElement(By.cssSelector("body"));
+
+            if (body.getAttribute("data-page-initialized") == null)
+            {
+                return;
+            }
+
+            waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
+        } catch (NoSuchElementException e)
+        {
+            // no body element found, there's nothing to wait for
         }
-
-
-        waitForCondition(ExpectedConditions.attributeToBe(By.cssSelector("body"), "data-page-initialized", "true"), 30);
-
     }
 
     @Override
