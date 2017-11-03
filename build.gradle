@@ -16,7 +16,7 @@ project.ext.versions = [
     spock: "1.1-groovy-2.4",
     hibernate: "5.1.0.Final",
     slf4j: "1.7.25",
-    geb: "1.1.1",
+    geb: "2.0",
     selenium: "3.7.0"
 ]
 
