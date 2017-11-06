@@ -1625,7 +1625,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         for (String text : linkText)
         {
-            webDriver.findElement(By.linkText(text)).click();
+            WebElement link = webDriver.findElement(By.linkText(text));
+            scrollIntoView(link);
+            link.click();
         }
     }
 
