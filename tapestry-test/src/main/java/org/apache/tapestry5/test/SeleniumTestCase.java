@@ -1474,8 +1474,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected final void openBaseURL()
     {
-        webDriver.navigate().to(baseURL);
+        open(baseURL);
 
+        waitForPageToLoad();
     }
 
     /**
@@ -1625,7 +1626,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         for (String text : linkText)
         {
-            webDriver.findElement(By.linkText(text)).click();
+            clickAndWait("link=" + text);
         }
     }
 
