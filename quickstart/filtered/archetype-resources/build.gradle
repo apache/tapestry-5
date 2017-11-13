@@ -59,7 +59,7 @@ dependencies {
     // CoffeeScript & Less support, plus resource minification:
     compile "org.apache.tapestry:tapestry-webresources:@tapestryReleaseVersion@"
 
-    test "org.apache.tapestry:tapestry-test:@tapestryReleaseVersion@"
+    testCompile "org.apache.tapestry:tapestry-test:@tapestryReleaseVersion@"
 
     // Log implementation choose one:
     // Log4j 1.x
