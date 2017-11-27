@@ -8,7 +8,8 @@ dependencies {
 
     testCompile project(":tapestry-runner")
     testCompile "org.gebish:geb-spock:${versions.geb}"
-
+    testCompile "org.spockframework:spock-tapestry:${versions.spock}"
+    
     testCompile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }

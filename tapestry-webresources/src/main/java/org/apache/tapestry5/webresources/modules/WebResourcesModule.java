@@ -15,6 +15,7 @@ package org.apache.tapestry5.webresources.modules;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.core.parser.AntlrException;
 import com.google.javascript.jscomp.CompilationLevel;
+
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.webresources.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -63,7 +64,8 @@ public class WebResourcesModule
 
     @Contribute(StreamableResourceSource.class)
     public static void provideCompilers(MappedConfiguration<String, ResourceTransformer> configuration, ResourceTransformerFactory factory,
-                                        @Autobuild CoffeeScriptCompiler coffeeScriptCompiler)
+                                        @Autobuild CoffeeScriptCompiler coffeeScriptCompiler,
+                                        @Autobuild final TypeScriptCompiler tsCompiler)
     {
         // contribution ids are file extensions:
 
@@ -75,6 +77,10 @@ public class WebResourcesModule
         configuration.add("less",
                 factory.createCompiler("text/css", "Less", "CSS", new LessResourceTransformer(),
                         CacheMode.MULTIPLE_FILE));
+
+        configuration.add("ts",
+                factory.createCompiler("text/javascript", "TS", "JavaScript", tsCompiler,
+                        CacheMode.SINGLE_FILE));
     }
 
     @Contribute(ResourceMinimizer.class)
