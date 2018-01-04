@@ -20,8 +20,8 @@ You can let Apache Maven create your initial project for you:
 
     mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org
 
-Maven will prompt you for the archetype to create ("Tapestry 5 Quickstart Project") and the exact version
-number (e.g., "5.4.3"). It also asks you for a group id, an artifact id, and a version number. Once Maven
+Maven will prompt you for the archetype to create ("Tapestry 5 Quickstart Project") and the Tapestry version
+number (e.g., "5.4.3"). It also asks you to create a group id, artifact id (e.g., "newapp") and version number for your app. Once Maven
 dowloads everything, then you can start the app:
 
     $ cd newapp
