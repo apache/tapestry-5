@@ -16,9 +16,9 @@ dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
     testCompile "commons-lang:commons-lang:2.6"
-    testCompile "org.apache.commons:commons-lang3:3.4"
+    testCompile "org.apache.commons:commons-lang3:3.7"
     testCompile "org.hibernate:hibernate-core:5.2.10.Final"
-    testRuntime "org.hsqldb:hsqldb:2.2.8"
+    testRuntime "org.hsqldb:hsqldb:2.4.0"
     
     provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
