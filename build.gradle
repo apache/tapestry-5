@@ -26,7 +26,7 @@ ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 project.version = tapestryVersion()
 
 // Remember that when generating a release, this should be incremented. Also don"t forget to
-// tag the release in Subversion.
+// tag the release in Git.
 // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
 // during a release
 
