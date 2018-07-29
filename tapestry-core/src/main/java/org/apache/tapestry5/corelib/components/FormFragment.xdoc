@@ -48,10 +48,10 @@
 
                 <t:beaneditor t:id="billingAddress"/>
 
-                <t:checkbox t:id="separateShipTo" t:mixins="triggerfragment" fragment="seperateShippingAddress"/>
+                <t:checkbox t:id="separateShipTo" t:mixins="triggerfragment" fragment="separateShippingAddress"/>
                 <t:label for="separateShipTo">Separate Ship To?</t:label>
 
-                <t:formfragment t:id="seperateShippingAddress" visible="separateShipTo">
+                <t:formfragment t:id="separateShippingAddress" visible="separateShipTo">
 
                     <h2>Shipping Address</h2>
 
