@@ -309,7 +309,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
             size++;
 
-            // This is definately a structural change
+            // This is definitely a structural change
 
             modCount++;
 

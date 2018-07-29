@@ -21,7 +21,7 @@ import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 /**
- * Utility used to iterate over the publically visible methods of a class or interface. The MethodIterator understands
+ * Utility used to iterate over the publicly visible methods of a class or interface. The MethodIterator understands
  * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
  *
