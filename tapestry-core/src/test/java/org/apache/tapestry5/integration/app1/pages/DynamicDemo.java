@@ -22,7 +22,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class DynamicDemo
 {
-    @Property
     @Persist
     private Integer selected;
 
