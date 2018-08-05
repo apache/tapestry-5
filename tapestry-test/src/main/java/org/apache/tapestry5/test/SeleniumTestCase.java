@@ -37,6 +37,8 @@ import org.testng.ITestContext;
 import org.testng.annotations.*;
 import org.testng.xml.XmlTest;
 
+import io.github.bonigarcia.wdm.FirefoxDriverManager;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
@@ -207,11 +209,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
-        // FirefoxDriverManager.getInstance().setup();
+        FirefoxDriverManager.getInstance().setup();
 
         File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         DesiredCapabilities desiredCapabilities = DesiredCapabilities.firefox();
-        desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
+        desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, true);
 
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities);
 
@@ -260,7 +262,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
                     try
                     {
-                        webDriver.quit();
+                        if (webDriver != null) { // is sometimes null... but why?
+                            webDriver.quit();
+                        }
                     } catch (RuntimeException e)
                     {
                         LOGGER.error("Webdriver shutdown failure.", e);
@@ -563,7 +567,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         WebElement element = webDriver.findElement(convertLocator(locator));
         scrollIntoView(element);
-        element.click();
+        JavascriptExecutor executor = (JavascriptExecutor)webDriver;
+        executor.executeScript("arguments[0].click();", element);
+//      element.click(); // failing as of Aug 2018
     }
 
     @Override
@@ -1801,7 +1807,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected static By convertLocator(String locator)
     {
-        By by;
         if (locator.startsWith("link="))
         {
             return By.linkText(locator.substring(5));

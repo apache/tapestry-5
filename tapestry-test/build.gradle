@@ -5,7 +5,7 @@ dependencies {
   compile project(":tapestry-test-data")
   compile project(":tapestry-runner")
 
-  compile ("io.github.bonigarcia:webdrivermanager:2.0.0")
+  compile ("io.github.bonigarcia:webdrivermanager:2.2.4")
 
   compile "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
       exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"

@@ -15,7 +15,7 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     @Test
     void page_navigation()
     {
-        openLinks "t5app/ "
+        openLinks "t5app/"
 
         assertTitle "Index Page"
 
@@ -31,7 +31,7 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     @Test
     void component_event_request()
     {
-        openLinks "t5app/ ", "show index page alert"
+        openLinks "t5app/", "show index page alert"
 
         assertTextPresent "index page alert"
     }
@@ -39,7 +39,7 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     @Test
     void static_pages()
     {
-        openLinks "static.html "
+        openLinks "static.html"
 
         assertTitle "Static File"
 
@@ -51,7 +51,7 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     @Test
     void asset_access()
     {
-        openLinks "t5app/ "
+        openLinks "t5app/"
 
         // Ony one image on page
         String assetURL = getAttribute("//img/@src")

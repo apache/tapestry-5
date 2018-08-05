@@ -16,7 +16,7 @@ dependencies {
     testCompile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
-    testCompile ("io.github.bonigarcia:webdrivermanager:1.7.2")
+    testCompile ("io.github.bonigarcia:webdrivermanager:2.2.4")
     
 }
 
