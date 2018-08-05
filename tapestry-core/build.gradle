@@ -65,9 +65,35 @@ jar {
     }
 }
 
+// tasks for starting integration test apps, useful when debugging failing integration tests
 task runTestApp1(type:JavaExec) {
   main = 'org.apache.tapestry5.test.JettyRunner'
   args "-d", "src/test/app1", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
+task runTestApp2(type:JavaExec) {
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/app2", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
+task runTestApp3(type:JavaExec) {
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/app3", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
+task runTestApp4(type:JavaExec) {
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/app4", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
+task runTestApp5(type:JavaExec) {
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/app5", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
+task runTestAppfolder(type:JavaExec) {
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/appfolder", "-p", "8080"
   classpath += project.sourceSets.test.runtimeClasspath
 }
 
