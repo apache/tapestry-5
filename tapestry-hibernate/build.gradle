@@ -15,3 +15,10 @@ jar {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.modules.HibernateModule'
     }
 }
+
+task runTestApp0(type:JavaExec) {
+  description 'Start tapestry-hibernate integration test app, useful when debugging failing integration tests'
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/webapp", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
