@@ -15,6 +15,15 @@
             <li>
                 <t:pagelink page="CachedForm">Cached Form</t:pagelink>
             </li>
+            <li>
+                <t:pagelink page="EncodeEntities">Encode Entities</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="PersistEntity">Persist Entity</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="SSOEntity">SSO Entity</t:pagelink>
+            </li>
         </ul>
     </body>
 </html>
