@@ -14,7 +14,7 @@ project.ext.versions = [
     easymock: "3.3.1",
     servletapi: "3.0.1",
     spock: "1.1-groovy-2.4",
-    hibernate: "5.1.0.Final",
+    hibernate: "5.1.1.Final",
     slf4j: "1.7.25",
     geb: "2.0",
     selenium: "3.12.0"
