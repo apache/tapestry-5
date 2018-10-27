@@ -117,6 +117,7 @@ dependencies {
 }
 
 def isJava9 = System.properties['java.version'].startsWith('9')
+def isJava10 = System.properties['java.version'].startsWith('10')
 
 subprojects {
 
@@ -192,8 +193,9 @@ subprojects {
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
         jvmArgs("-Dfile.encoding=UTF-8")
-        if (isJava9){
-          jvmArgs += ["--add-modules", "java.xml.ws.annotation"]
+        if (isJava9 || isJava10){
+          // TODO: make these regular dependencies instead
+          jvmArgs += ["--add-modules", "java.xml.ws.annotation,java.xml.bind"]
         }
 
         environment.LANG = 'en_US.UTF-8'
