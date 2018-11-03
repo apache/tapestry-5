@@ -35,7 +35,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.SERVICE;
 public @interface Namespace
 {
     /**
-     * The fully qualified namespace that will contain the functions to be exposed as methods.
+     * @return the fully qualified namespace that will contain the functions to be exposed as methods.
      */
     String value();
 }
