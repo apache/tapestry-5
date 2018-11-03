@@ -53,11 +53,14 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     {
         openLinks "t5app/"
 
-        // Ony one image on page
+        // there's only one image on page
         String assetURL = getAttribute("//img/@src")
 
-        assert assetURL.startsWith("/t5app/assets/")
+        // Selenium now adds unwanted port & host
+        String urlPath = new URL(assetURL).getPath();
 
-        assertDownloadedAsset assetURL, "src/test/appfolder/images/t5-logo.png"
+        assert urlPath.startsWith("/t5app/assets/")
+
+        assertDownloadedAsset urlPath, "src/test/appfolder/images/t5-logo.png"
     }
 }

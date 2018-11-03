@@ -14,7 +14,17 @@
 
 package org.apache.tapestry5.integration;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryRunnerConstants;
 
 public abstract class TapestryCoreTestCase extends SeleniumTestCase
 {
@@ -63,6 +73,48 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
 
         // Add the special "x" for the close button to the text.
         assertText("css=[data-container-type=alerts] .alert span", text);
+    }
+
+    /**
+     * Assert that asset at the given URL contains the exact same contents as the
+     * file at the given path.
+     * @param assetURL a root-relative (starting with "/") URL to an asset, such as
+     * "/t5app/assets/ctx/b492f3dd/images/t5-logo.png"
+     * @param path the path (relative to the module base directory) where the asset file exists, such
+     * as "src/test/appfolder/images/filename.ext"
+     * @throws IOException 
+     * @since 5.5
+     */
+    protected final void assertDownloadedAsset(String assetURL, String path) throws IOException
+    {
+        URL url = new URL(getBaseURL() + assetURL.substring(1));
+
+        byte[] downloaded = getBytes(url);
+
+        File file = new File(TapestryRunnerConstants.MODULE_BASE_DIR, path);
+        byte[] actual = Files.readAllBytes(file.toPath());
+        
+        assertEquals(downloaded, actual, "Asset contents differ at " + url + " and " + path);
+    }
+
+    /**
+     * Read (download) the content of this URL and return it as a byte[].
+     *
+     * @param url URL to read content from
+     * @return the byte[] from that URL
+     * @throws IOException if an IOException occurs.
+     */
+    private static byte[] getBytes(URL url) throws IOException {
+        InputStream is = new BufferedInputStream(url.openStream());
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        TapestryInternalUtils.copy(is, os);
+
+        os.close();
+        is.close();
+
+        return os.toByteArray();
     }
 
 }

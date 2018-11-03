@@ -51,7 +51,7 @@ public class AssetTests extends App1TestCase
 
         String assetURL = getAttribute(String.format("//img[@id='%s']/@src", id));
 
-        compareDownloadedAsset(assetURL, localPath);
+        assertDownloadedAsset(assetURL, localPath);
     }
     
     // TAP5-1515
@@ -78,35 +78,5 @@ public class AssetTests extends App1TestCase
         // without the fix, selenium timesout because the javascript code that sets the condition
         // used by tapestry testing code to know when the page is finished loading is never invoked.
         assertTrue(isVisible("assetWithWrongChecksum"));
-    }
-
-
-    private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
-    {
-        // Strip off the leading slash
-
-        URL url = new URL(getBaseURL() + assetURL.substring(1));
-
-        byte[] downloaded = readContent(url);
-
-        File local = new File(TapestryRunnerConstants.MODULE_BASE_DIR, localPath);
-
-        byte[] actual = readContent(local.toURL());
-
-        assertEquals(downloaded, actual);
-    }
-
-    private byte[] readContent(URL url) throws Exception
-    {
-        InputStream is = new BufferedInputStream(url.openStream());
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-        TapestryInternalUtils.copy(is, os);
-
-        os.close();
-        is.close();
-
-        return os.toByteArray();
     }
 }
