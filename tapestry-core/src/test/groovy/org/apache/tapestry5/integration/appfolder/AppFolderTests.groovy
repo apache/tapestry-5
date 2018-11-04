@@ -63,6 +63,6 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
 
         assert assetURL.startsWith("/t5app/assets/")
 
-        assertDownloadedAsset urlPath, "src/test/appfolder/images/t5-logo.png"
+        assertDownloadedAsset assetURL, "src/test/appfolder/images/t5-logo.png"
     }
 }
