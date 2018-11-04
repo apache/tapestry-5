@@ -116,12 +116,11 @@ dependencies {
     binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
 }
 
-def isJava9 = System.properties['java.version'].startsWith('9')
-def isJava10 = System.properties['java.version'].startsWith('10')
+String jdkVersion = System.properties['java.version']
+def jdkMajorVersion = jdkVersion.substring(0, jdkVersion.indexOf(".")) // 1, 9, 10...
 
 subprojects {
 
-    def jdkVersion = System.properties['java.version']
     def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
     
     version = parent.version
@@ -135,6 +134,8 @@ subprojects {
     apply plugin: "java"
     apply plugin: "groovy" // mostly for testing
     apply plugin: "maven"  // for deployment
+    // TODO: replace the "maven" plugin above with the newer "maven-publish"
+
     apply plugin: "project-report"
     apply plugin: "jacoco"
 
@@ -193,7 +194,7 @@ subprojects {
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
         jvmArgs("-Dfile.encoding=UTF-8")
-        if (isJava9 || isJava10){
+        if (jdkMajorVersion != "1"){
           // TODO: make these regular dependencies instead
           jvmArgs += ["--add-modules", "java.xml.ws.annotation,java.xml.bind"]
         }
