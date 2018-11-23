@@ -16,6 +16,9 @@
     <li><a href="${asset:context:META-INF/unavailable2.txt}">unavailable2.txt</a></li>
     <li><a href="${asset:context:AssetProtectionDemo.tml}">tml file</a></li>
     <li><a href="${asset:context:music/MusicDetails.tml}">nested tml file</a></li>
+    <li><a href="/assets/app//services/AppModule.class">.class file in the classpath</a></li>
+    <li><a href="${asset:classpath:/org/apache/tapestry5/integration/app1/fakeconfiguration.properties}">.properties file in the classpath</a></li>
+    <li><a href="${asset:classpath:/org/apache/tapestry5/integration/app1/fakeconfiguration.xml}">.xml file in the classpath</a></li>    
 </ul>
 
 </html>

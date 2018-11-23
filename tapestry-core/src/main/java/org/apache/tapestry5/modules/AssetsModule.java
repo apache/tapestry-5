@@ -12,6 +12,9 @@
 
 package org.apache.tapestry5.modules;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -20,14 +23,13 @@ import org.apache.tapestry5.internal.services.assets.*;
 import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
-
-import java.util.Map;
 
 /**
  * @since 5.3
@@ -272,7 +274,8 @@ public class AssetsModule
 
                                                       ClasspathAssetAliasManager classpathAssetAliasManager,
                                                       ResourceStreamer streamer,
-                                                      AssetSource assetSource)
+                                                      AssetSource assetSource,
+                                                      ClasspathAssetProtectionRule classpathAssetProtectionRule)
     {
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
@@ -280,7 +283,7 @@ public class AssetsModule
         {
             String path = mappings.get(folder);
 
-            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetSource, path));
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetSource, path, classpathAssetProtectionRule));
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,
@@ -353,4 +356,23 @@ public class AssetsModule
 
         configuration.add("Asset", assetDispatcher, "before:ComponentEvent");
     }
+    
+    @Primary
+    public static ClasspathAssetProtectionRule buildClasspathAssetProtectionRule(
+            List<ClasspathAssetProtectionRule> rules, ChainBuilder chainBuilder)
+    {
+        return chainBuilder.build(ClasspathAssetProtectionRule.class, rules);
+    }
+    
+    public static void contributeClasspathAssetProtectionRule(
+            OrderedConfiguration<ClasspathAssetProtectionRule> configuration) 
+    {
+        ClasspathAssetProtectionRule classFileRule = (s) -> s.toLowerCase().endsWith(".class");
+        configuration.add("ClassFile", classFileRule);
+        ClasspathAssetProtectionRule propertiesFileRule = (s) -> s.toLowerCase().endsWith(".properties");
+        configuration.add("PropertiesFile", propertiesFileRule);
+        ClasspathAssetProtectionRule xmlFileRule = (s) -> s.toLowerCase().endsWith(".xml");
+        configuration.add("XMLFile", xmlFileRule);
+    }
+    
 }
