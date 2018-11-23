@@ -1573,18 +1573,22 @@ public class CoreBehaviorsTests extends App1TestCase
     {
         openLinks("PageReset Annotation Demo");
 
+        waitForElementToAppear("current");
         assertText("current", "0");
 
         clickAndWait("link=increment");
 
+        waitForElementToAppear("current");
         assertText("current", "1");
 
         clickAndWait("link=increment");
 
+        waitForElementToAppear("current");
         assertText("current", "2");
 
         clickAndWait("link=refresh");
 
+        waitForElementToAppear("current");
         assertText("current", "2");
 
         clickAndWait(BACK_TO_INDEX);
