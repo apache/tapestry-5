@@ -1687,6 +1687,21 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
+    
+    /**
+     * Waits for an element with a given CSS selector to appear.
+     *
+     * @param selector
+     *         the CSS selector to wait.
+     * @since 5.5
+     */
+    protected final void waitForCssSelectorToAppear(String selector)
+    {
+
+        String condition = String.format("selenium.browserbot.getCurrentWindow().document.querySelector(\"%s\")", selector);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
 
     /**
      * Waits for the element to be removed from the DOM.

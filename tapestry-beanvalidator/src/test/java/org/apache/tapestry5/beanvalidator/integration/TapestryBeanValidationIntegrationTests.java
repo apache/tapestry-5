@@ -117,6 +117,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         //@NotNull
         click(SUBMIT);
 
+        waitForCssSelectorToAppear("p[data-error-block-for='notNullValue']");
         assertTextPresent("Not Null Value may not be null");
 
         type("notNullValue", "igor");
@@ -126,6 +127,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
+        waitForCssSelectorToAppear("p[data-error-block-for='minValue']");
         assertTextPresent("Min Value must be greater than or equal to 6");
 
         //@Max
@@ -145,6 +147,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
+        waitForCssSelectorToAppear("p[data-error-block-for='stringSizeValue']");
         assertTextPresent("String Size Value size must be between 3 and 6");
         
         //@Size(min) TAP5-2158
@@ -154,12 +157,14 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         final String stringMinLengthErrorMessage = "String Min Length size must be between 3 and " + Integer.MAX_VALUE;
         
+        waitForCssSelectorToAppear("p[data-error-block-for='stringMinLength']");
 		assertTextPresent(stringMinLengthErrorMessage);
         
         type("stringMinLength", "aaaaaa");
 
         click(SUBMIT);
-        
+
+        waitForInvisible("p[data-error-block-for='stringMinLength']");
         assertFalse(isTextPresent(stringMinLengthErrorMessage));
         
         //@Size(max) TAP5-2158
@@ -169,12 +174,14 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         final String stringMaxLengthErrorMessage = "String Max Length size must be between 0 and 6";
         
+        waitForCssSelectorToAppear("p[data-error-block-for='stringMaxLength']");
 		assertTextPresent(stringMaxLengthErrorMessage);
 
         type("stringMaxLength", "aaaaa");
 
         click(SUBMIT);
 
+        waitForInvisible("p[data-error-block-for='stringMaxLength']");
         assertFalse(isTextPresent(stringMaxLengthErrorMessage));
 
         click(SUBMIT);
@@ -190,8 +197,10 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
+        waitForCssSelectorToAppear("p[data-error-block-for='languages']");
         assertTextPresent("Languages size must be between 2 and 3");
 
+        waitForCssSelectorToAppear("p[data-error-block-for='nullValue']");
         assertTextPresent("Null Value must be null");
     }
 
