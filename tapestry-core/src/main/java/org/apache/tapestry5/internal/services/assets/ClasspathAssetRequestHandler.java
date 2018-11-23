@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.ClasspathAssetProtectionRule;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
@@ -35,23 +36,36 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
     private final ResourceStreamer streamer;
 
     private final AssetSource assetSource;
-
+    
     private final String baseFolder;
+    
+    private final ClasspathAssetProtectionRule classpathAssetProtectionRule;
 
     public ClasspathAssetRequestHandler(ResourceStreamer streamer,
-                                        AssetSource assetSource, String baseFolder)
+                                        AssetSource assetSource, String baseFolder,
+                                        ClasspathAssetProtectionRule classpathAssetProtectionRule)
     {
         this.streamer = streamer;
         this.assetSource = assetSource;
         this.baseFolder = baseFolder;
+        this.classpathAssetProtectionRule = classpathAssetProtectionRule;
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
         ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
-
-        Resource resource = assetSource.resourceForPath(path.resourcePath);
-
-        return path.stream(resource);
+        
+        final boolean handled;
+        if (classpathAssetProtectionRule.block(path.resourcePath)) 
+        {
+            handled = false;
+        }
+        else
+        {
+            Resource resource = assetSource.resourceForPath(path.resourcePath);
+    
+            handled = path.stream(resource);
+        }
+        return handled;
     }
 }
