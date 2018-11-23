@@ -27,7 +27,7 @@ dependencies {
   compile "org.antlr:antlr-runtime:3.3", { transitive = false }
 
   // Antlr3 tool path used with the antlr3 task
-  antlr3 "org.antlr:antlr:3.3"
+  antlr3 "org.antlr:antlr:3.5.2"
 
   testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
@@ -52,14 +52,6 @@ task generateGrammarSource(type: JavaExec) {
     logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
   }
 }
-
-ideaModule.dependsOn generateGrammarSource
-
-def generatedDir = file("$buildDir/generated-sources")
-
-def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
-
-idea.module.excludeDirs += buildMinusGeneratedDir
 
 compileJava.options.fork(memoryMaximumSize: '512m')
 compileJava.dependsOn generateGrammarSource

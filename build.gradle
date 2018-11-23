@@ -21,6 +21,14 @@ project.ext.versions = [
 // Provided so that the CI server can override the normal version number for nightly builds.
 version = System.getProperty("project-version", versions.tapestry)
 
+if (JavaVersion.current().isJava8Compatible()) {
+  allprojects {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  }
+}
+
 // Let analysis.apache.org get in touch with our builds
 
 project.ext {
@@ -76,7 +84,7 @@ allprojects {
         project {
             // Technically, Tapestry is built for JDK 1.5, but we're all using Eclipse or IntelliJ with
             // JDK 1.6 at this point.
-            jdkName = "1.6"
+            jdkName = "1.8"
         }
     }
 
@@ -107,7 +115,7 @@ dependencies {
     binaries "log4j:log4j:1.2.14"
     binaries "org.slf4j:slf4j-log4j12:1.6.1"
     binaries "commons-codec:commons-codec:1.5"
-    binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
+    binaries "org.antlr:antlr-runtime:3.5.2", { transitive = false }
 }
 
 subprojects {
@@ -126,8 +134,8 @@ subprojects {
     apply plugin: "maven"
     apply plugin: "project-report"
 
-    sourceCompatibility = "1.6"
-    targetCompatibility = "1.6"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
 
     // See http://jira.codehaus.org/browse/GRADLE-784
 
