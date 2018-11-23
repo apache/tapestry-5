@@ -82,6 +82,16 @@ It is now possible to control, for each JavaScript Stack, how that stack treats 
 The default is to aggregate the libraries and minimize them, but there are now options to aggregate
 them without minimizing, or to leave them as individual files (neither aggregating, nor minimizing).
 
+# Classpath asset protection (introduced in 5.4.4)
+A new service, `ClasspathAssetProtectionRule`, which receives contributions of `ClasspathAssetProtectionRule`
+instances, was created to you can easily add rules to block requests to classpath assets according to your 
+security needs. 
+
+Three rules are added out-of-the-box and may be overriden:
+* `ClassFile`: blocks access to assets with `.class` endings (case insensitive).
+* `PropertiesFile`: blocks access to assets with `.properties` endings (case insensitive).
+* `XMLFile`: blocks access to assets with `.xml` endings (case insensitive).
+
 ## FormGroup Mixin
 
 This new mixin for Field components adds the outer `<div class="form-group">` and `<label>` elements for a Field
