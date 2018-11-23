@@ -1392,8 +1392,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 return;
             }
-
-            waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
+            // Attempt to fix StaleElementReferenceException: The element reference of <body> is stale; either the element is no longer attached to the DOM, it is not in the current frame context, or the document has been refreshed
+            // waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
+            waitForCssSelectorToAppear("body[data-page-initialized='true'");
         } catch (NoSuchElementException e)
         {
             // no body element found, there's nothing to wait for
