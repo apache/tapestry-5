@@ -1,3 +1,5 @@
+package org.apache.tapestry5;
+
 // Copyright 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
