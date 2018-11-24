@@ -278,7 +278,7 @@ public class FormTests extends App1TestCase
 
         //make sure it's still selected if we navigate back...
         click("css=button.previousButton");
-        waitForCSSSelectedElementToAppear("td.selected");
+        waitForCssSelectorToAppear("td.selected");
 
         click("css=button.nextButton");
 
@@ -316,7 +316,7 @@ public class FormTests extends App1TestCase
         waitForSelectedToBeRemoved();
 
         click("css=div.datePicker .footerTable button");
-        waitForCSSSelectedElementToAppear("td.selected");
+        waitForCssSelectorToAppear("td.selected");
 
         //#1
         click("css=div.datePicker .footerTable button");
@@ -382,7 +382,7 @@ public class FormTests extends App1TestCase
         click("css=.x-impact .btn");
         waitForCondition(datePickerVisible);
         click("css=a.topLabel");
-        waitForCSSSelectedElementToAppear("div.labelPopup");
+        waitForCssSelectorToAppear("div.labelPopup");
         click("css=div.labelPopup a");
 
         waitForInvisible("css=div.labelPopup");

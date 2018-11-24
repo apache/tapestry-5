@@ -1654,26 +1654,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
-     * (it is not assured that the element will be visible).
-     *
-     * This implementation only works if the application provides a function onto the
-     * window object:  "testSupport.findCSSMatchCount()" which accepts a CSS rule and returns the number
-     * of matching elements.
-     *
-     * @param cssSelector
-     *         used to locate the element
-     * @since 5.3
-     * @deprecated Deprecated in 5.4 with no replacement
-     */
-    protected void waitForCSSSelectedElementToAppear(String cssSelector)
-    {
-        String condition = String.format("window.testSupport.findCSSMatchCount(\"%s\") > 0", cssSelector);
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-    }
-
-    /**
      * Waits for the element with the given client-side id to be present in the DOM (
      * does not assure that the element is visible).
      *

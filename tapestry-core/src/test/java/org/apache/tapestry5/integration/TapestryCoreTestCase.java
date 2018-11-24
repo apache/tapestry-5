@@ -69,7 +69,7 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
      */
     protected final void assertFirstAlert(String text)
     {
-        waitForCSSSelectedElementToAppear("[data-container-type=alerts] .alert");
+        waitForCssSelectorToAppear("*[data-container-type=alerts] .alert");
 
         // Add the special "x" for the close button to the text.
         assertText("css=[data-container-type=alerts] .alert span", text);

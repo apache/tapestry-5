@@ -34,13 +34,13 @@ class AlertsTests extends App1TestCase {
 
         clickAndWait "//input[@value='Traditional Update']"
 
-        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        waitForCssSelectorToAppear "$CONTAINER .alert"
 
         assertTextPresent "trad warn until"
 
         clickAndWait BACK_TO_INDEX
 
-        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        waitForCssSelectorToAppear "$CONTAINER .alert"
 
         assertTextPresent "trad warn until"
 
@@ -78,7 +78,7 @@ class AlertsTests extends App1TestCase {
 
         clickAndWait "//input[@value='Traditional Update']"
 
-        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        waitForCssSelectorToAppear "$CONTAINER .alert"
 
         assertTextPresent "trad warn transient"
 
@@ -110,7 +110,7 @@ class AlertsTests extends App1TestCase {
 
         click "//input[@value='Ajax Update']"
 
-        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        waitForCssSelectorToAppear "$CONTAINER .alert"
 
         assertTextPresent "ajax error until"
 
@@ -133,7 +133,7 @@ class AlertsTests extends App1TestCase {
         
         click "//input[@value='Ajax Update']"
         
-        waitForCSSSelectedElementToAppear "$CONTAINER .alert"
+        waitForCssSelectorToAppear "$CONTAINER .alert"
         
         assert isElementPresent("//div[@class='alert alert-dismissable alert-warning']/a/span[text()='Markup!']")
 
