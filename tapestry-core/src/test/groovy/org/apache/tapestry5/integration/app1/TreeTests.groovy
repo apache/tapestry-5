@@ -52,7 +52,7 @@ class TreeTests extends App1TestCase {
         sleep 250
 
         // Since there's no simple way to build the CSS select we need.
-        // waitForCSSSelectedElementToAppear "li.leaf-node > span"
+        // waitForCssSelectorToAppear "li.leaf-node > span"
 
         assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
 
@@ -60,12 +60,12 @@ class TreeTests extends App1TestCase {
 
         click "css=[data-tree-node-selection-enabled] li.leaf-node > span.tree-label"
 
-        waitForCSSSelectedElementToAppear "span.selected-leaf-node"
+        waitForCssSelectorToAppear "span.selected-leaf-node"
 
         clickAndWait "link=Redraw"
 
         // Make sure it is still there after a redraw
 
-        waitForCSSSelectedElementToAppear "span.selected-leaf-node"
+        waitForCssSelectorToAppear "span.selected-leaf-node"
     }
 }

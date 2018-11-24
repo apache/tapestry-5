@@ -154,7 +154,7 @@ class AlertsTests extends App1TestCase {
 
         waitForAjaxRequestsToComplete()
 
-        waitForCSSSelectedElementToAppear "div.t-error"
+        waitForCssSelectorToAppear "div.t-error"
 
         assertText "css=div.t-error div.t-message-container", "ajax error single"
 
