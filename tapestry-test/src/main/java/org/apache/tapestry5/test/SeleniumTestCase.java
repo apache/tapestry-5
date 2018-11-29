@@ -20,6 +20,7 @@ import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -1392,13 +1393,18 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 return;
             }
+            
             // Attempt to fix StaleElementReferenceException: The element reference of <body> is stale; either the element is no longer attached to the DOM, it is not in the current frame context, or the document has been refreshed
             // waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
-            waitForCssSelectorToAppear("body[data-page-initialized='true'");
+            waitForCssSelectorToAppear("body[data-page-initialized='true']");
         } catch (NoSuchElementException e)
         {
             // no body element found, there's nothing to wait for
+        } catch (StaleElementReferenceException e) {
+            e.printStackTrace();
+            System.out.println("Continuing execution after exception above.");
         }
+        
     }
 
     @Override
