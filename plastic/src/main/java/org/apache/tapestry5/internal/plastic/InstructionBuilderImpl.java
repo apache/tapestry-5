@@ -34,7 +34,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     /**
      * Maps from condition to opcode to jump to the false code block.
      */
-    private static final Map<Condition, Integer> conditionToOpcode = new HashMap<Condition, Integer>();
+    private static final Map<Condition, Integer> conditionToOpcode = new HashMap<>();
 
     static
     {
@@ -50,7 +50,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         m.put(Condition.GREATER, IF_ICMPLE);
     }
 
-    private static final Map<String, Integer> typeToSpecialComparisonOpcode = new HashMap<String, Integer>();
+    private static final Map<String, Integer> typeToSpecialComparisonOpcode = new HashMap<>();
 
     static
     {
@@ -61,7 +61,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         m.put("double", DCMPL);
     }
 
-    private static final Map<Object, Integer> constantOpcodes = new HashMap<Object, Integer>();
+    private static final Map<Object, Integer> constantOpcodes = new HashMap<>();
 
     static
     {
@@ -199,7 +199,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        doInvoke(INVOKESPECIAL, containingClassName, description);
+        doInvoke(INVOKESPECIAL, containingClassName, description, false);
 
         return this;
     }
@@ -223,7 +223,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        doInvoke(INVOKEVIRTUAL, className, returnType, methodName, argumentTypes);
+        doInvoke(INVOKEVIRTUAL, className, returnType, methodName, false, argumentTypes);
 
         return this;
     }
@@ -234,28 +234,30 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        doInvoke(INVOKEINTERFACE, interfaceName, returnType, methodName, argumentTypes);
+        doInvoke(INVOKEINTERFACE, interfaceName, returnType, methodName, true, argumentTypes);
 
         return this;
     }
 
-    private void doInvoke(int opcode, String className, String returnType, String methodName, String... argumentTypes)
+    private void doInvoke(int opcode, String className, String returnType, String methodName, boolean isInterface,
+                          String... argumentTypes)
     {
         v.visitMethodInsn(opcode, cache.toInternalName(className), methodName,
-                cache.toMethodDescriptor(returnType, argumentTypes));
+                cache.toMethodDescriptor(returnType, argumentTypes), isInterface);
     }
 
     @Override
     public InstructionBuilder invokeStatic(Class clazz, Class returnType, String methodName, Class... argumentTypes)
     {
-        doInvoke(INVOKESTATIC, clazz, returnType, methodName, argumentTypes);
+        doInvoke(INVOKESTATIC, clazz, returnType, methodName, false, argumentTypes);
 
         return this;
     }
 
-    private void doInvoke(int opcode, Class clazz, Class returnType, String methodName, Class... argumentTypes)
+    private void doInvoke(int opcode, Class clazz, Class returnType, String methodName, boolean isInterface,
+                          Class... argumentTypes)
     {
-        doInvoke(opcode, clazz.getName(), cache.toTypeName(returnType), methodName,
+        doInvoke(opcode, clazz.getName(), cache.toTypeName(returnType), methodName, isInterface,
                 PlasticUtils.toTypeNames(argumentTypes));
     }
 
@@ -272,15 +274,16 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        doInvoke(clazz.isInterface() ? INVOKEINTERFACE : INVOKEVIRTUAL, clazz, returnType, methodName, argumentTypes);
+        doInvoke(clazz.isInterface() ? INVOKEINTERFACE : INVOKEVIRTUAL, clazz, returnType, methodName,
+                clazz.isInterface(), argumentTypes);
 
         return this;
     }
 
-    private void doInvoke(int opcode, String containingClassName, MethodDescription description)
+    private void doInvoke(int opcode, String containingClassName, MethodDescription description, boolean isInterface)
     {
         v.visitMethodInsn(opcode, cache.toInternalName(containingClassName), description.methodName,
-                cache.toDesc(description));
+                cache.toDesc(description), isInterface);
     }
 
     @Override
@@ -306,7 +309,8 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         if (type != null && type != PrimitiveType.VOID)
         {
-            v.visitMethodInsn(INVOKESTATIC, type.wrapperInternalName, "valueOf", type.valueOfMethodDescriptor);
+            v.visitMethodInsn(INVOKESTATIC, type.wrapperInternalName, "valueOf", type.valueOfMethodDescriptor,
+                    false);
         }
 
         return this;
@@ -329,7 +333,8 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
     private void doUnbox(PrimitiveType type)
     {
-        v.visitMethodInsn(INVOKEVIRTUAL, type.wrapperInternalName, type.toValueMethodName, type.toValueMethodDescriptor);
+        v.visitMethodInsn(INVOKEVIRTUAL, type.wrapperInternalName, type.toValueMethodName, type.toValueMethodDescriptor,
+                false);
     }
 
     @Override
@@ -498,7 +503,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        doInvoke(INVOKESPECIAL, className, "void", "<init>", argumentTypes);
+        doInvoke(INVOKESPECIAL, className, "void", "<init>", false, argumentTypes);
 
         return this;
     }
@@ -661,14 +666,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         final LocalVariable var = state.startVariable(type);
 
-        new InstructionBuilderCallback()
-        {
-            @Override
-            public void doBuild(InstructionBuilder builder)
-            {
-                callback.doBuild(var, builder);
-            }
-        }.doBuild(this);
+        callback.doBuild(var, this);
 
         state.stopVariable(var);
 
@@ -733,27 +731,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         v.visitJumpInsn(conditionToOpcode.get(condition), ifFalseLabel);
 
-        new InstructionBuilderCallback()
-        {
-            @Override
-            public void doBuild(InstructionBuilder builder)
-            {
-                callback.ifTrue(builder);
-            }
-        }.doBuild(this);
+        callback.ifTrue(this);
 
         v.visitJumpInsn(GOTO, endIfLabel);
 
         v.visitLabel(ifFalseLabel);
 
-        new InstructionBuilderCallback()
-        {
-            @Override
-            public void doBuild(InstructionBuilder builder)
-            {
-                callback.ifFalse(builder);
-            }
-        }.doBuild(this);
+        callback.ifFalse(this);
 
         v.visitLabel(endIfLabel);
 
@@ -772,25 +756,11 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         Label exitLoop = new Label();
 
-        new InstructionBuilderCallback()
-        {
-            @Override
-            public void doBuild(InstructionBuilder builder)
-            {
-                callback.buildTest(builder);
-            }
-        }.doBuild(this);
+        callback.buildTest(this);
 
         v.visitJumpInsn(conditionToOpcode.get(condition), exitLoop);
 
-        new InstructionBuilderCallback()
-        {
-            @Override
-            public void doBuild(InstructionBuilder builder)
-            {
-                callback.buildBody(builder);
-            }
-        }.doBuild(this);
+        callback.buildBody(this);
 
         v.visitJumpInsn(GOTO, doCheck);
 

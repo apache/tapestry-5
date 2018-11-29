@@ -437,7 +437,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             // Replace the field access node with the appropriate method invocation.
 
-            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, ownerInternalName, instrumentation.methodName, instrumentation.methodDescription));
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, ownerInternalName, instrumentation.methodName, instrumentation.methodDescription, false));
 
             it.remove();
         }

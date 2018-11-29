@@ -20,13 +20,10 @@ import org.apache.tapestry5.plastic.*;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("all")
 public class PlasticClassImpl extends Lockable implements PlasticClass, InternalPlasticClassTransformation, Opcodes
@@ -100,9 +97,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final List<PlasticMethodImpl> methods;
 
-    private final Map<MethodDescription, PlasticMethod> description2method = new HashMap<MethodDescription, PlasticMethod>();
+    private final Map<MethodDescription, PlasticMethod> description2method = new HashMap<>();
 
-    final Set<String> methodNames = new HashSet<String>();
+    final Set<String> methodNames = new HashSet<>();
 
     private final List<ConstructorCallback> constructorCallbacks = PlasticInternalUtils.newList();
 
@@ -212,7 +209,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             inheritanceData.addInterface(interfaceName);
         }
 
-        methods = new ArrayList(classNode.methods.size());
+        methods = new ArrayList<>(classNode.methods.size());
 
         String invalidConstructorMessage = invalidConstructorMessage();
 
@@ -234,7 +231,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 continue;
             }
 
-            /**
+            /*
              * Static methods are not visible to the main API methods, but they must still be transformed,
              * in case they directly access fields. In addition, track their names to avoid collisions.
              */
@@ -274,7 +271,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         Collections.sort(methods);
 
-        fields = new ArrayList(classNode.fields.size());
+        fields = new ArrayList<>(classNode.fields.size());
 
         for (FieldNode node : classNode.fields)
         {
@@ -443,13 +440,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         if (list != null)
         {
 
-            final Set<String> annotations = new HashSet<String>();
-            final List<AnnotationNode> toBeRemoved = new ArrayList<AnnotationNode>();
+            final Set<String> annotations = new HashSet<>();
+            final List<AnnotationNode> toBeRemoved = new ArrayList<>();
             final List<AnnotationNode> toBeIterated;
 
             if (reverse)
             {
-                toBeIterated = new ArrayList<AnnotationNode>(list);
+                toBeIterated = new ArrayList<>(list);
                 Collections.reverse(toBeIterated);
             }
             else {
@@ -508,7 +505,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static List<Class> getJavaParameterTypes(MethodNode methodNode) {
         final ClassLoader classLoader = PlasticInternalUtils.class.getClassLoader();
         Type[] parameterTypes = Type.getArgumentTypes(methodNode.desc);
-        List<Class> list = new ArrayList<Class>();
+        List<Class> list = new ArrayList<>();
         for (Type type : parameterTypes)
         {
             try
@@ -626,16 +623,16 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 //        {
 //            introduceMethod(m).delegateTo(field);
 //        }
-        
+
         Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
         for (MethodSignature methodSignature : map.keySet())
         {
             introduceMethod(map.get(methodSignature)).delegateTo(field);
         }
-        
+
         return this;
     }
-    
+
     @Override
     public PlasticClass proxyInterface(Class interfaceType, PlasticMethod method)
     {
@@ -651,7 +648,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             introduceMethod(map.get(methodSignature)).delegateTo(method);
         }
-        
+
         return this;
     }
 
@@ -848,7 +845,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         check();
 
-        return new ArrayList<PlasticField>(fields);
+        return new ArrayList<>(fields);
     }
 
     @Override
@@ -860,7 +857,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (unclaimedFields == null)
         {
-            unclaimedFields = new ArrayList<PlasticField>(fields.size());
+            unclaimedFields = new ArrayList<>(fields.size());
 
             for (PlasticField f : fields)
             {
@@ -931,15 +928,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         check();
 
         List<PlasticMethod> result = getMethods();
-        Iterator<PlasticMethod> iterator = result.iterator();
 
-        while (iterator.hasNext())
-        {
-            PlasticMethod method = iterator.next();
-
-            if (!method.hasAnnotation(annotationType))
-                iterator.remove();
-        }
+        result.removeIf(method -> !method.hasAnnotation(annotationType));
 
         return result;
     }
@@ -949,7 +939,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         check();
 
-        return new ArrayList<PlasticMethod>(methods);
+        return new ArrayList<>(methods);
     }
 
     @Override
@@ -1266,11 +1256,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         InsnList insns = methodNode.instructions;
 
-        ListIterator it = insns.iterator();
+        ListIterator<AbstractInsnNode> it = insns.iterator();
 
         while (it.hasNext())
         {
-            AbstractInsnNode node = (AbstractInsnNode) it.next();
+            AbstractInsnNode node = it.next();
 
             int opcode = node.getOpcode();
 
@@ -1290,7 +1280,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             // Replace the field access node with the appropriate method invocation.
 
-            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, instrumentation.methodName, instrumentation.methodDescription));
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, instrumentation.methodName, instrumentation.methodDescription, false));
 
             it.remove();
         }
@@ -1456,12 +1446,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         addClassAnnotations(interfaceClassNode);
 
-        Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
-        
+        Set<PlasticMethod> introducedMethods = new HashSet<>();
+
         Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
-        
+
         // for (Method m : interfaceType.getMethods())
-	for (MethodSignature methodSignature : map.keySet())
+        for (MethodSignature methodSignature : map.keySet())
         {
             // MethodDescription description = new MethodDescription(m);
             final MethodDescription description = map.get(methodSignature);
@@ -1479,80 +1469,72 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     }
 
     private Map<MethodSignature, MethodDescription> createMethodSignatureMap(Class interfaceType) {
-	// TAP-2582: preprocessing the method list so we don't add duplicated
+        // TAP-2582: preprocessing the method list so we don't add duplicated
         // methods, something that happens when an interface has superinterfaces
         // and they define the same method signature.
         // In addition, we collect all the thrown checked exceptions, just in case.
-        Map<MethodSignature, MethodDescription> map = new HashMap<MethodSignature, MethodDescription>();
+        Map<MethodSignature, MethodDescription> map = new HashMap<>();
         for (Method m : interfaceType.getMethods())
         {
             final MethodSignature methodSignature = new MethodSignature(m);
             final MethodDescription newMethodDescription = new MethodDescription(m);
-            if (!map.containsKey(methodSignature)) 
+            if (!map.containsKey(methodSignature))
             {
-		map.put(methodSignature, newMethodDescription);
+                map.put(methodSignature, newMethodDescription);
             }
-            else 
+            else
             {
-        	if (newMethodDescription.checkedExceptionTypes != null && newMethodDescription.checkedExceptionTypes.length > 0)
-        	{
-        	    final MethodDescription methodDescription = map.get(methodSignature);
-                    final Set<String> checkedExceptionTypes = new HashSet<String>();
-                    checkedExceptionTypes.addAll(Arrays.asList(methodDescription.checkedExceptionTypes));
-                    checkedExceptionTypes.addAll(Arrays.asList(newMethodDescription.checkedExceptionTypes));
-                    map.put(methodSignature, new MethodDescription(
-                	    methodDescription, 
-                	    checkedExceptionTypes.toArray(new String[checkedExceptionTypes.size()])));
-        	}
+                if (newMethodDescription.checkedExceptionTypes != null && newMethodDescription.checkedExceptionTypes.length > 0)
+                {
+                    final MethodDescription methodDescription = map.get(methodSignature);
+                        final Set<String> checkedExceptionTypes = new HashSet<>();
+                        checkedExceptionTypes.addAll(Arrays.asList(methodDescription.checkedExceptionTypes));
+                        checkedExceptionTypes.addAll(Arrays.asList(newMethodDescription.checkedExceptionTypes));
+                        map.put(methodSignature, new MethodDescription(
+                            methodDescription,
+                            checkedExceptionTypes.toArray(new String[checkedExceptionTypes.size()])));
+                }
             }
         }
-	return map;
+        return map;
     }
-    
-    final private static class MethodSignature implements Comparable<MethodSignature>{
-	
-	final private Method method;
-	final private String name;
-	final private Class<?>[] parameterTypes;
-	
-	public MethodSignature(Method method) {
-	    this.method = method;
-	    this.name = method.getName();
-	    this.parameterTypes = method.getParameterTypes();
-	}
 
-	@Override
-	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + Arrays.hashCode(parameterTypes);
-	    result = prime * result + ((name == null) ? 0 : name.hashCode());
-	    return result;
-	}
+    final private static class MethodSignature implements Comparable<MethodSignature> {
+        final private Method method;
+        final private String name;
+        final private Class<?>[] parameterTypes;
 
-	@Override
-	public boolean equals(Object obj) {
-	    if (this == obj)
-		return true;
-	    if (obj == null)
-		return false;
-	    if (getClass() != obj.getClass())
-		return false;
-	    MethodSignature other = (MethodSignature) obj;
-	    if (!Arrays.equals(parameterTypes, other.parameterTypes))
-		return false;
-	    if (name == null) {
-		if (other.name != null)
-		    return false;
-	    } else if (!name.equals(other.name))
-		return false;
-	    return true;
-	}
+        public MethodSignature(Method method) {
+            this.method = method;
+            this.name = method.getName();
+            this.parameterTypes = method.getParameterTypes();
+        }
 
-	@Override
-	public int compareTo(MethodSignature o) {
-	    return method.getName().compareTo(o.method.getName());
-	}
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.hashCode(parameterTypes);
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+
+            MethodSignature other = (MethodSignature) obj;
+            if (!Arrays.equals(parameterTypes, other.parameterTypes)) return false;
+
+            return name == null ? other.name == null : name.equals(other.name);
+        }
+
+        @Override
+        public int compareTo(MethodSignature o) {
+            return method.getName().compareTo(o.method.getName());
+        }
     }
 
     @Override

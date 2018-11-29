@@ -9,7 +9,7 @@ test {
   useJUnit()
 }
 
-// Add the source directory for the imported/repackaged ASM 3.3.1 code
+// Add the source directory for the imported/repackaged ASM 7.0.1 code
 
 sourceSets.main.java.srcDir "src/external/java"
 
