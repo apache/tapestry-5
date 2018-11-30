@@ -3,7 +3,7 @@ description = "Integration with WRO4J to perform runtime CoffeeScript compilatio
 dependencies {
     compile project(":tapestry-core")
     compile "com.github.sommeri:less4j:1.12.0"
-    compile "com.google.javascript:closure-compiler-unshaded:v20171023"
+    compile "com.google.javascript:closure-compiler-unshaded:v20181125"
     compile "org.mozilla:rhino:1.7.7.2"
 
     testCompile project(":tapestry-runner")
