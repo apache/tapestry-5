@@ -6,6 +6,7 @@ apply plugin: "base"
 
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
+//apply from: "sha256.gradle"
 
 project.ext.versions = [
     jetty: "8.1.19.v20160209",
@@ -330,11 +331,12 @@ task aggregateJavadoc(type: Javadoc) {
         docTitle "Tapestry API - ($project.version)"
         bottom '${project.version} - Copyright &copy; 2003-2015 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
         use = true // 'use' seems to be a reserved word for the DSL
-        links "http://download.oracle.com/javase/6/docs/api/"
-        links "http://download.oracle.com/javaee/6/api/"
+        links "https://docs.oracle.com/javase/8/docs/api/"
+        links "https://docs.oracle.com/javaee/7/api/"
         addStringOption "tagletpath", configurations.javadoc.asPath
         addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
+        exclude "org/apache/tapestry5/internal/webresources/**"
     }
 
     def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
@@ -538,6 +540,13 @@ if (canDeploy) {
         outputDir "$buildDir/md5"
     }
 
+//    task generateSHA256Checksums(type: GenSHA256) {
+//        group "Release artifact"
+//        description "Creates SHA-256 checksums for archives of source and JavaDoc"
+//        source tasks.withType(Zip)
+//        outputDir "$buildDir/sha256"
+//    }
+
     if (doSign) {
         signing {
             sign configurations.archives
@@ -560,11 +569,12 @@ if (canDeploy) {
 
     task copyArchives(type: Copy) {
         group "Release artifact"
-        description "Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 checksums and PGP signatures (if signing is enabled)"
+        description "Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)"
 
         destinationDir file(archiveDeployFolder())
 
         from generateMD5Checksums
+        //from generateSHA256Checksums
         from configurations.uploads.allArtifacts.files
     }
 
