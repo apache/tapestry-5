@@ -10,6 +10,7 @@ dependencies {
 
     compile "org.apache.tomcat:tomcat-catalina:${versions.tomcat}"
     compile "org.apache.tomcat:tomcat-coyote:${versions.tomcat}"
+    compile "org.apache.tomcat:tomcat-jasper:${versions.tomcat}"
 
     compile "org.apache.tomcat:tomcat-dbcp:${versions.tomcat}"
     compile "commons-cli:commons-cli:1.2"

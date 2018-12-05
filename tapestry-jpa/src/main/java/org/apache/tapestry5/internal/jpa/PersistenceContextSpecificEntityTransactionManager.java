@@ -67,6 +67,7 @@ public class PersistenceContextSpecificEntityTransactionManager
 
     public <T> T invokeInTransaction(Invokable<T> invokable)
     {
+        final EntityTransaction transaction = getTransaction();
         if (transactionBeingCommitted)
         {
             // happens for example if you try to run a transaction in @PostCommit hook. We can only
@@ -79,7 +80,7 @@ public class PersistenceContextSpecificEntityTransactionManager
             }
             else
             {
-                rollbackTransaction(getTransaction());
+                rollbackTransaction(transaction);
                 throw new RuntimeException(
                         "Current transaction is already being committed. Transactions started @PostCommit are not allowed to return a value");
             }
@@ -95,7 +96,6 @@ public class PersistenceContextSpecificEntityTransactionManager
             }
         }
 
-        final EntityTransaction transaction = getTransaction();
         try
         {
             T result = invokable.invoke();
@@ -104,15 +104,11 @@ public class PersistenceContextSpecificEntityTransactionManager
             {
                 // Success or checked exception:
 
-                if (transaction.isActive())
+                boolean isActive = transaction.isActive();
+                if (isActive)
                 {
                     invokeBeforeCommit(transaction);
-                }
-
-                // FIXME check if we are still on top
-
-                if (transaction.isActive())
-                {
+                    // FIXME check if we are still on top
                     transactionBeingCommitted = true;
                     transaction.commit();
                     transactionBeingCommitted = false;

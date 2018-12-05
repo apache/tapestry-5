@@ -15,7 +15,6 @@
 package org.apache.tapestry5.test;
 
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 
 import java.io.File;
@@ -50,8 +49,11 @@ public class TomcatRunner implements ServletContainerRunner
         if (!tmpDir.endsWith(fileSeparator))
             tmpDir = tmpDir + fileSeparator;
         tomcatServer.setBaseDir(tmpDir + "tomcat");
-
+        tomcatServer.setPort(port);
         tomcatServer.addWebapp("/", expandedPath);
+
+        //Enable jndi lookups
+        tomcatServer.enableNaming();
 
         tomcatServer.getConnector().setAllowTrace(true);
 
@@ -68,6 +70,7 @@ public class TomcatRunner implements ServletContainerRunner
         }
 
         tomcatServer.start();
+        startDaemonAwaitThread();
     }
 
     /**
@@ -82,6 +85,7 @@ public class TomcatRunner implements ServletContainerRunner
         {
             // Stop immediately and not gracefully.
             tomcatServer.stop();
+            tomcatServer.destroy();
         }
         catch (Exception ex)
         {
@@ -117,4 +121,19 @@ public class TomcatRunner implements ServletContainerRunner
         return new File(TapestryRunnerConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
     }
 
+    // Unlike Jetty, all Tomcat threads are daemon threads. We create a
+    // blocking non-daemon to stop immediate shutdown
+    private void startDaemonAwaitThread() {
+        Thread awaitThread = new Thread() {
+
+            @Override
+            public void run() {
+                TomcatRunner.this.tomcatServer.getServer().await();
+            }
+
+        };
+        awaitThread.setContextClassLoader(getClass().getClassLoader());
+        awaitThread.setDaemon(false);
+        awaitThread.start();
+    }
 }

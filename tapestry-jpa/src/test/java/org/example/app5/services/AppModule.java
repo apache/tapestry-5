@@ -34,6 +34,7 @@ public class AppModule
     static
     {
 
+        //This will also affect test suites run after this one.Its better to run this suite last
         PersistenceProviderResolverHolder.setPersistenceProviderResolver(
                 new PersistenceProviderResolver()
                 {

@@ -32,6 +32,7 @@ import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.EntityTransactionManager;
 import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -66,10 +67,9 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     public void undecorated()
     {
         final VoidService delegate = newMock(VoidService.class);
-        final EntityManagerManager manager = newMock(EntityManagerManager.class);
         final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
-
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
 
@@ -87,14 +87,20 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     @Test
     public void persistence_unit_name_missing()
     {
-        final VoidService delegate = newMock(VoidService.class);
-        final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
         Map<String, EntityManager> managers = CollectionFactory.newMap();
         managers.put("A", newMock(EntityManager.class));
         managers.put("B", newMock(EntityManager.class));
 
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        expect(manager.getEntityManagers()).andReturn(managers);
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
 
@@ -121,14 +127,23 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     @Test
     public void persistence_unit_name_missing_single_unit_configured()
     {
-        final VoidService delegate = newMock(VoidService.class);
-        final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
-        final EntityTransaction transaction = newMock(EntityTransaction.class);
         EntityManager em = newMock(EntityManager.class);
         Map<String, EntityManager> managers = CollectionFactory.newMap();
         managers.put("A", em);
+
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        expect(manager.getEntityManagers()).andReturn(managers);
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
+
+        final EntityTransaction transaction = newMock(EntityTransaction.class);
+
 
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
@@ -150,13 +165,22 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     @Test
     public void persistence_unit_missing()
     {
-        final VoidService delegate = newMock(VoidService.class);
-        final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
         Map<String, EntityManager> managers = CollectionFactory.newMap();
         managers.put("A", newMock(EntityManager.class));
         managers.put("B", newMock(EntityManager.class));
+
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        expect(manager.getEntityManagers()).andReturn(managers);
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
+
 
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
@@ -184,14 +208,20 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     @Test
     public void persistence_unit_missing_single_unit_configured()
     {
-        final VoidService delegate = newMock(VoidService.class);
-        final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
-        final EntityTransaction transaction = newMock(EntityTransaction.class);
         EntityManager em = newMock(EntityManager.class);
         Map<String, EntityManager> managers = CollectionFactory.newMap();
         managers.put("A", em);
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        expect(manager.getEntityManagers()).andReturn(managers);
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
+        final EntityTransaction transaction = newMock(EntityTransaction.class);
 
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
@@ -215,8 +245,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
 
@@ -243,8 +279,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
 
@@ -271,8 +313,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
 
@@ -297,8 +345,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final Performer delegate = newMock(Performer.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
         final RuntimeException re = new RuntimeException("Unexpected.");
@@ -333,8 +387,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final Performer delegate = newMock(Performer.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
         final SQLException se = new SQLException("Checked.");
@@ -374,8 +434,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final ReturnTypeService delegate = newTestService();
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
 
@@ -400,8 +466,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     {
         final ReturnTypeService delegate = newTestService();
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final EntityTransactionManager transactionManager = newMock(EntityTransactionManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager, transactionManager);
+        expect(manager.getEntityManagers()).andReturn(CollectionFactory.newMap());
+
+        replay();
+        final EntityTransactionManager transactionManager = new EntityTransactionManagerImpl(
+                LoggerFactory.getLogger(EntityTransactionManagerImpl.class),manager);
+        verify();
+        final JpaAdvisorProvider provider = new JpaAdvisorProviderImpl(transactionManager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(provider);
         final EntityManager entityManager = newMock(EntityManager.class);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
 
@@ -462,10 +534,9 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         transaction.rollback();
     }
 
-    private JpaTransactionAdvisor newJpaTransactionAdvisor(final EntityManagerManager manager,
-            EntityTransactionManager transactionManager)
+    private JpaTransactionAdvisor newJpaTransactionAdvisor(final JpaAdvisorProvider provider)
     {
-        return new JpaTransactionAdvisorImpl(manager, transactionManager);
+        return new JpaTransactionAdvisorImpl(provider);
     }
 
     private ReturnTypeService newTestService()
@@ -533,20 +604,4 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         @PersistenceContext(unitName = UNIT_NAME)
         void perform() throws SQLException;
     }
-
-    public interface Service
-    {
-    	void perform();
-    }
-
-    public class ServiceImpl implements Service {
-    	@Override
-    	@CommitAfter
-    	@PersistenceContext(unitName = UNIT_NAME)
-        public void perform()
-    	{
-
-    	}
-    }
-
 }
