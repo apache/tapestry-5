@@ -816,7 +816,6 @@ class PropertyAccessImplSpec extends Specification {
   }
   
   public enum ById implements IdentifiableEnum<ById, Byte> {
-    ;
     public Byte getId() {
       return null
     }
