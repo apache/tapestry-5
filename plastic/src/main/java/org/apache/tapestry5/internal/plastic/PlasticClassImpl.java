@@ -619,15 +619,15 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         introduceInterface(interfaceType);
 
         // TAP5-2582: avoiding adding/delegating the same method more than once
-//        for (Method m : interfaceType.getMethods())
-//        {
-//            introduceMethod(m).delegateTo(field);
-//        }
-
         Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
         for (MethodSignature methodSignature : map.keySet())
         {
-            introduceMethod(map.get(methodSignature)).delegateTo(field);
+            final MethodDescription description = map.get(methodSignature);
+            if(Modifier.isStatic(description.modifiers))
+            {
+                continue;
+            }
+            introduceMethod(description).delegateTo(field);
         }
 
         return this;
@@ -646,6 +646,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         Map<MethodSignature, MethodDescription> map = createMethodSignatureMap(interfaceType);
         for (MethodSignature methodSignature : map.keySet())
         {
+            final MethodDescription description = map.get(methodSignature);
+            if(Modifier.isStatic(description.modifiers))
+            {
+                continue;
+            }
             introduceMethod(map.get(methodSignature)).delegateTo(method);
         }
 
@@ -1456,7 +1461,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             // MethodDescription description = new MethodDescription(m);
             final MethodDescription description = map.get(methodSignature);
 
-            if (!isMethodImplemented(description) && !isDefaultMethod(methodSignature.method))
+            if (!isMethodImplemented(description) && !isDefaultMethod(methodSignature.method) && !Modifier.isStatic(description.modifiers))
             {
                 // introducedMethods.add(introduceMethod(m));
                 introducedMethods.add(introduceMethod(description));

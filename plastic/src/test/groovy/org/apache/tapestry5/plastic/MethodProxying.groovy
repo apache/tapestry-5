@@ -1,6 +1,7 @@
 package org.apache.tapestry5.plastic
 
 import testsubjects.Memory
+import testinterfaces.WithStatic
 
 class MethodProxying extends AbstractPlasticSpecification {
 
@@ -19,6 +20,32 @@ class MethodProxying extends AbstractPlasticSpecification {
         expect:
 
         Runnable.isInstance o
+
+        when:
+
+        o.run()
+
+        then:
+
+        1 * mockRunnable.run()
+    }
+
+    def "Proxying with static methods"() {
+        setup:
+
+        def mockRunnable = Mock(Runnable.class)
+
+        def o = mgr.createClass(Object, { PlasticClass pc ->
+
+            def field = pc.introduceField(Runnable, "delegate").inject(mockRunnable)
+
+            pc.proxyInterface(WithStatic, field)
+        } as PlasticClassTransformer).newInstance()
+
+        expect:
+
+        WithStatic.isInstance o
+        o.version() == 1
 
         when:
 
