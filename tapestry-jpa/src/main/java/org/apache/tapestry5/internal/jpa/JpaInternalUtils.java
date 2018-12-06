@@ -78,15 +78,10 @@ public class JpaInternalUtils
     }
 
     public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
-                                                 PersistenceContext annotation) {
-        String unitName = annotation == null ? null : annotation.unitName();
-        return getEntityManager(entityManagerManager, unitName);
-    }
-
-
-    public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
-                                                 String unitName)
+                                                 PersistenceContext annotation)
     {
+        String unitName = annotation == null ? null : annotation.unitName();
+
         if (InternalUtils.isNonBlank(unitName))
             return entityManagerManager.getEntityManager(unitName);
 

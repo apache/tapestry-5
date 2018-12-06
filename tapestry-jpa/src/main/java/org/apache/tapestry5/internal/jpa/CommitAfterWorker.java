@@ -14,11 +14,17 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.EntityTransactionManager;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
@@ -26,22 +32,27 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
 
 public class CommitAfterWorker implements ComponentClassTransformWorker2
 {
-    private final JpaAdvisorProvider jpaAdvisorProvider;
+    private final Map<String, MethodAdvice> methodAdvices;
 
-    public CommitAfterWorker(JpaAdvisorProvider jpaAdvisorProvider)
+    public CommitAfterWorker(EntityManagerManager manager,
+            EntityTransactionManager transactionManager)
     {
-        this.jpaAdvisorProvider = jpaAdvisorProvider;
+        methodAdvices = new HashMap<>(manager.getEntityManagers().size());
+        for (Map.Entry<String, EntityManager> entry : manager.getEntityManagers().entrySet())
+            methodAdvices.put(entry.getKey(),
+                    new CommitAfterMethodAdvice(transactionManager, entry.getKey()));
+        methodAdvices.put(null, new CommitAfterMethodAdvice(transactionManager, null));
     }
 
     @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support,
-                          MutableComponentModel model)
+            MutableComponentModel model)
     {
         for (final PlasticMethod method : plasticClass.getMethodsWithAnnotation(CommitAfter.class))
         {
             PersistenceContext annotation = method.getAnnotation(PersistenceContext.class);
 
-            method.addAdvice(jpaAdvisorProvider.getAdvice(annotation));
+            method.addAdvice(methodAdvices.get(annotation == null ? null : annotation.unitName()));
         }
     }
 }

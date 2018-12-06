@@ -23,7 +23,17 @@ import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.jpa.*;
+import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
+import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
+import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
+import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
+import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.internal.jpa.EntityTransactionManagerImpl;
+import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
+import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
+import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
+import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
@@ -74,7 +84,6 @@ public class JpaModule
         binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withSimpleId();
         binder.bind(EntityManagerSource.class, EntityManagerSourceImpl.class);
         binder.bind(EntityTransactionManager.class, EntityTransactionManagerImpl.class);
-        binder.bind(JpaAdvisorProvider.class,JpaAdvisorProviderImpl.class);
 
     }
 

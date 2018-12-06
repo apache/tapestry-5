@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
@@ -36,8 +38,28 @@ public class EntityTransactionManagerImpl implements EntityTransactionManager
     {
         this.logger = logger;
         this.entityManagerManager = entityManagerManager;
-        this.transactionManagerMap = new HashMap<>(entityManagerManager.getEntityManagers().size());
+        transactionManagerMap = new HashMap<>(entityManagerManager.getEntityManagers().size());
     }
+
+    private EntityManager getEntityManager(String unitName)
+    {
+        // EntityManager em = JpaInternalUtils.getEntityManager(entityManagerManager, unitName);
+        // FIXME we should simply incorporate the logic in JpaInternalUtils.getEntityManager to
+        // EntityManagerManager.getEntityManager(unitName)
+        if (unitName != null)
+            return entityManagerManager.getEntityManager(unitName);
+        else
+        {
+            Map<String, EntityManager> entityManagers = entityManagerManager.getEntityManagers();
+            if (entityManagers.size() == 1)
+                return entityManagers.values().iterator().next();
+            else
+                throw new RuntimeException(
+                        "Unable to locate a single EntityManager. "
+                                + "You must provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation.");
+        }
+    }
+
     /*
      * (non-Javadoc)
      * @see net.satago.tapestry5.jpa.EntityTransactionManager#runInTransaction(java.lang.String,
@@ -69,7 +91,7 @@ public class EntityTransactionManagerImpl implements EntityTransactionManager
         if (!transactionManagerMap.containsKey(unitName))
         {
             PersistenceContextSpecificEntityTransactionManager transactionManager = new PersistenceContextSpecificEntityTransactionManager(
-                    logger, JpaInternalUtils.getEntityManager(entityManagerManager,unitName));
+                    logger, getEntityManager(unitName));
             transactionManagerMap.put(unitName, transactionManager);
             return transactionManager;
         }

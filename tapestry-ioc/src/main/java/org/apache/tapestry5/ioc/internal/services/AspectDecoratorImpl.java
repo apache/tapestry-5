@@ -39,7 +39,7 @@ public class AspectDecoratorImpl implements AspectDecorator
     @Override
     public <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, final T delegate, String description)
     {
-        return createBuilder(serviceInterface, delegate, new AnnotationAccessImpl(delegate.getClass(),serviceInterface), description);
+        return createBuilder(serviceInterface, delegate, new AnnotationAccessImpl(delegate.getClass()), description);
     }
 
     @Override

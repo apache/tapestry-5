@@ -14,45 +14,34 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import java.lang.reflect.Method;
-
 /**
- * Standard AnnotationAccess for an array of classes
+ * Standard AnnotationAccess for a specific type.
  * 
  * @since 5.3
  */
 public class AnnotationAccessImpl implements AnnotationAccess
 {
-    private final Class[] classes;
+    private final Class type;
 
-    public AnnotationAccessImpl(Class ...types)
+    public AnnotationAccessImpl(Class type)
     {
-        this.classes = types;
+        this.type = type;
     }
 
     @Override
     public AnnotationProvider getClassAnnotationProvider()
     {
-        return AnnotationProviderChain.create(F.flow(classes).removeNulls().map(InternalUtils.CLASS_TO_AP_MAPPER).toList());
+        return InternalUtils.toAnnotationProvider(type);
     }
 
     @Override
-    public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes) {
-        Flow<Class> searchClasses = F.flow(classes).removeNulls();
-        return AnnotationProviderChain.create(searchClasses.map(new Mapper<Class, Method>() {
-            @Override
-            public Method map(Class element) {
-                return InternalUtils.findMethod(element, methodName, parameterTypes);
-            }
-        }).map(InternalUtils.METHOD_TO_AP_MAPPER).toList());
+    public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes)
+    {
+        return InternalUtils.toAnnotationProvider(InternalUtils.findMethod(type, methodName, parameterTypes));
     }
 
 }
