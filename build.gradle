@@ -7,6 +7,7 @@ apply plugin: "sonar"
 
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
+apply from: "sha256.gradle"
 
 project.ext.versions = [
     jetty: "7.6.11.v20130520",
@@ -14,7 +15,7 @@ project.ext.versions = [
     testng: "6.8.21",
     easymock: "3.3.1",
     servletapi: "2.5",
-    spock: "1.0-groovy-2.3",
+    spock: "1.0-groovy-2.5",
     hibernate: "4.3.6.Final",
     slf4j: "1.7.19",
     geb: "0.10.0",
@@ -563,6 +564,13 @@ if (canDeploy) {
         outputDir "$buildDir/md5"
     }
 
+    task generateSHA256Checksums(type: GenSHA256) {
+        group "Release artifact"
+        description "Creates SHA-256 checksums for archives of source and JavaDoc"
+        source tasks.withType(Zip)
+        outputDir "$buildDir/sha256"
+    }
+    
     if (doSign) {
         signing {
             sign configurations.archives
@@ -590,6 +598,7 @@ if (canDeploy) {
         destinationDir file(archiveDeployFolder())
 
         from generateMD5Checksums
+        from generateSHA256Checksums
         from configurations.uploads.allArtifacts.files
     }
 
