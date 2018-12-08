@@ -1,0 +1,47 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<h1>DateField Demo</h1>
+
+<t:form>
+    <t:errors/>
+
+    <div class="field-group x-birthday">
+        <t:label for="birthday"/>
+        <t:html5datefield t:id="birthday"/>
+    </div>
+
+    <div class="field-group x-impact">
+        <t:label for="asteroidImpact"/>
+        <t:html5datefield t:id="asteroidImpact"/>
+    </div>
+
+    <input type="submit" value="Go" class="btn btn-primary"/>
+
+</t:form>
+
+<div class="btn-group">
+
+    <t:actionlink class="btn btn-default" t:id="clear">clear</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="english">english</t:actionlink>
+    <t:actionlink class="btn btn-default" t:id="french">french</t:actionlink>
+
+</div>
+
+<hr/>
+
+<dl>
+    <dt>Birthday</dt>
+    <dd id="birthday-output">
+        <t:output value="birthday" format="dateFormat"/>
+    </dd>
+    <dt>Impact</dt>
+    <dd id="impact-output">
+        <t:output value="asteroidImpact" format="dateFormat"/>
+    </dd>
+    <dt>Locale</dt>
+    <dd>${locale.displayName}</dd>
+</dl>
+
+
+</html>
