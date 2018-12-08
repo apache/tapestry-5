@@ -2,7 +2,7 @@
 <h1>Bean Editor With Form Fragment Demo</h1>
 
 	<t:form>
-		<t:loop source="literal:[1,2]">
+		<t:loop source="prop:[1,2]" index="var:index">
 			<t:beaneditor object="job"
 				include="title,canBeDoneRemotely">
 				<p:canBeDoneRemotely>
