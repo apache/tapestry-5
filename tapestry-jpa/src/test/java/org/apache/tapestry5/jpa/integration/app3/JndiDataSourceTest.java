@@ -15,8 +15,10 @@
 package org.apache.tapestry5.jpa.integration.app3;
 
 import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
+@TapestryTestConfiguration(webAppFolder = "src/test/app3")
 public class JndiDataSourceTest extends SeleniumTestCase
 {
     @Test

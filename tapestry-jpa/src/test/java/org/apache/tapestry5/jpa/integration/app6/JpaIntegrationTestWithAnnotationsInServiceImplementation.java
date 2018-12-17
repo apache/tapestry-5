@@ -16,9 +16,11 @@ package org.apache.tapestry5.jpa.integration.app6;
 
 import org.apache.tapestry5.internal.jpa.PersistedEntity;
 import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.app6.entities.User;
 import org.testng.annotations.Test;
 
+@TapestryTestConfiguration(webAppFolder = "src/test/app6")
 public class JpaIntegrationTestWithAnnotationsInServiceImplementation extends SeleniumTestCase
 {
 

@@ -59,7 +59,7 @@ public class JpaTestModule
 
     @Contribute(EntityManagerSource.class)
     public static void configurePersistenceUnit(
-            MappedConfiguration<String, PersistenceUnitConfigurer> cfg, ObjectLocator objectLocator)
+            MappedConfiguration<String, PersistenceUnitConfigurer> cfg, final ObjectLocator objectLocator)
     {
         PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
         {
