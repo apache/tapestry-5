@@ -694,6 +694,8 @@ public final class TapestryModule
         configuration.addInstance("max", Max.class);
         configuration.addInstance("regexp", Regexp.class);
         configuration.addInstance("email", Email.class);
+        configuration.addInstance("checked", Checked.class);
+        configuration.addInstance("unchecked", Unchecked.class);
         configuration.add("none", new None());
     }
 
