@@ -50,6 +50,8 @@ define ["underscore"],
 
           if _.isArray input
             return input.length is 0
+            
+          return false if typeof input is "boolean"
 
           return (exports.trim input).length is 0
 

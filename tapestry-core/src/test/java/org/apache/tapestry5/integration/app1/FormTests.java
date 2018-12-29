@@ -1252,6 +1252,42 @@ public class FormTests extends App1TestCase
         assertTextPresent("Validate in error");
     }
 
+    /** TAP5-2075 **/
+    @Test
+    public void validate_checkbox_must_be_checked()
+    {
+        openLinks("Validate Checkbox Must Be Checked");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("You must check Checkbox.");
+
+        check("//input[@type='checkbox']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Checkbox's value: true");
+    }
+
+    /** TAP5-2075 **/
+    @Test
+    public void validate_checkbox_must_be_unchecked()
+    {
+        openLinks("Validate Checkbox Must Be Unchecked");
+
+        check("//input[@type='checkbox']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("You must uncheck Checkbox.");
+
+        uncheck("//input[@type='checkbox']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Checkbox's value: false");
+    }
+
     // TAP5-2204
     @Test
     public void select_model_with_auto_security_and_non_persistent_model() throws Exception

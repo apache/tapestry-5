@@ -110,6 +110,8 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       fieldValue =
         if (@attr "data-value-mode") is "options"
           collectOptionValues this
+        else if @element.type is "checkbox"
+          @checked()
         else
           @value()
 

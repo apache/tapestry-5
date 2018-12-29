@@ -14,11 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Mixin;
@@ -47,7 +43,7 @@ public class Checkbox extends AbstractField
     @Parameter(defaultPrefix = BindingConstants.VALIDATE, allowNull = false)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
-    
+
     @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
@@ -63,10 +59,15 @@ public class Checkbox extends AbstractField
                 "name", getControlName(),
                 "id", getClientId(),
                 "checked", checked ? "checked" : null);
-        
+
+        putPropertyNameIntoBeanValidationContext("value");
+
         validate.render(writer);
 
+        removePropertyNameFromBeanValidationContext();
+
         resources.renderInformalParameters(writer);
+
 
         decorateInsideField();
     }
@@ -83,21 +84,23 @@ public class Checkbox extends AbstractField
         String postedValue = request.getParameter(controlName);
 
         boolean translated = postedValue != null;
-        
+
         // record as "true" or "false"
         validationTracker.recordInput(this, Boolean.toString(translated));
-        
+
+        putPropertyNameIntoBeanValidationContext("value");
         try
         {
             fieldValidationSupport.validate(translated, resources, validate);
-            
+
             value = translated;
         } catch (ValidationException ex)
         {
             validationTracker.recordError(this, ex.getMessage());
         }
+        removePropertyNameFromBeanValidationContext();
     }
-    
+
     /**
      * Computes a default value for the "validate" parameter using
      * {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.

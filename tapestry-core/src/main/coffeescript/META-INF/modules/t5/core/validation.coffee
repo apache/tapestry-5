@@ -164,5 +164,15 @@ define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
         memo.error = (@attr "data-regexp-message") or "INVALID"
         return false
 
+    dom.onDocument events.field.validate, "[data-expected-status=checked]", (event, memo) ->
+
+      unless memo.value
+        memo.error =  (@attr "data-checked-message") or "MUST BE CHECKED"
+
+    dom.onDocument events.field.validate, "[data-expected-status=unchecked]", (event, memo) ->
+
+      if memo.value
+        memo.error =  (@attr "data-checked-message") or "MUST NOT BE CHECKED"
+
     # Export the number parser, just to be nice (and to support some testing).
     return { parseNumber }

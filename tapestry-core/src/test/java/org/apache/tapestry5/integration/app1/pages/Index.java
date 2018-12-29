@@ -601,6 +601,12 @@ public class Index
 
                     new Item("textfieldwithnullvalidateparameter", "TextField with null validate parameter", "A TextField whose validate parameter is bound to null"),
 
+                    new Item("validateCheckboxMustBeChecked", "Validate Checkbox Must Be Checked", "A form that trigger validate in " +
+                            "error event on submit when checkbox is not checked"),
+
+                    new Item("validateCheckboxMustBeUnchecked", "Validate Checkbox Must Be Unchecked", "A form that trigger validate in " +
+                    		"error event on submit when checkbox is checked"),
+                    
                     new Item("validateInErrorEvent", "Validate in error Event", "A form that trigger validate in " +
                             "error event on submit when textfield is empty"),
 
