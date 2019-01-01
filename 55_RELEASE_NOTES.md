@@ -18,6 +18,7 @@ out-of-the-box and may be overriden:
 * `PropertiesFile`: blocks access to assets with `.properties` endings (case insensitive).
 * `XMLFile`: blocks access to assets with `.xml` endings (case insensitive).
 
+
 # New subproject/JAR: genericsresolver-guava
 Tapestry's own code to resolve the bound types of generic types and methods, based around GenericsUtils,
 couldn't handle some cases, as discovered in TAP5-2560. Fixing the code to handle these cases
@@ -25,3 +26,8 @@ turned out to not be feasible, so we introduced a new JAR, genericsresolver-java
 which replaces GenericsUtils with Google Guava's TypeResolver and associated classes.
 To use it, just add genericsresolver-java, which is versioned in the same way as the other Tapestry JARs,
 to the classpath of your projects and make sure a not too-old version of Google Guava is also in the classpath.
+
+# Validatior for Checkbox component
+If you want to enforce that a checkbox is checked or unchecked you can now use the new validators:
+* Checkbox must be checked: validator="checked" or @AssertTrue JSR-303 Bean validation annotation
+* Checkbox must be unchecked: validator="unchecked" or @AssertFalse JSR-303 Bean validation annotation
