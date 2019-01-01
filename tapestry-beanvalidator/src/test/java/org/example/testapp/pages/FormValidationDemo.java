@@ -17,13 +17,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.example.testapp.services.Foo;
@@ -65,9 +64,28 @@ public class FormValidationDemo
 	@Persist
 	private Date date;
 
+    @AssertTrue
+    @Property
+    @Persist
+    private boolean acceptedTermsAndConditions;
+
+    @AssertFalse
+    @Property
+    @Persist
+    private Boolean subscribed;
+
+    @SetupRender
+    private void setupRenderer()
+    {
+        if (subscribed == null)
+        {
+            subscribed = true;
+        }
+    }
+
     public void onPrepare() {
         if (languages == null) {
-            languages = new ArrayList<String>();
+            languages = new ArrayList<>();
         }
     }
 

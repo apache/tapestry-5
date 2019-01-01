@@ -53,7 +53,7 @@ public class BeanValidatorModule
     }
 
     public static void contributeServiceOverride(
-            MappedConfiguration<Class, Object> configuration,
+            MappedConfiguration<Class<?>, Object> configuration,
             @Local FieldValidatorDefaultSource source)
     {
         configuration.add(FieldValidatorDefaultSource.class, source);
@@ -71,7 +71,7 @@ public class BeanValidatorModule
     }
 
     public static void contributeBeanValidatorGroupSource(
-            final Configuration<Class> configuration)
+            final Configuration<Class<?>> configuration)
     {
         configuration.add(Default.class);
     }
@@ -184,6 +184,34 @@ public class BeanValidatorModule
                 {
                     writer.attributes("data-range-max", max);
                 }
+            }
+        });
+
+        configuration.add(new BaseCCD(AssertTrue.class)
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("t5/core/validation");
+
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-expected-status", "checked",
+                        "data-checked-message", message);
+            }
+        });
+
+        configuration.add(new BaseCCD(AssertFalse.class)
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("t5/core/validation");
+
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-expected-status", "unchecked",
+                        "data-checked-message", message);
             }
         });
     }

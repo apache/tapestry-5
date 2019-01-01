@@ -28,6 +28,22 @@
         <t:datefield t:id="birthDay" value="date" format="dd.MM.yyyy"/>
 
         <br/>
+        <div class="checkbox">
+            <label>
+                <t:checkbox t:id="acceptedTermsAndConditions"/>
+                Accept Terms and Conditions
+            </label>
+        </div>
+
+        <br/>
+        <div class="checkbox">
+            <label>
+                <t:checkbox t:id="subscribed"/>
+                Subscribed (untick to unsubscribe)
+            </label>
+        </div>
+
+        <br/>
         <input type="submit" value="Go"/>
 
     </t:form>

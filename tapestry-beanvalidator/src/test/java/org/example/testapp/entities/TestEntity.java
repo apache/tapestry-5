@@ -13,9 +13,10 @@
 // limitations under the License.
 package org.example.testapp.entities;
 
-import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.validation.constraints.*;
 
 public class TestEntity
 {
@@ -36,12 +37,18 @@ public class TestEntity
 
     @Size(min = 3)
     private String stringMinLength;
-    
+
     @Size(max = 6)
     private String stringMaxLength;
 
     @Size(min = 2, max = 3)
-    private Collection<String> collectionSizeValue = new ArrayList<String>();
+    private Collection<String> collectionSizeValue = new ArrayList<>();
+
+    @AssertTrue
+    private boolean mustBeTrue;
+
+    @AssertFalse
+    private boolean mustBeFalse = true;
 
     public String getNotNullValue()
     {
@@ -119,5 +126,25 @@ public class TestEntity
     public void setStringMaxLength(String stringMaxLength) {
         this.stringMaxLength = stringMaxLength;
     }
-    
+
+    public boolean isMustBeTrue()
+    {
+        return mustBeTrue;
+    }
+
+    public void setMustBeTrue(boolean mustBeTrue)
+    {
+        this.mustBeTrue = mustBeTrue;
+    }
+
+    public boolean isMustBeFalse()
+    {
+        return mustBeFalse;
+    }
+
+    public void setMustBeFalse(boolean mustBeFalse)
+    {
+        this.mustBeFalse = mustBeFalse;
+    }
+
 }
