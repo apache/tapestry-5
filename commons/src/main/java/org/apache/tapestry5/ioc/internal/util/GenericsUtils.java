@@ -12,8 +12,18 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Static methods related to the use of JDK 1.5 generics.
@@ -367,15 +377,7 @@ public class GenericsUtils
         }
 
         Class theClass = asClass(containingType);
-        Type genericSuperclass = theClass.getGenericSuperclass();
-        while (genericSuperclass != null && // true for interfaces with no superclass
-                !theClass.equals(Object.class) &&
-                !theClass.equals(typeVariableOwner))
-        {
-            stack.addFirst(genericSuperclass);
-            theClass = asClass(genericSuperclass);
-            genericSuperclass = theClass.getGenericSuperclass();
-        }
+        addGenericSuperclasses(theClass, typeVariableOwner, stack);
 
         int i = getTypeVariableIndex(typeVariable);
         Type resolved = typeVariable;
@@ -398,6 +400,34 @@ public class GenericsUtils
         // the only way we get here is if resolved is still a TypeVariable, otherwise an
         // exception is thrown or a value is returned.
         return ((TypeVariable) resolved).getBounds()[0];
+    }
+
+
+    private static void addGenericSuperclasses(Class theClass, final Class typeVariableOwner, final LinkedList<Type> stack) {
+        Type genericSuperclass = theClass.getGenericSuperclass();
+        while (genericSuperclass != null && // true for interfaces with no superclass
+                !theClass.equals(Object.class) &&
+                !theClass.equals(typeVariableOwner))
+        {
+            stack.addFirst(genericSuperclass);
+            theClass = asClass(genericSuperclass);
+            genericSuperclass = theClass.getGenericSuperclass();
+        }
+        for (Type type : theClass.getGenericInterfaces()) {
+            stack.add(type);
+        }
+        for (Class implementedInterface : getAllImplementedInterfaces(theClass)) {
+            addGenericSuperclasses(implementedInterface, typeVariableOwner, stack);
+        }
+    }
+    
+    private static List<Class> getAllImplementedInterfaces(Class theClass) {
+        List<Class> list = new ArrayList<>();
+        for (Class implementedInterface : theClass.getInterfaces()) {
+            list.add(implementedInterface);
+            list.addAll(getAllImplementedInterfaces(implementedInterface));
+        }
+        return list;
     }
 
     /**
