@@ -723,6 +723,26 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
         verify();
     }
     
+    // https://issues.apache.org/jira/browse/TAP5-2560
+    @Test
+    public void missing_property_due_to_wrong_type_parameter_resolution() 
+    {
+
+        Messages messages = mockMessages();
+
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel<FileContentUnit> beanModel = source.createDisplayModel(FileContentUnit.class, messages);
+        
+        // throws "org.apache.tapestry5.internal.services.PropertyExpressionException: Exception generating conduit for expression 'content.mimeType': Class org.apache.tapestry5.internal.services.AbstractBeanModelSourceImplTest$ContentData does not contain a property (or public field) named 'mimeType'." without fix
+        beanModel.add("content.mimeType");
+
+        verify();
+
+    }
+    
     final private static class SortableBean
     {
         private int sortableByDefault;
@@ -753,5 +773,33 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
         }
         
     }
+    
+    public interface NonTranslatableContentUnit<T extends ContentData> {
+        T getContent();
+    }
+
+    public interface BinaryContentUnit<T extends BinaryContent> extends NonTranslatableContentUnit<T> {}
+
+    public interface FileContentUnit extends BinaryContentUnit<FileContent> {}
+
+    public interface ContentData {
+        boolean isEmpty();
+    }
+
+    public interface BinaryContent extends ContentData {
+        String getMimeType();
+    }   
+
+    public interface FileContent extends BinaryContent {}
+    
+    public class ConcreteFileContent implements FileContentUnit {
+
+        @Override
+        public FileContent getContent() {
+            return null;
+        }
+        
+    }
+
     
 }
