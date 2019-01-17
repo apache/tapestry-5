@@ -42,7 +42,7 @@ public class TestEntity
     private String stringMaxLength;
 
     @Size(min = 2, max = 3)
-    private Collection<String> collectionSizeValue = new ArrayList<>();
+    private Collection<String> collectionSizeValue = new ArrayList<String>();
 
     @AssertTrue
     private boolean mustBeTrue;

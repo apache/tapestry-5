@@ -85,7 +85,7 @@ public class FormValidationDemo
 
     public void onPrepare() {
         if (languages == null) {
-            languages = new ArrayList<>();
+            languages = new ArrayList<String>();
         }
     }
 
