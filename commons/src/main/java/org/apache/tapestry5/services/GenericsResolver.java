@@ -2,7 +2,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -10,22 +10,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.services;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
-import org.apache.tapestry5.services.GenericsResolver;
+import org.apache.tapestry5.internal.services.GenericsResolverImpl;
 
 /**
- * Static methods related to the use of JDK 1.5 generics. From Tapestry 5.5.0,
- * this class just delegates to {@link GenericsResolver}.
+ * <p>Methods related to the use of Java 5+ generics.
+ * Instances should be obtained through {@link GenericsResolver.Provider#getInstance()}.</p>
+ * 
+ * <p>
+ * If you have exceptions or bad results with classes using Generics, such as exceptions
+ * or missing BeanModel properties,
+ * you should try adding the <code>genericsresolver-guava<code> Tapestry subproject to our classpath.
+ * </p>
+ * 
+ * @since 5.5.0
  */
-public class GenericsUtils
+@SuppressWarnings("unchecked")
+public interface GenericsResolver
 {
-    final private static GenericsResolver GENERICS_RESOLVER = GenericsResolver.Provider.getInstance();
-    
     /**
      * Analyzes the method in the context of containingClass and returns the Class that is represented by
      * the method's generic return type. Any parameter information in the generic return type is lost. If you want
@@ -39,10 +48,7 @@ public class GenericsUtils
      * @see #resolve(java.lang.reflect.Type,java.lang.reflect.Type)
      * @see #asClass(java.lang.reflect.Type)
      */
-    public static Class<?> extractGenericReturnType(Class<?> containingClass, Method method)
-    {
-        return GENERICS_RESOLVER.extractGenericReturnType(containingClass, method);
-    }
+    Class<?> extractGenericReturnType(Class<?> containingClass, Method method);
 
     /**
      * Analyzes the field in the context of containingClass and returns the Class that is represented by
@@ -57,10 +63,7 @@ public class GenericsUtils
      * @see #resolve(java.lang.reflect.Type,java.lang.reflect.Type)
      * @see #asClass(java.lang.reflect.Type)
      */
-    public static Class extractGenericFieldType(Class containingClass, Field field)
-    {
-        return GENERICS_RESOLVER.extractGenericFieldType(containingClass, field);
-    }
+    Class extractGenericFieldType(Class containingClass, Field field);
 
     /**
      * Analyzes the method in the context of containingClass and returns the Class that is represented by
@@ -71,10 +74,7 @@ public class GenericsUtils
      * @return the generic type represented by the methods generic return type, resolved based on the containingType.
      * @see #resolve(java.lang.reflect.Type,java.lang.reflect.Type)
      */
-    public static Type extractActualType(Type containingType, Method method)
-    {
-        return GENERICS_RESOLVER.extractActualType(containingType, method);
-    }
+    Type extractActualType(Type containingType, Method method);
 
     /**
      * Analyzes the method in the context of containingClass and returns the Class that is represented by
@@ -85,10 +85,7 @@ public class GenericsUtils
      * @return the generic type represented by the methods generic return type, resolved based on the containingType.
      * @see #resolve(java.lang.reflect.Type,java.lang.reflect.Type)
      */
-    public static Type extractActualType(Type containingType, Field field)
-    {
-        return GENERICS_RESOLVER.extractActualType(containingType, field);
-    }
+    Type extractActualType(Type containingType, Field field);
 
     /**
      * Resolves the type parameter based on the context of the containingType.
@@ -105,11 +102,43 @@ public class GenericsUtils
      *          the type which his
      * @return
      *          the type resolved to the best of our ability.
-     * @since 5.2.?
      */
-    public static Type resolve(final Type type, final Type containingType)
+    Type resolve(final Type type, final Type containingType);
+    
+    /**
+     * Convenience class for getting a {@link GenericsResolver} instance.
+     */
+    final static public class Provider 
     {
-        return GENERICS_RESOLVER.resolve(type, containingType);
+
+        final private static GenericsResolver instance;
+        
+        static 
+        {
+            
+            ServiceLoader<GenericsResolver> serviceLoader = ServiceLoader.load(GenericsResolver.class);
+            Iterator<GenericsResolver> iterator = serviceLoader.iterator();
+            if (iterator.hasNext()) 
+            {
+                instance = iterator.next();
+            }
+            else 
+            {
+                instance = new GenericsResolverImpl();
+            }
+        }
+        
+        /**
+         * Returns a cached {@linkplain GenericsResolver} instance. 
+         * If {@link ServiceLoader} finds one instance, it returns the first one found. If not,
+         * it returns {@link GenericsResolverImpl}.
+         * @return a {@link GenericsResolver} instance.
+         */
+        public static GenericsResolver getInstance() 
+        {
+            return instance;
+        }
+        
     }
     
     /**
@@ -126,9 +155,6 @@ public class GenericsUtils
      *           a Class, ParameterizedType, GenericArrayType
      * @return the un-parameterized class associated with the type.
      */
-    public static Class asClass(Type actualType)
-    {
-        return GENERICS_RESOLVER.asClass(actualType);
-    }
+    Class asClass(Type actualType);
     
 }
