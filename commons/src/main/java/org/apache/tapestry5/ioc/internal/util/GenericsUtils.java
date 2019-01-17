@@ -422,7 +422,7 @@ public class GenericsUtils
     }
     
     private static List<Class> getAllImplementedInterfaces(Class theClass) {
-        List<Class> list = new ArrayList<>();
+        List<Class> list = new ArrayList<Class>();
         for (Class implementedInterface : theClass.getInterfaces()) {
             list.add(implementedInterface);
             list.addAll(getAllImplementedInterfaces(implementedInterface));
