@@ -1,3 +1,5 @@
+// Copyright 2006 The Apache Software Foundation
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -9,17 +11,41 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.apache.tapestry5.internal.genericsresolverguava;
 
-import org.apache.tapestry5.beaneditor.BeanModelSourceBuilder;
-import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.annotations.Retain;
 
-public class GuavaBeanModelSourceImplTest extends AbstractBeanModelSourceImplTest {
+/**
+ * Used to test some issues related to visibility.
+ */
+public class VisibilityBean
+{
+    // Got to some real effort to provoke some name collisions!
 
-    @Override
-    protected BeanModelSource create()
+    @Retain
+    public static int _$myStatic;
+
+    @Retain
+    protected String _$myProtected;
+
+    @Retain
+    String _$myPackagePrivate;
+
+    @Retain
+    public String _$myPublic;
+
+    @Retain
+    private long $myLong;
+
+    public long getMyLong()
     {
-        return new BeanModelSourceBuilder().build();
+        return $myLong;
     }
-    
+
+    public void setMyLong(long myLong)
+    {
+        $myLong = myLong;
+    }
+
 }

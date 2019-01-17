@@ -13,44 +13,38 @@ package org.apache.tapestry5.internal.genericsresolverguava;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.BeanModelSourceBuilder;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.beaneditor.Sortable;
-import org.apache.tapestry5.internal.PropertyOrderBean;
-import org.apache.tapestry5.internal.services.BeanWithStaticField;
-import org.apache.tapestry5.internal.services.CompositeBean;
-import org.apache.tapestry5.internal.services.EnumBean;
-import org.apache.tapestry5.internal.services.NonVisualBean;
-import org.apache.tapestry5.internal.services.PropertyExpressionException;
-import org.apache.tapestry5.internal.services.SimpleBean;
-import org.apache.tapestry5.internal.services.StoogeBean;
-import org.apache.tapestry5.internal.services.StringArrayBean;
-import org.apache.tapestry5.internal.services.WriteOnlyBean;
-import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.modules.TapestryModule;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Copied from tapestry-core's tests due to the lack of a better option.
 * Tests for the bean editor model source itself, as well as the model classes.
 */
-public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCase
+public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
 {
  private BeanModelSource source;
 
  protected abstract BeanModelSource create();
-
+ 
  @BeforeClass
  public void setup()
  {
@@ -78,7 +72,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
      assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
      assertEquals(model.toString(),
-             "BeanModel[org.apache.tapestry5.internal.services.SimpleBean properties:firstName, lastName, age]");
+             "BeanModel[org.apache.tapestry5.internal.genericsresolverguava.SimpleBean properties:firstName, lastName, age]");
 
      PropertyModel age = model.get("age");
 
@@ -310,7 +304,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean already contains a property model for property \'age\'.");
+                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean already contains a property model for property \'age\'.");
      }
 
      verify();
@@ -335,7 +329,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property named \'frobozz\'.");
+                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean does not contain a property named \'frobozz\'.");
 
          assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName");
      }
@@ -364,7 +358,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property with id \'frobozz\'.");
+                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean does not contain a property with id \'frobozz\'.");
 
          assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName", "shrubfoo");
      }
@@ -586,7 +580,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
      {
          model.add("doesNotExist");
          unreachable();
-     } catch (PropertyExpressionException ex)
+     } catch (Exception ex)
      {
          assertMessageContains(ex, "does not contain", "doesNotExist");
      }
@@ -868,5 +862,10 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
             return value_;
         }
     }
- 
+
+    protected final PropertyConduit mockPropertyConduit()
+    {
+        return newMock(PropertyConduit.class);
+    }
+
 }
