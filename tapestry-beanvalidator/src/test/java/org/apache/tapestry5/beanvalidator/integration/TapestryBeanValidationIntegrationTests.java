@@ -215,9 +215,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         assertTextPresent("Null Value must be null");
 
-        waitForCssSelectorToAppear("p[data-error-block-for='mustBeTrue']");
         assertTextPresent("Must Be True must be true");
-        waitForCssSelectorToAppear("p[data-error-block-for='mustBeFalse']");
         assertTextPresent("Must Be False must be false");
 
         click("mustBeTrue");
