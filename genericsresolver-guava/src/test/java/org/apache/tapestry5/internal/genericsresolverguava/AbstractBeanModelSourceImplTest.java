@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.modules.TapestryModule;
@@ -766,6 +767,27 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
 
  }
  
+    // https://issues.apache.org/jira/browse/TAP5-2032
+    @Test
+    public void tap5_2032() 
+    {
+        // explodes without fix
+        new PropertyAccessImpl().getAdapter(ById.class);
+    }
+ 
+    public interface IdentifiableEnum<E extends Enum<E>, ID extends Number> 
+    {
+        ID getId();
+    }
+
+    public enum ById implements IdentifiableEnum<ById, Byte> 
+    {
+        ;
+        public Byte getId() 
+        {
+            return null;
+        }
+    }
  
  final private static class SortableBean
  {

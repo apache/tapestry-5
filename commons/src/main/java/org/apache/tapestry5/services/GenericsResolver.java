@@ -27,7 +27,7 @@ import org.apache.tapestry5.internal.services.GenericsResolverImpl;
  * <p>
  * If you have exceptions or bad results with classes using Generics, such as exceptions
  * or missing BeanModel properties,
- * you should try adding the <code>genericsresolver-guava<code> Tapestry subproject to our classpath.
+ * you should try adding the <code>genericsresolver-guava</code> Tapestry subproject to our classpath.
  * </p>
  * 
  * @since 5.5.0
@@ -44,7 +44,6 @@ public interface GenericsResolver
      * @param containingClass class which either contains or inherited the method
      * @param method          method from which to extract the return type
      * @return the class represented by the methods generic return type, resolved based on the context .
-     * @see #extractActualType(java.lang.reflect.Type, java.lang.reflect.Method)
      * @see #resolve(java.lang.reflect.Type,java.lang.reflect.Type)
      * @see #asClass(java.lang.reflect.Type)
      */
@@ -54,7 +53,7 @@ public interface GenericsResolver
      * Analyzes the field in the context of containingClass and returns the Class that is represented by
      * the field's generic type. Any parameter information in the generic type is lost, if you want
      * to preserve the type parameters of the return type consider using
-     * {@link #getTypeVariableIndex(java.lang.reflect.TypeVariable)}.
+     * #getTypeVariableIndex(java.lang.reflect.TypeVariable).
      *
      * @param containingClass class which either contains or inherited the field
      * @param field           field from which to extract the type
