@@ -48,7 +48,7 @@ public class GenericsUtils
      * Analyzes the field in the context of containingClass and returns the Class that is represented by
      * the field's generic type. Any parameter information in the generic type is lost, if you want
      * to preserve the type parameters of the return type consider using
-     * {@link #getTypeVariableIndex(java.lang.reflect.TypeVariable)}.
+     * #getTypeVariableIndex(java.lang.reflect.TypeVariable).
      *
      * @param containingClass class which either contains or inherited the field
      * @param field           field from which to extract the type
