@@ -13,15 +13,9 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.internal;
 
-
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Advise;
-import org.hibernate.Session;
-import org.hibernate.cfg.Configuration;
 
 public class AdviceModule
 {
@@ -51,19 +45,4 @@ public class AdviceModule
             final MethodAdviceReceiver methodAdviceReceiver) {
         methodAdviceReceiver.adviseAllMethods(new TestAdvice());
     }
-    
-//    public static void main(String[] args) {
-//	Registry registry = RegistryBuilder.buildAndStartupRegistry(AdviceModule.class);
-//	Session session = registry.getService(Session.class);
-//    }
-    
-    // TAP5-2582
-    public static Session buildHibernateSession(
-	    ObjectLocator objectLocator
-	) {
-	    return new Configuration()
-	        .configure("hibernate.cfg.xml")
-	        .buildSessionFactory()
-	        .openSession();
-	}
 }
