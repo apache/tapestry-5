@@ -163,6 +163,17 @@ public interface PlasticClass extends AnnotationAccess
      * @return this plastic class, for further configuration
      */
     PlasticClass proxyInterface(Class interfaceType, PlasticField field);
+    
+    /**
+     * Introduces the interface, and then invokes {@link PlasticMethod#delegateTo(PlasticMethod)} on each method
+     * defined by the interface.
+     *
+     * @param interfaceType defines the interface to proxy
+     * @param method        method to delegate to
+     * @return this plastic class, for further configuration
+     * @since 5.4.4
+     */
+    PlasticClass proxyInterface(Class interfaceType, PlasticMethod method);
 
     /**
      * Conditionally adds an implementation of <code>toString()</code> to the class, but only if it is not already

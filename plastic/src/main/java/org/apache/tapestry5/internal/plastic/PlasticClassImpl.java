@@ -621,7 +621,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         introduceInterface(interfaceType);
 
-        for (Method m : interfaceType.getMethods())
+        for (Method m : getUniqueMethods(interfaceType))
         {
             introduceMethod(m).delegateTo(field);
         }
@@ -968,7 +968,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     public PlasticMethod introduceMethod(Method method)
     {
         check();
-
         return introduceMethod(new MethodDescription(method));
     }
 
@@ -1401,8 +1400,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new InstructionBuilderImpl(description, mn, nameCache);
     }
 
-    @Override
     public Set<PlasticMethod> introduceInterface(Class interfaceType)
+    {
+        return introduceInterface(interfaceType, null);
+    }
+    
+    private Set<PlasticMethod> introduceInterface(Class interfaceType, PlasticMethod method)
     {
         check();
 
@@ -1431,20 +1434,52 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         addClassAnnotations(interfaceClassNode);
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
+        Set<Method> alreadyIntroducedMethods = new HashSet<>();
 
-        for (Method m : interfaceType.getMethods())
+        Method[] sortedMethods = interfaceType.getMethods();
+        Arrays.sort(sortedMethods, METHOD_COMPARATOR);
+        for (Method m : sortedMethods)
         {
             MethodDescription description = new MethodDescription(m);
 
-            if (!isMethodImplemented(description) && !isDefaultMethod(m))
+            if (!isMethodImplemented(description) && !isDefaultMethod(m) && !contains(alreadyIntroducedMethods, m))
             {
-                introducedMethods.add(introduceMethod(m));
+                PlasticMethod introducedMethod = introduceMethod(m);
+                introducedMethods.add(introducedMethod);
+                if (method != null) {
+                    introducedMethod.delegateTo(method);
+                }
+                alreadyIntroducedMethods.add(m);
             }
         }
 
         interfaceClassNode = null;
 
         return introducedMethods;
+    }
+    
+    @Override
+    public PlasticClass proxyInterface(Class interfaceType, PlasticMethod method)
+    {
+        check();
+        assert method != null;
+
+        introduceInterface(interfaceType, method);
+        
+        return this;
+    }
+
+    private boolean contains(Set<Method> alreadyIntroducedMethods, Method m) {
+        boolean contains = false;
+        for (Method method : alreadyIntroducedMethods) 
+        {
+            if (METHOD_COMPARATOR.compare(method, m) == 0)
+            {
+                contains = true;
+                break;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -1524,6 +1559,58 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             pool.setFieldReadInstrumentation(classNode.name, fieldName, fi);
         }
+    }
+    
+    final private MethodComparator METHOD_COMPARATOR = new MethodComparator();
+    
+    final private class MethodComparator implements Comparator<Method> 
+    {
+
+        @Override
+        public int compare(Method o1, Method o2) 
+        {
+            
+            int comparison = o1.getName().compareTo(o2.getName());
+            
+            if (comparison == 0) 
+            {
+                comparison = o1.getParameterTypes().length - o2.getParameterTypes().length;
+            }
+            
+            if (comparison == 0) 
+            {
+                final int count = o1.getParameterTypes().length;
+                for (int i = 0; i < count; i++) 
+                {
+                    Class p1 = o1.getParameterTypes()[i];
+                    Class p2 = o1.getParameterTypes()[i];
+                    if (!p1.equals(p2)) 
+                    {
+                        comparison = p1.getName().compareTo(p2.getName());
+                        break;
+                    }
+                }
+            }
+            return comparison;
+        }
+    }
+    
+    private List<Method> getUniqueMethods(Class interfaceType) 
+    {
+        final List<Method> unique = new ArrayList<>(Arrays.asList(interfaceType.getMethods()));
+        Collections.sort(unique, METHOD_COMPARATOR);
+        Method last = null;
+        Iterator<Method> iterator = unique.iterator();
+        while (iterator.hasNext()) 
+        {
+            Method m = iterator.next();
+            if (last != null && METHOD_COMPARATOR.compare(m, last) == 0)
+            {
+                last = m;
+                iterator.remove();
+            }
+        }
+        return unique;
     }
 
     @Override

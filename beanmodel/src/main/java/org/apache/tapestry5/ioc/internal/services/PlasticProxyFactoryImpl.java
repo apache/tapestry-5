@@ -65,15 +65,23 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     @Override
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback)
     {
-        return manager.createProxy(interfaceType, implementationType, callback);
+        return createProxy(interfaceType, implementationType, callback, true);
     }
-    
+
+    @Override
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType,
+            Class<? extends T> implementationType,
+            PlasticClassTransformer callback,
+            boolean introduceInterface) {
+        return manager.createProxy(interfaceType, implementationType, callback, introduceInterface);
+    }
+
+
     @Override
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
         return manager.createProxy(interfaceType, callback);
     }
-    
     
     @Override
     public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType,

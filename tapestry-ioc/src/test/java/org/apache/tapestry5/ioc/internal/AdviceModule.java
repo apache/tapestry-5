@@ -14,8 +14,11 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Advise;
+import org.hibernate.Session;
+import org.hibernate.cfg.Configuration;
 
 public class AdviceModule
 {
@@ -45,4 +48,5 @@ public class AdviceModule
             final MethodAdviceReceiver methodAdviceReceiver) {
         methodAdviceReceiver.adviseAllMethods(new TestAdvice());
     }
+    
 }

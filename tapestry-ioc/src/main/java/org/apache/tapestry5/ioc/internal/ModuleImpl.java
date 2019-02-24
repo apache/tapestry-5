@@ -509,10 +509,7 @@ public class ModuleImpl implements Module
                     }
                 });
 
-                for (Method m : serviceInterface.getMethods())
-                {
-                    plasticClass.introduceMethod(m).delegateTo(delegateMethod);
-                }
+                plasticClass.proxyInterface(serviceInterface, delegateMethod);
 
                 plasticClass.introduceMethod(WRITE_REPLACE).changeImplementation(new InstructionBuilderCallback()
                 {
@@ -525,7 +522,7 @@ public class ModuleImpl implements Module
 
                 plasticClass.addToString(description);
             }
-        });
+        }, false);
 
         return instantiator.newInstance();
     }

@@ -234,6 +234,21 @@ public class PlasticManager implements PlasticClassListenerHub
      * 
      * @param interfaceType
      *            class to extend from, which must be a class, not an interface
+     * @param callback
+     *            used to configure the new class
+     * @return the instantiator, which allows instances of the new class to be created
+     * @see #createProxyTransformation(Class, Class)
+     */
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback, boolean introduceInterface)
+    {
+        return createProxy(interfaceType, null, callback, introduceInterface);
+    }
+
+    /**
+     * Creates an entirely new class. The class extends from Object and implements the provided interface.
+     * 
+     * @param interfaceType
+     *            class to extend from, which must be a class, not an interface
      * @param implementationType
      *            class that implements interfaceType. It can be null. 
      * @param callback
@@ -244,13 +259,42 @@ public class PlasticManager implements PlasticClassListenerHub
      */
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback)
     {
+        return createProxy(interfaceType, implementationType, callback, true);
+    }
+    
+    /**
+     * Creates an entirely new class. The class extends from Object and implements the provided interface.
+     * 
+     * @param interfaceType
+     *            class to extend from, which must be a class, not an interface
+     * @param implementationType
+     *            class that implements interfaceType. It can be null. 
+     * @param callback
+     *            used to configure the new class
+     * @param introduceInterface
+     *            whether to introduce the interface to the Plastic class or not.
+     * @return the instantiator, which allows instances of the new class to be created
+     * @see #createProxyTransformation(Class, Class)
+     * @since 5.4.5
+     */
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback,
+            boolean introduceInterface)
+    {
         assert callback != null;
 
-        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType, implementationType);
+        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType, implementationType, introduceInterface);
 
         callback.transform(transformation.getPlasticClass());
 
         return transformation.createInstantiator();
+    }
+
+    /**
+     * Returns <code>createProxyTransformation(interfaceType, implementationType, true)</code>
+     */
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType, Class implementationType)
+    {
+        return createProxyTransformation(interfaceType, implementationType, true);
     }
 
     /**
@@ -262,9 +306,12 @@ public class PlasticManager implements PlasticClassListenerHub
      *            class proxy will extend from
      * @param implementationType
      *            class that implements interfaceType. It can be null.
+     * @param introduceInterface
+     *            whether <code>result.getPlasticClass().introduceInterface(interfaceType);</code> should
+     *            be called or not.
      * @return transformation from which an instantiator may be created
      */
-    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType, Class implementationType)
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType, Class implementationType, boolean introduceInterface)
     {
         assert interfaceType != null;
 
@@ -279,7 +326,10 @@ public class PlasticManager implements PlasticClassListenerHub
         PlasticClassTransformation<T> result = 
                 pool.createTransformation("java.lang.Object", name, implementationClassName);
 
-        result.getPlasticClass().introduceInterface(interfaceType);
+        if (introduceInterface)
+        {
+            result.getPlasticClass().introduceInterface(interfaceType);
+        }
 
         return result;
     }

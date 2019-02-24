@@ -63,6 +63,20 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      *         configures the proxy
      * @return instantiator that can be used to create an instance of the proxy class
      */
+    @IncompatibleChange(release = "5.4.5", details = "TAP5-2528")
+    <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback, boolean introduceInterface);
+
+    /**
+     * Same as <code>createProxy(interfacetype, implementationType, callback, true)</code>
+     *
+     * @param interfaceType
+     *         interface implemented by proxy
+     * @param implementationType
+     *         a class that implements the interfaceType. It can be null.
+     * @param callback
+     *         configures the proxy
+     * @return instantiator that can be used to create an instance of the proxy class
+     */
     @IncompatibleChange(release = "5.4", details = "TAP5-2029")
     <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback);
 
@@ -156,4 +170,5 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * @since 5.3.3
      */
     void clearCache();
+
 }
