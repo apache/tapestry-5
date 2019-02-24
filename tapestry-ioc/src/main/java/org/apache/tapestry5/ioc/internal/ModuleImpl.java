@@ -522,7 +522,7 @@ public class ModuleImpl implements Module
 
                 plasticClass.addToString(description);
             }
-        });
+        }, false);
 
         return instantiator.newInstance();
     }
