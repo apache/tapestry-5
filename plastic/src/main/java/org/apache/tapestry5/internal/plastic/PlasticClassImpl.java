@@ -1597,7 +1597,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     
     private List<Method> getUniqueMethods(Class interfaceType) 
     {
-        final List<Method> unique = new ArrayList<>(Arrays.asList(interfaceType.getMethods()));
+        final List<Method> unique = new ArrayList<Method>(Arrays.asList(interfaceType.getMethods()));
         Collections.sort(unique, METHOD_COMPARATOR);
         Method last = null;
         Iterator<Method> iterator = unique.iterator();
