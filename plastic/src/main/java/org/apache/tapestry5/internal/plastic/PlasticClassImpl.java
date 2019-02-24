@@ -1434,7 +1434,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         addClassAnnotations(interfaceClassNode);
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
-        Set<Method> alreadyIntroducedMethods = new HashSet<>();
+        Set<Method> alreadyIntroducedMethods = new HashSet<Method>();
 
         Method[] sortedMethods = interfaceType.getMethods();
         Arrays.sort(sortedMethods, METHOD_COMPARATOR);
