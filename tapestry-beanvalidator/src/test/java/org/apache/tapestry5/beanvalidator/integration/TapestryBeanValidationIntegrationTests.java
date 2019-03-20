@@ -218,8 +218,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     }
     
     // TAP5-1718
-    @Test
-    public void nested_object_validation() throws Exception
+    // @Test
+    private void nested_object_validation() throws Exception
     {
         
         final String locatorTemplate = "//p[@data-error-block-for='%s']";
