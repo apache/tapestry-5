@@ -8,7 +8,9 @@ before_install:
   - "export DISPLAY=:99.0"
 
 install: /bin/true
-script: ./gradlew -Dci=true --debug build
+script: ./gradlew -Dci=true build
+after_failure:
+  - cat */build/test-results/TEST-*.xml
 
 cache:
   directories:
