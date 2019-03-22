@@ -1,88 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archetype-descriptor name="Tapestry 5 Quickstart Project">
     <fileSets>
-        <fileSet filtered="true" packaged="true">
-            <directory>src/main/java</directory>
-            <includes>
-                <include>**/*.java</include>
-            </includes>
-        </fileSet>
-
-        <!-- Currently just a placeholder. -->
-        <fileSet filtered="true" packaged="false">
-            <directory>src/test/java</directory>
-        </fileSet>
-
-        <fileSet filtered="true">
-            <directory>src/main/webapp</directory>
-            <excludes>
-                <exclude>*.ico</exclude>
-                <exclude>**/*.jpg</exclude>
-                <exclude>**/*.gif</exclude>
-                <exclude>**/*.png</exclude>
-                <exclude>**/*.js</exclude>
-                <exclude>**/*.css</exclude>
-            </excludes>
-        </fileSet>
-
-        <!-- Don't want to filter binary files. -->
-
-        <fileSet filtered="false">
-            <directory>src/main/webapp</directory>
-            <includes>
-                <include>*.ico</include>
-                <include>**/*.jpg</include>
-                <include>**/*.gif</include>
-                <include>**/*.png</include>
-                <include>**/*.js</include>
-                <include>**/*.css</include>
-            </includes>
-        </fileSet>
-
-        <!-- This needs to stay at the root. -->
-        <fileSet filtered="true" packaged="false">
-            <directory>src/main/resources</directory>
-            <includes>
-                <include>log4j.properties</include>
-            </includes>
-        </fileSet>
-
-        <!-- The rest should be packaged. -->
-        <fileSet filtered="true" packaged="true">
-            <directory>src/main/resources</directory>
-            <excludes>
-                <exclude>log4j.properties</exclude>
-            </excludes>
-        </fileSet>
-
-        <fileSet filtered="true" packaged="false">
-            <directory>src/test/resources</directory>
-        </fileSet>
-
-        <fileSet filtered="true" packaged="false">
-            <directory>src/test/conf</directory>
-        </fileSet>
-
-        <fileSet filtered="true" packaged="false">
-            <directory>src/site</directory>
-        </fileSet>
-
-        <!-- Now the Gradle stuff -->
-
         <fileSet filtered="true" packaged="false">
             <directory/>
             <includes>
                 <include>build.gradle</include>
             </includes>
         </fileSet>
-
         <fileSet filtered="false" packaged="false">
             <directory/>
             <includes>
-                <include>gradlew*</include>
-                <include>gradle/wrapper/*</include>
+                <include>.gitignore</include>
+                <include>gradlew</include>
+                <include>gradlew.bat</include>
+                <include>gradle/**</include>
+                <include>settings.gradle</include>
             </includes>
         </fileSet>
-
+        <!-- Source Code -->
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <!-- Resources -->
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>log4j2.yml</include>
+                <include>application.yml</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>components/**</include>
+                <include>pages/**</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="false" packaged="false">
+            <directory>src/main/</directory>
+            <includes>
+                <include>webapp/**</include>
+            </includes>
+        </fileSet>
+        <!-- Test -->
+        <fileSet filtered="true" packaged="true">
+            <directory>src/test/groovy</directory>
+            <includes>
+                <include>**/*.groovy</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="false" packaged="false">
+            <directory>src/test/resources</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </archetype-descriptor>

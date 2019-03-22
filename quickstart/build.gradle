@@ -1,38 +1,68 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
-// Copy the gradle wrapper files from the project root
-processResources { 
-  from(rootDir) { 
-    include "gradlew"
-    include "gradlew.bat"
-    include "gradle/**"
-    into "archetype-resources"
-  }
+task copyGradleWrapper(type: Copy) {
+    ext.srcDir = file("$buildDir/wrapper")
+
+    inputs.dir srcDir
+    outputs.dir file("$buildDir/resources/main/archetype-resources")
+
+    from srcDir
+    into file("$buildDir/resources/main/archetype-resources")
+
+    exclude '.gradle'
+}
+
+task addGradleWrapper(type: Exec) {
+    workingDir "$buildDir/wrapper"
+    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '5.2'
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+
+    doFirst {
+        def wrapperDirectory = new File(buildDir, "wrapper")
+        wrapperDirectory.mkdirs()
+
+        def settings = new File(wrapperDirectory, "settings.gradle")
+        new FileOutputStream(settings).close();
+    }
+
+    finalizedBy 'copyGradleWrapper'
+}
+
+task addWrappers(dependsOn: [addGradleWrapper]) {
 }
 
 task processFiltered(type: Copy) {
+    ext.srcDir = file('src/main/resources-filtered')
 
-    ext.srcDir = file('filtered')
-
-    inputs.file srcDir
-    inputs.file file("${rootDir}/build.gradle")
-    outputs.dir sourceSets.main.java.outputDir
+    inputs.dir srcDir
+    outputs.dir sourceSets.main.output.resourcesDir
 
     from srcDir
-    into sourceSets.main.java.outputDir
+    into sourceSets.main.output.resourcesDir
 
-    // Use some of the filters provided by Ant
     filter(FixCrLfFilter)
     filter(ReplaceTokens, tokens: [
-            quickstartVersion: version,
-            tapestryReleaseVersion: version,
-            servletApiReleaseVersion: versions.servletapi,
-            testngReleaseVersion: versions.testng,
-            easymockReleaseVersion: versions.easymock,
-            slf4jReleaseVersion: versions.slf4j,
-            year: new GregorianCalendar()[Calendar.YEAR].toString()
+        quickstartVersion: version,
+        tapestryVersion: version,
+        tapestryTestifyVersion: '1.0.4',
+        tapestryXpathVersion: '1.0.1',
+        gebVersion: '2.3.1',
+        groovyVersion: '2.5.6',
+        htmlunitDriverVersion: '2.33.3',
+        jacksonVersion: '2.9.6',
+        jsonVersion: '1.1.2',
+        seleniumVersion: '3.141.59',
+        servletApiVersion: '3.0.1',
+        spockVersion: '1.3-RC1-groovy-2.5',
+        springBootVersion: '2.1.3.RELEASE',
+        yassonVersion: '1.0.1'
     ])
 }
 
-processResources.dependsOn processFiltered
+processResources.dependsOn([addWrappers, processFiltered])
