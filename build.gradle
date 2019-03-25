@@ -162,6 +162,8 @@ subprojects {
     test {
         useTestNG()
 
+        ignoreFailures = true
+
         options.suites("src/test/conf/testng.xml")
 
         maxHeapSize "400M"
