@@ -54,7 +54,7 @@ public class MBeanSupportImpl implements MBeanSupport
             server = servers.get(0);
         }
 
-        if (this.server == null)
+        if (server == null)
         {
             server = ManagementFactory.getPlatformMBeanServer();
         }
