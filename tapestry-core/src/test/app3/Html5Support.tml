@@ -12,6 +12,9 @@
 			<input t:type="TextField" t:id="maxNumber" t:validate="max=10" t:mixins="FormGroup"/>
 			<input t:type="TextField" t:id="minMaxNumber" t:validate="min=2,max=4" t:mixins="FormGroup"/>
 			<input t:type="TextField" t:id="regexp" t:validate="regexp=[0-9]{2}" t:mixins="FormGroup"/>
+			<input t:type="CheckBox" t:id="bool" t:mixins="FormGroup"/>
+			<input t:type="CheckBox" t:id="mustBeCheckedBoolean" t:validate="checked" t:mixins="FormGroup"/>
+			<input t:type="CheckBox" t:id="requiredBoolean" t:validate="required" t:mixins="FormGroup"/>
 			<input type="submit"/>
 		</form>
     </body>

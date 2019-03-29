@@ -40,4 +40,13 @@ public class Html5Support
     @Property
     private String regexp;
 
+    @Property
+    private boolean bool;
+
+    @Property
+    private boolean mustBeCheckedBoolean;
+
+    @Property
+    private boolean requiredBoolean;
+
 }
