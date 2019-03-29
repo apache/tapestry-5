@@ -122,7 +122,12 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
         assertEquals("number", getAttribute("minMaxNumber@type"));
         assertEquals("2", getAttribute("minMaxNumber@min"));
         assertEquals("4", getAttribute("minMaxNumber@max"));
-        
+
+        assertEquals(getAttribute("bool@required"), null);
+
+        assertEquals(getAttribute("mustBeCheckedBoolean@required"), "required");
+
+        assertEquals(getAttribute("requiredBoolean@required"), "required");
     }
 
 }

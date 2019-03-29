@@ -27,9 +27,10 @@ public class PrimitiveFieldConstraintGenerator implements ValidationConstraintGe
 {
     private final List<String> REQUIRED = Arrays.asList("required");
 
-    public List<String> buildConstraints(Class propertyType, AnnotationProvider annotationProvider)
+    @Override
+    public List<String> buildConstraints(Class<?> propertyType, AnnotationProvider annotationProvider)
     {
-        return propertyType.isPrimitive() ? REQUIRED : null;
+        return propertyType.isPrimitive() && !"boolean".equals(propertyType.getName()) ? REQUIRED : null;
     }
 
 }

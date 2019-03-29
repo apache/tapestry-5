@@ -42,5 +42,5 @@ public interface ValidationConstraintGenerator
      * @return a list of constraints
      * @see FieldValidatorSource
      */
-    List<String> buildConstraints(Class propertyType, AnnotationProvider annotationProvider);
+    List<String> buildConstraints(Class<?> propertyType, AnnotationProvider annotationProvider);
 }
