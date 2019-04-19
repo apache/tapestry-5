@@ -211,7 +211,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     public Class<?> doClassLoad(String className) throws IOException
     {
-        ClassVisitor analyzer = new ClassVisitor(Opcodes.ASM4)
+        ClassVisitor analyzer = new ClassVisitor(Opcodes.ASM7)
         {
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)

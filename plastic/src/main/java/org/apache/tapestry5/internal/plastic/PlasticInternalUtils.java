@@ -426,7 +426,7 @@ public class PlasticInternalUtils
 
         ClassNode result = new ClassNode();
 
-        ClassVisitor adapter = new ClassVisitor(Opcodes.ASM4, result)
+        ClassVisitor adapter = new ClassVisitor(Opcodes.ASM7, result)
         {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
