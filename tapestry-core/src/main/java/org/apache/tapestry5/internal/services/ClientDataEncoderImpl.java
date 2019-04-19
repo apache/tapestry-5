@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.util.zip.GZIPInputStream;
 
 public class ClientDataEncoderImpl implements ClientDataEncoder
@@ -126,13 +127,13 @@ public class ClientDataEncoderImpl implements ClientDataEncoder
 
         String actual = macOs.getResult();
 
-        if (!storedHmacResult.equals(actual))
+        if (!MessageDigest.isEqual(storedHmacResult.getBytes(), actual.getBytes()))
         {
             throw new IOException("Client data associated with the current request appears to have been tampered with " +
                     "(the HMAC signature does not match).");
         }
     }
-
+    
     public ObjectInputStream decodeEncodedClientData(String clientData) throws IOException
     {
         return decodeClientData(urlEncoder.decode(clientData));
