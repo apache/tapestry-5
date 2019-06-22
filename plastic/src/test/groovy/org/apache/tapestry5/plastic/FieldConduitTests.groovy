@@ -118,7 +118,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
         1 * fc.get(o, _) >> "plastic"
     }
 
-    def "subclass access methods are reouted through field conduit"()
+    def "subclass access methods are routed through field conduit"()
     {
         FieldConduit fc = Mock()
 
@@ -149,7 +149,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
         1* fc.get(o, _) >> "bumble"
     }
 
-    def "verify writebehind on normal field"()
+    def "verify write-behind on normal field"()
     {
         FieldConduit fc = Mock()
 
@@ -184,7 +184,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
         o.m_value == 1097
     }
 
-    def "verify writebehind on wide field"()
+    def "verify write-behind on wide field"()
     {
         FieldConduit fc = Mock()
 

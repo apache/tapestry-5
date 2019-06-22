@@ -1607,7 +1607,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         fieldInstrumentations.write.put(fieldName, fi);
 
-        if (!(proxy || privateField))
+        if (!proxy)
         {
             pool.setFieldWriteInstrumentation(classNode.name, fieldName, fi);
         }
@@ -1619,7 +1619,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         fieldInstrumentations.read.put(fieldName, fi);
 
-        if (!(proxy || privateField))
+        if (!proxy)
         {
             pool.setFieldReadInstrumentation(classNode.name, fieldName, fi);
         }
