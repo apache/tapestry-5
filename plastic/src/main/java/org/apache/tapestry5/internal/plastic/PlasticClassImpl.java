@@ -1437,7 +1437,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
              MethodDescription description = new MethodDescription(m);
 
-            if (!isMethodImplemented(description) && !isDefaultMethod(m) && !Modifier.isStatic(description.modifiers) && !contains(alreadyIntroducedMethods, m))
+            if (!isMethodImplemented(description) && !Modifier.isStatic(description.modifiers) && !contains(alreadyIntroducedMethods, m))
             {
                 PlasticMethod introducedMethod = introduceMethod(m);
                 introducedMethods.add(introducedMethod);
