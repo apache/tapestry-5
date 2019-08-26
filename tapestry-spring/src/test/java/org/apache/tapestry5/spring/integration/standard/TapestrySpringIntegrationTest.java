@@ -48,7 +48,7 @@ public class TapestrySpringIntegrationTest extends SeleniumTestCase
     {
         openBaseURL();
 
-        assertText("message", "SPRING VERSION 3.1.0.RELEASE: PIPELINE WAS INVOKED");
+        assertText("message", "SPRING VERSION 5.1.9.RELEASE: PIPELINE WAS INVOKED");
     }
 
     @Test

@@ -14,73 +14,62 @@
 
 package org.apache.tapestry5.javadoc;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Tag;
-import com.sun.tools.doclets.Taglet;
+import com.sun.source.doctree.DocTree;
+import jdk.javadoc.doclet.Doclet;
+import jdk.javadoc.doclet.DocletEnvironment;
+import jdk.javadoc.doclet.Taglet;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An inline tag allowed inside a type; it produces Tapestry component reference and other information.
  */
 public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 {
+    private DocletEnvironment env;
+    private Doclet doclet;
+
     /**
      * Map from class name to class description.
      */
     private final Map<String, ClassDescription> classDescriptions = CollectionFactory.newMap();
 
-    private ClassDoc firstSeen;
+    private final Set<Location> allowedLocations = CollectionFactory.newSet(Location.TYPE);
+
+    private Element firstSeen;
 
     private static final String NAME = "tapestrydoc";
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unused", "unchecked"})
     public static void register(Map paramMap)
     {
         paramMap.put(NAME, new TapestryDocTaglet());
     }
 
     @Override
-    public boolean inField()
+    public void init(DocletEnvironment env, Doclet doclet)
     {
-        return false;
+        this.env = env;
+        this.doclet = doclet;
     }
 
     @Override
-    public boolean inConstructor()
+    public Set<Location> getAllowedLocations()
     {
-        return false;
-    }
-
-    @Override
-    public boolean inMethod()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean inOverview()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean inPackage()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean inType()
-    {
-        return true;
+        return allowedLocations;
     }
 
     @Override
@@ -96,53 +85,26 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
     }
 
     @Override
-    public ClassDescription getDescription(String className)
+    public String toString(List<? extends DocTree> tags, Element element)
     {
-        ClassDescription result = classDescriptions.get(className);
-
-        if (result == null)
-        {
-            // System.err.printf("*** Search for CD %s ...\n", className);
-
-            ClassDoc cd = firstSeen.findClass(className);
-
-            // System.err.printf("CD %s ... %s\n", className, cd == null ? "NOT found" : "found");
-
-            result = cd == null ? new ClassDescription() : new ClassDescription(cd, this);
-
-            classDescriptions.put(className, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public String toString(Tag tag)
-    {
-        throw new IllegalStateException("toString(Tag) should not be called for a non-inline tag.");
-    }
-
-    @Override
-    public String toString(Tag[] tags)
-    {
-        if (tags.length == 0)
+        if (tags.size() == 0)
             return null;
 
         // This should only be invoked with 0 or 1 tags. I suppose someone could put @tapestrydoc in the comment block
         // more than once.
 
-        Tag tag = tags[0];
+        DocTree tag = tags.get(0);
 
         try
         {
             StringWriter writer = new StringWriter(5000);
 
-            ClassDoc classDoc = (ClassDoc) tag.holder();
+            TypeElement classDoc = (TypeElement) element;
 
             if (firstSeen == null)
                 firstSeen = classDoc;
 
-            ClassDescription cd = getDescription(classDoc.qualifiedName());
+            ClassDescription cd = getDescription(classDoc.getQualifiedName().toString());
 
             writeClassDescription(cd, writer);
 
@@ -156,6 +118,27 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
             return null; // unreachable
         }
+    }
+
+    @Override
+    public ClassDescription getDescription(String className)
+    {
+        ClassDescription result = classDescriptions.get(className);
+
+        if (result == null)
+        {
+            // System.err.printf("*** Search for CD %s ...\n", className);
+
+            TypeElement cd = env.getElementUtils().getTypeElement(className);
+
+            // System.err.printf("CD %s ... %s\n", className, cd == null ? "NOT found" : "found");
+
+            result = cd == null ? new ClassDescription(env) : new ClassDescription(cd, this, env);
+
+            classDescriptions.put(className, result);
+        }
+
+        return result;
     }
 
     private void writeElement(Writer writer, String elementSpec, String text) throws IOException
@@ -203,9 +186,10 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
     private void writerParameter(ParameterDescription pd, String rowClass, Writer writer) throws IOException
     {
+        String description = pd.extractDescription();
 
         writer.write("<tr class='values " + rowClass + "'>");
-        writer.write("<td rowspan='2' class='colFirst'>");
+        writer.write("<td" + (StringUtils.isEmpty(description) ? "" : " rowspan='2'") + " class='colFirst'>");
         writer.write(pd.name);
         writer.write("</td>");
 
@@ -238,11 +222,8 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
         writer.write("</tr>");
 
-        String description = pd.extractDescription();
-
-        if (description.length() > 0)
+        if (StringUtils.isNotEmpty(description))
         {
-
             writer.write("<tr class='" + rowClass + "'>");
             writer.write("<td colspan='4' class='description colLast'>");
             writer.write(description);
@@ -304,7 +285,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
      * Shorten the given class name by removing built-in Java packages
      * (currently just java.lang)
      *
-     * @param className
+     * @param name
      *         name of class, with package
      * @return potentially shorter class name
      */
@@ -313,9 +294,14 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         return name.replace("java.lang.", "");
     }
 
-    private void streamXdoc(ClassDoc classDoc, Writer writer) throws Exception
+    private void streamXdoc(TypeElement classDoc, Writer writer) throws Exception
     {
-        File sourceFile = classDoc.position().file();
+        JavaFileObject sourceFileObject = env.getJavaFileManager()
+                .getJavaFileForInput(StandardLocation.SOURCE_PATH,
+                        classDoc.getQualifiedName().toString(),
+                        JavaFileObject.Kind.SOURCE);
+
+        File sourceFile = new File(sourceFileObject.toUri());
 
         // The .xdoc file will be adjacent to the sourceFile
 

@@ -351,7 +351,7 @@ Table styles
 .contentContainer .description table, .contentContainer .details table {
     border-bottom:none;
 }
-.contentContainer ul li table th.colOne, .contentContainer ul li table th.colFirst, .contentContainer ul li table th.colLast, .classUseContainer ul li table th, .constantValuesContainer ul li table th, .contentContainer ul li table td.colOne, .contentContainer ul li table td.colFirst, .contentContainer ul li table td.colLast, .classUseContainer ul li table td, .constantValuesContainer ul li table td{
+.contentContainer ul li table th.colOne, .contentContainer ul li table th.colFirst, .contentContainer ul li table tr:nth-child(1)>th.colSecond, .contentContainer ul li table th.colLast, .classUseContainer ul li table th, .constantValuesContainer ul li table th, .contentContainer ul li table td.colOne, .contentContainer ul li table td.colFirst, .contentContainer ul li table td.colSecond, .contentContainer ul li table td.colLast, .classUseContainer ul li table td, .constantValuesContainer ul li table td{
     vertical-align:top;
     padding-right:20px;
 }
@@ -361,7 +361,7 @@ Table styles
 .contentContainer ul li table td.colOne, .classUseContainer ul li table td.colOne {
     padding-right:3px;
 }
-.overviewSummary caption, .packageSummary caption, .contentContainer ul.blockList li.blockList caption, .summary caption, .classUseContainer caption, .constantValuesContainer caption {
+.overviewSummary caption, .packageSummary caption, .memberSummary caption, .contentContainer ul.blockList li.blockList caption, .summary caption, .classUseContainer caption, .constantValuesContainer caption {
     position:relative;
     text-align:left;
     background-repeat:no-repeat;
@@ -375,7 +375,7 @@ Table styles
 caption a:link, caption a:hover, caption a:active, caption a:visited {
     color:#FFFFFF;
 }
-.overviewSummary caption span, .packageSummary caption span, .contentContainer ul.blockList li.blockList caption span, .summary caption span, .classUseContainer caption span, .constantValuesContainer caption span {
+.overviewSummary caption span, .packageSummary caption span, .memberSummary caption span, .contentContainer ul.blockList li.blockList caption span, .summary caption span, .classUseContainer caption span, .constantValuesContainer caption span {
     white-space:nowrap;
     padding-top:8px;
     padding-left:8px;
@@ -384,7 +384,7 @@ caption a:link, caption a:hover, caption a:active, caption a:visited {
     background-image:url(titlebar_green.gif);
     height:18px;
 }
-.overviewSummary .tabEnd, .packageSummary .tabEnd, .contentContainer ul.blockList li.blockList .tabEnd, .summary .tabEnd, .classUseContainer .tabEnd, .constantValuesContainer .tabEnd {
+.overviewSummary .tabEnd, .packageSummary .tabEnd, .memberSummary .tabEnd, .contentContainer ul.blockList li.blockList .tabEnd, .summary .tabEnd, .classUseContainer .tabEnd, .constantValuesContainer .tabEnd {
     width:10px;
     background-image:url(titlebar_green_end.gif);
     background-repeat:no-repeat;
@@ -405,21 +405,25 @@ ul.blockList ul.blockList li.blockList table {
 .rowColor {
     background-color:#ffffff;
 }
-.overviewSummary td, .packageSummary td, .contentContainer ul.blockList li.blockList td, .summary td, .classUseContainer td, .constantValuesContainer td {
+.overviewSummary td, .packageSummary td, .memberSummary td, .memberSummary th:nth-child(1), .contentContainer ul.blockList li.blockList td, .summary td, .classUseContainer td, .constantValuesContainer td {
     text-align:left;
     padding:3px 3px 3px 7px;
 }
-th.colFirst, th.colLast, th.colOne, .constantValuesContainer th, .parameters th {
+th.colFirst, th.colLast, th.colOne, .constantValuesContainer th, .parameters th,
+/* javadoc bug? it emits tr>th even for non-header cells */
+tr:nth-child(1)>th.colSecond {
     background:#dee3e9;
     border-top:1px solid #9eadc0;
     border-bottom:1px solid #9eadc0;
     text-align:left;
     padding:3px 3px 3px 7px;
 }
-td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colFirst a:active, td.colFirst a:visited, td.colFirst a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
+td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colSecond a:link, td.colFirst a:active, td.colSecond a:active, td.colFirst a:visited, td.colSecond a:visited, td.colFirst a:hover, td.colSecond a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
     font-weight:bold;
 }
-td.colFirst, th.colFirst {
+td.colFirst, th.colFirst,
+/* colFirst is not always emitted, i.e. for constructor names */
+th:nth-child(1) {
     border-left:1px solid #9eadc0;
     white-space:nowrap;
 }
@@ -435,13 +439,25 @@ table.overviewSummary  {
     margin-left:0px;
 }
 table.overviewSummary td.colFirst, table.overviewSummary th.colFirst,
+table.overviewSummary td:nth-child(1), table.overviewSummary th:nth-child(1),
 table.overviewSummary td.colOne, table.overviewSummary th.colOne {
     width:25%;
     vertical-align:middle;
 }
-table.packageSummary td.colFirst, table.overviewSummary th.colFirst {
+table.packageSummary td.colFirst, table.packageSummary th.colFirst,
+table.packageSummary td:nth-child(1), table.packageSummary th:nth-child(1) {
     width:25%;
     vertical-align:middle;
+}
+table.memberSummary td.colFirst, table.memberSummary th.colFirst,
+table.memberSummary td:nth-child(1), table.memberSummary th:nth-child(1) {
+    width:25%;
+    vertical-align:middle;
+}
+
+table.memberSummary {
+    border-spacing: 0;
+    border-collapse: collapse;
 }
 /*
 Content styles
@@ -496,4 +512,10 @@ div.description table.parameters td.colFirst {
 }
 table.parameters td.description {
     border-top: none;
+}
+.t5-danger {
+    color: red;
+}
+.t5-left {
+    text-align: left;
 }

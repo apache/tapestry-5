@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
-import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.Map;
 

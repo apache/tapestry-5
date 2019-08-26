@@ -40,7 +40,7 @@ public interface Link
     List<String> getParameterNames();
 
     /**
-     * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
+     * Returns the value of a specifically named query parameter, or <code>null</code> if no such query parameter is stored
      * in the link.
      *
      * Use this method only when you are sure the parameter has only one value. If the parameter might have more than
@@ -116,7 +116,7 @@ public interface Link
     String toRedirectURI();
 
     /**
-     * Returns the link anchor. If this link does not have an anchor, this method returns <tt>null</tt>.
+     * Returns the link anchor. If this link does not have an anchor, this method returns <code>null</code>.
      *
      * @return the link anchor
      */
