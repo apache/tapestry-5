@@ -101,6 +101,9 @@ public abstract class AbstractResource extends LockSupport implements Resource
             terms.add(term);
         }
 
+        // Handling systems using backslash as the path separator, such as Windows
+        relativePath = relativePath.replace('\\', '/');
+        
         for (String term : relativePath.split("/"))
         {
             // This will occur if the relative path contains sequential slashes
