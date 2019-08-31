@@ -92,7 +92,29 @@ public class XMLTokenStreamTests
             
             String testDocument="<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root>"+unicodeString+"</root>\n";
             XMLTokenStream xts=new XMLTokenStream(new ResourceStub(testDocument.getBytes("utf-8")),parserUrlMap);
-            xts.parse();
+            
+            // Ugly way to handle exceptions like java.io.IOException: Server returned HTTP response code: 503 for URL: http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent
+            // when running tests
+            int attempts = 0;
+            int maxAttempts = 10;
+            boolean success = false;
+            while (!success && attempts < maxAttempts)
+            {
+                try 
+                {
+                    xts.parse();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Thread.sleep(5000);
+                    attempts++;
+                    continue;
+                }
+                success = true;
+            }
+            if (attempts == maxAttempts) 
+            {
+                throw new RuntimeException("Maximum number of attempts reached");
+            }
             Assert.assertEquals(xts.next(), XMLTokenType.START_ELEMENT);
             Assert.assertEquals(xts.getLocalName(), "root");
             Assert.assertEquals(xts.next(), XMLTokenType.CHARACTERS);
