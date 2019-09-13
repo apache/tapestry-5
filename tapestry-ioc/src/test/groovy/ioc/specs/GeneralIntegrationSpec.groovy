@@ -1,8 +1,10 @@
 package ioc.specs
 
+import org.apache.tapestry5.ioc.DefaultMethodService
 import org.apache.tapestry5.ioc.ObjectLocator
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
+import org.apache.tapestry5.ioc.ServiceBinder
 import org.apache.tapestry5.ioc.internal.services.Bean
 import org.apache.tapestry5.ioc.services.PropertyAccess
 import org.hibernate.Session
@@ -34,8 +36,26 @@ class GeneralIntegrationSpec extends AbstractSharedRegistrySpecification {
       Session session = registry.getService(Session.class);
   }
 
-  public static final class TestModule 
+  def "Methods overriding default methods should actually be called"() {
+      when:
+      Registry registry = RegistryBuilder.buildAndStartupRegistry(TestModule.class);
+      DefaultMethodService defaultMethodService = registry.getService(DefaultMethodService.class)
+      then:
+      defaultMethodService.notOverriden() == "Default";
+      defaultMethodService.overriden() == "Impl";
+  }
+  
+  public static class DefaultMethodServiceImpl implements DefaultMethodService {
+      public String overriden() {
+          return "Impl";
+      }
+  }
+
+  public static final class TestModule
   {
+      public static void bind(ServiceBinder binder) {
+          binder.bind(DefaultMethodService.class, DefaultMethodServiceImpl.class);
+      }
       public static Session buildHibernateSession(
           ObjectLocator objectLocator
       ) {
