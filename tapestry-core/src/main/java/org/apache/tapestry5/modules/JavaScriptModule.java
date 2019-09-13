@@ -164,6 +164,11 @@ public class JavaScriptModule
             addCoreStylesheets(configuration, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css");
             addCoreStylesheets(configuration, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap-grid.css");
         }
+        
+        if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            configuration.add("defaultcss", StackExtension.stylesheet("${" + SymbolConstants.DEFAULT_STYLESHEET + "}"));
+        }
 
         for (String name : bundledModules)
         {
@@ -393,15 +398,9 @@ public class JavaScriptModule
         
         if (compatibility.enabled(Trait.BOOTSTRAP_3))
         {
-            configuration.add("bootstrap/transition", new AMDWrapper(transition).require("jquery", "$").asJavaScriptModuleConfiguration());
-
-            for (String name : new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
-                    "scrollspy", "tab", "tooltip"})
-            {
-                Resource lib = transition.forFile(name + ".js");
-
-                configuration.add("bootstrap/" + name, new AMDWrapper(lib).require("bootstrap/transition").asJavaScriptModuleConfiguration());
-            }
+            final String[] modules = new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip"};
+            addBootstrap3Modules(configuration, transition, modules);
 
             Resource popover = transition.forFile("popover.js");
 
@@ -428,10 +427,29 @@ public class JavaScriptModule
             }
         }
 
+        // Just the minimum to have alerts and AJAX validation working when Bootstrap
+        // is completely disabled
+        if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            final String[] modules = new String[]{"alert", "dropdown", "collapse"};
+            addBootstrap3Modules(configuration, transition, modules);
+        }
+
         configuration.add("t5/core/typeahead", new JavaScriptModuleConfiguration(typeahead).dependsOn("jquery"));
 
         configuration.add("moment", new JavaScriptModuleConfiguration(moment));
 
+    }
+
+    private static void addBootstrap3Modules(MappedConfiguration<String, Object> configuration, Resource transition, final String[] modules) {
+        configuration.add("bootstrap/transition", new AMDWrapper(transition).require("jquery", "$").asJavaScriptModuleConfiguration());
+
+        for (String name : modules)
+        {
+            Resource lib = transition.forFile(name + ".js");
+
+            configuration.add("bootstrap/" + name, new AMDWrapper(lib).require("bootstrap/transition").asJavaScriptModuleConfiguration());
+        }
     }
 
     @Contribute(SymbolProvider.class)

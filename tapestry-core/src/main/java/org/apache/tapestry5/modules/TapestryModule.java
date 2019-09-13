@@ -2023,8 +2023,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
-        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css");
-
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);

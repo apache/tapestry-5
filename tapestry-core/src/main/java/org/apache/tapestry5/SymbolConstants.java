@@ -17,9 +17,11 @@ import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.modules.NoBootstrapModule;
 import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 /**
@@ -209,10 +211,15 @@ public class SymbolConstants
     public static final String START_PAGE_NAME = "tapestry.start-page-name";
 
     /**
-     * The default stylesheet automatically inserted into every rendered HTML page.
+     * The default stylesheet automatically inserted into every rendered HTML page when
+     * no Bootstrap version is enabled (i.e both {@link Trait#BOOTSTRAP_3} and {@link Trait#BOOTSTRAP_4}
+     * traits are disabled, something done by {@linkplain NoBootstrapModule}). 
+     * 
+     * It was deprecated in 5.4 with no replacement (the stylesheet is now associated with the core {@link JavaScriptStack}.),
+     * but undeprecated in 5.5.0 with the caveat described above.
      *
+     * @see NoBootstrapModule
      * @since 5.2.0
-     * @deprecated Deprecated in 5.4 with no replacement; the stylesheet is now associated with the core {@link JavaScriptStack}.
      */
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
