@@ -15,12 +15,18 @@
 
     <t:block id="boolean">
 
-        <div class="checkbox">
+        <div class="checkbox" t:type="If" t:test="bootstrap3Enabled">
             <label>
                 <div class="input-group">
-                    <input t:id="checkboxField"/>
+                    <input t:id="checkboxField3"/>
                     ${context.label}
                 </div>
+            </label>
+        </div>
+        <div class="form-group form-check" t:type="If" t:test="!bootstrap3Enabled">
+            <input t:id="checkboxField"/>
+            <label t:type="Label" for="checkboxField">
+                ${context.label}
             </label>
         </div>
     </t:block>

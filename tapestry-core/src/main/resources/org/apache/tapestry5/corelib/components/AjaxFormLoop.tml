@@ -15,7 +15,7 @@
     </t:block>
 
     <t:block id="defaultAddRow">
-        <t:addrowlink class="btn btn-default btn-sm">
+        <t:addrowlink class="${symbol:tapestry.ajax-form-loop-add-row-link-css-class}">
             <t:glyphicon name="plus-sign"/>
             Add row
         </t:addrowlink>

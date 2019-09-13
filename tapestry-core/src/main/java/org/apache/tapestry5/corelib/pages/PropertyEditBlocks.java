@@ -32,6 +32,8 @@ import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PropertyEditContext;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
@@ -46,6 +48,9 @@ public class PropertyEditBlocks
 {
     @Environmental
     private PropertyEditContext context;
+    
+    @Inject
+    private Compatibility compatibility;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
@@ -67,6 +72,12 @@ public class PropertyEditBlocks
                     "model=selectModelForProperty", "validate=prop:selectValidator",
                     "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
     private Select select;
+
+    @SuppressWarnings("unused")
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "clientId=prop:context.propertyId", "ensureClientIdUnique=true"})
+    private Checkbox checkboxField3;
 
     @SuppressWarnings("unused")
     @Component(
@@ -197,4 +208,10 @@ public class PropertyEditBlocks
     {
             return beanModelSource.createEditModel(context.getPropertyType(), context.getContainerMessages());
     }
+    
+    public boolean isBootstrap3Enabled()
+    {
+        return compatibility.enabled(Trait.BOOTSTRAP_3);
+    }
+    
 }

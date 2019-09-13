@@ -14,6 +14,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -21,6 +22,7 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 
 /**
@@ -45,6 +47,11 @@ import org.apache.tapestry5.services.BeanModelSource;
 @SupportsInformalParameters
 public class BeanDisplay
 {
+    
+    @Inject
+    @Symbol(SymbolConstants.BEAN_DISPLAY_CSS_CLASS)
+    @Property
+    private String cssClass;
 
     /**
      * The object to be rendered; if not explicitly bound, a default binding to a property whose name matches this

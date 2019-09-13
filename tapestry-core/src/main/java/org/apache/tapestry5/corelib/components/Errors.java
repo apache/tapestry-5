@@ -14,16 +14,20 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.List;
 import java.util.Set;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.ComponentOverride;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Standard validation error presenter. Must be enclosed by a
@@ -35,7 +39,7 @@ import java.util.Set;
  * @tapestrydoc
  * @see Form
  */
-@Import(module = "bootstrap/alert")
+//@Import(module = "bootstrap/alert")
 public class Errors
 {
     /**
@@ -59,12 +63,23 @@ public class Errors
     /**
      * The CSS class for the div element rendered by the component.
      */
-    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "alert alert-danger")
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "symbol:" + SymbolConstants.ERRORS_DEFAULT_CLASS_PARAMETER_VALUE)
     private String className;
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)
     private ValidationTracker tracker;
+    
+    @Inject
+    @Symbol(SymbolConstants.ERRORS_BASE_CSS_CLASS)
+    private String baseCssClass;
+
+    @Inject
+    @Symbol(SymbolConstants.ERRORS_CLOSE_BUTTON_CSS_CLASS)
+    private String closeButtonCssClass;
+    
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
 
     boolean beginRender(MarkupWriter writer)
     {
@@ -83,13 +98,15 @@ public class Errors
         {
             return false;
         }
+        
+        setUpJavaScript();
 
         Set<String> previousErrors = CollectionFactory.newSet();
 
-        writer.element("div", "class", "alert-dismissable " + className);
+        writer.element("div", "class", baseCssClass + " " + className);
         writer.element("button",
                 "type", "button",
-                "class", "close",
+                "class", closeButtonCssClass,
                 "data-dismiss", "alert");
         writer.writeRaw("&times;");
         writer.end();
@@ -117,7 +134,19 @@ public class Errors
         writer.end(); // ul
 
         writer.end(); // div
-
+        
         return false;
     }
+
+    /**
+     * Hook to set up JavaScript, specifically for handling the close button.
+     * Method intended to be overriden when Bootstrap isn't being used.
+     * This implementation calls <code>javaScriptSupport.require("bootstrap/alert");</code>.
+     * @since 5.5
+     * @see ComponentOverride
+     */
+    protected void setUpJavaScript() {
+        javaScriptSupport.require("bootstrap/alert");
+    }
+    
 }

@@ -1,4 +1,4 @@
-<dl class="well dl-horizontal" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<dl class="${cssClass}" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <t:loop t:source="model.propertyNames" formState="ITERATION" t:value="propertyName">
 

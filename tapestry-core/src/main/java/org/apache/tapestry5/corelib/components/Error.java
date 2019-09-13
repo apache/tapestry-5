@@ -16,17 +16,21 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 
 /**
  * Provides a client-side element to contain validation errors; this renders as a {@code <p class="help-block">}.
  * Must be enclosed by a
  * {@link org.apache.tapestry5.corelib.components.Form} component and assumes the field and the Error component
- * are enclosed by a {@code <div class="form-group">}.
+ * are enclosed by a {@code <div class="[form group CSS class]">}, where {@code [form group CSS class]}
+ * is defined by the value of the {@link SymbolConstants#FORM_GROUP_WRAPPER_CSS_CLASS}
+ * configuration symbol ({@code tapestry.form-group-wrapper-css-class}).
  *
  * It is acceptable to include multiple Errors components for a single field; this is sometimes necessary
  * when creating a responsive layout - which should probably ensure that only one of the Errors is
@@ -50,11 +54,16 @@ public class Error
 
     @Inject
     private ComponentResources resources;
+    
+    @Inject
+    @Symbol(SymbolConstants.ERROR_CSS_CLASS)
+    private String cssClass;
 
     boolean beginRender(final MarkupWriter writer)
     {
         // Initially invisible; will be shown on client if an error exists.
-        Element element = writer.element("p", "class", "help-block invisible");
+        Element element = writer.element("p", "class", 
+                !("help-block".equals(cssClass)) ? ("help-block " + cssClass) : cssClass + " invisible");
 
         resources.renderInformalParameters(writer);
 

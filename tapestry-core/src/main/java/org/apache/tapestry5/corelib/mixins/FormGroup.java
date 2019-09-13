@@ -86,7 +86,8 @@ public class FormGroup
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("div", "class", divCssClass);
+        writer.element("div", "class", 
+                !("form-group".equals(divCssClass)) ? ("form-group" + " " + divCssClass) : divCssClass);
 
         decorator.beforeLabel(field);
 

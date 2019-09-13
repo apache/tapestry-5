@@ -27,8 +27,6 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.integration.app1.data.Address;
 import org.apache.tapestry5.integration.app1.data.Entity;
-import org.apache.tapestry5.integration.app1.data.Person;
-import org.apache.tapestry5.integration.app1.data.Pet;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
@@ -38,10 +36,13 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.modules.Bootstrap4Module;
+import org.apache.tapestry5.modules.NoBootstrapModule;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
@@ -55,6 +56,8 @@ import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueLabelProvider;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.security.ClientWhitelist;
@@ -65,6 +68,8 @@ import org.slf4j.Logger;
 /**
  * I was just dying to see how fast requests are!
  */
+//@ImportModule(Bootstrap4Module.class)
+//@ImportModule(NoBootstrapModule.class)
 public class AppModule
 {
 
@@ -175,6 +180,8 @@ public class AppModule
 
         configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js");
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.ALWAYS);
+//        configuration.add(SymbolConstants.ERROR_CSS_CLASS, "yyyy");
+//        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/integration/app1/app1.css");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)

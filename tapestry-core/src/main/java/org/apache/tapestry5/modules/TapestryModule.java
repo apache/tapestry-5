@@ -2023,8 +2023,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
-        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "");
-
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
@@ -2128,6 +2126,15 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_NAME, "");
         configuration.add(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS, "");
         configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "form-control");
+        
+        // Grid's default table CSS class comes from the ComponentParameterConstants.GRID_TABLE_CSS_CLASS symbol
+        configuration.add(SymbolConstants.BEAN_DISPLAY_CSS_CLASS, "well dl-horizontal");
+        configuration.add(SymbolConstants.BEAN_EDITOR_BOOLEAN_PROPERTY_DIV_CSS_CLASS, "input-group");
+        configuration.add(SymbolConstants.ERROR_CSS_CLASS, "help-block");
+        configuration.add(SymbolConstants.AJAX_FORM_LOOP_ADD_ROW_LINK_CSS_CLASS, "btn btn-default btn-sm");
+        configuration.add(SymbolConstants.ERRORS_BASE_CSS_CLASS, "alert-dismissable");
+        configuration.add(SymbolConstants.ERRORS_DEFAULT_CLASS_PARAMETER_VALUE, "alert alert-danger");
+        configuration.add(SymbolConstants.ERRORS_CLOSE_BUTTON_CSS_CLASS, "close");
 
         // TAP5-1998
         configuration.add(SymbolConstants.LENIENT_DATE_FORMAT, false);

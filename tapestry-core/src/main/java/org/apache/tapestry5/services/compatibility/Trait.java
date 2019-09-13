@@ -32,5 +32,20 @@ public enum Trait
     /**
      * Support for Tapestry 5.3 style initializers (the client-side {@code T5.initializers} namespace).
      */
-    INITIALIZERS
+    INITIALIZERS,
+    
+    /**
+     * Indicates that Twitter Bootstrap 3 CSS and JavaScript should be included in all pages by default.
+     * @see <a href="https://getbootstrap.com/">Bootstrap site</a>
+     * @since 5.5
+     */
+    BOOTSTRAP_3,
+    
+    /**
+     * Indicates that Twitter Bootstrap 4 CSS and JavaScript should be included in all pages by default.
+     * @see <a href="https://getbootstrap.com/">Bootstrap site</a>
+     * @since 5.5
+     */
+    BOOTSTRAP_4,
+    
 }
