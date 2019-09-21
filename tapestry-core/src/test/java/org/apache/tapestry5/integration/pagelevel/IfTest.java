@@ -35,10 +35,14 @@ public class IfTest extends Assert
         assertNotNull(doc.getElementById("5"));
         assertNotNull(doc.getElementById("8"));
         assertNotNull(doc.getElementById("9"));
+        assertNotNull(doc.getElementById("10"));
+        assertNotNull(doc.getElementById("13"));
         assertNull(doc.getElementById("2"));
         assertNull(doc.getElementById("4"));
         assertNull(doc.getElementById("6"));
         assertNull(doc.getElementById("7"));
+        assertNull(doc.getElementById("11"));
+        assertNull(doc.getElementById("12"));
     }
 
     @AfterMethod

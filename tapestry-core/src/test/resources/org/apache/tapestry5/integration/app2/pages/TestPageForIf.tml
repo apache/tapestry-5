@@ -29,4 +29,20 @@
       <p id="9">foo</p>
     </div>
   </t:loop>
+  <t:if test="true">
+      <t:parameter name="then">
+	      <p id="10">blah.</p>
+	  </t:parameter>
+      <t:parameter name="else">
+          <p id="11">hey.</p>
+      </t:parameter>
+  </t:if>
+  <t:if test="false">
+      <t:parameter name="then">
+          <p id="12">blah.</p>
+      </t:parameter>
+      <t:parameter name="else">
+          <p id="13">hey.</p>
+      </t:parameter>
+  </t:if>
 </html>

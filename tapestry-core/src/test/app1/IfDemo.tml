@@ -1,0 +1,34 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+    <p t:type="If" test="returntrue" id="originalIf">
+    	original if
+    </p>
+
+    <p t:type="If" test="returntrue" id="originalIfElse">
+    	original then
+    	<p:else>
+    		original else
+    	</p:else>
+    </p>
+
+    <p t:type="If" test="returntrue" id="originalIfThenElse">
+    	This appear in the output at all
+    	<p:then>
+    		new then
+    	</p:then>
+    	<p:else>
+    		new else
+    	</p:else>
+    </p>
+
+    <p t:type="If" test="!returntrue" id="else">
+    	This shouldn't appear in the output at all
+    	<p:then>
+    		new then
+    	</p:then>
+    	<p:else>
+    		just else
+    	</p:else>
+    </p>
+
+</html>

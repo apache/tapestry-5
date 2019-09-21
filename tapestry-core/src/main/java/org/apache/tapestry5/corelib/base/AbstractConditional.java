@@ -44,6 +44,13 @@ public abstract class AbstractConditional
     protected abstract boolean test();
 
     /**
+     * The {@link org.apache.tapestry5.Block} to render if {@link #test()} is true. The default, null, means
+     * render the component body in that situation..
+     */
+    @Parameter(name = "then", defaultPrefix = BindingConstants.LITERAL)
+    private Block thenBlock;
+
+    /**
      * An alternate {@link org.apache.tapestry5.Block} to render if {@link #test()} is false. The default, null, means
      * render nothing in that situation.
      */
@@ -60,7 +67,7 @@ public abstract class AbstractConditional
     {
         boolean enabled = test();
 
-        Block toRender = enabled ? resources.getBody() : elseBlock;
+        Block toRender = enabled ? (thenBlock == null ? resources.getBody() : thenBlock) : elseBlock;
 
         String elementName = resources.getElementName();
 

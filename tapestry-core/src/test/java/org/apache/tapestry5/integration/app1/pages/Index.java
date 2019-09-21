@@ -615,7 +615,9 @@ public class Index
 
                     new Item("BeanEditorWithFormFragmentDemo", "Bean Editor With Form Fragment Demo", "TriggerFragment mixin used inside a BeanEditor"),
 
-                    new Item("ObjectEditorDemo","Object Editor Demo","Edit Bean with address objects")
+                    new Item("ObjectEditorDemo","Object Editor Demo","Edit Bean with address objects"),
+                    
+                    new Item("IfDemo","If Demo","If component with all its options")
                 );
 
     static
