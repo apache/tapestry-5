@@ -22,13 +22,17 @@ public class CoreBehaviorsTests extends App1TestCase
 {
 
     @Test
-    public void access_to_page_name()
+    public void access_to_page_name() throws InterruptedException
     {
         openBaseURL();
 
         assertText("activePageName", "Index");
 
         clickAndWait("link=Grid Demo");
+        
+        // Trying to prevent this test from failing in Travis CI
+        waitForPageToLoad();
+        Thread.sleep(1000);
 
         assertText("activePageName", "GridDemo");
     }
