@@ -88,6 +88,12 @@ public class Tuple<A, B>
         return isMatch(obj);
     }
 
+    @Override
+    public int hashCode()
+    {
+        return 31 * (first == null ? 0 : first.hashCode()) + (second == null ? 0 : second.hashCode());
+    }
+
     /**
      * The heart of {@link #equals(Object)}; the other object is the same class as this object.
      * 
