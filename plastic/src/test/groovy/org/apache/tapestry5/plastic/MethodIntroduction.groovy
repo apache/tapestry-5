@@ -1,5 +1,6 @@
 package org.apache.tapestry5.plastic
 
+import testsubjects.BaseClass
 import testsubjects.ChildClass
 
 class MethodIntroduction extends AbstractPlasticSpecification {
@@ -138,5 +139,17 @@ class MethodIntroduction extends AbstractPlasticSpecification {
         present == true
     }
 
+    def "introduce method override with generic parameters and return types"() {
+
+        setup:
+
+        def o = instanceWithIntroducedMethod(new MethodDescription(BaseClass.getMethod("genericParametersAndReturnTypeMethod", Long.class, List.class)), true)
+
+        expect:
+
+        "java.util.Map<java.lang.Long, java.util.List<java.lang.String>>" == o.class.getMethod("genericParametersAndReturnTypeMethod", Long.class, List.class).genericReturnType.typeName
+        "java.lang.Long" == o.class.getMethod("genericParametersAndReturnTypeMethod", Long.class, List.class).genericParameterTypes[0].typeName
+        "java.util.List<java.lang.String>" == o.class.getMethod("genericParametersAndReturnTypeMethod", Long.class, List.class).genericParameterTypes[1].typeName
+    }
 }
 

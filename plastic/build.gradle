@@ -2,7 +2,7 @@ description = "High-level runtime transformations of Java classes"
 
 dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
-
+    compile "net.bytebuddy:byte-buddy:1.6.6"
 }
 
 test { 

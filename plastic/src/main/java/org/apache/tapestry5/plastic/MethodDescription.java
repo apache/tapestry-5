@@ -110,7 +110,12 @@ public class MethodDescription implements Comparable<MethodDescription>
     public MethodDescription(Method method)
     {
         this(method.getModifiers(), PlasticUtils.toTypeName(method.getReturnType()), method.getName(), PlasticUtils
-                .toTypeNames(method.getParameterTypes()), null, PlasticUtils.toTypeNames(method.getExceptionTypes()));
+                .toTypeNames(method.getParameterTypes()), getGenericSignature(method), PlasticUtils.toTypeNames(method.getExceptionTypes()));
+    }
+
+    private static String getGenericSignature(Method method)
+    {
+        return new net.bytebuddy.description.method.MethodDescription.ForLoadedMethod(method).getGenericSignature();
     }
 
     @Override
