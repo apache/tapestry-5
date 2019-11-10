@@ -1014,12 +1014,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return new PlasticMethodImpl(this, methodNode);
     }
 
-    private boolean isDefaultMethod(Method method)
-    {
-        return method.getDeclaringClass().isInterface() &&
-                (method.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_ABSTRACT)) == Opcodes.ACC_PUBLIC;
-    }
-
     private void createNewMethodImpl(MethodDescription methodDescription, MethodNode methodNode)
     {
         newBuilder(methodDescription, methodNode).returnDefaultValue();
@@ -1435,9 +1429,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         Arrays.sort(sortedMethods, METHOD_COMPARATOR);
         for (Method m : sortedMethods)
         {
-             MethodDescription description = new MethodDescription(m);
+            MethodDescription description = new MethodDescription(m);
 
-            if (!isMethodImplemented(description) && !Modifier.isStatic(description.modifiers) && !contains(alreadyIntroducedMethods, m))
+            if (!isMethodImplemented(description) && 
+                    !(m.isDefault() && m.isBridge()) && 
+                    !Modifier.isStatic(description.modifiers) && 
+                    !contains(alreadyIntroducedMethods, m))
             {
                 PlasticMethod introducedMethod = introduceMethod(m);
                 introducedMethods.add(introducedMethod);
@@ -1634,7 +1631,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         public int compare(Method o1, Method o2) 
         {
             
-            int comparison = o1.getName().compareTo(o2.getName());
+            int comparison = comparison = o1.getName().compareTo(o2.getName());
             
             if (comparison == 0) 
             {
@@ -1655,6 +1652,26 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     }
                 }
             }
+            
+            if (comparison == 0)
+            {
+                // Trying to get methods lower in the interface hierarchy sorted before the same methods
+                // higher in the hierarchy
+                Class<?> declaringClass1 = o1.getDeclaringClass();
+                Class<?> declaringClass2 = o2.getDeclaringClass();
+                if (declaringClass1.isInterface() && declaringClass2.isInterface() && 
+                        !declaringClass1.equals(declaringClass2)) {
+                    if (declaringClass1.isAssignableFrom(declaringClass2))
+                    {
+                        comparison = -1;
+                    }
+                    else if (declaringClass1.isAssignableFrom(declaringClass2))
+                    {
+                        comparison = 1;
+                    }
+                }
+            }
+                    
             return comparison;
         }
     }
