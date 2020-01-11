@@ -206,7 +206,7 @@ public class PropertyEditBlocks
     @SuppressWarnings("unchecked")
     public BeanModel<?> getModel()
     {
-            return beanModelSource.createEditModel(context.getPropertyType(), context.getContainerMessages());
+        return beanModelSource.createEditModel(context.getPropertyType(), context.getContainerMessages());
     }
     
     public boolean isBootstrap3Enabled()

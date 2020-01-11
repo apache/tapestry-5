@@ -392,6 +392,15 @@ public class SymbolConstants
     public static final String BOOTSTRAP_ROOT = "tapestry.bootstrap-root";
 
     /**
+     * The root asset path for Font Awesome; if your application uses a modified version of it,
+     * you can override this symbol to have Tapestry automatically use your version. The value should be a path
+     * to a folder (under "classpath:" or "context:") and should not include a trailing slash.
+     *
+     * @since 5.5
+     */
+    public static final String FONT_AWESOME_ROOT = "tapestry.font-awesome-root";
+
+    /**
      * Tapestry relies on an underlying client-side JavaScript infrastructure framework to handle DOM manipulation,
      * event handling, and Ajax requests. Through Tapestry 5.3, the foundation was
      * <a href="http://http://prototypejs.org/">Prototype</a>. In 5.4, support for

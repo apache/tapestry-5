@@ -12,33 +12,63 @@
 
 package org.apache.tapestry5.modules;
 
+import java.util.Locale;
+
 import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.corelib.components.FontAwesomeIcon;
+import org.apache.tapestry5.corelib.components.Glyphicon;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.internal.services.javascript.*;
+import org.apache.tapestry5.internal.services.javascript.AddBrowserCompatibilityStyles;
+import org.apache.tapestry5.internal.services.javascript.ConfigureHTMLElementFilter;
+import org.apache.tapestry5.internal.services.javascript.Internal;
+import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
+import org.apache.tapestry5.internal.services.javascript.ModuleDispatcher;
+import org.apache.tapestry5.internal.services.javascript.ModuleManagerImpl;
 import org.apache.tapestry5.internal.util.MessageCatalogResource;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentOverride;
+import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.PathConstructor;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
-import org.apache.tapestry5.services.javascript.*;
+import org.apache.tapestry5.services.javascript.AMDWrapper;
+import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.javascript.ModuleManager;
+import org.apache.tapestry5.services.javascript.StackExtension;
+import org.apache.tapestry5.services.javascript.StackExtensionType;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
-
-import java.util.Locale;
 
 /**
  * Defines the services related to JavaScript and {@link org.apache.tapestry5.services.javascript.JavaScriptStack}s.
@@ -148,6 +178,8 @@ public class JavaScriptModule
         }
 
         add(configuration, StackExtensionType.MODULE, "jquery");
+        
+        addCoreStylesheets(configuration, "${" + SymbolConstants.FONT_AWESOME_ROOT + "}/css/font-awesome.css");
 
         if (compatibility.enabled(Trait.BOOTSTRAP_3) && compatibility.enabled(Trait.BOOTSTRAP_4))
         {
@@ -508,6 +540,22 @@ public class JavaScriptModule
     {
         configuration.addInstance("ConfigureHTMLElement", ConfigureHTMLElementFilter.class);
         configuration.add("AddBrowserCompatibilityStyles", new AddBrowserCompatibilityStyles());
+    }
+    
+    /**
+     * Overrides the {@link Glyphicon} component with {@link FontAwesomeIcon} if Bootstrap 3
+     * isn't enabled.
+     * @see Trait#BOOTSTRAP_3
+     * @see Compatibility
+     */
+    @Contribute(ComponentOverride.class)
+    public static void overrideGlyphiconWithFontAwesomeIfNeeded(MappedConfiguration<Class, Class> configuration,
+            Compatibility compatibility)
+    {
+        if (!compatibility.enabled(Trait.BOOTSTRAP_3))
+        {
+            configuration.add(Glyphicon.class, FontAwesomeIcon.class);
+        }
     }
 
 }

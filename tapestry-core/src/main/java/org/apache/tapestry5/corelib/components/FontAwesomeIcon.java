@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2020 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
@@ -22,18 +23,16 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * Renders a {@code <span>} tag with the CSS class to select a <a href="http://getbootstrap.com/components/#glyphicons">Bootstrap Glyphicon</a>.
- * 
+ * Renders an {@code <i>} tag with the CSS class to select a <a href="https://fontawesome.com/v4.7.0/">FontAwesome 4.7.0</a> icon.
  * If Twitter Bootstrap 3 isn't enabled (i.e @{link Trait#BOOTSTRAP_3 is set to false),
- * this usages of this component are automatically and transparently replaced by {@link FontAwesomeIcon}.
+ * this component automatically and transparently replaces {@link Glyphicon} usages.
  *
  * @see {@link org.apache.tapestry5.services.compatibility.Trait#BOOTSTRAP_3}.
- *
  * @tapestrydoc
- * @since 5.4
+ * @since 5.5
  */
 @SupportsInformalParameters
-public class Glyphicon
+public class FontAwesomeIcon
 {
     /**
      * The name of the icon, e.g., "arrow-up", "flag", "fire" etc.
@@ -46,8 +45,8 @@ public class Glyphicon
 
     boolean beginRender(MarkupWriter writer)
     {
-        writer.element("span",
-                "class", "glyphicon glyphicon-" + name);
+        writer.element("i",
+                "class", "fa fa-" + name);
         resources.renderInformalParameters(writer);
         writer.end();
 

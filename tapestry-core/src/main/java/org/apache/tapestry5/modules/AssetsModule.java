@@ -84,6 +84,7 @@ public class AssetsModule
         configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
 
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap");
+        configuration.add(SymbolConstants.FONT_AWESOME_ROOT, "${tapestry.asset.root}/font_awesome");
 
         configuration.add("tapestry.asset.root", "classpath:META-INF/assets/tapestry5");
         configuration.add(SymbolConstants.OMIT_EXPIRATION_CACHE_CONTROL_HEADER, "max-age=60,must-revalidate");
