@@ -4,7 +4,7 @@ dependencies {
   compile project(':tapestry-func')
   compile project(':tapestry5-annotations')
   compile project(":plastic")
-  compile "org.javassist:javassist:3.18.2-GA"
+  compile "org.javassist:javassist:3.26.0-GA"
 
   testRuntime project(':tapestry-test')
 
