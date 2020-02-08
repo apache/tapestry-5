@@ -1,16 +1,16 @@
-import org.apache.tools.ant.filters.*
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+  id 'antlr'
+}
 
 description = "Central module for Tapestry, containing all core services and components"
 
-project.ext { 
+project.ext {
   antlrSource = "src/main/antlr"
   antlrOutput = "$buildDir/generated-sources/antlr"
 }
 
-
-configurations {
-  antlr3
-}
 
 sourceSets.main.java.srcDir antlrOutput
 
@@ -18,46 +18,26 @@ dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
 
-  provided project(":tapestry-test")
-  provided "javax.servlet:servlet-api:${versions.servletapi}"
+  compileOnly project(":tapestry-test")
+  compileOnly "javax.servlet:servlet-api:${versions.servletapi}"
+  compileOnly "org.easymock:easymock:${versions.easymock}"
 
   compile "commons-codec:commons-codec:1.5"
 
   // Transitive will bring in the unwanted string template library as well
   compile "org.antlr:antlr-runtime:3.3", { transitive = false }
 
-  // Antlr3 tool path used with the antlr3 task
-  antlr3 "org.antlr:antlr:3.5.2"
+  // Antlr tool path used with the antlr3 task
+  antlr "org.antlr:antlr:3.5.2"
 
+  testCompile "org.testng:testng:${versions.testng}", { transitive = false }
+  testCompile "org.easymock:easymock:${versions.easymock}"
+  testCompile project(":tapestry-test")
   testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
 
-// This may spin out as a plugin once we've got the details down pat
-
-task generateGrammarSource(type: JavaExec) {
-  description "Generates Java sources from Antlr3 grammars."
-  inputs.source fileTree(dir: antlrSource, include: "**/*.g")
-  outputs.dir file(antlrOutput)
-
-  // See http://forums.gradle.org/gradle/topics/why_does_a_task_execute_even_when_inputs_and_outputs_are_defined_and_nothing_has_changed
-  outputs.upToDateSpec = new AndSpec();
-
-  classpath configurations.antlr3
-
-  main "org.antlr.Tool"
-  args "-o", "${antlrOutput}/org/apache/tapestry5/internal/antlr"
-  args inputs.sourceFiles
-
-  doFirst {
-    logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
-  }
-}
-
 compileJava.options.fork(memoryMaximumSize: '512m')
-compileJava.dependsOn generateGrammarSource
-
-// Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
+// compileJava.dependsOn generateGrammarSource
 
 jar {
   from("src/main/filtered-resources") {
