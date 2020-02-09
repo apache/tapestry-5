@@ -1,3 +1,5 @@
+description = "Apache Tapestry 5 Project"
+
 project.ext.versions = [
     // Remember that when generating a release, this should be incremented. Also don"t forget to
     // tag the release in Git.
@@ -10,15 +12,33 @@ project.ext.versions = [
     spock     : "0.6-groovy-1.8"
 ]
 
+allprojects {
+    group = "org.apache.tapestry"
+    version = "5.3.9-beta-1"
+}
+
 subprojects {
     apply plugin: "java"
+    apply plugin: "maven-publish"
+    apply plugin: "signing"
 
-    group = "org.apache.tapestry"
+    group = project.group
+    version = project.version
 
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
 
     repositories {
         mavenCentral()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = project.group
+                from components.java
+                artifactId = jar.baseName
+            }
+        }
     }
 }
