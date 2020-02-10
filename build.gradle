@@ -32,6 +32,11 @@ subprojects {
         mavenCentral()
     }
 
+    test {
+        useTestNG()
+        options.suites("src/test/conf/testng.xml")
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
