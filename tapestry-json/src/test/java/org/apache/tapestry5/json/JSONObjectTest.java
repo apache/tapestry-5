@@ -46,7 +46,7 @@ public class JSONObjectTest extends TestUtils
 
         JSONObject fullCopy = new JSONObject(master, "fred", "barney");
 
-        assertEquals(fullCopy.toString(), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n" + "}");
+        assertEquals(fullCopy.toString(), "{\n  \"barney\" : \"rubble\",\n  \"fred\" : \"flintstone\"\n" + "}");
 
         JSONObject limitedCopy2 = new JSONObject(master, "fred", "wilma");
         assertEquals(limitedCopy2.keys().size(), 1);
@@ -372,7 +372,7 @@ public class JSONObjectTest extends TestUtils
     {
         JSONObject object = new JSONObject().put("t", true).put("f", false);
 
-        assertEquals(object.toString(), "{\n  \"f\" : false,\n  \"t\" : true\n}");
+        assertEquals(object.toString(), "{\n  \"t\" : true,\n  \"f\" : false\n}");
     }
 
     @Test
@@ -914,8 +914,8 @@ public class JSONObjectTest extends TestUtils
     {
         JSONObject o = new JSONObject("fred", "flintstone", "barney", "rubble");
 
-        assertEquals(o.toString(true), "{\"fred\":\"flintstone\",\"barney\":\"rubble\"}");
-        assertEquals(o.toString(false), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n}");
+        assertEquals(o.toString(true), "{\"barney\":\"rubble\",\"fred\":\"flintstone\"}");
+        assertEquals(o.toString(false), "{\n  \"barney\" : \"rubble\",\n  \"fred\" : \"flintstone\"\n}");
     }
 
     @Test
