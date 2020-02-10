@@ -11,8 +11,13 @@ project.ext {
   antlrOutput = "$buildDir/generated-sources/antlr"
 }
 
-
 sourceSets.main.java.srcDir antlrOutput
+
+configurations {
+  compile {
+    extendsFrom = extendsFrom.findAll { it != configurations.antlr }
+  }
+}
 
 dependencies {
   compile project(':tapestry-ioc')
