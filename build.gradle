@@ -1,9 +1,6 @@
 description = "Apache Tapestry 5 Project"
 
 project.ext.versions = [
-    // Remember that when generating a release, this should be incremented. Also don"t forget to
-    // tag the release in Git.
-    tapestry  : "5.3.9",
     jetty     : "7.6.9.v20130131",
     tomcat    : "6.0.30",
     testng    : "5.14.10",
@@ -12,18 +9,55 @@ project.ext.versions = [
     spock     : "0.6-groovy-1.8"
 ]
 
+project.ext {
+    stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
+    snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
+
+    doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
+
+    // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+
+    deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
+    deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
+
+    canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+
+    deployUsername = { hasProperty(deployUsernameProperty) ? getProperty(deployUsernameProperty) : "" }
+    deployPassword = { hasProperty(deployUsernameProperty) ? getProperty(deployPasswordProperty) : "" }
+}
+
+ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
+
+// Remember that when generating a release, this should be incremented. Also don"t forget to
+// tag the release in Git.
+// Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
+// during a release
+
+def tapestryVersion() {
+
+    def major = "5.3.9"
+    def minor = "-beta-1"
+
+    // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
+    // When building normally, or for a release, no suffix is desired.
+    continuousIntegrationBuild ? major + "-SNAPSHOT" : major + minor
+}
+
 allprojects {
     group = "org.apache.tapestry"
-    version = "5.3.9-beta-1"
+
+    // Provided so that the CI server can override the normal version number for nightly builds.
+    version = tapestryVersion()
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 }
 
 subprojects {
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "signing"
-
-    group = project.group
-    version = project.version
 
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
@@ -37,13 +71,47 @@ subprojects {
         options.suites("src/test/conf/testng.xml")
     }
 
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allJava
+        classifier = 'sources'
+    }
+
+    task javadocJar(type: Jar) {
+        from javadoc
+        classifier = 'javadoc'
+
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 groupId = project.group
                 from components.java
+                artifact sourcesJar
+                artifact javadocJar
                 artifactId = jar.baseName
+                pom {
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+                repositories {
+                    maven {
+                        url = isSnapshot() ? project.snapshotUrl : project.stagingUrl
+                        credentials {
+                            username = deployUsername()
+                            password = deployPassword()
+                        }
+                    }
+                }
             }
         }
     }
+}
+
+boolean isSnapshot() {
+    project.version.contains("SNAPSHOT")
 }
