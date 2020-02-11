@@ -21,4 +21,4 @@ cache:
 sudo: false
 
 addons:
-  firefox: "24.0esr"
+  firefox: "24.8.1esr"
