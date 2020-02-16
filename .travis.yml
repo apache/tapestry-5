@@ -9,7 +9,7 @@ before_install:
   - "export DISPLAY=:99.0"
 
 install: /bin/true
-script: ./gradlew -Dci=true build
+script: ./gradlew -Dci=true build --info
 after_failure:
   - cat */build/test-results/TEST-*.xml
 

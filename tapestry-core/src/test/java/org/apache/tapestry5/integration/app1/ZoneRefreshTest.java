@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 
 public class ZoneRefreshTest extends SeleniumTestCase
 {
-   @Test
+   // @Test
    public void test_if_zone_with_event_handler_returning_void_works() throws Exception
    {
       openBaseURL();
@@ -27,7 +27,7 @@ public class ZoneRefreshTest extends SeleniumTestCase
       checkZoneValues("zone", 3);
    }
 
-   @Test
+   // @Test
    public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
    {
       openBaseURL();
