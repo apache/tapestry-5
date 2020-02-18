@@ -27,7 +27,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * If Twitter Bootstrap 3 isn't enabled (i.e @{link Trait#BOOTSTRAP_3 is set to false),
  * this component automatically and transparently replaces {@link Glyphicon} usages.
  *
- * @see {@link org.apache.tapestry5.services.compatibility.Trait#BOOTSTRAP_3}.
+ * @see org.apache.tapestry5.services.compatibility.Trait#BOOTSTRAP_3
  * @tapestrydoc
  * @since 5.5
  */
