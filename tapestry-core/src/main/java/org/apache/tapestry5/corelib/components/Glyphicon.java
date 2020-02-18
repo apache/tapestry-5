@@ -27,7 +27,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * If Twitter Bootstrap 3 isn't enabled (i.e @{link Trait#BOOTSTRAP_3 is set to false),
  * this usages of this component are automatically and transparently replaced by {@link FontAwesomeIcon}.
  *
- * @see {@link org.apache.tapestry5.services.compatibility.Trait#BOOTSTRAP_3}.
+ * @see link org.apache.tapestry5.services.compatibility.Trait#BOOTSTRAP_3
  *
  * @tapestrydoc
  * @since 5.4
