@@ -275,6 +275,14 @@ public class ZoneTests extends App1TestCase
         }
 
     }
+    
+    private void assertCSSStartsWith(String elementId, String cssProperty, String expected)
+    {
+        String actual = selenium.getEval(String.format("window.document.defaultView.getComputedStyle(window.document.getElementById('%s'), null).getPropertyValue('%s')",
+                elementId, cssProperty));
+
+        assertTrue(actual.startsWith("underline"), String.format("CSS property '%s' of '%s' should start with '%s'.", cssProperty, elementId, expected));
+    }
 
     private void assertCSS(String elementId, String cssProperty, String expected)
     {
@@ -303,7 +311,7 @@ public class ZoneTests extends App1TestCase
         // zonedemo-viaajax.css; green from zonedmeo-overrides.css (not blue as defined in zonedemo-viaajax.css).
 
         assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
-        assertCSS("demo-aip", "text-decoration", "underline");
+        assertCSSStartsWith("demo-aip", "text-decoration", "underline");
     }
 
     /**
