@@ -327,6 +327,7 @@ task aggregateJavadoc(type: Javadoc) {
     destinationDir file("$buildDir/documentation/javadocs")
 
     def tapestryStylesheet = file("src/javadoc/stylesheet7.css")
+    int thisYear = java.time.Year.now().getValue()
 
     configure(options) {
         splitIndex true
@@ -335,7 +336,7 @@ task aggregateJavadoc(type: Javadoc) {
         windowTitle "Tapestry API - ${project.version}"
         header "Tapestry API - ${project.version}"
         docTitle "Tapestry API - ($project.version)"
-        bottom '${project.version} - Copyright &copy; 2003-2015 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
+        bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
         use = true // 'use' seems to be a reserved word for the DSL
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://docs.oracle.com/javaee/7/api/"
