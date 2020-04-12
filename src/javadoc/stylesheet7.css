@@ -7,7 +7,7 @@ body {
     background-color:#ffffff;
     color:#353833;
     font-family:Arial, Helvetica, sans-serif;
-    font-size:76%;
+    font-size:95%;
     margin:0;
 }
 a:link, a:visited {
@@ -122,7 +122,7 @@ Navigation bar styles
     padding:0;
     width:100%;
     clear:right;
-    height:2.8em;
+    height: 2rem;
     padding-top:10px;
     overflow:hidden;
 }
@@ -366,7 +366,7 @@ Table styles
     text-align:left;
     background-repeat:no-repeat;
     color:#FFFFFF;
-    font-weight:bold;
+    font-weight: normal;
     clear:none;
     overflow:hidden;
     padding:0px;
@@ -376,21 +376,25 @@ caption a:link, caption a:hover, caption a:active, caption a:visited {
     color:#FFFFFF;
 }
 .overviewSummary caption span, .packageSummary caption span, .contentContainer ul.blockList li.blockList caption span, .summary caption span, .classUseContainer caption span, .constantValuesContainer caption span {
-    white-space:nowrap;
-    padding-top:8px;
-    padding-left:8px;
-    display:block;
-    float:left;
-    background-image:url(titlebar_green.gif);
-    height:18px;
+    white-space: nowrap;
+    padding: .4rem .4rem .3rem .4rem;
+    display: block;
+    float: left;
+    height: 18px;
+    background: #559d2f;
+    margin: 0 .3rem;
+    border-radius: 5px 5px 0 0;
 }
+.contentContainer ul.blockList li.blockList caption span span { /** double spans */
+    float: none;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    border-radius: 0;
+}
+
 .overviewSummary .tabEnd, .packageSummary .tabEnd, .contentContainer ul.blockList li.blockList .tabEnd, .summary .tabEnd, .classUseContainer .tabEnd, .constantValuesContainer .tabEnd {
-    width:10px;
-    background-image:url(titlebar_green_end.gif);
-    background-repeat:no-repeat;
-    background-position:top right;
-    position:relative;
-    float:left;
+    display: none;
 }
 ul.blockList ul.blockList li.blockList table {
     margin:0 0 12px 0px;
@@ -449,6 +453,12 @@ Content styles
 .description pre {
     margin-top:0;
 }
+.description dd pre {
+    background: black;
+    color: white;
+    padding: .5rem;
+    font-size: .8rem;
+}
 .deprecatedContent {
     margin:0;
     padding:10px 0;
@@ -496,4 +506,10 @@ div.description table.parameters td.colFirst {
 }
 table.parameters td.description {
     border-top: none;
+}
+.skipNav {
+    position: absolute;
+    top: auto;
+    left: -9999px;
+    overflow: hidden;
 }
