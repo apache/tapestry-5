@@ -34,7 +34,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.SERVICE;
 public @interface FunctionName
 {
     /**
-     * The name of the Clojure function to map the method to. This may be a simple name, in which case
+     * @return the name of the Clojure function to map the method to. This may be a simple name, in which case
      * it will be a name within the {@link Namespace} of the service interface, or it may be a fully qualified name
      * of an arbitrary Clojure function.
      */

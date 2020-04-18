@@ -28,11 +28,15 @@ public interface ExceptionReportWriter
     /**
      * Analyzes the exception (using the {@link org.apache.tapestry5.ioc.services.ExceptionAnalyzer} service)
      * and then writes the result to the writer.
+     * @param writer the PrintWriter to write to, not null
+     * @param exception the exception to look at, possibly null
      */
     void writeReport(PrintWriter writer, Throwable exception);
 
     /**
      * Writes the analyzed exception to the writer.
+     * @param writer the PrintWriter to write to, not null
+     * @param exception the exception to look at, possibly null
      */
     void writeReport(PrintWriter writer, ExceptionAnalysis exception);
 }
