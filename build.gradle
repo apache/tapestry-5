@@ -66,6 +66,8 @@ project.ext {
     archiveDeployFolder = { getProperty("apacheArchivesFolder") }
 }
 
+println "JDK: " + System.getProperty("java.version")
+
 //println "Can deploy? $canDeploy"
 //println "Is snapshot? isSnapshot"
 //println "deployUsernameProperty $deployUsernameProperty"
