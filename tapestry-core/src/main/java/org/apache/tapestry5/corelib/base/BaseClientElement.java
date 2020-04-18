@@ -41,9 +41,8 @@ public abstract class BaseClientElement implements ClientElement
     protected JavaScriptSupport javaScriptSupport;
 
     /**
-     * Invoked (usually from a {@link org.apache.tapestry5.annotations.BeginRender} phase method) to assign
+     * Invoked (usually from a {@link org.apache.tapestry5.annotations.BeginRender} phase method) to assigned
      * the element, and clear the clientId (only relevant for components that render in a loop).
-     * @param the element to store
      */
     protected void storeElement(Element element)
     {

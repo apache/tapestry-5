@@ -24,7 +24,7 @@ package org.apache.tapestry5;
 public interface Field extends ClientElement
 {
     /**
-     * @return the value used as the name attribute of the rendered element. This value will be unique within an
+     * Returns the value used as the name attribute of the rendered element. This value will be unique within an
      * enclosing form, even if the same component renders multiple times.
      *
      * @see org.apache.tapestry5.services.FormSupport#allocateControlName(String)
@@ -46,7 +46,6 @@ public interface Field extends ClientElement
      * disabled field will ignore any value passed up in a form submit request. Care must be taken if the disabled
      * status of a field can change between the time the field is rendered and the time the enclosing form is
      * submitted.
-     * @return true if disabled, false otherwise
      */
     boolean isDisabled();
 

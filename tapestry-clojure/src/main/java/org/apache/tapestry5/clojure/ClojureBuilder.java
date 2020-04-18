@@ -23,7 +23,8 @@ public interface ClojureBuilder
      * Creates the proxy. Method names are converted to Clojure function names.
      *
      * @param interfaceType
-     *         type of interface. Must have the {@link Namespace} annotation. Not null.
+     *         type of interface, must have the {@link Namespace} annotation
+     * @param <T>
      * @return the proxy
      * @see MethodToFunctionSymbolMapper
      */

@@ -27,7 +27,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 public interface ClientElement
 {
     /**
-     * @return a unique id for the element. This value will be unique for any given rendering of a page. This value is
+     * Returns a unique id for the element. This value will be unique for any given rendering of a page. This value is
      * intended for use as the id attribute of the client-side element, and will be used with any DHTML/Ajax related
      * JavaScript.
      */

@@ -37,7 +37,6 @@ public class JSONModule
      * <li>{@link String} to {@link org.apache.tapestry5.json.JSONObject}</li>
      * <li>{@link String} to {@link org.apache.tapestry5.json.JSONArray}</li>
      * </ul>
-     * @param configuration the configuration to provide the type coercer to
      */
     @Contribute(TypeCoercer.class)
     public static void provideCoercions(Configuration<CoercionTuple> configuration)

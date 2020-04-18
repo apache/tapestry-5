@@ -300,10 +300,7 @@ public class XDocStreamer
 
     }
 
-    /**
-     * Parse the file and write its transformed content to the Writer.
-     * @throws SAXException if unable to parse the xdoc file
-     */
+    /** Parse the file and write its transformed content to the Writer. */
     public void writeContent() throws SAXException
     {
         SaxHandler handler = new SaxHandler();

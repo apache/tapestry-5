@@ -82,7 +82,6 @@ public abstract class AbstractComponentEventLink extends AbstractLink
      *
      * @param eventContext
      *         the context as an object array, possibly null
-     * @return the link, not null
      */
     protected abstract Link createLink(Object[] eventContext);
 

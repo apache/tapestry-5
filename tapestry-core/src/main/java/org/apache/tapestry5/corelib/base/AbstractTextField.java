@@ -204,7 +204,6 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * Should blank input be ignored (after validation)? This will be true for
      * {@link org.apache.tapestry5.corelib.components.PasswordField}.
-     * @return true if blank input should be ignored, false otherwise
      */
     protected boolean ignoreBlankInput()
     {

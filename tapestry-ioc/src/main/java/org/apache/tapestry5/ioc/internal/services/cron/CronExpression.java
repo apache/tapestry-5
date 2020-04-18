@@ -344,7 +344,6 @@ public class CronExpression implements Serializable
     /**
      * Returns the time zone for which this <code>CronExpression</code>
      * will be resolved.
-     * @return the time zone, not null
      */
     public TimeZone getTimeZone()
     {
@@ -359,7 +358,6 @@ public class CronExpression implements Serializable
     /**
      * Sets the time zone for which  this <code>CronExpression</code>
      * will be resolved.
-     * @param timeZone the time zone, or null
      */
     public void setTimeZone(TimeZone timeZone)
     {
@@ -367,6 +365,8 @@ public class CronExpression implements Serializable
     }
 
     /**
+     * Returns the string representation of the <CODE>CronExpression</CODE>
+     *
      * @return a string representation of the <CODE>CronExpression</CODE>
      */
     @Override
@@ -1667,8 +1667,8 @@ public class CronExpression implements Serializable
      * Advance the calendar to the particular hour paying particular attention
      * to daylight saving problems.
      *
-     * @param cal the calendar to change
-     * @param hour the hour of day, 0..23, not null
+     * @param cal
+     * @param hour
      */
     protected void setCalendarHour(Calendar cal, int hour)
     {
@@ -1682,7 +1682,6 @@ public class CronExpression implements Serializable
     /**
      * NOT YET IMPLEMENTED: Returns the time before the given time
      * that the <code>CronExpression</code> matches.
-     * @param endTime the ending time, or null
      */
     public Date getTimeBefore(Date endTime)
     {
@@ -1693,7 +1692,6 @@ public class CronExpression implements Serializable
     /**
      * NOT YET IMPLEMENTED: Returns the final time that the
      * <code>CronExpression</code> will match.
-     * @return the final time, or null
      */
     public Date getFinalFireTime()
     {
