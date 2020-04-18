@@ -51,7 +51,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements Opcod
    * version.
    */
   public SourceInterpreter() {
-    super(ASM7);
+    super(/* latest api = */ ASM8);
     if (getClass() != SourceInterpreter.class) {
       throw new IllegalStateException();
     }
@@ -62,7 +62,8 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements Opcod
    *
    * @param api the ASM API version supported by this interpreter. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
    */
   protected SourceInterpreter(final int api) {
     super(api);
@@ -204,7 +205,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements Opcod
       }
     }
     if (value1.size != value2.size || !containsAll(value1.insns, value2.insns)) {
-      HashSet<AbstractInsnNode> setUnion = new HashSet<AbstractInsnNode>();
+      HashSet<AbstractInsnNode> setUnion = new HashSet<>();
       setUnion.addAll(value1.insns);
       setUnion.addAll(value2.insns);
       return new SourceValue(Math.min(value1.size, value2.size), setUnion);

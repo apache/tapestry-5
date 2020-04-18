@@ -35,6 +35,7 @@ import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.RecordComponentVisitor;
 import org.apache.tapestry5.internal.plastic.asm.TypePath;
 
 /**
@@ -118,7 +119,7 @@ public final class TraceClassVisitor extends ClassVisitor {
    */
   public TraceClassVisitor(
       final ClassVisitor classVisitor, final Printer printer, final PrintWriter printWriter) {
-    super(Opcodes.ASM7, classVisitor);
+    super(/* latest api = */ Opcodes.ASM9_EXPERIMENTAL, classVisitor);
     this.printWriter = printWriter;
     this.p = printer;
   }
@@ -186,11 +187,32 @@ public final class TraceClassVisitor extends ClassVisitor {
     super.visitNestMember(nestMember);
   }
 
+  /**
+   * <b>Experimental, use at your own risk.</b>.
+   *
+   * @param permittedSubtype the internal name of a permitted subtype.
+   * @deprecated this API is experimental.
+   */
+  @Override
+  @Deprecated
+  public void visitPermittedSubtypeExperimental(final String permittedSubtype) {
+    p.visitPermittedSubtypeExperimental(permittedSubtype);
+    super.visitPermittedSubtypeExperimental(permittedSubtype);
+  }
+
   @Override
   public void visitInnerClass(
       final String name, final String outerName, final String innerName, final int access) {
     p.visitInnerClass(name, outerName, innerName, access);
     super.visitInnerClass(name, outerName, innerName, access);
+  }
+
+  @Override
+  public RecordComponentVisitor visitRecordComponent(
+      final String name, final String descriptor, final String signature) {
+    Printer recordComponentPrinter = p.visitRecordComponent(name, descriptor, signature);
+    return new TraceRecordComponentVisitor(
+        super.visitRecordComponent(name, descriptor, signature), recordComponentPrinter);
   }
 
   @Override

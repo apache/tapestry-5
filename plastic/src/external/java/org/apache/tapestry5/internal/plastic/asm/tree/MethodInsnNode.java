@@ -27,10 +27,9 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
+import java.util.Map;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-
-import java.util.Map;
 
 /**
  * A node that represents a method instruction. A method instruction is an instruction that invokes
@@ -66,9 +65,7 @@ public class MethodInsnNode extends AbstractInsnNode {
    *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
    * @param name the method's name.
    * @param descriptor the method's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
-   * @deprecated use {@link #MethodInsnNode(int, String, String, String, boolean)} instead.
    */
-  @Deprecated
   public MethodInsnNode(
       final int opcode, final String owner, final String name, final String descriptor) {
     this(opcode, owner, name, descriptor, opcode == Opcodes.INVOKEINTERFACE);

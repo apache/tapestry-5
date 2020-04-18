@@ -49,15 +49,16 @@ public class AnnotationRemapper extends AnnotationVisitor {
    * @param remapper the remapper to use to remap the types in the visited annotation.
    */
   public AnnotationRemapper(final AnnotationVisitor annotationVisitor, final Remapper remapper) {
-    this(Opcodes.ASM7, annotationVisitor, remapper);
+    this(/* latest api = */ Opcodes.ASM8, annotationVisitor, remapper);
   }
 
   /**
    * Constructs a new {@link AnnotationRemapper}.
    *
    * @param api the ASM API version supported by this remapper. Must be one of {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}
    * @param annotationVisitor the annotation visitor this remapper must deleted to.
    * @param remapper the remapper to use to remap the types in the visited annotation.
    */
@@ -83,9 +84,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
     if (annotationVisitor == null) {
       return null;
     } else {
-      return annotationVisitor == av
-          ? this
-          : new AnnotationRemapper(api, annotationVisitor, remapper);
+      return annotationVisitor == av ? this : createAnnotationRemapper(annotationVisitor);
     }
   }
 
@@ -95,9 +94,18 @@ public class AnnotationRemapper extends AnnotationVisitor {
     if (annotationVisitor == null) {
       return null;
     } else {
-      return annotationVisitor == av
-          ? this
-          : new AnnotationRemapper(api, annotationVisitor, remapper);
+      return annotationVisitor == av ? this : createAnnotationRemapper(annotationVisitor);
     }
+  }
+
+  /**
+   * Constructs a new remapper for annotations. The default implementation of this method returns a
+   * new {@link AnnotationRemapper}.
+   *
+   * @param annotationVisitor the AnnotationVisitor the remapper must delegate to.
+   * @return the newly created remapper.
+   */
+  protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
+    return new AnnotationRemapper(api, annotationVisitor, remapper);
   }
 }

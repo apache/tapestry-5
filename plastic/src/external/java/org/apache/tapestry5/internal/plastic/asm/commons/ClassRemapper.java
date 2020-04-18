@@ -36,10 +36,25 @@ import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.RecordComponentVisitor;
 import org.apache.tapestry5.internal.plastic.asm.TypePath;
 
 /**
  * A {@link ClassVisitor} that remaps types with a {@link Remapper}.
+ *
+ * <p><i>This visitor has several limitations</i>. A non-exhaustive list is the following:
+ *
+ * <ul>
+ *   <li>it cannot remap type names in dynamically computed strings (remapping of type names in
+ *       static values is supported).
+ *   <li>it cannot remap values derived from type names at compile time, such as
+ *       <ul>
+ *         <li>type name hashcodes used by some Java compilers to implement the string switch
+ *             statement.
+ *         <li>some compound strings used by some Java compilers to implement lambda
+ *             deserialization.
+ *       </ul>
+ * </ul>
  *
  * @author Eugene Kuleshov
  */
@@ -59,7 +74,7 @@ public class ClassRemapper extends ClassVisitor {
    * @param remapper the remapper to use to remap the types in the visited class.
    */
   public ClassRemapper(final ClassVisitor classVisitor, final Remapper remapper) {
-    this(Opcodes.ASM7, classVisitor, remapper);
+    this(/* latest api = */ Opcodes.ASM8, classVisitor, remapper);
   }
 
   /**
@@ -67,7 +82,8 @@ public class ClassRemapper extends ClassVisitor {
    *
    * @param api the ASM API version supported by this remapper. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
    * @param classVisitor the class visitor this remapper must deleted to.
    * @param remapper the remapper to use to remap the types in the visited class.
    */
@@ -125,6 +141,19 @@ public class ClassRemapper extends ClassVisitor {
       }
     }
     super.visitAttribute(attribute);
+  }
+
+  @Override
+  public RecordComponentVisitor visitRecordComponent(
+      final String name, final String descriptor, final String signature) {
+    RecordComponentVisitor recordComponentVisitor =
+        super.visitRecordComponent(
+            remapper.mapRecordComponentName(className, name, descriptor),
+            remapper.mapDesc(descriptor),
+            remapper.mapSignature(signature, true));
+    return recordComponentVisitor == null
+        ? null
+        : createRecordComponentRemapper(recordComponentVisitor);
   }
 
   @Override
@@ -191,6 +220,18 @@ public class ClassRemapper extends ClassVisitor {
   }
 
   /**
+   * <b>Experimental, use at your own risk.</b>.
+   *
+   * @param permittedSubtype the internal name of a permitted subtype.
+   * @deprecated this API is experimental.
+   */
+  @Override
+  @Deprecated
+  public void visitPermittedSubtypeExperimental(final String permittedSubtype) {
+    super.visitPermittedSubtypeExperimental(remapper.mapType(permittedSubtype));
+  }
+
+  /**
    * Constructs a new remapper for fields. The default implementation of this method returns a new
    * {@link FieldRemapper}.
    *
@@ -232,5 +273,17 @@ public class ClassRemapper extends ClassVisitor {
    */
   protected ModuleVisitor createModuleRemapper(final ModuleVisitor moduleVisitor) {
     return new ModuleRemapper(api, moduleVisitor, remapper);
+  }
+
+  /**
+   * Constructs a new remapper for record components. The default implementation of this method
+   * returns a new {@link RecordComponentRemapper}.
+   *
+   * @param recordComponentVisitor the RecordComponentVisitor the remapper must delegate to.
+   * @return the newly created remapper.
+   */
+  protected RecordComponentVisitor createRecordComponentRemapper(
+      final RecordComponentVisitor recordComponentVisitor) {
+    return new RecordComponentRemapper(api, recordComponentVisitor, remapper);
   }
 }
