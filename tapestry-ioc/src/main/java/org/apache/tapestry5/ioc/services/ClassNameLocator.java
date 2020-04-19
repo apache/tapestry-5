@@ -29,7 +29,7 @@ public interface ClassNameLocator
      * package (or any sub-package), but excludes inner classes. No other filtering (beyond inner classes) occurs, so
      * there's no guarantee that the class names returned are public (for example).
      *
-     * @param packageName
+     * @param packageName the name of the package to be inspected.
      * @return fully qualified class names
      */
     Collection<String> locateClassNames(String packageName);

@@ -26,6 +26,7 @@ public interface AspectInterceptorBuilder<T> extends MethodAdviceReceiver
 
     /**
      * Builds and returns the interceptor.  Any methods that have not been advised will become "pass thrus".
+     * @return the interceptor instance.
      */
     T build();
 }

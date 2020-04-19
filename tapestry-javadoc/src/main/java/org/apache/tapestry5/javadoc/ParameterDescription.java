@@ -72,7 +72,7 @@ public class ParameterDescription
      * Extracts the description, converting Text and @link nodes as needed into markup text.
      *
      * @return markup text, ready for writing
-     * @throws IOException
+     * @throws IOException if some error occurs.
      */
     public String extractDescription() throws IOException
     {

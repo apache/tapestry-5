@@ -107,7 +107,7 @@ public abstract class AbstractLink implements ClientElement
 
     /**
      * Adds any user-defined parameters as query parameters.
-     * @param link
+     * @param link a {@link org.apache.tapestry5.Link}.
      */
     protected final void addParameters(Link link)
     {
@@ -163,6 +163,7 @@ public abstract class AbstractLink implements ClientElement
     /**
      * Returns true if the component is disabled (as per its disabled parameter). Disabled link components should not
      * render a tag, but should still render their body.
+     * @return <code>true</code> or <code>false</code>.
      */
     public boolean isDisabled()
     {

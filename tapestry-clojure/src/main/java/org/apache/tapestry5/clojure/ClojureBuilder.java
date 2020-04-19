@@ -25,6 +25,7 @@ public interface ClojureBuilder
      * @param interfaceType
      *         type of interface. Must have the {@link Namespace} annotation. Not null.
      * @return the proxy
+     * @param <T> the interface type.
      * @see MethodToFunctionSymbolMapper
      */
     <T> T build(Class<T> interfaceType);

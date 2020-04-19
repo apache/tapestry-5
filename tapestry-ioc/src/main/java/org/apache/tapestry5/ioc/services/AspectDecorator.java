@@ -32,6 +32,7 @@ public interface AspectDecorator
      * @param delegate         the object on which methods will be invokes
      * @param description      used as the toString() of the interceptor unless toString() is part of the service
      *                         interface
+     * @param <T> the type of the service interface.
      * @return a builder that can be used to generate the final interceptor
      */
     <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, T delegate, String description);
@@ -47,6 +48,7 @@ public interface AspectDecorator
      *                         and service interface
      * @param description      used as the toString() of the interceptor unless toString() is part of the service
      *                         interface
+     * @param <T> the type of the service interface.
      * @return a builder that can be used to generate the final interceptor
      */
     <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, T delegate,

@@ -27,6 +27,7 @@ public interface MethodAdviceReceiver extends AnnotationAccess
 
     /**
      * Advises <em>all</em> methods of the interface with the given advice.
+     * @param advice the method advice to be applied.
      *
      * @since 5.3
      */
@@ -44,6 +45,7 @@ public interface MethodAdviceReceiver extends AnnotationAccess
 
     /**
      * Returns the interface for which methods may be advised.
+     * @return the interface class instance.
      *
      * @since 5.1.0.0
      */

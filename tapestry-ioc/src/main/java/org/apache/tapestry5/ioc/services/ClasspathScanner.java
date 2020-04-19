@@ -32,7 +32,7 @@ public interface ClasspathScanner
      * @param matcher
      *         passed each potential match to determine which are included in the final result
      * @return matching paths based on the search and the matcher
-     * @throws IOException
+     * @throws IOException if some error occurrs.
      */
     Set<String> scan(String packagePath, ClasspathMatcher matcher) throws IOException;
 }

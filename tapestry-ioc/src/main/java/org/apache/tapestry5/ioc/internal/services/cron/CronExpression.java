@@ -1683,6 +1683,7 @@ public class CronExpression implements Serializable
      * NOT YET IMPLEMENTED: Returns the time before the given time
      * that the <code>CronExpression</code> matches.
      * @param endTime the ending time, or null
+     * @return <code>null</code>
      */
     public Date getTimeBefore(Date endTime)
     {

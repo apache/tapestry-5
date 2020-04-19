@@ -88,6 +88,9 @@ public abstract class AbstractPropertyOutput
     /**
      * Invoked from subclasses to do the rendering. The subclass controls the naming convention for locating an
      * overriding Block parameter (it is the name of the property possibly suffixed with a value).
+     * @param writer a MarkupWriter
+     * @param overrideBlockId the override block id
+     * @return a Block
      */
     protected Object renderPropertyValue(MarkupWriter writer, String overrideBlockId)
     {

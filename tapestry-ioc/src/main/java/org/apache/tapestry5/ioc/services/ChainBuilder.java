@@ -34,6 +34,10 @@ public interface ChainBuilder
 {
     /**
      * Creates a chain instance from a command interface and a list of commands (implementing the interface).
+     * @param <T> the command interface type
+     * @param commandInterface the command interface
+     * @param commands the list of commands to be chained
+     * @return the chain instance
      */
     <T> T build(Class<T> commandInterface, List<T> commands);
 }

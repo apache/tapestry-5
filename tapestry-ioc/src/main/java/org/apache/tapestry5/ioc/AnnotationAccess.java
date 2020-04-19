@@ -28,6 +28,7 @@ public interface AnnotationAccess
      * Returns a provider for annotations on the service class and interface. This will reflect annotations defined by
      * the implementation class itself, plus annotations defined by the service interface (implementation class
      * annotations take precedence).
+     * @return an AnnotationProvider instance.
      */
     AnnotationProvider getClassAnnotationProvider();
 
@@ -35,6 +36,9 @@ public interface AnnotationAccess
      * Returns a provider for annotations of a method of the class. This includes annotations on
      * the implementation method, plus annotations on the corresponding service interface method
      * (if such a method exists), with precedence on the implementation class method annotations.
+     * @param methodName the name of the method.
+     * @param parameterTypes the types of the parameters of the method.
+     * @return an AnnotationProvider instance.     * 
      */
     AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes);
 

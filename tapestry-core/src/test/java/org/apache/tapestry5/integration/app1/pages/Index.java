@@ -64,30 +64,30 @@ public class Index
 
 //                    new Item("ZoneFormDemo", "Zone Form Decoration", "Fields inside an Ajax-updatd Form are still decorated properly."),
 
-                    new Item("AjaxValidationDemo", "Ajax Validation", "Demonstrated proper integration of server-side validation and client-side field decoration."),
+//                    new Item("AjaxValidationDemo", "Ajax Validation", "Demonstrated proper integration of server-side validation and client-side field decoration."),
 
                     new Item("OverrideEventHandlerDemo", "Event Handler Override Demo", "Event Handler methods overridden by sub-classes invoke base-class correctly."),
 
-                    new Item("LogoSubclass", "Base class Assets in sub-classes", "Assets are resolved for the parent class if that's where the annotations are."),
+//                    new Item("LogoSubclass", "Base class Assets in sub-classes", "Assets are resolved for the parent class if that's where the annotations are."),
 
                     new Item("MissingRequiredARP", "Missing Query Parameter for @ActivationRequestParameter", "Activating a page with a required @ActivationRequestParameter, but no matching query parameter, is an error."),
 
-                    new Item("DateFieldValidationDemo", "DateField Validation Demo",
-                            "Use of DateField component when client validation is disabled."),
+//                    new Item("DateFieldValidationDemo", "DateField Validation Demo",
+//                            "Use of DateField component when client validation is disabled."),
 
                     new Item("MixinParameters54", "Strict Mixin Parameters", "In the 5.4 DTD, Parameter Mixins must be qualified with the mixin id."),
 
-                    new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
+//                    new Item("AsyncDemo", "Async Links and Forms Demo", "Async (XHR) Updates without a containing Zone."),
 
                     new Item("FormCancelActionDemo", "Form Cancel Action Demo", "FormSupport.addCancel() support"),
 
                     new Item("AjaxRadioDemo", "Ajax Radio Demo", "Radio components inside an Ajax form"),
 
-                    new Item("TimeIntervalDemo", "TimeInterval Demo", "Interval component, based on Moment.js"),
+//                    new Item("TimeIntervalDemo", "TimeInterval Demo", "Interval component, based on Moment.js"),
 
-                    new Item("LocalDateDemo", "LocalDate Demo", "LocalDate component, based on Moment.js"),
+//                    new Item("LocalDateDemo", "LocalDate Demo", "LocalDate component, based on Moment.js"),
 
-                    new Item("EmptyIfDemo", "Empty If Demo", "Ensure an empty If can still render."),
+//                    new Item("EmptyIfDemo", "Empty If Demo", "Ensure an empty If can still render."),
 
                     new Item("MissingAssetDemo", "Missing Asset Demo", "Error when injecting an asset that does not exist."),
 
