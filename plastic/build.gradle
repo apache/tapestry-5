@@ -3,6 +3,11 @@ description = "High-level runtime transformations of Java classes"
 dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
+    compile 'jakarta.annotation:jakarta.annotation-api:1.3.4'
+    compile 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    compile 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    compile "com.sun.xml.ws:jaxws-ri:2.3.2"
+    compile 'javax.xml.ws:jaxws-api:2.3.1'
 }
 
 test { 

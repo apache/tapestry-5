@@ -14,11 +14,11 @@ project.ext.versions = [
     testng: "6.8.21",
     easymock: "3.3.1",
     servletapi: "3.0.1",
-    spock: "1.1-groovy-2.4",
+    spock: "1.3-groovy-2.5",
     hibernate: "5.1.1.Final",
     slf4j: "1.7.25",
     geb: "2.0",
-    selenium: "3.12.0"
+    selenium: "3.141.59"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
@@ -203,10 +203,6 @@ subprojects {
         systemProperties["java.io.tmpdir"] = temporaryDir.absolutePath
 
         jvmArgs("-Dfile.encoding=UTF-8")
-        if (jdkMajorVersion != "1"){
-          // TODO: make these regular dependencies instead
-          jvmArgs += ["--add-modules", "java.xml.ws.annotation,java.xml.bind"]
-        }
 
         environment.LANG = 'en_US.UTF-8'
         
@@ -331,7 +327,11 @@ task aggregateJavadoc(type: Javadoc) {
     def tapestryStylesheet = file("src/javadoc/stylesheet7.css")
     int thisYear = java.time.Year.now().getValue()
 
-    configure(options) {
+    def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
+    def allMainJavaFiles = allMainSourceSets*.java
+    def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
+
+    options {
         splitIndex true
         linkSource true
         stylesheetFile tapestryStylesheet
@@ -342,16 +342,16 @@ task aggregateJavadoc(type: Javadoc) {
         use = true // 'use' seems to be a reserved word for the DSL
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://docs.oracle.com/javaee/7/api/"
-        addStringOption "tagletpath", configurations.javadoc.asPath
-        addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
+        tagletPath List.copyOf((Set) configurations.javadoc.files)
+        //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
+//        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+        addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
+        addStringOption 'source', '8'
+        taglets "org.apache.tapestry5.javadoc.TapestryDocTaglet"
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
         exclude "org/apache/tapestry5/internal/webresources/**"
         exclude "org/apache/tapestry5/webresources/modules/**"
     }
-
-    def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
-    def allMainJavaFiles = allMainSourceSets*.java
-    def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
 
     source allMainJavaFiles
 
@@ -439,11 +439,6 @@ task combinedJacocoReport(type:JacocoReport){
 task continuousIntegration {
     dependsOn subprojects.build, 'tapestry-core:testWithPrototype', aggregateJavadoc, combinedJacocoReport
     description "Task executed on Jenkins CI server after Git commits"
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
-    description "Regenerates the Gradle Wrapper files"
 }
 
 task zippedSources(type: Zip) {

@@ -3,6 +3,10 @@ package org.apache.tapestry5.integration.app1.pages
 import org.apache.tapestry5.annotations.Persist
 import org.apache.tapestry5.annotations.Property
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
+
 
 class TimeIntervalDemo extends LocalDateDemo {
 
@@ -12,7 +16,7 @@ class TimeIntervalDemo extends LocalDateDemo {
 
     void setupRender() {
         if (previousRender == null)
-            previousRender = new Date().clearTime()
+            previousRender = new Date(LocalDateTime.now().toLocalDate().toEpochDay())
     }
 
     void afterRender() {

@@ -7,7 +7,7 @@ dependencies {
 
 
   testCompile project(':tapestry-test')
-  testCompile 'org.eclipse.persistence:eclipselink:2.6.2'
+  testCompile 'org.eclipse.persistence:eclipselink:2.7.4'
 
   testRuntime "com.h2database:h2:1.2.145"
   testRuntime "org.apache.tomcat:dbcp:6.0.32"

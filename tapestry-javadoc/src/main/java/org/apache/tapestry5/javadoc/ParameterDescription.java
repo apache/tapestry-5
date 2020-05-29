@@ -14,22 +14,21 @@
 
 package org.apache.tapestry5.javadoc;
 
+import com.sun.source.doctree.*;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import javax.lang.model.element.VariableElement;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.SeeTag;
-import com.sun.javadoc.Tag;
-
 public class ParameterDescription
 {
-    public final FieldDoc field;
+    public final VariableElement field;
 
     public final String name;
 
@@ -49,12 +48,15 @@ public class ParameterDescription
 
     public final boolean deprecated;
 
+    private final DocCommentTreeProvider docCommentTreeProvider;
+
     private static final Pattern SPECIAL_CONTENT = Pattern.compile("(?:</?(\\p{Alpha}+)>)|(?:&\\p{Alpha}+;)");
     private static final Set<String> PASS_THROUGH_TAGS = CollectionFactory.newSet("b", "em", "i", "code", "strong");
 
 
-    public ParameterDescription(final FieldDoc fieldDoc, final String name, final String type, final String defaultValue, final String defaultPrefix,
-            final boolean required, final boolean allowNull, final boolean cache, final String since, final boolean deprecated)
+    public ParameterDescription(final VariableElement fieldDoc, final String name, final String type, final String defaultValue, final String defaultPrefix,
+                                final boolean required, final boolean allowNull, final boolean cache, final String since, final boolean deprecated,
+                                final DocCommentTreeProvider docCommentTreeProvider)
     {
         this.field = fieldDoc;
         this.name = name;
@@ -66,6 +68,7 @@ public class ParameterDescription
         this.cache = cache;
         this.since = since;
         this.deprecated = deprecated;
+        this.docCommentTreeProvider = docCommentTreeProvider;
     }
 
     /**
@@ -76,40 +79,42 @@ public class ParameterDescription
      */
     public String extractDescription() throws IOException
     {
+        final DocCommentTree tree = docCommentTreeProvider.getDocCommentTree(field);
+
+        if (tree == null)
+        {
+            return "";
+        }
+
         StringBuilder builder = new StringBuilder();
 
-        for (Tag tag : field.inlineTags())
+        for (com.sun.source.doctree.DocTree tag : tree.getFullBody())
         {
-            if (tag.name().equals("Text"))
+            if (tag.getKind() == DocTree.Kind.TEXT)
             {
-                appendContentSafe(builder, tag.text());
+                TextTree textTree = (TextTree) tag;
+                appendContentSafe(builder, textTree.getBody());
                 continue;
             }
 
-            if (tag.name().equals("@link"))
+            if (tag.getKind() == DocTree.Kind.LINK)
             {
-                SeeTag seeTag = (SeeTag) tag;
-
-                String label = seeTag.label();
-                if (label != null && !label.equals(""))
+                LinkTree seeTag = (LinkTree) tag;
+                String label = seeTag.getLabel().toString();
+                if (StringUtils.isNotEmpty(label))
                 {
                     builder.append(StringEscapeUtils.escapeHtml(label));
                     continue;
                 }
 
-                if (seeTag.referencedClassName() != null)
-                    builder.append(StringEscapeUtils.escapeHtml(seeTag.referencedClassName()));
-
-                if (seeTag.referencedMemberName() != null)
-                {
-                    builder.append('#');
-                    builder.append(StringEscapeUtils.escapeHtml(seeTag.referencedMemberName()));
-                }
+                if (seeTag.getReference() != null)
+                    builder.append(StringEscapeUtils.escapeHtml(seeTag.getReference().getSignature()));
             }
-            else if (tag.name().equals("@code"))
+            else if (tag.getKind() == DocTree.Kind.CODE)
             {
+                LiteralTree codeTag = (LiteralTree) tag;
                 builder.append("<code>");
-                builder.append(StringEscapeUtils.escapeHtml(tag.text()));
+                builder.append(StringEscapeUtils.escapeHtml(codeTag.getBody().getBody()));
                 builder.append("</code>");
             }
         }

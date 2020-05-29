@@ -1,24 +1,13 @@
 description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
 
+sourceCompatibility = "11"
+targetCompatibility = "11"
+
 dependencies {
   compile project(':tapestry-core')
   compile "commons-lang:commons-lang:2.6"
-  compile files(getTools())
-  
 }
 
-/** Returns the tools.jar/classes.jar of the Java runtime. */
-File getTools() {
-  def jreRelpath = isMacOSX_1_6() ? "../classes/classes.jar" : "../lib/tools.jar"
-  def jdkRelpath = isMacOSX_1_6() ? "classes/classes.jar" : "lib/tools.jar"
-  
-  def javaHome = System.properties['java.home']
-
-  return new File(javaHome, jdkRelpath).exists() ? new File(javaHome, jdkRelpath) : new File(javaHome, jreRelpath)
+test {
+  useJUnit()
 }
-
-boolean isMacOSX_1_6() {
-  System.properties['os.name'].toLowerCase().contains('mac os') &&
-      System.properties['java.version'].startsWith("1.6.")
-}
-  
