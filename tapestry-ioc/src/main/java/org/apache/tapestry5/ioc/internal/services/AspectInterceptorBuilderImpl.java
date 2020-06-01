@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;

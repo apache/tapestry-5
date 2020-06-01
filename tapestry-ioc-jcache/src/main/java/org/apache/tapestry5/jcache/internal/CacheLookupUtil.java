@@ -22,8 +22,8 @@ import javax.cache.annotation.CacheKeyGenerator;
 import javax.cache.annotation.CacheResolverFactory;
 import javax.inject.Singleton;
 
+import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.plastic.MethodInvocation;
 import org.jsr107.ri.annotations.AbstractCacheLookupUtil;
 import org.jsr107.ri.annotations.InternalCacheInvocationContext;
