@@ -1,6 +1,6 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl
+import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl
 import org.apache.tapestry5.ioc.internal.util.TapestryException
 import org.apache.tapestry5.ioc.util.ExceptionUtils
 import org.apache.tapestry5.ioc.util.ExceptionWrapper

@@ -14,9 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.services.*;
-
 import java.io.IOException;
+
+import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Traditional;
 
 /**
  * Terminator for the {@link org.apache.tapestry5.services.ComponentRequestHandler} pipeline, that feeds out into the

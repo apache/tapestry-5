@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.grid;
 
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
 
 /**
  * A provider of model data to the sub-components of the {@link org.apache.tapestry5.corelib.components.Grid} component.

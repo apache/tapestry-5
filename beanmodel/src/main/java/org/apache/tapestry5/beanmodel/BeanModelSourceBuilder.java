@@ -9,10 +9,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.beaneditor;
+package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.internal.services.BeanModelSourceImpl;
-import org.apache.tapestry5.internal.services.PropertyConduitSourceImpl;
+import org.apache.tapestry5.beanmodel.internal.services.BeanModelSourceImpl;
+import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl;
+import org.apache.tapestry5.beanmodel.internal.services.PropertyConduitSourceImpl;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.internal.services.StringInternerImpl;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -21,16 +24,13 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.BasicDataTypeAnalyzers;
 import org.apache.tapestry5.ioc.internal.BasicTypeCoercions;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
-import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
 import org.apache.tapestry5.ioc.internal.services.TypeCoercerImpl;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
-import org.apache.tapestry5.services.PropertyConduitSource;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;

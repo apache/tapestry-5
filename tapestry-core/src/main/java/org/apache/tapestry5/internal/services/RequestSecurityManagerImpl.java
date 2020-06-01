@@ -18,8 +18,14 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.LinkSecurity;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 

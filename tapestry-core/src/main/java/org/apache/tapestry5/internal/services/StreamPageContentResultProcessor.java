@@ -16,11 +16,18 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.StreamPageContent;
 
 import java.io.IOException;
 

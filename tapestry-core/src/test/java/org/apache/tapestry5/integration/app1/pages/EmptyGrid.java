@@ -20,13 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.BeanModelSource;
 
 public class EmptyGrid
 {

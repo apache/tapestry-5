@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.grid;
 
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 
 /**
- * Identifies how a single column (identified as a {@link org.apache.tapestry5.beaneditor.PropertyModel}) is sorted.
+ * Identifies how a single column (identified as a {@link org.apache.tapestry5.beanmodel.PropertyModel}) is sorted.
  */
 public class SortConstraint
 {

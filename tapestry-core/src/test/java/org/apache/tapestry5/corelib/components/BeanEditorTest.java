@@ -22,7 +22,8 @@ import static org.easymock.EasyMock.anyObject;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
@@ -30,7 +31,6 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BeanEditContext;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;

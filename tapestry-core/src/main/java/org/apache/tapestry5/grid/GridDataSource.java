@@ -77,7 +77,7 @@ public interface GridDataSource
 
     /**
      * Returns the type of value in the rows, or null if not known. This value is used to create a default {@link
-     * org.apache.tapestry5.beaneditor.BeanModel} when no such model is explicitly provided.
+     * org.apache.tapestry5.beanmodel.BeanModel} when no such model is explicitly provided.
      *
      * @return the row type, or null
      */

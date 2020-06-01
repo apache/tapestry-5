@@ -17,8 +17,9 @@ package org.apache.tapestry5.corelib.pages;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.*;
 import org.apache.tapestry5.internal.PageCatalogTotals;
@@ -31,7 +32,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 

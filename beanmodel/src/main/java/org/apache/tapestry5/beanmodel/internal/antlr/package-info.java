@@ -15,4 +15,4 @@
 /**
  * [INTERNAL USE ONLY] support classes related to Antlr; API subject to change
  */
-package org.apache.tapestry5.internal.antlr;
+package org.apache.tapestry5.beanmodel.internal.antlr;

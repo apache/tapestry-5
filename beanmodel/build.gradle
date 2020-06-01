@@ -23,6 +23,7 @@ dependencies {
     }
 
     testCompile "org.testng:testng:${versions.testng}", { transitive = false }
+    testCompile "org.easymock:easymock:${versions.easymock}"
 }
 
 clean.delete generateGrammarSource.outputDirectory

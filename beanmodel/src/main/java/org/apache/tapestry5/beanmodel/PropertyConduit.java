@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5;
+package org.apache.tapestry5.beanmodel;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 

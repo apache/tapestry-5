@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5;
+package org.apache.tapestry5.beanmodel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.apache.tapestry5.services.PropertyConduitSource;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 
 
 /**

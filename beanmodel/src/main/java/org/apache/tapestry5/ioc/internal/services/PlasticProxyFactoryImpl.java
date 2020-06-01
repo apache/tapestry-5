@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.beanmodel.internal.services.PlasticClassListenerLogger;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;

@@ -17,10 +17,10 @@ package org.apache.tapestry5.internal.bindings;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.internal.services.Invariant;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.services.Invariant;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
@@ -88,7 +88,7 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
     }
 
     /**
-     * Almost always returns false, unless the conduit provides the {@link org.apache.tapestry5.internal.services.Invariant}
+     * Almost always returns false, unless the conduit provides the {@link org.apache.tapestry5.beanmodel.internal.services.Invariant}
      * annotation.
      */
     @Override

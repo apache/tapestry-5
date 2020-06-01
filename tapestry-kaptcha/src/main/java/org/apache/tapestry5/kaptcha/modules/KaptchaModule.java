@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.kaptcha.modules;
 
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -24,7 +25,12 @@ import org.apache.tapestry5.kaptcha.KaptchaSymbolConstants;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaDataTypeAnalyzer;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaProducerImpl;
 import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.DataTypeAnalyzer;
+import org.apache.tapestry5.services.EditBlockContribution;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 /**

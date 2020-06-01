@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 
@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;

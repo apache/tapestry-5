@@ -14,14 +14,14 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry5.services.BeanModelSource;
 
 import java.util.List;
 

@@ -16,7 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;

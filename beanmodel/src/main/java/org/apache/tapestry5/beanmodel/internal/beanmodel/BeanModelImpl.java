@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.beaneditor;
+package org.apache.tapestry5.beanmodel.internal.beanmodel;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
-import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.beanmodel.internal.services.CoercingPropertyConduitWrapper;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -27,7 +28,6 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.util.List;
 import java.util.Map;

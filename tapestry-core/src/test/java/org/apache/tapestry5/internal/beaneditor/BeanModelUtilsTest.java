@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.easymock.EasyMock;
 import org.testng.annotations.DataProvider;

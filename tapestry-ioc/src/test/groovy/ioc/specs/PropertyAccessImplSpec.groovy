@@ -7,6 +7,7 @@ import java.lang.reflect.Method
 
 import org.apache.tapestry5.beaneditor.DataType
 import org.apache.tapestry5.beaneditor.Validate
+import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl
 import org.apache.tapestry5.ioc.annotations.Scope
 import org.apache.tapestry5.ioc.internal.services.*
 import org.apache.tapestry5.ioc.internal.util.Pair

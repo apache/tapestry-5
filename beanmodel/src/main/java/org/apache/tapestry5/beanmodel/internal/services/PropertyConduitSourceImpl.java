@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.PropertyConduit2;
-import org.apache.tapestry5.internal.InternalPropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
+import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -38,7 +40,6 @@ import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

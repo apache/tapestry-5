@@ -14,10 +14,10 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.BeanModelSource;
 
 /**
  * A component that creates an entire form for editing the properties of a particular bean (or POJO, or any object
@@ -35,8 +35,8 @@ import org.apache.tapestry5.services.BeanModelSource;
  * events of a Form.
  *
  * @tapestrydoc
- * @see org.apache.tapestry5.beaneditor.BeanModel
- * @see org.apache.tapestry5.services.BeanModelSource
+ * @see org.apache.tapestry5.beanmodel.BeanModel
+ * @see org.apache.tapestry5.beanmodel.services.BeanModelSource
  * @see org.apache.tapestry5.corelib.components.PropertyEditor
  * @see org.apache.tapestry5.beaneditor.DataType
  * @see Form
@@ -67,7 +67,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     /**
      * A comma-separated list of property names to be retained from the
-     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * {@link org.apache.tapestry5.beanmodel.BeanModel} (only used
      * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
@@ -76,7 +76,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      * The names are case-insensitive.
@@ -94,7 +94,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String reorder;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      */

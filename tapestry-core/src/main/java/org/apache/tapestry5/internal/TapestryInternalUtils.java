@@ -13,6 +13,9 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Orderable;

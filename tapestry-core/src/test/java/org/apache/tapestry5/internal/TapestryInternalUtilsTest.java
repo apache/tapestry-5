@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.beaneditor.Width;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;

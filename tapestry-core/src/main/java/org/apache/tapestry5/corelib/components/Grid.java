@@ -14,16 +14,16 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.corelib.data.GridPagerPosition;
 import org.apache.tapestry5.grid.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.FormSupport;
@@ -50,8 +50,8 @@ import java.util.List;
  * to use a unique ID for each row that doesn't change when rows are reordered.
  *
  * @tapestrydoc
- * @see org.apache.tapestry5.beaneditor.BeanModel
- * @see org.apache.tapestry5.services.BeanModelSource
+ * @see org.apache.tapestry5.beanmodel.BeanModel
+ * @see org.apache.tapestry5.beanmodel.services.BeanModelSource
  * @see org.apache.tapestry5.grid.GridDataSource
  * @see BeanEditForm
  * @see BeanDisplay
@@ -129,7 +129,7 @@ public class Grid implements GridModel, ClientElement
     private GridSortModel sortModel;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beanmodel.BeanModel}.
      * Cells for added columns will be blank unless a cell override is provided. This parameter is only used
      * when a default model is created automatically.
      */
@@ -138,7 +138,7 @@ public class Grid implements GridModel, ClientElement
 
     /**
      * A comma-separated list of property names to be retained from the
-     * {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * {@link org.apache.tapestry5.beanmodel.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive. This parameter is only used
      * when a default model is created automatically.
@@ -148,7 +148,7 @@ public class Grid implements GridModel, ClientElement
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * .
      * The names are case-insensitive. This parameter is only used
      * when a default model is created automatically.

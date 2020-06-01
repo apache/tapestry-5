@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.beaneditor;
+package org.apache.tapestry5.beanmodel.internal.beanmodel;
 
 import java.lang.annotation.Annotation;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.Sortable;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;

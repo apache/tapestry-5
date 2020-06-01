@@ -15,7 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.corelib.base.AbstractPropertyOutput;
 
 /**

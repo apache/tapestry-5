@@ -17,10 +17,14 @@ package org.apache.tapestry5.internal.services;
 import java.util.Map;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
 
 @SuppressWarnings("all")
 public class ValueEncoderSourceImpl implements ValueEncoderSource, Runnable

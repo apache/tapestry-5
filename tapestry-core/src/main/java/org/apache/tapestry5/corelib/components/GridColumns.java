@@ -19,7 +19,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.grid.GridModel;
 import org.apache.tapestry5.grid.GridSortModel;

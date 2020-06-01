@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal;
+package org.apache.tapestry5.beanmodel.internal;
 
-import org.apache.tapestry5.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.PropertyConduit2;
 
 
 /**
- * Extension to {@link org.apache.tapestry5.PropertyConduit2} that adds a method to determine the name of the property.
+ * Extension to {@link org.apache.tapestry5.beanmodel.PropertyConduit2} that adds a method to determine the name of the property.
  * 
  * @since 5.2.0
  *

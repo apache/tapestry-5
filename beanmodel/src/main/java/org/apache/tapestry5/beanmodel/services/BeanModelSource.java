@@ -10,19 +10,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.beanmodel.services;
 
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 
 /**
- * Used by a component to create a default {@link org.apache.tapestry5.beaneditor.BeanModel} for a particular bean
+ * Used by a component to create a default {@link org.apache.tapestry5.beanmodel.BeanModel} for a particular bean
  * class. Also provides support to the model by generating validation information for individual fields.
  *
  * BeanModels are the basis for the {@link org.apache.tapestry5.corelib.components.BeanEditor} and {@link
  * org.apache.tapestry5.corelib.components.Grid} comopnents.
  *
- * @see org.apache.tapestry5.services.PropertyConduitSource
+ * @see org.apache.tapestry5.beanmodel.services.PropertyConduitSource
  */
 public interface BeanModelSource
 {

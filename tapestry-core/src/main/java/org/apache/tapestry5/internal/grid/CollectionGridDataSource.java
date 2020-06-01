@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;

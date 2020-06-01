@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 import java.lang.annotation.Annotation;
 
-import org.apache.tapestry5.internal.InternalPropertyConduit;
+import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
- * Companion class for {@link org.apache.tapestry5.PropertyConduit} instances created by the
- * {@link org.apache.tapestry5.services.PropertyConduitSource}.
+ * Companion class for {@link org.apache.tapestry5.beanmodel.PropertyConduit} instances created by the
+ * {@link org.apache.tapestry5.beanmodel.services.PropertyConduitSource}.
  */
 @SuppressWarnings("all")
 public class PropertyConduitDelegate

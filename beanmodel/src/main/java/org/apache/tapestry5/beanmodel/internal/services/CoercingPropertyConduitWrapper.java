@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.PropertyConduit2;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit2;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 public class CoercingPropertyConduitWrapper implements PropertyConduit2

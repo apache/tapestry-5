@@ -10,17 +10,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.beaneditor;
+package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
- * Part of a {@link org.apache.tapestry5.beaneditor.BeanModel} that defines the attributes of a single property of a
+ * Part of a {@link org.apache.tapestry5.beanmodel.BeanModel} that defines the attributes of a single property of a
  * bean.
  *
  *
- * A PropertyModel is also an {@link AnnotationProvider}, as long as the {@link org.apache.tapestry5.PropertyConduit} is
+ * A PropertyModel is also an {@link AnnotationProvider}, as long as the {@link org.apache.tapestry5.beanmodel.PropertyConduit} is
  * non-null.  When there is no property conduit, then {@link org.apache.tapestry5.ioc.AnnotationProvider#getAnnotation(Class)}
  * will return null.
  */

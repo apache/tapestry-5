@@ -18,12 +18,12 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.BeanModelSource;
 
 /**
  * A component that displays the properties of a bean (or POJO, or any object with properties) as a
@@ -77,7 +77,7 @@ public class BeanDisplay
     private BeanModel model;
     /**
      * A comma-separated list of property names to be retained from the
-     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * {@link org.apache.tapestry5.beanmodel.BeanModel} (only used
      * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
@@ -86,7 +86,7 @@ public class BeanDisplay
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      * The names are case-insensitive.
@@ -104,7 +104,7 @@ public class BeanDisplay
     private String reorder;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      */

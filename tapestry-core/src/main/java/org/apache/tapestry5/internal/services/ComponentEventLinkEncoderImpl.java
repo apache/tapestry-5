@@ -15,12 +15,23 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ContextPathEncoder;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 
 import java.util.List;
