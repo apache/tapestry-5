@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.internal.services.AccessableObjectAnnotationProvider;
+import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
+import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;

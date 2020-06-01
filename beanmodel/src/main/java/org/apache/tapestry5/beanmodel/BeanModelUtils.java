@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.beaneditor;
+package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
 
 /**
@@ -26,7 +25,7 @@ public final class BeanModelUtils
     final private static String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
-     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * Performs standard set of modifications to a {@link org.apache.tapestry5.beanmodel.BeanModel}
      * . First new
      * properties may be added, then properties removed, then properties reordered.
      *
@@ -62,7 +61,7 @@ public final class BeanModelUtils
 
     /**
      * Adds empty properties to the bean model. New properties are added with a <em>null</em>
-     * {@link org.apache.tapestry5.PropertyConduit}. `
+     * {@link org.apache.tapestry5.beanmodel.PropertyConduit}. `
      *
      * @param model         to be modified
      * @param propertyNames comma-separated list of property names
@@ -108,7 +107,12 @@ public final class BeanModelUtils
         model.reorder(split(propertyNames));
     }
     
-    static String[] split(String propertyNames)
+    /**
+     * Don't use this method, which is only public for testing purposes.
+     * @param propertyNames
+     * @return a String array
+     */
+    public static String[] split(String propertyNames)
     {
         String trimmed = propertyNames.trim();
 

@@ -10,12 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.beanmodel.services;
 
-import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
 
 /**
- * A source for {@link org.apache.tapestry5.PropertyConduit}s, which can be thought of as a compiled property path
+ * A source for {@link org.apache.tapestry5.beanmodel.PropertyConduit}s, which can be thought of as a compiled property path
  * expression. PropertyConduits are the basis of the "prop:" binding factory, thus this service defines the expression
  * format used by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}.
  */

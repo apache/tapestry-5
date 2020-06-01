@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.integration.app1.base;
 
-import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.PropertyConduitSource;
 
 /**
  * For testing TAPESTRY-1518.

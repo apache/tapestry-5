@@ -20,16 +20,16 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.internal.BeanEditContextImpl;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.BeanEditContext;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
@@ -89,7 +89,7 @@ public class BeanEditor
 
     /**
      * A comma-separated list of property names to be retained from the
-     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * {@link org.apache.tapestry5.beanmodel.BeanModel} (only used
      * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
@@ -98,7 +98,7 @@ public class BeanEditor
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      * The names are case-insensitive.
@@ -116,7 +116,7 @@ public class BeanEditor
     private String reorder;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beanmodel.BeanModel}
      * (only used
      * when a default model is created automatically).
      */

@@ -12,17 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
-
-import java.lang.annotation.*;
+package org.apache.tapestry5.beanmodel.internal.services;
 
 /**
- * Special annotation that is applied to literal {@link org.apache.tapestry5.PropertyConduit}s, to inform {@link
- * org.apache.tapestry5.internal.bindings.PropBinding} that the value is, in fact, invariant.
+ * Exception thrown when there is a problem parsing a property expression using the ANTLR property expression grammar.
  */
-@Target({ElementType.PARAMETER, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Invariant
+public class PropertyExpressionException extends RuntimeException
 {
+    private final String expression;
+
+    public PropertyExpressionException(String message, String expression, Throwable cause)
+    {
+        super(message, cause);
+
+        this.expression = expression;
+    }
+
+    /**
+     * Returns the property expression containing the error.
+     */
+    public String getExpression()
+    {
+        return expression;
+    }
 }

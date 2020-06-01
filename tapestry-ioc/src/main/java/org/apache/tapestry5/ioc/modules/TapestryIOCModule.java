@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.modules;
 
+import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;

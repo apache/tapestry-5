@@ -15,13 +15,18 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

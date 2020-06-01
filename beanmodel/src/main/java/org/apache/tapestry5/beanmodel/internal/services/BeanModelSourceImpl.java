@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.beanmodel.internal.services;
 
-import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
-import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelUtils;
+import org.apache.tapestry5.beanmodel.internal.beanmodel.BeanModelImpl;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
-import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

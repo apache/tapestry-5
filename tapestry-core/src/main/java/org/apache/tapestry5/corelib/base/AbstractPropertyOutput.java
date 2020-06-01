@@ -14,7 +14,8 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;

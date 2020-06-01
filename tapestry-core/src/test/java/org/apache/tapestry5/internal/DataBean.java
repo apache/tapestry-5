@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal;
 
 /**
- * Used as test when setting the order of properties in a {@link org.apache.tapestry5.beaneditor.BeanModel}.
+ * Used as test when setting the order of properties in a {@link org.apache.tapestry5.beanmodel.BeanModel}.
  */
 public class DataBean
 {

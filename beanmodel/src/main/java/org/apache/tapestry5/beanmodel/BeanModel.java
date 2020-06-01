@@ -10,11 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.beaneditor;
-
-import org.apache.tapestry5.PropertyConduit;
+package org.apache.tapestry5.beanmodel;
 
 import java.util.List;
+
+import org.apache.tapestry5.beaneditor.DataType;
+import org.apache.tapestry5.beaneditor.RelativePosition;
 
 /**
  * Provides the information necessary to build a user interface to view, create or edit an instance of a particular
@@ -22,11 +23,11 @@ import java.util.List;
  *
  * BeanModels are not thread-safe, they are also not serializable.
  *
- * Here, and in {@link org.apache.tapestry5.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
- * However, a full {@linkplain org.apache.tapestry5.services.PropertyConduitSource#create(Class, String) property
+ * Here, and in {@link org.apache.tapestry5.beanmodel.PropertyModel}, the term "propertyName" is used for simplicitly.
+ * However, a full {@linkplain org.apache.tapestry5.beanmodel.services.PropertyConduitSource#create(Class, String) property
  * expression} may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}.
  *
- * @see org.apache.tapestry5.services.BeanModelSource
+ * @see org.apache.tapestry5.beanmodel.services.BeanModelSource
  */
 public interface BeanModel<T>
 {
@@ -61,7 +62,7 @@ public interface BeanModel<T>
     /**
      * Returns the identified model.  Property ids are a stripped version of the property name. Case is ignored.
      *
-     * @param propertyId matched caselessly against {@link org.apache.tapestry5.beaneditor.PropertyModel#getId()}
+     * @param propertyId matched caselessly against {@link org.apache.tapestry5.beanmodel.PropertyModel#getId()}
      * @throws RuntimeException if the bean editor model does not have a property model with the indicated id
      */
     PropertyModel getById(String propertyId);
@@ -70,7 +71,7 @@ public interface BeanModel<T>
      * Adds a new property to the model, returning its mutable model for further refinement. The property is added to
      * the <em>end</em> of the list of properties. The property must be real (but may have been excluded if there was no
      * {@linkplain org.apache.tapestry5.beaneditor.DataType datatype} associated with the property). To add a synthetic
-     * property, use {@link #add(String, org.apache.tapestry5.PropertyConduit)}
+     * property, use {@link #add(String, org.apache.tapestry5.beanmodel.PropertyConduit)}
      *
      * @param propertyName name of property to add
      * @return the new property model (for further configuration)

@@ -14,9 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.services.*;
-
 import java.io.IOException;
+
+import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.services.Ajax;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.Request;
 
 /**
  * A filter that intercepts Ajax-oriented requests, thos that originate on the client-side using XmlHttpRequest. In

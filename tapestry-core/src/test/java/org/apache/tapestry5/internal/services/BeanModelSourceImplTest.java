@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 
 /**
  * Tests a BeanModelSource created using Tapestry-IoC.

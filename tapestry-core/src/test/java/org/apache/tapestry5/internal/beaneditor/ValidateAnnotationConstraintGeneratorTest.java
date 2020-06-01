@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;
 import org.testng.annotations.Test;

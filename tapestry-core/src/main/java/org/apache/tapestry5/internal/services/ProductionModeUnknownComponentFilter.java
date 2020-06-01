@@ -12,10 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
 
 import java.io.IOException;
 

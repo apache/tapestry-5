@@ -14,10 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
 
 import java.io.IOException;
 

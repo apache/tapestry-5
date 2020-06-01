@@ -32,7 +32,7 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beanmodel.PropertyModel;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.GridModel;
 import org.apache.tapestry5.services.FormSupport;

@@ -16,10 +16,16 @@ package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Traditional;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadEvents;
 

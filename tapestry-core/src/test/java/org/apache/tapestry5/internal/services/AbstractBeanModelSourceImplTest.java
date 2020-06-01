@@ -14,18 +14,19 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.BeanModelSourceBuilder;
-import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.beaneditor.Sortable;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.BeanModelSourceBuilder;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.beanmodel.internal.services.PropertyExpressionException;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.internal.PropertyOrderBean;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

@@ -12,8 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 
