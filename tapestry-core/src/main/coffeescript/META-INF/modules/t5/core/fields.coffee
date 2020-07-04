@@ -80,6 +80,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       block = dom.create "p",
         class: "help-block"
         "data-error-block-for": fieldId
+        "id": fieldId + "-help-block"
 
       # The .input-group selectors are used to attach buttons or markers to the field.
       # In which case, the help block can go after the group instead.
@@ -100,7 +101,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
     dom.onDocument events.field.inputValidation, (event, formMemo) ->
 
-      # Fields that are disbled, or not visible to the user are not subject to
+      # Fields that are disabled, or not visible to the user are not subject to
       # validation. Typically, a field will only be invisible due to the
       # core/FormFragment component.
       return if @element.disabled or (not @deepVisible())
@@ -116,7 +117,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
           @value()
 
       memo = value: fieldValue
-
+      
       postEventTrigger = =>
         if memo.error
           # Assume the event handler displayed the message.
@@ -146,7 +147,11 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
 
       if failure
         formMemo.error = true
+        this.attr('aria-invalid', 'true');
+        this.attr('aria-describedby', this.attr('id') + "-help-block");
       else
+        this.attr('aria-invalid', 'false');
+        this.attr('aria-describedby ', null);
         @trigger events.field.clearValidationError
 
       return
@@ -157,6 +162,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
       for block in blocks or []
         block.hide().update("")
         block.parent().removeClass "has-error"
+        block.attr("role", null)
 
       group = @findParent ".form-group"
 
@@ -176,6 +182,7 @@ define ["underscore", "./events", "./dom", "./utils", "./forms"],
         # where the help block can't be under the same .form-group element as the field (more common
         # with a horizontal form layout).
         block.parent().addClass("has-error")
+        block.attr("role", "alert")
 
       group = @findParent ".form-group"
 

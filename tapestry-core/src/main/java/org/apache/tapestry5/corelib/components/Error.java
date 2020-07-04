@@ -63,8 +63,9 @@ public class Error
     {
         // Initially invisible; will be shown on client if an error exists.
         Element element = writer.element("p", "class", 
-                !("help-block".equals(cssClass)) ? ("help-block " + cssClass) : cssClass + " invisible");
-
+                !("help-block".equals(cssClass)) ? ("help-block " + cssClass) : cssClass + " invisible",
+                        "role", "alert");
+        
         resources.renderInformalParameters(writer);
 
         // Wait until the end of the heartbeat to ensure the Field has had a chance to render.
@@ -80,5 +81,11 @@ public class Error
     {
         // The field may add an id attribute because of this call.
         element.attribute("data-error-block-for", field.getClientId());
+        String id = field.getClientId() + "-help-block";
+        element.attribute("id", id);
+        Element input = element.getDocument().getElementById(field.getClientId());
+        if (input != null) {
+            input.attribute("aria-describedby", id);
+        }
     }
 }

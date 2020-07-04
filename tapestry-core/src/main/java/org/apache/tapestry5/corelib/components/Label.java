@@ -43,6 +43,19 @@ public class Label
     @Parameter(name = "for", required = true, allowNull = false, defaultPrefix = BindingConstants.COMPONENT)
     private Field field;
 
+    /**
+     * Used to explicitly set the client-side id of the element for this component. Normally this is not
+     * bound (or null) and {@link org.apache.tapestry5.services.javascript.JavaScriptSupport#allocateClientId(org.apache.tapestry5.ComponentResources)}
+     * is used to generate a unique client-id based on the component's id. In some cases, when creating client-side
+     * behaviors, it is useful to explicitly set a unique id for an element using this parameter.
+     * 
+     * Certain values, such as "submit", "method", "reset", etc., will cause client-side conflicts and are not allowed; using such will
+     * cause a runtime exception.
+     * @since 5.6.0
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String clientId;
+
     @Environmental
     private ValidationDecorator decorator;
 
@@ -66,6 +79,10 @@ public class Label
     private boolean ignoreBody;
 
     private Element labelElement;
+
+    private String string;
+
+    private String string2;
 
     boolean beginRender(MarkupWriter writer)
     {
@@ -96,8 +113,16 @@ public class Label
               + " is linked to a Field that failed to return a clientId. The 'for' attibute will not be rendered.";
             javaScriptSupport.require("t5/core/console").invoke("warn").with(warningText);
         }
-
+        
+        String id = clientId != null ? clientId : javaScriptSupport.allocateClientId(fieldId + "-label");
+        labelElement.attribute("id", id);
         labelElement.forceAttributes("for", fieldId);
+        
+        Element input = labelElement.getDocument().getElementById(field.getClientId());
+        if (input != null) {
+            input.attribute("aria-labelledby", id);
+        }
+        
         decorator.insideLabel(field, labelElement);
     }
 
