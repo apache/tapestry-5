@@ -103,7 +103,7 @@ public class Errors
 
         Set<String> previousErrors = CollectionFactory.newSet();
 
-        writer.element("div", "class", baseCssClass + " " + className);
+        writer.element("div", "class", baseCssClass + " " + className, "role", "alert");
         writer.element("button",
                 "type", "button",
                 "class", closeButtonCssClass,

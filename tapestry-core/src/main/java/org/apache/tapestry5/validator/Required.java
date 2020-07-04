@@ -68,7 +68,8 @@ public final class Required extends AbstractValidator<Void, Object>
             writer.attributes(
                     DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-optionality", "required",
-                    "data-required-message", buildMessage(formatter, field));
+                    "data-required-message", buildMessage(formatter, field),
+                    "aria-required", "true");
         }
         if (html5Support.isHtml5SupportEnabled())
         {
