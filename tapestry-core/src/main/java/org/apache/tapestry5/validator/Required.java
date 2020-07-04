@@ -61,6 +61,8 @@ public final class Required extends AbstractValidator<Void, Object>
                        FormSupport formSupport)
     {
 
+        writer.attributes("aria-required", "true");
+        
         if (formSupport.isClientValidationEnabled())
         {
             javaScriptSupport.require("t5/core/validation");
