@@ -49,8 +49,8 @@ class MiscTests extends App1TestCase {
     {
         openLinks "Override Label Class Demo"
 
-        assertSourcePresent "<label for=\"firstName\" class=\"control-label\">First Name</label>",
-                            "<label for=\"lastName\" class=\"control-label dummyClassName\">Last Name</label>"
+        assertSourcePresent "<label for=\"firstName\" id=\"firstName-label\" class=\"control-label\">First Name</label>",
+                            "<label for=\"lastName\" id=\"lastName-label\" class=\"control-label dummyClassName\">Last Name</label>"
 
     }
 
