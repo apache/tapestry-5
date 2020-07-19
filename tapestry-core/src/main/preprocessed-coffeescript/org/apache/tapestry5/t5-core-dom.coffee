@@ -555,7 +555,12 @@ define ["underscore", "./utils", "./events", "jquery"],
       if memo
         throw new Error "Memo must be null when triggering a native event"
 
-      fireNativeEvent @element, eventName
+      # Hacky solution for TAP5-2602 (5.4 LinkSubmit does not work with Prototype JS)
+      unless Prototype.Browser.WebKit and eventName == 'submit' and @element instanceof HTMLFormElement
+        fireNativeEvent @element, eventName
+      else
+        @element.submit()
+              
 #endif
 
     # With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
