@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
 
@@ -27,6 +28,8 @@ import java.io.IOException;
  */
 public class ChecksumPath
 {
+    private static final String NON_EXISTING_RESOURCE = "_________________________";
+
     public final String checksum;
 
     public final String resourcePath;
@@ -38,13 +41,20 @@ public class ChecksumPath
         this.streamer = streamer;
         int slashx = extraPath.indexOf('/');
 
-        checksum = extraPath.substring(0, slashx);
+        checksum = slashx >= 0 ? extraPath.substring(0, slashx) : null;
 
         String morePath = extraPath.substring(slashx + 1);
 
-        resourcePath = baseFolder == null
-                ? morePath
-                : baseFolder + "/" + morePath;
+        if (StringUtils.isNotBlank(morePath)) {
+            resourcePath = baseFolder == null
+                    ? morePath
+                    : baseFolder + "/" + morePath;
+        }
+        else {
+            // When we only have something which looks like a checksum but no actual path.
+            // For example, /assets/META-INF/
+            resourcePath = NON_EXISTING_RESOURCE;
+        }
     }
 
     /**
