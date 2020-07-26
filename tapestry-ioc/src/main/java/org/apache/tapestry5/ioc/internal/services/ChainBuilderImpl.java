@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.services.Builtin;
@@ -60,7 +61,10 @@ public class ChainBuilderImpl implements ChainBuilder
 
                 for (Method method : commandInterface.getMethods())
                 {
-                    implementMethod(plasticClass, method, commandsField);
+                    if (!Modifier.isStatic(method.getModifiers()))
+                    {
+                        implementMethod(plasticClass, method, commandsField);
+                    }
                 }
 
                 plasticClass.addToString(String.format("<Command chain of %s>", commandInterface.getName()));

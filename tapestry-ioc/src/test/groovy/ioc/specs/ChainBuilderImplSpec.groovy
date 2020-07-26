@@ -1,6 +1,7 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.services.ChainBuilder
+import org.apache.tapestry5.ioc.internal.InterfaceWithStaticMethod
 
 interface ChainCommand {
 
@@ -116,6 +117,23 @@ class ChainBuilderImplSpec extends AbstractSharedRegistrySpecification {
 
     chain.toString() == "<Command chain of ioc.specs.ChainCommand>"
   }
+  
+  final private static class InterfaceWithStaticMethodImpl extends InterfaceWithStaticMethod 
+  {
+    public int something() { return 2; }
+  }
 
+  /* Blows up without fix. */
+  def "chain interface has static method"() {
+    InterfaceWithStaticMethod c1 = Mock()
+    InterfaceWithStaticMethod c2 = new InterfaceWithStaticMethodImpl()
+
+    when:
+      InterfaceWithStaticMethod chain = getService(ChainBuilder).build(InterfaceWithStaticMethod, [c1, c2])
+    then: 
+      chain.something() == 2
+      chain.defaultSomething() == 1
+  
+  }
 
 }
