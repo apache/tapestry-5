@@ -18,10 +18,14 @@ package org.apache.tapestry5.json;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
+import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
@@ -71,7 +75,7 @@ import java.util.Set;
  *
  * <p>Instances of this class are not thread safe.
  */
-public final class JSONObject extends JSONCollection {
+public final class JSONObject extends JSONCollection implements Map<String, Object> {
 
     private static final Double NEGATIVE_ZERO = -0d;
 
@@ -146,7 +150,7 @@ public final class JSONObject extends JSONCollection {
         if (object instanceof JSONObject) {
             this.nameValuePairs = ((JSONObject) object).nameValuePairs;
         } else {
-            throw JSON.typeMismatch(object, "JSONObject");
+            throw JSONExceptionBuilder.tokenerTypeMismatch(object, JSONType.OBJECT);
         }
     }
 
@@ -197,7 +201,7 @@ public final class JSONObject extends JSONCollection {
 
     /**
      * Constructs a new JSONObject using a series of String keys and object values.
-     * Object values sholuld be compatible with {@link #put(String, Object)}. Keys must be strings
+     * Object values should be compatible with {@link #put(String, Object)}. Keys must be strings
      * (toString() will be invoked on each key).
      *
      * Prior to release 5.4, keysAndValues was type String...; changing it to Object... makes
@@ -219,9 +223,11 @@ public final class JSONObject extends JSONCollection {
 
     /**
      * Returns the number of name/value mappings in this object.
-     *
+     * 
+     * @deprecated Use {@link #size()} instead.
      * @return the length of this.
      */
+    @Deprecated
     public int length() {
         return nameValuePairs.size();
     }
@@ -237,14 +243,15 @@ public final class JSONObject extends JSONCollection {
      *              {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
      *              infinities}.
      * @return this object.
-     * @throws RuntimeException if the value is an invalid double (infinite or NaN).
+     * @throws IllegalArgumentException if the value is an invalid double (infinite or NaN).
      */
+    @Override
     public JSONObject put(String name, Object value) {
         if (value == null) {
             nameValuePairs.remove(name);
             return this;
         }
-        testValidity(value);
+        JSON.testValidity(value);
         if (value instanceof Number) {
             // deviate from the original by checking all Numbers, not just floats & doubles
             JSON.checkDouble(((Number) value).doubleValue());
@@ -303,11 +310,11 @@ public final class JSONObject extends JSONCollection {
      * @param name  The name of the array to which the value should be appended.
      * @param value The value to append.
      * @return this object.
-     * @throws RuntimeException if {@code name} is {@code null} or if the mapping for
+     * @throws JSONTypeMismatchException if {@code name} is {@code null} or if the mapping for
      *                       {@code name} is non-null and is not a {@link JSONArray}.
      */
     public JSONObject append(String name, Object value) {
-        testValidity(value);
+        JSON.testValidity(value);
         Object current = nameValuePairs.get(checkName(name));
 
         final JSONArray array;
@@ -318,7 +325,7 @@ public final class JSONObject extends JSONCollection {
             nameValuePairs.put(name, newArray);
             array = newArray;
         } else {
-            throw new RuntimeException("JSONObject[\"" + name + "\"] is not a JSONArray.");
+            throw new JSONTypeMismatchException("JSONObject[\"" + name + "\"]", JSONType.ARRAY, current.getClass());
         }
 
         array.checkedPut(value);
@@ -331,17 +338,6 @@ public final class JSONObject extends JSONCollection {
             throw new RuntimeException("Names must be non-null");
         }
         return name;
-    }
-
-    /**
-     * Removes the named mapping if it exists; does nothing otherwise.
-     *
-     * @param name The name of the mapping to remove.
-     * @return the value previously mapped by {@code name}, or null if there was
-     * no such mapping.
-     */
-    public Object remove(String name) {
-        return nameValuePairs.remove(name);
     }
 
     /**
@@ -360,26 +356,14 @@ public final class JSONObject extends JSONCollection {
      * Returns true if this object has a mapping for {@code name}. The mapping
      * may be {@link #NULL}.
      *
-     * @param name The name of the value to check on.
+     * @deprecated use {@link #containsKey(Object)} instead
+     * @param name
+     *            The name of the value to check on.
      * @return true if this object has a field named {@code name}
      */
+    @Deprecated
     public boolean has(String name) {
-        return nameValuePairs.containsKey(name);
-    }
-
-    /**
-     * Returns the value mapped by {@code name}, or throws if no such mapping exists.
-     *
-     * @param name The name of the value to get.
-     * @return The value.
-     * @throws RuntimeException if no such mapping exists.
-     */
-    public Object get(String name) {
-        Object result = nameValuePairs.get(name);
-        if (result == null) {
-            throw new RuntimeException("JSONObject[\"" + name + "\"] not found.");
-        }
-        return result;
+        return containsKey(name);
     }
 
     /**
@@ -389,7 +373,7 @@ public final class JSONObject extends JSONCollection {
      * @param name The name of the value to get.
      * @return The value.
      */
-    public Object opt(String name) {
+    public Object opt(Object name) {
         return nameValuePairs.get(name);
     }
 
@@ -399,14 +383,45 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws RuntimeException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a boolean.
      */
     public boolean getBoolean(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.BOOLEAN);
+        }
         Boolean result = JSON.toBoolean(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, "Boolean");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.BOOLEAN);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value to which the specified key is mapped and a boolean, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a boolean.
+     * @since 5.7
+     */
+    public boolean getBooleanOrDefault(String name, boolean defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Boolean result = JSON.toBoolean(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.BOOLEAN);
         }
         return result;
     }
@@ -417,14 +432,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws RuntimeException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a double.
      */
     public double getDouble(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Double result = JSON.toDouble(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, "number");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -435,18 +454,49 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws RuntimeException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to an int.
      */
     public int getInt(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Integer result = JSON.toInteger(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, "int");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
 
+    /**
+     * Returns the value to which the specified key is mapped and an int, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to an int.
+     * @since 5.7
+     */
+    public int getIntOrDefault(String name, int defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Integer result = JSON.toInteger(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
+        }
+        return result;
+    }
+    
     /**
      * Returns the value mapped by {@code name} if it exists and is a long or
      * can be coerced to a long, or throws otherwise.
@@ -457,14 +507,45 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field that we want.
      * @return The value of the field.
-     * @throws RuntimeException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a long.
      */
     public long getLong(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Long result = JSON.toLong(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, "long");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value to which the specified key is mapped and a long, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a long.
+     * @since 5.7
+     */
+    public long getLongOrDefault(String name, int defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Long result = JSON.toLong(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -475,53 +556,145 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The value of the field.
-     * @throws RuntimeException if no such mapping exists.
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                               to String
      */
     public String getString(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.STRING);
+        }
         String result = JSON.toString(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, "String");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.STRING);
         }
         return result;
     }
 
+    /**
+     * Returns the value to which the specified key is mapped and a string, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a string.
+     * @since 5.7
+     */
+    public String getStringOrDefault(String name, String defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        String result = JSON.toString(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.STRING);
+        }
+        return result;
+    }
+    
     /**
      * Returns the value mapped by {@code name} if it exists and is a {@code
      * JSONArray}, or throws otherwise.
      *
      * @param name The field we want to get.
      * @return The value of the field (if it is a JSONArray.
-     * @throws RuntimeException if the mapping doesn't exist or is not a {@code
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping is not a {@code
      *                       JSONArray}.
      */
     public JSONArray getJSONArray(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.ARRAY);
+        }
         if (object instanceof JSONArray) {
             return (JSONArray) object;
         } else {
-            throw JSON.typeMismatch(false, name, object, "JSONArray");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.ARRAY);
         }
     }
 
+    /**
+     * Returns the value to which the specified key is mapped and a JSONArray, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a JSONArray.
+     * @since 5.7
+     */
+    public JSONArray getJSONArrayOrDefault(String name, JSONArray defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        if (object instanceof JSONArray) {
+            return (JSONArray) object;
+        } else {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.ARRAY);
+        }
+    }
+    
     /**
      * Returns the value mapped by {@code name} if it exists and is a {@code
      * JSONObject}, or throws otherwise.
      *
      * @param name The name of the field that we want.
      * @return a specified field value (if it is a JSONObject)
-     * @throws RuntimeException if the mapping doesn't exist or is not a {@code
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping is not a {@code
      *                       JSONObject}.
      */
     public JSONObject getJSONObject(String name) {
-        Object object = get(name);
+        Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.OBJECT);
+        }
         if (object instanceof JSONObject) {
             return (JSONObject) object;
         } else {
-            throw JSON.typeMismatch(false, name, object, "JSONObject");
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.OBJECT);
         }
     }
 
+    
+    /**
+     * Returns the value to which the specified key is mapped and a JSONObject, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a JSONObject.
+     * @since 5.7
+     */
+    public JSONObject getJSONObjectOrDefault(String name, JSONObject defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        if (object instanceof JSONObject) {
+            return (JSONObject) object;
+        } else {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.OBJECT);
+        }
+    }
     /**
      * Returns the set of {@code String} names in this object. The returned set
      * is a view of the keys in this object. {@link Set#remove(Object)} will remove
@@ -731,27 +904,6 @@ public final class JSONObject extends JSONCollection {
     }
 
     /**
-     * Invokes {@link #put(String, Object)} for each value from the map.
-     *
-     * @param newProperties
-     *         to add to this JSONObject
-     * @return this JSONObject
-     * @since 5.4
-     */
-    public JSONObject putAll(Map<String, ?> newProperties)
-    {
-        assert newProperties != null;
-
-        for (Map.Entry<String, ?> e : newProperties.entrySet())
-        {
-            put(e.getKey(), e.getValue());
-        }
-
-        return this;
-    }
-
-
-    /**
      * Navigates into a nested JSONObject, creating the JSONObject if necessary. They key must not exist,
      * or must be a JSONObject.
      *
@@ -780,27 +932,180 @@ public final class JSONObject extends JSONCollection {
         return (JSONObject) nested;
     }
 
-    static void testValidity(Object value)
+    /**
+     * Returns the number of key-value mappings in this JSONObject.
+     * If it contains more than {@code Integer.MAX_VALUE} elements, returns
+     * {@code Integer.MAX_VALUE}.
+     *
+     * @return the number of key-value mappings in this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public int size()
     {
-        if (value == null)
-          throw new IllegalArgumentException("null isn't valid in JSONObject and JSONArray. Use JSONObject.NULL instead.");
-        if (value == NULL)
-        {
-            return;
-        }
-        Class<? extends Object> clazz = value.getClass();
-        if (Boolean.class.isAssignableFrom(clazz)
-            || Number.class.isAssignableFrom(clazz)
-            || String.class.isAssignableFrom(clazz)
-            || JSONArray.class.isAssignableFrom(clazz)
-            || JSONLiteral.class.isAssignableFrom(clazz)
-            || JSONObject.class.isAssignableFrom(clazz)
-            || JSONString.class.isAssignableFrom(clazz))
-        {
-            return;
-        }
-
-        throw new RuntimeException("JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type "+clazz.getName()+" is not allowed.");
+        return nameValuePairs.size();
     }
+
+    /**
+     * Returns {@code true} if this JSONObject contains no key-value mappings.
+     *
+     * @return {@code true} if this JSONObject contains no key-value mappings
+     * @since 5.7
+     */
+    @Override
+    public boolean isEmpty()
+    {
+        return nameValuePairs.isEmpty();
+    }
+
+    /**
+     * Returns {@code true} if this JSONObject contains a mapping for the specified
+     * key.
+     *
+     * @param key
+     *            key whose presence in this map is to be tested
+     * @return {@code true} if this map contains a mapping for the specified
+     *         key
+     * @since 5.7
+     */
+    @Override
+    public boolean containsKey(Object key)
+    {
+        return nameValuePairs.containsKey(key);
+    }
+
+    /**
+     * Returns {@code true} if this JSONObject maps one or more keys to the
+     * specified value.
+     *
+     * @param value value whose presence in this map is to be tested
+     * @return {@code true} if this JSONObject maps one or more keys to the
+     *         specified value
+     * @since 5.7
+     */
+    @Override
+    public boolean containsValue(Object value)
+    {
+        return nameValuePairs.containsValue(value);
+    }
+
+    /**
+     * Returns the value mapped by {@code name}, or throws if no such mapping exists.
+     *
+     * @param name The name of the value to get.
+     * @return The value.
+     * @throws JSONValueNotFoundException if no such mapping exists.
+     */ @Override
+    public Object get(Object key)
+    {
+        Object result = nameValuePairs.get(key);
+         if (result == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, key, JSONType.ANY);
+         }
+         return result;
+    }
+
+    /**
+      * Returns the value to which the specified key is mapped, or
+      * {@code defaultValue} if this JSONObject contains no mapping for the key.
+      *
+      * @param key the key whose associated value is to be returned
+      * @param defaultValue the default mapping of the key
+      * @return the value to which the specified key is mapped, or
+      *         {@code defaultValue} if this JSONObject contains no mapping for the key
+      * @since 5.7
+      */
+    @Override
+    public Object getOrDefault(Object key, Object defaultValue)
+    {
+        Object value = opt(key);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
+     * Removes the named mapping if it exists; does nothing otherwise.
+     *
+     * @param name The name of the mapping to remove.
+     * @return the value previously mapped by {@code name}, or null if there was
+     *         no such mapping.
+     */
+    @Override
+    public Object remove(Object key)
+    {
+        return nameValuePairs.remove(key);
+    }
+
+    /**
+     * Invokes {@link #put(String, Object)} for each value from the map.
+     *
+     * @param newProperties
+     *            to add to this JSONObject
+     * @return this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public void putAll(Map<? extends String, ? extends Object> m)
+    {
+        assert m != null;
+
+        for (Map.Entry<? extends String, ? extends Object> e : m.entrySet())
+        {
+            put(e.getKey(), e.getValue());
+        }
+    }
+
+    /**
+     * Removes all of the mappings from this JSONObject.
+     * 
+     * @since 5.7
+     */
+    @Override
+    public void clear()
+    {
+        nameValuePairs.clear();
+    }
+
+    /**
+     * Returns a {@link Set} view of the keys contained in this JSONObject.
+     * The set is backed by the JSONObject, so changes to the map are
+     * reflected in the set, and vice-versa.
+     *
+     * @return a set view of the keys contained in this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public Set<String> keySet()
+    {
+        return nameValuePairs.keySet();
+    }
+
+    /**
+     * Returns a {@link Collection} view of the values contained in this JSONObject.
+     * The collection is backed by the JSONObject, so changes to the map are
+     * reflected in the collection, and vice-versa.
+     *
+     * @return a collection view of the values contained in this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public Collection<Object> values()
+    {
+        return nameValuePairs.values();
+    }
+
+    /**
+     * Returns a {@link Set} view of the mappings contained in this JSONObject.
+     * The set is backed by the JSONObject, so changes to the map are
+     * reflected in the set, and vice-versa.
+     *
+     * @return a set view of the mappings contained in this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public Set<Entry<String, Object>> entrySet()
+    {
+        return nameValuePairs.entrySet();
+    }
+  
 
 }

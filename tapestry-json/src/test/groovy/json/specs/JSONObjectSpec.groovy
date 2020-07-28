@@ -4,6 +4,11 @@ import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.JSONString
+import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.exceptions.JSONSyntaxException
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
+import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -82,9 +87,33 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONValueNotFoundException e = thrown()
 
-        e.message == /JSONObject["barney"] not found./
+        e.message == /JSONObject["barney"] is not found. Required: ANY/
+    }
+
+    def "getOrDefault returns defaultValue if not found"() {
+        def master = new JSONObject("fred", "flintstone")
+
+        when:
+
+        def result = master.getOrDefault "barney", "gumble"
+
+        then:
+
+        result == "gumble"
+    }
+
+    def "getOrDefault returns value if found"() {
+        def master = new JSONObject("fred", "flintstone")
+
+        when:
+
+        def result = master.getOrDefault "fred", "other"
+
+        then:
+
+        result == "flintstone"
     }
 
     @Unroll
@@ -148,9 +177,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["akey"] is not a Boolean./
+        e.message == /JSONObject["akey"] is not a BOOLEAN. Actual: java.lang.Integer/
     }
 
     def "accumulate simple values"() {
@@ -238,7 +267,7 @@ class JSONObjectSpec extends Specification {
         object.toCompactString() == /{"friends":["barney","zaphod"]}/
     }
 
-    def "appending to a key whose value is not a JSONArray is an exception"() {
+    def "appending to a key whose value is not aArray is an exception"() {
         def object = new JSONObject(/{friends: 0 }/)
 
         when:
@@ -247,9 +276,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["friends"] is not a JSONArray./
+        e.message == /JSONObject["friends"] is not a ARRAY. Actual: java.lang.Integer/
     }
 
     def "getDouble() with a non-numeric value is an exception"() {
@@ -261,9 +290,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["notdouble"] is not a number./
+        e.message == /JSONObject["notdouble"] is not a NUMBER. Actual: java.lang.Boolean/
     }
 
     def "getDouble() with a string that can not be parsed as a number is an exception"() {
@@ -275,10 +304,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["notdouble"] is not a number./
-
+        e.message == /JSONObject["notdouble"] is not a NUMBER. Actual: java.lang.String/
     }
 
     def "has() will identify which keys have values and which do not"() {
@@ -290,7 +318,7 @@ class JSONObjectSpec extends Specification {
         !object.has("barney")
     }
 
-    def "getJSONArray() for a value that is not a JSONArray is an exception"() {
+    def "getJSONArray() for a value that is not aArray is an exception"() {
         def object = new JSONObject(/{notarray: 22.7}/)
 
         when:
@@ -301,7 +329,7 @@ class JSONObjectSpec extends Specification {
 
         RuntimeException e = thrown()
 
-        e.message == /JSONObject["notarray"] is not a JSONArray./
+        e.message == /JSONObject["notarray"] is not a ARRAY. Actual: java.lang.Double/
     }
 
     def "length() of a JSONObject is the number of keys"() {
@@ -400,21 +428,21 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONSyntaxException e = thrown()
 
         e.message.trim().startsWith expected
 
         where:
 
-        input                     | expected                                                   | desc
-        "{  "                     | "A JSONObject text must end with '}' at character 3"       | "unmatched open brace"
-        "fred"                    | "A JSONObject text must begin with '{' at character 1 of " | "missing open brace"
-        /{ "akey" }/              | /Expected a ':' after a key at character 10 of/            | "missing value after key"
-        /{ "fred" : 1 "barney" }/ | /Expected a ',' or '}' at character 14 of/                 | "missing property separator"
-        /{ "list" : [1, 2/        | /Expected a ',' or ']' at character 16 of/                 | "missing seperator or closing bracket"
-        '''/* unclosed'''         | /Unclosed comment at character 11 of/                      | "unclosed C-style comment"
-        /{ "fred \n}/             | /Unterminated string at character 11 of/                   | "unterminated string at line end"
-        /{ fred: ,}/              | /Missing value at character 8 of /                         | "missing value after key"
+        input                     | expected                                                                 | desc
+        "{  "                     | "A JSONObject text must end with '}' at character 3"                     | "unmatched open brace"
+        "fred"                    | /A JSONObject text must start with '{' (actual: 'f') at character 1 of/  | "missing open brace"
+        /{ "akey" }/              | /Expected a ':' after a key at character 10 of/                          | "missing value after key"
+        /{ "fred" : 1 "barney" }/ | /Expected a ',' or '}' at character 14 of/                               | "missing property separator"
+        /{ "list" : [1, 2/        | /Expected a ',' or ']' at character 16 of/                               | "missing seperator or closing bracket"
+        '''/* unclosed'''         | /Unclosed comment at character 11 of/                                    | "unclosed C-style comment"
+        /{ "fred \n}/             | /Unterminated string at character 11 of/                                 | "unterminated string at line end"
+        /{ fred: ,}/              | /Missing value at character 8 of /                                       | "missing value after key"
     }
 
     def "can use ':' or '=>' as key seperator, and ';' as property separator"() {
@@ -469,9 +497,14 @@ class JSONObjectSpec extends Specification {
 
         where:
 
-        value << [Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Float.NaN,
-            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY]
-
+        value << [
+            Double.NaN,
+            Double.NEGATIVE_INFINITY,
+            Double.POSITIVE_INFINITY,
+            Float.NaN,
+            Float.NEGATIVE_INFINITY,
+            Float.POSITIVE_INFINITY
+        ]
     }
 
     def "parse an empty object is empty"() {
@@ -496,16 +529,47 @@ class JSONObjectSpec extends Specification {
         object.toCompactString() == /{"barney":"rubble"}/
     }
 
-    def "only specific object types may be added"() {
+    def "only specific object types may be added - no exception"() {
+        def object = new JSONObject(/{}/)
+
         when:
 
-        JSONObject.testValidity([:])
+        object.put("key", value)
 
         then:
 
-        RuntimeException e = thrown()
+        noExceptionThrown()
 
-        e.message == '''JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.LinkedHashMap is not allowed.'''
+        where:
+        value << [
+            null,
+            true,
+            3,
+            3.5,
+            "*VALUE*",
+            new JSONLiteral("*LITERAL*"),
+            new JSONObject(),
+            new JSONArray()
+        ]
+    }
+
+    def "only specific object types may be added - exception"() {
+        def object = new JSONObject(/{}/)
+
+        when:
+
+        object.put("key", value)
+
+        then:
+
+        JSONInvalidTypeException e = thrown()
+
+        where:
+        value << [
+            new java.util.Date(),
+            [],
+            [:]
+        ]
     }
 
     def "JSONString can output anything it wants"() {
@@ -651,7 +715,6 @@ class JSONObjectSpec extends Specification {
         then:
 
         object.get("foo") == "bar"
-
     }
 
     def "pretty-print an empty JSONObject"() {
@@ -741,7 +804,6 @@ class JSONObjectSpec extends Specification {
         json == /{
   "kermit" : "frog"
 }/
-
     }
 
     def "getString() at index"() {
@@ -770,8 +832,8 @@ class JSONObjectSpec extends Specification {
 
     def "can access contents of object as a map"() {
         def object = new JSONObject("foo", "bar")
-            .put("null", JSONObject.NULL)
-            .put("number", 6)
+                .put("null", JSONObject.NULL)
+                .put("number", 6)
 
         when:
 
@@ -808,7 +870,6 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        result.is object
         object.toCompactString() == /{"fred":"flintstone","barney":"rubble","wilma":"flintstone"}/
     }
 
@@ -884,7 +945,5 @@ class JSONObjectSpec extends Specification {
         then:
 
         source == copy
-
     }
-
 }
