@@ -19,9 +19,5 @@ cache:
 
 sudo: false
 
-notifications:
-  email:
-    - dev@tapestry.apache.org
-
 addons:
   firefox: "latest-esr"
