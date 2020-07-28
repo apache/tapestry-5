@@ -131,7 +131,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * @return this array.
      */
     public JSONArray put(Object value) {
-        JSONObject.testValidity(value);
+        JSON.testValidity(value);
         values.add(value);
         return this;
     }
@@ -142,7 +142,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * @param value The value to append.
      */
     void checkedPut(Object value) {
-        JSONObject.testValidity(value);
+        JSON.testValidity(value);
         if (value instanceof Number) {
             JSON.checkDouble(((Number) value).doubleValue());
         }
@@ -168,7 +168,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         {
             throw new RuntimeException("JSONArray[" + index + "] not found.");
         }
-        JSONObject.testValidity(value);
+        JSON.testValidity(value);
         if (value instanceof Number) {
             // deviate from the original by checking all Numbers, not just floats & doubles
             JSON.checkDouble(((Number) value).doubleValue());

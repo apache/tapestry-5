@@ -16,6 +16,8 @@
 
 package org.apache.tapestry5.json;
 
+import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException;
+
 class JSON {
     /**
      * Returns the input if it is a JSON-permissible value; throws otherwise.
@@ -111,5 +113,31 @@ class JSON {
                     + " of type " + actual.getClass().getName()
                     + " cannot be converted to " + requiredType);
         }
+    }
+    
+    static void testValidity(Object value)
+    {
+        if (value == null) {
+            throw new IllegalArgumentException("null isn't valid in JSONObject and JSONArray. Use JSONObject.NULL instead.");
+        }
+
+        if (value == JSONObject.NULL)
+        {
+            return;
+        }
+
+        Class<? extends Object> clazz = value.getClass();
+        if (Boolean.class.isAssignableFrom(clazz)
+            || Number.class.isAssignableFrom(clazz)
+            || String.class.isAssignableFrom(clazz)
+            || JSONArray.class.isAssignableFrom(clazz)
+            || JSONLiteral.class.isAssignableFrom(clazz)
+            || JSONObject.class.isAssignableFrom(clazz)
+            || JSONString.class.isAssignableFrom(clazz))
+        {
+            return;
+        }
+
+        throw new JSONInvalidTypeException(clazz);
     }
 }

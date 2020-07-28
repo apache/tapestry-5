@@ -4,6 +4,8 @@ import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.JSONString
+import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.JSON
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -496,16 +498,45 @@ class JSONObjectSpec extends Specification {
         object.toCompactString() == /{"barney":"rubble"}/
     }
 
-    def "only specific object types may be added"() {
+    def "only specific object types may be added - no exception"() {
+        def object = new JSONObject(/{}/)
+
         when:
 
-        JSONObject.testValidity([:])
+        object.put("key", value)
 
         then:
+        
+        noExceptionThrown()
 
-        RuntimeException e = thrown()
+        where:
+        value << [
+            null,
+            true,
+            3,
+            3.5,
+            "*VALUE*",
+            new JSONLiteral("*LITERAL*"), 
+            new JSONObject(),
+            new JSONArray()]
+    }
+    
+    def "only specific object types may be added - exception"() {
+        def object = new JSONObject(/{}/)
 
-        e.message == '''JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.LinkedHashMap is not allowed.'''
+        when:
+
+        object.put("key", value)
+
+        then:
+        
+        JSONInvalidTypeException e = thrown()
+
+        where:
+        value << [
+            new java.util.Date(),
+            [],
+            [:]]
     }
 
     def "JSONString can output anything it wants"() {

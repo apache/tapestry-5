@@ -1,6 +1,9 @@
 package json.specs
 
 import org.apache.tapestry5.json.JSONArray
+import org.apache.tapestry5.json.JSONLiteral
+import org.apache.tapestry5.json.JSONObject
+import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
 import spock.lang.Specification
 
 class JSONArraySpec extends Specification {
@@ -368,5 +371,44 @@ class JSONArraySpec extends Specification {
 		
 	}
 
+    def "only specific object types may be added - no exception"() {
+        def array = new JSONArray()
+
+        when:
+
+        array.put(value)
+
+        then:
+        
+        noExceptionThrown()
+
+        where:
+        value << [
+            true,
+            3,
+            3.5,
+            "*VALUE*",
+            new JSONLiteral("*LITERAL*"),
+            new JSONObject(),
+            new JSONArray()]
+    }
+    
+    def "only specific object types may be added - exception"() {
+        def array = new JSONArray()
+
+        when:
+
+        array.put(value)
+
+        then:
+        
+        JSONInvalidTypeException e = thrown()
+
+        where:
+        value << [
+            new java.util.Date(),
+            [],
+            [:]]
+    }
 
 }

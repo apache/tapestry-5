@@ -244,7 +244,7 @@ public final class JSONObject extends JSONCollection {
             nameValuePairs.remove(name);
             return this;
         }
-        testValidity(value);
+        JSON.testValidity(value);
         if (value instanceof Number) {
             // deviate from the original by checking all Numbers, not just floats & doubles
             JSON.checkDouble(((Number) value).doubleValue());
@@ -307,7 +307,7 @@ public final class JSONObject extends JSONCollection {
      *                       {@code name} is non-null and is not a {@link JSONArray}.
      */
     public JSONObject append(String name, Object value) {
-        testValidity(value);
+        JSON.testValidity(value);
         Object current = nameValuePairs.get(checkName(name));
 
         final JSONArray array;
@@ -778,29 +778,6 @@ public final class JSONObject extends JSONCollection {
         }
 
         return (JSONObject) nested;
-    }
-
-    static void testValidity(Object value)
-    {
-        if (value == null)
-          throw new IllegalArgumentException("null isn't valid in JSONObject and JSONArray. Use JSONObject.NULL instead.");
-        if (value == NULL)
-        {
-            return;
-        }
-        Class<? extends Object> clazz = value.getClass();
-        if (Boolean.class.isAssignableFrom(clazz)
-            || Number.class.isAssignableFrom(clazz)
-            || String.class.isAssignableFrom(clazz)
-            || JSONArray.class.isAssignableFrom(clazz)
-            || JSONLiteral.class.isAssignableFrom(clazz)
-            || JSONObject.class.isAssignableFrom(clazz)
-            || JSONString.class.isAssignableFrom(clazz))
-        {
-            return;
-        }
-
-        throw new RuntimeException("JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type "+clazz.getName()+" is not allowed.");
     }
 
 }
