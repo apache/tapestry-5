@@ -20,6 +20,9 @@ package org.apache.tapestry5.json;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.text.MessageFormat;
+
+import org.apache.tapestry5.json.exceptions.JSONSyntaxException;
 
 /**
  * Parses a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)
@@ -105,15 +108,15 @@ class JSONTokener {
      *
      * @return a {@link JSONObject}, {@link JSONArray}, String, Boolean,
      * Integer, Long, Double or {@link JSONObject#NULL}.
-     * @throws RuntimeException if the input is malformed.
+     * @throws JSONSyntaxException if the input is malformed.
      */
      Object nextValue(Class<?> desiredType) {
         int c = nextCleanInternal();
         if (JSONObject.class.equals(desiredType) && c != '{'){
-            throw syntaxError("A JSONObject text must begin with '{'");
+            throw syntaxError(MessageFormat.format("A JSONObject text must start with '''{''' (actual: ''{0}'')", Character.toString((char)c)));
         }
         if (JSONArray.class.equals(desiredType) && c != '['){
-          throw syntaxError("A JSONArray text must start with '['");
+          throw syntaxError(MessageFormat.format("A JSONArray text must start with ''['' (actual: ''{0}'')", Character.toString((char)c)));
         }
         switch (c) {
             case -1:
@@ -269,11 +272,13 @@ class JSONTokener {
                     throw syntaxError("Unterminated escape sequence");
                 }
                 String hex = in.substring(pos, pos + 4);
-                pos += 4;
                 try {
                     return (char) Integer.parseInt(hex, 16);
                 } catch (NumberFormatException nfe) {
                     throw syntaxError("Invalid escape sequence: " + hex);
+                }
+                finally {
+                    pos += 4;
                 }
             }
             case 'x': {
@@ -281,11 +286,13 @@ class JSONTokener {
                   throw syntaxError("Unterminated escape sequence");
               }
               String hex = in.substring(pos, pos + 2);
-              pos += 2;
               try {
                   return (char) Integer.parseInt(hex, 16);
               } catch (NumberFormatException nfe) {
                   throw syntaxError("Invalid escape sequence: " + hex);
+              }
+              finally {
+                  pos += 2;
               }
 
             }
@@ -498,8 +505,8 @@ class JSONTokener {
      * @param message The message we want to include.
      * @return An exception that we can throw.
      */
-    private RuntimeException syntaxError(String message) {
-        return new RuntimeException(message + this);
+    private JSONSyntaxException syntaxError(String message) {
+        return new JSONSyntaxException(this.pos, message + this);
     }
 
     /**

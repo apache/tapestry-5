@@ -16,13 +16,15 @@
 
 package org.apache.tapestry5.json;
 
+import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException;
+
 class JSON {
     /**
      * Returns the input if it is a JSON-permissible value; throws otherwise.
      */
-    static double checkDouble(double d) throws RuntimeException {
+    static double checkDouble(double d) throws IllegalArgumentException {
         if (Double.isInfinite(d) || Double.isNaN(d)) {
-            throw new RuntimeException("JSON does not allow non-finite numbers.");
+            throw new IllegalArgumentException("JSON does not allow non-finite numbers.");
         }
         return d;
     }
@@ -92,24 +94,29 @@ class JSON {
         return null;
     }
 
-    static RuntimeException typeMismatch(boolean array, Object indexOrName, Object actual,
-            String requiredType) throws RuntimeException {
-        String location = array ? "JSONArray[" + indexOrName + "]" : "JSONObject[\"" + indexOrName + "\"]";
-        if (actual == null) {
-            throw new RuntimeException(location + " is null.");
-        } else {
-            throw new RuntimeException(location + " is not a " + requiredType + ".");
+    static void testValidity(Object value)
+    {
+        if (value == null) {
+            throw new IllegalArgumentException("null isn't valid in JSONArray. Use JSONObject.NULL instead.");
         }
-    }
 
-    static RuntimeException typeMismatch(Object actual, String requiredType)
-            throws RuntimeException {
-        if (actual == null) {
-            throw new RuntimeException("Value is null.");
-        } else {
-            throw new RuntimeException("Value " + actual
-                    + " of type " + actual.getClass().getName()
-                    + " cannot be converted to " + requiredType);
+        if (value == JSONObject.NULL)
+        {
+            return;
         }
+
+        Class<? extends Object> clazz = value.getClass();
+        if (Boolean.class.isAssignableFrom(clazz)
+            || Number.class.isAssignableFrom(clazz)
+            || String.class.isAssignableFrom(clazz)
+            || JSONArray.class.isAssignableFrom(clazz)
+            || JSONLiteral.class.isAssignableFrom(clazz)
+            || JSONObject.class.isAssignableFrom(clazz)
+            || JSONString.class.isAssignableFrom(clazz))
+        {
+            return;
+        }
+
+        throw new JSONInvalidTypeException(clazz);
     }
 }
