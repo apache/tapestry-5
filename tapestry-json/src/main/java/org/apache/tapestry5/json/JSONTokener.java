@@ -113,10 +113,10 @@ class JSONTokener {
      Object nextValue(Class<?> desiredType) {
         int c = nextCleanInternal();
         if (JSONObject.class.equals(desiredType) && c != '{'){
-            throw syntaxError(MessageFormat.format("A JSONObject text must start with '''{''' (actual: ''{0}'')", Character.toString(c)));
+            throw syntaxError(MessageFormat.format("A JSONObject text must start with '''{''' (actual: ''{0}'')", Character.toString((char)c)));
         }
         if (JSONArray.class.equals(desiredType) && c != '['){
-          throw syntaxError(MessageFormat.format("A JSONArray text must start with ''['' (actual: ''{0}'')", Character.toString(c)));
+          throw syntaxError(MessageFormat.format("A JSONArray text must start with ''['' (actual: ''{0}'')", Character.toString((char)c)));
         }
         switch (c) {
             case -1:
