@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.json.exceptions.JSONArrayIndexOutOfBoundsException;
 import org.apache.tapestry5.json.exceptions.JSONSyntaxException;
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
@@ -168,11 +169,12 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *              infinities}.
      * @return this array.
      * @throws RuntimeException If the value cannot be represented as a finite double value.
+     * @throws ArrayIndexOutOfBoundsException if the index is lower than 0
      */
     public JSONArray put(int index, Object value) {
         if (index < 0)
         {
-            throw new RuntimeException("JSONArray[" + index + "] not found.");
+            throw new JSONArrayIndexOutOfBoundsException(index);
         }
         JSON.testValidity(value);
         if (value instanceof Number) {
@@ -203,16 +205,22 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
+     * @throws JSONArrayIndexOutOfBoundsException if the given index is out of bounds.
      * @throws JSONValueNotFoundException if this array has no value at {@code index}, or if
      *                       that value is the {@code null} reference. This method returns
      *                       normally if the value is {@code JSONObject#NULL}.
      */
     public Object get(int index) {
-        Object value = values.get(index);
-        if (value == null) {
-            throw JSONExceptionBuilder.valueNotFound(true, index, JSONType.ANY);
+        try {
+            Object value = values.get(index);
+            if (value == null) {
+                throw JSONExceptionBuilder.valueNotFound(true, index, JSONType.ANY);
+            }
+            return value;
         }
-        return value;
+        catch (IndexOutOfBoundsException e) {
+            throw new JSONArrayIndexOutOfBoundsException(index);
+        }
     }
 
     /**

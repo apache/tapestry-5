@@ -3,6 +3,7 @@ package json.specs
 import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
+import org.apache.tapestry5.json.exceptions.JSONArrayIndexOutOfBoundsException
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
 import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
@@ -185,13 +186,13 @@ class JSONArraySpec extends Specification {
 
         when:
 
-        array.put(-1, "fred")
+        array.put(-2, "fred")
 
         then:
 
-        RuntimeException e = thrown()
+        JSONArrayIndexOutOfBoundsException e = thrown()
 
-        e.message == "JSONArray[-1] not found."
+        e.index == -2
     }
 
     def "put() overrides existing value in array"() {
@@ -423,7 +424,8 @@ class JSONArraySpec extends Specification {
 
         then:
         
-        IndexOutOfBoundsException e = thrown()
+        JSONArrayIndexOutOfBoundsException e = thrown()
+        e.index == 3
     }
 
     def "non-finite / NaN Double not allowed in constructor"() {
