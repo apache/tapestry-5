@@ -149,7 +149,7 @@ public final class JSONObject extends JSONCollection {
         if (object instanceof JSONObject) {
             this.nameValuePairs = ((JSONObject) object).nameValuePairs;
         } else {
-            throw JSON.typeMismatch(object, JSONType.OBJECT);
+            throw JSONExceptionBuilder.tokenerTypeMismatch(object, JSONType.OBJECT);
         }
     }
 
@@ -375,12 +375,12 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the value to get.
      * @return The value.
-     * @throws RuntimeException if no such mapping exists.
+     * @throws JSONValueNotFoundException if no such mapping exists.
      */
     public Object get(String name) {
         Object result = nameValuePairs.get(name);
         if (result == null) {
-            throw new JSONValueNotFoundException("JSONObject[\"" + name + "\"]", JSONType.ANY);
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.ANY);
         }
         return result;
     }
@@ -402,14 +402,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a boolean.
      */
     public boolean getBoolean(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.BOOLEAN);
+        }
         Boolean result = JSON.toBoolean(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, JSONType.BOOLEAN);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.BOOLEAN);
         }
         return result;
     }
@@ -420,14 +424,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a double.
      */
     public double getDouble(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Double result = JSON.toDouble(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -438,14 +446,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The selected value if it exists.
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to an int.
      */
     public int getInt(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Integer result = JSON.toInteger(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -460,14 +472,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field that we want.
      * @return The value of the field.
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or cannot be coerced
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a long.
      */
     public long getLong(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.NUMBER);
+        }
         Long result = JSON.toLong(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -478,13 +494,18 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field we want.
      * @return The value of the field.
-     * @throws JSONTypeMismatchException if no such mapping exists.
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                               to String
      */
     public String getString(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.STRING);
+        }
         String result = JSON.toString(object);
         if (result == null) {
-            throw JSON.typeMismatch(false, name, object, JSONType.STRING);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.STRING);
         }
         return result;
     }
@@ -495,15 +516,19 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The field we want to get.
      * @return The value of the field (if it is a JSONArray.
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or is not a {@code
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping is not a {@code
      *                       JSONArray}.
      */
     public JSONArray getJSONArray(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.ARRAY);
+        }
         if (object instanceof JSONArray) {
             return (JSONArray) object;
         } else {
-            throw JSON.typeMismatch(false, name, object, JSONType.ARRAY);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.ARRAY);
         }
     }
 
@@ -513,15 +538,19 @@ public final class JSONObject extends JSONCollection {
      *
      * @param name The name of the field that we want.
      * @return a specified field value (if it is a JSONObject)
-     * @throws JSONTypeMismatchException if the mapping doesn't exist or is not a {@code
+     * @throws JSONValueNotFoundException if the mapping doesn't exist
+     * @throws JSONTypeMismatchException if the mapping is not a {@code
      *                       JSONObject}.
      */
     public JSONObject getJSONObject(String name) {
         Object object = opt(name);
+        if (object == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.OBJECT);
+        }
         if (object instanceof JSONObject) {
             return (JSONObject) object;
         } else {
-            throw JSON.typeMismatch(false, name, object, JSONType.OBJECT);
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.OBJECT);
         }
     }
 

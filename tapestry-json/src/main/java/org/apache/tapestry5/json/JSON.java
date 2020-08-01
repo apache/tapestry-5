@@ -96,25 +96,6 @@ class JSON {
         return null;
     }
 
-    static RuntimeException typeMismatch(boolean array, Object indexOrName, Object actual,
-            JSONType requiredType) throws RuntimeException {
-        String location = array ? "JSONArray[" + indexOrName + "]" : "JSONObject[\"" + indexOrName + "\"]";
-        if (actual == null) {
-            throw new JSONValueNotFoundException(location, requiredType);
-        } else {
-            throw new JSONTypeMismatchException(location, requiredType, actual.getClass());
-        }
-    }
-
-    static RuntimeException typeMismatch(Object actual, JSONType requiredType)
-            throws RuntimeException {
-        if (actual == null) {
-            throw new JSONValueNotFoundException("Value", requiredType);
-        } else {
-            throw new JSONTypeMismatchException("Value", requiredType, actual.getClass());
-        }
-    }
-    
     static void testValidity(Object value)
     {
         if (value == null) {

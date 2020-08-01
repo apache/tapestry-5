@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
@@ -72,7 +73,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONArray) {
             values = ((JSONArray) object).values;
         } else {
-            throw JSON.typeMismatch(object, JSONType.ARRAY);
+            throw JSONExceptionBuilder.tokenerTypeMismatch(object, JSONType.ARRAY);
         }
     }
 
@@ -206,7 +207,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     public Object get(int index) {
         Object value = values.get(index);
         if (value == null) {
-            throw new JSONValueNotFoundException("JSONArray[" + index + "]", JSONType.ANY);
+            throw JSONExceptionBuilder.valueNotFound(true, index, JSONType.ANY);
         }
         return value;
     }
@@ -238,7 +239,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         Object object = get(index);
         Boolean result = JSON.toBoolean(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, JSONType.BOOLEAN);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.BOOLEAN);
         }
         return result;
     }
@@ -256,7 +257,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         Object object = get(index);
         Double result = JSON.toDouble(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -274,7 +275,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         Object object = get(index);
         Integer result = JSON.toInteger(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -292,7 +293,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         Object object = get(index);
         Long result = JSON.toLong(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -309,7 +310,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         Object object = get(index);
         String result = JSON.toString(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, JSONType.STRING);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.STRING);
         }
         return result;
     }
@@ -328,7 +329,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONArray) {
             return (JSONArray) object;
         } else {
-            throw JSON.typeMismatch(true, index, object, JSONType.ARRAY);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.ARRAY);
         }
     }
 
@@ -346,7 +347,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONObject) {
             return (JSONObject) object;
         } else {
-            throw JSON.typeMismatch(true, index, object, JSONType.OBJECT);
+            throw JSONExceptionBuilder.typeMismatch(true, index, object, JSONType.OBJECT);
         }
     }
 
