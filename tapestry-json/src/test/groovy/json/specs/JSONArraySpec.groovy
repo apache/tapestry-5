@@ -4,6 +4,8 @@ import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
+
 import spock.lang.Specification
 
 class JSONArraySpec extends Specification {
@@ -89,9 +91,9 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == "JSONArray[0] is not a Boolean."
+        e.message == "JSONArray[0] is not a BOOLEAN. Actual: java.lang.Integer"
     }
 
     def "handling of boolean values passed into constructor"() {
@@ -117,9 +119,9 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == "JSONArray[0] is not a number."
+        e.message == "JSONArray[0] is not a NUMBER. Actual: java.lang.Boolean"
     }
 
     def "getDouble() works with numbers and parseable strings"() {
@@ -149,9 +151,9 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == "JSONArray[1] is not a JSONArray."
+        e.message == "JSONArray[1] is not a ARRAY. Actual: java.lang.String"
     }
 
     def "get a nested array"() {
@@ -172,9 +174,9 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == "JSONArray[1] is not a JSONObject."
+        e.message == "JSONArray[1] is not a OBJECT. Actual: java.lang.String"
     }
 
     def "may not put at a negative index"() {

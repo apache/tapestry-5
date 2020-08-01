@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
+
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
 /**
@@ -205,7 +207,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         try {
             Object value = values.get(index);
             if (value == null) {
-                throw new RuntimeException("Value at " + index + " is null.");
+                throw new JSONValueNotFoundException("JSONArray[" + index + "]", JSONType.ANY);
             }
             return value;
         } catch (IndexOutOfBoundsException e) {
@@ -233,14 +235,14 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value at {@code index} doesn't exist or
+     * @throws JSONTypeMismatchException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a boolean.
      */
     public boolean getBoolean(int index) {
         Object object = get(index);
         Boolean result = JSON.toBoolean(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, "Boolean");
+            throw JSON.typeMismatch(true, index, object, JSONType.BOOLEAN);
         }
         return result;
     }
@@ -251,14 +253,14 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value at {@code index} doesn't exist or
+     * @throws JSONTypeMismatchException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a double.
      */
     public double getDouble(int index) {
         Object object = get(index);
         Double result = JSON.toDouble(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, "number");
+            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -269,14 +271,14 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value at {@code index} doesn't exist or
+     * @throws JSONTypeMismatchException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a int.
      */
     public int getInt(int index) {
         Object object = get(index);
         Integer result = JSON.toInteger(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, "int");
+            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -287,14 +289,14 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value at {@code index} doesn't exist or
+     * @throws JSONTypeMismatchException if the value at {@code index} doesn't exist or
      *                       cannot be coerced to a long.
      */
     public long getLong(int index) {
         Object object = get(index);
         Long result = JSON.toLong(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, "long");
+            throw JSON.typeMismatch(true, index, object, JSONType.NUMBER);
         }
         return result;
     }
@@ -305,13 +307,13 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if no such value exists.
+     * @throws JSONTypeMismatchException if no such value exists.
      */
     public String getString(int index) {
         Object object = get(index);
         String result = JSON.toString(object);
         if (result == null) {
-            throw JSON.typeMismatch(true, index, object, "String");
+            throw JSON.typeMismatch(true, index, object, JSONType.STRING);
         }
         return result;
     }
@@ -322,7 +324,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value doesn't exist or is not a {@code
+     * @throws JSONTypeMismatchException if the value doesn't exist or is not a {@code
      *                       JSONArray}.
      */
     public JSONArray getJSONArray(int index) {
@@ -330,7 +332,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONArray) {
             return (JSONArray) object;
         } else {
-            throw JSON.typeMismatch(true, index, object, "JSONArray");
+            throw JSON.typeMismatch(true, index, object, JSONType.ARRAY);
         }
     }
 
@@ -340,7 +342,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if the value doesn't exist or is not a {@code
+     * @throws JSONTypeMismatchException if the value doesn't exist or is not a {@code
      *                       JSONObject}.
      */
     public JSONObject getJSONObject(int index) {
@@ -348,7 +350,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONObject) {
             return (JSONObject) object;
         } else {
-            throw JSON.typeMismatch(true, index, object, "JSONObject");
+            throw JSON.typeMismatch(true, index, object, JSONType.OBJECT);
         }
     }
 

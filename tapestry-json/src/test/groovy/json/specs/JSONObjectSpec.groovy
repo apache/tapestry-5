@@ -5,6 +5,8 @@ import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.JSONString
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
+import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException
 import org.apache.tapestry5.json.JSON
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -84,9 +86,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONValueNotFoundException e = thrown()
 
-        e.message == /JSONObject["barney"] not found./
+        e.message == /JSONObject["barney"] is not found. Required: ANY/
     }
 
     @Unroll
@@ -150,9 +152,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["akey"] is not a Boolean./
+        e.message == /JSONObject["akey"] is not a BOOLEAN. Actual: java.lang.Integer/
     }
 
     def "accumulate simple values"() {
@@ -240,7 +242,7 @@ class JSONObjectSpec extends Specification {
         object.toCompactString() == /{"friends":["barney","zaphod"]}/
     }
 
-    def "appending to a key whose value is not a JSONArray is an exception"() {
+    def "appending to a key whose value is not aArray is an exception"() {
         def object = new JSONObject(/{friends: 0 }/)
 
         when:
@@ -249,9 +251,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["friends"] is not a JSONArray./
+        e.message == /JSONObject["friends"] is not a ARRAY. Actual: java.lang.Integer/
     }
 
     def "getDouble() with a non-numeric value is an exception"() {
@@ -263,9 +265,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["notdouble"] is not a number./
+        e.message == /JSONObject["notdouble"] is not a NUMBER. Actual: java.lang.Boolean/
     }
 
     def "getDouble() with a string that can not be parsed as a number is an exception"() {
@@ -277,9 +279,9 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONTypeMismatchException e = thrown()
 
-        e.message == /JSONObject["notdouble"] is not a number./
+        e.message == /JSONObject["notdouble"] is not a NUMBER. Actual: java.lang.String/
 
     }
 
@@ -292,7 +294,7 @@ class JSONObjectSpec extends Specification {
         !object.has("barney")
     }
 
-    def "getJSONArray() for a value that is not a JSONArray is an exception"() {
+    def "getJSONArray() for a value that is not aArray is an exception"() {
         def object = new JSONObject(/{notarray: 22.7}/)
 
         when:
@@ -303,7 +305,7 @@ class JSONObjectSpec extends Specification {
 
         RuntimeException e = thrown()
 
-        e.message == /JSONObject["notarray"] is not a JSONArray./
+        e.message == /JSONObject["notarray"] is not a ARRAY. Actual: java.lang.Double/
     }
 
     def "length() of a JSONObject is the number of keys"() {

@@ -17,6 +17,8 @@
 package org.apache.tapestry5.json;
 
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException;
+import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
+import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
 
 class JSON {
     /**
@@ -95,12 +97,12 @@ class JSON {
     }
 
     static RuntimeException typeMismatch(boolean array, Object indexOrName, Object actual,
-            String requiredType) throws RuntimeException {
+            JSONType requiredType) throws RuntimeException {
         String location = array ? "JSONArray[" + indexOrName + "]" : "JSONObject[\"" + indexOrName + "\"]";
         if (actual == null) {
-            throw new RuntimeException(location + " is null.");
+            throw new JSONValueNotFoundException(location, requiredType);
         } else {
-            throw new RuntimeException(location + " is not a " + requiredType + ".");
+            throw new JSONTypeMismatchException(location, requiredType, actual.getClass());
         }
     }
 
