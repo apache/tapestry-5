@@ -4,6 +4,7 @@ import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
 
 import spock.lang.Specification
@@ -42,9 +43,9 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONSyntaxException e = thrown()
 
-        e.message == "A JSONArray text must start with '[' at character 1 of 1, 2, 3]"
+        e.message == "A JSONArray text must start with '[' (actual: '1') at character 1 of 1, 2, 3]"
     }
 
     def "parse an empty array"() {

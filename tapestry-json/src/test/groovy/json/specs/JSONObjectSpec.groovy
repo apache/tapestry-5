@@ -5,6 +5,7 @@ import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.JSONString
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
+import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException
 import org.apache.tapestry5.json.JSON
@@ -404,21 +405,21 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        RuntimeException e = thrown()
+        JSONSyntaxException e = thrown()
 
         e.message.trim().startsWith expected
 
         where:
 
-        input                     | expected                                                   | desc
-        "{  "                     | "A JSONObject text must end with '}' at character 3"       | "unmatched open brace"
-        "fred"                    | "A JSONObject text must begin with '{' at character 1 of " | "missing open brace"
-        /{ "akey" }/              | /Expected a ':' after a key at character 10 of/            | "missing value after key"
-        /{ "fred" : 1 "barney" }/ | /Expected a ',' or '}' at character 14 of/                 | "missing property separator"
-        /{ "list" : [1, 2/        | /Expected a ',' or ']' at character 16 of/                 | "missing seperator or closing bracket"
-        '''/* unclosed'''         | /Unclosed comment at character 11 of/                      | "unclosed C-style comment"
-        /{ "fred \n}/             | /Unterminated string at character 11 of/                   | "unterminated string at line end"
-        /{ fred: ,}/              | /Missing value at character 8 of /                         | "missing value after key"
+        input                     | expected                                                                 | desc
+        "{  "                     | "A JSONObject text must end with '}' at character 3"                     | "unmatched open brace"
+        "fred"                    | /A JSONObject text must start with '{' (actual: 'f') at character 1 of/  | "missing open brace"
+        /{ "akey" }/              | /Expected a ':' after a key at character 10 of/                          | "missing value after key"
+        /{ "fred" : 1 "barney" }/ | /Expected a ',' or '}' at character 14 of/                               | "missing property separator"
+        /{ "list" : [1, 2/        | /Expected a ',' or ']' at character 16 of/                               | "missing seperator or closing bracket"
+        '''/* unclosed'''         | /Unclosed comment at character 11 of/                                    | "unclosed C-style comment"
+        /{ "fred \n}/             | /Unterminated string at character 11 of/                                 | "unterminated string at line end"
+        /{ fred: ,}/              | /Missing value at character 8 of /                                       | "missing value after key"
     }
 
     def "can use ':' or '=>' as key seperator, and ';' as property separator"() {
