@@ -105,7 +105,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     }
 
     /**
-     * Create a new array, and adds all values fro the iterable to the array (using {@link #putAll(Iterable)}.
+     * Create a new array, and adds all values from the iterable to the array (using {@link #putAll(Iterable)}.
      *
      * This is implemented as a static method so as not to break the semantics of the existing {@link #JSONArray(Object...)} constructor.
      * Adding a constructor of type Iterable would change the meaning of <code>new JSONArray(new JSONArray())</code>.
