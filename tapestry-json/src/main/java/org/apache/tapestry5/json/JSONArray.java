@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.json.exceptions.JSONSyntaxException;
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
 
@@ -61,7 +62,8 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param readFrom a tokener whose nextValue() method will yield a
      *                 {@code JSONArray}.
-     * @throws RuntimeException if the parse fails or doesn't yield a
+     * @throws JSONSyntaxException if the parse fails
+     * @throws JSONTypeMismatchException if it doesn't yield a
      *                       {@code JSONArray}.
      */
     JSONArray(JSONTokener readFrom) {
@@ -81,8 +83,9 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * Creates a new {@code JSONArray} with values from the JSON string.
      *
      * @param json a JSON-encoded string containing an array.
-     * @throws RuntimeException if the parse fails or doesn't yield a {@code
-     *                       JSONArray}.
+     * @throws JSONSyntaxException if the parse fails
+     * @throws JSONTypeMismatchException if it doesn't yield a
+     *                       {@code JSONArray}.
      */
     public JSONArray(String json) {
         this(new JSONTokener(json));

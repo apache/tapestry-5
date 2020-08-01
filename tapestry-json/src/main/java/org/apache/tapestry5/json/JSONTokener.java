@@ -108,7 +108,7 @@ class JSONTokener {
      *
      * @return a {@link JSONObject}, {@link JSONArray}, String, Boolean,
      * Integer, Long, Double or {@link JSONObject#NULL}.
-     * @throws RuntimeException if the input is malformed.
+     * @throws JSONSyntaxException if the input is malformed.
      */
      Object nextValue(Class<?> desiredType) {
         int c = nextCleanInternal();
