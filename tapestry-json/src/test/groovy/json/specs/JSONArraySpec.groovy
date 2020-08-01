@@ -413,4 +413,15 @@ class JSONArraySpec extends Specification {
             [:]]
     }
 
+    def "array index out of bounds must throw informative exception"() {
+        def array = new JSONArray(1, 2, 3)
+
+        when:
+
+        array.get(array.length())
+
+        then:
+        
+        IndexOutOfBoundsException e = thrown()
+    }
 }

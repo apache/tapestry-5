@@ -199,20 +199,16 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *
      * @param index Which value to get.
      * @return the value at the specified location.
-     * @throws RuntimeException if this array has no value at {@code index}, or if
+     * @throws JSONValueNotFoundException if this array has no value at {@code index}, or if
      *                       that value is the {@code null} reference. This method returns
      *                       normally if the value is {@code JSONObject#NULL}.
      */
     public Object get(int index) {
-        try {
-            Object value = values.get(index);
-            if (value == null) {
-                throw new JSONValueNotFoundException("JSONArray[" + index + "]", JSONType.ANY);
-            }
-            return value;
-        } catch (IndexOutOfBoundsException e) {
-            throw new RuntimeException("Index " + index + " out of range [0.." + values.size() + ")");
+        Object value = values.get(index);
+        if (value == null) {
+            throw new JSONValueNotFoundException("JSONArray[" + index + "]", JSONType.ANY);
         }
+        return value;
     }
 
     /**
