@@ -12,7 +12,7 @@ public class JSONSyntaxException extends RuntimeException {
     }
 
     public int getPosition() {
-        return position;
+        return this.position;
     }
 
 }
