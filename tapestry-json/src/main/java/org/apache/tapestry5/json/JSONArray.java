@@ -72,7 +72,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         if (object instanceof JSONArray) {
             values = ((JSONArray) object).values;
         } else {
-            throw JSON.typeMismatch(object, "JSONArray");
+            throw JSON.typeMismatch(object, JSONType.ARRAY);
         }
     }
 

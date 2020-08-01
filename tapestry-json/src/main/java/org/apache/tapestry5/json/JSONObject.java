@@ -149,7 +149,7 @@ public final class JSONObject extends JSONCollection {
         if (object instanceof JSONObject) {
             this.nameValuePairs = ((JSONObject) object).nameValuePairs;
         } else {
-            throw JSON.typeMismatch(object, "JSONObject");
+            throw JSON.typeMismatch(object, JSONType.OBJECT);
         }
     }
 

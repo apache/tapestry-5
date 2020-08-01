@@ -106,21 +106,19 @@ class JSON {
         }
     }
 
-    static RuntimeException typeMismatch(Object actual, String requiredType)
+    static RuntimeException typeMismatch(Object actual, JSONType requiredType)
             throws RuntimeException {
         if (actual == null) {
-            throw new RuntimeException("Value is null.");
+            throw new JSONValueNotFoundException("Value", requiredType);
         } else {
-            throw new RuntimeException("Value " + actual
-                    + " of type " + actual.getClass().getName()
-                    + " cannot be converted to " + requiredType);
+            throw new JSONTypeMismatchException("Value", requiredType, actual.getClass());
         }
     }
     
     static void testValidity(Object value)
     {
         if (value == null) {
-            throw new IllegalArgumentException("null isn't valid in JSONObject and JSONArray. Use JSONObject.NULL instead.");
+            throw new IllegalArgumentException("null isn't valid in JSONArray. Use JSONObject.NULL instead.");
         }
 
         if (value == JSONObject.NULL)
