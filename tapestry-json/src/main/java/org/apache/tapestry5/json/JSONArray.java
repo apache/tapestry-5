@@ -100,7 +100,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     public JSONArray(Object... values) {
         this();
         for (int i = 0; i < values.length; ++i) {
-            put(values[i]);
+            checkedPut(values[i]);
         }
     }
 

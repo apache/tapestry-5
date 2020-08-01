@@ -425,4 +425,21 @@ class JSONArraySpec extends Specification {
         
         IndexOutOfBoundsException e = thrown()
     }
+
+    def "non-finite / NaN Double not allowed in constructor"() {
+        
+        when:
+        
+        new JSONArray(value)
+        
+        then:
+        
+        RuntimeException e = thrown()
+        
+        where:
+        value << [
+            Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY,
+            Double.NaN]
+    }
 }
