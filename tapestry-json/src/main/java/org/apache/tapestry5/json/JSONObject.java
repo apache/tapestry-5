@@ -398,6 +398,33 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
     }
 
     /**
+     * Returns the value to which the specified key is mapped and a boolean, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a boolean.
+     * @since 5.7
+     */
+    public boolean getBooleanOrDefault(String name, boolean defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Boolean result = JSON.toBoolean(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.BOOLEAN);
+        }
+        return result;
+    }
+
+    /**
      * Returns the value mapped by {@code name} if it exists and is a double or
      * can be coerced to a double, or throws otherwise.
      *
@@ -442,6 +469,33 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
     }
 
     /**
+     * Returns the value to which the specified key is mapped and an int, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to an int.
+     * @since 5.7
+     */
+    public int getIntOrDefault(String name, int defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Integer result = JSON.toInteger(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
+        }
+        return result;
+    }
+    
+    /**
      * Returns the value mapped by {@code name} if it exists and is a long or
      * can be coerced to a long, or throws otherwise.
      * Note that JSON represents numbers as doubles,
@@ -462,6 +516,33 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         }
         Long result = JSON.toLong(object);
         if (result == null) {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value to which the specified key is mapped and a long, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a long.
+     * @since 5.7
+     */
+    public long getLongOrDefault(String name, int defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        Long result = JSON.toLong(object);
+        if (result == null)
+        {
             throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.NUMBER);
         }
         return result;
@@ -490,6 +571,33 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
     }
 
     /**
+     * Returns the value to which the specified key is mapped and a string, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a string.
+     * @since 5.7
+     */
+    public String getStringOrDefault(String name, String defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        String result = JSON.toString(object);
+        if (result == null)
+        {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.STRING);
+        }
+        return result;
+    }
+    
+    /**
      * Returns the value mapped by {@code name} if it exists and is a {@code
      * JSONArray}, or throws otherwise.
      *
@@ -512,6 +620,32 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
     }
 
     /**
+     * Returns the value to which the specified key is mapped and a JSONArray, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a JSONArray.
+     * @since 5.7
+     */
+    public JSONArray getJSONArrayOrDefault(String name, JSONArray defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        if (object instanceof JSONArray) {
+            return (JSONArray) object;
+        } else {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.ARRAY);
+        }
+    }
+    
+    /**
      * Returns the value mapped by {@code name} if it exists and is a {@code
      * JSONObject}, or throws otherwise.
      *
@@ -533,6 +667,32 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         }
     }
 
+    
+    /**
+     * Returns the value to which the specified key is mapped and a JSONObject, or
+     * {@code defaultValue} if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @param defaultValue the default mapping of the key
+     * @return the value to which the specified key is mapped, or
+     * {@code defaultValue} if this map contains no mapping for the key
+     * @throws JSONTypeMismatchException if the mapping cannot be coerced
+     *                       to a JSONObject.
+     * @since 5.7
+     */
+    public JSONObject getJSONObjectOrDefault(String name, JSONObject defaultValue)
+    {
+        Object object = opt(name);
+        if (object == null)
+        {
+            return defaultValue;
+        }
+        if (object instanceof JSONObject) {
+            return (JSONObject) object;
+        } else {
+            throw JSONExceptionBuilder.typeMismatch(false, name, object, JSONType.OBJECT);
+        }
+    }
     /**
      * Returns the set of {@code String} names in this object. The returned set
      * is a view of the keys in this object. {@link Set#remove(Object)} will remove
