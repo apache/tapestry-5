@@ -8,7 +8,7 @@ import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
 import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException
-import org.apache.tapestry5.json.JSON
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -90,6 +90,30 @@ class JSONObjectSpec extends Specification {
         JSONValueNotFoundException e = thrown()
 
         e.message == /JSONObject["barney"] is not found. Required: ANY/
+    }
+
+    def "getOrDefault returns defaultValue if not found"() {
+        def master = new JSONObject("fred", "flintstone")
+
+        when:
+
+        def result = master.getOrDefault "barney", "gumble"
+
+        then:
+
+        result == "gumble"
+    }
+
+    def "getOrDefault returns value if found"() {
+        def master = new JSONObject("fred", "flintstone")
+
+        when:
+
+        def result = master.getOrDefault "fred", "other"
+
+        then:
+
+        result == "flintstone"
     }
 
     @Unroll
@@ -283,7 +307,6 @@ class JSONObjectSpec extends Specification {
         JSONTypeMismatchException e = thrown()
 
         e.message == /JSONObject["notdouble"] is not a NUMBER. Actual: java.lang.String/
-
     }
 
     def "has() will identify which keys have values and which do not"() {
@@ -474,9 +497,14 @@ class JSONObjectSpec extends Specification {
 
         where:
 
-        value << [Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Float.NaN,
-            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY]
-
+        value << [
+            Double.NaN,
+            Double.NEGATIVE_INFINITY,
+            Double.POSITIVE_INFINITY,
+            Float.NaN,
+            Float.NEGATIVE_INFINITY,
+            Float.POSITIVE_INFINITY
+        ]
     }
 
     def "parse an empty object is empty"() {
@@ -509,7 +537,7 @@ class JSONObjectSpec extends Specification {
         object.put("key", value)
 
         then:
-        
+
         noExceptionThrown()
 
         where:
@@ -519,11 +547,12 @@ class JSONObjectSpec extends Specification {
             3,
             3.5,
             "*VALUE*",
-            new JSONLiteral("*LITERAL*"), 
+            new JSONLiteral("*LITERAL*"),
             new JSONObject(),
-            new JSONArray()]
+            new JSONArray()
+        ]
     }
-    
+
     def "only specific object types may be added - exception"() {
         def object = new JSONObject(/{}/)
 
@@ -532,14 +561,15 @@ class JSONObjectSpec extends Specification {
         object.put("key", value)
 
         then:
-        
+
         JSONInvalidTypeException e = thrown()
 
         where:
         value << [
             new java.util.Date(),
             [],
-            [:]]
+            [:]
+        ]
     }
 
     def "JSONString can output anything it wants"() {
@@ -685,7 +715,6 @@ class JSONObjectSpec extends Specification {
         then:
 
         object.get("foo") == "bar"
-
     }
 
     def "pretty-print an empty JSONObject"() {
@@ -775,7 +804,6 @@ class JSONObjectSpec extends Specification {
         json == /{
   "kermit" : "frog"
 }/
-
     }
 
     def "getString() at index"() {
@@ -804,8 +832,8 @@ class JSONObjectSpec extends Specification {
 
     def "can access contents of object as a map"() {
         def object = new JSONObject("foo", "bar")
-            .put("null", JSONObject.NULL)
-            .put("number", 6)
+                .put("null", JSONObject.NULL)
+                .put("number", 6)
 
         when:
 
@@ -842,7 +870,6 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        result.is object
         object.toCompactString() == /{"fred":"flintstone","barney":"rubble","wilma":"flintstone"}/
     }
 
@@ -918,7 +945,5 @@ class JSONObjectSpec extends Specification {
         then:
 
         source == copy
-
     }
-
 }

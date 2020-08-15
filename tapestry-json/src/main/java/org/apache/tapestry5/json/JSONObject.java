@@ -18,6 +18,7 @@ package org.apache.tapestry5.json;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -74,7 +75,7 @@ import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
  *
  * <p>Instances of this class are not thread safe.
  */
-public final class JSONObject extends JSONCollection {
+public final class JSONObject extends JSONCollection implements Map<String, Object> {
 
     private static final Double NEGATIVE_ZERO = -0d;
 
@@ -222,9 +223,10 @@ public final class JSONObject extends JSONCollection {
 
     /**
      * Returns the number of name/value mappings in this object.
-     *
+     * @deprecated Use {@code length()} instead.
      * @return the length of this.
      */
+    @Deprecated
     public int length() {
         return nameValuePairs.size();
     }
@@ -242,6 +244,7 @@ public final class JSONObject extends JSONCollection {
      * @return this object.
      * @throws IllegalArgumentException if the value is an invalid double (infinite or NaN).
      */
+    @Override
     public JSONObject put(String name, Object value) {
         if (value == null) {
             nameValuePairs.remove(name);
@@ -337,17 +340,6 @@ public final class JSONObject extends JSONCollection {
     }
 
     /**
-     * Removes the named mapping if it exists; does nothing otherwise.
-     *
-     * @param name The name of the mapping to remove.
-     * @return the value previously mapped by {@code name}, or null if there was
-     * no such mapping.
-     */
-    public Object remove(String name) {
-        return nameValuePairs.remove(name);
-    }
-
-    /**
      * Returns true if this object has no mapping for {@code name} or if it has
      * a mapping whose value is {@link #NULL}.
      *
@@ -363,26 +355,13 @@ public final class JSONObject extends JSONCollection {
      * Returns true if this object has a mapping for {@code name}. The mapping
      * may be {@link #NULL}.
      *
+     * @deprecated use {@code containsKey} instead
      * @param name The name of the value to check on.
      * @return true if this object has a field named {@code name}
      */
+    @Deprecated
     public boolean has(String name) {
-        return nameValuePairs.containsKey(name);
-    }
-
-    /**
-     * Returns the value mapped by {@code name}, or throws if no such mapping exists.
-     *
-     * @param name The name of the value to get.
-     * @return The value.
-     * @throws JSONValueNotFoundException if no such mapping exists.
-     */
-    public Object get(String name) {
-        Object result = nameValuePairs.get(name);
-        if (result == null) {
-            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.ANY);
-        }
-        return result;
+        return containsKey(name);
     }
 
     /**
@@ -392,7 +371,7 @@ public final class JSONObject extends JSONCollection {
      * @param name The name of the value to get.
      * @return The value.
      */
-    public Object opt(String name) {
+    public Object opt(Object name) {
         return nameValuePairs.get(name);
     }
 
@@ -763,27 +742,6 @@ public final class JSONObject extends JSONCollection {
     }
 
     /**
-     * Invokes {@link #put(String, Object)} for each value from the map.
-     *
-     * @param newProperties
-     *         to add to this JSONObject
-     * @return this JSONObject
-     * @since 5.4
-     */
-    public JSONObject putAll(Map<String, ?> newProperties)
-    {
-        assert newProperties != null;
-
-        for (Map.Entry<String, ?> e : newProperties.entrySet())
-        {
-            put(e.getKey(), e.getValue());
-        }
-
-        return this;
-    }
-
-
-    /**
      * Navigates into a nested JSONObject, creating the JSONObject if necessary. They key must not exist,
      * or must be a JSONObject.
      *
@@ -811,5 +769,119 @@ public final class JSONObject extends JSONCollection {
 
         return (JSONObject) nested;
     }
+
+    @Override
+    public int size()
+    {
+        return nameValuePairs.size();
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return nameValuePairs.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key)
+    {
+        return nameValuePairs.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value)
+    {
+        return nameValuePairs.containsValue(value);
+    }
+
+    /**
+     * Returns the value mapped by {@code name}, or throws if no such mapping exists.
+     *
+     * @param name The name of the value to get.
+     * @return The value.
+     * @throws JSONValueNotFoundException if no such mapping exists.
+     */ @Override
+    public Object get(Object key)
+    {
+        Object result = nameValuePairs.get(key);
+         if (result == null) {
+            throw JSONExceptionBuilder.valueNotFound(false, key, JSONType.ANY);
+         }
+         return result;
+    }
+
+    /**
+      * Returns the value to which the specified key is mapped, or
+      * {@code defaultValue} if this map contains no mapping for the key.
+      *
+      * @param key the key whose associated value is to be returned
+      * @param defaultValue the default mapping of the key
+      * @return the value to which the specified key is mapped, or
+      * {@code defaultValue} if this map contains no mapping for the key
+      * @since 5.7
+      */
+    @Override
+    public Object getOrDefault(Object key, Object defaultValue)
+    {
+        Object value = opt(key);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
+     * Removes the named mapping if it exists; does nothing otherwise.
+     *
+     * @param name The name of the mapping to remove.
+     * @return the value previously mapped by {@code name}, or null if there was
+     *         no such mapping.
+     */
+    @Override
+    public Object remove(Object key)
+    {
+        return nameValuePairs.remove(key);
+    }
+
+    /**
+     * Invokes {@link #put(String, Object)} for each value from the map.
+     *
+     * @param newProperties
+     *            to add to this JSONObject
+     * @return this JSONObject
+     * @since 5.7
+     */
+    @Override
+    public void putAll(Map<? extends String, ? extends Object> m)
+    {
+        assert m != null;
+
+        for (Map.Entry<? extends String, ? extends Object> e : m.entrySet())
+        {
+            put(e.getKey(), e.getValue());
+        }
+    }
+
+    @Override
+    public void clear()
+    {
+        nameValuePairs.clear();
+    }
+
+    @Override
+    public Set<String> keySet()
+    {
+        return nameValuePairs.keySet();
+    }
+
+    @Override
+    public Collection<Object> values()
+    {
+        return nameValuePairs.values();
+    }
+
+    @Override
+    public Set<Entry<String, Object>> entrySet()
+    {
+        return nameValuePairs.entrySet();
+    }
+  
 
 }
