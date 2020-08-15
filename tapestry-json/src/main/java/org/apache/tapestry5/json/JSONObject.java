@@ -240,7 +240,7 @@ public final class JSONObject extends JSONCollection {
      *              {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
      *              infinities}.
      * @return this object.
-     * @throws RuntimeException if the value is an invalid double (infinite or NaN).
+     * @throws IllegalArgumentException if the value is an invalid double (infinite or NaN).
      */
     public JSONObject put(String name, Object value) {
         if (value == null) {

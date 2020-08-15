@@ -96,7 +96,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      * Creates a new {@code JSONArray} with values from the given primitive array.
      *
      * @param values The values to use.
-     * @throws RuntimeException if any of the values are non-finite double values (i.e. NaN or infinite)
+     * @throws IllegalArgumentException if any of the values are non-finite double values (i.e. NaN or infinite)
      */
     public JSONArray(Object... values) {
         this();
@@ -168,7 +168,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
      *              infinities}.
      * @return this array.
-     * @throws RuntimeException If the value cannot be represented as a finite double value.
+     * @throws IllegalArgumentException If the value cannot be represented as a finite double value.
      * @throws ArrayIndexOutOfBoundsException if the index is lower than 0
      */
     public JSONArray put(int index, Object value) {

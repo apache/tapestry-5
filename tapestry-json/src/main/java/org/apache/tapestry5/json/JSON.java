@@ -17,16 +17,14 @@
 package org.apache.tapestry5.json;
 
 import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException;
-import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
-import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
 
 class JSON {
     /**
      * Returns the input if it is a JSON-permissible value; throws otherwise.
      */
-    static double checkDouble(double d) throws RuntimeException {
+    static double checkDouble(double d) throws IllegalArgumentException {
         if (Double.isInfinite(d) || Double.isNaN(d)) {
-            throw new RuntimeException("JSON does not allow non-finite numbers.");
+            throw new IllegalArgumentException("JSON does not allow non-finite numbers.");
         }
         return d;
     }
