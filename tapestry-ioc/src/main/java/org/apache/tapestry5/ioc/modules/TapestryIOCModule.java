@@ -273,4 +273,12 @@ public final class TapestryIOCModule
         configuration.add(IOCSymbols.THREAD_POOL_ENABLED, true);
         configuration.add(IOCSymbols.THREAD_POOL_QUEUE_SIZE, 100);
     }
+    
+    public static void contributeRegistryStartup(OrderedConfiguration<Runnable> configuration, 
+            PeriodicExecutor periodicExecutor)
+    {
+        configuration.add(PeriodicExecutor.class.getSimpleName(), 
+                () ->  periodicExecutor.init());
+    }
+    
 }

@@ -23,9 +23,9 @@ import org.apache.tapestry5.ioc.services.cron.Schedule;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,6 +46,8 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
     private static final long FIVE_MINUTES = 5 * 60 * 1000;
 
     private final AtomicInteger jobIdAllocator = new AtomicInteger();
+    
+    private final AtomicBoolean started = new AtomicBoolean();
 
     private final Lock jobLock = new ReentrantLock();
 
@@ -251,9 +253,16 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
             }
         });
 
-        thread.start();
     }
 
+    public void init()
+    {
+        if (!started.get())
+        {
+            started.set(true);
+            thread.start();
+        }
+    }
 
     void removeJob(Job job)
     {

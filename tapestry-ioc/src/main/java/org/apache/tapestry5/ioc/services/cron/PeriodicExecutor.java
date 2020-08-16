@@ -30,4 +30,10 @@ public interface PeriodicExecutor
      * @return a PeriodicJob that can be used to query when the job executes, or to cancel its execution
      */
     PeriodicJob addJob(Schedule schedule, String name, Runnable job);
+    
+    /**
+     * Initializes this service. <em>Never call this method direclty. It's intended
+     * for internal Tapestry-IoC usage only</em>.
+     */
+    public void init();
 }
