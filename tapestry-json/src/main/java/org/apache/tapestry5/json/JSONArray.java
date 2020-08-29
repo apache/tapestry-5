@@ -17,6 +17,7 @@
 package org.apache.tapestry5.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
  *
  * Instances of this class are not thread safe.
  */
-public final class JSONArray extends JSONCollection implements Iterable<Object> {
+public final class JSONArray extends JSONCollection implements Collection<Object> {
 
     private final List<Object> values;
 
@@ -121,10 +122,37 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     }
 
     /**
+     * @deprecated Use {@code length()} instead.
      * @return Returns the number of values in this array.
      */
     public int length() {
+        return size();
+    }
+
+    /**
+     * Returns the number of values in this array.
+     * If this list contains more than {@code Integer.MAX_VALUE} elements, returns
+     * {@code Integer.MAX_VALUE}.
+     *
+     * @return the number of values in this array
+     * @since 5.7
+     */
+    @Override
+    public int size()
+    {
         return values.size();
+    }
+
+    /**
+     * Returns {@code true} if this array contains no values.
+     *
+     * @return {@code true} if this array contains no values
+     * @since 5.7
+     */
+    @Override
+    public boolean isEmpty()
+    {
+        return values.isEmpty();
     }
 
     /**
@@ -136,11 +164,28 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
      *              infinities}. Unsupported values are not permitted and will cause the
      *              array to be in an inconsistent state.
      * @return this array.
+     * @deprecated The use of {@code add(Object)] is encouraged.
      */
     public JSONArray put(Object value) {
-        JSON.testValidity(value);
-        values.add(value);
+        add(value);
         return this;
+    }
+
+    /**
+     * Appends {@code value} to the end of this array.
+     *
+     * @param value a {@link JSONObject}, {@link JSONArray}, String, Boolean,
+     *              Integer, Long, Double, or {@link JSONObject#NULL}}. May
+     *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}. Unsupported values are not permitted and will cause the
+     *              array to be in an inconsistent state.
+     * @return {@code true} (as specified by {@link Collection#add})
+     */
+    @Override
+    public boolean add(Object value)
+    {
+        JSON.testValidity(value);
+        return values.add(value);
     }
 
     /**
@@ -235,6 +280,59 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
             return null;
         }
         return values.remove(index);
+    }
+
+    /**
+     * Removes the first occurrence of the specified value from this array,
+     * if it is present (optional operation). If this list does not contain
+     * the element, it is unchanged.
+     *
+     * @param value
+     *            element to be removed from this list, if present
+     * @return {@code true} if the value was removed
+     * @throws NullPointerException
+     *             if the specified element is null and this
+     *             list does not permit null elements
+     *             (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @since 5.7
+     */
+    @Override
+    public boolean remove(Object o)
+    {
+        return values.remove(o);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c)
+    {
+        return values.removeAll(c);
+    }
+
+    /**
+     * Removes all of the values from this array.
+     * 
+     * @since 5.7
+     */
+    @Override
+    public void clear()
+    {
+        values.clear();
+    }
+
+    /**
+     * Retains only the values in this array that are contained in the
+     * specified collection.
+     *
+     * @param collection
+     *            collection containing elements to be retained in this list
+     * @return {@code true} if this list changed as a result of the call
+     * @since 5.7
+     */
+
+    @Override
+    public boolean retainAll(Collection<?> c)
+    {
+        return values.retainAll(c);
     }
 
     /**
@@ -423,6 +521,31 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
     }
 
     /**
+     * Adds all objects from the collection into this JSONArray, using {@link #add(Object)}.
+     *
+     * @param collection
+     *            Any collection, or null
+     * @return boolean true, if JSONArray was changed.
+     * @since 5.7
+     */
+    @Override
+    public boolean addAll(Collection<? extends Object> collection)
+    {
+        if (collection == null)
+        { 
+            return false;
+        }
+
+        boolean changed = false;
+        for (Object value : collection)
+        {
+            changed = add(value) || changed;
+        }
+
+        return changed;
+    }
+
+    /**
      * Returns an unmodifiable list of the contents of the array. This is a wrapper around the list's internal
      * storage and is live (changes to the JSONArray affect the returned List).
      *
@@ -434,12 +557,65 @@ public final class JSONArray extends JSONCollection implements Iterable<Object> 
         return Collections.unmodifiableList(values);
     }
 
+    /**
+     * Returns an array containing all of the values in this JSONArray in proper
+     * sequence.
+     *
+     * @return an array containing all of the values in this JSONArray in proper
+     *         sequence
+     * @since 5.7
+     */
+    @Override
+    public Object[] toArray()
+    {
+        return values.toArray();
+    }
 
+    /**
+     * Returns an array containing all of the values in this JSONArray in
+     * proper sequence; the runtime type of the returned array is that of
+     * the specified array.
+     *
+     * @param a
+     *            the array into which the values of this JSONArray are to
+     *            be stored, if it is big enough; otherwise, a new array of the
+     *            same runtime type is allocated for this purpose.
+     * @return an array containing the values of this JSONArray
+     * @throws ArrayStoreException
+     *             if the runtime type of the specified array
+     *             is not a supertype of the runtime type of every element in
+     *             this list
+     * @throws NullPointerException
+     *             if the specified array is null
+     * @since 5.7
+     */
+    @Override
+    public <T> T[] toArray(T[] a)
+    {
+        return values.toArray(a);
+    }
+
+    /**
+     * Returns an iterator over the values in this array in proper sequence.
+     *
+     * @return an iterator over the values in this array in proper sequence
+     * @since 5.7
+     */
     @Override
     public Iterator<Object> iterator()
     {
         return values.iterator();
     }
 
+    @Override
+    public boolean contains(Object o)
+    {
+        return values.contains(o);
+    }
 
+    @Override
+    public boolean containsAll(Collection<?> c)
+    {
+        return values.containsAll(c);
+    }
 }

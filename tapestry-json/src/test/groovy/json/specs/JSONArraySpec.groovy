@@ -19,7 +19,7 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        array.length() == 3
+        array.size() == 3
         array.get(0) == "foo"
         array.get(1) == "bar"
         array.get(2) == "baz"
@@ -32,7 +32,7 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        array.length() == 3
+        array.size() == 3
 
         array.toCompactString() == /["fred","barney","wilma"]/
     }
@@ -56,7 +56,29 @@ class JSONArraySpec extends Specification {
 
         then:
 
+        array.isEmpty()
+    }
+
+    def "isEmpty() is false if array is non-empty"() {
+        when:
+
+        def array = new JSONArray("[1]")
+
+        then:
+
+        array.isEmpty() == false
+    }
+
+    def "isEmpty() == zero length == zero size"() {
+        when:
+
+        def array = new JSONArray("[]")
+
+        then:
+
+        array.isEmpty()
         array.length() == 0
+        array.size() == 0
     }
 
     def "an empty element in the parse is a null"() {
@@ -66,7 +88,7 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        array.length() == 3
+        array.size() == 3
         array.getInt(0) == 1
         array.isNull(1)
         array.getInt(2) == 3
@@ -79,7 +101,7 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        array.length() == 2
+        array.size() == 2
         array.get(0) == 1
         array.get(1) == 2
     }
@@ -270,7 +292,7 @@ class JSONArraySpec extends Specification {
         !i.hasNext()
     }
 
-    def "remove an element"() {
+    def "remove an element by index"() {
         def array = new JSONArray("one", "two", "three")
 
         when:
@@ -279,8 +301,120 @@ class JSONArraySpec extends Specification {
 
         then:
 
-        array.length() == 2
+        array.size() == 2
         array.toCompactString() == /["one","three"]/
+    }
+
+    def "remove an element by value"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.remove("one")
+
+        then:
+
+        result == true
+        array.size() == 2
+        array.toCompactString() == /["two","three"]/
+    }
+
+    def "remove an element by value - not found"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.remove("four")
+
+        then:
+
+        result == false
+        array.size() == 3
+        array.toCompactString() == /["one","two","three"]/
+    }
+
+    def "remove all elements by collection"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.removeAll(["one", "three"])
+
+        then:
+
+        result == true
+        array.size() == 1
+        array.toCompactString() == /["two"]/
+    }
+
+    def "remove all elements by collection - partial"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.removeAll(["one", "four"])
+
+        then:
+
+        result == true
+        array.size() == 2
+        array.toCompactString() == /["two","three"]/
+    }
+
+    def "remove all elements by collection - none found"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.removeAll(["four", "five"])
+
+        then:
+
+        result == false
+        array.size() == 3
+        array.toCompactString() == /["one","two","three"]/
+    }
+
+    def "retain all elements by collection - all"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.retainAll(["one", "two", "three"])
+
+        then:
+
+        result == false
+        array.size() == 3
+        array.toCompactString() == /["one","two","three"]/
+    }
+
+    def "retain all elements by collection - partial"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.retainAll(["one", "three"])
+
+        then:
+
+        result == true
+        array.size() == 2
+        array.toCompactString() == /["one","three"]/
+    }
+
+    def "retain all elements by collection - none"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        def result = array.retainAll(["four", "five"])
+
+        then:
+
+        result == true
+        array.isEmpty()
+        array.toCompactString() == /[]/
     }
 
     def "putAll() adds new objects to existing array"() {
@@ -305,6 +439,44 @@ class JSONArraySpec extends Specification {
         then:
 
         array.toCompactString() == /[100,200]/
+    }
+
+
+    def "addAll() adds new objects to existing array"() {
+        def array = new JSONArray(100, 200)
+
+        when:
+
+        array.addAll([300, 400, 500])
+
+        then:
+
+        array.toCompactString() == /[100,200,300,400,500]/
+    }
+
+
+    def "addAll() returns true if changed"() {
+        def array = new JSONArray(100, 200)
+
+        when:
+
+        def result = array.addAll([300, 400, 500])
+
+        then:
+
+        result == true
+    }
+
+    def "addAll() returns false if not changed"() {
+        def array = new JSONArray(100, 200)
+
+        when:
+
+        def result = array.addAll((Collection)null)
+
+        then:
+
+        result == false
     }
 
     def "list returned by toList() is unmodifiable"() {
@@ -348,32 +520,30 @@ class JSONArraySpec extends Specification {
 
         list.toString(true) == "[1,2,3]"
     }
-	
-	def "put() should throw an IllegalArgumentException when receiving null"() {
-		
-		def array = new JSONArray()
-		
-		when:
-		
-		array.put(null)
-		
-		then:
-		
-		thrown IllegalArgumentException
-		
-	}
-	
-	def "new JSONArray() should throw an IllegalArgumentException when receiving null"() {
-		
-		when:
-		
-		new JSONArray(1, null, 3)
-		
-		then:
-		
-		thrown IllegalArgumentException
-		
-	}
+
+    def "put() should throw an IllegalArgumentException when receiving null"() {
+
+        def array = new JSONArray()
+
+        when:
+
+        array.put(null)
+
+        then:
+
+        thrown IllegalArgumentException
+    }
+
+    def "new JSONArray() should throw an IllegalArgumentException when receiving null"() {
+
+        when:
+
+        new JSONArray(1, null, 3)
+
+        then:
+
+        thrown IllegalArgumentException
+    }
 
     def "only specific object types may be added - no exception"() {
         def array = new JSONArray()
@@ -383,7 +553,7 @@ class JSONArraySpec extends Specification {
         array.put(value)
 
         then:
-        
+
         noExceptionThrown()
 
         where:
@@ -394,9 +564,10 @@ class JSONArraySpec extends Specification {
             "*VALUE*",
             new JSONLiteral("*LITERAL*"),
             new JSONObject(),
-            new JSONArray()]
+            new JSONArray()
+        ]
     }
-    
+
     def "only specific object types may be added - exception"() {
         def array = new JSONArray()
 
@@ -405,14 +576,15 @@ class JSONArraySpec extends Specification {
         array.put(value)
 
         then:
-        
+
         JSONInvalidTypeException e = thrown()
 
         where:
         value << [
             new java.util.Date(),
             [],
-            [:]]
+            [:]
+        ]
     }
 
     def "array index out of bounds must throw informative exception"() {
@@ -420,28 +592,29 @@ class JSONArraySpec extends Specification {
 
         when:
 
-        array.get(array.length())
+        array.get(array.size())
 
         then:
-        
+
         JSONArrayIndexOutOfBoundsException e = thrown()
         e.index == 3
     }
 
     def "non-finite / NaN Double not allowed in constructor"() {
-        
+
         when:
-        
+
         new JSONArray(value)
-        
+
         then:
-        
+
         RuntimeException e = thrown()
-        
+
         where:
         value << [
             Double.POSITIVE_INFINITY,
             Double.NEGATIVE_INFINITY,
-            Double.NaN]
+            Double.NaN
+        ]
     }
 }
