@@ -1100,6 +1100,8 @@ public class FormTests extends App1TestCase
     {
         openLinks("SelectModel coercion");
 
+        waitForElementToAppear("track");
+        
         select("track", "label=The Calling");
 
         clickAndWait(SUBMIT);
