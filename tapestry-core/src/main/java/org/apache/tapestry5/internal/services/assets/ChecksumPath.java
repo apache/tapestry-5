@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
 
@@ -41,11 +40,11 @@ public class ChecksumPath
         this.streamer = streamer;
         int slashx = extraPath.indexOf('/');
 
-        checksum = slashx >= 0 ? extraPath.substring(0, slashx) : null;
+        checksum = extraPath.substring(0, slashx);
 
         String morePath = extraPath.substring(slashx + 1);
 
-        if (StringUtils.isNotBlank(morePath)) {
+        if (!isBlank(morePath)) {
             resourcePath = baseFolder == null
                     ? morePath
                     : baseFolder + "/" + morePath;
@@ -76,4 +75,21 @@ public class ChecksumPath
 
         return streamer.streamResource(resource, checksum, ResourceStreamer.DEFAULT_OPTIONS);
     }
+    
+    /**
+     * Copied from StringUtils since it's the only method we want from it.
+     */
+    private static boolean isBlank(final CharSequence cs) {
+        int strLen;
+        if (cs == null || (strLen = cs.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
