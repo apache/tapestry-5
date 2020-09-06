@@ -201,7 +201,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Constructs a new JSONObject using a series of String keys and object values.
-     * Object values sholuld be compatible with {@link #put(String, Object)}. Keys must be strings
+     * Object values should be compatible with {@link #put(String, Object)}. Keys must be strings
      * (toString() will be invoked on each key).
      *
      * Prior to release 5.4, keysAndValues was type String...; changing it to Object... makes
@@ -223,7 +223,8 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the number of name/value mappings in this object.
-     * @deprecated Use {@code length()} instead.
+     * 
+     * @deprecated Use {@link #size()} instead.
      * @return the length of this.
      */
     @Deprecated
@@ -355,8 +356,9 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns true if this object has a mapping for {@code name}. The mapping
      * may be {@link #NULL}.
      *
-     * @deprecated use {@code containsKey} instead
-     * @param name The name of the value to check on.
+     * @deprecated use {@link #containsKey(Object)} instead
+     * @param name
+     *            The name of the value to check on.
      * @return true if this object has a field named {@code name}
      */
     @Deprecated
@@ -399,12 +401,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the value to which the specified key is mapped and a boolean, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
      * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a boolean.
      * @since 5.7
@@ -470,12 +472,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the value to which the specified key is mapped and an int, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
      * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to an int.
      * @since 5.7
@@ -523,12 +525,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the value to which the specified key is mapped and a long, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
      * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a long.
      * @since 5.7
@@ -572,12 +574,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the value to which the specified key is mapped and a string, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
      * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a string.
      * @since 5.7
@@ -621,12 +623,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
      * Returns the value to which the specified key is mapped and a JSONArray, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key
+     * {@code defaultValue} if this JSONObject contains no mapping for the key
      * @throws JSONTypeMismatchException if the mapping cannot be coerced
      *                       to a JSONArray.
      * @since 5.7
@@ -930,24 +932,57 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         return (JSONObject) nested;
     }
 
+    /**
+     * Returns the number of key-value mappings in this JSONObject.
+     * If it contains more than {@code Integer.MAX_VALUE} elements, returns
+     * {@code Integer.MAX_VALUE}.
+     *
+     * @return the number of key-value mappings in this JSONObject
+     * @since 5.7
+     */
     @Override
     public int size()
     {
         return nameValuePairs.size();
     }
 
+    /**
+     * Returns {@code true} if this JSONObject contains no key-value mappings.
+     *
+     * @return {@code true} if this JSONObject contains no key-value mappings
+     * @since 5.7
+     */
     @Override
     public boolean isEmpty()
     {
         return nameValuePairs.isEmpty();
     }
 
+    /**
+     * Returns {@code true} if this JSONObject contains a mapping for the specified
+     * key.
+     *
+     * @param key
+     *            key whose presence in this map is to be tested
+     * @return {@code true} if this map contains a mapping for the specified
+     *         key
+     * @since 5.7
+     */
     @Override
     public boolean containsKey(Object key)
     {
         return nameValuePairs.containsKey(key);
     }
 
+    /**
+     * Returns {@code true} if this JSONObject maps one or more keys to the
+     * specified value.
+     *
+     * @param value value whose presence in this map is to be tested
+     * @return {@code true} if this JSONObject maps one or more keys to the
+     *         specified value
+     * @since 5.7
+     */
     @Override
     public boolean containsValue(Object value)
     {
@@ -972,12 +1007,12 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
     /**
       * Returns the value to which the specified key is mapped, or
-      * {@code defaultValue} if this map contains no mapping for the key.
+      * {@code defaultValue} if this JSONObject contains no mapping for the key.
       *
       * @param key the key whose associated value is to be returned
       * @param defaultValue the default mapping of the key
       * @return the value to which the specified key is mapped, or
-      * {@code defaultValue} if this map contains no mapping for the key
+      *         {@code defaultValue} if this JSONObject contains no mapping for the key
       * @since 5.7
       */
     @Override
@@ -1019,24 +1054,53 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         }
     }
 
+    /**
+     * Removes all of the mappings from this JSONObject.
+     * 
+     * @since 5.7
+     */
     @Override
     public void clear()
     {
         nameValuePairs.clear();
     }
 
+    /**
+     * Returns a {@link Set} view of the keys contained in this JSONObject.
+     * The set is backed by the JSONObject, so changes to the map are
+     * reflected in the set, and vice-versa.
+     *
+     * @return a set view of the keys contained in this JSONObject
+     * @since 5.7
+     */
     @Override
     public Set<String> keySet()
     {
         return nameValuePairs.keySet();
     }
 
+    /**
+     * Returns a {@link Collection} view of the values contained in this JSONObject.
+     * The collection is backed by the JSONObject, so changes to the map are
+     * reflected in the collection, and vice-versa.
+     *
+     * @return a collection view of the values contained in this JSONObject
+     * @since 5.7
+     */
     @Override
     public Collection<Object> values()
     {
         return nameValuePairs.values();
     }
 
+    /**
+     * Returns a {@link Set} view of the mappings contained in this JSONObject.
+     * The set is backed by the JSONObject, so changes to the map are
+     * reflected in the set, and vice-versa.
+     *
+     * @return a set view of the mappings contained in this JSONObject
+     * @since 5.7
+     */
     @Override
     public Set<Entry<String, Object>> entrySet()
     {
