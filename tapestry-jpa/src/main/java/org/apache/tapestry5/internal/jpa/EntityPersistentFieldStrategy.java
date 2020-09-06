@@ -34,13 +34,13 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
     }
 
     @Override
-    protected Object convertApplicationValueToPersisted(final Object newValue)
+    public Object convertApplicationValueToPersisted(final Object newValue)
     {
         return JpaInternalUtils.convertApplicationValueToPersisted(entityManagerManager, newValue);
     }
 
     @Override
-    protected Object convertPersistedToApplicationValue(final Object persistedValue)
+    public Object convertPersistedToApplicationValue(final Object persistedValue)
     {
         final PersistedEntity persisted = (PersistedEntity) persistedValue;
 

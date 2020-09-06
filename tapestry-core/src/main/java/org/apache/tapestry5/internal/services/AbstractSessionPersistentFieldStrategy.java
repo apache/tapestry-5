@@ -141,7 +141,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
      * @return persisted value
      * @see #convertPersistedToApplicationValue(Object)
      */
-    protected Object convertApplicationValueToPersisted(Object newValue)
+    public Object convertApplicationValueToPersisted(Object newValue)
     {
         return newValue;
     }
@@ -154,7 +154,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
      * @return application value
      * @see #convertPersistedToApplicationValue(Object)
      */
-    protected Object convertPersistedToApplicationValue(Object persistedValue)
+    public Object convertPersistedToApplicationValue(Object persistedValue)
     {
         return persistedValue;
     }

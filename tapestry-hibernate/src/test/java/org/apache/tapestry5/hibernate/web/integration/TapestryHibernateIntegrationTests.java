@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate.integration;
+package org.apache.tapestry5.hibernate.web.integration;
 
-import org.apache.tapestry5.internal.hibernate.PersistedEntity;
-import org.apache.tapestry5.internal.hibernate.PersistedTransientEntity;
+import org.apache.tapestry5.hibernate.web.internal.PersistedEntity;
+import org.apache.tapestry5.hibernate.web.internal.PersistedTransientEntity;
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.app0.entities.User;

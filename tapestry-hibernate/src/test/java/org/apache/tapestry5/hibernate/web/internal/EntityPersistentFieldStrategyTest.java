@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.hibernate.web.internal;
 
+import org.apache.tapestry5.hibernate.web.internal.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.hibernate.web.internal.SessionRestorable;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

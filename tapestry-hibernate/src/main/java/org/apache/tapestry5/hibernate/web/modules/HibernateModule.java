@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate.modules;
+package org.apache.tapestry5.hibernate.web.modules;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.commons.Configuration;
@@ -21,14 +21,14 @@ import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.commons.services.PropertyAccess;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.hibernate.HibernateCore;
-import org.apache.tapestry5.hibernate.HibernatePersistenceConstants;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.hibernate.HibernateSymbols;
+import org.apache.tapestry5.hibernate.web.HibernatePersistenceConstants;
+import org.apache.tapestry5.hibernate.web.internal.CommitAfterWorker;
+import org.apache.tapestry5.hibernate.web.internal.EntityApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.hibernate.web.internal.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.hibernate.web.internal.HibernateEntityValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
-import org.apache.tapestry5.internal.hibernate.EntityApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.internal.hibernate.EntityPersistentFieldStrategy;
-import org.apache.tapestry5.internal.hibernate.HibernateEntityValueEncoder;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -36,6 +36,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
@@ -186,6 +188,12 @@ public class HibernateModule
     @Contribute(DashboardManager.class)
     public static void provideHibernateDashboardTab(OrderedConfiguration<DashboardTab> configuration)
     {
-        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "core/HibernateStatistics"), "after:Services");
+        configuration.add("HibernateStatistics", new DashboardTab("Hibernate", "hibernate/HibernateStatistics"), "after:Services");
+    }
+    
+    @Contribute(ComponentClassResolver.class)
+    public static void provideLibraryMapping(Configuration<LibraryMapping> configuration)
+    {
+        configuration.add(new LibraryMapping("hibernate", "org.apache.tapestry5.hibernate.web"));
     }
 }

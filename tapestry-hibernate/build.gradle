@@ -12,7 +12,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.modules.HibernateModule'
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.web.modules.HibernateModule'
     }
 }
 

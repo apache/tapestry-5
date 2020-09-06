@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.hibernate.web.internal;
 
 import org.apache.tapestry5.internal.services.AbstractSessionPersistentFieldStrategy;
 import org.apache.tapestry5.services.Request;
@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Persists Hibernate entities by storing their id in the session.
  *
- * @see org.apache.tapestry5.internal.hibernate.PersistedEntity
+ * @see org.apache.tapestry5.hibernate.web.internal.PersistedEntity
  */
 public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFieldStrategy
 {
@@ -38,7 +38,7 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
     }
 
     @Override
-    protected Object convertApplicationValueToPersisted(Object newValue)
+    public Object convertApplicationValueToPersisted(Object newValue)
     {
         assert newValue != null;
 
@@ -60,7 +60,7 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
     }
 
     @Override
-    protected Object convertPersistedToApplicationValue(Object persistedValue)
+    public Object convertPersistedToApplicationValue(Object persistedValue)
     {
         assert persistedValue != null;
 

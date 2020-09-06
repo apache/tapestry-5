@@ -17,6 +17,8 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.hibernate.internal.HibernateTransactionAdvisorImpl;
+import org.apache.tapestry5.hibernate.internal.HibernateTransactionDecoratorImpl;
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.services.AspectDecorator;

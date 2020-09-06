@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.hibernate.web.internal;
 
 import org.apache.tapestry5.internal.services.SessionApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.ApplicationStateCreator;
@@ -22,7 +22,7 @@ import org.hibernate.Session;
 /**
  * Persists Hibernate entities as SSOs by storing their primary key in the {@link org.apache.tapestry5.services.Session}.
  *
- * @see org.apache.tapestry5.internal.hibernate.PersistedEntity
+ * @see org.apache.tapestry5.hibernate.web.internal.PersistedEntity
  */
 public class EntityApplicationStatePersistenceStrategy extends SessionApplicationStatePersistenceStrategy
 {

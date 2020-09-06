@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.hibernate.web.internal;
 
 import org.apache.tapestry5.commons.services.PropertyAccess;
 import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.hibernate.web.internal.HibernateEntityValueEncoder;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.hibernate.Session;
