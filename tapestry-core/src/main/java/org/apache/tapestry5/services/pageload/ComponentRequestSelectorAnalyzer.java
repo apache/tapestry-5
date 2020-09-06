@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 
 /**
  * Determines the {@link ComponentResourceSelector} for the current request. This is often based on cookies, query
- * parameters, or other details available in the {@link org.apache.tapestry5.services.Request}. The default implementation simply wraps the
+ * parameters, or other details available in the {@link org.apache.tapestry5.http.services.Request}. The default implementation simply wraps the
  * {@linkplain ThreadLocale current locale} as a ComponentResourceSelector. A custom implementation may
  * {@linkplain ComponentResourceSelector#withAxis(Class, Object) add additional axes} to the selector.
  * 

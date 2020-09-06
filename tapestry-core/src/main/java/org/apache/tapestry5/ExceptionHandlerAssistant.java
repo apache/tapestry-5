@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.services.RequestExceptionHandler;
 
 import java.io.IOException;

@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.util.VirtualResource;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.ByteArrayInputStream;

@@ -13,8 +13,8 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app2.pages;
 
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Response;
 
 public class TestPageForHttpHeaders
 {

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * Extends {@link org.apache.tapestry5.internal.bindings.AbstractBinding} with a description and a binding type, with

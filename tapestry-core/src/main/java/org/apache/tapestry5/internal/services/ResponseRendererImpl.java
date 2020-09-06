@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ResponseRenderer;

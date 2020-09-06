@@ -16,9 +16,9 @@ package org.apache.tapestry5.integration.symbolparam.components
 
 import org.apache.tapestry5.annotations.Import
 import org.apache.tapestry5.annotations.Property
+import org.apache.tapestry5.http.services.Request
+import org.apache.tapestry5.http.services.Session
 import org.apache.tapestry5.ioc.annotations.Inject
-import org.apache.tapestry5.services.Request
-import org.apache.tapestry5.services.Session
 
 @Import(stack="core")
 class Layout {

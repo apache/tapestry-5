@@ -22,8 +22,8 @@ import java.io.Reader;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 

@@ -32,7 +32,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * the {@link org.apache.tapestry5.services.ApplicationStateManager}. An SSO property is stored as
  * global session object (i.e., in the {@link javax.servlet.ServletContext}), accessible to every
  * page or component, but in fact the built-in strategies for SSO management are
- * session-specific, ultimately storing data in the {@link org.apache.tapestry5.services.Session}.
+ * session-specific, ultimately storing data in the {@link org.apache.tapestry5.http.services.Session}.
  * <p>
  * For each SSO property, you may declare a companion boolean property that can be checked to see if
  * the SSO has been created yet. The companion boolean property must have the same name as the SSO

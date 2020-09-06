@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.services.Ajax;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
@@ -41,7 +41,7 @@ public class AjaxPageNameComponentEventResultProcessor implements ComponentEvent
     }
 
     /**
-     * Obtains a page render {@link org.apache.tapestry5.Link} for the named, then builds a JSON response for the
+     * Obtains a page render {@link org.apache.tapestry5.http.Link} for the named, then builds a JSON response for the
      * client.
      * 
      * @param value

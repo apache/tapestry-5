@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
  * Defines a context for editing a bean via {@link org.apache.tapestry5.corelib.components.BeanEditor}.

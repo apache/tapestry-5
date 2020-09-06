@@ -12,13 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,7 +34,7 @@ public class JSONArrayEventResultProcessor implements ComponentEventResultProces
 
     public JSONArrayEventResultProcessor(Response response,
 
-                                         @Symbol(SymbolConstants.CHARSET)
+                                         @Symbol(TapestryHttpSymbolConstants.CHARSET)
                                          String outputEncoding,
 
                                          @Symbol(SymbolConstants.COMPACT_JSON)

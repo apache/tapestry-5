@@ -1,12 +1,12 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.AnnotationProvider
-import org.apache.tapestry5.ioc.ObjectCreator
+import org.apache.tapestry5.commons.AnnotationProvider
+import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.ServiceBuilderResources
-import org.apache.tapestry5.ioc.internal.FieService
-import org.apache.tapestry5.ioc.internal.FoeService
-import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodFixture
 import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvoker
+import org.apache.tapestry5.ioc.test.internal.FieService
+import org.apache.tapestry5.ioc.test.internal.FoeService
+import org.apache.tapestry5.ioc.test.internal.ServiceBuilderMethodFixture
 import org.slf4j.Logger
 
 class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecification {

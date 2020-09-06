@@ -18,8 +18,15 @@ import java.util.Map;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanmodel.internal.services.*;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
+import org.apache.tapestry5.http.services.ApplicationGlobals;
+import org.apache.tapestry5.http.services.CompressionAnalyzer;
+import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.internal.AssetConstants;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.AssetSourceImpl;
 import org.apache.tapestry5.internal.services.ClasspathAssetAliasManagerImpl;
 import org.apache.tapestry5.internal.services.ClasspathAssetFactory;
@@ -30,12 +37,12 @@ import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.services.assets.*;
 import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.AssetRequestDispatcher;
@@ -46,9 +53,6 @@ import org.apache.tapestry5.services.ClasspathProvider;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextProvider;
 import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
@@ -99,7 +103,6 @@ public class AssetsModule
         // Minification may be enabled in production mode, but unless a minimizer is provided, nothing
         // will change.
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
-        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, true);
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, false);
 
@@ -117,8 +120,8 @@ public class AssetsModule
 
     @Decorate(id = "GZipCompression", serviceInterface = StreamableResourceSource.class)
     public StreamableResourceSource enableCompression(StreamableResourceSource delegate,
-                                                      @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-                                                      boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
+                                                      @Symbol(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                                      boolean gzipEnabled, @Symbol(TapestryHttpSymbolConstants.MIN_GZIP_SIZE)
                                                       int compressionCutoff,
                                                       AssetChecksumGenerator checksumGenerator)
     {
@@ -130,7 +133,7 @@ public class AssetsModule
     @Decorate(id = "CacheCompressed", serviceInterface = StreamableResourceSource.class)
     @Order("before:GZIpCompression")
     public StreamableResourceSource enableCompressedCaching(StreamableResourceSource delegate,
-                                                            @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                                            @Symbol(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED)
                                                             boolean gzipEnabled, ResourceChangeTracker tracker)
     {
         return gzipEnabled
@@ -273,7 +276,7 @@ public class AssetsModule
     @Contribute(ClasspathAssetAliasManager.class)
     public static void addApplicationAndTapestryMappings(MappedConfiguration<String, String> configuration,
 
-                                                         @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                         @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                                          String appPackage)
     {
         configuration.add("tapestry", "org/apache/tapestry5");

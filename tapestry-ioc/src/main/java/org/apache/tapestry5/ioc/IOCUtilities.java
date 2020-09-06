@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
+
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 
 import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
 

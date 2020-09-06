@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.LinkCreationListener2;
 import org.apache.tapestry5.services.PageRenderRequestParameters;

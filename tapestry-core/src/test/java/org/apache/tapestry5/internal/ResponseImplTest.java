@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tapestry5.internal.services.ResponseImpl;
+import org.apache.tapestry5.http.internal.services.ResponseImpl;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Response;
 import org.testng.annotations.Test;
 
 public class ResponseImplTest extends InternalBaseTestCase

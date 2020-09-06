@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ContentType;
-
 import java.io.IOException;
+
+import org.apache.tapestry5.http.ContentType;
 
 /**
  * Public facade around internal services related to rendering a markup response.

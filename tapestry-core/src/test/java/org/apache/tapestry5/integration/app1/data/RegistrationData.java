@@ -18,7 +18,7 @@ import org.apache.tapestry5.beaneditor.DataType;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beaneditor.Width;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 import java.util.List;
 

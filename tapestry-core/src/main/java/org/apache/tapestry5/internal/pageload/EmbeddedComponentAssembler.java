@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import org.apache.tapestry5.commons.Locatable;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.ioc.Locatable;
 
 import java.util.Set;
 

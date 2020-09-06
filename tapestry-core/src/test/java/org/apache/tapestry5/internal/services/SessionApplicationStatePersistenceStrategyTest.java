@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 import org.testng.annotations.Test;
 
 import spock.lang.Issue;

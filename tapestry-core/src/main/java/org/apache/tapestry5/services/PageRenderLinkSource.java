@@ -13,7 +13,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 
 /**
  * A service that allows other services to create page render links.

@@ -58,7 +58,7 @@ public final class StreamPageContent
      * Renders the page using the supplied page activation context.
      *
      * @param pageClass             class of the page to render, or null to render the currently active page (as per
-     *                              {@link org.apache.tapestry5.services.RequestGlobals#getActivePageName()})
+     *                              {@link org.apache.tapestry5.http.services.RequestGlobals#getActivePageName()})
      * @param pageActivationContext activation context of the page
      */
     public StreamPageContent(final Class<?> pageClass, final Object... pageActivationContext)

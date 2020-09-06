@@ -1,13 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.AbstractServiceCreator
-import org.apache.tapestry5.ioc.internal.IOCMessages
-import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodFixture
-import spock.lang.Specification
+import static org.apache.tapestry5.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType
 
 import java.lang.reflect.Method
 
-import static org.apache.tapestry5.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType
+import org.apache.tapestry5.ioc.internal.AbstractServiceCreator
+import org.apache.tapestry5.ioc.internal.IOCMessages
+import org.apache.tapestry5.ioc.test.internal.ServiceBuilderMethodFixture
+
+import spock.lang.Specification
 
 class ServiceCreatorGenericsSpec extends Specification {
 

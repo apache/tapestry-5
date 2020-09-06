@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;

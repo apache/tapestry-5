@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.HttpServletRequestFilter;
-import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.services.HttpServletRequestFilter;
+import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 

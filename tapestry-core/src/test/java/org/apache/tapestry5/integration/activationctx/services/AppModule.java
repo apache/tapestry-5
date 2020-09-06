@@ -15,7 +15,8 @@
 package org.apache.tapestry5.integration.activationctx.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 
 /**
  *
@@ -25,6 +26,6 @@ public class AppModule
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr");
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
     }
 }

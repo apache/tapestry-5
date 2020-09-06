@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 public class InternalComponentInvalidationEventHubImpl extends InvalidationEventHubImpl implements
         InternalComponentInvalidationEventHub
 {
-    public InternalComponentInvalidationEventHubImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
+    public InternalComponentInvalidationEventHubImpl(@Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                                      boolean productionMode)
     {
         super(productionMode);

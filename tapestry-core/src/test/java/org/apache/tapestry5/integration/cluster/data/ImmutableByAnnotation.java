@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.integration.cluster.data;
 
-import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
+import org.apache.tapestry5.http.annotations.ImmutableSessionPersistedObject;
 
 @ImmutableSessionPersistedObject
 public class ImmutableByAnnotation implements SessionStateObject {

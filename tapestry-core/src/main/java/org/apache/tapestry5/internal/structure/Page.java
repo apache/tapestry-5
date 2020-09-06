@@ -14,8 +14,8 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
@@ -203,7 +203,7 @@ public interface Page extends PageLifecycleCallbackHub
     /**
      * Discards all persistent field changes for the page containing the component. Changes are
      * eliminated from
-     * persistent storage (such as the {@link org.apache.tapestry5.services.Session}) which will
+     * persistent storage (such as the {@link org.apache.tapestry5.http.services.Session}) which will
      * take effect in the <em>next</em> request (the attached page instance is not affected).
      */
     void discardPersistentFieldChanges();

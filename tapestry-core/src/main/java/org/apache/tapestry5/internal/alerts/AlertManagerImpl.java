@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.alerts;
 
 import org.apache.tapestry5.alerts.*;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.ajax.JavaScriptCallback;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;

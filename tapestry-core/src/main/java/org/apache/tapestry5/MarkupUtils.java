@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Utility methods related to generating markup.

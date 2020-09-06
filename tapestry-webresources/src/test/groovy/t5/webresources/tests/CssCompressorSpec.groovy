@@ -1,9 +1,9 @@
 package t5.webresources.tests
 
 import geb.spock.GebReportingSpec
-import org.apache.tapestry5.test.JettyRunner
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
+import org.apache.tapestry5.internal.webresources.CssCompressor
+import org.apache.tapestry5.test.JettyRunner
 
 import spock.lang.Issue;
 import spock.lang.Shared

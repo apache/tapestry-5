@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.commons.MessageFormatter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.MessageFormatter;
 import org.testng.annotations.Test;
 
 /**

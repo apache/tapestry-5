@@ -229,9 +229,19 @@ subprojects {
     }
 
     jar {
+    	// println "JAR projectDir: " + projectDir.getName().replaceAll("5", "").replaceAll("tapestry-", "").replaceAll("-", "");
         from(projectDir) {
             include "*.txt"
             into "META-INF"
+        }
+        manifest {
+        	attributes("Automatic-Module-Name": "org.apache.tapestry." + projectDir.getName()
+        		.replaceAll("tapestry5", "tapestry")
+        		.replaceAll("tapestry-", "")
+        		.replaceAll("-", ""))        		
+        	if (projectDir.getName().equals("tapestry-version-migrator")) {
+        		attributes("Main-Class": "org.apache.tapestry5.versionmigrator.Main")
+        	}
         }
     }
 
@@ -407,7 +417,7 @@ dependencies {
 }
 
 task combinedJacocoReport(type:JacocoReport){
-  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart'}
+  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart' && it.name != 'beanmodel' && it.name != 'commons' && it.name != 'genericsresolver-guava' && it.name != 'tapestry5-annotations' && it.name != 'tapestry-internal-test' && it.name != 'tapestry-runner' && it.name != 'tapestry-test-constants' && it.name != 'tapestry-test-data' && it.name != 'tapestry-ioc-jcache'}
   dependsOn = subprojectsToConsider.test
   additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
   sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)

@@ -14,15 +14,15 @@ package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssembler;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;

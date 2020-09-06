@@ -16,8 +16,8 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
-import org.apache.tapestry5.internal.services.StringInterner;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.services.StringInterner;
 import org.apache.tapestry5.services.BindingFactory;
 
 /**

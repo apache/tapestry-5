@@ -15,8 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.beaneditor.DataType;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.services.DataTypeAnalyzer;
+import org.apache.tapestry5.commons.internal.services.AnnotationDataTypeAnalyzer;
+import org.apache.tapestry5.commons.services.DataTypeAnalyzer;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 

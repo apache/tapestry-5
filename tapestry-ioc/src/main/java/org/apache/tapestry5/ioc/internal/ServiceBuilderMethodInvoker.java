@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.Method;
 
 /**
- * Basic implementation of {@link org.apache.tapestry5.ioc.ObjectCreator} that handles invoking a method on the module
+ * Basic implementation of {@link org.apache.tapestry5.commons.ObjectCreator} that handles invoking a method on the module
  * builder, and figures out the correct parameters to pass into the annotated method.
  */
 public class ServiceBuilderMethodInvoker extends AbstractServiceCreator

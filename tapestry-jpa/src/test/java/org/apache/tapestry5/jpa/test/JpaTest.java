@@ -30,6 +30,7 @@ import javax.persistence.RollbackException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
+import org.apache.tapestry5.http.services.ApplicationGlobals;
 import org.apache.tapestry5.internal.jpa.JpaInternalUtils;
 import org.apache.tapestry5.internal.jpa.PersistedEntity;
 import org.apache.tapestry5.internal.test.PageTesterContext;
@@ -41,7 +42,6 @@ import org.apache.tapestry5.jpa.test.entities.ThingOne;
 import org.apache.tapestry5.jpa.test.entities.ThingTwo;
 import org.apache.tapestry5.jpa.test.entities.VersionedThing;
 import org.apache.tapestry5.modules.TapestryModule;
-import org.apache.tapestry5.services.ApplicationGlobals;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

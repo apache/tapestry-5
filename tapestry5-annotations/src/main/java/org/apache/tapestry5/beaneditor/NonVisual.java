@@ -24,8 +24,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation for properties which are non-visual, and so should not appear (by default) inside a {@link
- * BeanModel}. The annotation may be placed on either the getter or the setter method or on the field.
+ * Marker annotation for properties which are non-visual, and so should not appear (by default) inside a 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/beaneditor/BeanModel.html">BeanModel</a>. 
+ * The annotation may be placed on either the getter or the setter method or on the field.
  */
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RUNTIME)

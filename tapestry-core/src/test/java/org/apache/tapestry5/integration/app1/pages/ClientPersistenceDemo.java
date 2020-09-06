@@ -13,10 +13,10 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.integration.app1.ClientDataWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 
 public class ClientPersistenceDemo
 {

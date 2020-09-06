@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.MarkupRenderer;
@@ -34,7 +34,7 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
 
     private final boolean debugEnabled;
 
-    public ConfigureHTMLElementFilter(ThreadLocale threadLocale, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    public ConfigureHTMLElementFilter(ThreadLocale threadLocale, @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.threadLocale = threadLocale;
         this.debugEnabled = !productionMode;

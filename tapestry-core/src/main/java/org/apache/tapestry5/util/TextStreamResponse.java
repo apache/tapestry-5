@@ -16,9 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.services.Response;
 
 public class TextStreamResponse implements StreamResponse
 {
@@ -43,7 +43,7 @@ public class TextStreamResponse implements StreamResponse
      *            character set of output, usually "UTF-8"
      * @param text
      *            text to be streamed in the response
-     * @see org.apache.tapestry5.SymbolConstants#CHARSET
+     * @see org.apache.tapestry5.http.TapestryHttpSymbolConstants#CHARSET
      */
     public TextStreamResponse(String contentType, String charset, String text)
     {

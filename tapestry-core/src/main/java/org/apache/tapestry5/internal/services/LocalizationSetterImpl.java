@@ -23,15 +23,15 @@ import java.util.Set;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Given a set of supported locales, for a specified desired locale, sets the current thread's locale to a supported

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * A token containing an expression expansion from the template. Expression expansions look like Ant variables, i.e.,

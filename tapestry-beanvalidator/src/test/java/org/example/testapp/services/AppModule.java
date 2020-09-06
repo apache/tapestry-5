@@ -15,9 +15,10 @@ package org.example.testapp.services;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanvalidator.BeanValidatorConfigurer;
 import org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 
 @ImportModule(BeanValidatorModule.class)
@@ -26,7 +27,7 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "u93490jhsprf2904rh29-3uj");
     }
 

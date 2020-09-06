@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.dynamic;
 
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.TemplateParser;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 

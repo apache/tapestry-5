@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.pageload;
 
 import java.util.Map;
 
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;

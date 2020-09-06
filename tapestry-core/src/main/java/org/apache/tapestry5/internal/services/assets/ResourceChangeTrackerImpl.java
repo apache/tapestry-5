@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.ioc.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 
 public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implements ResourceChangeTracker,
         UpdateListener
@@ -37,7 +37,7 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
     private final long fixedLastModifiedTime = Math.round(System.currentTimeMillis() / 1000d) * 1000L;
 
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
-                                     @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                     @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                      boolean productionMode)
     {
         super(productionMode);

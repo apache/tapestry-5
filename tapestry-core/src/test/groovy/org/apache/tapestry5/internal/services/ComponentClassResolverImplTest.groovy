@@ -1,16 +1,16 @@
 package org.apache.tapestry5.internal.services
 
+import static org.easymock.EasyMock.isA
+
+import org.apache.tapestry5.commons.util.CollectionFactory
+import org.apache.tapestry5.commons.util.UnknownValueException
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory
 import org.apache.tapestry5.ioc.services.ClassNameLocator
-import org.apache.tapestry5.ioc.util.UnknownValueException
 import org.apache.tapestry5.services.ComponentClassResolver
 import org.apache.tapestry5.services.LibraryMapping
 import org.easymock.EasyMock
 import org.slf4j.Logger
 import org.testng.annotations.Test
-
-import static org.easymock.EasyMock.isA
 
 class ComponentClassResolverImplTest extends InternalBaseTestCase {
 

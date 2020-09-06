@@ -14,15 +14,27 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.util.*;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.Markable;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Status;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
 

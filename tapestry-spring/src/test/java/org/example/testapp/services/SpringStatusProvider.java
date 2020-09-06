@@ -14,8 +14,8 @@
 
 package org.example.testapp.services;
 
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.services.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.SpringVersion;
 

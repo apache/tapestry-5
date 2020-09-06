@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.http.services.Dispatcher;
+
 /**
  * Central location for logic related to building client-side paths, taking into account
  * the context path (if any), and the {@link org.apache.tapestry5.SymbolConstants#APPLICATION_FOLDER}
@@ -36,7 +38,7 @@ public interface PathConstructor
 
     /**
      * Constructs the dispatch path, which is like the client path, but omits the context path; this aligns
-     * the result with the value returned from {@link org.apache.tapestry5.services.Request#getPath()}, and is used
+     * the result with the value returned from {@link org.apache.tapestry5.http.services.Request#getPath()}, and is used
      * in code, typically {@link Dispatcher} implementations, that are attempting to route based on the incoming request path.
      *
      * @param terms

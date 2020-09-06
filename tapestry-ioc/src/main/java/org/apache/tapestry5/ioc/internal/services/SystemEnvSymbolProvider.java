@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 
 import java.util.Map;

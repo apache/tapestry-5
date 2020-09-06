@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;

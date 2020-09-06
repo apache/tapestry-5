@@ -16,8 +16,8 @@ package org.apache.tapestry5.upload.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;

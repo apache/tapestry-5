@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.annotations;
 
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.services.Session;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

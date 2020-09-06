@@ -1,7 +1,8 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.util.ConcurrentTarget
-import org.apache.tapestry5.ioc.internal.util.ConcurrentTargetWrapper
+import org.apache.tapestry5.ioc.test.internal.util.ConcurrentTarget
+import org.apache.tapestry5.ioc.test.internal.util.ConcurrentTargetWrapper
+
 import spock.lang.Specification
 
 class ConcurrentBarrierSpec extends Specification {

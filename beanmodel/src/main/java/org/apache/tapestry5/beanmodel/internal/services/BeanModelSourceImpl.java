@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.beanmodel.internal.services;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beanmodel.BeanModel;
@@ -21,19 +26,18 @@ import org.apache.tapestry5.beanmodel.BeanModelUtils;
 import org.apache.tapestry5.beanmodel.internal.beanmodel.BeanModelImpl;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
+import org.apache.tapestry5.commons.services.DataTypeAnalyzer;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.annotations.ComponentLayer;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.DataTypeAnalyzer;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.List;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {

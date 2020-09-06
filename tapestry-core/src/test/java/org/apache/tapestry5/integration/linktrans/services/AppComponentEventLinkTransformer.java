@@ -17,15 +17,15 @@ package org.apache.tapestry5.integration.linktrans.services;
 import java.util.Locale;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 
 public class AppComponentEventLinkTransformer implements ComponentEventLinkTransformer

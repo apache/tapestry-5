@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**

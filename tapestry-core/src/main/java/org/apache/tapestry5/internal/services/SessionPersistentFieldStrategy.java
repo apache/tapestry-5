@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 
 /**
  * A strategy for storing persistent page properties into the {@link Session session}.

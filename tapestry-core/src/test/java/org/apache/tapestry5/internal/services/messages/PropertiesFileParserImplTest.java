@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.services.messages;
 
 import java.util.Map;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.testng.annotations.Test;

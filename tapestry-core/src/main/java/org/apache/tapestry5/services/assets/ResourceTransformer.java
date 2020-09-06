@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.ContentType;
 
 import java.io.IOException;
 import java.io.InputStream;

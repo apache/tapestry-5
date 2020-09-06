@@ -16,12 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.List;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
@@ -29,7 +30,6 @@ import org.apache.tapestry5.services.LinkCreationHub;
 import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.LinkCreationListener2;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.RequestGlobals;
 
 @SuppressWarnings("all")
 public class LinkSourceImpl implements LinkSource, LinkCreationHub

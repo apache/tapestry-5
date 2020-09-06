@@ -17,14 +17,14 @@ package org.apache.tapestry5.ioc.internal;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 public class ServiceAdvisorImpl extends AbstractMethodInvokingInstrumenter implements ServiceAdvisor
 {

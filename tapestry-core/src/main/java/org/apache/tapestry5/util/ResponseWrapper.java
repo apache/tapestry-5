@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Response;
 
 /**
- * Implementation of {@link org.apache.tapestry5.services.Response} that delegates all method invocations to a delegate
+ * Implementation of {@link org.apache.tapestry5.http.services.Response} that delegates all method invocations to a delegate
  * instance. This is used as a base class for overriding just some behaviors of Response.
  */
 public class ResponseWrapper implements Response

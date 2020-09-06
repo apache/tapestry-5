@@ -17,7 +17,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**

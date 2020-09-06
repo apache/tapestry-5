@@ -14,14 +14,20 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.internal.AbstractContributionDef;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.internal.AbstractContributionDef;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.plastic.PlasticUtils;

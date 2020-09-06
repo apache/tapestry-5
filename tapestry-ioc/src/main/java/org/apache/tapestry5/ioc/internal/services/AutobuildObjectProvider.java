@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectProvider;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 
 /**
  * Checks for the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation and, if so
- * invokes {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)} on it.
+ * invokes {@link org.apache.tapestry5.commons.ObjectLocator#autobuild(Class)} on it.
  */
 public class AutobuildObjectProvider implements ObjectProvider
 {

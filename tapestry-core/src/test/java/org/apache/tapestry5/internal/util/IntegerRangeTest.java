@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.util;
 
+import org.apache.tapestry5.commons.util.IntegerRange;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.spring;
 
-import org.apache.tapestry5.TapestryFilter;
+import org.apache.tapestry5.http.TapestryFilter;
 import org.apache.tapestry5.internal.spring.SpringModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 

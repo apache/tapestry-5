@@ -12,24 +12,24 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.MultiKey;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
-import org.apache.tapestry5.internal.util.MultiKey;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -102,7 +102,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     };
 
     public ComponentTemplateSourceImpl(@Inject
-                                       @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                       @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                        boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
                                        ClasspathURLConverter classpathURLConverter)
     {

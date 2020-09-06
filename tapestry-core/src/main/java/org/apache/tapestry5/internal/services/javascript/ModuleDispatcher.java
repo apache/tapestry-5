@@ -13,19 +13,19 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PathConstructor;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 

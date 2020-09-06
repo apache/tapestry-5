@@ -14,22 +14,22 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.internal.util.LockSupport;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 import java.lang.ref.Reference;

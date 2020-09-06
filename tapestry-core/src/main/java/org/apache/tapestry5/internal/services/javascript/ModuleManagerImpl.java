@@ -13,20 +13,21 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.PathConstructor;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
@@ -65,7 +66,7 @@ public class ModuleManagerImpl implements ModuleManager
                              StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
                              boolean compactJSON,
-                             @Symbol(SymbolConstants.PRODUCTION_MODE)
+                             @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                              boolean productionMode,
                              @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
                              String modulePathPrefix,

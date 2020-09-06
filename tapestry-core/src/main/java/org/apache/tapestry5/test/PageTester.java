@@ -12,13 +12,15 @@
 
 package org.apache.tapestry5.test;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Visitor;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.SingleKeySymbolProvider;
-import org.apache.tapestry5.internal.TapestryAppInitializer;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.internal.SingleKeySymbolProvider;
+import org.apache.tapestry5.http.internal.TapestryAppInitializer;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
+import org.apache.tapestry5.http.services.ApplicationGlobals;
+import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.internal.test.PageTesterContext;
 import org.apache.tapestry5.internal.test.PageTesterModule;
 import org.apache.tapestry5.internal.test.TestableRequest;
@@ -27,8 +29,7 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.ApplicationGlobals;
-import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.modules.TapestryModule;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -97,11 +98,12 @@ public class PageTester
         assert appName != null;
         assert InternalUtils.isNonBlank(contextPath);
 
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
+        SymbolProvider provider = new SingleKeySymbolProvider(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(LoggerFactory.getLogger(PageTester.class), provider, appName,
                 null);
 
+        initializer.addModules(TapestryModule.class);
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
         initializer.addModules(provideExtraModuleDefs());
@@ -595,7 +597,7 @@ public class PageTester
 
     /**
      * Sets the simulated browser's preferred language, i.e., the value returned from
-     * {@link org.apache.tapestry5.services.Request#getLocale()}.
+     * {@link org.apache.tapestry5.http.services.Request#getLocale()}.
      *
      * @param preferedLanguage
      *         preferred language setting

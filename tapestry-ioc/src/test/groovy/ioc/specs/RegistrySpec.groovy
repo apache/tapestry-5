@@ -1,14 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.BarneyModule;
-import org.apache.tapestry5.ioc.CatchAllServiceConfigurationListener;
-import org.apache.tapestry5.ioc.Greeter
-import org.apache.tapestry5.ioc.FredModule
-import org.apache.tapestry5.ioc.GreeterModule
-import org.apache.tapestry5.ioc.HelterModule
-import org.apache.tapestry5.ioc.NameListHolder;
-import org.apache.tapestry5.ioc.StringLookup;
-import org.apache.tapestry5.ioc.internal.services.StartupModule2
+import org.apache.tapestry5.ioc.test.BarneyModule
+import org.apache.tapestry5.ioc.test.CatchAllServiceConfigurationListener
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule
+import org.apache.tapestry5.ioc.test.HelterModule
+import org.apache.tapestry5.ioc.test.NameListHolder
+import org.apache.tapestry5.ioc.test.StringLookup
+import org.apache.tapestry5.ioc.test.internal.services.StartupModule2
 
 class RegistrySpec extends AbstractRegistrySpecification {
 
@@ -23,7 +23,7 @@ class RegistrySpec extends AbstractRegistrySpecification {
     then:
 
     greeter.greeting == "Hello"
-    greeter.toString() == "<Proxy for HelloGreeter(org.apache.tapestry5.ioc.Greeter)>"
+    greeter.toString() == "<Proxy for HelloGreeter(org.apache.tapestry5.ioc.test.Greeter)>"
   }
 
   def "circular module references are ignored"() {

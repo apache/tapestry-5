@@ -15,7 +15,7 @@ package org.apache.tapestry5.validator;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.commons.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.javascript.DataConstants;

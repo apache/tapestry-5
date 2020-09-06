@@ -1,8 +1,8 @@
 package org.apache.tapestry5.corelib.components
 
 import org.apache.tapestry5.ComponentResources
-import org.apache.tapestry5.Link
 import org.apache.tapestry5.MarkupWriter
+import org.apache.tapestry5.http.Link
 import org.apache.tapestry5.services.PageRenderLinkSource
 import org.apache.tapestry5.test.TapestryTestCase
 import org.testng.annotations.Test

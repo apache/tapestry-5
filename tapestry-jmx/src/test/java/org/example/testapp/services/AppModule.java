@@ -12,8 +12,8 @@
 
 package org.example.testapp.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Decorate;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
@@ -30,7 +30,7 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
     }
 
     @Decorate(serviceInterface = Sample.class)

@@ -38,7 +38,7 @@ public interface BeanModel<T>
 
 
     /**
-     * Creates a new bean instance.  This is based on {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)},
+     * Creates a new bean instance.  This is based on {@link org.apache.tapestry5.commons.ObjectLocator#autobuild(Class)},
      * so a public constructor will be used, and dependencies injected.
      *
      * @return new instance of the bean

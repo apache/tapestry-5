@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 /**
- * A service that allows listeners to be registered to learn about {@link org.apache.tapestry5.Link} creation.
+ * A service that allows listeners to be registered to learn about {@link org.apache.tapestry5.http.Link} creation.
  */
 public interface LinkCreationHub
 {

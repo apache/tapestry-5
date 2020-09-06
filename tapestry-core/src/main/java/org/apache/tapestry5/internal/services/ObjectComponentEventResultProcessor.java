@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 

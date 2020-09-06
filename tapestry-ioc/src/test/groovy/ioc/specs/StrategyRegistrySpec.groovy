@@ -1,7 +1,8 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.util.StrategyRegistry
-import org.apache.tapestry5.ioc.util.UnknownValueException
+import org.apache.tapestry5.commons.util.StrategyRegistry
+import org.apache.tapestry5.commons.util.UnknownValueException
+
 import spock.lang.Specification
 
 class StrategyRegistrySpec extends Specification {

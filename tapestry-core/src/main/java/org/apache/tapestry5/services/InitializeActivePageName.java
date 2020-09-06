@@ -16,6 +16,8 @@ package org.apache.tapestry5.services;
 
 import java.io.IOException;
 
+import org.apache.tapestry5.http.services.RequestGlobals;
+
 /**
  * Filter contributed into the {@link ComponentRequestHandler} pipeline to set the
  * {@link RequestGlobals#getActivePageName() activePageName property}.

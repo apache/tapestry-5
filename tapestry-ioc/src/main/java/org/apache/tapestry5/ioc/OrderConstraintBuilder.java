@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
+
 /**
  * Constructs order constraints for {@link OrderedConfiguration}.
  * 

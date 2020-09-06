@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
 /**

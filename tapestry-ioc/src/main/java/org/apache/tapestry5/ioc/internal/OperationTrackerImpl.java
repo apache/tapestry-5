@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
+import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
-import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 
 import java.io.IOException;

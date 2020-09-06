@@ -23,8 +23,8 @@ import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResolverFactory;
 import javax.cache.annotation.CacheResult;
 
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.jcache.internal.CacheLookupUtil;

@@ -14,7 +14,6 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
@@ -22,22 +21,24 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.base.AbstractInternalPage;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.RequestGlobals;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.PageActivationContextCollector;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.URLEncoder;
 
 import java.net.MalformedURLException;
@@ -47,7 +48,7 @@ import java.util.regex.Pattern;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application. When {@link org.apache.tapestry5.SymbolConstants#PRODUCTION_MODE} is "true", it is very abbreviated.
+ * application. When {@link org.apache.tapestry5.http.TapestryHttpSymbolConstants#PRODUCTION_MODE} is "true", it is very abbreviated.
  *
  * @see org.apache.tapestry5.corelib.components.ExceptionDisplay
  */
@@ -66,7 +67,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     private String attributeName;
 
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     @Property(write = false)
     private boolean productionMode;
 
@@ -76,7 +77,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     private String tapestryVersion;
 
     @Inject
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
+    @Symbol(TapestryHttpSymbolConstants.APPLICATION_VERSION)
     @Property(write = false)
     private String applicationVersion;
 

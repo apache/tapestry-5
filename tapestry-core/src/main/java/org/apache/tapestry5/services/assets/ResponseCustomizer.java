@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.services.Response;
-
 import java.io.IOException;
+
+import org.apache.tapestry5.http.services.Response;
 
 /**
  * Used to customize the response prior to streaming content to the client; typically this is used to

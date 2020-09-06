@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
  * Part of a {@link org.apache.tapestry5.beanmodel.BeanModel} that defines the attributes of a single property of a
@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
  *
  *
  * A PropertyModel is also an {@link AnnotationProvider}, as long as the {@link org.apache.tapestry5.beanmodel.PropertyConduit} is
- * non-null.  When there is no property conduit, then {@link org.apache.tapestry5.ioc.AnnotationProvider#getAnnotation(Class)}
+ * non-null.  When there is no property conduit, then {@link org.apache.tapestry5.commons.AnnotationProvider#getAnnotation(Class)}
  * will return null.
  */
 public interface PropertyModel extends AnnotationProvider

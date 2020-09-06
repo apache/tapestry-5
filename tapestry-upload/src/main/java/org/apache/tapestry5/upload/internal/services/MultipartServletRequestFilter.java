@@ -15,8 +15,8 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry5.services.HttpServletRequestFilter;
-import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.http.services.HttpServletRequestFilter;
+import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 
 import javax.servlet.http.HttpServletRequest;

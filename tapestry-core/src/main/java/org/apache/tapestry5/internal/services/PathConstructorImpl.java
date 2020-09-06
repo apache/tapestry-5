@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PathConstructor;
 
@@ -23,7 +24,7 @@ public class PathConstructorImpl implements PathConstructor
     private final String clientPrefix, dispatchPrefix;
 
     public PathConstructorImpl(
-            @Symbol(SymbolConstants.CONTEXT_PATH) String contextPath,
+            @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH) String contextPath,
             @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
     {
         StringBuilder b = new StringBuilder("/");

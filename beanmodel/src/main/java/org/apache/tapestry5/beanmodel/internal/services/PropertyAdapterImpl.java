@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.beanmodel.internal.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.services.AccessableObjectAnnotationProvider;
-import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
-import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.List;
+
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.internal.services.AccessableObjectAnnotationProvider;
+import org.apache.tapestry5.commons.internal.services.AnnotationProviderChain;
+import org.apache.tapestry5.commons.internal.services.ServiceMessages;
+import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 
 public class PropertyAdapterImpl implements PropertyAdapter
 {

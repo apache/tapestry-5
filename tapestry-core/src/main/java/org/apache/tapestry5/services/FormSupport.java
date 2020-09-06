@@ -112,7 +112,7 @@ public interface FormSupport extends ClientElement
     String getFormComponentId();
 
     /**
-     * Id used as a prefix when searching {@link org.apache.tapestry5.ioc.Messages} for validation messages and
+     * Id used as a prefix when searching {@link org.apache.tapestry5.commons.Messages} for validation messages and
      * constraints. This is normally the simple id of the form.
      *
      * @return validation id string

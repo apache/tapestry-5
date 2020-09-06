@@ -11,8 +11,8 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.genericsresolverguava;
 
-import org.apache.tapestry5.beaneditor.BeanModelSourceBuilder;
-import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.beanmodel.BeanModelSourceBuilder;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 
 public class GuavaBeanModelSourceImplTest extends AbstractBeanModelSourceImplTest {
 

@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.webresources;
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
 import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;

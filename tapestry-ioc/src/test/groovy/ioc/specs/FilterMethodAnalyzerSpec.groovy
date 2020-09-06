@@ -2,8 +2,9 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.internal.services.FilterMethodAnalyzer
 import org.apache.tapestry5.ioc.internal.services.MethodSignature
-import org.apache.tapestry5.ioc.internal.services.SampleFilter
-import org.apache.tapestry5.ioc.internal.services.SampleService
+import org.apache.tapestry5.ioc.test.internal.services.SampleFilter
+import org.apache.tapestry5.ioc.test.internal.services.SampleService
+
 import spock.lang.Specification
 import spock.lang.Unroll
 

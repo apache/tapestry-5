@@ -16,13 +16,13 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import java.io.IOException;
 
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Ajax;
 import org.apache.tapestry5.services.ComponentEventRequestFilter;
 import org.apache.tapestry5.services.ComponentEventRequestHandler;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Filter for the {@link Ajax} {@link ComponentEventRequestHandler} that informs the {@link AjaxFormUpdateController}

@@ -14,18 +14,33 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.commons.services.Coercion;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CommonsUtils;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AdvisorDef2;
+import org.apache.tapestry5.ioc.IOCConstants;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.ServiceDefImpl;
-import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
@@ -426,7 +441,7 @@ public class InternalUtils
 
     public static boolean isBlank(String input)
     {
-        return InternalCommonsUtils.isBlank(input);
+        return CommonsUtils.isBlank(input);
     }
 
     /**

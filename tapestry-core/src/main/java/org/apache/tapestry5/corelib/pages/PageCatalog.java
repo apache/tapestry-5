@@ -14,23 +14,23 @@
 
 package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.*;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.PageCatalogTotals;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
@@ -53,7 +53,7 @@ public class PageCatalog
 
     @Property
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
 
     @Inject

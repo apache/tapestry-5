@@ -8,10 +8,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.services.XMLTokenStream;
 import org.apache.tapestry5.internal.services.XMLTokenType;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.AbstractResource;
 import org.testng.Assert;
 import org.testng.annotations.Test;

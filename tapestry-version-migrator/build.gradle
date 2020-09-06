@@ -1,0 +1,17 @@
+description = "Tool to help migrate source code using Tapestry from one version to another. Initially built for 5.7.0"
+
+dependencies {
+    testCompile group: 'org.testng', name: 'testng', version: '7.3.0'
+}
+
+test {
+    useTestNG() {
+        useDefaultListeners = true // Tells TestNG to execute its default reporting structure
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.apache.tapestry5.versionmigrator.Main'
+    }
+}

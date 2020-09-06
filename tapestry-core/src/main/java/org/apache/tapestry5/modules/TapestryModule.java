@@ -12,19 +12,134 @@
 
 package org.apache.tapestry5.modules;
 
-import org.apache.tapestry5.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentParameterConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidationSupport;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.VersionUtils;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.ActivationRequestParameter;
+import org.apache.tapestry5.annotations.BindParameter;
 import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.DiscardAfter;
+import org.apache.tapestry5.annotations.HeartbeatDeferred;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.annotations.PageActivationContext;
+import org.apache.tapestry5.annotations.PageAttached;
+import org.apache.tapestry5.annotations.PageDetached;
+import org.apache.tapestry5.annotations.PageLoaded;
+import org.apache.tapestry5.annotations.PageReset;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Secure;
+import org.apache.tapestry5.annotations.Service;
+import org.apache.tapestry5.annotations.SessionAttribute;
+import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
+import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.beanmodel.*;
-import org.apache.tapestry5.beanmodel.internal.services.*;
-import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.beanmodel.internal.services.BeanModelSourceImpl;
+import org.apache.tapestry5.beanmodel.internal.services.PropertyConduitSourceImpl;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
+import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectProvider;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.internal.BasicDataTypeAnalyzers;
+import org.apache.tapestry5.commons.internal.services.AnnotationDataTypeAnalyzer;
+import org.apache.tapestry5.commons.internal.services.DefaultDataTypeAnalyzer;
+import org.apache.tapestry5.commons.internal.services.StringInterner;
+import org.apache.tapestry5.commons.internal.services.StringInternerImpl;
+import org.apache.tapestry5.commons.services.Coercion;
+import org.apache.tapestry5.commons.services.CoercionTuple;
+import org.apache.tapestry5.commons.services.DataTypeAnalyzer;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalSymbols;
+import org.apache.tapestry5.http.internal.gzip.GZipFilter;
+import org.apache.tapestry5.http.internal.services.ApplicationGlobalsImpl;
+import org.apache.tapestry5.http.internal.services.RequestGlobalsImpl;
+import org.apache.tapestry5.http.internal.services.RequestImpl;
+import org.apache.tapestry5.http.internal.services.ResponseImpl;
+import org.apache.tapestry5.http.internal.services.TapestrySessionFactory;
+import org.apache.tapestry5.http.internal.services.TapestrySessionFactoryImpl;
+import org.apache.tapestry5.http.modules.TapestryHttpModule;
+import org.apache.tapestry5.http.services.ApplicationGlobals;
+import org.apache.tapestry5.http.services.ApplicationInitializer;
+import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.Context;
+import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.HttpServletRequestFilter;
+import org.apache.tapestry5.http.services.HttpServletRequestHandler;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestGlobals;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
+import org.apache.tapestry5.http.services.ServletApplicationInitializer;
+import org.apache.tapestry5.http.services.ServletApplicationInitializerFilter;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.ComponentOverrideImpl;
 import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
 import org.apache.tapestry5.internal.DefaultValueLabelProvider;
@@ -38,12 +153,28 @@ import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.internal.beaneditor.MessagesConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGenerator;
-import org.apache.tapestry5.internal.bindings.*;
+import org.apache.tapestry5.internal.bindings.AssetBindingFactory;
+import org.apache.tapestry5.internal.bindings.BlockBindingFactory;
+import org.apache.tapestry5.internal.bindings.ComponentBindingFactory;
+import org.apache.tapestry5.internal.bindings.ContextBindingFactory;
+import org.apache.tapestry5.internal.bindings.LiteralBindingFactory;
+import org.apache.tapestry5.internal.bindings.MessageBindingFactory;
+import org.apache.tapestry5.internal.bindings.NullFieldStrategyBindingFactory;
+import org.apache.tapestry5.internal.bindings.PropBindingFactory;
+import org.apache.tapestry5.internal.bindings.RenderVariableBindingFactory;
+import org.apache.tapestry5.internal.bindings.SymbolBindingFactory;
+import org.apache.tapestry5.internal.bindings.TranslateBindingFactory;
+import org.apache.tapestry5.internal.bindings.ValidateBindingFactory;
 import org.apache.tapestry5.internal.dynamic.DynamicTemplateParserImpl;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
-import org.apache.tapestry5.internal.gzip.GZipFilter;
-import org.apache.tapestry5.internal.renderers.*;
+import org.apache.tapestry5.internal.renderers.AvailableValuesRenderer;
+import org.apache.tapestry5.internal.renderers.ComponentResourcesRenderer;
+import org.apache.tapestry5.internal.renderers.EventContextRenderer;
+import org.apache.tapestry5.internal.renderers.ListRenderer;
+import org.apache.tapestry5.internal.renderers.LocationRenderer;
+import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
+import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
@@ -61,20 +192,78 @@ import org.apache.tapestry5.internal.services.security.ClientWhitelistImpl;
 import org.apache.tapestry5.internal.services.security.LocalhostOnly;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
-import org.apache.tapestry5.internal.transform.*;
+import org.apache.tapestry5.internal.transform.ActivationRequestParameterWorker;
+import org.apache.tapestry5.internal.transform.ApplicationStateWorker;
+import org.apache.tapestry5.internal.transform.BindParameterWorker;
+import org.apache.tapestry5.internal.transform.CachedWorker;
+import org.apache.tapestry5.internal.transform.ComponentWorker;
+import org.apache.tapestry5.internal.transform.DiscardAfterWorker;
+import org.apache.tapestry5.internal.transform.EnvironmentalWorker;
+import org.apache.tapestry5.internal.transform.HeartbeatDeferredWorker;
+import org.apache.tapestry5.internal.transform.ImportWorker;
+import org.apache.tapestry5.internal.transform.InjectComponentWorker;
+import org.apache.tapestry5.internal.transform.InjectContainerWorker;
+import org.apache.tapestry5.internal.transform.InjectNamedProvider;
+import org.apache.tapestry5.internal.transform.InjectPageWorker;
+import org.apache.tapestry5.internal.transform.InjectServiceWorker;
+import org.apache.tapestry5.internal.transform.InjectWorker;
+import org.apache.tapestry5.internal.transform.LogWorker;
+import org.apache.tapestry5.internal.transform.MixinAfterWorker;
+import org.apache.tapestry5.internal.transform.MixinWorker;
+import org.apache.tapestry5.internal.transform.OnEventWorker;
+import org.apache.tapestry5.internal.transform.OperationWorker;
+import org.apache.tapestry5.internal.transform.PageActivationContextWorker;
+import org.apache.tapestry5.internal.transform.PageLifecycleAnnotationWorker;
+import org.apache.tapestry5.internal.transform.PageResetAnnotationWorker;
+import org.apache.tapestry5.internal.transform.ParameterWorker;
+import org.apache.tapestry5.internal.transform.PersistWorker;
+import org.apache.tapestry5.internal.transform.PropertyWorker;
+import org.apache.tapestry5.internal.transform.RenderCommandWorker;
+import org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker;
+import org.apache.tapestry5.internal.transform.RetainWorker;
+import org.apache.tapestry5.internal.transform.SessionAttributeWorker;
+import org.apache.tapestry5.internal.transform.SupportsInformalParametersWorker;
+import org.apache.tapestry5.internal.transform.UnclaimedFieldWorker;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
 import org.apache.tapestry5.internal.translator.StringTranslator;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.internal.BasicDataTypeAnalyzers;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Advise;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
+import org.apache.tapestry5.ioc.annotations.ComponentLayer;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.Operation;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Startup;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.ioc.services.LazyAdvisor;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.plastic.MethodAdvice;
@@ -84,7 +273,93 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.Ajax;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BeanBlockOverrideSource;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ComponentLibraryInfo;
+import org.apache.tapestry5.services.ComponentLibraryInfoSource;
+import org.apache.tapestry5.services.ComponentMessages;
+import org.apache.tapestry5.services.ComponentOverride;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.ComponentTemplates;
+import org.apache.tapestry5.services.ContextPathEncoder;
+import org.apache.tapestry5.services.ContextProvider;
+import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.Cookies;
+import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.DateUtilities;
+import org.apache.tapestry5.services.DefaultObjectRenderer;
+import org.apache.tapestry5.services.DisplayBlockContribution;
+import org.apache.tapestry5.services.EditBlockContribution;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
+import org.apache.tapestry5.services.ExceptionReportWriter;
+import org.apache.tapestry5.services.ExceptionReporter;
+import org.apache.tapestry5.services.FieldTranslatorSource;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.HiddenFieldLocationRules;
+import org.apache.tapestry5.services.Html5Support;
+import org.apache.tapestry5.services.HttpError;
+import org.apache.tapestry5.services.InitializeActivePageName;
+import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.LinkCreationHub;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.NullFieldStrategySource;
+import org.apache.tapestry5.services.ObjectRenderer;
+import org.apache.tapestry5.services.PageDocumentGenerator;
+import org.apache.tapestry5.services.PageRenderLinkSource;
+import org.apache.tapestry5.services.PageRenderRequestFilter;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.PartialTemplateRenderer;
+import org.apache.tapestry5.services.PathConstructor;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.RelativeElementPosition;
+import org.apache.tapestry5.services.RequestExceptionHandler;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.ResponseRenderer;
+import org.apache.tapestry5.services.SelectModelFactory;
+import org.apache.tapestry5.services.StackTraceElementAnalyzer;
+import org.apache.tapestry5.services.StackTraceElementClassConstants;
+import org.apache.tapestry5.services.StreamPageContent;
+import org.apache.tapestry5.services.Traditional;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TranslatorAlternatesSource;
+import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.URLEncoder;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.services.ValidationDecoratorFactory;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.ValueLabelProvider;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
@@ -104,34 +379,28 @@ import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.InjectionProvider2;
-import org.apache.tapestry5.validator.*;
+import org.apache.tapestry5.validator.Checked;
+import org.apache.tapestry5.validator.Email;
+import org.apache.tapestry5.validator.Max;
+import org.apache.tapestry5.validator.MaxLength;
+import org.apache.tapestry5.validator.Min;
+import org.apache.tapestry5.validator.MinLength;
+import org.apache.tapestry5.validator.None;
+import org.apache.tapestry5.validator.Regexp;
+import org.apache.tapestry5.validator.Required;
+import org.apache.tapestry5.validator.Unchecked;
+import org.apache.tapestry5.validator.ValidatorMacro;
 import org.slf4j.Logger;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * The root module for Tapestry.
  */
 @Marker(Core.class)
 @ImportModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class, TapestryHttpModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
-
-    private final ApplicationGlobals applicationGlobals;
 
     private final PropertyShadowBuilder shadowBuilder;
 
@@ -169,8 +438,6 @@ public final class TapestryModule
 
                           RequestGlobals requestGlobals,
 
-                          ApplicationGlobals applicationGlobals,
-
                           ChainBuilder chainBuilder,
 
                           Environment environment,
@@ -190,7 +457,6 @@ public final class TapestryModule
         this.pipelineBuilder = pipelineBuilder;
         this.shadowBuilder = shadowBuilder;
         this.requestGlobals = requestGlobals;
-        this.applicationGlobals = applicationGlobals;
         this.chainBuilder = chainBuilder;
         this.environment = environment;
         this.strategyBuilder = strategyBuilder;
@@ -201,121 +467,6 @@ public final class TapestryModule
         this.endOfRequestEventHub = endOfRequestEventHub;
     }
 
-    // A bunch of classes "promoted" from inline inner class to nested classes,
-    // just so that the stack trace would be more readable. Most of these
-    // are terminators for pipeline services.
-
-    /**
-     * @since 5.1.0.0
-     */
-    private class ApplicationInitializerTerminator implements ApplicationInitializer
-    {
-        public void initializeApplication(Context context)
-        {
-            applicationGlobals.storeContext(context);
-        }
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    private class HttpServletRequestHandlerTerminator implements HttpServletRequestHandler
-    {
-        private final RequestHandler handler;
-        private final String applicationCharset;
-        private final TapestrySessionFactory sessionFactory;
-
-        public HttpServletRequestHandlerTerminator(RequestHandler handler, String applicationCharset,
-                                                   TapestrySessionFactory sessionFactory)
-        {
-            this.handler = handler;
-            this.applicationCharset = applicationCharset;
-            this.sessionFactory = sessionFactory;
-        }
-
-        public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
-                throws IOException
-        {
-            requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
-
-            // Should have started doing this a long time ago: recoding attributes into
-            // the request for things that may be needed downstream, without having to extend
-            // Request.
-
-            servletRequest.setAttribute("servletAPI.protocol", servletRequest.getProtocol());
-            servletRequest.setAttribute("servletAPI.characterEncoding", servletRequest.getCharacterEncoding());
-            servletRequest.setAttribute("servletAPI.contentLength", servletRequest.getContentLength());
-            servletRequest.setAttribute("servletAPI.authType", servletRequest.getAuthType());
-            servletRequest.setAttribute("servletAPI.contentType", servletRequest.getContentType());
-            servletRequest.setAttribute("servletAPI.scheme", servletRequest.getScheme());
-
-            Request request = new RequestImpl(servletRequest, applicationCharset, sessionFactory);
-            Response response = new ResponseImpl(servletRequest, servletResponse);
-
-            // TAP5-257: Make sure that the "initial guess" for request/response
-            // is available, even ifsome filter in the RequestHandler pipeline replaces them.
-            // Which just goes to show that there should have been only one way to access the Request/Response:
-            // either functionally (via parameters) or global (via ReqeuestGlobals) but not both.
-            // That ship has sailed.
-
-            requestGlobals.storeRequestResponse(request, response);
-
-            // Transition from the Servlet API-based pipeline, to the
-            // Tapestry-based pipeline.
-
-            return handler.service(request, response);
-        }
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    private class ServletApplicationInitializerTerminator implements ServletApplicationInitializer
-    {
-        private final ApplicationInitializer initializer;
-
-        public ServletApplicationInitializerTerminator(ApplicationInitializer initializer)
-        {
-            this.initializer = initializer;
-        }
-
-        public void initializeApplication(ServletContext servletContext)
-        {
-            applicationGlobals.storeServletContext(servletContext);
-
-            // And now, down the (Web) ApplicationInitializer pipeline ...
-
-            ContextImpl context = new ContextImpl(servletContext);
-
-            applicationGlobals.storeContext(context);
-
-            initializer.initializeApplication(context);
-        }
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    private class RequestHandlerTerminator implements RequestHandler
-    {
-        private final Dispatcher masterDispatcher;
-
-        public RequestHandlerTerminator(Dispatcher masterDispatcher)
-        {
-            this.masterDispatcher = masterDispatcher;
-        }
-
-        public boolean service(Request request, Response response) throws IOException
-        {
-            // Update RequestGlobals with the current request/response (in case
-            // some filter replaced the
-            // normal set).
-            requestGlobals.storeRequestResponse(request, response);
-
-            return masterDispatcher.dispatch(request, response);
-        }
-    }
-
     public static void bind(ServiceBinder binder)
     {
         binder.bind(PersistentLocale.class, PersistentLocaleImpl.class);
@@ -324,10 +475,8 @@ public final class TapestryModule
                 ApplicationStatePersistenceStrategySourceImpl.class);
         binder.bind(BindingSource.class, BindingSourceImpl.class);
         binder.bind(FieldValidatorSource.class, FieldValidatorSourceImpl.class);
-        binder.bind(ApplicationGlobals.class, ApplicationGlobalsImpl.class);
         binder.bind(Cookies.class, CookiesImpl.class);
         binder.bind(FieldValidatorDefaultSource.class, FieldValidatorDefaultSourceImpl.class);
-        binder.bind(RequestGlobals.class, RequestGlobalsImpl.class);
         binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);  // Remove in 5.5
         binder.bind(ValidationConstraintGenerator.class, ValidationConstraintGeneratorImpl.class);
         binder.bind(EnvironmentalShadowBuilder.class, EnvironmentalShadowBuilderImpl.class);
@@ -344,7 +493,6 @@ public final class TapestryModule
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
         binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withSimpleId();
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
-        binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
@@ -360,7 +508,6 @@ public final class TapestryModule
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withSimpleId();
-        binder.bind(TapestrySessionFactory.class, TapestrySessionFactoryImpl.class);
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
@@ -454,7 +601,7 @@ public final class TapestryModule
 
     @Contribute(ComponentClassResolver.class)
     public static void provideCoreAndAppLibraries(Configuration<LibraryMapping> configuration,
-                                                  @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                  @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                                   String appRootPackage)
     {
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib"));
@@ -609,8 +756,8 @@ public final class TapestryModule
      * <dd>Checks for {@link org.apache.tapestry5.beaneditor.DataType} annotation</dd>
      * <dt>Default (ordered last)</dt>
      * <dd>
-     * {@link org.apache.tapestry5.internal.services.DefaultDataTypeAnalyzer} service (
-     * {@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry5.ioc.MappedConfiguration)} )</dd>
+     * {@link org.apache.tapestry5.commons.internal.services.DefaultDataTypeAnalyzer} service (
+     * {@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry5.commons.MappedConfiguration)} )</dd>
      * </dl>
      */
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration,
@@ -774,7 +921,7 @@ public final class TapestryModule
     /**
      * <dl>
      * <dt>StoreIntoGlobals</dt>
-     * <dd>Stores the request and response into {@link org.apache.tapestry5.services.RequestGlobals} at the start of the
+     * <dd>Stores the request and response into {@link org.apache.tapestry5.http.services.RequestGlobals} at the start of the
      * pipeline</dd>
      * <dt>IgnoredPaths</dt>
      * <dd>Identifies requests that are known (via the IgnoredPathsFilter service's configuration) to be mapped to other
@@ -785,31 +932,10 @@ public final class TapestryModule
      */
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
 
-                                                    @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-                                                    boolean gzipCompressionEnabled,
-
-                                                    @Autobuild
-                                                    GZipFilter gzipFilter,
-
                                                     @InjectService("IgnoredPathsFilter")
                                                     HttpServletRequestFilter ignoredPathsFilter)
     {
         configuration.add("IgnoredPaths", ignoredPathsFilter);
-
-        configuration.add("GZIP", gzipCompressionEnabled ? gzipFilter : null);
-
-        HttpServletRequestFilter storeIntoGlobals = new HttpServletRequestFilter()
-        {
-            public boolean service(HttpServletRequest request, HttpServletResponse response,
-                                   HttpServletRequestHandler handler) throws IOException
-            {
-                requestGlobals.storeServletRequestResponse(request, response);
-
-                return handler.service(request, response);
-            }
-        };
-
-        configuration.add("StoreIntoGlobals", storeIntoGlobals, "before:*");
     }
 
     /**
@@ -826,7 +952,7 @@ public final class TapestryModule
      * <dd>Catches request errors and lets the {@link org.apache.tapestry5.services.RequestExceptionHandler} handle them
      * </dd>
      * <dt>StoreIntoGlobals</dt>
-     * <dd>Stores the request and response into the {@link org.apache.tapestry5.services.RequestGlobals} service (this
+     * <dd>Stores the request and response into the {@link org.apache.tapestry5.http.services.RequestGlobals} service (this
      * is repeated at the end of the pipeline, in case any filter substitutes the request or response).
      * <dt>EndOfRequest</dt>
      * <dd>Notifies internal services that the request has ended</dd>
@@ -834,7 +960,7 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-                                         @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                         @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                          boolean productionMode)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
@@ -1231,7 +1357,7 @@ public final class TapestryModule
 
     /**
      * Analyzes properties to determine the data types, used to
-     * {@linkplain #provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)} locale
+     * {@linkplain #provideDefaultBeanBlocks(org.apache.tapestry5.commons.Configuration)} locale
      * display and edit blocks for properties. The default behaviors
      * look for a {@link org.apache.tapestry5.beaneditor.DataType} annotation
      * before deriving the data type from the property type.
@@ -1252,61 +1378,6 @@ public final class TapestryModule
     public InjectionProvider2 buildInjectionProvider(List<InjectionProvider2> configuration)
     {
         return chainBuilder.build(InjectionProvider2.class, configuration);
-    }
-
-    /**
-     * Initializes the application, using a pipeline of {@link org.apache.tapestry5.services.ApplicationInitializer}s.
-     */
-    @Marker(Primary.class)
-    public ApplicationInitializer buildApplicationInitializer(Logger logger,
-                                                              List<ApplicationInitializerFilter> configuration)
-    {
-        ApplicationInitializer terminator = new ApplicationInitializerTerminator();
-
-        return pipelineBuilder.build(logger, ApplicationInitializer.class, ApplicationInitializerFilter.class,
-                configuration, terminator);
-    }
-
-    public HttpServletRequestHandler buildHttpServletRequestHandler(Logger logger,
-
-                                                                    List<HttpServletRequestFilter> configuration,
-
-                                                                    @Primary
-                                                                    RequestHandler handler,
-
-                                                                    @Symbol(SymbolConstants.CHARSET)
-                                                                    String applicationCharset,
-
-                                                                    TapestrySessionFactory sessionFactory)
-    {
-        HttpServletRequestHandler terminator = new HttpServletRequestHandlerTerminator(handler, applicationCharset,
-                sessionFactory);
-
-        return pipelineBuilder.build(logger, HttpServletRequestHandler.class, HttpServletRequestFilter.class,
-                configuration, terminator);
-    }
-
-    @Marker(Primary.class)
-    public RequestHandler buildRequestHandler(Logger logger, List<RequestFilter> configuration,
-
-                                              @Primary
-                                              Dispatcher masterDispatcher)
-    {
-        RequestHandler terminator = new RequestHandlerTerminator(masterDispatcher);
-
-        return pipelineBuilder.build(logger, RequestHandler.class, RequestFilter.class, configuration, terminator);
-    }
-
-    public ServletApplicationInitializer buildServletApplicationInitializer(Logger logger,
-                                                                            List<ServletApplicationInitializerFilter> configuration,
-
-                                                                            @Primary
-                                                                            ApplicationInitializer initializer)
-    {
-        ServletApplicationInitializer terminator = new ServletApplicationInitializerTerminator(initializer);
-
-        return pipelineBuilder.build(logger, ServletApplicationInitializer.class,
-                ServletApplicationInitializerFilter.class, configuration, terminator);
     }
 
     /**
@@ -1405,54 +1476,6 @@ public final class TapestryModule
     }
 
     /**
-     * Ordered contributions to the MasterDispatcher service allow different URL
-     * matching strategies to occur.
-     */
-    @Marker(Primary.class)
-    public Dispatcher buildMasterDispatcher(List<Dispatcher> configuration)
-    {
-        return chainBuilder.build(Dispatcher.class, configuration);
-    }
-
-    /**
-     * Builds a shadow of the RequestGlobals.request property. Note again that
-     * the shadow can be an ordinary singleton,
-     * even though RequestGlobals is perthread.
-     */
-    public Request buildRequest()
-    {
-        return shadowBuilder.build(requestGlobals, "request", Request.class);
-    }
-
-    /**
-     * Builds a shadow of the RequestGlobals.HTTPServletRequest property.
-     * Generally, you should inject the {@link Request} service instead, as
-     * future version of Tapestry may operate beyond just the servlet API.
-     */
-    public HttpServletRequest buildHttpServletRequest()
-    {
-        return shadowBuilder.build(requestGlobals, "HTTPServletRequest", HttpServletRequest.class);
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    public HttpServletResponse buildHttpServletResponse()
-    {
-        return shadowBuilder.build(requestGlobals, "HTTPServletResponse", HttpServletResponse.class);
-    }
-
-    /**
-     * Builds a shadow of the RequestGlobals.response property. Note again that
-     * the shadow can be an ordinary singleton,
-     * even though RequestGlobals is perthread.
-     */
-    public Response buildResponse()
-    {
-        return shadowBuilder.build(requestGlobals, "response", Response.class);
-    }
-
-    /**
      * The MarkupRenderer service is used to render a full page as markup.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.MarkupRendererFilter}s.
      */
@@ -1472,7 +1495,6 @@ public final class TapestryModule
                                                             List<PartialMarkupRendererFilter> configuration, @Autobuild
     PartialMarkupRendererTerminator terminator)
     {
-
         return pipelineBuilder.build(logger, PartialMarkupRenderer.class, PartialMarkupRendererFilter.class,
                 configuration, terminator);
     }
@@ -1606,7 +1628,7 @@ public final class TapestryModule
      * <dd>The stream response is sent as the actual response</dd>
      * <dt>String</dt>
      * <dd>Interprets the value as a logical page name and sends a client response to redirect to that page</dd>
-     * <dt>{@link org.apache.tapestry5.Link}</dt>
+     * <dt>{@link org.apache.tapestry5.http.Link}</dt>
      * <dd>Sends a JSON response to redirect to the link</dd>
      * <dt>{@link Class}</dt>
      * <dd>Treats the class as a page class and sends a redirect for a page render for that page</dd>
@@ -1667,7 +1689,7 @@ public final class TapestryModule
 
     /**
      * Contributes a default object renderer for type Object, plus specialized
-     * renderers for {@link org.apache.tapestry5.services.Request}, {@link org.apache.tapestry5.ioc.Location},
+     * renderers for {@link org.apache.tapestry5.http.services.Request}, {@link org.apache.tapestry5.commons.Location},
      * {@link org.apache.tapestry5.ComponentResources}, {@link org.apache.tapestry5.EventContext},
      * {@link AvailableValues},
      * List, and Object[].
@@ -1724,7 +1746,7 @@ public final class TapestryModule
      * </dl>
      *
      * @see org.apache.tapestry5.SymbolConstants#OMIT_GENERATOR_META
-     * @see org.apache.tapestry5.SymbolConstants#PRODUCTION_MODE
+     * @see org.apache.tapestry5.http.TapestryHttpSymbolConstants#PRODUCTION_MODE
      * @see org.apache.tapestry5.SymbolConstants#INCLUDE_CORE_STACK
      * @see org.apache.tapestry5.SymbolConstants#ENABLE_PAGELOADING_MASK
      */
@@ -1738,7 +1760,7 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
 
-                                         @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                         @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                          boolean productionMode,
 
                                          @Symbol(SymbolConstants.INCLUDE_CORE_STACK)
@@ -2033,9 +2055,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
-        configuration.add(SymbolConstants.PRODUCTION_MODE, true);
-
-        configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
@@ -2060,16 +2080,10 @@ public final class TapestryModule
 
         configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
 
-        configuration.add(SymbolConstants.CHARSET, "UTF-8");
-
         configuration.add(SymbolConstants.APPLICATION_CATALOG,
-                String.format("context:WEB-INF/${%s}.properties", InternalSymbols.APP_NAME));
+                String.format("context:WEB-INF/${%s}.properties", TapestryHttpInternalSymbols.APP_NAME));
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
-
-        configuration.add(SymbolConstants.MIN_GZIP_SIZE, 100);
-
-        configuration.add(SymbolConstants.APPLICATION_VERSION, "0.0.1");
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, false);
 
@@ -2081,11 +2095,6 @@ public final class TapestryModule
         configuration.add(InternalSymbols.RESERVED_FORM_CONTROL_NAMES, "reset,submit,select,id,method,action,onsubmit," + InternalConstants.CANCEL_NAME);
 
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, false);
-
-        // The default values denote "use values from request"
-        configuration.add(SymbolConstants.HOSTNAME, "");
-        configuration.add(SymbolConstants.HOSTPORT, 0);
-        configuration.add(SymbolConstants.HOSTPORT_SECURE, 0);
 
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
 
@@ -2116,13 +2125,11 @@ public final class TapestryModule
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
-        configuration.add(SymbolConstants.CONTEXT_PATH, "");
+        configuration.add(TapestryHttpSymbolConstants.CONTEXT_PATH, "");
 
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
-
-        configuration.add(SymbolConstants.SESSION_LOCKING_ENABLED, true);
 
         // TAP5-2070 keep the old behavior, defaults to false
         configuration.add(MetaDataConstants.UNKNOWN_ACTIVATION_CONTEXT_CHECK, false);
@@ -2349,46 +2356,6 @@ public final class TapestryModule
     }
 
     /**
-     * The master SessionPersistedObjectAnalyzer.
-     *
-     * @since 5.1.0.0
-     */
-    @Marker(Primary.class)
-    public SessionPersistedObjectAnalyzer buildSessionPersistedObjectAnalyzer(
-            Map<Class, SessionPersistedObjectAnalyzer> configuration)
-    {
-        return strategyBuilder.build(SessionPersistedObjectAnalyzer.class, configuration);
-    }
-
-    /**
-     * Identifies String, Number and Boolean as immutable objects, a catch-all
-     * handler for Object (that understands
-     * the {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject} annotation),
-     * and a handler for {@link org.apache.tapestry5.OptimizedSessionPersistedObject}.
-     *
-     * @since 5.1.0.0
-     */
-    public static void contributeSessionPersistedObjectAnalyzer(
-            MappedConfiguration<Class, SessionPersistedObjectAnalyzer> configuration)
-    {
-        configuration.add(Object.class, new DefaultSessionPersistedObjectAnalyzer());
-
-        SessionPersistedObjectAnalyzer<Object> immutable = new SessionPersistedObjectAnalyzer<Object>()
-        {
-            public boolean checkAndResetDirtyState(Object sessionPersistedObject)
-            {
-                return false;
-            }
-        };
-
-        configuration.add(String.class, immutable);
-        configuration.add(Number.class, immutable);
-        configuration.add(Boolean.class, immutable);
-
-        configuration.add(OptimizedSessionPersistedObject.class, new OptimizedSessionPersistedObjectAnalyzer());
-    }
-
-    /**
      * @since 5.1.1.0
      */
     @Marker(Primary.class)
@@ -2435,7 +2402,7 @@ public final class TapestryModule
     /**
      * Advises the {@link org.apache.tapestry5.services.messages.ComponentMessagesSource} service so
      * that the creation
-     * of {@link org.apache.tapestry5.ioc.Messages} instances can be deferred.
+     * of {@link org.apache.tapestry5.commons.Messages} instances can be deferred.
      *
      * @since 5.1.0.0
      */
@@ -2474,7 +2441,7 @@ public final class TapestryModule
      *
      * @since 5.2.0
      */
-    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         configuration.addInstance("OperationTracker", RequestOperationTracker.class);
 
@@ -2637,7 +2604,7 @@ public final class TapestryModule
      */
     @Contribute(ServiceOverride.class)
     public static void productionModeOverrides(MappedConfiguration<Class, Object> configuration,
-                                               @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                               @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                                boolean productionMode)
     {
         if (productionMode)
@@ -2788,5 +2755,5 @@ public final class TapestryModule
             return info;
         }
     }
-
+    
 }

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services.security;
 
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 

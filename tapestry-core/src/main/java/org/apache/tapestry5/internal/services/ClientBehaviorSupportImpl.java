@@ -13,8 +13,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.corelib.data.InsertPosition;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport

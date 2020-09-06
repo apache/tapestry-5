@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.xml.sax.*;
 import org.xml.sax.ext.Attributes2;
 import org.xml.sax.ext.LexicalHandler;

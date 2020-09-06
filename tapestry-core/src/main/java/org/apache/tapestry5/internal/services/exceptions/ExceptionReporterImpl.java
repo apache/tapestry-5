@@ -13,10 +13,10 @@
 package org.apache.tapestry5.internal.services.exceptions;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ExceptionReportWriter;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.slf4j.Logger;

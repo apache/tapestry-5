@@ -14,19 +14,21 @@
 
 package org.apache.tapestry5.spring.modules;
 
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.http.services.ApplicationInitializer;
+import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.internal.spring.SymbolBeanFactoryPostProcessor;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.services.ApplicationInitializer;
-import org.apache.tapestry5.services.ApplicationInitializerFilter;
-import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.modules.TapestryModule;
 import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.SpringConstants;
 import org.slf4j.Logger;
@@ -43,6 +45,7 @@ import java.util.List;
  *
  * @since 5.1.0.0
  */
+@ImportModule(TapestryModule.class)
 public class SpringModule
 {
     private final Logger logger;
@@ -53,6 +56,7 @@ public class SpringModule
     }
 
     @Contribute(ApplicationInitializer.class)
+    @Primary
     public void reportSpringContextDetailsAtStartup(
             OrderedConfiguration<ApplicationInitializerFilter> configuration, final ApplicationContext springContext)
     {

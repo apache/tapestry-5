@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Collections;
 import java.util.Map;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Used by {@link org.apache.tapestry5.dom.Element} to construct namespace URI to prefix maps.

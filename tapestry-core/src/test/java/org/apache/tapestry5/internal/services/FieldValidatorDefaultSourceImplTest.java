@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;

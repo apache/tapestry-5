@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;

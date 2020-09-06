@@ -16,12 +16,12 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.MetaDataLocator;

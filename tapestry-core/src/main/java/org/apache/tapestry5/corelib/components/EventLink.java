@@ -14,9 +14,9 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
+import org.apache.tapestry5.http.Link;
 
 /**
  * A close relative of {@link org.apache.tapestry5.corelib.components.ActionLink} except in two ways.

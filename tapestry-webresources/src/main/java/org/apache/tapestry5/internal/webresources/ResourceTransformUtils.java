@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.webresources;
 
-import org.apache.tapestry5.ioc.Resource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Adler32;
+
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * @since 5.4

@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.http.Link;
 
 public class PageRenderLinkSourceImpl implements PageRenderLinkSource
 {

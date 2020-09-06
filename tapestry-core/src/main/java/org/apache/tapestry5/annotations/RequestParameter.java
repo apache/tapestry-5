@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.annotations;
 
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.transform.OnEventWorker;
 import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.services.Request;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

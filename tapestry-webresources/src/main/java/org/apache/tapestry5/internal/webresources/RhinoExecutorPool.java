@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.webresources;
 
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.NativeFunction;

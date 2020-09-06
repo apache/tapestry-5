@@ -20,12 +20,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Description;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -90,7 +90,7 @@ public class ComponentLibraries
     private Block classesTable;
     
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     @Property
     private boolean productionMode;
     

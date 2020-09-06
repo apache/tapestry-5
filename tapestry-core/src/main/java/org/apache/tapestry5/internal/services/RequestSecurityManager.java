@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.LinkSecurity;
+import org.apache.tapestry5.http.LinkSecurity;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 
@@ -24,7 +24,7 @@ import java.io.IOException;
  * Used to manage the relationship between the security of a request and the security of a page. By secure, we mean
  * whether a request uses HTTPS and whether a page demands the use of HTTPS.
  *
- * @see org.apache.tapestry5.services.Request#isSecure()
+ * @see org.apache.tapestry5.http.services.Request#isSecure()
  */
 public interface RequestSecurityManager
 {

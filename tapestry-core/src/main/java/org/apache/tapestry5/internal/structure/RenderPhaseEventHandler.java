@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.Renderable;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 

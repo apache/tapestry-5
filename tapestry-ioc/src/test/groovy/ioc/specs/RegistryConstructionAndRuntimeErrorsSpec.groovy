@@ -1,9 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule
-import org.apache.tapestry5.ioc.internal.PrivateConstructorModule
-import org.apache.tapestry5.ioc.internal.UpcaseService
-import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.DuplicateFredModule
+import org.apache.tapestry5.ioc.test.ExtraMethodsModule
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.NoImplementationClassForSimpleIdModule
+import org.apache.tapestry5.ioc.test.RecursiveConstructorModule
+import org.apache.tapestry5.ioc.test.UnknownScopeModule
+import org.apache.tapestry5.ioc.test.internal.ExtraPublicConstructorsModule
+import org.apache.tapestry5.ioc.test.internal.PrivateConstructorModule
+import org.apache.tapestry5.ioc.test.internal.UpcaseService
 
 /**
  * A few tests that are easiest (or even just possible) by building a Registry and trying out a few
@@ -75,7 +80,7 @@ class RegistryConstructionAndRuntimeErrorsSpec extends AbstractRegistrySpecifica
 
     RuntimeException e = thrown()
 
-    e.message.contains "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors."
+    e.message.contains "Module class org.apache.tapestry5.ioc.test.internal.PrivateConstructorModule does not contain any public constructors."
   }
 
   def "extra public constructors on a module class are ignored"() {
@@ -99,7 +104,7 @@ class RegistryConstructionAndRuntimeErrorsSpec extends AbstractRegistrySpecifica
 
     RuntimeException e = thrown()
 
-    e.message.contains "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: "
+    e.message.contains "Module class org.apache.tapestry5.ioc.test.ExtraMethodsModule contains unrecognized public methods: "
     e.message.contains "thisMethodIsInvalid()"
     e.message.contains "soIsThisMethod()"
   }

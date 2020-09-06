@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.StackTraceElementAnalyzer;
 import org.apache.tapestry5.services.StackTraceElementClassConstants;
@@ -28,7 +28,7 @@ public class ApplicationStackTraceElementAnalyzer implements StackTraceElementAn
 {
     private final String appPackage;
 
-    public ApplicationStackTraceElementAnalyzer(@Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    public ApplicationStackTraceElementAnalyzer(@Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     String appPackage)
     {
         this.appPackage = appPackage;

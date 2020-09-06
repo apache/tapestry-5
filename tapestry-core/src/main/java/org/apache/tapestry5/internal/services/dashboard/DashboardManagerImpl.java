@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services.dashboard;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.dashboard.DashboardManager;

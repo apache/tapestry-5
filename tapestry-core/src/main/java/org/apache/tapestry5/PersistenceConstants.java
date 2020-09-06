@@ -22,7 +22,7 @@ package org.apache.tapestry5;
 public class PersistenceConstants
 {
     /**
-     * The field's value is stored in the {@link org.apache.tapestry5.services.Session}.
+     * The field's value is stored in the {@link org.apache.tapestry5.http.services.Session}.
      */
     public static final String SESSION = "session";
 

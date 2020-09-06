@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.SessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.PersistentFieldChange;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
 

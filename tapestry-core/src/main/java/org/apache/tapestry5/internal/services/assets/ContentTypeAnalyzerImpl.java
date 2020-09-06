@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.services.assets;
 
 import java.util.Map;
 
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.assets.ContentTypeAnalyzer;
 
 public class ContentTypeAnalyzerImpl implements ContentTypeAnalyzer

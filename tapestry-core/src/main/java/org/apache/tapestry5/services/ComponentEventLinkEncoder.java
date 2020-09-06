@@ -12,12 +12,13 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
 
 /**
- * Responsible for creating {@link org.apache.tapestry5.Link}s for page render requests and for component event
+ * Responsible for creating {@link org.apache.tapestry5.http.Link}s for page render requests and for component event
  * requests, and for parsing incoming paths to identify requests that are component event or page render requests. This
  * centralizes some logic that was scattered about in Tapestry 5.0.
  * 
@@ -57,7 +58,7 @@ public interface ComponentEventLinkEncoder
      * In many cases the context name is blank, so the path begins with a "/" and then the locale name or page name.
      *
      * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create". The context
-     * portion isn't the concern of this code, since {@link org.apache.tapestry5.services.Request#getPath()} will
+     * portion isn't the concern of this code, since {@link org.apache.tapestry5.http.services.Request#getPath()} will
      * already have stripped that off. We can act as if the context is always "/" (the path always starts with a slash).
      *
      * Passes the resulting Link through the {@link ComponentEventLinkTransformer} chain of command, returning the
@@ -72,7 +73,7 @@ public interface ComponentEventLinkEncoder
     Link createComponentEventLink(ComponentEventRequestParameters parameters, boolean forForm);
 
     /**
-     * Checks the request, primarily the {@linkplain org.apache.tapestry5.services.Request#getPath() path}, to determine
+     * Checks the request, primarily the {@linkplain org.apache.tapestry5.http.services.Request#getPath() path}, to determine
      * the if the request is a component event request. As a side-effect (necessary for historical reasons), responsible
      * for setting the locale for the thread, including the {@link org.apache.tapestry5.services.PersistentLocale} ...
      * but only if the locale is a component event.
@@ -84,7 +85,7 @@ public interface ComponentEventLinkEncoder
     ComponentEventRequestParameters decodeComponentEventRequest(Request request);
 
     /**
-     * Checks the request, primarily the {@linkplain org.apache.tapestry5.services.Request#getPath() path}, to determine
+     * Checks the request, primarily the {@linkplain org.apache.tapestry5.http.services.Request#getPath() path}, to determine
      * the if the request is a page render request. As a side-effect (necessary for historical reasons), responsible for
      * setting the locale for the thread, including the {@link org.apache.tapestry5.services.PersistentLocale} ... but
      * only if the request is a page render.

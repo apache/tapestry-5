@@ -17,9 +17,9 @@ package org.apache.tapestry5.services.messages;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CaseInsensitiveMap;
 
 /**
  * Used when constructing a component's {@link Messages} object. Responsible for reading the

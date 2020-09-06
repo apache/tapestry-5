@@ -14,7 +14,7 @@ package org.apache.tapestry5.internal.webresources;
 
 import com.github.sommeri.less4j.LessSource;
 import org.apache.commons.io.IOUtils;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 

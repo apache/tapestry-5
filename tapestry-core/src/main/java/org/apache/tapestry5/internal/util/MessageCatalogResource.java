@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.util;
 
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 

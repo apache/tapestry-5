@@ -15,9 +15,9 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
+import org.apache.tapestry5.http.Link;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.

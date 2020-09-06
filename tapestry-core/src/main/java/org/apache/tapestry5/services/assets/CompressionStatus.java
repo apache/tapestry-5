@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.services.Response;
 
 /**
  * Indicates how the content inside a {@link StreamableResource} is (potentially) compressed.

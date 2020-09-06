@@ -15,13 +15,13 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.SessionAttribute;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.FieldConduit;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 

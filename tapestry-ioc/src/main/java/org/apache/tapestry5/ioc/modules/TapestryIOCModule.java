@@ -15,18 +15,83 @@
 package org.apache.tapestry5.ioc.modules;
 
 import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.BasicTypeCoercions;
+import org.apache.tapestry5.commons.internal.services.*;
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.IOCSymbols;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.internal.BasicTypeCoercions;
-import org.apache.tapestry5.ioc.internal.services.*;
+import org.apache.tapestry5.ioc.internal.services.AspectDecoratorImpl;
+import org.apache.tapestry5.ioc.internal.services.AutobuildObjectProvider;
+import org.apache.tapestry5.ioc.internal.services.ChainBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
+import org.apache.tapestry5.ioc.internal.services.ClasspathScannerImpl;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.internal.services.DefaultImplementationBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.ExceptionAnalyzerImpl;
+import org.apache.tapestry5.ioc.internal.services.ExceptionTrackerImpl;
+import org.apache.tapestry5.ioc.internal.services.LazyAdvisorImpl;
+import org.apache.tapestry5.ioc.internal.services.LoggingAdvisorImpl;
+import org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImpl;
+import org.apache.tapestry5.ioc.internal.services.MapSymbolProvider;
+import org.apache.tapestry5.ioc.internal.services.MasterObjectProviderImpl;
+import org.apache.tapestry5.ioc.internal.services.NonParallelExecutor;
+import org.apache.tapestry5.ioc.internal.services.OperationAdvisorImpl;
+import org.apache.tapestry5.ioc.internal.services.ParallelExecutorImpl;
+import org.apache.tapestry5.ioc.internal.services.PerThreadServiceLifecycle;
+import org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.PropertyShadowBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.RegistryStartup;
+import org.apache.tapestry5.ioc.internal.services.ServiceOverrideImpl;
+import org.apache.tapestry5.ioc.internal.services.StrategyBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.SymbolObjectProvider;
+import org.apache.tapestry5.ioc.internal.services.SymbolSourceImpl;
+import org.apache.tapestry5.ioc.internal.services.SystemEnvSymbolProvider;
+import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
+import org.apache.tapestry5.ioc.internal.services.ThreadLocaleImpl;
+import org.apache.tapestry5.ioc.internal.services.ThunkCreatorImpl;
+import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
+import org.apache.tapestry5.ioc.internal.services.ValueObjectProvider;
 import org.apache.tapestry5.ioc.internal.services.cron.PeriodicExecutorImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ApplicationDefaults;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.services.ClasspathScanner;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
+import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
+import org.apache.tapestry5.ioc.services.ExceptionTracker;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.LazyAdvisor;
+import org.apache.tapestry5.ioc.services.LoggingAdvisor;
+import org.apache.tapestry5.ioc.services.LoggingDecorator;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.OperationAdvisor;
+import org.apache.tapestry5.ioc.services.ParallelExecutor;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.ServiceConfigurationListenerHub;
+import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.services.ThunkCreator;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
-import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -181,8 +246,8 @@ public final class TapestryIOCModule
      * <li>primitive[] to List</li>
      * <li>Object to List (by wrapping as a singleton list)</li>
      * <li>String to File</li>
-     * <li>String to {@link org.apache.tapestry5.ioc.util.TimeInterval}</li>
-     * <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to Long</li>
+     * <li>String to {@link org.apache.tapestry5.commons.util.TimeInterval}</li>
+     * <li>{@link org.apache.tapestry5.commons.util.TimeInterval} to Long</li>
      * <li>Object to Object[] (wrapping the object as an array)</li>
      * <li>Collection to Object[] (via the toArray() method)
      * <li>{@link Flow} to List</li>

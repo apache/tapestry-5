@@ -13,9 +13,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.MetaDataLocator;
@@ -28,7 +28,7 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 
     public PageContentTypeAnalyzerImpl(MetaDataLocator metaDataLocator,
 
-    @Symbol(SymbolConstants.CHARSET)
+    @Symbol(TapestryHttpSymbolConstants.CHARSET)
     String outputCharset)
     {
         this.metaDataLocator = metaDataLocator;

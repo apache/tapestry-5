@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.def;
 
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.slf4j.Logger;
 

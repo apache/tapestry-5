@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.slf4j.Logger;
 
 /**
- * Decorator for {@link org.apache.tapestry5.ioc.ObjectCreator} that ensures the service is only created once. This
+ * Decorator for {@link org.apache.tapestry5.commons.ObjectCreator} that ensures the service is only created once. This
  * detects a situation where the service builder for a service directly or indirectly invokes methods on the service
  * itself. This would show up as a second call up the ServiceCreator stack injected into the proxy, potentially leading
  * to endless recursion. We try to identify that recursion and produce a useable exception report.

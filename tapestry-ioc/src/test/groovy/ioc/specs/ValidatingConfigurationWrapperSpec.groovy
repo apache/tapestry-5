@@ -1,9 +1,10 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.Configuration
-import org.apache.tapestry5.ioc.ObjectLocator
+import org.apache.tapestry5.commons.Configuration
+import org.apache.tapestry5.commons.ObjectLocator
 import org.apache.tapestry5.ioc.internal.TypeCoercerProxy
 import org.apache.tapestry5.ioc.internal.ValidatingConfigurationWrapper
+
 import spock.lang.Specification
 
 class ValidatingConfigurationWrapperSpec extends Specification {

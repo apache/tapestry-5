@@ -19,7 +19,7 @@ package org.apache.tapestry5;
  * ability to coerce
  * or encode parameters as needed.
  * 
- * @see org.apache.tapestry5.ioc.services.TypeCoercer
+ * @see org.apache.tapestry5.commons.services.TypeCoercer
  * @see org.apache.tapestry5.ValueEncoder
  */
 public interface EventContext

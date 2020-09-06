@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newLinkedList;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
 
 public class SymbolSourceImpl implements SymbolSource
 {

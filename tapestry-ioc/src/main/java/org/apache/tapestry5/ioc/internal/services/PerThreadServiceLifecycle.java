@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.ServiceLifecycle;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 /**
  * Allows a service to exist "per thread" (in each thread). Creates a proxy that delegates to a per-thread instance.

@@ -15,8 +15,8 @@
 package org.example.app0.pages;
 
 import org.apache.tapestry5.grid.GridDataSource;
-import org.apache.tapestry5.hibernate.HibernateGridDataSource;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.hibernate.web.HibernateGridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;

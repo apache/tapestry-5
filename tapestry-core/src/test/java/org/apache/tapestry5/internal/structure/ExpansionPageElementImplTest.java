@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.testng.annotations.Test;

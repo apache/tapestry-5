@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.http.internal.SingleKeySymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.testng.Assert;
 import org.testng.annotations.Test;

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.services.messages;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.ioc.annotations.NotLazy;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.Locale;

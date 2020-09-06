@@ -17,20 +17,6 @@ import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 public class InternalSymbols
 {
     /**
-     * The name of the application (i.e., the name of the application filter). Used, for example, to
-     * select additional resources related to the application.
-     */
-    public static final String APP_NAME = "tapestry.app-name";
-
-    /**
-     * The application package converted to a path ('.' becomes '/'). Useful for finding resources
-     * on the classpath relevant to the application.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String APP_PACKAGE_PATH = "tapestry.app-package-path";
-
-    /**
      * Comma-separated list of pre-allocated Form component control names. Basically, this exists to
      * work around name collisions on the client side. Starting in 5.3, these names are
      * also pre-allocated as ids.

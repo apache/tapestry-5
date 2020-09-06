@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.beanvalidator;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
 
-import java.util.Collection;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import java.util.Collection;
 
 public class ClientConstraintDescriptorImpl implements ClientConstraintDescriptorSource
 {

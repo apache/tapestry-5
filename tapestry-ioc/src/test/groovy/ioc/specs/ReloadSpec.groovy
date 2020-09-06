@@ -4,7 +4,8 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
-import org.apache.tapestry5.services.UpdateListenerHub
+import org.apache.tapestry5.ioc.services.UpdateListenerHub
+
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import com.example.*

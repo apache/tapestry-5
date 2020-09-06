@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import javax.persistence.EntityManager;
 import javax.persistence.spi.PersistenceUnitInfo;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.EntityManagerSource;

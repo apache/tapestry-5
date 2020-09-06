@@ -14,17 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 
 /**
  * Base class for strategies that store their values as keys in the session. Implements a uniform format for the keys,
@@ -141,7 +141,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
      * @return persisted value
      * @see #convertPersistedToApplicationValue(Object)
      */
-    protected Object convertApplicationValueToPersisted(Object newValue)
+    public Object convertApplicationValueToPersisted(Object newValue)
     {
         return newValue;
     }
@@ -154,7 +154,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
      * @return application value
      * @see #convertPersistedToApplicationValue(Object)
      */
-    protected Object convertPersistedToApplicationValue(Object persistedValue)
+    public Object convertPersistedToApplicationValue(Object persistedValue)
     {
         return persistedValue;
     }

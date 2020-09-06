@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
-import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.BindingSource;
 

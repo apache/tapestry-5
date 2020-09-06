@@ -17,17 +17,17 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.testng.annotations.Test;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 
 import java.util.Collection;
 import java.util.Map;

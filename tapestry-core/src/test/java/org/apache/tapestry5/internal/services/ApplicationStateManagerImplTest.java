@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStateManager;

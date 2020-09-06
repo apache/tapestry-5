@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Used by some {@link ResourceTransformer} implementations to track additional dependencies that can arise

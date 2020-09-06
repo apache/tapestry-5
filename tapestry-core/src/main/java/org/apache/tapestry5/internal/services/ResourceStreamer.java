@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
@@ -35,7 +35,7 @@ import java.util.Set;
 public interface ResourceStreamer
 {
     /**
-     * Used to customize the behavior of {@link #streamResource(org.apache.tapestry5.ioc.Resource, java.lang.String, java.util.Set)}.
+     * Used to customize the behavior of {@link #streamResource(org.apache.tapestry5.commons.Resource, java.lang.String, java.util.Set)}.
      *
      * @since 5.4
      */

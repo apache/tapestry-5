@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.commons.internal.util.LockSupport;
+
 /**
  * Logic for handling one shot semantics for classes; classes that include a method (or methods) that "locks down" the
  * instance, to prevent it from being used again in the future.

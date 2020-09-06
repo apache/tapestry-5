@@ -15,13 +15,13 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
-import org.apache.tapestry5.services.RequestGlobals;
 
 @SuppressWarnings("all")
 public class ComponentSourceImpl implements ComponentSource

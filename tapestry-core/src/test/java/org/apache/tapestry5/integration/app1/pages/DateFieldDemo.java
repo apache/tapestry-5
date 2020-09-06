@@ -17,8 +17,8 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.PersistentLocale;
 
 import java.text.DateFormat;

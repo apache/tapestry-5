@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.services.ValueLabelProvider;
 
 /**

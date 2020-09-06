@@ -13,10 +13,14 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.components.SelectTest.Platform;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
@@ -28,11 +32,7 @@ import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ContextValueEncoder;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;

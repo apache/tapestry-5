@@ -13,11 +13,12 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.FieldHandle;
@@ -26,7 +27,6 @@ import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ComponentEventHandler;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;

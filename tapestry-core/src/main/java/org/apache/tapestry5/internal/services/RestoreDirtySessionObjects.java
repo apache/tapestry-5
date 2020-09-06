@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 
 /**
- * A listener that invokes {@link org.apache.tapestry5.services.Session#restoreDirtyObjects()}.
+ * A listener that invokes {@link org.apache.tapestry5.http.services.Session#restoreDirtyObjects()}.
  */
 public class RestoreDirtySessionObjects implements EndOfRequestListener
 {

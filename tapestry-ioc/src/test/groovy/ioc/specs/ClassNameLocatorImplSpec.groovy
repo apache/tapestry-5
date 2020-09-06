@@ -51,7 +51,7 @@ class ClassNameLocatorImplSpec extends Specification {
 
     def "can locate classes in local folder, but exclude inner classes"() {
 
-        def packageName = "org.apache.tapestry5.ioc.services"
+        def packageName = "org.apache.tapestry5.commons.services"
 
         when:
 
@@ -59,7 +59,7 @@ class ClassNameLocatorImplSpec extends Specification {
 
         then:
 
-        assertInList names, packageName, "SymbolSource", "CoercionTuple"
+        assertInList names, packageName, "DataTypeAnalyzer", "CoercionTuple"
 
         // This is an inner class and those should never be provided.
         assertNotInList names, packageName, 'CoercionTuple$CoercionWrapper'

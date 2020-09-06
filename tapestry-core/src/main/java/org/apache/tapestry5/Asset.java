@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * An Asset is any kind of resource that can be exposed to the client web browser. Although quite often an Asset is a
@@ -40,7 +40,7 @@ public interface Asset
      * checksum. This wasn't an issue in earlier releases where the clientURL incorporated a version number.
      *
      * Finally, starting in 5.4, this value will often be <em>variant</em>: the exact URL returned will depend on
-     * whether the underlying resource content is compressable, whether the current {@link org.apache.tapestry5.services.Request}
+     * whether the underlying resource content is compressable, whether the current {@link org.apache.tapestry5.http.services.Request}
      * supports compression.
      *
      * @see org.apache.tapestry5.services.AssetSource

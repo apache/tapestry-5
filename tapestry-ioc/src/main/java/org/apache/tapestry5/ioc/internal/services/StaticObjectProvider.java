@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectProvider;
 
 /**
  * Provides a single object of a given type.

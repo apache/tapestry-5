@@ -15,19 +15,20 @@
 package org.apache.tapestry5.integration.app3.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.integration.app3.components.OverrideComponent;
 import org.apache.tapestry5.integration.app3.components.OverridenComponent;
 import org.apache.tapestry5.integration.app3.mixins.OverrideMixin;
 import org.apache.tapestry5.integration.app3.mixins.OverridenMixin;
 import org.apache.tapestry5.integration.app3.pages.OverridePage;
 import org.apache.tapestry5.integration.app3.pages.OverridenPage;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.services.ComponentOverride;
 import org.apache.tapestry5.services.DisplayBlockContribution;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.security.ClientWhitelist;
@@ -52,9 +53,9 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
+        configuration.add(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
 
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
 
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
         

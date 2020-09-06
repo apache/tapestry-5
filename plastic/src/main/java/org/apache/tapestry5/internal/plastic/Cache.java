@@ -21,8 +21,8 @@ import java.util.Map;
  * Quick and dirty key/value cache that is subclassed to provide the logic that generates the value for
  * a missing key.
  * 
- * @param <S>
- * @param <T>
+ * @param <S> key type
+ * @param <T> value type
  */
 public abstract class Cache<S, T>
 {

@@ -15,14 +15,14 @@
 package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Context;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.ObjectRenderer;
-import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     private final ObjectRenderer masterObjectRenderer;
 
-    public RequestRenderer(@Primary ObjectRenderer masterObjectRenderer, Context context, @Symbol(SymbolConstants.CONTEXT_PATH) String contextPath)
+    public RequestRenderer(@Primary ObjectRenderer masterObjectRenderer, Context context, @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH) String contextPath)
     {
         this.masterObjectRenderer = masterObjectRenderer;
         this.context = context;

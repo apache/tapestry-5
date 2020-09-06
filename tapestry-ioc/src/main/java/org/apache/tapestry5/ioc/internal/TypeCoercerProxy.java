@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 
 /**
  * A simplified version of {@link TypeCoercer} used to defer the instantiation of the actual TypeCoercer

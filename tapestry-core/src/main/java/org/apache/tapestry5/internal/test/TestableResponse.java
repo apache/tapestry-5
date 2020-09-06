@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.test;
 
 import java.util.List;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Response;
 
 public interface TestableResponse extends Response
 {
@@ -33,7 +33,7 @@ public interface TestableResponse extends Response
     Document getRenderedDocument();
 
     /**
-     * Returns the link redirected to via {@link org.apache.tapestry5.services.Response#sendRedirect(org.apache.tapestry5.Link)}.
+     * Returns the link redirected to via {@link org.apache.tapestry5.http.services.Response#sendRedirect(org.apache.tapestry5.http.Link)}.
      */
     Link getRedirectLink();
 

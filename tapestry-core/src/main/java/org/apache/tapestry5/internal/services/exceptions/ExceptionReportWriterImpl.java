@@ -12,23 +12,23 @@
 
 package org.apache.tapestry5.internal.services.exceptions;
 
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Reducer;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestGlobals;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.apache.tapestry5.services.ExceptionReportWriter;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.Session;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
@@ -81,7 +81,7 @@ public class ExceptionReportWriterImpl implements ExceptionReportWriter
     private RequestGlobals requestGlobals;
 
     @Inject
-    @Symbol(SymbolConstants.CONTEXT_PATH)
+    @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH)
     private String contextPath;
 
     @Override

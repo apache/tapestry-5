@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.commons.util.CommonsUtils;
 
 /**
  * Placeholder used when no context is available.
@@ -39,6 +40,6 @@ public class EmptyEventContext implements EventContext
 
     public String[] toStrings()
     {
-        return InternalConstants.EMPTY_STRING_ARRAY;
+        return CommonsUtils.EMPTY_STRING_ARRAY;
     }
 }

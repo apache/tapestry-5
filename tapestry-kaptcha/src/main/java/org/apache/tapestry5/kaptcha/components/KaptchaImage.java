@@ -13,15 +13,15 @@
 package org.apache.tapestry5.kaptcha.components;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
 import org.apache.tapestry5.services.HttpError;
-import org.apache.tapestry5.services.Response;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;

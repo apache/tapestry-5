@@ -1,7 +1,17 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule
-import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.AutobuildInjectionModule
+import org.apache.tapestry5.ioc.test.AutobuildModule
+import org.apache.tapestry5.ioc.test.ConventionFailureModule
+import org.apache.tapestry5.ioc.test.ConventionModule
+import org.apache.tapestry5.ioc.test.ConventionModuleImplementationNotFound
+import org.apache.tapestry5.ioc.test.Pingable
+import org.apache.tapestry5.ioc.test.ServiceBuilderAutobuilderModule
+import org.apache.tapestry5.ioc.test.StringHolder
+import org.apache.tapestry5.ioc.test.StringHolderImpl
+import org.apache.tapestry5.ioc.test.StringTransformer
+import org.apache.tapestry5.ioc.test.UnbuildablePingable
+import org.apache.tapestry5.ioc.test.internal.ExceptionInConstructorModule
 
 class AutobuildSpec extends AbstractRegistrySpecification {
 
@@ -61,7 +71,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
     then:
 
     RuntimeException e = thrown()
-    e.message.contains "Could not find default implementation class org.apache.tapestry5.ioc.StringTransformerImpl."
+    e.message.contains "Could not find default implementation class org.apache.tapestry5.ioc.test.StringTransformerImpl."
     e.message.contains "Please provide this class, or bind the service interface to a specific implementation class."
   }
 
@@ -141,7 +151,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.UnbuildablePingable does not contain a public constructor needed to autobuild."
   }
 
   def "verify exception when autobuild class has not valid constructor"() {
@@ -155,7 +165,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.UnbuildablePingable does not contain a public constructor needed to autobuild."
   }
 
   def "a service build method may include a parameter with @Autobuild"() {

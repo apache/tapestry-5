@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 
 /**
  * Stores ASOs in the {@link Session}, which will be created as necessary.

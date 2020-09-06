@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;

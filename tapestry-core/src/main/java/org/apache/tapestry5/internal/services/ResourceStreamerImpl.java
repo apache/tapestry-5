@@ -14,16 +14,18 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +65,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
                                 OperationTracker tracker,
 
-                                @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                 boolean productionMode,
 
                                 ResourceChangeTracker resourceChangeTracker,
@@ -214,7 +216,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         if (streamable.getCompression() == CompressionStatus.COMPRESSED)
         {
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+            response.setHeader(TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER, TapestryHttpInternalConstants.GZIP_CONTENT_ENCODING);
         }
 
         ResponseCustomizer responseCustomizer = streamable.getResponseCustomizer();

@@ -14,9 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.DelegatingInjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;

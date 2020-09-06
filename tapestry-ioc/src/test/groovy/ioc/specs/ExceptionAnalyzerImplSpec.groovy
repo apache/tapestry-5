@@ -1,7 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.Location
-import org.apache.tapestry5.ioc.internal.util.TapestryException
+import org.apache.tapestry5.commons.Location
+import org.apache.tapestry5.commons.internal.util.TapestryException
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer
 
 class WriteOnlyPropertyException extends Exception {

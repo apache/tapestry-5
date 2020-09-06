@@ -12,13 +12,13 @@
 
 package org.apache.tapestry5.services.linktransform;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.services.PageRenderDispatcher;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Allows the default {@link Link} for a page render request to be replaced.

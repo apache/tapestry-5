@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.http.services.Request;
 
 /**
  * A fluent API to create and write cookies. Used by the

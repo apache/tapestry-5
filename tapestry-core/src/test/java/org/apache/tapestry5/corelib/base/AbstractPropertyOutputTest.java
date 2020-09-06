@@ -15,9 +15,9 @@ package org.apache.tapestry5.corelib.base;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.testng.annotations.Test;
 
 public class AbstractPropertyOutputTest extends InternalBaseTestCase

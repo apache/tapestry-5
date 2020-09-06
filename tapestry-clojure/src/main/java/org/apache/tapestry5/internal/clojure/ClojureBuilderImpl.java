@@ -18,10 +18,10 @@ import clojure.lang.Symbol;
 import org.apache.tapestry5.clojure.ClojureBuilder;
 import org.apache.tapestry5.clojure.MethodToFunctionSymbolMapper;
 import org.apache.tapestry5.clojure.Namespace;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.reflect.Method;

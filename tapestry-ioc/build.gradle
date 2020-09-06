@@ -12,6 +12,7 @@ dependencies {
     // of the top-level build:
 
     compile "javax.inject:javax.inject:1"
+    compile "javax.annotation:javax.annotation-api:1.3.2"
 
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 

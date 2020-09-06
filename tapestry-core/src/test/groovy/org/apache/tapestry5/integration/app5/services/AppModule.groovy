@@ -13,16 +13,16 @@
 package org.apache.tapestry5.integration.app5.services
 
 import org.apache.tapestry5.SymbolConstants
+import org.apache.tapestry5.commons.MappedConfiguration
+import org.apache.tapestry5.commons.Resource
 import org.apache.tapestry5.func.F
+import org.apache.tapestry5.http.services.Response
 import org.apache.tapestry5.integration.app5.Client
 import org.apache.tapestry5.integration.app5.ClientTracker
 import org.apache.tapestry5.internal.services.assets.DelegatingSRS
-import org.apache.tapestry5.ioc.MappedConfiguration
-import org.apache.tapestry5.ioc.Resource
 import org.apache.tapestry5.ioc.annotations.Decorate
 import org.apache.tapestry5.model.ComponentModel
 import org.apache.tapestry5.services.ApplicationStateManager
-import org.apache.tapestry5.services.Response
 import org.apache.tapestry5.services.assets.*
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator

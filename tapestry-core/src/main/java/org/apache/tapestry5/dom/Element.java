@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.PrintOutCollector;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.PrintWriter;
 import java.util.*;

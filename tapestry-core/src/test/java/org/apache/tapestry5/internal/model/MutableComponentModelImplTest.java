@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.model;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;

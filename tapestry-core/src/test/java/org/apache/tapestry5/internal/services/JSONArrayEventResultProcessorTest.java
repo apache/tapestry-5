@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.Response;
 import org.testng.annotations.Test;
 
 import java.io.CharArrayWriter;

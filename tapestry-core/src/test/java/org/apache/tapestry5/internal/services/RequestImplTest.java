@@ -12,9 +12,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.internal.services.RequestImpl;
+import org.apache.tapestry5.http.internal.services.TapestrySessionFactory;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -132,7 +134,7 @@ public class RequestImplTest extends InternalBaseTestCase
     {
         HttpServletRequest sr = mockHttpServletRequest();
 
-        expect(sr.getHeader(RequestImpl.REQUESTED_WITH_HEADER)).andReturn(headerValue);
+        expect(sr.getHeader(Request.REQUESTED_WITH_HEADER)).andReturn(headerValue);
 
         replay();
 
@@ -283,7 +285,7 @@ public class RequestImplTest extends InternalBaseTestCase
         HttpServletRequest sr = mockHttpServletRequest();
 
         expect(sr.isSecure()).andReturn(false);
-        expect(sr.getHeader(RequestImpl.X_FORWARDED_PROTO_HEADER)).andReturn("https");
+        expect(sr.getHeader(Request.X_FORWARDED_PROTO_HEADER)).andReturn("https");
 
         replay();
 

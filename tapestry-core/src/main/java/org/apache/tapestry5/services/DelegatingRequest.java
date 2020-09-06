@@ -17,6 +17,9 @@ package org.apache.tapestry5.services;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
+
 /**
  * Class that wraps an {@linkplain Request}, delegating all its methods.
  * 

@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -23,8 +26,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,7 +53,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
                                            PartialMarkupRenderer partialMarkupRenderer,
 
                                            @Inject
-                                           @Symbol(SymbolConstants.CHARSET)
+                                           @Symbol(TapestryHttpSymbolConstants.CHARSET)
                                            String outputEncoding,
 
                                            @Symbol(SymbolConstants.COMPACT_JSON)

@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -107,7 +108,7 @@ public abstract class AbstractLink implements ClientElement
 
     /**
      * Adds any user-defined parameters as query parameters.
-     * @param link a {@link org.apache.tapestry5.Link}.
+     * @param link a {@link org.apache.tapestry5.http.Link}.
      */
     protected final void addParameters(Link link)
     {
@@ -128,7 +129,7 @@ public abstract class AbstractLink implements ClientElement
     }
 
     /**
-     * Returns the most recently rendered {@link org.apache.tapestry5.Link} for this component. Subclasses calculate
+     * Returns the most recently rendered {@link org.apache.tapestry5.http.Link} for this component. Subclasses calculate
      * their link value as they render, and the value is valid until the end of the request, or the next time the same
      * component renders itself (if inside a loop).
      * 

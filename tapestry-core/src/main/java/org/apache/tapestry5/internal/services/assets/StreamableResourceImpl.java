@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResponseCustomizer;

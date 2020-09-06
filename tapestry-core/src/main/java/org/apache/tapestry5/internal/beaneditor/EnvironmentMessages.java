@@ -15,7 +15,7 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 
 /**
  * Holds the current (overrides) Messages object and override id for placemnt into the environment

@@ -12,11 +12,11 @@
 
 package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -51,7 +51,7 @@ public class ServiceStatus
 
     @Property
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
 
     {

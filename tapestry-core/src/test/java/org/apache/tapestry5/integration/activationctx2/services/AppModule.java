@@ -16,7 +16,8 @@ package org.apache.tapestry5.integration.activationctx2.services;
 
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 
 /**
  *
@@ -26,7 +27,7 @@ public class AppModule
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
 
         // Enable by default the check on activation context parameters

@@ -15,8 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -27,8 +28,8 @@ public class ForceDevelopmentModeModule
     @ApplicationDefaults
     public static void enableDevelopmentMode(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(SymbolConstants.PRODUCTION_MODE, false);
-        configuration.add(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "app.root.package");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, false);
+        configuration.add(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "app.root.package");
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "hmac passphrase for testing");
     }
 }

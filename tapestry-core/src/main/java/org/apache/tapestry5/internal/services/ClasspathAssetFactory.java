@@ -15,14 +15,14 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.AssetAlias;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathProvider;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 

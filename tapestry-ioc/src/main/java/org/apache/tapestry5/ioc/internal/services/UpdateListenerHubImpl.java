@@ -18,10 +18,10 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.ioc.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 
 @PreventServiceDecoration
 public class UpdateListenerHubImpl implements UpdateListenerHub

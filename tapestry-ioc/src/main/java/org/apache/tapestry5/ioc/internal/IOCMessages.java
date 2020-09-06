@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.internal.util.MessagesImpl;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 import java.lang.reflect.Constructor;

@@ -13,11 +13,11 @@
 package org.apache.tapestry5.internal.pageload;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.pageload.PagePreloader;

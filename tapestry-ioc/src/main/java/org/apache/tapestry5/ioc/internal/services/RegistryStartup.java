@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.util.List;

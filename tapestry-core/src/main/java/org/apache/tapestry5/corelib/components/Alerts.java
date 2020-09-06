@@ -13,15 +13,15 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.Alert;
 import org.apache.tapestry5.alerts.AlertStorage;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.BaseClientElement;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 /**

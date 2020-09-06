@@ -16,10 +16,10 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.util.List;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 public class PipelineBuilderImpl implements PipelineBuilder

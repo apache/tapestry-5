@@ -1,8 +1,12 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.AdviseByMarkerModule
-import org.apache.tapestry5.ioc.internal.AdviseByMarkerModule2
-import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.AdviceDemoModule
+import org.apache.tapestry5.ioc.test.AdviceMethodMissingAdvisorParameterModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule2
+import org.apache.tapestry5.ioc.test.NonVoidAdvisorMethodModule
+import org.apache.tapestry5.ioc.test.internal.AdviseByMarkerModule
+import org.apache.tapestry5.ioc.test.internal.AdviseByMarkerModule2
 
 class AdvisorsSpec extends AbstractRegistrySpecification {
 
@@ -15,7 +19,7 @@ class AdvisorsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)"
+    e.message.contains "Advise method org.apache.tapestry5.ioc.test.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)"
     e.message.contains "does not return void"
   }
 
@@ -28,7 +32,7 @@ class AdvisorsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()"
+    e.message.contains "Advise method org.apache.tapestry5.ioc.test.AdviceMethodMissingAdvisorParameterModule.adviseBar()"
     e.message.contains "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver."
   }
 

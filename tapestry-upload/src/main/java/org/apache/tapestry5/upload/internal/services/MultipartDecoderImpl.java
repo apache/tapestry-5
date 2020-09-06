@@ -18,9 +18,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
@@ -59,7 +59,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
             @Symbol(UploadSymbols.FILESIZE_MAX)
             long maxFileSize,
 
-            @Symbol(SymbolConstants.CHARSET)
+            @Symbol(TapestryHttpSymbolConstants.CHARSET)
             String requestEncoding)
     {
         this.fileItemFactory = fileItemFactory;

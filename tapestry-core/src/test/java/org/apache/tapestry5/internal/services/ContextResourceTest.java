@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.Context;
 import org.testng.annotations.Test;
 
 import java.io.File;

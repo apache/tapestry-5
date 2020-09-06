@@ -23,7 +23,7 @@ import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 /**
  * Extension to {@link PropertyConduit} that adds a method to access the generic property type.
  * {@link PropertyConduitSource} instances should ideally return PropertyConduit2 objects, not PropertyConduit.
- * This is only primarily of interest to {@link Binding2}.
+ * This is only primarily of interest to <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/Binding2.html">Binding2</a>.
  * 
  * @since 5.4
  */

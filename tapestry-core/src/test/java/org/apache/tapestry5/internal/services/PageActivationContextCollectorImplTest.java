@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;

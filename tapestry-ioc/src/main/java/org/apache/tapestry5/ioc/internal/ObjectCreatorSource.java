@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 
 /**

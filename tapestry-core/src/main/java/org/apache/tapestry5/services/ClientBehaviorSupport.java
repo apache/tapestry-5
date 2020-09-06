@@ -13,8 +13,8 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.corelib.data.InsertPosition;
+import org.apache.tapestry5.http.Link;
 
 /**
  * Collects details about zone usage for efficient initialization of the client side objects. This has grown to include

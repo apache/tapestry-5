@@ -15,9 +15,9 @@
 package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;

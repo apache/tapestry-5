@@ -13,7 +13,7 @@
 package org.apache.tapestry5.ajax;
 
 import org.apache.tapestry5.ClientBodyElement;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.Map;

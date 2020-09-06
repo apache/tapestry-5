@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.ValueLabelProvider;
 
 /**

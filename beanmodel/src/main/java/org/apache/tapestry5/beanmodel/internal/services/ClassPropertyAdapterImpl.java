@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.beanmodel.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newCaseInsensitiveMap;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -23,12 +23,12 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.commons.internal.services.ServiceMessages;
+import org.apache.tapestry5.commons.internal.util.GenericsUtils;
+import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 {

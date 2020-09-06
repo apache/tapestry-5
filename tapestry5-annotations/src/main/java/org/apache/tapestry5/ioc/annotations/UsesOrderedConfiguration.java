@@ -17,8 +17,8 @@ package org.apache.tapestry5.ioc.annotations;
 import java.lang.annotation.*;
 
 /**
- * A documentation-only interface placed on service interfaces for services which have an {@linkplain
- * org.apache.tapestry5.ioc.OrderedConfiguration ordered configuration}, to identify the type of contribution.
+ * A documentation-only interface placed on service interfaces for services which have an 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/OrderedConfiguration.html">ordered configuration</a>, to identify the type of contribution.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)

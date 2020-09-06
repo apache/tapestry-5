@@ -1,7 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.Greeter
-import org.apache.tapestry5.ioc.ServiceBuilderModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.ServiceBuilderModule
 
 class ServiceBinderSpec extends AbstractRegistrySpecification {
 

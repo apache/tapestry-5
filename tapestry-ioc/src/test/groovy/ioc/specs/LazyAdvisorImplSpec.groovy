@@ -1,11 +1,11 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.Greeter
+import java.sql.SQLException
+
 import org.apache.tapestry5.ioc.annotations.NotLazy
 import org.apache.tapestry5.ioc.services.AspectDecorator
 import org.apache.tapestry5.ioc.services.LazyAdvisor
-
-import java.sql.SQLException
+import org.apache.tapestry5.ioc.test.Greeter
 
 public interface LazyService {
 

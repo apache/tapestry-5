@@ -15,12 +15,12 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.http.services.Context;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletResponse;

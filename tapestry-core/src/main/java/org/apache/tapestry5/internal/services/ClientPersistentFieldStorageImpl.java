@@ -12,17 +12,17 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.SessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ClientDataSink;
 import org.apache.tapestry5.services.PersistentFieldChange;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

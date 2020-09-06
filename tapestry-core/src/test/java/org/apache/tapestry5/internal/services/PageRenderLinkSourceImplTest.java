@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.integration.app3.pages.Index;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentClassResolver;

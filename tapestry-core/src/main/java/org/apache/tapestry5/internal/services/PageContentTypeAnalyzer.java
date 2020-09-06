@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.internal.structure.Page;
 
 public interface PageContentTypeAnalyzer
 {
     /**
-     * Analyzes the meta-data for the page and identifies the correct {@link org.apache.tapestry5.ContentType}
+     * Analyzes the meta-data for the page and identifies the correct {@link org.apache.tapestry5.http.ContentType}
      * (including encoding).
      *
      * @param page to be rendered

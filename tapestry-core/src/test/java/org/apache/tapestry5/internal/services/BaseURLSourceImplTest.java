@@ -12,9 +12,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.internal.services.BaseURLSourceImpl;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.BaseURLSource;
-import org.apache.tapestry5.services.Request;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

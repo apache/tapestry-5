@@ -18,11 +18,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.IdMatcher;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 /**
  * Abstract base class for implementations of {@link org.apache.tapestry5.ioc.ServiceDecorator} (i.e., old school) and

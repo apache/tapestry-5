@@ -19,15 +19,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**

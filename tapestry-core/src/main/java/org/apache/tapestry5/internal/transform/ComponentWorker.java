@@ -18,15 +18,15 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.MixinClasses;
 import org.apache.tapestry5.annotations.Mixins;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.services.StringLocation;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CommonsUtils;
 import org.apache.tapestry5.internal.KeyValue;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Orderable;
-import org.apache.tapestry5.ioc.internal.services.StringLocation;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
@@ -146,7 +146,7 @@ public class ComponentWorker implements ComponentClassTransformWorker2
 
         for (int i = 0; i < annotation.value().length; i++)
         {
-            String[] constraints = orderEmpty ? InternalConstants.EMPTY_STRING_ARRAY : TapestryInternalUtils
+            String[] constraints = orderEmpty ? CommonsUtils.EMPTY_STRING_ARRAY : TapestryInternalUtils
                     .splitMixinConstraints(annotation.order()[i]);
 
             model.addMixin(annotation.value()[i].getName(), constraints);

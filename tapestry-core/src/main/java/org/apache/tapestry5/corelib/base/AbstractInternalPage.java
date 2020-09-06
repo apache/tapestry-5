@@ -14,9 +14,9 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Base page for Tapestry internal pages, that should suppress any application changes to the core stack's CSS.

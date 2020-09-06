@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.commons.internal.services.ServiceMessages;
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.reflect.Method;

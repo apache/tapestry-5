@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.services.linktransform;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.services.ComponentEventDispatcher;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Allows for selective replacement of the default {@link Link} used to represent a component event request.

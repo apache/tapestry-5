@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * Ends a previously started element (including components, parameters, blocks, etc.).

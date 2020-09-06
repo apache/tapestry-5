@@ -18,8 +18,8 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.integration.app1.data.DoubleItem;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
 
 import java.util.Collections;

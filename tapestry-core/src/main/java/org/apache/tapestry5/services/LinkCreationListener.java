@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 
 /**
  * Listener interface for objects that need to be notified about newly created links.

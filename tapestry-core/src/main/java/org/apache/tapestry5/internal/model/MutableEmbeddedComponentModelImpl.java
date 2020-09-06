@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.BaseLocatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 

@@ -15,8 +15,8 @@
 package org.apache.tapestry5.util;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * A value encoder that can be used for arbitrary Enum types. The enum name is stored as the client side value.

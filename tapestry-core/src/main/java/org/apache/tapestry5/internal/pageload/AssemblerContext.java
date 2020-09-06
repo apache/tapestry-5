@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.parser.TokenType;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.runtime.RenderCommand;
 
 import java.util.List;

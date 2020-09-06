@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Ajax;
@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import java.io.IOException;
 
 /**
- * Handles {@link org.apache.tapestry5.Link} result types by building a JSON response with key "redirectURL".
+ * Handles {@link org.apache.tapestry5.http.Link} result types by building a JSON response with key "redirectURL".
  */
 @SuppressWarnings("all")
 public class AjaxLinkComponentEventResultProcessor implements ComponentEventResultProcessor<Link>

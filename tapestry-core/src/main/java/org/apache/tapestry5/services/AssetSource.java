@@ -14,7 +14,7 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -29,7 +29,7 @@ import java.util.Locale;
  * a JAR, such as a component library). Other domains can be defined via contributions to the AssetSource service.
  *
  * Since 5.1.0.0, is is preferred that
- * {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.ioc.Resource)} return an instance
+ * {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.commons.Resource)} return an instance
  * of {@link org.apache.tapestry5.Asset2}.
  */
 @UsesMappedConfiguration(AssetFactory.class)

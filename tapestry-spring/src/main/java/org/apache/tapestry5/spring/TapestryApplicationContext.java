@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.spring;
 
-import org.apache.tapestry5.TapestryFilter;
+import org.apache.tapestry5.http.TapestryFilter;
 import org.apache.tapestry5.internal.spring.TapestryBeanFactory;
 import org.apache.tapestry5.ioc.Registry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;

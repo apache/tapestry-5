@@ -15,9 +15,9 @@ package org.example.app0.pages;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;
 

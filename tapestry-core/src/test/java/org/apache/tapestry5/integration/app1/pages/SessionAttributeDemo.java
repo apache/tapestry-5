@@ -15,9 +15,9 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.SessionAttribute;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 
 public class SessionAttributeDemo
 {

@@ -14,27 +14,33 @@
 
 package org.apache.tapestry5.javadoc;
 
-import java.util.Map;
-
+import com.sun.source.doctree.DocCommentTree;
+import com.sun.source.doctree.DocTree;
+import com.sun.source.doctree.SinceTree;
+import com.sun.source.util.SimpleDocTreeVisitor;
+import jdk.javadoc.doclet.DocletEnvironment;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.AnnotationDesc.ElementValuePair;
-import com.sun.javadoc.AnnotationValue;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.Tag;
+import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementFilter;
+import javax.lang.model.util.SimpleAnnotationValueVisitor9;
+import javax.lang.model.util.SimpleTypeVisitor9;
+import java.util.List;
+import java.util.Map;
 
 public class ClassDescription
 {
-    public final ClassDoc classDoc;
+    public final DocletEnvironment env;
+
+    public final TypeElement classDoc;
 
     public final Map<String, ParameterDescription> parameters = CollectionFactory.newCaseInsensitiveMap();
 
@@ -43,23 +49,35 @@ public class ClassDescription
      */
     public final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
 
-    public ClassDescription()
+    public ClassDescription(DocletEnvironment env)
     {
+        this.env = env;
         this.classDoc = null;
     }
 
-    public ClassDescription(ClassDoc classDoc, ClassDescriptionSource source)
+    public ClassDescription(TypeElement classDoc, ClassDescriptionSource source, DocletEnvironment env)
     {
         this.classDoc = classDoc;
+        this.env = env;
 
         loadEvents();
         loadParameters(source);
 
-        ClassDoc parentDoc = classDoc.superclass();
+        TypeMirror parentDoc = classDoc.getSuperclass();
 
-        if (parentDoc != null)
+        if (parentDoc != null
+                && !StringUtils.equals(Object.class.getName(), classDoc.toString()))
         {
-            ClassDescription parentDescription = source.getDescription(classDoc.superclass().qualifiedName());
+            String className = parentDoc.accept(new SimpleTypeVisitor9<String, Object>()
+            {
+                @Override
+                public String visitDeclared(DeclaredType t, Object o)
+                {
+                    return t.asElement().asType().toString();
+                }
+            }, null);
+
+            ClassDescription parentDescription = source.getDescription(className);
 
             mergeInto(events, parentDescription.events);
             mergeInto(parameters, parentDescription.parameters);
@@ -68,7 +86,7 @@ public class ClassDescription
 
     private void loadEvents()
     {
-        AnnotationDesc eventsAnnotation = getAnnotation(classDoc, Events.class);
+        AnnotationMirror eventsAnnotation = getAnnotation(classDoc, Events.class);
 
         if (eventsAnnotation == null)
             return;
@@ -76,21 +94,26 @@ public class ClassDescription
         // Events has only a single attribute: value(), so we know its the first element
         // in the array.
 
-        ElementValuePair pair = eventsAnnotation.elementValues()[0];
+        AnnotationValue annotationValue = eventsAnnotation.getElementValues().values().iterator().next();
 
-        AnnotationValue annotationValue = pair.value();
-        AnnotationValue[] values = (AnnotationValue[]) annotationValue.value();
-
-        for (AnnotationValue eventValue : values)
+        annotationValue.accept(new SimpleAnnotationValueVisitor9<Void, Void>()
         {
-            String event = (String) eventValue.value();
-            int ws = event.indexOf(' ');
+            @Override
+            public Void visitArray(List<? extends AnnotationValue> values, Void aVoid)
+            {
+                for (AnnotationValue eventValue : values)
+                {
+                    String event = (String) eventValue.getValue();
+                    int ws = event.indexOf(' ');
 
-            String name = ws < 0 ? event : event.substring(0, ws);
-            String description = ws < 0 ? "" : event.substring(ws + 1).trim();
+                    String name = ws < 0 ? event : event.substring(0, ws);
+                    String description = ws < 0 ? "" : event.substring(ws + 1).trim();
 
-            events.put(name, description);
-        }
+                    events.put(name, description);
+                }
+                return null;
+            }
+        }, null);
     }
 
     private static <K, V> void mergeInto(Map<K, V> target, Map<K, V> source)
@@ -107,12 +130,12 @@ public class ClassDescription
 
     private void loadParameters(ClassDescriptionSource source)
     {
-        for (FieldDoc fd : classDoc.fields(false))
+        for (VariableElement fd : ElementFilter.fieldsIn(classDoc.getEnclosedElements()))
         {
-            if (fd.isStatic())
+            if (fd.getModifiers().contains(Modifier.STATIC))
                 continue;
 
-            if (!fd.isPrivate())
+            if (!fd.getModifiers().contains(Modifier.PRIVATE))
                 continue;
 
             Map<String, String> values = getAnnotationValues(fd, Parameter.class);
@@ -122,12 +145,20 @@ public class ClassDescription
                 String name = values.get("name");
 
                 if (name == null)
-                    name = fd.name().replaceAll("^[$_]*", "");
+                    name = fd.getSimpleName().toString().replaceAll("^[$_]*", "");
 
-                ParameterDescription pd = new ParameterDescription(fd, name, fd.type().qualifiedTypeName(), get(values,
-                        "value", ""), get(values, "defaultPrefix", BindingConstants.PROP), getBoolean(values,
-                        "required", false), getBoolean(values, "allowNull", true), getBoolean(values, "cache", true),
-                        getSinceTagValue(fd), isDeprecated(fd));
+                ParameterDescription pd = new ParameterDescription(
+                        fd,
+                        name,
+                        fd.asType().toString(),
+                        get(values, "value", ""),
+                        get(values, "defaultPrefix", BindingConstants.PROP),
+                        getBoolean(values, "required", false),
+                        getBoolean(values, "allowNull", true),
+                        getBoolean(values, "cache", true),
+                        getSinceTagValue(fd),
+                        env.getElementUtils().isDeprecated(fd),
+                        e -> env.getDocTrees().getDocCommentTree(e));
 
                 parameters.put(name, pd);
 
@@ -154,40 +185,48 @@ public class ClassDescription
         }
     }
 
-    private ParameterDescription getPublishedParameterDescription(ClassDescriptionSource source, FieldDoc fd,
-            String name)
+    private ParameterDescription getPublishedParameterDescription(
+            ClassDescriptionSource source, VariableElement fd, String name)
     {
-        String currentClassName = fd.type().qualifiedTypeName();
+        String currentClassName = fd.asType().toString();
 
         while (true)
         {
             ClassDescription componentCD = source.getDescription(currentClassName);
 
             if (componentCD.classDoc == null)
-                throw new IllegalArgumentException(String.format("Published parameter '%s' from %s not found.", name,
-                        fd.qualifiedName()));
+                //  TODO FQN for fd
+                throw new IllegalArgumentException(
+                        String.format("Published parameter '%s' from %s not found.", name, fd.getSimpleName()));
 
             if (componentCD.parameters.containsKey(name)) { return componentCD.parameters.get(name); }
 
-            currentClassName = componentCD.classDoc.superclass().typeName();
+            currentClassName = componentCD.classDoc.getSuperclass().toString();
         }
     }
 
-    private static boolean isDeprecated(ProgramElementDoc doc)
+    private String getSinceTagValue(Element doc)
     {
-        return (getAnnotation(doc, Deprecated.class) != null) || (doc.tags("deprecated").length != 0);
-    }
+        final DocCommentTree tree = env.getDocTrees().getDocCommentTree(doc);
 
-    private static String getSinceTagValue(Doc doc)
-    {
-        return getTagValue(doc, "since");
-    }
+        if (tree == null)
+        {
+            return "";
+        }
 
-    private static String getTagValue(Doc doc, String tagName)
-    {
-        Tag[] tags = doc.tags(tagName);
+        for (DocTree tag : tree.getBlockTags())
+        {
+            return tag.accept(new SimpleDocTreeVisitor<String, Void>("")
+            {
+                @Override
+                public String visitSince(SinceTree node, Void aVoid)
+                {
+                    return node.getBody().toString();
+                }
+            }, null);
+        }
 
-        return 0 < tags.length ? tags[0].text() : "";
+        return "";
     }
 
     private static boolean getBoolean(Map<String, String> map, String key, boolean defaultValue)
@@ -206,30 +245,30 @@ public class ClassDescription
         return defaultValue;
     }
 
-    private static AnnotationDesc getAnnotation(ProgramElementDoc source, Class annotationType)
+    private static AnnotationMirror getAnnotation(Element source, Class annotationType)
     {
         String name = annotationType.getName();
 
-        for (AnnotationDesc ad : source.annotations())
+        for (AnnotationMirror ad : source.getAnnotationMirrors())
         {
-            if (ad.annotationType().qualifiedTypeName().equals(name)) { return ad; }
+            if (ad.getAnnotationType().toString().equals(name)) { return ad; }
         }
 
         return null;
     }
 
-    private static Map<String, String> getAnnotationValues(ProgramElementDoc source, Class annotationType)
+    private static Map<String, String> getAnnotationValues(Element source, Class annotationType)
     {
-        AnnotationDesc annotation = getAnnotation(source, annotationType);
+        AnnotationMirror annotation = getAnnotation(source, annotationType);
 
         if (annotation == null)
             return null;
 
         Map<String, String> result = CollectionFactory.newMap();
 
-        for (ElementValuePair pair : annotation.elementValues())
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> pair : annotation.getElementValues().entrySet())
         {
-            result.put(pair.element().name(), pair.value().value().toString());
+            result.put(pair.getKey().getSimpleName().toString(), pair.getValue().getValue().toString());
         }
 
         return result;

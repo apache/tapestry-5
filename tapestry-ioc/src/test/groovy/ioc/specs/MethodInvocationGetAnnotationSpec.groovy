@@ -3,12 +3,12 @@ package ioc.specs
 import org.apache.tapestry5.beaneditor.ReorderProperties
 import org.apache.tapestry5.ioc.annotations.Advise
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.internal.AdviceModule
-import org.apache.tapestry5.ioc.internal.AnnotatedServiceInterface
-import org.apache.tapestry5.ioc.internal.DecoratorModule
-import org.apache.tapestry5.ioc.internal.NonAnnotatedGenericSetServiceInterface
-import org.apache.tapestry5.ioc.internal.NonAnnotatedServiceInterface
-import org.apache.tapestry5.ioc.internal.TestAdvice
+import org.apache.tapestry5.ioc.test.internal.AdviceModule
+import org.apache.tapestry5.ioc.test.internal.AnnotatedServiceInterface
+import org.apache.tapestry5.ioc.test.internal.DecoratorModule
+import org.apache.tapestry5.ioc.test.internal.NonAnnotatedGenericSetServiceInterface
+import org.apache.tapestry5.ioc.test.internal.NonAnnotatedServiceInterface
+import org.apache.tapestry5.ioc.test.internal.TestAdvice
 
 /**
  * Tests whether MethodAdvice.getAnnotation() is actually returning annotations from

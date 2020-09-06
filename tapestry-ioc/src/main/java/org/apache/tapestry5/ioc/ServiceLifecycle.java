@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.ObjectCreator;
+
 /**
  * Allows certain types of lifecycles to control exactly how services are instantiated.
  */

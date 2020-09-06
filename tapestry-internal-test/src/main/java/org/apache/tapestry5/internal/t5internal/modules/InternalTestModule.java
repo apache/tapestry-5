@@ -1,6 +1,6 @@
 package org.apache.tapestry5.internal.t5internal.modules;
 
-import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.LibraryMapping;

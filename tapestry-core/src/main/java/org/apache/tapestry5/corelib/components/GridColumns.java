@@ -20,13 +20,13 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.grid.GridModel;
 import org.apache.tapestry5.grid.GridSortModel;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 

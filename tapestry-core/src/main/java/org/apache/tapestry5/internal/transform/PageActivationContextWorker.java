@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.PageActivationContext;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.FieldHandle;

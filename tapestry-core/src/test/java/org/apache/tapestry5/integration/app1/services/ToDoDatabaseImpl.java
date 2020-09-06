@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.integration.app1.services;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Urgency;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.Collections;
 import java.util.Comparator;

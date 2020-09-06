@@ -4,6 +4,7 @@ import org.apache.tapestry5.clojure.modules.ClojureModule
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.modules.TapestryModule
+
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification

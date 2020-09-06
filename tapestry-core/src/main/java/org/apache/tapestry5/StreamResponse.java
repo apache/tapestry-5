@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.services.Response;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.tapestry5.http.services.Response;
 
 /**
  * An alternate response from a component event handler method used to directly provide a stream of data to be sent to

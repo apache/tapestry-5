@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.Registry;
 
 import java.lang.annotation.Annotation;

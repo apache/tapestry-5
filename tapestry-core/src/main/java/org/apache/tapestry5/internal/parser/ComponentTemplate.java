@@ -12,11 +12,11 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * A parsed component template, containing all the tokens parsed from the template.

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 
 import java.util.Map;
 

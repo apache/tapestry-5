@@ -16,12 +16,12 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.List;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.DefaultMarkupModel;
 import org.apache.tapestry5.dom.Html5MarkupModel;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.internal.parser.DTDToken;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.parser.TokenType;

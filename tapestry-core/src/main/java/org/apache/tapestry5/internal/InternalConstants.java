@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.annotations.PublishEvent;
+import org.apache.tapestry5.commons.util.CommonsUtils;
+import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.dom.MarkupModel;
-import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.TapestryHttpConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
@@ -25,13 +28,15 @@ public final class InternalConstants
      * Init parameter used to identify the package from which application classes are loaded. Such
      * classes are in the
      * pages, components and mixins sub-packages.
+     * @deprecated Use {@link TapestryHttpInternalConstants#TAPESTRY_APP_PACKAGE_PARAM} instead
      */
-    public static final String TAPESTRY_APP_PACKAGE_PARAM = "tapestry.app-package";
+    public static final String TAPESTRY_APP_PACKAGE_PARAM = TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM;
 
     /**
      * Turns off loading of default modules (as driven by JAR file Manifest entries).
+     * @deprecated Use {@link TapestryHttpInternalConstants#DISABLE_DEFAULT_MODULES_PARAM} instead
      */
-    public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
+    public static final String DISABLE_DEFAULT_MODULES_PARAM = TapestryHttpInternalConstants.DISABLE_DEFAULT_MODULES_PARAM;
 
     /**
      * The name of the query parameter that stores the page activation context inside an action
@@ -64,11 +69,14 @@ public final class InternalConstants
     /**
      * Used in some Ajax scenarios to set the content type for the response early, when the Page
      * instance (the authority
-     * on content types) is known. The value is of type {@link org.apache.tapestry5.ContentType}.
+     * on content types) is known. The value is of type {@link org.apache.tapestry5.http.ContentType}.
      */
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
 
-    public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
+    /**
+     * @deprecated Use {@link TapestryHttpInternalConstants#CHARSET_CONTENT_TYPE_PARAMETER} instead
+     */
+    public static final String CHARSET_CONTENT_TYPE_PARAMETER = TapestryHttpInternalConstants.CHARSET_CONTENT_TYPE_PARAMETER;
 
     /**
      * As above but to store the name of the page. Necessary for determining the correct
@@ -88,25 +96,27 @@ public final class InternalConstants
      * suppressed. This is
      * useful when the code opening the response stream wants to explicitly control whether GZIP
      * compression occurs or
-     * not.
+     * not. Alias to {@link TapestryHttpConstants#SUPPRESS_COMPRESSION}.
      *
      * @since 5.1.0.0
      */
-    public static final String SUPPRESS_COMPRESSION = "tapestry.supress-compression";
+    public static final String SUPPRESS_COMPRESSION = TapestryHttpConstants.SUPPRESS_COMPRESSION;
 
     /**
      * Name of response header for content encoding.
      *
      * @since 5.1.0.0
+     * @deprecated Use {@link TapestryHttpInternalConstants#CONTENT_ENCODING_HEADER} instead
      */
-    public static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
+    public static final String CONTENT_ENCODING_HEADER = TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER;
 
     /**
      * Response content encoding value indicating use of GZIP compression.
      *
      * @since 5.1.0.0
+     * @deprecated Use {@link TapestryHttpInternalConstants#GZIP_CONTENT_ENCODING} instead
      */
-    public static final String GZIP_CONTENT_ENCODING = "gzip";
+    public static final String GZIP_CONTENT_ENCODING = TapestryHttpInternalConstants.GZIP_CONTENT_ENCODING;
 
     /**
      * Identifies the start of an expansion inside a template.
@@ -120,7 +130,10 @@ public final class InternalConstants
 
     public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    /**
+     * @deprecated Use {@link CommonsUtils#EMPTY_STRING_ARRAY} instead
+     */
+    public static final String[] EMPTY_STRING_ARRAY = CommonsUtils.EMPTY_STRING_ARRAY;
 
     /**
      * Name of the core {@link JavaScriptStack}, which supplies the basic JavaScript infrastructure
@@ -196,7 +209,7 @@ public final class InternalConstants
      * can most likely occur when a web spider, such as Google, uses an old component event URI from
      * a prior deployment, which no longer works in a new deployment, due to structural changes. Since
      * changing the APIs that significantly is forbidden, a non-null value is added as an
-     * {@link org.apache.tapestry5.services.Request} attribute.
+     * {@link org.apache.tapestry5.http.services.Request} attribute.
      *
      * @since 5.4
      */

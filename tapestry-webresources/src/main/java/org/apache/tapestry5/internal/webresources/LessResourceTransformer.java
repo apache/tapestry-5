@@ -16,9 +16,10 @@ import com.github.sommeri.less4j.Less4jException;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.LessSource;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
-import org.apache.tapestry5.ContentType;
+
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 
@@ -73,8 +74,8 @@ public class LessResourceTransformer implements ResourceTransformer
     }
 
     /**
-     * Invoked from {@link #transform(org.apache.tapestry5.ioc.Resource, org.apache.tapestry5.services.assets.ResourceDependencies)}
-     * to perform the actual work of compiling a {@link org.apache.tapestry5.ioc.Resource} which has been wrapped as a
+     * Invoked from {@link #transform(org.apache.tapestry5.commons.Resource, org.apache.tapestry5.services.assets.ResourceDependencies)}
+     * to perform the actual work of compiling a {@link org.apache.tapestry5.commons.Resource} which has been wrapped as a
      * {@link com.github.sommeri.less4j.LessSource}.
      */
     protected LessCompiler.CompilationResult compile(LessCompiler compiler, LessSource lessSource) throws Less4jException

@@ -17,12 +17,12 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.services.RequestGlobals;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.MarkupWriterFactory;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
 
 public class PageResponseRendererImpl implements PageResponseRenderer

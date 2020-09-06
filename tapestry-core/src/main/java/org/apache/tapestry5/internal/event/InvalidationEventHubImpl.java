@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.event;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
- * {@link org.apache.tapestry5.services.InvalidationListener}s.
+ * {@link org.apache.tapestry5.commons.services.InvalidationListener}s.
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.LinkSecurity;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.LinkSecurity;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
-import org.apache.tapestry5.services.Response;
 
 import java.util.Arrays;
 import java.util.List;

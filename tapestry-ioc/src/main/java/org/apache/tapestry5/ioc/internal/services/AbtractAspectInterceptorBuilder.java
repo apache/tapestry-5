@@ -17,8 +17,8 @@ package org.apache.tapestry5.ioc.internal.services;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.ioc.AnnotationAccess;
-import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 
 public abstract class AbtractAspectInterceptorBuilder<T> implements AspectInterceptorBuilder<T>

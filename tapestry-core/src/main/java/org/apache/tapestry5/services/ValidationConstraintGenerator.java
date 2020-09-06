@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
  * Invoked to generate a list of validation constraint strings for a property. This typically involves scanning the
  * property for annotations or naming conventions that confer the desired validation. The constraint strings are
  * ultimately handed to {@link FieldValidatorSource#createValidator(org.apache.tapestry5.Field, String, String, String,
- * org.apache.tapestry5.ioc.Messages, java.util.Locale)}.
+ * org.apache.tapestry5.commons.Messages, java.util.Locale)}.
  */
 @UsesOrderedConfiguration(ValidationConstraintGenerator.class)
 public interface ValidationConstraintGenerator

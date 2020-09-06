@@ -18,9 +18,9 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.internal.services.StringInterner;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.services.StringInterner;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldValidatorSource;
 

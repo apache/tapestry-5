@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ReloadHelperImpl implements ReloadHelper
 
     private final List<Runnable> callbacks = CollectionFactory.newThreadSafeList();
 
-    public ReloadHelperImpl(AlertManager alertManager, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    public ReloadHelperImpl(AlertManager alertManager, @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.alertManager = alertManager;
         this.productionMode = productionMode;

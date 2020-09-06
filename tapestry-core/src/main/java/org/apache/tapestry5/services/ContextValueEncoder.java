@@ -18,7 +18,7 @@ package org.apache.tapestry5.services;
  * Used to convert values used in event contexts to client string representations and back.
  *
  * @see org.apache.tapestry5.ValueEncoder
- * @see org.apache.tapestry5.ioc.services.TypeCoercer
+ * @see org.apache.tapestry5.commons.services.TypeCoercer
  */
 public interface ContextValueEncoder
 {

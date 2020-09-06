@@ -15,10 +15,10 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import java.net.URLEncoder;
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.http.Link;
 
 public class FormLinkParameters {
 

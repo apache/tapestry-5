@@ -21,15 +21,15 @@ public enum ConfigurationType
 {
 
     /**
-     * @see org.apache.tapestry5.ioc.Configuration
+     * @see <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/Configuration.html">Configuration</a>
      */
     UNORDERED,
     /**
-     * @see org.apache.tapestry5.ioc.OrderedConfiguration
+     * @see <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/OrderedConfiguration.html">OrderedConfiguration</a>
      */
     ORDERED,
     /**
-     * @see org.apache.tapestry5.ioc.MappedConfiguration
+     * @see <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/MappedConfiguration.html">MappedConfiguration</a>     
      */
     MAPPED
 }

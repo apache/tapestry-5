@@ -15,11 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseRenderer;
 import org.testng.annotations.Test;
 

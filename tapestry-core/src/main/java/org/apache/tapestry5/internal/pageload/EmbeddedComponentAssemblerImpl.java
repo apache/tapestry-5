@@ -12,15 +12,15 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Orderable;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;

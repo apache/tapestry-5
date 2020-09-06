@@ -15,20 +15,24 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CommonsUtils;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.IOOperation;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
@@ -146,7 +150,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private Object[] defaulted(Object[] context)
     {
-        return context == null ? InternalConstants.EMPTY_STRING_ARRAY : context;
+        return context == null ? CommonsUtils.EMPTY_STRING_ARRAY : context;
     }
 
     public <T> T invoke(String description, Invokable<T> operation)

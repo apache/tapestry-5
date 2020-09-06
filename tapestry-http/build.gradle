@@ -1,0 +1,31 @@
+import org.gradle.plugins.ide.idea.model.*
+import org.apache.tools.ant.filters.ReplaceTokens
+import t5build.*
+
+description = "Tapestry classes that handle HTTP requests"
+
+dependencies {
+    compile project(':tapestry-ioc')
+    compile project(':tapestry-json')
+    compile project(':beanmodel')
+
+    provided project(":tapestry-test")
+    provided project(":tapestry-test-constants")
+
+    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
+
+    compile "commons-codec:commons-codec:1.10"
+
+    testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+
+    testRuntime 'com.google.inject:guice:3.0'
+}
+
+// Not sure why this is necessary:
+compileTestGroovy.dependsOn compileTestJava
+
+jar {
+    from("src/main/filtered-resources") {
+        filter(ReplaceTokens, tokens: [version: project.version])
+    }
+}

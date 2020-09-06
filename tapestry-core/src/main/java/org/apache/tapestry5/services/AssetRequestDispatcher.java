@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Marker annotation used to specifically identify the {@link org.apache.tapestry5.services.Dispatcher} used to dispatch
+ * Marker annotation used to specifically identify the {@link org.apache.tapestry5.http.services.Dispatcher} used to dispatch
  * asset requests (so that {@link org.apache.tapestry5.services.assets.AssetRequestHandler}s can be contributed).
  */
 @Target(

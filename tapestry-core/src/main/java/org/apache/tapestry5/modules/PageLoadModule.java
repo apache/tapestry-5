@@ -13,6 +13,7 @@
 package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
 import org.apache.tapestry5.internal.pageload.PagePreloaderImpl;
@@ -46,7 +47,7 @@ public class PageLoadModule
     public static void preloadPages(PagePreloader preloader,
                                     @Symbol(SymbolConstants.PRELOADER_MODE)
                                     PreloaderMode mode,
-                                    @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                     boolean productionMode)
     {
         if (mode.isEnabledFor(productionMode))

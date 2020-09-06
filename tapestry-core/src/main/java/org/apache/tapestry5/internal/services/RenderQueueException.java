@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 
 /**
  * Exception used when rendering, to capture the stack of active components (for propery reporting in the exception

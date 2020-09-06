@@ -17,8 +17,8 @@ package org.apache.tapestry5.ioc.internal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
 

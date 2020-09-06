@@ -1,22 +1,34 @@
 package ioc.specs
 
+import java.lang.reflect.Method
+
+import org.apache.tapestry5.commons.Locatable
+import org.apache.tapestry5.commons.Location
+import org.apache.tapestry5.commons.ObjectCreator
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.services.Coercion
 import org.apache.tapestry5.func.F
 import org.apache.tapestry5.func.Predicate
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.ioc.def.ServiceDef
 import org.apache.tapestry5.ioc.def.ServiceDef2
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
+import org.apache.tapestry5.ioc.internal.util.*
 import org.apache.tapestry5.ioc.services.Builtin
-import org.apache.tapestry5.ioc.services.Coercion
 import org.apache.tapestry5.ioc.services.SymbolSource
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaInject
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaInjectService
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaJavaxInject
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaJavaxNamed
+import org.apache.tapestry5.ioc.test.internal.util.InjectoBean
+import org.apache.tapestry5.ioc.test.internal.util.JavaxInjectBean
+import org.apache.tapestry5.ioc.test.internal.util.NotRetainedRuntime
+import org.apache.tapestry5.ioc.test.internal.util.TooManyAutobuildConstructorsBean
+
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.lang.reflect.Method
-
-import org.apache.tapestry5.ioc.*
-import org.apache.tapestry5.ioc.internal.util.*
 
 class InternalUtilsSpec extends Specification {
 
@@ -298,7 +310,7 @@ class InternalUtilsSpec extends Specification {
 
     IllegalArgumentException e = thrown()
 
-    e.message == "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @Retention(RetentionPolicy.RUNTIME) to the class."
+    e.message == "Marker annotation class org.apache.tapestry5.ioc.test.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @Retention(RetentionPolicy.RUNTIME) to the class."
   }
 
   def "close(Closable) for null does nothing"() {

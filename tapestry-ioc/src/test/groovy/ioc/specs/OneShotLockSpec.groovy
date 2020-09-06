@@ -1,6 +1,8 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.util.OneShotLockSubject
+
+import org.apache.tapestry5.ioc.test.internal.util.OneShotLockSubject
+
 import spock.lang.Specification
 
 class OneShotLockSpec extends Specification {

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;

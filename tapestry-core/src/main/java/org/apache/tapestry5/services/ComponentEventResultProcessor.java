@@ -26,7 +26,7 @@ import java.io.IOException;
  * for Ajax requests (which typically return a partially rendered page), distinguished by the @{@link
  * org.apache.tapestry5.services.Ajax} marker annotation.
  *
- * @param <T>
+ * @param <T> the type of the values being handled
  */
 @UsesMappedConfiguration(key = Class.class, value = ComponentEventResultProcessor.class)
 public interface ComponentEventResultProcessor<T>
@@ -36,7 +36,7 @@ public interface ComponentEventResultProcessor<T>
      *
      * Starting in release 5.4, it is recommended that for any response that involves Tapestry pages or components,
      * the implementation should create an {@link org.apache.tapestry5.ioc.IOOperation} to do the rendering, and
-     * add the operation to the {@link org.apache.tapestry5.services.Request} as attribute
+     * add the operation to the {@link org.apache.tapestry5.http.services.Request} as attribute
      * {@link org.apache.tapestry5.TapestryConstants#RESPONSE_RENDERER}.
      * This avoids a number of issues related to the {@link org.apache.tapestry5.services.Environment}.
      *

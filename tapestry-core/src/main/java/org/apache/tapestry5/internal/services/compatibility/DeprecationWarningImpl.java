@@ -16,12 +16,12 @@ package org.apache.tapestry5.internal.services.compatibility;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
-import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.slf4j.Logger;
 

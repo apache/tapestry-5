@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.test.TapestryTestCase;
@@ -134,7 +134,7 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "No object of type org.apache.tapestry5.ioc.Location is available from the Environment.");
+                    "No object of type org.apache.tapestry5.commons.Location is available from the Environment.");
             assertFalse(ex.getAvailableValues().getValues().contains("org.apache.tapestry5.ioc.Location"));
         }
 

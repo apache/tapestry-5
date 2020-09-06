@@ -15,16 +15,16 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 
 import java.util.Collections;
 import java.util.Map;

@@ -14,10 +14,10 @@ package org.apache.tapestry5.internal.services;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.InternalSymbols;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 public class FormControlNameManagerImpl implements FormControlNameManager
 {

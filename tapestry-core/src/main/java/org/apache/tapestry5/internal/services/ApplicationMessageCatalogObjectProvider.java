@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.LockSupport;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.util.LockSupport;
+import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 import java.util.Locale;

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.integration.pagelevel;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

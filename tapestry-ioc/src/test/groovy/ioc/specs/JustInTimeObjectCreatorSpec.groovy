@@ -1,6 +1,6 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.ObjectCreator
+import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.internal.ServiceActivityTracker
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator
 import org.apache.tapestry5.ioc.services.Status

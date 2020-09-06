@@ -16,12 +16,16 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
@@ -30,8 +34,6 @@ import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 
 import java.util.List;
@@ -75,7 +77,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
                                          PersistentLocale persistentLocale,
                                          @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
                                          boolean encodeLocaleIntoPath,
-                                         @Symbol(SymbolConstants.CONTEXT_PATH)
+                                         @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH)
                                          String contextPath,
                                          @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder,
                                          MetaDataLocator metaDataLocator,

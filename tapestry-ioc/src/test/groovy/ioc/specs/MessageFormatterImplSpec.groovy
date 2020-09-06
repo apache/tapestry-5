@@ -1,6 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.util.MessageFormatterImpl
+import org.apache.tapestry5.commons.internal.util.MessageFormatterImpl
+
 import spock.lang.Specification
 import spock.lang.Unroll
 

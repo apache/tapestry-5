@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -94,7 +95,7 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
      * Ignores any attempt to set the character encoding, as it already has been set before the request content was
      * parsed.
      *
-     * @see org.apache.tapestry5.SymbolConstants#CHARSET
+     * @see org.apache.tapestry5.http.TapestryHttpSymbolConstants#CHARSET
      */
     @Override
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException

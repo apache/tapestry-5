@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.LinkSecurity;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.LinkSecurity;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
@@ -30,8 +32,6 @@ import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

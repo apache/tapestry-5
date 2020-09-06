@@ -14,17 +14,17 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
@@ -70,7 +70,7 @@ public class DevTool
 
     @Property
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
 
     @Component(inheritInformalParameters = true, parameters = {

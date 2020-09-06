@@ -1,8 +1,9 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.Locatable
+import org.apache.tapestry5.commons.Location
 import org.apache.tapestry5.ioc.BaseLocatable
-import org.apache.tapestry5.ioc.Locatable
-import org.apache.tapestry5.ioc.Location
+
 import spock.lang.Specification
 
 class LocatableFixture extends BaseLocatable {

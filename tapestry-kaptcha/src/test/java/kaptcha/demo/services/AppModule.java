@@ -13,8 +13,9 @@
 package kaptcha.demo.services;
 
 import com.google.code.kaptcha.Constants;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
@@ -33,7 +34,7 @@ public class AppModule
     public static void provideApplicationDefaults(
             MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
     }
 
     public static Object decorateKaptchaProducer(final KaptchaProducer producer, final Logger logger)

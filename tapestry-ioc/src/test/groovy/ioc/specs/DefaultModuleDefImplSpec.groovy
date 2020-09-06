@@ -1,23 +1,51 @@
 package ioc.specs
 
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
+
+import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.def.ServiceDef3
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
+import org.apache.tapestry5.ioc.internal.*
+import org.apache.tapestry5.ioc.test.AutobuildModule
+import org.apache.tapestry5.ioc.test.BlueMarker
+import org.apache.tapestry5.ioc.test.MarkerModule
+import org.apache.tapestry5.ioc.test.RedMarker
+import org.apache.tapestry5.ioc.test.StringHolder
+import org.apache.tapestry5.ioc.test.internal.AbstractAutobuildServiceModule
+import org.apache.tapestry5.ioc.test.internal.ArrayDecoratorMethodModule
+import org.apache.tapestry5.ioc.test.internal.BuilderMethodModule
+import org.apache.tapestry5.ioc.test.internal.ComplexAutobuildModule
+import org.apache.tapestry5.ioc.test.internal.DefaultServiceIdModule
+import org.apache.tapestry5.ioc.test.internal.EagerLoadViaAnnotationModule
+import org.apache.tapestry5.ioc.test.internal.ExceptionInBindMethod
+import org.apache.tapestry5.ioc.test.internal.FieService
+import org.apache.tapestry5.ioc.test.internal.MappedConfigurationModule
+import org.apache.tapestry5.ioc.test.internal.ModuleWithOverriddenObjectMethods
+import org.apache.tapestry5.ioc.test.internal.MutlipleAutobuildServiceConstructorsModule
+import org.apache.tapestry5.ioc.test.internal.NamedServiceModule
+import org.apache.tapestry5.ioc.test.internal.NoUsableContributionParameterModule
+import org.apache.tapestry5.ioc.test.internal.NonStaticBindMethodModule
+import org.apache.tapestry5.ioc.test.internal.NoopClassLoaderDelegate
+import org.apache.tapestry5.ioc.test.internal.OrderedConfigurationModule
+import org.apache.tapestry5.ioc.test.internal.PrimitiveDecoratorMethodModule
+import org.apache.tapestry5.ioc.test.internal.ServiceIdConflictMethodModule
+import org.apache.tapestry5.ioc.test.internal.ServiceIdViaAnnotationModule
+import org.apache.tapestry5.ioc.test.internal.SimpleModule
+import org.apache.tapestry5.ioc.test.internal.SyntheticMethodModule
+import org.apache.tapestry5.ioc.test.internal.ToUpperCaseStringHolder
+import org.apache.tapestry5.ioc.test.internal.TooManyContributionParametersModule
+import org.apache.tapestry5.ioc.test.internal.UninstantiableAutobuildServiceModule
+import org.apache.tapestry5.ioc.test.internal.VoidBuilderMethodModule
 import org.slf4j.Logger
 
 import spock.lang.Issue;
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import org.apache.tapestry5.ioc.*
-import org.apache.tapestry5.ioc.internal.*
-
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
-
-import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
 
 class DefaultModuleDefImplSpec extends Specification {
 
@@ -286,7 +314,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.internal.RunnableServiceImpl (implementation of service 'Runnable') does not contain any public constructors."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.internal.RunnableServiceImpl (implementation of service 'Runnable') does not contain any public constructors."
   }
 
   def "the bind() method of a module class must be a static method"() {
@@ -298,7 +326,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)"
+    e.message.contains "Method org.apache.tapestry5.ioc.test.internal.NonStaticBindMethodModule.bind(ServiceBinder)"
     e.message.contains "appears to be a service binder method, but is an instance method, not a static method"
   }
 
@@ -337,7 +365,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     1 * logger.debug(_) >> { args ->
       assert args[0].contains(
-          "Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)")
+          "Invoking constructor org.apache.tapestry5.ioc.test.internal.MultipleConstructorsAutobuildService(StringHolder)")
     }
 
     0 * _
@@ -352,7 +380,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind(ServiceBinder)"
+    e.message.contains "Error invoking service binder method org.apache.tapestry5.ioc.test.internal.ExceptionInBindMethod.bind(ServiceBinder)"
     e.message.contains "at ExceptionInBindMethod.java"
     e.message.contains "Really, how often is this going to happen?"
   }
@@ -462,7 +490,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.internal.AbstractRunnableService (implementation of service 'Runnable') is abstract."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.internal.AbstractRunnableService (implementation of service 'Runnable') is abstract."
 
   }
 

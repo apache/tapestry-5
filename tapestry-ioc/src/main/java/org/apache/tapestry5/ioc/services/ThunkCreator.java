@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 
 /**
  * A <a href="http://en.wikipedia.org/wiki/Thunk">thunk</a> is a delayed calculation. In Java and Tapestry terms, a
  * Thunk is a proxy object of a particular interface that delegates all methods to an object of the same type obtained
- * from an {@link org.apache.tapestry5.ioc.ObjectProvider}. This is used by {@link
+ * from an {@link org.apache.tapestry5.commons.ObjectProvider}. This is used by {@link
  * org.apache.tapestry5.ioc.services.LazyAdvisor} to build lazy thunk proxies.
  *
  * @since 5.1.0.1

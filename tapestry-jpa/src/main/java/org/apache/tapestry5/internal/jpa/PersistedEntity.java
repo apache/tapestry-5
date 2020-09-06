@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
-import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
+import org.apache.tapestry5.http.annotations.ImmutableSessionPersistedObject;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 
 /**

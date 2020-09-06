@@ -1,13 +1,17 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.ioc.AdvisorDef2
-import org.apache.tapestry5.ioc.BlueMarker
-import org.apache.tapestry5.ioc.RedMarker
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
-import org.slf4j.Logger
-import spock.lang.Specification
 import org.apache.tapestry5.ioc.def.*
 import org.apache.tapestry5.ioc.internal.*
+import org.apache.tapestry5.ioc.test.BlueMarker
+import org.apache.tapestry5.ioc.test.RedMarker
+import org.apache.tapestry5.ioc.test.internal.FieService
+import org.apache.tapestry5.ioc.test.internal.ModuleImplTestModule
+import org.apache.tapestry5.ioc.test.internal.services.ToStringService
+import org.slf4j.Logger
+
+import spock.lang.Specification
 
 class ModuleImplSpec extends Specification {
 

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.util;
 
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.services.InvalidationEventHub;
 
 /**
  * A utility class for managing a cacheable result that can be recomputed when needed.

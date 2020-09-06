@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Set;
 

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.HttpError;
-import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 

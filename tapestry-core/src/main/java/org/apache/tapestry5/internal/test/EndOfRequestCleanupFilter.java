@@ -14,17 +14,17 @@
 
 package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 
 import java.io.IOException;
 
 /**
  * Makes sure that {@link org.apache.tapestry5.ioc.services.PerthreadManager#cleanup()} is invoked at the end of each
- * request (normally handled by {@link org.apache.tapestry5.TapestryFilter}).
+ * request (normally handled by {@link org.apache.tapestry5.http.TapestryFilter}).
  */
 public class EndOfRequestCleanupFilter implements RequestFilter
 {

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.pageload;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 import org.apache.tapestry5.model.ComponentModel;
 

@@ -1,9 +1,14 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.services.TypeCoercer
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard
 import org.apache.tapestry5.ioc.services.Status
-import org.apache.tapestry5.ioc.services.TypeCoercer
-import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.BlueMarker
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule
+import org.apache.tapestry5.ioc.test.PerThreadModule
+import org.apache.tapestry5.ioc.test.RedMarker
+import org.apache.tapestry5.ioc.test.StringHolder
 
 class ServiceActivityScoreboardSpec extends AbstractRegistrySpecification {
 

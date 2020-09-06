@@ -12,15 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 /**
  * Creates {@link org.apache.tapestry5.internal.services.Instantiator}s for components, based on component class name.
  * This will involve transforming the component's class before it is loaded.
  *
- * In addition, a source acts as an event hub for {@link org.apache.tapestry5.services.InvalidationListener}s, so that
+ * In addition, a source acts as an event hub for {@link org.apache.tapestry5.commons.services.InvalidationListener}s, so that
  * any information derived from loaded classes can be discarded and rebuilt when classes change.
  *
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is

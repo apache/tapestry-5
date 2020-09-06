@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentSource;

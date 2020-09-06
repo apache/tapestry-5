@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.internal.webresources;
 
-import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 
 public abstract class DelegatingResourceTransformer implements ResourceTransformer

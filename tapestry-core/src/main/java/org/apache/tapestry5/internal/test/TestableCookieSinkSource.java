@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import javax.servlet.http.Cookie;
 import java.util.Map;

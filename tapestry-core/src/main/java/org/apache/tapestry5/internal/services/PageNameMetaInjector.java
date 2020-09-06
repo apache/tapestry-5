@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.services.MarkupRenderer;
 import org.apache.tapestry5.services.MarkupRendererFilter;
-import org.apache.tapestry5.services.RequestGlobals;
 
 /**
  * Injects a {@code <meta/>} element into the {@code <head/>} to identify the Tapestry page name.

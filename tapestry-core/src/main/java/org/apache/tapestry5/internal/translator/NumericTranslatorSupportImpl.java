@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.translator;
 
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.math.BigDecimal;

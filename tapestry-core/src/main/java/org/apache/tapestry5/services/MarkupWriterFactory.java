@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.internal.structure.Page;
 
 /**

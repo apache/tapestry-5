@@ -21,8 +21,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+
+import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.services.Session;
 
 /**
  * Used to map a property of a page or component to value stored in session.

@@ -13,8 +13,8 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
 
 /**
  * A source for {@link org.apache.tapestry5.Translator}s, either by name or by property type. The source knows

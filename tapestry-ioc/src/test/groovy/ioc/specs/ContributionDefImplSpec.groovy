@@ -1,17 +1,19 @@
 package ioc.specs
 
+import java.lang.reflect.Method
+
+import javax.inject.Named
+
+import org.apache.tapestry5.commons.*
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.annotations.InjectService
 import org.apache.tapestry5.ioc.internal.ContributionDefImpl
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
-import org.apache.tapestry5.ioc.internal.UpcaseService
+import org.apache.tapestry5.ioc.test.internal.UpcaseService
 import org.slf4j.Logger
+
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.lang.reflect.Method
-import javax.inject.Named
-
-import org.apache.tapestry5.ioc.*
 
 class ModuleFixture {
 
@@ -159,7 +161,7 @@ class ContributionDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Service 'Foo' is configured using org.apache.tapestry5.ioc.Configuration, not org.apache.tapestry5.ioc.MappedConfiguration."
+    e.message.contains "Service 'Foo' is configured using org.apache.tapestry5.commons.Configuration, not org.apache.tapestry5.commons.MappedConfiguration."
   }
 
   def "ordered configuration injects and contributes a service via @InjectService"() {

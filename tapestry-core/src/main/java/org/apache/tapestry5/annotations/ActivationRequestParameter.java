@@ -14,8 +14,8 @@ package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
@@ -62,7 +62,7 @@ public @interface ActivationRequestParameter
 
     /**
      * If true then a null value is an error. If false, then a null value will result in no update to the field. Either way,
-     * a null field value will result in no query parameter added to a  {@linkplain org.apache.tapestry5.Link generated link}.
+     * a null field value will result in no query parameter added to a  {@linkplain org.apache.tapestry5.http.Link generated link}.
      *
      * @since 5.4
      */

@@ -15,14 +15,14 @@
 package org.apache.tapestry5.tree;
 
 import org.apache.tapestry5.BaseOptimizedSessionPersistedObject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 import java.util.Set;
 
 /**
  * Manages a Set of String {@link TreeNode} ids.
  * 
- * @param <T>
+ * @param <T> the type of the tree.
  * @since 5.3
  * @see TreeModel
  */

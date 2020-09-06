@@ -22,7 +22,13 @@ import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.ObjectProvider;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
 import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
@@ -35,11 +41,7 @@ import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
 import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
 import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -50,9 +52,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.EntityManagerSource;
 import org.apache.tapestry5.jpa.EntityTransactionManager;
@@ -113,7 +113,7 @@ public class JpaModule
     @Contribute(JpaEntityPackageManager.class)
     public static void provideEntityPackages(Configuration<String> configuration,
 
-                                             @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                             @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                              String appRootPackage)
     {
         configuration.add(appRootPackage + ".entities");

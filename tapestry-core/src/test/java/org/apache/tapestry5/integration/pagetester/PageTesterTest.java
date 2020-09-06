@@ -15,8 +15,8 @@
 package org.apache.tapestry5.integration.pagetester;
 
 import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalSymbols;
 import org.apache.tapestry5.integration.pagelevel.TestConstants;
-import org.apache.tapestry5.internal.InternalSymbols;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
@@ -83,6 +83,6 @@ public class PageTesterTest extends Assert
     {
         SymbolSource source = tester.getRegistry().getService(SymbolSource.class);
 
-        assertEquals(source.valueForSymbol(InternalSymbols.APP_PACKAGE_PATH), "org/apache/tapestry5/integration/app2");
+        assertEquals(source.valueForSymbol(TapestryHttpInternalSymbols.APP_PACKAGE_PATH), "org/apache/tapestry5/integration/app2");
     }
 }

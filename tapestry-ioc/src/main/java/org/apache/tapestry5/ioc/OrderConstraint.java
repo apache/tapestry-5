@@ -16,6 +16,8 @@ package org.apache.tapestry5.ioc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
+
 /**
  * Represents an order constraints for {@link OrderedConfiguration}.
  * 

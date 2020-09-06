@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 
 /**
  * A proxy for the {@link TypeCoercer}

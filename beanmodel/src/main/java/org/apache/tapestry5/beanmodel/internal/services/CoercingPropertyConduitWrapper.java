@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyConduit2;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 
 public class CoercingPropertyConduitWrapper implements PropertyConduit2
 {

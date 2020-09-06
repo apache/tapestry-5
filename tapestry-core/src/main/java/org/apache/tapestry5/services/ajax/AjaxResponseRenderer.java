@@ -34,7 +34,7 @@ public interface AjaxResponseRenderer
      *         client id of zone to update with the content from the renderer
      * @param renderer
      *         a {@link org.apache.tapestry5.Block}, {@link org.apache.tapestry5.runtime.Component} or other object that can be
-     *         {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coerced} to  {@link org.apache.tapestry5.runtime.RenderCommand}.
+     *         {@linkplain org.apache.tapestry5.commons.services.TypeCoercer coerced} to  {@link org.apache.tapestry5.runtime.RenderCommand}.
      * @return the renderer, for a fluid interface
      */
     AjaxResponseRenderer addRender(String clientId, Object renderer);

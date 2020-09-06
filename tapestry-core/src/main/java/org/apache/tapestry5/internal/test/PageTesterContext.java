@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.test.TapestryRunnerConstants;
 
 import java.io.File;

@@ -1,8 +1,8 @@
 package org.apache.tapestry5.internal.services
 
 import org.apache.tapestry5.alerts.AlertManager
-import org.apache.tapestry5.ioc.test.TestBase
 import org.apache.tapestry5.services.ClientDataEncoder
+import org.apache.tapestry5.test.ioc.TestBase
 import org.easymock.EasyMock
 import org.slf4j.Logger
 import org.testng.annotations.Test

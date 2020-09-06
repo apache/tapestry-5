@@ -46,7 +46,7 @@ public class IOCSymbols
     public static final String THREAD_POOL_MAX_SIZE = "tapestry.thread-pool.max-pool-size";
 
     /**
-     * Time in milliseconds (via {@link org.apache.tapestry5.ioc.util.TimeInterval}) to keep waiting threads alive.
+     * Time in milliseconds (via {@link org.apache.tapestry5.commons.util.TimeInterval}) to keep waiting threads alive.
      * Default is one minute.
      */
     public static final String THREAD_POOL_KEEP_ALIVE = "tapestry.thread-pool.keep-alive";

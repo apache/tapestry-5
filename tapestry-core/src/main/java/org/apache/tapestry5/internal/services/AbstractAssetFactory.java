@@ -17,12 +17,12 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
+import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;

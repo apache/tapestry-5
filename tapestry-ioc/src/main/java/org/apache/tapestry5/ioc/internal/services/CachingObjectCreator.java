@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.LockSupport;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.internal.util.LockSupport;
 
 /**
- * An {@link org.apache.tapestry5.ioc.ObjectCreator} that delegates to another
- * {@link org.apache.tapestry5.ioc.ObjectCreator} and caches the result.
+ * An {@link org.apache.tapestry5.commons.ObjectCreator} that delegates to another
+ * {@link org.apache.tapestry5.commons.ObjectCreator} and caches the result.
  */
 public class CachingObjectCreator<T> extends LockSupport implements ObjectCreator<T>
 {

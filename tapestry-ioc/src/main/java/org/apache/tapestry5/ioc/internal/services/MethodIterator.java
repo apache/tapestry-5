@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
+
 import java.lang.reflect.Method;
 import java.util.*;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 /**
  * Utility used to iterate over the publicly visible methods of a class or interface. The MethodIterator understands

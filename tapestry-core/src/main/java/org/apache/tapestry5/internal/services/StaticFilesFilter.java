@@ -20,11 +20,11 @@ import java.net.URL;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.TapestryConstants;
-import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.services.Context;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
 
 /**
  * Identifies requests that are for actual resource files in the context. For those, Tapestry allows the servlet

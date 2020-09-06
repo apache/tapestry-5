@@ -3,14 +3,14 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry5.beanmodel.services.*;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.services.RequestExceptionHandler;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
 
 /**
- * Filter for the {@link org.apache.tapestry5.services.RequestHandler} pipeline used to intercept and report
+ * Filter for the {@link org.apache.tapestry5.http.services.RequestHandler} pipeline used to intercept and report
  * exceptions.
  */
 public class RequestErrorFilter implements RequestFilter

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.http.internal.TapestryAppInitializer;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.util.Transformer;
 import org.slf4j.Logger;

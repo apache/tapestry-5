@@ -14,9 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.internal.services.ContextImpl;
+import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.Context;
 import org.testng.annotations.Test;
 
 import javax.servlet.ServletContext;

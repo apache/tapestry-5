@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;

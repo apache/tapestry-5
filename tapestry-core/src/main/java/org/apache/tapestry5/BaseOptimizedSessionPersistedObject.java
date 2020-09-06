@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.tapestry5.http.OptimizedSessionPersistedObject;
+
 /**
  * Base implementation of
- * {@link org.apache.tapestry5.OptimizedSessionPersistedObject}. Subclasses
+ * {@link org.apache.tapestry5.http.OptimizedSessionPersistedObject}. Subclasses
  * should invoke {@link #markDirty()} after the internal state of the object changes.
  *
  * Due to the concurrent nature of session attributes it's important that markDirty occurs <strong>after</strong>

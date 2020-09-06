@@ -18,11 +18,11 @@ import java.util.Map;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 

@@ -17,15 +17,15 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentRequestHandler;
-import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 

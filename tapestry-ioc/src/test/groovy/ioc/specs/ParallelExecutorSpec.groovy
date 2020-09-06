@@ -1,9 +1,10 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.Invokable
-import org.apache.tapestry5.ioc.StringHolder
-import org.apache.tapestry5.ioc.StringHolderImpl
 import org.apache.tapestry5.ioc.services.ParallelExecutor
+import org.apache.tapestry5.ioc.test.StringHolder
+import org.apache.tapestry5.ioc.test.StringHolderImpl
+
 import spock.lang.Shared
 
 class ParallelExecutorSpec extends AbstractSharedRegistrySpecification {
@@ -76,7 +77,7 @@ class ParallelExecutorSpec extends AbstractSharedRegistrySpecification {
 
     then:
 
-    thunk.toString() == "FutureThunk[org.apache.tapestry5.ioc.StringHolder]"
+    thunk.toString() == "FutureThunk[org.apache.tapestry5.ioc.test.StringHolder]"
   }
 
   def "exception inside the Invokable is rethrown by the thunk"() {

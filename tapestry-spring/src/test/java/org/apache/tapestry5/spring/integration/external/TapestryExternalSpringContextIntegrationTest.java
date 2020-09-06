@@ -25,7 +25,7 @@ public class TapestryExternalSpringContextIntegrationTest extends SeleniumTestCa
     public void external_context_integration_test() throws Exception
     {
         openBaseURL();
-
+        Thread.sleep(4000);
         assertTextPresent("Demonstrates Spring Context Configured Externally", "Instantiated via a factory bean.");
     }
 }

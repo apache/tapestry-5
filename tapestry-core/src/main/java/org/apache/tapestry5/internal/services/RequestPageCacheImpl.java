@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.RequestGlobals;
 import org.slf4j.Logger;
 
 import java.util.Map;

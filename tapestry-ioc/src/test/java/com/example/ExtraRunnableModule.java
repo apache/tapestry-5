@@ -1,6 +1,6 @@
 package com.example;
 
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Startup;
 
 import java.util.List;

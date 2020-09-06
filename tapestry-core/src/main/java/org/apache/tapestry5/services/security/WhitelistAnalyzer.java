@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.security;
 
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.http.services.Request;
 
 /**
  * Given a request, determine if the request is from a client on the whitelist.

@@ -20,9 +20,9 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 

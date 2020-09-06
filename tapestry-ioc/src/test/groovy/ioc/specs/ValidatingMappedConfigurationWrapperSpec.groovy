@@ -1,14 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.MappedConfiguration
-import org.apache.tapestry5.ioc.ObjectLocator
+import java.sql.SQLException
+
+import org.apache.tapestry5.commons.MappedConfiguration
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.ioc.def.ContributionDef
 import org.apache.tapestry5.ioc.internal.ContributionDefImpl
 import org.apache.tapestry5.ioc.internal.TypeCoercerProxy
 import org.apache.tapestry5.ioc.internal.ValidatingMappedConfigurationWrapper
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
-
-import java.sql.SQLException
 
 class ValidatingMappedConfigurationWrapperSpec extends AbstractSharedRegistrySpecification {
 

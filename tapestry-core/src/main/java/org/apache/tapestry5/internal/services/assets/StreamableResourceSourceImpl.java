@@ -12,10 +12,11 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.ContentType;
+import org.apache.tapestry5.http.services.CompressionAnalyzer;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.*;
 
 import java.io.ByteArrayOutputStream;

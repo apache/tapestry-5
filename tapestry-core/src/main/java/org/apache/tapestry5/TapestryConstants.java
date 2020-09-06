@@ -38,7 +38,7 @@ public class TapestryConstants
      * notification} after the initialization event; the LOOPBACK prevents this reset notification.
      *
      * @see ComponentEventLinkEncoder#createPageRenderLink(org.apache.tapestry5.services.PageRenderRequestParameters)
-     * @see ComponentEventLinkEncoder#decodePageRenderRequest(org.apache.tapestry5.services.Request)
+     * @see ComponentEventLinkEncoder#decodePageRenderRequest(org.apache.tapestry5.http.services.Request)
      * @see PageResetListener
      * @since 5.2.0
      */
@@ -61,7 +61,7 @@ public class TapestryConstants
     public static final String RESPONSE_RENDERER = "tapestry.response-renderer";
 
     /**
-     * Name of a {@link org.apache.tapestry5.services.Request} attribute, used
+     * Name of a {@link org.apache.tapestry5.http.services.Request} attribute, used
      * to disable JavaScript minimization during asset requests.
      *
      * @see org.apache.tapestry5.services.javascript.JavaScriptStack#getJavaScriptAggregationStrategy()

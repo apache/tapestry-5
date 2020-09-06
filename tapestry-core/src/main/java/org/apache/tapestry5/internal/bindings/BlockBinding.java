@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 public class BlockBinding extends AbstractBinding
 {

@@ -1,1 +1,1 @@
-org.apache.tapestry5.internal.genericsresolverguava.GuavaGenericsResolver
+org.apache.tapestry5.genericsresolverguava.internal.GuavaGenericsResolver

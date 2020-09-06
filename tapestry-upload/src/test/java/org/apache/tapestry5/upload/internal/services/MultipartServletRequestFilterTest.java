@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.testng.annotations.Test;

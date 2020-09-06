@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Represents a bundle of properties files that can be used to collect properties that are eventually used to form a

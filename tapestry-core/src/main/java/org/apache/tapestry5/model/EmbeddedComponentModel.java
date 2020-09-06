@@ -15,7 +15,7 @@
 package org.apache.tapestry5.model;
 
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.commons.Locatable;
 
 import java.util.List;
 

@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 
 import java.lang.reflect.Method;
 

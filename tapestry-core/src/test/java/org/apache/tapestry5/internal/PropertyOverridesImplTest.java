@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Messages;
 import org.testng.annotations.Test;
 
 public class PropertyOverridesImplTest extends InternalBaseTestCase

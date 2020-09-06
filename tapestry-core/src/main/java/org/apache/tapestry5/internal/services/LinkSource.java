@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.services.LinkCreationHub;
 import org.apache.tapestry5.services.LinkCreationListener2;
 
 /**
- * A source for {@link org.apache.tapestry5.Link} objects.
+ * A source for {@link org.apache.tapestry5.http.Link} objects.
  *
  * @see org.apache.tapestry5.services.LinkCreationListener2
  * @since 5.1.0.0

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Makes a {@link org.apache.tapestry5.ioc.Resource} available as a {@link org.apache.tapestry5.ioc.services.SymbolProvider}
+ * Makes a {@link org.apache.tapestry5.commons.Resource} available as a {@link org.apache.tapestry5.ioc.services.SymbolProvider}
  *
  * @since 5.1.0.5
  */

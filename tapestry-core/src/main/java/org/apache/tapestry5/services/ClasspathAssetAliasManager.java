@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * Used as part of the support for classpath {@link org.apache.tapestry5.Asset}s, to convert the Asset's
- * {@link org.apache.tapestry5.ioc.Resource} to a URL that can be accessed by the client. The asset path, within the
+ * {@link org.apache.tapestry5.commons.Resource} to a URL that can be accessed by the client. The asset path, within the
  * classpath, is converted into a shorter virtual path. The term "alias" here is generally referred to as
  * "virtual folder" elsewhere.
  *

@@ -15,13 +15,13 @@
 package org.apache.tapestry5.runtime;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 
 /**
  * A wrapper exception around any exception thrown when invoking a component event handler. In some cases, the
  * underlying exception may have been a declared exception, and will be wrapped in a RuntimeException.
  *
- * @see org.apache.tapestry5.ioc.util.ExceptionUtils#findCause(Throwable, Class)
+ * @see org.apache.tapestry5.commons.util.ExceptionUtils#findCause(Throwable, Class)
  */
 public class ComponentEventException extends TapestryException
 {

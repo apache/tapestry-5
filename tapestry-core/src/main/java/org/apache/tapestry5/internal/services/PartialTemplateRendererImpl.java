@@ -14,8 +14,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialTemplateRenderer;
 import org.slf4j.Logger;

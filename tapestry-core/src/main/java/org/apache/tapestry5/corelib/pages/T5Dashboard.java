@@ -16,6 +16,7 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.AbstractInternalPage;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
@@ -37,7 +38,7 @@ public class T5Dashboard extends AbstractInternalPage
 
     @Property
     @Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
 
     @Inject

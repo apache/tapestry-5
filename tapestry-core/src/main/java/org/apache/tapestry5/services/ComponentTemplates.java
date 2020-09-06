@@ -18,7 +18,7 @@ import java.lang.annotation.*;
 
 
 /**
- * Marker annotation used to inject the correct {@link org.apache.tapestry5.services.InvalidationEventHub} service
+ * Marker annotation used to inject the correct {@link org.apache.tapestry5.commons.services.InvalidationEventHub} service
  * responsible for validations when component template files change.
  *
  * @since 5.1.0.0

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public interface MessagesSource extends InvalidationEventHub, UpdateListener

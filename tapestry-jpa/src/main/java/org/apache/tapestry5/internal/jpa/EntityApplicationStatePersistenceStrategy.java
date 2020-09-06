@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.services.SessionApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.services.ApplicationStateCreator;
-import org.apache.tapestry5.services.Request;
 
 public class EntityApplicationStatePersistenceStrategy extends
         SessionApplicationStatePersistenceStrategy

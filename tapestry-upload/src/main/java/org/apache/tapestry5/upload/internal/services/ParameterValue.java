@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.List;
 

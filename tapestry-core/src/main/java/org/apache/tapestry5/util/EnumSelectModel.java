@@ -19,10 +19,10 @@ import java.util.List;
 
 import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum instance name and

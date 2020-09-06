@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.PropertyEditContext;
-import org.apache.tapestry5.ioc.Messages;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

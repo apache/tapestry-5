@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 
 import javax.crypto.Mac;
 import java.io.IOException;

@@ -20,8 +20,8 @@ import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.beanvalidator.BeanValidatorGroupSource;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.BeanValidationContext;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 

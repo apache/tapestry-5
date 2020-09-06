@@ -17,8 +17,8 @@ package org.apache.tapestry5.func;
 /**
  * A Tuple holds two values of two different types.
  * 
- * @param <A>
- * @param <B>
+ * @param <A> first type
+ * @param <B> second type
  * @since 5.3
  */
 public class Tuple<A, B>

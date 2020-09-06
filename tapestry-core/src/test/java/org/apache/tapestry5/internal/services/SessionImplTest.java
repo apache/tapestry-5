@@ -14,9 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.http.internal.services.ClusteredSessionImpl;
+import org.apache.tapestry5.http.internal.services.SessionImpl;
+import org.apache.tapestry5.http.internal.services.SessionLock;
+import org.apache.tapestry5.http.services.Session;
+import org.apache.tapestry5.http.services.SessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;

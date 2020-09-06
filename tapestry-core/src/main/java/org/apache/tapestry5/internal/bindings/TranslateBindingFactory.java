@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.internal.services.StringInterner;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.services.StringInterner;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldTranslatorSource;
 

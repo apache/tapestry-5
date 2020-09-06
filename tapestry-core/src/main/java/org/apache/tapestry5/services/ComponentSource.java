@@ -15,6 +15,8 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.runtime.Component;
 
 /**

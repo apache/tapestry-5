@@ -17,8 +17,8 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Messages;
 
 /**
  * Defines a context for editing a property of a bean via {@link org.apache.tapestry5.corelib.components.BeanEditor}.

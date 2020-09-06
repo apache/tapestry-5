@@ -15,6 +15,13 @@ dependencies {
     compile project(':tapestry-ioc')
     compile project(':tapestry-json')
     compile project(':beanmodel')
+    compile project(':tapestry-http')
+    
+    compile 'jakarta.annotation:jakarta.annotation-api:1.3.4'
+    compile 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    compile 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    compile 'com.sun.xml.ws:jaxws-rt:2.3.2'
+    compile 'javax.xml.ws:jaxws-api:2.3.1'
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")

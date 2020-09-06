@@ -12,11 +12,15 @@
 
 package org.apache.tapestry5.ioc.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A documentation-only interface placed on service interfaces for services which have a {@linkplain
- * org.apache.tapestry5.ioc.MappedConfiguration mapped configuration}, to identify the type of key (often, a String),
+ * A documentation-only interface placed on service interfaces for services which have a 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/MappedConfiguration.html">mapped configuration</a>, to identify the type of key (often, a String),
  * and type of contribution.
  *
  * Remember that when the key type is String, the map will be case-insensitive.

@@ -13,7 +13,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Used by {@link AssetSource} to create new {@link Asset}s as needed.

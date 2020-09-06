@@ -15,9 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

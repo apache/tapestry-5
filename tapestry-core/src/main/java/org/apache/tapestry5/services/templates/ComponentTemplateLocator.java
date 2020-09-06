@@ -13,7 +13,7 @@
 package org.apache.tapestry5.services.templates;
 
 import org.apache.tapestry5.TapestryConstants;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;

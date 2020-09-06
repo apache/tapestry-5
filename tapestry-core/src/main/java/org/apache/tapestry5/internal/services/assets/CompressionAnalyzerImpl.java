@@ -2,7 +2,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import java.util.Map;
 
-import org.apache.tapestry5.services.assets.CompressionAnalyzer;
+import org.apache.tapestry5.http.services.CompressionAnalyzer;
 
 public class CompressionAnalyzerImpl implements CompressionAnalyzer
 {

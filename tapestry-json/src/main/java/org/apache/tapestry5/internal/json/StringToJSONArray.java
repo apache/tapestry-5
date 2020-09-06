@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.json;
 
-import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.commons.services.Coercion;
 import org.apache.tapestry5.json.JSONArray;
 
 /**

@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.services.ObjectRenderer;
 
 /**

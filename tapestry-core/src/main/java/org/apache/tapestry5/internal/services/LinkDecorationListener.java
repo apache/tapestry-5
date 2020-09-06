@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Link;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
