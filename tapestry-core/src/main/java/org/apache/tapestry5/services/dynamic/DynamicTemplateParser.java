@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.dynamic;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Parses a dynamic template based on a resource or an input stream.

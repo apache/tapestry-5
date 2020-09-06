@@ -16,16 +16,16 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.Map;
 

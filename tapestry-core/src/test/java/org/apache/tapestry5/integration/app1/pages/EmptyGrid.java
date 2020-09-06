@@ -25,7 +25,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class EmptyGrid

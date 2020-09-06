@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Scope;
 

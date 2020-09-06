@@ -27,7 +27,7 @@ package org.apache.tapestry5;
  * Tapestry can automatically generate ValueEncoders for enums as well as
  * Collections of any object types for which a coercion can be found from a
  * formatted String, such as primitives, primitive wrappers, Dates, Calendars,
- * "name=value" strings, and any types for which a {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer
+ * "name=value" strings, and any types for which a {@linkplain org.apache.tapestry5.commons.services.TypeCoercer
  * custom type coercion} has been contributed.
  *
  * Custom ValueEncoder implementations will need to be supplied for entity type

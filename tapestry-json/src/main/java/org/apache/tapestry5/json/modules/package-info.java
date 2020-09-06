@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Optional module that allows JSON objects to be used with the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service, when
+ * Optional module that allows JSON objects to be used with the {@link org.apache.tapestry5.commons.services.TypeCoercer} service, when
  * the tapestry-ioc module is present.
  */
 package org.apache.tapestry5.json.modules;

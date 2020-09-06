@@ -13,9 +13,9 @@
 package org.apache.tapestry5.tree;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Collections;
 import java.util.LinkedList;

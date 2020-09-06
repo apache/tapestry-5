@@ -14,8 +14,8 @@ package org.apache.tapestry5.model;
 
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.ioc.Location;
 
 /**
  * Mutable version of {@link org.apache.tapestry5.model.ComponentModel} used during the transformation phase.

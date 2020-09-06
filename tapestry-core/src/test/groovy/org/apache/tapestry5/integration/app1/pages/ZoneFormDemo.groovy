@@ -6,8 +6,8 @@ import org.apache.tapestry5.alerts.AlertManager
 import org.apache.tapestry5.annotations.Environmental
 import org.apache.tapestry5.annotations.InjectComponent
 import org.apache.tapestry5.beaneditor.Validate
-import org.apache.tapestry5.corelib.components.Zone
 import org.apache.tapestry5.ioc.annotations.Inject
+import org.apache.tapestry5.corelib.components.Zone
 
 /**
  * Used to demonstrate Ajax updates to a form including decoration.

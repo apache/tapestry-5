@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;

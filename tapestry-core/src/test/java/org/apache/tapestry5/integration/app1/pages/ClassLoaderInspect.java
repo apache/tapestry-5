@@ -16,8 +16,8 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.IOException;

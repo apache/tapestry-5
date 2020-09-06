@@ -18,8 +18,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 
 /**
  * A PropertyConduit for a literal value in an expression, such as a number, or "true", "false" or "null".

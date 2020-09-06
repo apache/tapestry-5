@@ -1,7 +1,8 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.Resource
+import org.apache.tapestry5.commons.Resource
 import org.apache.tapestry5.ioc.internal.services.ResourceSymbolProvider
+
 import spock.lang.Specification
 
 class ResourceSymbolProviderSpec extends Specification {

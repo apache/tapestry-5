@@ -15,7 +15,7 @@
 package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.tree.DefaultTreeModel;
 import org.apache.tapestry5.tree.TreeModel;
 

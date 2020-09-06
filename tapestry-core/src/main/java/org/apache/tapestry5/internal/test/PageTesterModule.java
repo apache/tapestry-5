@@ -13,11 +13,11 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;

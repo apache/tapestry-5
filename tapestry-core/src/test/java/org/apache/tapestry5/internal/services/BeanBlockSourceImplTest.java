@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockOverrideSource;
 import org.apache.tapestry5.services.BeanBlockSource;
@@ -27,10 +27,10 @@ import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.EditBlockContribution;
 import org.testng.annotations.Test;
 
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
+
 import java.util.Collection;
 import java.util.Collections;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 public class BeanBlockSourceImplTest extends InternalBaseTestCase
 {

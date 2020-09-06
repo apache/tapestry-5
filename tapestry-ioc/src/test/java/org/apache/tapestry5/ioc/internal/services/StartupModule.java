@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 
 public class StartupModule
 {

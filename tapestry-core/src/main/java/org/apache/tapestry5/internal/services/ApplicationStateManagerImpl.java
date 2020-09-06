@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newConcurrentMap;
 
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStateManager;

@@ -1,9 +1,10 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
-import org.slf4j.Logger
-import spock.lang.Shared
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.ioc.internal.services.*
+import org.slf4j.Logger
+
+import spock.lang.Shared
 
 class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
 

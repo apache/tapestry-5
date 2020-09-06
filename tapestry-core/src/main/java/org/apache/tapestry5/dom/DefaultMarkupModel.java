@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Set;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional (X)HTML

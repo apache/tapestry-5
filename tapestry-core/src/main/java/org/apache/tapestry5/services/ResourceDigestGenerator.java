@@ -36,7 +36,7 @@ public interface ResourceDigestGenerator
 {
     /**
      * Examines the path (typically, the file name extension at the end of the path) to determine if a checksum is
-     * required for the path. The path is {@link org.apache.tapestry5.ioc.Resource} style, without a leading slash.
+     * required for the path. The path is {@link org.apache.tapestry5.commons.Resource} style, without a leading slash.
      *
      * As of Tapestry 5.4, simply returns false.
      */

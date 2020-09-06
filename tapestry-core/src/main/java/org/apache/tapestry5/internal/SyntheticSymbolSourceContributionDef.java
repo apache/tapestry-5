@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 

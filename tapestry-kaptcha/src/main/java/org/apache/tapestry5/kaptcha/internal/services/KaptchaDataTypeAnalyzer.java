@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.kaptcha.internal.services;
 
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.commons.services.DataTypeAnalyzer;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
 import org.apache.tapestry5.kaptcha.annotations.Kaptcha;
-import org.apache.tapestry5.services.DataTypeAnalyzer;
 
 public class KaptchaDataTypeAnalyzer implements DataTypeAnalyzer
 {

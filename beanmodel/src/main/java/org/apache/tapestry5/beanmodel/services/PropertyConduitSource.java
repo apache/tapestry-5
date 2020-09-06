@@ -26,7 +26,7 @@ public interface PropertyConduitSource
      * returns, so despite the name, this method does not always create a <em>new</em> conduit. The cache is cleared if
      * a change to component classes is observed.
      *
-     * Callers of this method should observe notifications from the {@link org.apache.tapestry5.services.InvalidationEventHub}
+     * Callers of this method should observe notifications from the {@link org.apache.tapestry5.commons.services.InvalidationEventHub}
      * for {@link org.apache.tapestry5.services.ComponentClasses} and discard any aquired conduits; failure to do so
      * will create memory leaks whenever component classes change (the conduits will keep references to the old classes
      * and classloaders).

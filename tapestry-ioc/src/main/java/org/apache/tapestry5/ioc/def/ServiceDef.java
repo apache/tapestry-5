@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.ioc.def;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.ServiceLifecycle;
 import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;

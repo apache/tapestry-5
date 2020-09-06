@@ -18,8 +18,8 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Id;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Map;
 

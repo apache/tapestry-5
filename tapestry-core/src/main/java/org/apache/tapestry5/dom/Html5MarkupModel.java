@@ -15,7 +15,7 @@ package org.apache.tapestry5.dom;
 
 import java.util.Set;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Implementation of {@link org.apache.tapestry5.dom.MarkupModel} that correctly handles HTML5 void

@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.internal.services.ResourceSymbolProvider;
 import org.apache.tapestry5.services.Context;
 
 /**
- * Makes a {@link org.apache.tapestry5.ioc.Resource} in the {@link org.apache.tapestry5.services.Context} available as a
+ * Makes a {@link org.apache.tapestry5.commons.Resource} in the {@link org.apache.tapestry5.services.Context} available as a
  * {@link org.apache.tapestry5.ioc.services.SymbolProvider}
  *
  * @since 5.1.0.5

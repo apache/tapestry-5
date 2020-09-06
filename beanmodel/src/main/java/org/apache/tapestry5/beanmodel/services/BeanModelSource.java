@@ -13,7 +13,7 @@
 package org.apache.tapestry5.beanmodel.services;
 
 import org.apache.tapestry5.beanmodel.BeanModel;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 
 /**
  * Used by a component to create a default {@link org.apache.tapestry5.beanmodel.BeanModel} for a particular bean
@@ -43,8 +43,8 @@ public interface BeanModelSource
      *                                 org.apache.tapestry5.corelib.components.BeanDisplay}).
      * @param messages                 Used to find explicit overrides of
      * @return a model
-     * @deprecated use {@link #createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)} or {@link
-     *             #createEditModel(Class, org.apache.tapestry5.ioc.Messages)}
+     * @deprecated use {@link #createDisplayModel(Class, org.apache.tapestry5.commons.Messages)} or {@link
+     *             #createEditModel(Class, org.apache.tapestry5.commons.Messages)}
      */
     <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages);
 

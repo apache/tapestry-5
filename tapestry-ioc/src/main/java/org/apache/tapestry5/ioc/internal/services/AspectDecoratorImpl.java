@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.AnnotationAccessImpl;
@@ -21,7 +22,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 import java.lang.reflect.Method;
 

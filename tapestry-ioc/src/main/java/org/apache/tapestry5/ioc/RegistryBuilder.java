@@ -13,17 +13,22 @@
 package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
+import org.apache.tapestry5.commons.internal.*;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
-import org.apache.tapestry5.ioc.internal.*;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl;
+import org.apache.tapestry5.ioc.internal.LoggerSourceImpl;
+import org.apache.tapestry5.ioc.internal.PerThreadOperationTracker;
+import org.apache.tapestry5.ioc.internal.RegistryImpl;
+import org.apache.tapestry5.ioc.internal.RegistryWrapper;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.modules.TapestryIOCModule;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.lang.reflect.AnnotatedElement;

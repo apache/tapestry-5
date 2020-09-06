@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.annotations.NotLazy;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;

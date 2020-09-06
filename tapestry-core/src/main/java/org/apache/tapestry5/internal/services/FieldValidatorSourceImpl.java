@@ -18,21 +18,21 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.Validator;
-import org.apache.tapestry5.ioc.MessageFormatter;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.MessageFormatter;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.validator.ValidatorMacro;
 
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 @SuppressWarnings("all")
 public class FieldValidatorSourceImpl implements FieldValidatorSource

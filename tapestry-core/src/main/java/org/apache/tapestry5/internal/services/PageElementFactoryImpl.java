@@ -18,20 +18,20 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
 import org.apache.tapestry5.internal.structure.ExpansionPageElement;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 
-import java.util.List;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import java.util.List;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {

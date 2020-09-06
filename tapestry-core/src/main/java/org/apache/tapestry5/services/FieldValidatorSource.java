@@ -15,8 +15,8 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.util.Locale;

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.commons.internal.services.ServiceMessages;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
@@ -21,9 +22,9 @@ import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.slf4j.Logger;
 
-import java.util.List;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newThreadSafeList;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newThreadSafeList;
+import java.util.List;
 
 public class RegistryShutdownHubImpl implements RegistryShutdownHub
 {

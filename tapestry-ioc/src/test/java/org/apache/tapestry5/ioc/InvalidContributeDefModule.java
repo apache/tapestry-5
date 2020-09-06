@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.Configuration;
+
 public class InvalidContributeDefModule
 {
     /**

@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetRequestDispatcher;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Dispatcher;

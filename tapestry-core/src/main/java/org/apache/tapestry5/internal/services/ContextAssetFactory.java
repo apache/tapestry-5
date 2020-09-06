@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;

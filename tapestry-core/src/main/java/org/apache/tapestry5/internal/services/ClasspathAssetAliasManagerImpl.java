@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.services.AssetAlias;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 

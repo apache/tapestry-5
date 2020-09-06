@@ -15,15 +15,15 @@
 package org.apache.tapestry5.integration.app3.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.integration.app3.components.OverrideComponent;
 import org.apache.tapestry5.integration.app3.components.OverridenComponent;
 import org.apache.tapestry5.integration.app3.mixins.OverrideMixin;
 import org.apache.tapestry5.integration.app3.mixins.OverridenMixin;
 import org.apache.tapestry5.integration.app3.pages.OverridePage;
 import org.apache.tapestry5.integration.app3.pages.OverridenPage;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.services.ComponentOverride;
 import org.apache.tapestry5.services.DisplayBlockContribution;

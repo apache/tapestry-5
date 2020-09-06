@@ -196,7 +196,7 @@ public class Grid implements GridModel, ClientElement
     /**
      * If true, then the Grid will also render a table element complete with headers if the data source is empty.
      * If set to true, a model parameter will have to be specified. A default model for a specific class can be
-     * created using {@link BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)}.
+     * created using {@link BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.commons.Messages)}.
      */
     @Parameter
     private boolean renderTableIfEmpty = false;
@@ -447,7 +447,7 @@ public class Grid implements GridModel, ClientElement
      * parameter (via {@link org.apache.tapestry5.grid.GridDataSource#getRowType()}. Subclasses may override to provide
      * a different mechanism. The returning binding is variant (not invariant).
      *
-     * @see BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)
+     * @see BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.commons.Messages)
      */
     protected Binding defaultModel()
     {

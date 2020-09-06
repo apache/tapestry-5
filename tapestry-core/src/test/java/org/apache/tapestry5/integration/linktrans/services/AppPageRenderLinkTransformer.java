@@ -18,9 +18,9 @@ import java.util.Locale;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.PersistentLocale;

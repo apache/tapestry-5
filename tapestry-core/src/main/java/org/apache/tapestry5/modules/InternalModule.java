@@ -14,6 +14,8 @@ package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.beanmodel.internal.services.*;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.services.AjaxPartialResponseRenderer;
 import org.apache.tapestry5.internal.services.AjaxPartialResponseRendererImpl;
@@ -67,8 +69,6 @@ import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;

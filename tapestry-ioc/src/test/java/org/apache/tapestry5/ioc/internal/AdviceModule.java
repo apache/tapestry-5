@@ -14,8 +14,8 @@
 package org.apache.tapestry5.ioc.internal;
 
 
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Advise;
 import org.hibernate.Session;

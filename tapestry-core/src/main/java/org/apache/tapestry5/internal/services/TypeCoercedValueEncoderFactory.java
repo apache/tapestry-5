@@ -13,13 +13,13 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 
 /**
  * Provides {@link org.apache.tapestry5.ValueEncoder} instances that are backed by the {@link
- * org.apache.tapestry5.ioc.services.TypeCoercer} service.
+ * org.apache.tapestry5.commons.services.TypeCoercer} service.
  */
 public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Object>
 {

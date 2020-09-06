@@ -17,12 +17,12 @@ package org.apache.tapestry5.ioc.internal;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.def.DecoratorDef2;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 public class DecoratorDefImpl extends AbstractServiceInstrumenter implements DecoratorDef2
 {

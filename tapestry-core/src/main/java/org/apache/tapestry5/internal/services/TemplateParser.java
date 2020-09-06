@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.net.URL;

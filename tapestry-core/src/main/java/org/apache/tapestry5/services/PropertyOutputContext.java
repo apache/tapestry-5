@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.corelib.components.Grid;
-import org.apache.tapestry5.ioc.Messages;
 
 /**
  * Provides context information needed when displaying a value. This interface is an integral part of the {@link Grid}

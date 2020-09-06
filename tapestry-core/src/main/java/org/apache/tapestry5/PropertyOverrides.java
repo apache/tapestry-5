@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 
 /**
  * Provides access to blocks and messages used when overriding property labels, and property display or edit blocks.

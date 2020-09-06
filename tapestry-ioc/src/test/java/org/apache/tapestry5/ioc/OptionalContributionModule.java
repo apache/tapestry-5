@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.ioc.annotations.Optional;
 
 public class OptionalContributionModule

@@ -1,7 +1,8 @@
 package org.apache.tapestry5.ioc.internal.services
 
+import org.apache.tapestry5.commons.services.TypeCoercer
+
 import ioc.specs.AbstractRegistrySpecification
-import org.apache.tapestry5.ioc.services.TypeCoercer
 
 
 class ServiceProxySerializationSpec extends AbstractRegistrySpecification {

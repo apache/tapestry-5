@@ -20,9 +20,8 @@ import org.apache.tapestry5.beaneditor.Sortable;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyModel;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 @SuppressWarnings("all")

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.integration.app1.services;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.integration.app1.data.Track;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

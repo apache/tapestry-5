@@ -18,8 +18,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Messages;
 
 import java.util.Locale;
 
@@ -30,7 +30,7 @@ public interface FieldTranslatorSource
 {
     /**
      * Common shorthand for {@link #createDefaultTranslator(org.apache.tapestry5.Field, String,
-     * org.apache.tapestry5.ioc.Messages, java.util.Locale, Class, org.apache.tapestry5.ioc.AnnotationProvider)}.
+     * org.apache.tapestry5.commons.Messages, java.util.Locale, Class, org.apache.tapestry5.commons.AnnotationProvider)}.
      *
      * @param resources     of component who owns the parameter
      * @param parameterName name of parameter used to determine the property type

@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.commons.ObjectProvider;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**

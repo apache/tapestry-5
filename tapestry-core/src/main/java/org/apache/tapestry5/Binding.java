@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
  * A binding is a connection between a component and its container (another component), that allows the embedded

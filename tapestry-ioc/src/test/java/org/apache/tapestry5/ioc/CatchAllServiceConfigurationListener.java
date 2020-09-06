@@ -17,8 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ServiceConfigurationListener;
 
 /**

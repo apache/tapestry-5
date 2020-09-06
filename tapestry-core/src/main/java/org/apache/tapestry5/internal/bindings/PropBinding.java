@@ -20,9 +20,9 @@ import java.lang.reflect.Type;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyConduit2;
 import org.apache.tapestry5.beanmodel.internal.services.Invariant;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 /**
  * Base class for bindings created by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}. A subclass

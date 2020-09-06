@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.commons.Locatable;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 

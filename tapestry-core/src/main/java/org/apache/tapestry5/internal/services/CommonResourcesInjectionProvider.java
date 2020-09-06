@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.InstanceContext;

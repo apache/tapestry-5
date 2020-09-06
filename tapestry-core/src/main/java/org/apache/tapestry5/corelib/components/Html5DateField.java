@@ -26,8 +26,8 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.corelib.base.AbstractField;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 

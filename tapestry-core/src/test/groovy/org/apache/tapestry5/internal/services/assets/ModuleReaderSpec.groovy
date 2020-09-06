@@ -1,15 +1,7 @@
 package org.apache.tapestry5.internal.services.assets
 
-import org.apache.tapestry5.internal.services.IdentityAssetPathConverter
 import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssemblerImpl.ModuleReader;
-import org.apache.tapestry5.internal.util.VirtualResource;
 import org.apache.tapestry5.ioc.test.TestBase
-import org.apache.tapestry5.services.BaseURLSource
-import org.apache.tapestry5.services.PathConstructor
-import org.apache.tapestry5.services.Request
-import org.apache.tapestry5.services.assets.AssetChecksumGenerator
-import org.apache.tapestry5.services.assets.CompressionStatus
-import org.apache.tapestry5.services.assets.StreamableResource
 import org.testng.annotations.Test
 
 class ModuleReaderTest extends TestBase {

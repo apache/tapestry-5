@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;

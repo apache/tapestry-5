@@ -15,7 +15,7 @@ package org.apache.tapestry5.integration.app1.components;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.util.IntegerRange;
+import org.apache.tapestry5.commons.util.IntegerRange;
 
 /**
  * A component that can count up or count down.

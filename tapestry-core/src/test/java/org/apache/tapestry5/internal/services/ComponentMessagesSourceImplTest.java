@@ -18,10 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;

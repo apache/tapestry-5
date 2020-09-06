@@ -12,8 +12,6 @@
 
 package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry5.ioc.Resource;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,10 +19,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+import org.apache.tapestry5.commons.Resource;
+
 /**
  * Base class for virtual resources: resources that are not simply mapped to stored files, but are assembled, as necessary,
  * on the fly. This is used inside Tapestry to expose the application's localized message catalog as a module.
- * Subclasses should implement the {@link org.apache.tapestry5.ioc.Resource#openStream()} method to return a stream of
+ * Subclasses should implement the {@link org.apache.tapestry5.commons.Resource#openStream()} method to return a stream of
  * the contents of the virtual resource.
  *
  * @see org.apache.tapestry5.services.javascript.ModuleManager

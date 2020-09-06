@@ -8,6 +8,7 @@ bin/
 *.ipr
 *.iml
 *.iws
+.metadata
 target
 test-output
 temp-testng*.xml

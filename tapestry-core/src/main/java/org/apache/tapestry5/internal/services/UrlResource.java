@@ -19,8 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.util.VirtualResource;
-import org.apache.tapestry5.ioc.Resource;
 
 public class UrlResource extends VirtualResource {
     

@@ -14,10 +14,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.ComponentEventRequestHandler;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;

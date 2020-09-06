@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Locatable;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * Exception thrown when a {@link Block} is requested but not found.

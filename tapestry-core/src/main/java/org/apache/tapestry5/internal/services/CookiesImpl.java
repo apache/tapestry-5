@@ -18,9 +18,9 @@ import javax.servlet.http.Cookie;
 
 import org.apache.tapestry5.CookieBuilder;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.Request;
 

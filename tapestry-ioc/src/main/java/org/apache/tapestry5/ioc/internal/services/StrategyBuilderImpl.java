@@ -17,10 +17,10 @@ package org.apache.tapestry5.ioc.internal.services;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.StrategyBuilder;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;

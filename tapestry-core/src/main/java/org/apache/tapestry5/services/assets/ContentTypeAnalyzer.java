@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.Context;
 

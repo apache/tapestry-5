@@ -15,8 +15,8 @@ package org.apache.tapestry5.corelib.base;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.Width;
+import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
-import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 

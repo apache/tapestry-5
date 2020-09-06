@@ -13,16 +13,16 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.slf4j.Logger;

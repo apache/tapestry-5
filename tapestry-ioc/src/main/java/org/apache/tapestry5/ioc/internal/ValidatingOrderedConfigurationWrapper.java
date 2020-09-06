@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
@@ -23,8 +23,8 @@ import org.apache.tapestry5.ioc.internal.util.Orderer;
 import java.util.Map;
 
 /**
- * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.ioc.OrderedConfiguration}, implementing validation of
- * values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}.
+ * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.commons.OrderedConfiguration}, implementing validation of
+ * values provided to an {@link org.apache.tapestry5.commons.OrderedConfiguration}.
  *
  * @param <T>
  */

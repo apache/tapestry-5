@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.internal.util.MessagesImpl;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
 import java.io.File;

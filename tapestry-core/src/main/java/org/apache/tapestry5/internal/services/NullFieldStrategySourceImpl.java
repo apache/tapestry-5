@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.services.NullFieldStrategySource;
 
 import java.util.Map;

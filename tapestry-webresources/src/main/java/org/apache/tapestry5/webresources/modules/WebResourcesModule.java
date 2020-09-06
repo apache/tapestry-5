@@ -17,13 +17,13 @@ import com.github.sommeri.less4j.core.parser.AntlrException;
 import com.google.javascript.jscomp.CompilationLevel;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.webresources.*;
-import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -94,7 +94,7 @@ public class WebResourcesModule
     /**
      * Alas {@link AntlrException}s do not have a useful toString() which makes them useless in the exception report;
      * here we provide an {@link ObjectRenderer} that breaks them apart into useful strings. Eventually we may be
-     * able to synthesize a {@link org.apache.tapestry5.ioc.Location} from them as well and show some of the source .less file.
+     * able to synthesize a {@link org.apache.tapestry5.commons.Location} from them as well and show some of the source .less file.
      */
     @Contribute(ObjectRenderer.class)
     @Primary

@@ -17,9 +17,9 @@ package org.apache.tapestry5.beanmodel.internal.services;
 import java.lang.annotation.Annotation;
 
 import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
-import org.apache.tapestry5.internal.util.IntegerRange;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.IntegerRange;
 
 /**
  * Companion class for {@link org.apache.tapestry5.beanmodel.PropertyConduit} instances created by the

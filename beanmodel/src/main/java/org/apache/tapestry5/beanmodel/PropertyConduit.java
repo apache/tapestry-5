@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
  * Used to read or update the value associated with a property. A PropertyConduit provides access to the annotations on

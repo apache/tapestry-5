@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 
 /**
- * Makes a {@link org.apache.tapestry5.ioc.Resource} on the classpath available as a {@link
+ * Makes a {@link org.apache.tapestry5.commons.Resource} on the classpath available as a {@link
  * org.apache.tapestry5.ioc.services.SymbolProvider}
  *
  * @since 5.1.0.5

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 

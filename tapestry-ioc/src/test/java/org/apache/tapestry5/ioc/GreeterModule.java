@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Marker;
 

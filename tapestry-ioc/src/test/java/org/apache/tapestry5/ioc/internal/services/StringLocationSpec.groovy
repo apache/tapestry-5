@@ -1,6 +1,8 @@
 package org.apache.tapestry5.ioc.internal.services
 
-import org.apache.tapestry5.ioc.Location
+import org.apache.tapestry5.commons.Location
+import org.apache.tapestry5.commons.internal.services.StringLocation
+
 import spock.lang.Specification
 
 class StringLocationSpec extends Specification {

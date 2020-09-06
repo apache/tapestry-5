@@ -1,9 +1,10 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.util.GenericsUtils
+import org.apache.tapestry5.commons.internal.util.GenericsUtils
 import org.apache.tapestry5.ioc.internal.util.NonGenericBean
 import org.apache.tapestry5.ioc.internal.util.StringBean
 import org.apache.tapestry5.ioc.internal.util.StringLongPair
+
 import spock.lang.Specification
 import spock.lang.Unroll
 

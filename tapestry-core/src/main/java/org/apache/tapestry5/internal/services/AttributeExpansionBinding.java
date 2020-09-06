@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
-import org.apache.tapestry5.ioc.Location;
 
 /**
  * Wraps a {@link StringProvider} as a read-only {@link Binding}.

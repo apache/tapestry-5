@@ -1,22 +1,26 @@
 package ioc.specs
 
+import java.lang.reflect.Method
+
+import org.apache.tapestry5.commons.Locatable
+import org.apache.tapestry5.commons.Location
+import org.apache.tapestry5.commons.ObjectCreator
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.services.Coercion
 import org.apache.tapestry5.func.F
 import org.apache.tapestry5.func.Predicate
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.ioc.def.ServiceDef
 import org.apache.tapestry5.ioc.def.ServiceDef2
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
+import org.apache.tapestry5.ioc.internal.util.*
 import org.apache.tapestry5.ioc.services.Builtin
-import org.apache.tapestry5.ioc.services.Coercion
 import org.apache.tapestry5.ioc.services.SymbolSource
+
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.lang.reflect.Method
-
-import org.apache.tapestry5.ioc.*
-import org.apache.tapestry5.ioc.internal.util.*
 
 class InternalUtilsSpec extends Specification {
 

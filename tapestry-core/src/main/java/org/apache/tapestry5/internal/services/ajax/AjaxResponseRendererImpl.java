@@ -13,13 +13,13 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialMarkupRenderer;

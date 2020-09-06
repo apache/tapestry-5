@@ -1,6 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.util.TimeInterval
+import org.apache.tapestry5.commons.util.TimeInterval
+
 import spock.lang.Specification
 import spock.lang.Unroll
 

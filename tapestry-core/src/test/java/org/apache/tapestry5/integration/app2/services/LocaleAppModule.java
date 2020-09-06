@@ -15,7 +15,7 @@
 package org.apache.tapestry5.integration.app2.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 
 public class LocaleAppModule
 {

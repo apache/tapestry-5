@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 
 import java.util.Collection;

@@ -18,9 +18,9 @@ import java.net.URL;
 import java.util.Map;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.AssetConstants;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetFactory;
 
 public class ExternalUrlAssetFactory implements AssetFactory {

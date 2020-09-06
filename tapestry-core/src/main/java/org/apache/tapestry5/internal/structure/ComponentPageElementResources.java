@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -39,7 +39,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
     ComponentResourceSelector getSelector();
 
     /**
-     * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component
+     * Used to obtain a {@link org.apache.tapestry5.commons.Messages} instance for a particular component. If the component
      * extends from another component, then its localized properties will merge with its parent's properties (with the
      * subclass overriding the super class on any conflicts).
      *
@@ -63,7 +63,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
      * @param targetType
      *         defines the target type
      * @return the coerced value
-     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.commons.services.TypeCoercer
      */
     <S, T> T coerce(S input, Class<T> targetType);
 

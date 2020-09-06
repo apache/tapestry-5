@@ -12,13 +12,13 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectProvider;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
- * A service that acts as a chain-of-command over a number of {@link org.apache.tapestry5.ioc.ObjectProvider}, but
+ * A service that acts as a chain-of-command over a number of {@link org.apache.tapestry5.commons.ObjectProvider}, but
  * allows for the case where no object may be provided.
  *
  * This service is itself a key part of Tapestry's general injection mechanism; it is used when instantiating a service

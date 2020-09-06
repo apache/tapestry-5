@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**

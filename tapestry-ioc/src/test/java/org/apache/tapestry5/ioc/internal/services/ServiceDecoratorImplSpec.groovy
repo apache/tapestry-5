@@ -1,14 +1,15 @@
 package org.apache.tapestry5.ioc.internal.services
 
-import ioc.specs.AbstractSharedRegistrySpecification
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.ioc.ModuleBuilderSource
 import org.apache.tapestry5.ioc.ServiceDecorator
 import org.apache.tapestry5.ioc.ServiceResources
 import org.apache.tapestry5.ioc.internal.FieService
 import org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture
 import org.apache.tapestry5.ioc.internal.ServiceDecoratorImpl
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
 import org.slf4j.Logger
+
+import ioc.specs.AbstractSharedRegistrySpecification
 
 class ServiceDecoratorImplSpec extends AbstractSharedRegistrySpecification {
 

@@ -16,8 +16,8 @@ package org.apache.tapestry5.validator;
 
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.commons.MessageFormatter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.MessageFormatter;
 import org.testng.annotations.Test;
 
 public class MaxLengthTest extends InternalBaseTestCase

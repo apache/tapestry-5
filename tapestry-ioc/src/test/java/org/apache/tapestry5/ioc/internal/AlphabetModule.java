@@ -16,11 +16,11 @@ package org.apache.tapestry5.ioc.internal;
 
 import java.util.List;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.BlueMarker;
 import org.apache.tapestry5.ioc.GreenMarker;
 import org.apache.tapestry5.ioc.NameListHolder;
 import org.apache.tapestry5.ioc.NameListHolder2;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 

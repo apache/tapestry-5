@@ -27,8 +27,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 public class TestableResponseImpl implements TestableResponse
 {

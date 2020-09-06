@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import static java.util.Collections.singletonMap;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +26,10 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.commons.MessageFormatter;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.MessageFormatter;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;

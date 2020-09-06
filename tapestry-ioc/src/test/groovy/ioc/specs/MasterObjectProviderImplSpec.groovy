@@ -1,12 +1,13 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.AnnotationProvider
-import org.apache.tapestry5.ioc.ObjectLocator
-import org.apache.tapestry5.ioc.ObjectProvider
+import org.apache.tapestry5.commons.AnnotationProvider
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.ObjectProvider
 import org.apache.tapestry5.ioc.OperationTracker
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.internal.services.MasterObjectProviderImpl
 import org.apache.tapestry5.ioc.services.MasterObjectProvider
+
 import spock.lang.Shared
 import spock.lang.Specification
 

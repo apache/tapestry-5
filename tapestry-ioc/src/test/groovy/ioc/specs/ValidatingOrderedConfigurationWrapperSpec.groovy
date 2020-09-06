@@ -1,11 +1,12 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.ObjectLocator
-import org.apache.tapestry5.ioc.OrderedConfiguration
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.OrderedConfiguration
 import org.apache.tapestry5.ioc.internal.TypeCoercerProxy
 import org.apache.tapestry5.ioc.internal.ValidatingOrderedConfigurationWrapper
 import org.apache.tapestry5.ioc.internal.util.Orderer
 import org.slf4j.Logger
+
 import spock.lang.Specification
 
 class ValidatingOrderedConfigurationWrapperSpec extends Specification {

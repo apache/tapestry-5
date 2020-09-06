@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
+
 public class FailedConfigurationOverrideModule
 {
     public static void contributeOrderedNames(OrderedConfiguration<String> configuration)

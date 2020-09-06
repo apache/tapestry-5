@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.slf4j.Logger;
 
 /**
  * Contains resources that may be provided to a service when it initializes, which includes other services defined in
  * the registry. ServiceResources provides access to other services (it extends
- * {@link org.apache.tapestry5.ioc.ObjectLocator}).
+ * {@link org.apache.tapestry5.commons.ObjectLocator}).
  */
 public interface ServiceResources extends ObjectLocator, AnnotationAccess
 {

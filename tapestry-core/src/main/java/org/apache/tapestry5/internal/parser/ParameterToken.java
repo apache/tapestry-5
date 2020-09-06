@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * A parameter block to be passed to a component as a parameter.

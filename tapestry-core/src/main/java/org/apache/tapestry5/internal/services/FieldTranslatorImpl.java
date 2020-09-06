@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.commons.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
 
 public class FieldTranslatorImpl<T> implements FieldTranslator<T>

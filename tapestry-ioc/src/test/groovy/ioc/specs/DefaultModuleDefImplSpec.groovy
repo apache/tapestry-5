@@ -1,23 +1,21 @@
 package ioc.specs
 
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
+
+import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
+import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.def.ServiceDef3
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory
+import org.apache.tapestry5.ioc.internal.*
 import org.slf4j.Logger
 
 import spock.lang.Issue;
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import org.apache.tapestry5.ioc.*
-import org.apache.tapestry5.ioc.internal.*
-
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
-
-import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
 
 class DefaultModuleDefImplSpec extends Specification {
 

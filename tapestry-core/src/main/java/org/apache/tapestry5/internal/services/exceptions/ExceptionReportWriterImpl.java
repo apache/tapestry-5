@@ -13,6 +13,7 @@
 package org.apache.tapestry5.internal.services.exceptions;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
@@ -20,7 +21,6 @@ import org.apache.tapestry5.func.Reducer;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;

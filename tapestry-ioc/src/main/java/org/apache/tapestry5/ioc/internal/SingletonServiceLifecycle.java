@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.ServiceResources;
 
 /**
- * The basic implementation of a service lifecycle, which simply uses the {@link org.apache.tapestry5.ioc.ObjectCreator}
+ * The basic implementation of a service lifecycle, which simply uses the {@link org.apache.tapestry5.commons.ObjectCreator}
  * to create an instance of the service when asked.
  */
 public class SingletonServiceLifecycle implements ServiceLifecycle2

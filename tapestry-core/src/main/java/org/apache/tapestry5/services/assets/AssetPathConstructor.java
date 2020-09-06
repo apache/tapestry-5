@@ -35,7 +35,7 @@ public interface AssetPathConstructor
      * @param virtualFolder
      *         corresponds to a {@link AssetRequestHandler} contributed to the AssetDispatcher service
      * @param path
-     *         a path that can be used to identify the underlying {@link org.apache.tapestry5.ioc.Resource} or
+     *         a path that can be used to identify the underlying {@link org.apache.tapestry5.commons.Resource} or
      *         or re-acquire the {@link StreamableResource}; this will be the final portion of the URL, after
      *         the appropriate prefix (based on whether the resource is compressed or not) and the checksum for the
      *         resource

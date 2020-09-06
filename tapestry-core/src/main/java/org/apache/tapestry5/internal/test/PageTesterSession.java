@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Session;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.List;
 import java.util.Map;

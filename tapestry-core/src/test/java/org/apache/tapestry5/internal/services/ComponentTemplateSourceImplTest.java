@@ -20,14 +20,14 @@ import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;

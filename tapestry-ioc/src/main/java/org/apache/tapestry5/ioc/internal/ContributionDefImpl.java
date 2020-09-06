@@ -14,10 +14,18 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.util.*;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.def.ContributionDef3;
-import org.apache.tapestry5.ioc.internal.util.*;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.internal.util.DelegatingInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.WrongConfigurationTypeGuard;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;

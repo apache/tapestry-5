@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * A block, used to enclose a chunk of template (including components) and control when or if the content is rendered.

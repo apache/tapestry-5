@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 
 /**

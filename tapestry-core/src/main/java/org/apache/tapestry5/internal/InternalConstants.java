@@ -14,8 +14,8 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.annotations.PublishEvent;
+import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.dom.MarkupModel;
-import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 

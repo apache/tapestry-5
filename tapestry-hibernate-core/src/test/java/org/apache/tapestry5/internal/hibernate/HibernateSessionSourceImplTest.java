@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathScannerImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.example.app0.entities.User;

@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
-
 import java.lang.annotation.Annotation;
+
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.ObjectLocator;
 
 /**
  * Base service locator class used when only the module is known (i.e., when instantiating a module

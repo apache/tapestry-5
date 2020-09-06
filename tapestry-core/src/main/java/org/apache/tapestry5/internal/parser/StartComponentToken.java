@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 
 /**
  * The start element of a component within the template. Will be followed by a series of {@link

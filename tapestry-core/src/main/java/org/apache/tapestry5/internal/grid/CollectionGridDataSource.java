@@ -20,10 +20,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 @SuppressWarnings("all")
 public class CollectionGridDataSource implements GridDataSource

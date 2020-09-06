@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-
 import java.io.InputStream;
 import static java.lang.String.format;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
+
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;

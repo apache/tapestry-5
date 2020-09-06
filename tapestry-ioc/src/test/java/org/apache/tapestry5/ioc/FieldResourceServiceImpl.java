@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Collection;
 import java.util.Collections;

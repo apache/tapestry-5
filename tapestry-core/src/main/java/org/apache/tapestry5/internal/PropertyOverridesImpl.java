@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 
 public class PropertyOverridesImpl implements PropertyOverrides
 {

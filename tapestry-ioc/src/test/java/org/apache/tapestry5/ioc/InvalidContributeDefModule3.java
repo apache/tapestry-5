@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc;
 
 import java.util.List;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 

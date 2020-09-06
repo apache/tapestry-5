@@ -17,8 +17,8 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Collections;
 import java.util.List;

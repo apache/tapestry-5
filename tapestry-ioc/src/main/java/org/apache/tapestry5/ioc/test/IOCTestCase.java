@@ -14,10 +14,23 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AdvisorDef2;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.def.*;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.slf4j.Logger;
 
 import java.io.File;

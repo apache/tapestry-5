@@ -18,9 +18,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.Condition;
 import org.apache.tapestry5.plastic.InstructionBuilder;

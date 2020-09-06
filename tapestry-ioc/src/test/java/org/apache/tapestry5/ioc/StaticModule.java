@@ -14,11 +14,12 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 public class StaticModule {
   private static boolean instantiated;

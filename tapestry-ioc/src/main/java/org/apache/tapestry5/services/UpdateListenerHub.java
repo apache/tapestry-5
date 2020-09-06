@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
 
 /**
  * Manages a set of {@link org.apache.tapestry5.services.UpdateListener}s. Periodically (say, every request during
@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.ObjectLocator;
  * is active, and the active thread invokes {@link #fireCheckForUpdates()}. Various services that are dependent on
  * external resource files (such as classes or template files) can check to see if any file they've used has changed. If
  * so, the service can invalidate its internal cache, or notify other services (typically via
- * {@link org.apache.tapestry5.services.InvalidationListener} that they should do the same.
+ * {@link org.apache.tapestry5.commons.services.InvalidationListener} that they should do the same.
  *
  * Note that this interface has moved from module tapestry-core to tapestry-ioc, but has kept the same package (for
  * backwards compatibility reasons).
@@ -43,7 +43,7 @@ public interface UpdateListenerHub
     /**
      * Invoked periodically to allow services to check if underlying state has changed. For example, a template file may
      * have changed. Listeners will typically notify applicable listeners of their own (they usually implement
-     * {@link org.apache.tapestry5.services.InvalidationEventHub}) when such a change occurs.
+     * {@link org.apache.tapestry5.commons.services.InvalidationEventHub}) when such a change occurs.
      */
     void fireCheckForUpdates();
 }

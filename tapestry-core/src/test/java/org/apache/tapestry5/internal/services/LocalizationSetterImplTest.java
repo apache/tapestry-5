@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newSet;
 
 import java.util.List;
 import java.util.Locale;

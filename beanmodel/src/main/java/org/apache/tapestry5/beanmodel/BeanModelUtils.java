@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.beanmodel;
 
-import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.

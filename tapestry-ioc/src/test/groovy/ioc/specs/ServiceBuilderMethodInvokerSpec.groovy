@@ -1,7 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.AnnotationProvider
-import org.apache.tapestry5.ioc.ObjectCreator
+import org.apache.tapestry5.commons.AnnotationProvider
+import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.ServiceBuilderResources
 import org.apache.tapestry5.ioc.internal.FieService
 import org.apache.tapestry5.ioc.internal.FoeService

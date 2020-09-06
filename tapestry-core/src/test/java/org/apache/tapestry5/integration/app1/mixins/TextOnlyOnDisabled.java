@@ -20,8 +20,8 @@ import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.BindParameter;
 import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * Renders a plain-text version of a value where

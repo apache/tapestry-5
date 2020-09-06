@@ -13,12 +13,12 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialMarkupRenderer;

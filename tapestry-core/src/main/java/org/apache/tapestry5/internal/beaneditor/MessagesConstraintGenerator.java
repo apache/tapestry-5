@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.beaneditor;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.PropertyEditContext;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.List;

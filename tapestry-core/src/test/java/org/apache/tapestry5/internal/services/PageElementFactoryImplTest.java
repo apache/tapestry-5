@@ -16,13 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;

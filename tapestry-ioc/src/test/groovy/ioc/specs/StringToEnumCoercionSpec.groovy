@@ -1,7 +1,8 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.util.StringToEnumCoercion
 import org.apache.tapestry5.util.Stooge
-import org.apache.tapestry5.util.StringToEnumCoercion
+
 import spock.lang.Specification
 
 class StringToEnumCoercionSpec extends Specification {

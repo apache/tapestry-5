@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.services.assets;
 
-import org.apache.tapestry5.ioc.Resource;
-
 import java.io.IOException;
 
+import org.apache.tapestry5.commons.Resource;
+
 /**
- * Generates a checksum of an arbitrary {@link org.apache.tapestry5.ioc.Resource} or {@link StreamableResource} which can be incorporated into
+ * Generates a checksum of an arbitrary {@link org.apache.tapestry5.commons.Resource} or {@link StreamableResource} which can be incorporated into
  * the {@linkplain org.apache.tapestry5.Asset#toClientURL() client URL} of an Asset.
  *
  * @since 5.4

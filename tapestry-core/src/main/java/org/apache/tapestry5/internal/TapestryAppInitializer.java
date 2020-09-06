@@ -13,13 +13,18 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.services.*;
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ServiceActivity;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.modules.TapestryModule;
 import org.slf4j.Logger;
 

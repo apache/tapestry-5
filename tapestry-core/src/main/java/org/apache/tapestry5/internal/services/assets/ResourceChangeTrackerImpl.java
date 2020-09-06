@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;

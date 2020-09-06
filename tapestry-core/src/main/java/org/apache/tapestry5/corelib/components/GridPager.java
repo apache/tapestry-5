@@ -17,10 +17,10 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 

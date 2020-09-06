@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.List;
 
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.ioc.BaseLocatable;
-import org.apache.tapestry5.ioc.Location;
 
 /**
  * A token parsed from an XML file, used when parsing templates.

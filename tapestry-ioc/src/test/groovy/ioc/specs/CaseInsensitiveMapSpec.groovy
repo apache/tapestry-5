@@ -1,6 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.util.CaseInsensitiveMap
+
+import org.apache.tapestry5.commons.util.CaseInsensitiveMap
 
 import spock.lang.Issue;
 import spock.lang.Specification

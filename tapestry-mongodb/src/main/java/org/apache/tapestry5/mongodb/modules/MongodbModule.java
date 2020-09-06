@@ -16,16 +16,17 @@ package org.apache.tapestry5.mongodb.modules;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
+
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.services.Coercion;
+import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.internal.mongodb.MongoDBImpl;
 import org.apache.tapestry5.internal.mongodb.MongoDBSourceImpl;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.mongodb.MongoDB;
 import org.apache.tapestry5.mongodb.MongoDBSource;
@@ -77,7 +78,7 @@ public class MongodbModule
      * Contribute coercions for {@link WriteConcern} and {@link ReadPreference} to have them from
      * {@link org.apache.tapestry5.ioc.annotations.Symbol}
      *
-     * @param configuration lets help the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service
+     * @param configuration lets help the {@link org.apache.tapestry5.commons.services.TypeCoercer} service
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {

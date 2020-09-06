@@ -1,6 +1,6 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.ObjectCreator
+import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.def.ServiceDef
 import org.apache.tapestry5.ioc.internal.ObjectCreatorSource
 import org.apache.tapestry5.ioc.internal.RecursiveServiceCreationCheckWrapper

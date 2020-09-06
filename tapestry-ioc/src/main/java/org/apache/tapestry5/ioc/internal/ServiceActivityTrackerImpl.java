@@ -15,7 +15,6 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry5.ioc.services.Status;
@@ -24,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;

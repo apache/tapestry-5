@@ -17,7 +17,7 @@ package org.apache.tapestry5.javadoc;
 import com.sun.source.doctree.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 import javax.lang.model.element.VariableElement;
 import java.io.IOException;

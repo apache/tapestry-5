@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
 
 public class ContributionOrderModule
 {

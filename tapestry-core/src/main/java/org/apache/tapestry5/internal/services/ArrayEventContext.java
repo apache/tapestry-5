@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.AbstractEventContext;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * Simple implementation of {@link org.apache.tapestry5.EventContext}.

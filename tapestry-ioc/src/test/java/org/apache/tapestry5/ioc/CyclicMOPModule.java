@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
 
 public class CyclicMOPModule
 {

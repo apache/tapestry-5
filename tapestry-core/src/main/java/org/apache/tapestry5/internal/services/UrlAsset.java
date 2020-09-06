@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 public class UrlAsset extends AbstractAsset
 {

@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.services.pageload;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Encapsulates the information that is used when locating a template or message catalog associated with a component.

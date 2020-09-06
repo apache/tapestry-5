@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.beanvalidator;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
 import org.apache.tapestry5.json.JSONObject;
 
-import java.util.Set;
+import static org.apache.tapestry5.commons.util.CollectionFactory.newSet;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import java.util.Set;
 
 /**
  * Describes a single client-side constraint.

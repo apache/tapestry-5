@@ -15,15 +15,15 @@
 package org.apache.tapestry5.beanmodel.services;
 
 import org.apache.tapestry5.beanmodel.internal.services.PlasticClassListenerLogger;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.internal.services.StringLocation;
+import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.internal.services.StringLocation;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalCommonsUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
 

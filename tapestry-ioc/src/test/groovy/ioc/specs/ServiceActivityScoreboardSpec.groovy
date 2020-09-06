@@ -2,7 +2,6 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard
 import org.apache.tapestry5.ioc.services.Status
-import org.apache.tapestry5.ioc.services.TypeCoercer
 import org.apache.tapestry5.ioc.*
 
 class ServiceActivityScoreboardSpec extends AbstractRegistrySpecification {

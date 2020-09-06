@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.apache.tapestry5.services.GenericsResolver;
+import org.apache.tapestry5.commons.services.GenericsResolver;
 
 import com.google.common.reflect.TypeToken;
 

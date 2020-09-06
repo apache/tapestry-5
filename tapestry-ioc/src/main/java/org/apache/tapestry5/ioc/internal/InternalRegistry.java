@@ -14,7 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
@@ -30,7 +35,7 @@ import java.util.Set;
 public interface InternalRegistry extends Registry, RegistryShutdownHub, OperationTracker
 {
     /**
-     * As with {@link org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)},
+     * As with {@link org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.commons.AnnotationProvider)},
      * but handles the {@link org.apache.tapestry5.ioc.annotations.Local} annotation.
      *
      * @param objectType         type of object o be injected

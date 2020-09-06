@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * An Asset is any kind of resource that can be exposed to the client web browser. Although quite often an Asset is a

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 
 public class NonmatchingMappedConfigurationOverrideModule
 {

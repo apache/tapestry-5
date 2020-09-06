@@ -14,7 +14,7 @@ package org.apache.tapestry5.model;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.slf4j.Logger;

@@ -1,13 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.AnnotationProvider
-import org.apache.tapestry5.ioc.ObjectLocator
-import org.apache.tapestry5.ioc.ObjectProvider
+import org.apache.tapestry5.commons.AnnotationProvider
+import org.apache.tapestry5.commons.ObjectLocator
+import org.apache.tapestry5.commons.ObjectProvider
+import org.apache.tapestry5.commons.services.TypeCoercer
 import org.apache.tapestry5.ioc.annotations.IntermediateType
 import org.apache.tapestry5.ioc.annotations.Value
 import org.apache.tapestry5.ioc.internal.services.ValueObjectProvider
 import org.apache.tapestry5.ioc.services.SymbolSource
-import org.apache.tapestry5.ioc.services.TypeCoercer
+
 import spock.lang.Specification
 
 class ValueObjectProviderSpec extends Specification {

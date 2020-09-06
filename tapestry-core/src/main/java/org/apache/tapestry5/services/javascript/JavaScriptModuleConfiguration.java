@@ -12,10 +12,10 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import org.apache.tapestry5.ioc.Resource;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Used to define a <a href="http://requirejs.org/docs/api.html#config-shim">module shim</a>, used to adapt non-AMD JavaScript libraries

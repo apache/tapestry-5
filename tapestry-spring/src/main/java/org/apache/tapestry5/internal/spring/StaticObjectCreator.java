@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
 
 /**
- * An {@link org.apache.tapestry5.ioc.ObjectCreator} for a statically identified object (typically, a bean from the
+ * An {@link org.apache.tapestry5.commons.ObjectCreator} for a statically identified object (typically, a bean from the
  * Spring application context).
  */
 public class StaticObjectCreator implements ObjectCreator

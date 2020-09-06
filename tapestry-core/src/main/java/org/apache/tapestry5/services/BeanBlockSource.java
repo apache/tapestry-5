@@ -27,8 +27,8 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
  * Tapestry contributes a number of default data types and corresponding edit and display blocks. The {@link
  * org.apache.tapestry5.services.BeanBlockOverrideSource} service allows these to be overridden.
  *
- * @see org.apache.tapestry5.services.DataTypeAnalyzer
- * @see org.apache.tapestry5.modules.TapestryModule#provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)
+ * @see org.apache.tapestry5.commons.services.DataTypeAnalyzer
+ * @see org.apache.tapestry5.modules.TapestryModule#provideDefaultBeanBlocks(org.apache.tapestry5.commons.Configuration)
  */
 @UsesConfiguration(BeanBlockContribution.class)
 public interface BeanBlockSource

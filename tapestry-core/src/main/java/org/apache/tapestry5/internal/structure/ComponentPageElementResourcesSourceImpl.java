@@ -15,15 +15,15 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.RequestGlobals;

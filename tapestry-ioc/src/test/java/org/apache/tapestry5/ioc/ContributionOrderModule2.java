@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.commons.OrderedConfiguration;
+
 public class ContributionOrderModule2
 {
     public static void contributeOrderedService(OrderedConfiguration<Integer> configuration) 

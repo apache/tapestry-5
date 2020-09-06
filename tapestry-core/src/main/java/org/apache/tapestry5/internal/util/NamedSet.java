@@ -12,12 +12,12 @@
 
 package org.apache.tapestry5.internal.util;
 
+import org.apache.tapestry5.commons.internal.util.LockSupport;
+import org.apache.tapestry5.commons.util.CaseInsensitiveMap;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.LockSupport;
-import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.ioc.BaseLocatable;
-import org.apache.tapestry5.ioc.Location;
 
 /**
  * Base class for tokens parsed out of a template. The set of classes rooted here are effectively object encapsulations

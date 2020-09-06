@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.Resource;
-
 import java.net.URL;
+
+import org.apache.tapestry5.commons.Resource;
 
 /**
  * Implementation of {@link Resource} for files on the classpath (as defined by a {@link ClassLoader}).

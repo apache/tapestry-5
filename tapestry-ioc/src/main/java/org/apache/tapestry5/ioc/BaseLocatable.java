@@ -14,8 +14,11 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.Locatable;
+import org.apache.tapestry5.commons.Location;
+
 /**
- * Base implementation of {@link org.apache.tapestry5.ioc.Locatable}.
+ * Base implementation of {@link org.apache.tapestry5.commons.Locatable}.
  */
 public class BaseLocatable implements Locatable
 {

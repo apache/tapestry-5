@@ -15,9 +15,9 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.apache.tapestry5.runtime.RenderCommand;

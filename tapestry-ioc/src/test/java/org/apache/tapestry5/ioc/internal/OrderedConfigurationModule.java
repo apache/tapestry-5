@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 
 /**
  * Used by {@link org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl}.

@@ -15,7 +15,7 @@ package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.BindingFactory;
 

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 class OrderedConfigurationOverride<T>
 {

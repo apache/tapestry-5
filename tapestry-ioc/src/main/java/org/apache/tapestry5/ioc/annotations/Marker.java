@@ -32,7 +32,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * org.apache.tapestry5.ioc.ServiceBindingOptions#withMarker(Class[])} will accumulate; a service may have any number of
  * markers.  Generally one or two is enough.
  *
- * @see org.apache.tapestry5.ioc.ObjectLocator#getService(Class, Class[])
+ * @see org.apache.tapestry5.commons.ObjectLocator#getService(Class, Class[])
  */
 @Target(
         {TYPE, METHOD})

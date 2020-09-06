@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.internal.util.MessagesImpl;
 
 class UtilMessages
 {

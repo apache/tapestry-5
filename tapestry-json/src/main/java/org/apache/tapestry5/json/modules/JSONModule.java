@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.json.modules;
 
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.services.CoercionTuple;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.json.StringToJSONArray;
 import org.apache.tapestry5.internal.json.StringToJSONObject;
-import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 

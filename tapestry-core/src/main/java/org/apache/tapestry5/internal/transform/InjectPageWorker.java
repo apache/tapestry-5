@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.InstanceContext;

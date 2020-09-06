@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 @SuppressWarnings("unchecked")
 public class PropertyAccessImpl implements PropertyAccess

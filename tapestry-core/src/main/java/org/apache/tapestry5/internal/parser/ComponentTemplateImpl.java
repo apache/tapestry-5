@@ -12,15 +12,15 @@
 
 package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {

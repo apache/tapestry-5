@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 
 import java.util.Map;
 
 /**
- * A wrapper around a Map that provides the {@link org.apache.tapestry5.ioc.MappedConfiguration} interface, and provides
+ * A wrapper around a Map that provides the {@link org.apache.tapestry5.commons.MappedConfiguration} interface, and provides
  * two forms of validation for mapped configurations:
  * <ul>
  * <li>If either key or value is null, then a warning is logged</li>

@@ -1,9 +1,9 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.services.TypeCoercer
+import org.apache.tapestry5.commons.util.TimeInterval
 import org.apache.tapestry5.func.F
 import org.apache.tapestry5.ioc.annotations.AnnotationUseContext
-import org.apache.tapestry5.ioc.services.TypeCoercer
-import org.apache.tapestry5.ioc.util.TimeInterval
 import org.apache.tapestry5.plastic.PlasticUtils
 
 import com.example.Animal;

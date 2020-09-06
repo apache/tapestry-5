@@ -2,9 +2,9 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.integration.app1.data.Department;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class AjaxRadioDemo

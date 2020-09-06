@@ -1,6 +1,5 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.util.Stack
 import spock.lang.Specification
 
 class StackSpec extends Specification {

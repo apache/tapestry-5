@@ -15,10 +15,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.ValueLabelProvider;

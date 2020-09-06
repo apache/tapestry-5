@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
@@ -21,14 +25,10 @@ import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ReloadAware;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class MessageAccessImpl implements MessageAccess

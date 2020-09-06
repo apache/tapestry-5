@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.parser;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 

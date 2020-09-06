@@ -17,11 +17,11 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Ajax;
 import org.apache.tapestry5.services.ComponentEventRequestHandler;

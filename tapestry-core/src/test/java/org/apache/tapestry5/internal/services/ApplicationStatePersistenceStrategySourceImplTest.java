@@ -15,10 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
 import org.testng.annotations.Test;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 
 import java.util.Collections;
 import java.util.Map;

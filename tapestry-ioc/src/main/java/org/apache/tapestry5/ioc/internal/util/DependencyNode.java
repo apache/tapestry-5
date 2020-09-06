@@ -14,9 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.Orderable;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.slf4j.Logger;
+
+import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
 import java.util.List;
 

@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
-import org.apache.tapestry5.ioc.Resource;
 
 import java.io.IOException;
 

@@ -13,10 +13,10 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 

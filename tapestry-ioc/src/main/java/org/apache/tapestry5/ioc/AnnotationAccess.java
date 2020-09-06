@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.commons.AnnotationProvider;
+
 /**
  * Introduced for Tapestry 5.3, contains new methods to provide access to annotations on the class,
  * and on methods of the class. In rare cases, the same annotation type will appear on the service interface

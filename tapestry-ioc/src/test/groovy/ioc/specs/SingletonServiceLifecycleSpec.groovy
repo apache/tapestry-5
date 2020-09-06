@@ -1,8 +1,9 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.ObjectCreator
+import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.ServiceResources
 import org.apache.tapestry5.ioc.internal.SingletonServiceLifecycle
+
 import spock.lang.Specification
 
 class SingletonServiceLifecycleSpec extends Specification {

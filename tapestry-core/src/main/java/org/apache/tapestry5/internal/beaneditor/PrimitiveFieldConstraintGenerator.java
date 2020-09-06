@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;
 
 import java.util.Arrays;

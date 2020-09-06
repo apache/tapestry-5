@@ -1,9 +1,11 @@
 package ioc.specs
 
+import org.apache.tapestry5.commons.internal.util.InheritanceSearch
+import org.apache.tapestry5.ioc.internal.util.*
 import org.apache.tapestry5.plastic.PlasticUtils
+
 import spock.lang.Specification
 import spock.lang.Unroll
-import org.apache.tapestry5.ioc.internal.util.*
 
 class InheritanceSearchSpec extends Specification {
 

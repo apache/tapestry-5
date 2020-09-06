@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.*;
-
 import java.util.*;
+
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
+import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
+import org.apache.tapestry5.ioc.services.ExceptionInfo;
 
 public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 {

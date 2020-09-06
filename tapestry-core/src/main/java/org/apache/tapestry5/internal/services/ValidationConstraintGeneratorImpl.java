@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.List;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;
 
 @SuppressWarnings("all")

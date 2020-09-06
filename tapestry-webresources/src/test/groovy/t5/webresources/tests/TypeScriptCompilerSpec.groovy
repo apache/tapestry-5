@@ -1,10 +1,10 @@
 package t5.webresources.tests;
 
 import org.apache.tapestry5.SymbolConstants
+import org.apache.tapestry5.commons.MappedConfiguration
 import org.apache.tapestry5.internal.InternalSymbols
 import org.apache.tapestry5.internal.test.PageTesterContext
 import org.apache.tapestry5.internal.webresources.TypeScriptCompiler
-import org.apache.tapestry5.ioc.MappedConfiguration
 import org.apache.tapestry5.ioc.annotations.Autobuild
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.ioc.annotations.SubModule

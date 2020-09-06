@@ -22,6 +22,16 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beanmodel.*;
 import org.apache.tapestry5.beanmodel.internal.services.*;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.BasicDataTypeAnalyzers;
+import org.apache.tapestry5.commons.internal.services.AnnotationDataTypeAnalyzer;
+import org.apache.tapestry5.commons.internal.services.DefaultDataTypeAnalyzer;
+import org.apache.tapestry5.commons.internal.services.StringInterner;
+import org.apache.tapestry5.commons.internal.services.StringInternerImpl;
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
@@ -68,13 +78,23 @@ import org.apache.tapestry5.internal.translator.StringTranslator;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.internal.BasicDataTypeAnalyzers;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.ioc.services.LazyAdvisor;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.plastic.MethodAdvice;
@@ -609,8 +629,8 @@ public final class TapestryModule
      * <dd>Checks for {@link org.apache.tapestry5.beaneditor.DataType} annotation</dd>
      * <dt>Default (ordered last)</dt>
      * <dd>
-     * {@link org.apache.tapestry5.internal.services.DefaultDataTypeAnalyzer} service (
-     * {@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry5.ioc.MappedConfiguration)} )</dd>
+     * {@link org.apache.tapestry5.commons.internal.services.DefaultDataTypeAnalyzer} service (
+     * {@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry5.commons.MappedConfiguration)} )</dd>
      * </dl>
      */
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration,
@@ -1231,7 +1251,7 @@ public final class TapestryModule
 
     /**
      * Analyzes properties to determine the data types, used to
-     * {@linkplain #provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)} locale
+     * {@linkplain #provideDefaultBeanBlocks(org.apache.tapestry5.commons.Configuration)} locale
      * display and edit blocks for properties. The default behaviors
      * look for a {@link org.apache.tapestry5.beaneditor.DataType} annotation
      * before deriving the data type from the property type.
@@ -1667,7 +1687,7 @@ public final class TapestryModule
 
     /**
      * Contributes a default object renderer for type Object, plus specialized
-     * renderers for {@link org.apache.tapestry5.services.Request}, {@link org.apache.tapestry5.ioc.Location},
+     * renderers for {@link org.apache.tapestry5.services.Request}, {@link org.apache.tapestry5.commons.Location},
      * {@link org.apache.tapestry5.ComponentResources}, {@link org.apache.tapestry5.EventContext},
      * {@link AvailableValues},
      * List, and Object[].
@@ -2435,7 +2455,7 @@ public final class TapestryModule
     /**
      * Advises the {@link org.apache.tapestry5.services.messages.ComponentMessagesSource} service so
      * that the creation
-     * of {@link org.apache.tapestry5.ioc.Messages} instances can be deferred.
+     * of {@link org.apache.tapestry5.commons.Messages} instances can be deferred.
      *
      * @since 5.1.0.0
      */

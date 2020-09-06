@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.*;
 import java.net.JarURLConnection;

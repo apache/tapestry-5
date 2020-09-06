@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 
 /**
  * An exception caught and reported by an {@link org.apache.tapestry5.ioc.OperationTracker}; the trace property

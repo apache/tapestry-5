@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.EagerLoadServiceProxy;
 import org.apache.tapestry5.ioc.internal.ServiceActivityTracker;
 import org.apache.tapestry5.ioc.services.Status;

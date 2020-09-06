@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.AnnotationProvider;
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
@@ -79,7 +79,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      *
      * @param embeddedId
      *         selects the embedded component (case is ignored)
-     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
+     * @throws org.apache.tapestry5.commons.util.UnknownValueException
      *         if this component does not contain a component with the given id
      */
 
@@ -227,7 +227,7 @@ public interface ComponentResources extends ComponentResourcesCommon
     List<String> getInformalParameterNames();
 
     /**
-     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coerces} the bound
+     * Reads an informal parameter and {@linkplain org.apache.tapestry5.commons.services.TypeCoercer coerces} the bound
      * value to the indicated type.
      *
      * @param name

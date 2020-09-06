@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.util.CaseInsensitiveMap;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.MultiKey;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.internal.util.MultiKey;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;

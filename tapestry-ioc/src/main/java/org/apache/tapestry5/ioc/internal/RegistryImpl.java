@@ -14,20 +14,53 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.NullAnnotationProvider;
+import org.apache.tapestry5.commons.internal.util.*;
+import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.IOCConstants;
+import org.apache.tapestry5.ioc.IOOperation;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.JDKUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.modules.TapestryIOCModule;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.ServiceConfigurationListener;
+import org.apache.tapestry5.ioc.services.ServiceConfigurationListenerHub;
+import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 
@@ -1030,7 +1063,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     /**
-     * Given markers and matches processed by {@link #findServiceDefsMatchingMarkerAndType(Class, org.apache.tapestry5.ioc.AnnotationProvider, Module, java.util.List, java.util.Set)}, this
+     * Given markers and matches processed by {@link #findServiceDefsMatchingMarkerAndType(Class, org.apache.tapestry5.commons.AnnotationProvider, Module, java.util.List, java.util.Set)}, this
      * finds the singular match, or reports an error for 0 or 2+ matches.
      */
     private <T> T extractServiceFromMatches(Class<T> objectType, List<Class> markers, Set<ServiceDef2> matches)

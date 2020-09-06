@@ -15,11 +15,11 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.hibernate.Session;
 import org.hibernate.mapping.Property;
 import org.slf4j.Logger;

@@ -16,10 +16,10 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.util.Set;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ExceptionTracker;
 
 @Scope(ScopeConstants.PERTHREAD)

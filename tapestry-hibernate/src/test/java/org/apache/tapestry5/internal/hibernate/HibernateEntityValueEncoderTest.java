@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.hibernate.Session;
 import org.slf4j.Logger;

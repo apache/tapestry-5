@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
-
 import java.util.Map;
+
+import org.apache.tapestry5.commons.util.StrategyRegistry;
 
 /**
  * A service implementation builder that operates around a {@link StrategyRegistry}, implementing a version of the Gang

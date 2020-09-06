@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
-
 import java.util.Formatter;
 
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
+
 /**
- * Implementation class for {@link org.apache.tapestry5.ioc.Location}.
+ * Implementation class for {@link org.apache.tapestry5.commons.Location}.
  */
 public final class LocationImpl implements Location
 {

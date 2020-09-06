@@ -12,7 +12,9 @@
 
 package org.apache.tapestry5.ioc.def;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ServiceResources;
 
 /**
  * Contribution to a service configuration.

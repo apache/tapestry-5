@@ -15,8 +15,8 @@
 package org.apache.tapestry5.alerts;
 
 import org.apache.tapestry5.OptimizedSessionPersistedObject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.LockSupport;
+import org.apache.tapestry5.commons.internal.util.LockSupport;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 import java.io.Serializable;
 import java.util.Iterator;

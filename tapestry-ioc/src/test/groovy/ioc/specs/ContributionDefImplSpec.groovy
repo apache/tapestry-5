@@ -10,8 +10,8 @@ import spock.lang.Specification
 
 import java.lang.reflect.Method
 import javax.inject.Named
-
 import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.commons.*
 
 class ModuleFixture {
 

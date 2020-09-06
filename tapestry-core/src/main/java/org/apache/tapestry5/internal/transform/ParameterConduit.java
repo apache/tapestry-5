@@ -14,8 +14,8 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.plastic.FieldConduit;
 
 /**

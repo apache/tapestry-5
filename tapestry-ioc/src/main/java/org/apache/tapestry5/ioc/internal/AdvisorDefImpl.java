@@ -17,12 +17,12 @@ package org.apache.tapestry5.ioc.internal;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.AdvisorDef2;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 public class AdvisorDefImpl extends AbstractServiceInstrumenter implements AdvisorDef2
 {

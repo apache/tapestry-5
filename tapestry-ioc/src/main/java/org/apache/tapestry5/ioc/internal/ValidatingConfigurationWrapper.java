@@ -16,11 +16,11 @@ package org.apache.tapestry5.ioc.internal;
 
 import java.util.Collection;
 
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.ObjectLocator;
 
 /**
- * Wraps a {@link java.util.Collection} as a {@link org.apache.tapestry5.ioc.Configuration} and perform validation that
+ * Wraps a {@link java.util.Collection} as a {@link org.apache.tapestry5.commons.Configuration} and perform validation that
  * collected value are of the correct type.
  */
 public class ValidatingConfigurationWrapper<T> extends AbstractConfigurationImpl<T> implements Configuration<T>

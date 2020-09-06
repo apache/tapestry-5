@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.ioc.IOCSymbols;
-import org.apache.tapestry5.ioc.MappedConfiguration;
 
 public class NonParallelModule
 {

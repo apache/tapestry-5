@@ -15,6 +15,11 @@
 package org.apache.tapestry5.hibernate.modules;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.hibernate.HibernateCore;
 import org.apache.tapestry5.hibernate.HibernatePersistenceConstants;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
@@ -24,16 +29,11 @@ import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
 import org.apache.tapestry5.internal.hibernate.EntityApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.internal.hibernate.EntityPersistentFieldStrategy;
 import org.apache.tapestry5.internal.hibernate.HibernateEntityValueEncoder;
-import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.PersistentFieldStrategy;

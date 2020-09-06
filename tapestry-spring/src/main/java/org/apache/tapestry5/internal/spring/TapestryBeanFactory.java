@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * Identifies dependencies whose field or method parameter contains the {@link org.apache.tapestry5.ioc.annotations.Inject}
  * or {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations and, if so, invokes {@link
- * org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)} to provide the
+ * org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.commons.AnnotationProvider)} to provide the
  * value.
  */
 public class TapestryBeanFactory extends DefaultListableBeanFactory

@@ -12,15 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.Locatable;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.parser.*;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.AbstractResource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.test.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

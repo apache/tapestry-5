@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.RequestGlobals;
 
 import java.util.List;

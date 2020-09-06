@@ -16,13 +16,13 @@ package org.apache.tapestry5.util;
 
 import java.util.List;
 
+import org.apache.tapestry5.commons.internal.services.TypeCoercerImpl;
+import org.apache.tapestry5.commons.services.Coercion;
+import org.apache.tapestry5.commons.services.CoercionTuple;
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.services.TypeCoercerImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.testng.annotations.Test;
 
 
