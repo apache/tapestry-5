@@ -17,12 +17,12 @@ lexer grammar PropertyExpressionLexer;
 
 options
 {
-  superClass='org.apache.tapestry5.internal.antlr.BaseLexer';
+  superClass='org.apache.tapestry5.beanmodel.internal.antlr.BaseLexer';
 }
 
 @header
 {
-package org.apache.tapestry5.internal.antlr;
+package org.apache.tapestry5.beanmodel.internal.antlr;
 }
 
 	

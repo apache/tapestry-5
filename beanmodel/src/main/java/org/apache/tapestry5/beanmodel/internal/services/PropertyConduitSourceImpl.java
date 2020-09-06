@@ -21,8 +21,8 @@ import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyConduit2;
 import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
-import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
-import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
+import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionLexer;
+import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser;
 import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.MultiKey;
@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.*;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource
 {

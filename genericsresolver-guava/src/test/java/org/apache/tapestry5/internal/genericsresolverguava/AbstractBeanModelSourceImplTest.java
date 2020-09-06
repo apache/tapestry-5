@@ -16,24 +16,18 @@ package org.apache.tapestry5.internal.genericsresolverguava;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.beaneditor.Sortable;
-import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.beanmodel.BeanModel;
+import org.apache.tapestry5.beanmodel.PropertyConduit;
+import org.apache.tapestry5.beanmodel.PropertyModel;
+import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl;
+import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.modules.TapestryModule;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**

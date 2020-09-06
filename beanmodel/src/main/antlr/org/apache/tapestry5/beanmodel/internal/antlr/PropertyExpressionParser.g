@@ -17,7 +17,7 @@ parser grammar PropertyExpressionParser;
 
 options
 {
-  superClass='org.apache.tapestry5.internal.antlr.BaseParser';
+  superClass='org.apache.tapestry5.beanmodel.internal.antlr.BaseParser';
   output=AST;		
   ASTLabelType=CommonTree;
   tokenVocab=PropertyExpressionLexer;
@@ -38,7 +38,7 @@ tokens
 
 @header
 {
-package org.apache.tapestry5.internal.antlr;
+package org.apache.tapestry5.beanmodel.internal.antlr;
 }
 
 	
