@@ -12,30 +12,26 @@
 
 package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
-import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * An optional annotation that may be placed on a service building method of a module, or on the implementation class
  * (when using service binding). The annotation overrides the default scope for services (the default being a global
  * singleton that is instantiated on demand) for an alternate lifecycle. Alternate lifecycles are typically used to bind
  * a service implementation to a single thread or request. Modules may define new scopes. Each scope should have a
- * corresponding {@link ServiceLifecycle} implementation. The linkage from scope name to service lifecycle occurs via a
- * contribution to the {@link ServiceLifecycleSource} service configuration.
+ * corresponding <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ServiceLifecycle.html">ServiceLifecycle</a> implementation. The linkage from scope name to service lifecycle occurs via a
+ * contribution to the <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/services/ServiceLifecycleSource.html">ServiceLifecycleSource</a> service configuration.
  *
  * The annotation may also be placed directly on a service implementation class, when using service binding (via
- * the {@link ServiceBinder}).
+ * the <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ServiceBinder.html">ServiceBinder</a>).
  *
- * @see org.apache.tapestry5.ioc.ScopeConstants
+ * @see <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ServiceBinder.html">ScopeConstants</a>.
  */
 @Target(
         {TYPE, METHOD})
@@ -45,7 +41,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Scope
 {
     /**
-     * An identifier used to look up a non-default {@link ServiceLifecycle}.
+     * An identifier used to look up a non-default <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ServiceBinder.html">ServiceLifecycle</a>.
      */
     String value();
 }

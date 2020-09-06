@@ -12,8 +12,6 @@
 
 package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry5.ioc.def.ServiceDef;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -23,7 +21,8 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Used to define one or more {@linkplain ServiceDef#getMarkers() marker annotations} for a service implementation. This
+ * Used to define one or more 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/def/ServiceDef.html">ServiceDef#getMarkers() marker annotations</a> for a service implementation. This
  * allows for injection based on the combination of type and marker interface. These marker interfaces should not have
  * any values. The mere presence of the marker annotation is all that is needed.
  *
