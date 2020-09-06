@@ -122,8 +122,8 @@ public final class JSONArray extends JSONCollection implements Collection<Object
     }
 
     /**
-     * @deprecated Use {@code length()} instead.
      * @return Returns the number of values in this array.
+     * @deprecated Use {@link #size()} instead.
      */
     public int length() {
         return size();
@@ -164,7 +164,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      *              infinities}. Unsupported values are not permitted and will cause the
      *              array to be in an inconsistent state.
      * @return this array.
-     * @deprecated The use of {@code add(Object)] is encouraged.
+     * @deprecated The use of {@link #add(Object)] is encouraged.
      */
     public JSONArray put(Object value) {
         add(value);
@@ -180,6 +180,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      *              infinities}. Unsupported values are not permitted and will cause the
      *              array to be in an inconsistent state.
      * @return {@code true} (as specified by {@link Collection#add})
+     * @since 5.7
      */
     @Override
     public boolean add(Object value)
@@ -283,33 +284,37 @@ public final class JSONArray extends JSONCollection implements Collection<Object
     }
 
     /**
-     * Removes the first occurrence of the specified value from this array,
-     * if it is present (optional operation). If this list does not contain
-     * the element, it is unchanged.
+     * Removes the first occurrence of the specified value from this JSONArray,
+     * if it is present.
      *
-     * @param value
-     *            element to be removed from this list, if present
-     * @return {@code true} if the value was removed
-     * @throws NullPointerException
-     *             if the specified element is null and this
-     *             list does not permit null elements
-     *             (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @param value value to be removed from this JSONArray, if present
+     * @return {@code true} if the element was removed
      * @since 5.7
      */
     @Override
-    public boolean remove(Object o)
+    public boolean remove(Object value)
     {
-        return values.remove(o);
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c)
-    {
-        return values.removeAll(c);
+        return values.remove(value);
     }
 
     /**
-     * Removes all of the values from this array.
+     * Removes from this JSONArray all of its values that are contained in the
+     * specified collection.
+     *
+     * @param collection collection containing value to be removed from this JSONArray
+     * @return {@code true} if this JSONArray changed as a result of the call
+     * @throws NullPointerException if the specified collection is null.
+     * @see Collection#contains(Object)
+     * @since 5.7
+     */
+    @Override
+    public boolean removeAll(Collection<?> collection)
+    {
+        return values.removeAll(collection);
+    }
+
+    /**
+     * Removes all of the values from this JSONArray.
      * 
      * @since 5.7
      */
@@ -320,15 +325,13 @@ public final class JSONArray extends JSONCollection implements Collection<Object
     }
 
     /**
-     * Retains only the values in this array that are contained in the
+     * Retains only the values in this JSONArray that are contained in the
      * specified collection.
      *
-     * @param collection
-     *            collection containing elements to be retained in this list
+     * @param collection collection containing elements to be retained in this list
      * @return {@code true} if this list changed as a result of the call
      * @since 5.7
      */
-
     @Override
     public boolean retainAll(Collection<?> c)
     {
@@ -523,8 +526,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
     /**
      * Adds all objects from the collection into this JSONArray, using {@link #add(Object)}.
      *
-     * @param collection
-     *            Any collection, or null
+     * @param collection Any collection, or null
      * @return boolean true, if JSONArray was changed.
      * @since 5.7
      */
@@ -576,7 +578,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      * proper sequence; the runtime type of the returned array is that of
      * the specified array.
      *
-     * @param a
+     * @param array
      *            the array into which the values of this JSONArray are to
      *            be stored, if it is big enough; otherwise, a new array of the
      *            same runtime type is allocated for this purpose.
@@ -590,16 +592,15 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      * @since 5.7
      */
     @Override
-    public <T> T[] toArray(T[] a)
+    public <T> T[] toArray(T[] array)
     {
-        return values.toArray(a);
+        return values.toArray(array);
     }
 
     /**
      * Returns an iterator over the values in this array in proper sequence.
      *
      * @return an iterator over the values in this array in proper sequence
-     * @since 5.7
      */
     @Override
     public Iterator<Object> iterator()
@@ -607,12 +608,32 @@ public final class JSONArray extends JSONCollection implements Collection<Object
         return values.iterator();
     }
 
+    /**
+     * Returns {@code true} if this JSONArray contains the specified value.
+     *
+     * @param value value whose presence in this JSONArray is to be tested
+     * @return {@code true} if this JSONArray contains the specified
+     *         value
+     * @since 5.7
+     */
     @Override
-    public boolean contains(Object o)
+    public boolean contains(Object value)
     {
-        return values.contains(o);
+        return values.contains(value);
     }
 
+    /**
+     * Returns {@code true} if this JSONArray contains all of the values
+     * in the specified collection.
+     *
+     * @param c collection to be checked for containment in this collection
+     * @return {@code true} if this collection contains all of the elements
+     *         in the specified collection
+     * @throws NullPointerException
+     *             if the specified collection is null.
+     * @see #contains(Object)
+     * @since 5.7
+     */
     @Override
     public boolean containsAll(Collection<?> c)
     {
