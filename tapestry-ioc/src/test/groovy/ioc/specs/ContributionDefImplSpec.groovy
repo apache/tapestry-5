@@ -3,7 +3,7 @@ package ioc.specs
 import org.apache.tapestry5.ioc.annotations.InjectService
 import org.apache.tapestry5.ioc.internal.ContributionDefImpl
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
-import org.apache.tapestry5.ioc.internal.UpcaseService
+import org.apache.tapestry5.ioc.test.internal.UpcaseService
 import org.slf4j.Logger
 import spock.lang.Shared
 import spock.lang.Specification

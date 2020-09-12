@@ -2,6 +2,14 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.def.ModuleDef
 import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl
+import org.apache.tapestry5.ioc.test.BarneyModule
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.MasterModule
+import org.apache.tapestry5.ioc.test.NameListHolder
+import org.apache.tapestry5.ioc.test.RegistryBuilderTestModule
+import org.apache.tapestry5.ioc.test.ServiceBuilderModule
+import org.apache.tapestry5.ioc.test.Square
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification

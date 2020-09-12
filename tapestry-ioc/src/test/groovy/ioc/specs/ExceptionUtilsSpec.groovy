@@ -3,7 +3,7 @@ package ioc.specs
 import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl
 import org.apache.tapestry5.commons.internal.util.TapestryException
 import org.apache.tapestry5.commons.util.ExceptionUtils
-import org.apache.tapestry5.ioc.util.ExceptionWrapper
+import org.apache.tapestry5.ioc.test.util.ExceptionWrapper
 
 import spock.lang.Shared
 import spock.lang.Specification

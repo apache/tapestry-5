@@ -1,8 +1,14 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule
-import org.apache.tapestry5.ioc.internal.PrivateConstructorModule
-import org.apache.tapestry5.ioc.internal.UpcaseService
+import org.apache.tapestry5.ioc.test.DuplicateFredModule
+import org.apache.tapestry5.ioc.test.ExtraMethodsModule
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.NoImplementationClassForSimpleIdModule
+import org.apache.tapestry5.ioc.test.RecursiveConstructorModule
+import org.apache.tapestry5.ioc.test.UnknownScopeModule
+import org.apache.tapestry5.ioc.test.internal.ExtraPublicConstructorsModule
+import org.apache.tapestry5.ioc.test.internal.PrivateConstructorModule
+import org.apache.tapestry5.ioc.test.internal.UpcaseService
 import org.apache.tapestry5.ioc.*
 
 /**

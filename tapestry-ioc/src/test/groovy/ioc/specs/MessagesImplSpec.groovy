@@ -2,7 +2,7 @@ package ioc.specs
 
 import org.apache.tapestry5.commons.Messages
 import org.apache.tapestry5.commons.internal.util.MessagesImpl
-import org.apache.tapestry5.ioc.internal.util.TargetMessages
+import org.apache.tapestry5.ioc.test.internal.util.TargetMessages
 
 import spock.lang.Shared
 import spock.lang.Specification

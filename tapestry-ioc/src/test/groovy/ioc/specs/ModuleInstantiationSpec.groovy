@@ -1,7 +1,7 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.NameListHolder
-import org.apache.tapestry5.ioc.StaticModule
+import org.apache.tapestry5.ioc.test.NameListHolder
+import org.apache.tapestry5.ioc.test.StaticModule
 
 class ModuleInstantiationSpec extends AbstractRegistrySpecification {
 

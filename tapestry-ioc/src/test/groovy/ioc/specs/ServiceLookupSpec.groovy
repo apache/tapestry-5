@@ -6,6 +6,14 @@ import org.apache.tapestry5.commons.AnnotationProvider
 import org.apache.tapestry5.commons.services.TypeCoercer
 import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.services.Builtin
+import org.apache.tapestry5.ioc.test.BlueMarker
+import org.apache.tapestry5.ioc.test.DuplicateServiceTypeModule
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule
+import org.apache.tapestry5.ioc.test.LocalModule
+import org.apache.tapestry5.ioc.test.Pingable
+import org.apache.tapestry5.ioc.test.StringHolder
 
 class ServiceLookupSpec extends AbstractRegistrySpecification {
 

@@ -2,11 +2,11 @@ package ioc.specs
 
 import org.apache.tapestry5.commons.ObjectLocator
 import org.apache.tapestry5.commons.services.PropertyAccess
-import org.apache.tapestry5.ioc.DefaultMethodService
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.ServiceBinder
-import org.apache.tapestry5.ioc.internal.services.Bean
+import org.apache.tapestry5.ioc.test.DefaultMethodService
+import org.apache.tapestry5.ioc.test.internal.services.Bean
 import org.hibernate.Session
 import org.hibernate.cfg.Configuration
 

@@ -1,6 +1,17 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule
+import org.apache.tapestry5.ioc.test.AutobuildInjectionModule
+import org.apache.tapestry5.ioc.test.AutobuildModule
+import org.apache.tapestry5.ioc.test.ConventionFailureModule
+import org.apache.tapestry5.ioc.test.ConventionModule
+import org.apache.tapestry5.ioc.test.ConventionModuleImplementationNotFound
+import org.apache.tapestry5.ioc.test.Pingable
+import org.apache.tapestry5.ioc.test.ServiceBuilderAutobuilderModule
+import org.apache.tapestry5.ioc.test.StringHolder
+import org.apache.tapestry5.ioc.test.StringHolderImpl
+import org.apache.tapestry5.ioc.test.StringTransformer
+import org.apache.tapestry5.ioc.test.UnbuildablePingable
+import org.apache.tapestry5.ioc.test.internal.ExceptionInConstructorModule
 import org.apache.tapestry5.ioc.*
 
 class AutobuildSpec extends AbstractRegistrySpecification {

@@ -2,6 +2,14 @@ package ioc.specs
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.ioc.internal.services.*
+import org.apache.tapestry5.ioc.test.internal.services.ExtraFilterMethod
+import org.apache.tapestry5.ioc.test.internal.services.ExtraServiceMethod
+import org.apache.tapestry5.ioc.test.internal.services.MiddleFilter
+import org.apache.tapestry5.ioc.test.internal.services.MiddleService
+import org.apache.tapestry5.ioc.test.internal.services.StandardFilter
+import org.apache.tapestry5.ioc.test.internal.services.StandardService
+import org.apache.tapestry5.ioc.test.internal.services.ToStringFilter
+import org.apache.tapestry5.ioc.test.internal.services.ToStringService
 import org.slf4j.Logger
 
 import spock.lang.Shared

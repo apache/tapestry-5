@@ -2,7 +2,7 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.internal.services.RegistryStartup
-import org.apache.tapestry5.ioc.internal.services.StartupModule
+import org.apache.tapestry5.ioc.test.internal.services.StartupModule
 import org.slf4j.Logger
 import spock.lang.Specification
 

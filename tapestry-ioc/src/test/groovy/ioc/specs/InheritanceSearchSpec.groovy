@@ -2,6 +2,12 @@ package ioc.specs
 
 import org.apache.tapestry5.commons.internal.util.InheritanceSearch
 import org.apache.tapestry5.ioc.internal.util.*
+import org.apache.tapestry5.ioc.test.internal.util.Drivable
+import org.apache.tapestry5.ioc.test.internal.util.DrivableImpl
+import org.apache.tapestry5.ioc.test.internal.util.Playable
+import org.apache.tapestry5.ioc.test.internal.util.PlayableImpl
+import org.apache.tapestry5.ioc.test.internal.util.ToyTruck
+import org.apache.tapestry5.ioc.test.internal.util.ToyTruckImpl
 import org.apache.tapestry5.plastic.PlasticUtils
 
 import spock.lang.Specification

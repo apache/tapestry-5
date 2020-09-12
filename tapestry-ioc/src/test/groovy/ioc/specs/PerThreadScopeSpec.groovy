@@ -1,8 +1,8 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.PerThreadModule
-import org.apache.tapestry5.ioc.ScopeMismatchModule
-import org.apache.tapestry5.ioc.StringHolder
+import org.apache.tapestry5.ioc.test.PerThreadModule
+import org.apache.tapestry5.ioc.test.ScopeMismatchModule
+import org.apache.tapestry5.ioc.test.StringHolder
 
 class PerThreadScopeSpec extends AbstractRegistrySpecification {
 

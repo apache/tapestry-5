@@ -11,8 +11,15 @@ import org.apache.tapestry5.commons.services.ClassPropertyAdapter
 import org.apache.tapestry5.commons.services.PropertyAccess
 import org.apache.tapestry5.ioc.annotations.Scope
 import org.apache.tapestry5.ioc.internal.services.*
-import org.apache.tapestry5.ioc.internal.util.Pair
-import org.apache.tapestry5.ioc.internal.util.StringLongPair
+import org.apache.tapestry5.ioc.test.internal.services.AnnotatedBean
+import org.apache.tapestry5.ioc.test.internal.services.AnnotatedBeanSubclass
+import org.apache.tapestry5.ioc.test.internal.services.Bean
+import org.apache.tapestry5.ioc.test.internal.services.BeanWithIndexedProperty
+import org.apache.tapestry5.ioc.test.internal.services.PublicFieldBean
+import org.apache.tapestry5.ioc.test.internal.services.ShadowedPublicFieldBean
+import org.apache.tapestry5.ioc.test.internal.services.SubInterface
+import org.apache.tapestry5.ioc.test.internal.util.Pair
+import org.apache.tapestry5.ioc.test.internal.util.StringLongPair
 
 import com.example.TestInterface
 

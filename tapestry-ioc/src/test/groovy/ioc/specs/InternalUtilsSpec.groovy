@@ -17,6 +17,14 @@ import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.internal.util.*
 import org.apache.tapestry5.ioc.services.Builtin
 import org.apache.tapestry5.ioc.services.SymbolSource
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaInject
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaInjectService
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaJavaxInject
+import org.apache.tapestry5.ioc.test.internal.util.FieldInjectionViaJavaxNamed
+import org.apache.tapestry5.ioc.test.internal.util.InjectoBean
+import org.apache.tapestry5.ioc.test.internal.util.JavaxInjectBean
+import org.apache.tapestry5.ioc.test.internal.util.NotRetainedRuntime
+import org.apache.tapestry5.ioc.test.internal.util.TooManyAutobuildConstructorsBean
 
 import spock.lang.Shared
 import spock.lang.Specification

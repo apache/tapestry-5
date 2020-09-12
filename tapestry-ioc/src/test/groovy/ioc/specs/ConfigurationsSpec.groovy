@@ -1,9 +1,33 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.AlphabetModule
-import org.apache.tapestry5.ioc.internal.AlphabetModule2
 import org.apache.tapestry5.ioc.services.SymbolSource
-import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule
+import org.apache.tapestry5.ioc.test.BarneyModule
+import org.apache.tapestry5.ioc.test.CaseInsensitiveContributeMethodModule
+import org.apache.tapestry5.ioc.test.ConfigurationOverrideModule
+import org.apache.tapestry5.ioc.test.ContributeByClassModule
+import org.apache.tapestry5.ioc.test.ContributedValueCoercionModule
+import org.apache.tapestry5.ioc.test.ContributionOrderModule
+import org.apache.tapestry5.ioc.test.ContributionOrderModule2
+import org.apache.tapestry5.ioc.test.ContributionOrderModule3
+import org.apache.tapestry5.ioc.test.ContributionOrderModule4
+import org.apache.tapestry5.ioc.test.DuplicateConfigurationOverrideModule
+import org.apache.tapestry5.ioc.test.FailedConfigurationOverrideModule
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.InjectionCheck
+import org.apache.tapestry5.ioc.test.InjectionCheckModule
+import org.apache.tapestry5.ioc.test.InvalidContributeDefModule
+import org.apache.tapestry5.ioc.test.InvalidContributeDefModule2
+import org.apache.tapestry5.ioc.test.InvalidContributeDefModule3
+import org.apache.tapestry5.ioc.test.NameListHolder
+import org.apache.tapestry5.ioc.test.NameListHolder2
+import org.apache.tapestry5.ioc.test.OptionalContributionModule
+import org.apache.tapestry5.ioc.test.OrderedService
+import org.apache.tapestry5.ioc.test.Sizer
+import org.apache.tapestry5.ioc.test.StringLookup
+import org.apache.tapestry5.ioc.test.StringTransformer
+import org.apache.tapestry5.ioc.test.internal.AlphabetModule
+import org.apache.tapestry5.ioc.test.internal.AlphabetModule2
+import org.apache.tapestry5.ioc.test.util.NonmatchingMappedConfigurationOverrideModule
 import org.apache.tapestry5.ioc.*
 
 /** Integration tests for various types of service configurations. */

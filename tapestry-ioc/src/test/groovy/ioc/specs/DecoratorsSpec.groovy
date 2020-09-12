@@ -1,7 +1,18 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.internal.DecorateByMarkerModule
-import org.apache.tapestry5.ioc.internal.DecorateByMarkerModule2
+import org.apache.tapestry5.ioc.test.BarneyModule
+import org.apache.tapestry5.ioc.test.DecoratorList
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule
+import org.apache.tapestry5.ioc.test.GreeterModule2
+import org.apache.tapestry5.ioc.test.PreventDecorationModule
+import org.apache.tapestry5.ioc.test.Rocket
+import org.apache.tapestry5.ioc.test.SpecificDecoratorModule
+import org.apache.tapestry5.ioc.test.SpecificDecoratorModuleAgain
+import org.apache.tapestry5.ioc.test.StringTransformer
+import org.apache.tapestry5.ioc.test.internal.DecorateByMarkerModule
+import org.apache.tapestry5.ioc.test.internal.DecorateByMarkerModule2
 import org.apache.tapestry5.ioc.*
 
 /** Integration tests for service decorators and some related behaviors. */

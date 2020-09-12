@@ -1,8 +1,8 @@
 package ioc.specs
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.tapestry5.ioc.internal.services.TextTransformer
 import org.apache.tapestry5.ioc.services.AspectDecorator
+import org.apache.tapestry5.ioc.test.internal.services.TextTransformer
 import org.apache.tapestry5.plastic.MethodAdvice
 import org.apache.tapestry5.plastic.MethodInvocation
 import spock.lang.Shared

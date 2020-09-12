@@ -1,6 +1,13 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.CyclicMOPModule
+import org.apache.tapestry5.ioc.test.FieldResourceInjectionModule
+import org.apache.tapestry5.ioc.test.FieldResourceService
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.GreeterModule
+import org.apache.tapestry5.ioc.test.GreeterServiceOverrideModule
+import org.apache.tapestry5.ioc.test.PostInjectionMethodModule
 
 class InjectionSpec extends AbstractRegistrySpecification {
 

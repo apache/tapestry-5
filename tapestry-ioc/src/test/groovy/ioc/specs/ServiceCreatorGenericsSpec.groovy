@@ -2,7 +2,8 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.internal.AbstractServiceCreator
 import org.apache.tapestry5.ioc.internal.IOCMessages
-import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodFixture
+import org.apache.tapestry5.ioc.test.internal.ServiceBuilderMethodFixture
+
 import spock.lang.Specification
 
 import java.lang.reflect.Method

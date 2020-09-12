@@ -1,6 +1,15 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.*
+import org.apache.tapestry5.ioc.test.BarneyModule
+import org.apache.tapestry5.ioc.test.ConcreteServiceBuilderModule
+import org.apache.tapestry5.ioc.test.CountingGreeterImpl
+import org.apache.tapestry5.ioc.test.FredModule
+import org.apache.tapestry5.ioc.test.Greeter
+import org.apache.tapestry5.ioc.test.IntegrationTestFixture
+import org.apache.tapestry5.ioc.test.NonProxiedServiceModule
+import org.apache.tapestry5.ioc.test.StringHolder
+import org.apache.tapestry5.ioc.test.StringHolderImpl
 
 class ServiceProxySpec extends AbstractRegistrySpecification {
 
