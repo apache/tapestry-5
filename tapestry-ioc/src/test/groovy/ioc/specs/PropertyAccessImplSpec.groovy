@@ -10,7 +10,6 @@ import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl
 import org.apache.tapestry5.commons.services.ClassPropertyAdapter
 import org.apache.tapestry5.commons.services.PropertyAccess
 import org.apache.tapestry5.ioc.annotations.Scope
-import org.apache.tapestry5.ioc.internal.services.*
 import org.apache.tapestry5.ioc.test.internal.services.AnnotatedBean
 import org.apache.tapestry5.ioc.test.internal.services.AnnotatedBeanSubclass
 import org.apache.tapestry5.ioc.test.internal.services.Bean

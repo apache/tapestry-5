@@ -1,8 +1,9 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.test.Bean
 import org.apache.tapestry5.ioc.test.BeanSubclass
-import org.apache.tapestry5.ioc.test.TestBase
+import org.apache.tapestry5.ioc.test.internal.services.Bean
+import org.apache.tapestry5.test.ioc.TestBase
+
 import spock.lang.Specification
 
 class TestBaseSpec extends Specification {

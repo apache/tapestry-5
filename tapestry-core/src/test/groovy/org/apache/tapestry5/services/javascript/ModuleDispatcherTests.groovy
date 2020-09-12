@@ -5,11 +5,11 @@ import javax.servlet.http.HttpServletResponse
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor
 import org.apache.tapestry5.internal.services.javascript.ModuleDispatcher
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker
-import org.apache.tapestry5.ioc.test.TestBase
 import org.apache.tapestry5.services.LocalizationSetter
 import org.apache.tapestry5.services.PathConstructor
 import org.apache.tapestry5.services.Request
 import org.apache.tapestry5.services.Response
+import org.apache.tapestry5.test.ioc.TestBase
 import org.easymock.EasyMock
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

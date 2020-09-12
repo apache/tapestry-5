@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.hibernate.internal.DefaultHibernateConfigurer;
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.hibernate.cfg.Configuration;
 import org.testng.annotations.Test;
 

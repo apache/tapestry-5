@@ -1,5 +1,6 @@
 package ioc.specs
 
+import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.def.ModuleDef
 import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl
 import org.apache.tapestry5.ioc.test.BarneyModule
@@ -12,8 +13,8 @@ import org.apache.tapestry5.ioc.test.ServiceBuilderModule
 import org.apache.tapestry5.ioc.test.Square
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
 import spock.lang.Specification
-import org.apache.tapestry5.ioc.*
 
 class RegistryBuilderSpec extends Specification {
 

@@ -4,7 +4,6 @@ import java.sql.PreparedStatement
 
 import org.apache.tapestry5.commons.AnnotationProvider
 import org.apache.tapestry5.commons.services.TypeCoercer
-import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.services.Builtin
 import org.apache.tapestry5.ioc.test.BlueMarker
 import org.apache.tapestry5.ioc.test.DuplicateServiceTypeModule

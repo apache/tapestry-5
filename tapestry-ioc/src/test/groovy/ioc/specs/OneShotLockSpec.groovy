@@ -1,5 +1,6 @@
 package ioc.specs
 
+
 import org.apache.tapestry5.ioc.test.internal.util.OneShotLockSubject
 
 import spock.lang.Specification

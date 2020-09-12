@@ -1,6 +1,5 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.test.BarneyModule
 import org.apache.tapestry5.ioc.test.ConcreteServiceBuilderModule
 import org.apache.tapestry5.ioc.test.CountingGreeterImpl

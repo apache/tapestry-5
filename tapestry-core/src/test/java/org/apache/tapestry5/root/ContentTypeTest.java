@@ -13,7 +13,7 @@
 package org.apache.tapestry5.root;
 
 import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

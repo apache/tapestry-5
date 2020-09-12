@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.test.ioc;
 
 import org.easymock.*;
 import org.testng.annotations.AfterMethod;
@@ -35,7 +35,7 @@ import org.testng.annotations.AfterMethod;
  * to ensure backwards compatibility.
  * 
  * @see org.easymock.EasyMock#createControl()
- * @see org.apache.tapestry5.ioc.test.MockTester
+ * @see org.apache.tapestry5.test.ioc.MockTester
  * @deprecated In 5.4, with no replacement
  */
 public class TestBase extends TestUtils

@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

@@ -31,6 +31,7 @@ import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.slf4j.Logger;
 
 import java.io.File;

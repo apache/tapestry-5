@@ -1,6 +1,5 @@
 package ioc.specs
 
-import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.test.CyclicMOPModule
 import org.apache.tapestry5.ioc.test.FieldResourceInjectionModule
 import org.apache.tapestry5.ioc.test.FieldResourceService

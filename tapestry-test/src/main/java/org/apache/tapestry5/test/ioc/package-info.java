@@ -13,4 +13,4 @@
 // limitations under the License.
 
 /** Classes supporting testing of Tapestry IOC services */
-package org.apache.tapestry5.ioc.test;
+package org.apache.tapestry5.test.ioc;

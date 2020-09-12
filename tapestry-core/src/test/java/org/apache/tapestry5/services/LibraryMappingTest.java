@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.annotations.Test;
 
 public class LibraryMappingTest extends TestBase

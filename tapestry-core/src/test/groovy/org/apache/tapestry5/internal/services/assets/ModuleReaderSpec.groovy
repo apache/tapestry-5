@@ -1,7 +1,7 @@
 package org.apache.tapestry5.internal.services.assets
 
 import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssemblerImpl.ModuleReader;
-import org.apache.tapestry5.ioc.test.TestBase
+import org.apache.tapestry5.test.ioc.TestBase
 import org.testng.annotations.Test
 
 class ModuleReaderTest extends TestBase {

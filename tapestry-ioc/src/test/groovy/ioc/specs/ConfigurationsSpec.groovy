@@ -28,7 +28,6 @@ import org.apache.tapestry5.ioc.test.StringTransformer
 import org.apache.tapestry5.ioc.test.internal.AlphabetModule
 import org.apache.tapestry5.ioc.test.internal.AlphabetModule2
 import org.apache.tapestry5.ioc.test.util.NonmatchingMappedConfigurationOverrideModule
-import org.apache.tapestry5.ioc.*
 
 /** Integration tests for various types of service configurations. */
 class ConfigurationsSpec extends AbstractRegistrySpecification {

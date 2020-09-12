@@ -7,7 +7,6 @@ import org.apache.tapestry5.ioc.test.GreeterModule2
 import org.apache.tapestry5.ioc.test.NonVoidAdvisorMethodModule
 import org.apache.tapestry5.ioc.test.internal.AdviseByMarkerModule
 import org.apache.tapestry5.ioc.test.internal.AdviseByMarkerModule2
-import org.apache.tapestry5.ioc.*
 
 class AdvisorsSpec extends AbstractRegistrySpecification {
 

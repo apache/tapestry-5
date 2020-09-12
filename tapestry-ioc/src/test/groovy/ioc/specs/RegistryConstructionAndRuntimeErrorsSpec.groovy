@@ -9,7 +9,6 @@ import org.apache.tapestry5.ioc.test.UnknownScopeModule
 import org.apache.tapestry5.ioc.test.internal.ExtraPublicConstructorsModule
 import org.apache.tapestry5.ioc.test.internal.PrivateConstructorModule
 import org.apache.tapestry5.ioc.test.internal.UpcaseService
-import org.apache.tapestry5.ioc.*
 
 /**
  * A few tests that are easiest (or even just possible) by building a Registry and trying out a few

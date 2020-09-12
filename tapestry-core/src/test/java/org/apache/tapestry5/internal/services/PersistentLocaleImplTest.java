@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
-import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.annotations.Test;
 
 import java.util.Locale;

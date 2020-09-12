@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathScannerImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;

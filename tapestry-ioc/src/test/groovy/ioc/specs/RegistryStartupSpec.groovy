@@ -4,6 +4,7 @@ import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.internal.services.RegistryStartup
 import org.apache.tapestry5.ioc.test.internal.services.StartupModule
 import org.slf4j.Logger
+
 import spock.lang.Specification
 
 class RegistryStartupSpec extends Specification {

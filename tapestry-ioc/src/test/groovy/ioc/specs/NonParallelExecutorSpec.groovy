@@ -4,7 +4,6 @@ import org.apache.tapestry5.ioc.Invokable
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.services.ParallelExecutor
-import org.apache.tapestry5.ioc.test.internal.services.NonParallelModule
 
 import spock.lang.AutoCleanup
 import spock.lang.Shared

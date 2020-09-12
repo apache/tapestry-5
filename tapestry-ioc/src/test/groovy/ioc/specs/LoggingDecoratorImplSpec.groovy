@@ -1,8 +1,8 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.services.LoggingDecorator
-import org.apache.tapestry5.ioc.test.internal.ToStringService
 import org.apache.tapestry5.ioc.test.internal.UpcaseService
+import org.apache.tapestry5.ioc.test.internal.services.ToStringService
 import org.slf4j.Logger
 import org.xml.sax.SAXParseException
 

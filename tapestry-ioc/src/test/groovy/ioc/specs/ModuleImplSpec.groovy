@@ -8,7 +8,7 @@ import org.apache.tapestry5.ioc.test.BlueMarker
 import org.apache.tapestry5.ioc.test.RedMarker
 import org.apache.tapestry5.ioc.test.internal.FieService
 import org.apache.tapestry5.ioc.test.internal.ModuleImplTestModule
-import org.apache.tapestry5.ioc.test.internal.ToStringService
+import org.apache.tapestry5.ioc.test.internal.services.ToStringService
 import org.slf4j.Logger
 
 import spock.lang.Specification

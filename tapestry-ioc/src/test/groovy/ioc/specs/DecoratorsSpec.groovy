@@ -13,7 +13,6 @@ import org.apache.tapestry5.ioc.test.SpecificDecoratorModuleAgain
 import org.apache.tapestry5.ioc.test.StringTransformer
 import org.apache.tapestry5.ioc.test.internal.DecorateByMarkerModule
 import org.apache.tapestry5.ioc.test.internal.DecorateByMarkerModule2
-import org.apache.tapestry5.ioc.*
 
 /** Integration tests for service decorators and some related behaviors. */
 class DecoratorsSpec extends AbstractRegistrySpecification {

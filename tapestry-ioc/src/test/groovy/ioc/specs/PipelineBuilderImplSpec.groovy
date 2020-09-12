@@ -4,6 +4,7 @@ import org.apache.tapestry5.ioc.services.PipelineBuilder
 import org.apache.tapestry5.ioc.test.internal.services.StandardFilter
 import org.apache.tapestry5.ioc.test.internal.services.StandardService
 import org.slf4j.Logger
+
 import spock.lang.Shared
 
 class PipelineBuilderImplSpec extends AbstractSharedRegistrySpecification {

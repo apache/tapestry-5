@@ -23,10 +23,10 @@ import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.annotations.Test;
 
 public class LocalizationSetterImplTest extends InternalBaseTestCase
