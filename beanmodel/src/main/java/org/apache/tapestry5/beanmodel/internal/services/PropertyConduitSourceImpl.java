@@ -14,43 +14,74 @@
 
 package org.apache.tapestry5.beanmodel.internal.services;
 
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.DECIMAL;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.DEREF;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.FALSE;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.IDENTIFIER;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.INTEGER;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.INVOKE;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.LIST;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.MAP;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.NOT;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.NULL;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.RANGEOP;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.SAFEDEREF;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.STRING;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.THIS;
+import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.TRUE;
+
+import org.apache.tapestry5.ioc.annotations.ComponentLayer;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyConduit2;
 import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
+import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionLexer;
+import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.commons.internal.NullAnnotationProvider;
 import org.apache.tapestry5.commons.internal.services.StringInterner;
 import org.apache.tapestry5.commons.internal.util.GenericsUtils;
 import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
-import org.apache.tapestry5.commons.services.*;
+import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.services.PropertyAccess;
+import org.apache.tapestry5.commons.services.PropertyAdapter;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.commons.util.IntegerRange;
 import org.apache.tapestry5.commons.util.MultiKey;
 import org.apache.tapestry5.commons.util.UnknownValueException;
-import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionLexer;
-import org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.*;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource
 {

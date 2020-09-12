@@ -18,8 +18,8 @@ import java.util.Map;
 
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.services.ComponentClasses;
 
 public class StringInternerImpl implements StringInterner
 {

@@ -22,17 +22,17 @@ import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements a barrier that periodically asks the {@link org.apache.tapestry5.services.UpdateListenerHub} to check for
+ * Implements a barrier that periodically asks the {@link org.apache.tapestry5.ioc.services.UpdateListenerHub} to check for
  * updates to files. The UpdateListenerHub is invoked from a write method, meaning that when it is called, all other
  * threads will be blocked.
  */

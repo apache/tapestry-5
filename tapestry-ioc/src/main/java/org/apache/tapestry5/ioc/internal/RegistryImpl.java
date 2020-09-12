@@ -61,7 +61,7 @@ import org.apache.tapestry5.ioc.services.ServiceConfigurationListenerHub;
 import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.slf4j.Logger;
 
 import java.io.IOException;

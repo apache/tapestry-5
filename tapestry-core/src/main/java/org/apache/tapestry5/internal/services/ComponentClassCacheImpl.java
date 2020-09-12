@@ -20,9 +20,9 @@ import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
+import org.apache.tapestry5.ioc.annotations.ComponentLayer;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
 
 import java.util.Map;
 

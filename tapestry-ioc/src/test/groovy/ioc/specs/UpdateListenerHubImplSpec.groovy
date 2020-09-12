@@ -1,8 +1,9 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl
-import org.apache.tapestry5.services.UpdateListener
-import org.apache.tapestry5.services.UpdateListenerHub
+import org.apache.tapestry5.ioc.services.UpdateListener
+import org.apache.tapestry5.ioc.services.UpdateListenerHub
+
 import spock.lang.Specification
 
 import java.lang.ref.WeakReference

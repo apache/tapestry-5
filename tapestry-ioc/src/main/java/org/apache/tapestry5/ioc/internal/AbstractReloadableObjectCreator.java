@@ -29,7 +29,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ReloadAware;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;

@@ -25,7 +25,7 @@ import java.util.Map;
  * <dt>component templates
  * <dd>{@link org.apache.tapestry5.services.ComponentTemplates} marker annotation
  * <dt>component classes
- * <dd>{@link org.apache.tapestry5.services.ComponentClasses} marker annotation
+ * <dd>{@link org.apache.tapestry5.annotations.ComponentClasses} marker annotation
  * </dl>
  *
  * Starting in Tapestry 5.3, these services are disabled in production (it does nothing).

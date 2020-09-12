@@ -20,10 +20,10 @@ import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.commons.util.UnknownValueException;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.TranslatorSource;
 
 import java.util.Collections;

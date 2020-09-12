@@ -90,8 +90,8 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.services.ThunkCreator;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
-import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.File;
 import java.lang.reflect.Array;

@@ -14,7 +14,7 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 
 /**
  * Optional interface that may be implemented by a service implementation (or even

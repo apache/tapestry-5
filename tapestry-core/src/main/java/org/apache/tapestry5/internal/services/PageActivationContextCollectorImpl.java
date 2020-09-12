@@ -23,9 +23,9 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.ComponentClasses;
 
 import java.util.Map;
 

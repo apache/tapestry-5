@@ -10,12 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.commons.ObjectLocator;
 
 /**
- * Manages a set of {@link org.apache.tapestry5.services.UpdateListener}s. Periodically (say, every request during
+ * Manages a set of {@link org.apache.tapestry5.ioc.services.UpdateListener}s. Periodically (say, every request during
  * development, or every minute or so during production), request processing is locked down so that only a single thread
  * is active, and the active thread invokes {@link #fireCheckForUpdates()}. Various services that are dependent on
  * external resource files (such as classes or template files) can check to see if any file they've used has changed. If

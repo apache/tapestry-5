@@ -16,4 +16,4 @@
  * Support classes for the {@link org.apache.tapestry5.corelib.components.BeanEditor}
  * component.
  */
-package org.apache.tapestry5.beaneditor;
+package org.apache.tapestry5.beanmodel;

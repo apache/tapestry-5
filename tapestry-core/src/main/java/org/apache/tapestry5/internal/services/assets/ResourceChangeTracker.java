@@ -18,7 +18,7 @@ import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.apache.tapestry5.services.assets.ResourceDependencies;
 
 /**

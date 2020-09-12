@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
  * Interface for objects which can periodically check for updates.
@@ -18,7 +18,7 @@ package org.apache.tapestry5.services;
  * Note that this interface has moved from module tapestry-core to tapestry-ioc, but has kept the same package (for
  * backwards compatibility reasons).
  * 
- * @see org.apache.tapestry5.services.UpdateListenerHub
+ * @see org.apache.tapestry5.ioc.services.UpdateListenerHub
  * @since 5.1.0.0
  */
 public interface UpdateListener
