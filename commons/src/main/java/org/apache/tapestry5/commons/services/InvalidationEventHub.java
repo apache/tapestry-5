@@ -15,7 +15,7 @@ package org.apache.tapestry5.commons.services;
 import java.util.Map;
 
 /**
- * An object which manages a list of {@link org.apache.tapestry5.services.InvalidationListener}s. There are multiple
+ * An object which manages a list of {@link org.apache.tapestry5.commons.services.InvalidationListener}s. There are multiple
  * event hub services implementing this interface, each with a specific marker annotation; each can register listeners
  * and fire events; these are based on the type of resource that has been invalidated. Tapestry has built-in support
  * for:

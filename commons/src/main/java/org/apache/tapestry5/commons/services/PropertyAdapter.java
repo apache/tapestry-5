@@ -24,7 +24,7 @@ import org.apache.tapestry5.commons.AnnotationProvider;
  *
  * Starting in release 5.2, this property may actually be a public field. In 5.3, it may be a public static field.
  *
- * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter
+ * @see org.apache.tapestry5.commons.services.ClassPropertyAdapter
  */
 public interface PropertyAdapter extends AnnotationProvider
 {

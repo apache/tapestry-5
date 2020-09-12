@@ -32,7 +32,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
  *
  * @see org.apache.tapestry5.corelib.components.Grid
  * @see org.apache.tapestry5.corelib.components.BeanEditForm
- * @see org.apache.tapestry5.BeanBlockSource
+ * @see org.apache.tapestry5.services.BeanBlockSource
  */
 @UsesOrderedConfiguration(DataTypeAnalyzer.class)
 @UsesMappedConfiguration(key = Class.class, value = String.class)

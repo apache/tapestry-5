@@ -17,7 +17,7 @@ package org.apache.tapestry5.commons.internal.services;
 /**
  * Creates "interned" strings that are unique for the same content. This is used for common description strings,
  * particularly those used by {@link org.apache.tapestry5.Binding} instances.  The internal cache of interned strings id
- * cleared whenever the {@link org.apache.tapestry5.annotations.ComponentClasses} 
+ * cleared whenever the {@link org.apache.tapestry5.ioc.annotations.ComponentClasses} 
  * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/services/InvalidationEventHub.html">InvalidationEventHub</a> is invalidated (i.e., when component class files change).
  *
  * @since 5.1.0.0

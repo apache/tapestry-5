@@ -45,7 +45,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * Finally, on a constructor, this is used to indicate <em>which</em> constructor should be used when more than one is
  * available.
  * 
- * @see org.apache.tapestry5.ioc.ObjectProvider
+ * @see org.apache.tapestry5.commons.ObjectProvider
  */
 @Target(
 { PARAMETER, FIELD, CONSTRUCTOR })

@@ -18,7 +18,7 @@ import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
- * building the {@link org.apache.tapestry5.comons.services.TypeCoercer} service. Wraps a
+ * building the {@link org.apache.tapestry5.commons.services.TypeCoercer} service. Wraps a
  * {@link org.apache.tapestry5.commons.services.Coercion} object that performs the work with additional properties that
  * describe
  * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
