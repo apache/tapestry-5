@@ -48,6 +48,7 @@ public class MultiZoneUpdate
     /**
      * Alternate constructor that takes a ClientBodyElement (typically, a
      * {@link org.apache.tapestry5.corelib.components.Zone}).
+     * @
      */
     public MultiZoneUpdate(ClientBodyElement zone)
     {

@@ -91,7 +91,7 @@ public interface PropertyAdapter extends AnnotationProvider
 
     /**
      * Returns the type of bean to which this property belongs. This is the same as
-     * {@link org.apache.tapestry5.ioc.services.ClassPropertyAdapter#getBeanType()}.
+     * {@link org.apache.tapestry5.commons.services.ClassPropertyAdapter#getBeanType()}.
      */
     Class getBeanType();
 

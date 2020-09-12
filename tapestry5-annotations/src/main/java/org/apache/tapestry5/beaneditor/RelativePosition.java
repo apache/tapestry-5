@@ -21,12 +21,12 @@ package org.apache.tapestry5.beaneditor;
 public enum RelativePosition
 {
     /**
-     * The new {@link PropertyModel} goes before the existing model.
+     * The new <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/beanmodel/PropertyModel.html">PropertyModel</a> goes before the existing model.
      */
     BEFORE,
 
     /**
-     * The new {@link PropertyModel} goes after the existing model.
+     * The new <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/beanmodel/PropertyModel.html">PropertyModel</a> goes after the existing model.
      */
     AFTER
 }

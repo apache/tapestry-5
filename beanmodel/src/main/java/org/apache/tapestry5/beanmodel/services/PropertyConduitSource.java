@@ -27,7 +27,7 @@ public interface PropertyConduitSource
      * a change to component classes is observed.
      *
      * Callers of this method should observe notifications from the {@link org.apache.tapestry5.commons.services.InvalidationEventHub}
-     * for {@link org.apache.tapestry5.annotations.ComponentClasses} and discard any aquired conduits; failure to do so
+     * for {@link org.apache.tapestry5.ioc.annotations.ComponentClasses} and discard any aquired conduits; failure to do so
      * will create memory leaks whenever component classes change (the conduits will keep references to the old classes
      * and classloaders).
      *
