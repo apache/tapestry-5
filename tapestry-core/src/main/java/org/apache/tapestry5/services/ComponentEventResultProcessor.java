@@ -26,7 +26,7 @@ import java.io.IOException;
  * for Ajax requests (which typically return a partially rendered page), distinguished by the @{@link
  * org.apache.tapestry5.services.Ajax} marker annotation.
  *
- * @param <T>
+ * @param <T> the type of the values being handled
  */
 @UsesMappedConfiguration(key = Class.class, value = ComponentEventResultProcessor.class)
 public interface ComponentEventResultProcessor<T>

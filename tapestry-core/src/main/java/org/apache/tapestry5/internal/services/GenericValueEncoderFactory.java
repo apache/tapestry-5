@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
  * odd for a factory, because it doesn't actually create the returned instance, just stores it until the encoder is
  * needed.
  *
- * @param <V>
+ * @param <V> the type of the value.
  */
 public class GenericValueEncoderFactory<V> implements ValueEncoderFactory<V>
 {

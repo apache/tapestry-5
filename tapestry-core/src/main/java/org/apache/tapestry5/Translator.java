@@ -19,7 +19,7 @@ import org.apache.tapestry5.services.FormSupport;
 /**
  * Translates between client-side and server-side values. Client-side values are always strings.
  * 
- * @param <T>
+ * @param <T> the type being translated
  * @see org.apache.tapestry5.services.TranslatorSource
  * @see org.apache.tapestry5.FieldValidationSupport
  * @see org.apache.tapestry5.FieldTranslator

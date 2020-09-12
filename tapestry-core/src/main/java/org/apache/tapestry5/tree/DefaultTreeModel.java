@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * This implementation is <em>not</em> thread safe.
  *
- * @param <T>
+ * @param <T> the type of data in the tree
  * @since 5.3
  */
 @SuppressWarnings({"UnusedDeclaration"})

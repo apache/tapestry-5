@@ -28,7 +28,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * Marks an event handler method to be published as an event to be called in JavaScript
  * through the <code>t5/core/ajax</code> function when the <code>options</code>
  * parameter has an <code>element</code> attribute.
- * <p>
+ * </p>
  * 
  * <p>
  * The logic for obtaining the URL is actually located implemented in the

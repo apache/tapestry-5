@@ -20,8 +20,8 @@ import java.util.Map;
  * The result of the {@link Flow#zipWith(Flow)} method (or created from a Map via {@link F#zippedFlow(Map)}), a Flow of
  * combined {@link Tuple} values (that can be deconstructed, eventually, using {@link #unzip()}).
  * 
- * @param <A>
- * @param <B>
+ * @param <A> first type
+ * @param <B> second type
  * @since 5.3
  */
 public interface ZippedFlow<A, B> extends FlowOperations<Tuple<A, B>, ZippedFlow<A, B>>

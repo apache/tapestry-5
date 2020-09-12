@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * Chain of command for {@link org.apache.tapestry5.ioc.AnnotationProvider}.
+ * Chain of command for {@link org.apache.tapestry5.commons.AnnotationProvider}.
  */
 public class AnnotationProviderChain implements AnnotationProvider
 {

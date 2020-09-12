@@ -16,7 +16,7 @@ package org.apache.tapestry5.plastic;
  * A wrapper around a {@link PlasticClass} that allows the class to be converted into a concrete class, once all
  * transformations are complete.
  * 
- * @param <T>
+ * @param <T> the type being generated.
  */
 public interface PlasticClassTransformation<T>
 {

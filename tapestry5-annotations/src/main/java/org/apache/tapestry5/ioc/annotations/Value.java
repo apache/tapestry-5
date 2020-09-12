@@ -30,7 +30,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * it may also be applied to field.
  *
  * @see org.apache.tapestry5.ioc.services.SymbolSource
- * @see org.apache.tapestry5.ioc.services.TypeCoercer
+ * @see <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/services/TypeCoecer.html">TypeCoercer</a>
  */
 @Target(
         { PARAMETER, FIELD })

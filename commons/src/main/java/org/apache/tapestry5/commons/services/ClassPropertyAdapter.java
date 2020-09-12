@@ -16,7 +16,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * Organizes all {@link org.apache.tapestry5.ioc.services.PropertyAdapter}s for a particular class.
+ * Organizes all {@link org.apache.tapestry5.commons.services.PropertyAdapter}s for a particular class.
  *
  * Only provides access to <em>simple</em> properties. Indexed properties are ignored.
  *

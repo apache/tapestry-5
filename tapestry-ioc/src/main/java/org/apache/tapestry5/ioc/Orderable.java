@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * pre-requisites (objects which should be ordered earlier) and post-requisites (objects which should be ordered
  * later).
  *
- * @param <T>
+ * @param <T> the wrapped type
  */
 public class Orderable<T>
 {

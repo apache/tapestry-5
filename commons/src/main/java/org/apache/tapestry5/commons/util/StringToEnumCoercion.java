@@ -18,7 +18,7 @@ import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.commons.services.Coercion;
 
 /**
- * A {@link org.apache.tapestry5.ioc.services.Coercion} for converting strings into an instance of a particular
+ * A {@link org.apache.tapestry5.commons.services.Coercion} for converting strings into an instance of a particular
  * enumerated type. The {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
  *

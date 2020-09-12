@@ -27,7 +27,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * more flexible or appropriate.
  *
  * This annotation may also be used with fields of service implementation classes, modules, or other objects constructed
- * via {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)}.
+ * via <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/ObjectLocator.html#autobuild(Class)">ObjectLocator#autobuild(Class)</a>.
  */
 @Target({PARAMETER, FIELD})
 @Retention(RUNTIME)

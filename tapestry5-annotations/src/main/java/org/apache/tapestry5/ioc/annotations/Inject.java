@@ -30,11 +30,11 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  *
  * In terms of the IoC container; normally, resources take precedence over annotations when injecting. The Inject
  * annotation overrides this default, forcing the resolution of the parameters value via the master
- * {@link org.apache.tapestry5.ioc.ObjectProvider}, even when the parameter's type matches a type that is normally a
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/ObjectProvider.html">ObjectProvider</a>, even when the parameter's type matches a type that is normally a
  * resource.
  *
  * For service implementations, module classes, and other objects constructed via
- * {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)}, this annotation indicates that an injection is
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/ObjectLocator.html#autobuild(Class)">ObjectLocator#autobuild(Class)</a>, this annotation indicates that an injection is
  * desired on the field, as with fields of a Tapestry component.
  *
  * In terms of the IoC container, the Inject annotation is only used on parameters to service builder methods (and

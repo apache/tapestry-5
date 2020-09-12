@@ -26,7 +26,7 @@ package org.apache.tapestry5.services;
  * (Application State Objects). This service would be better named "SessionStateCreator"
  * (but renaming it would cause backwards compatibility issues).</em>
  * 
- * @param <T>
+ * @param <T> the type of the created objects
  */
 public interface ApplicationStateCreator<T>
 {

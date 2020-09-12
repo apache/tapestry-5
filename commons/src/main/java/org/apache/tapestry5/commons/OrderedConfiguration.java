@@ -24,7 +24,7 @@ package org.apache.tapestry5.commons;
  * </ul>
  *
  * The service defines the <em>type</em> of contribution, in terms of a base class or service interface. Contributions
- * must be compatible with the type, or be {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercable} to the type.
+ * must be compatible with the type, or be {@linkplain org.apache.tapestry5.commons.services.TypeCoercer coercable} to the type.
  *
  * @see org.apache.tapestry5.ioc.annotations.Contribute
  * @see org.apache.tapestry5.ioc.annotations.UsesConfiguration

@@ -21,11 +21,11 @@ import java.util.Map;
  * for:
  * <dl>
  * <dt>message catalog resources
- * <dd>{@link org.apache.tapestry5.services.ComponentMessages} marker annotation
+ * <dd><a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/services/ComponentMessages.html">ComponentMessages</a> marker annotation
  * <dt>component templates
- * <dd>{@link org.apache.tapestry5.services.ComponentTemplates} marker annotation
+ * <dd><a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/services/ComponentTemplates.html">ComponentTemplates</a> marker annotation
  * <dt>component classes
- * <dd>{@link org.apache.tapestry5.annotations.ComponentClasses} marker annotation
+ * <dd><a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/services/ComponentClasses.html">ComponentClasses</a> marker annotation
  * </dl>
  *
  * Starting in Tapestry 5.3, these services are disabled in production (it does nothing).

@@ -25,7 +25,7 @@ import org.apache.tapestry5.commons.util.AbstractMessages;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
- * Implementation of {@link org.apache.tapestry5.ioc.Messages} based around a {@link java.util.ResourceBundle}.
+ * Implementation of {@link org.apache.tapestry5.commons.Messages} based around a {@link java.util.ResourceBundle}.
  */
 public class MessagesImpl extends AbstractMessages
 {

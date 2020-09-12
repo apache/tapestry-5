@@ -17,7 +17,7 @@ package org.apache.tapestry5;
 /**
  * Responsible for validation of a single field.
  *
- * @param <T>
+ * @param <T> the type of the values being validated
  * @see Validator
  * @see org.apache.tapestry5.services.FieldValidatorDefaultSource
  */

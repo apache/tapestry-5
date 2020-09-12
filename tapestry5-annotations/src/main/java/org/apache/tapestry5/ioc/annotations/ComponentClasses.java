@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation used to inject the correct {@link org.apache.tapestry5.services.InvalidationEventHub} service
+ * Marker annotation used to inject the correct <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/services/InvalidationEventHub.html">InvalidationEventHub</a> service
  * responsible for invalidations when underlying component class files are changed.
  * 
  * @since 5.1.0.0

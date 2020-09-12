@@ -15,7 +15,7 @@ package org.apache.tapestry5.commons.services;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 /**
- * Makes use of {@link org.apache.tapestry5.ioc.services.Coercion}s to convert between an input value (of some specific
+ * Makes use of {@link org.apache.tapestry5.commons.services.Coercion}s to convert between an input value (of some specific
  * type) and a desired output type. Smart about coercing, even if it requires multiple coercion steps (i.e., via an
  * intermediate type, such as String).
  */

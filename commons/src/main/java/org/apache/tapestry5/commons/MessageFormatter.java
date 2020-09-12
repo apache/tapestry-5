@@ -15,7 +15,7 @@
 package org.apache.tapestry5.commons;
 
 /**
- * Obtained from a {@link org.apache.tapestry5.ioc.Messages}, used to format messages for a specific localized message
+ * Obtained from a <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/MessageFormatter.html">org.apache.tapestry5.ioc.Messages</a>, used to format messages for a specific localized message
  * key.
  */
 public interface MessageFormatter

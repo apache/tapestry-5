@@ -15,7 +15,8 @@
 package org.apache.tapestry5.beaneditor;
 
 /**
- * Controls the position of newly added {@link PropertyModel}s inside a {@link BeanModel}.
+ * Controls the position of newly added <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/beanmodel/PropertyModel.html">PropertyModel</a> inside a 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/beanmodel/BeanModel.html">BeanModel</a>.
  */
 public enum RelativePosition
 {

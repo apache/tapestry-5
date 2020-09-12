@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * (used as a closure) to the containing method. This is similar to {@link AtomicReference}, except that it is simpler
  * but <strong>not</strong> thread safe.
  *
- * @param <T>
+ * @param <T> the type being holded.
  */
 public class Holder<T>
 {

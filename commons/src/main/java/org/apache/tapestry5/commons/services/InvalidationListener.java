@@ -20,7 +20,7 @@ package org.apache.tapestry5.commons.services;
  * file is found to have changed, the event is fired (with the expectation that the cleared cache will be repopulated as
  * necessary).
  *
- * @see org.apache.tapestry5.services.InvalidationEventHub
+ * @see org.apache.tapestry5.commons.services.InvalidationEventHub
  * @since 5.1.0.0
  * @deprecated In 5.4; use {@link InvalidationEventHub#addInvalidationCallback(Runnable)} instead
  */

@@ -31,8 +31,8 @@ import java.util.Map;
  *
  * Handles instantiation of instances.
  * 
- * @param <K>
- * @param <V>
+ * @param <K> the key type
+ * @param <V> the value type
  */
 public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigurationImpl<V> implements
         MappedConfiguration<K, V>

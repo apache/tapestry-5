@@ -18,9 +18,9 @@ import java.lang.annotation.*;
 
 
 /**
- * Directs that the value to be built should be an autobuild instance of the type with injections performed, via {@link
- * org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)}. This should only be placed on a field or parameter of an
- * instantiable type (not an interface).
+ * Directs that the value to be built should be an autobuild instance of the type with injections performed, via 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/ObjectLocator.html#autobuild(Class)">ObjectLocator.html#autobuild(Class)</a>.
+ * This should only be placed on a field or parameter of an instantiable type (not an interface).
  *
  * @since 5.2
  */

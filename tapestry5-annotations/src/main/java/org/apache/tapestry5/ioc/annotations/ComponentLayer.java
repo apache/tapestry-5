@@ -24,7 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marker annotation used to identify a service from the component layer that conflicts, in terms of service interface,
- * with a service from elsewhere. In particular, this is used to disambiguate {@link org.apache.tapestry5.ioc.services.PlasticProxyFactory} which has one implementation (marked with {@link
+ * with a service from elsewhere. In particular, this is used to disambiguate 
+ * <a href="https://tapestry.apache.org/current/apidocs/org/apache/tapestry5/commons/PlasticProxyFactory.html">PlasticProxyFactory</a> which has one implementation (marked with {@link
  * org.apache.tapestry5.ioc.services.Builtin} and another with this annotation.
  */
 @Target(

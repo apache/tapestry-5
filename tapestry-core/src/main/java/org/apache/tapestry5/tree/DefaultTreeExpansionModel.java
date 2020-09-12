@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * Manages a Set of String {@link TreeNode} ids.
  * 
- * @param <T>
+ * @param <T> the type of the tree.
  * @since 5.3
  * @see TreeModel
  */

@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
- * Provides access to a single property within a class. Acts as an {@link org.apache.tapestry5.ioc.AnnotationProvider};
+ * Provides access to a single property within a class. Acts as an {@link org.apache.tapestry5.commons.AnnotationProvider};
  * when searching for annotations, the read method (if present) is checked first, followed by the write method, followed
  * by the underlying field (when the property name matches the field name).
  *
@@ -26,7 +26,6 @@ import org.apache.tapestry5.commons.AnnotationProvider;
  *
  * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter
  */
-@SuppressWarnings("unchecked")
 public interface PropertyAdapter extends AnnotationProvider
 {
     /**
@@ -85,7 +84,7 @@ public interface PropertyAdapter extends AnnotationProvider
     boolean isCastRequired();
 
     /**
-     * Returns the {@link org.apache.tapestry5.ioc.services.ClassPropertyAdapter} that provides access to other
+     * Returns the {@link org.apache.tapestry5.commons.services.ClassPropertyAdapter} that provides access to other
      * properties defined by the same class.
      */
     ClassPropertyAdapter getClassAdapter();
