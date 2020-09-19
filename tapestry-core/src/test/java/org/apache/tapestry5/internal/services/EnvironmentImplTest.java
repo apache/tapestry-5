@@ -134,7 +134,7 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "No object of type org.apache.tapestry5.ioc.Location is available from the Environment.");
+                    "No object of type org.apache.tapestry5.commons.Location is available from the Environment.");
             assertFalse(ex.getAvailableValues().getValues().contains("org.apache.tapestry5.ioc.Location"));
         }
 
