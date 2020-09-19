@@ -88,7 +88,7 @@ class ServiceProxySpec extends AbstractRegistrySpecification {
 
     when: "invoking toString() on the proxy"
 
-    assert g.toString() == "<Autoreload proxy org.apache.tapestry5.ioc.CountingGreeterImpl(org.apache.tapestry5.ioc.Greeter)>"
+    assert g.toString() == "<Autoreload proxy org.apache.tapestry5.ioc.test.CountingGreeterImpl(org.apache.tapestry5.ioc.test.Greeter)>"
 
     then: "the implementation is not yet instantiated"
 

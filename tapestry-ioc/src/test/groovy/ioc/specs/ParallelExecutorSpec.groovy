@@ -77,7 +77,7 @@ class ParallelExecutorSpec extends AbstractSharedRegistrySpecification {
 
     then:
 
-    thunk.toString() == "FutureThunk[org.apache.tapestry5.ioc.StringHolder]"
+    thunk.toString() == "FutureThunk[org.apache.tapestry5.ioc.test.StringHolder]"
   }
 
   def "exception inside the Invokable is rethrown by the thunk"() {

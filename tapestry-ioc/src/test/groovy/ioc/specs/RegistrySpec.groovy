@@ -23,7 +23,7 @@ class RegistrySpec extends AbstractRegistrySpecification {
     then:
 
     greeter.greeting == "Hello"
-    greeter.toString() == "<Proxy for HelloGreeter(org.apache.tapestry5.ioc.Greeter)>"
+    greeter.toString() == "<Proxy for HelloGreeter(org.apache.tapestry5.ioc.test.Greeter)>"
   }
 
   def "circular module references are ignored"() {

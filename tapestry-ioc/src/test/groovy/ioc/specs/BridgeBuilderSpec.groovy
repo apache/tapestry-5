@@ -36,7 +36,7 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
 
     then:
 
-    bridge.toString() == "<PipelineBridge from org.apache.tapestry5.ioc.internal.services.StandardService to org.apache.tapestry5.ioc.internal.services.StandardFilter>"
+    bridge.toString() == "<PipelineBridge from org.apache.tapestry5.ioc.test.internal.services.StandardService to org.apache.tapestry5.ioc.test.internal.services.StandardFilter>"
   }
 
   def "standard service and interface"() {

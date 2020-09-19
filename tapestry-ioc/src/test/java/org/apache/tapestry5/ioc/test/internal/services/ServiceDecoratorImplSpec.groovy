@@ -98,9 +98,9 @@ class ServiceDecoratorImplSpec extends AbstractSharedRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Decorator method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorUntyped(Object)"
+    e.message.contains "Decorator method org.apache.tapestry5.ioc.test.internal.ServiceDecoratorFixture.decoratorUntyped(Object)"
     e.message.contains "(invoked for service '$SERVICE_ID') returned"
-    e.message.contains "which is not assignable to the org.apache.tapestry5.ioc.internal.FieService service interface."
+    e.message.contains "which is not assignable to the org.apache.tapestry5.ioc.test.internal.FieService service interface."
 
   }
 
@@ -126,7 +126,7 @@ class ServiceDecoratorImplSpec extends AbstractSharedRegistrySpecification {
     RuntimeException e = thrown()
 
     e.message.contains "Error invoking"
-    e.message.contains "org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorThrowsException(java.lang.Object)"
+    e.message.contains "org.apache.tapestry5.ioc.test.internal.ServiceDecoratorFixture.decoratorThrowsException(java.lang.Object)"
     e.message.contains "Ouch!"
 
   }

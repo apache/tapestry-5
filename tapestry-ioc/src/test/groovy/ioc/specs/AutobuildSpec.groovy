@@ -71,7 +71,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
     then:
 
     RuntimeException e = thrown()
-    e.message.contains "Could not find default implementation class org.apache.tapestry5.ioc.StringTransformerImpl."
+    e.message.contains "Could not find default implementation class org.apache.tapestry5.ioc.test.StringTransformerImpl."
     e.message.contains "Please provide this class, or bind the service interface to a specific implementation class."
   }
 
@@ -151,7 +151,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.UnbuildablePingable does not contain a public constructor needed to autobuild."
   }
 
   def "verify exception when autobuild class has not valid constructor"() {
@@ -165,7 +165,7 @@ class AutobuildSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.UnbuildablePingable does not contain a public constructor needed to autobuild."
   }
 
   def "a service build method may include a parameter with @Autobuild"() {

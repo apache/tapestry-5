@@ -80,7 +80,7 @@ class RegistryConstructionAndRuntimeErrorsSpec extends AbstractRegistrySpecifica
 
     RuntimeException e = thrown()
 
-    e.message.contains "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors."
+    e.message.contains "Module class org.apache.tapestry5.ioc.test.internal.PrivateConstructorModule does not contain any public constructors."
   }
 
   def "extra public constructors on a module class are ignored"() {
@@ -104,7 +104,7 @@ class RegistryConstructionAndRuntimeErrorsSpec extends AbstractRegistrySpecifica
 
     RuntimeException e = thrown()
 
-    e.message.contains "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: "
+    e.message.contains "Module class org.apache.tapestry5.ioc.test.ExtraMethodsModule contains unrecognized public methods: "
     e.message.contains "thisMethodIsInvalid()"
     e.message.contains "soIsThisMethod()"
   }

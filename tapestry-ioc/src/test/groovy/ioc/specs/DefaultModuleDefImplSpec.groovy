@@ -314,7 +314,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.internal.RunnableServiceImpl (implementation of service 'Runnable') does not contain any public constructors."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.internal.RunnableServiceImpl (implementation of service 'Runnable') does not contain any public constructors."
   }
 
   def "the bind() method of a module class must be a static method"() {
@@ -326,7 +326,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)"
+    e.message.contains "Method org.apache.tapestry5.ioc.test.internal.NonStaticBindMethodModule.bind(ServiceBinder)"
     e.message.contains "appears to be a service binder method, but is an instance method, not a static method"
   }
 
@@ -365,7 +365,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     1 * logger.debug(_) >> { args ->
       assert args[0].contains(
-          "Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)")
+          "Invoking constructor org.apache.tapestry5.ioc.test.internal.MultipleConstructorsAutobuildService(StringHolder)")
     }
 
     0 * _
@@ -380,7 +380,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind(ServiceBinder)"
+    e.message.contains "Error invoking service binder method org.apache.tapestry5.ioc.test.internal.ExceptionInBindMethod.bind(ServiceBinder)"
     e.message.contains "at ExceptionInBindMethod.java"
     e.message.contains "Really, how often is this going to happen?"
   }
@@ -490,7 +490,7 @@ class DefaultModuleDefImplSpec extends Specification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Class org.apache.tapestry5.ioc.internal.AbstractRunnableService (implementation of service 'Runnable') is abstract."
+    e.message.contains "Class org.apache.tapestry5.ioc.test.internal.AbstractRunnableService (implementation of service 'Runnable') is abstract."
 
   }
 

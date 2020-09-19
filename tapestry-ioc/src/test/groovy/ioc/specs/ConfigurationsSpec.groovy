@@ -122,7 +122,7 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
     then:
     IllegalArgumentException e = thrown()
 
-    e.message.contains "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)"
+    e.message.contains "Contribution org.apache.tapestry5.ioc.test.InvalidContributeDefModule.contributeDoesNotExist(Configuration)"
     e.message.contains "is for service 'DoesNotExist', which does not exist."
   }
 
@@ -152,7 +152,7 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Failure processing override from org.apache.tapestry5.ioc.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)"
+    e.message.contains "Failure processing override from org.apache.tapestry5.ioc.test.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)"
     e.message.contains "Override for object 'wilma' is invalid as it does not match an existing object."
   }
 
@@ -200,7 +200,7 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)"
+    e.message.contains "Override for key alley cat (at org.apache.tapestry5.ioc.test.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)"
     e.message.contains "does not match an existing key"
   }
 
@@ -267,11 +267,11 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    ["Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule2.provideConfiguration(OrderedConfiguration)",
-        "is for service 'interface org.apache.tapestry5.ioc.NameListHolder'",
+    ["Contribution org.apache.tapestry5.ioc.test.InvalidContributeDefModule2.provideConfiguration(OrderedConfiguration)",
+        "is for service 'interface org.apache.tapestry5.ioc.test.NameListHolder'",
         "qualified with marker annotations [",
-        "interface org.apache.tapestry5.ioc.BlueMarker",
-        "interface org.apache.tapestry5.ioc.RedMarker",
+        "interface org.apache.tapestry5.ioc.test.BlueMarker",
+        "interface org.apache.tapestry5.ioc.test.RedMarker",
         "], which does not exist."].every { e.message.contains it}
   }
 
@@ -281,9 +281,9 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
     then:
     RuntimeException e = thrown()
 
-    ["Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule3.provideConfiguration(OrderedConfiguration)",
-        "is for service 'interface org.apache.tapestry5.ioc.NameListHolder'",
-        "qualified with marker annotations [interface org.apache.tapestry5.ioc.BlueMarker], which does not exist."].every
+    ["Contribution org.apache.tapestry5.ioc.test.InvalidContributeDefModule3.provideConfiguration(OrderedConfiguration)",
+        "is for service 'interface org.apache.tapestry5.ioc.test.NameListHolder'",
+        "qualified with marker annotations [interface org.apache.tapestry5.ioc.test.BlueMarker], which does not exist."].every
         { e.message.contains it}
   }
 

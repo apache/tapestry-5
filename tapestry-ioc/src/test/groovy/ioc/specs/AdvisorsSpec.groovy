@@ -19,7 +19,7 @@ class AdvisorsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)"
+    e.message.contains "Advise method org.apache.tapestry5.ioc.test.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)"
     e.message.contains "does not return void"
   }
 
@@ -32,7 +32,7 @@ class AdvisorsSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()"
+    e.message.contains "Advise method org.apache.tapestry5.ioc.test.AdviceMethodMissingAdvisorParameterModule.adviseBar()"
     e.message.contains "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver."
   }
 

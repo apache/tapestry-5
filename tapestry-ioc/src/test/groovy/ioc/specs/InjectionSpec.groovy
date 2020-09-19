@@ -21,7 +21,7 @@ class InjectionSpec extends AbstractRegistrySpecification {
     then:
 
     greeter.greeting == "Hello"
-    greeter.toString() == "<Proxy for Greeter(org.apache.tapestry5.ioc.Greeter)>"
+    greeter.toString() == "<Proxy for Greeter(org.apache.tapestry5.ioc.test.Greeter)>"
   }
 
   def "injection by marker with single match"() {
@@ -50,9 +50,9 @@ class InjectionSpec extends AbstractRegistrySpecification {
 
     RuntimeException e = thrown()
 
-    e.message.contains "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.RedMarker"
-    e.message.contains "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()"
-    e.message.contains "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()"
+    e.message.contains "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.test.Greeter with marker annotation(s) org.apache.tapestry5.ioc.test.RedMarker"
+    e.message.contains "org.apache.tapestry5.ioc.test.GreeterModule.buildRedGreeter1()"
+    e.message.contains "org.apache.tapestry5.ioc.test.GreeterModule.buildRedGreeter2()"
   }
 
   def "verify exception for injection by marker and no matches"() {
@@ -69,7 +69,7 @@ class InjectionSpec extends AbstractRegistrySpecification {
     RuntimeException e = thrown()
 
     e.message.contains "Exception constructing service"
-    e.message.contains "Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker."
+    e.message.contains "Unable to locate any service assignable to type org.apache.tapestry5.ioc.test.Greeter with marker annotation(s) org.apache.tapestry5.ioc.test.YellowMarker."
   }
 
   def "recursion handling injections (due to MasterObjectProvider) is detected"() {

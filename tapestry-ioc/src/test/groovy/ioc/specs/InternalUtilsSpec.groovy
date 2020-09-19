@@ -310,7 +310,7 @@ class InternalUtilsSpec extends Specification {
 
     IllegalArgumentException e = thrown()
 
-    e.message == "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @Retention(RetentionPolicy.RUNTIME) to the class."
+    e.message == "Marker annotation class org.apache.tapestry5.ioc.test.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @Retention(RetentionPolicy.RUNTIME) to the class."
   }
 
   def "close(Closable) for null does nothing"() {
