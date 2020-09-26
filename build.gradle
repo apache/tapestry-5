@@ -225,9 +225,13 @@ subprojects {
     }
 
     jar {
+    	// println "JAR projectDir: " + projectDir.getName().replaceAll("5", "")
         from(projectDir) {
             include "*.txt"
             into "META-INF"
+        }
+        manifest {
+        	attributes("Automatic-Module-Name": "org.apache.tapestry5." + projectDir.getName().replaceAll("5", ""))
         }
     }
 
