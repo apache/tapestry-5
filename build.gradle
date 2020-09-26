@@ -407,7 +407,7 @@ dependencies {
 }
 
 task combinedJacocoReport(type:JacocoReport){
-  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart' && it.name != 'beanmodel'}
+  def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart' && it.name != 'beanmodel' && it.name != 'commons'}
   dependsOn = subprojectsToConsider.test
   additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
   sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
