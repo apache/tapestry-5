@@ -10,13 +10,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import org.apache.tapestry5.commons.services.GenericsResolver;
+import org.apache.tapestry5.genericsresolverguava.internal.GuavaGenericsResolver;
 
 import com.google.common.reflect.TypeToken;
 
