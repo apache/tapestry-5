@@ -118,9 +118,13 @@ public class Label
         labelElement.attribute("id", id);
         labelElement.forceAttributes("for", fieldId);
         
-        Element input = labelElement.getDocument().getElementById(field.getClientId());
-        if (input != null) {
-            input.attribute("aria-labelledby", id);
+        if (fieldId != null)
+        {
+            Element input = labelElement.getDocument().getElementById(field.getClientId());
+            if (input != null) 
+            {
+                input.attribute("aria-labelledby", id);
+            }
         }
         
         decorator.insideLabel(field, labelElement);
