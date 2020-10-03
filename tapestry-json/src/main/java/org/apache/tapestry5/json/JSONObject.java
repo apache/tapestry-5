@@ -77,6 +77,8 @@ import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
  */
 public final class JSONObject extends JSONCollection implements Map<String, Object> {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Double NEGATIVE_ZERO = -0d;
 
     /**
@@ -86,7 +88,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * <li>show up in the {@link #names} array
      * <li>show up in the {@link #keys} iterator
      * <li>return {@code true} for {@link #has(String)}
-     * <li>do not throw on {@link #get(String)}
+     * <li>do not throw on {@link #get}
      * <li>are included in the encoded JSON string.
      * </ul>
      *
@@ -98,7 +100,6 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
 
       private static final long serialVersionUID = 1L;
 
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
         @Override
         public boolean equals(Object o) {
             return o == this || o == null; // API specifies this broken equals implementation
@@ -403,7 +404,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and a boolean, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key
@@ -474,7 +475,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and an int, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key
@@ -527,7 +528,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and a long, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key
@@ -576,7 +577,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and a string, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key
@@ -625,7 +626,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and a JSONArray, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this JSONObject contains no mapping for the key
@@ -674,7 +675,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * Returns the value to which the specified key is mapped and a JSONObject, or
      * {@code defaultValue} if this map contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned
+     * @param name the key whose associated value is to be returned
      * @param defaultValue the default mapping of the key
      * @return the value to which the specified key is mapped, or
      * {@code defaultValue} if this map contains no mapping for the key
@@ -996,11 +997,11 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      * @return The value.
      * @throws JSONValueNotFoundException if no such mapping exists.
      */ @Override
-    public Object get(Object key)
+    public Object get(Object name)
     {
-        Object result = nameValuePairs.get(key);
+        Object result = nameValuePairs.get(name);
          if (result == null) {
-            throw JSONExceptionBuilder.valueNotFound(false, key, JSONType.ANY);
+            throw JSONExceptionBuilder.valueNotFound(false, name, JSONType.ANY);
          }
          return result;
     }
@@ -1030,9 +1031,9 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      *         no such mapping.
      */
     @Override
-    public Object remove(Object key)
+    public Object remove(Object name)
     {
-        return nameValuePairs.remove(key);
+        return nameValuePairs.remove(name);
     }
 
     /**
@@ -1040,15 +1041,14 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      *
      * @param newProperties
      *            to add to this JSONObject
-     * @return this JSONObject
      * @since 5.7
      */
     @Override
-    public void putAll(Map<? extends String, ? extends Object> m)
+    public void putAll(Map<? extends String, ? extends Object> newProperties)
     {
-        assert m != null;
+        assert newProperties != null;
 
-        for (Map.Entry<? extends String, ? extends Object> e : m.entrySet())
+        for (Map.Entry<? extends String, ? extends Object> e : newProperties.entrySet())
         {
             put(e.getKey(), e.getValue());
         }
