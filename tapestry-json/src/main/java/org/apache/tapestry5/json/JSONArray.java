@@ -48,6 +48,8 @@ import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
  * Instances of this class are not thread safe.
  */
 public final class JSONArray extends JSONCollection implements Collection<Object> {
+    
+    private static final long serialVersionUID = 1L;
 
     private final List<Object> values;
 
@@ -164,7 +166,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      *              infinities}. Unsupported values are not permitted and will cause the
      *              array to be in an inconsistent state.
      * @return this array.
-     * @deprecated The use of {@link #add(Object)] is encouraged.
+     * @deprecated The use of {@link #add(Object)} is encouraged.
      */
     public JSONArray put(Object value) {
         add(value);
@@ -333,9 +335,9 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      * @since 5.7
      */
     @Override
-    public boolean retainAll(Collection<?> c)
+    public boolean retainAll(Collection<?> collection)
     {
-        return values.retainAll(c);
+        return values.retainAll(collection);
     }
 
     /**
