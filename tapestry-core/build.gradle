@@ -27,10 +27,10 @@ dependencies {
   compileOnly "javax.servlet:servlet-api:${versions.servletapi}"
   compileOnly "org.easymock:easymock:${versions.easymock}"
 
-  compile "commons-codec:commons-codec:1.5"
+  compile "commons-codec:commons-codec:1.15"
 
   // Transitive will bring in the unwanted string template library as well
-  compile "org.antlr:antlr-runtime:3.3", { transitive = false }
+  compile "org.antlr:antlr-runtime:3.5.2", { transitive = false }
 
   // Antlr tool path used with the antlr3 task
   antlr "org.antlr:antlr:3.5.2"
@@ -38,7 +38,7 @@ dependencies {
   testCompile "org.testng:testng:${versions.testng}", { transitive = false }
   testCompile "org.easymock:easymock:${versions.easymock}"
   testCompile project(":tapestry-test")
-  testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+  testRuntime "org.hsqldb:hsqldb:2.2.8"
 }
 
 compileJava.options.fork(memoryMaximumSize: '512m')
