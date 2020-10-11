@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.util;
 
-import junit.framework.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class LocaleUtilsTest extends Assert
     private void assertValidToLocale(String language)
     {
         Locale locale = LocaleUtils.toLocale(language);
-        assertNotNull("valid locale", locale);
+        assertNotNull(locale, "valid locale");
         assertEquals(language, locale.getLanguage());
         //country and variant are empty
         assertTrue(locale.getCountry() == null || locale.getCountry().length() == 0);
@@ -50,7 +50,7 @@ public class LocaleUtilsTest extends Assert
     private void assertValidToLocale(String localeString, String language, String country)
     {
         Locale locale = LocaleUtils.toLocale(localeString);
-        assertNotNull("valid locale", locale);
+        assertNotNull(locale, "valid locale");
         assertEquals(language, locale.getLanguage());
         assertEquals(country, locale.getCountry());
         //variant is empty
@@ -70,7 +70,7 @@ public class LocaleUtilsTest extends Assert
             String country, String variant)
     {
         Locale locale = LocaleUtils.toLocale(localeString);
-        assertNotNull("valid locale", locale);
+        assertNotNull(locale, "valid locale");
         assertEquals(language, locale.getLanguage());
         assertEquals(country, locale.getCountry());
         assertEquals(variant, locale.getVariant());

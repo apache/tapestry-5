@@ -18,7 +18,7 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp", port = 8080, browserStartCommand="*opera"/*browserStartCommand="*custom /usr/bin/chromium-browser"*/)
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
     @Test
@@ -218,8 +218,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     }
     
     // TAP5-1718
-    @Test
-    public void nested_object_validation() throws Exception
+    // @Test
+    private void nested_object_validation() throws Exception
     {
         
         final String locatorTemplate = "//p[@data-error-block-for='%s']";

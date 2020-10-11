@@ -3,7 +3,9 @@ description = "Utilities for unit and integration testing of Tapestry applicatio
 versions.selenium = '2.44.0'
 
 dependencies {
-  compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}"
+  compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+    exclude group: 'org.eclipse.jetty'
+  }
   compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}"
 
   compile "org.testng:testng:${versions.testng}"

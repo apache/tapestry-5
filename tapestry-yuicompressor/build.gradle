@@ -8,7 +8,9 @@ dependencies {
 }
 
 repositories { 
-  mavenRepo name: "Maven Play Plugin", url: "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
+  maven {
+      url "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
+  }
 }
 
 jar {

@@ -19,6 +19,7 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Optional;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;

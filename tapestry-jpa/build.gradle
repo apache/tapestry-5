@@ -1,19 +1,21 @@
 description = "Provides support for simple CRUD applications built on top of Tapestry and JPA"
 
 dependencies {
-  compile project(':tapestry-core')
-  compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
+    compile project(':tapestry-core')
+    compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
 
-  testCompile project(':tapestry-test')
+    testCompile project(':tapestry-test')
 
-  testRuntime "com.h2database:h2:1.2.145"
-  testCompile "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
-  testRuntime "org.apache.tomcat:dbcp:6.0.32"
+    testRuntime "com.h2database:h2:1.2.145"
+    testCompile "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
+    testRuntime "org.apache.tomcat:dbcp:${versions.tomcat}"
 
 }
 
 repositories {
-  mavenRepo name: "EclipseLink", url: "http://download.eclipse.org/rt/eclipselink/maven.repo/"
+    maven {
+        url  "http://download.eclipse.org/rt/eclipselink/maven.repo/"
+    }
 }
 
 test {

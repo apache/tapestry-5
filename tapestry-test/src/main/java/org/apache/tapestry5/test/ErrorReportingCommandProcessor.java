@@ -66,6 +66,13 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
+            try
+            {
+                Thread.sleep(50);
+            }
+            catch (InterruptedException e)
+            {
+            }
             return delegate.doCommand(command, args);
         }
         catch (RuntimeException ex)
