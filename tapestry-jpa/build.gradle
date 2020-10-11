@@ -8,7 +8,7 @@ dependencies {
 
     testRuntime "com.h2database:h2:1.2.145"
     testCompile "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
-    testRuntime "org.apache.tomcat:dbcp:6.0.32"
+    testRuntime "org.apache.tomcat:dbcp:${versions.tomcat}"
 
 }
 

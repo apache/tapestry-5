@@ -1,6 +1,6 @@
 description = "Basic Hibernate services for Tapestry, useable outside of a Tapestry web application"
 
-versions.hibernate = '3.6.0.Final'
+versions.hibernate = '3.6.10.Final'
 
 dependencies {
   compile project(':tapestry-ioc')
@@ -12,15 +12,11 @@ dependencies {
   runtime "geronimo-spec:geronimo-spec-jta:1.0-M1"  
   runtime "antlr:antlr:2.7.6"
   runtime "dom4j:dom4j:1.6.1"
-  runtime "org.javassist:javassist:3.26.0-GA"
-  
-    
-  testCompile project(':tapestry-test')
+  runtime "org.javassist:javassist:${versions.javassist}"
 
+  testCompile project(':tapestry-test')
   testCompile "org.easymock:easymock:${versions.easymock}"
-  
   testCompile "org.testng:testng:${versions.testng}", { transitive = false }
-  
   testRuntime "org.hsqldb:hsqldb:2.2.8"
 }
 
