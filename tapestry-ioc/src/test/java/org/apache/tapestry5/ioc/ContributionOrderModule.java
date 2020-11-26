@@ -18,11 +18,17 @@ public class ContributionOrderModule
 {
     public static void bind(ServiceBinder binder) {
         binder.bind(OrderedService.class);
+        binder.bind(UnorderedService.class);
     }
     
     public static void contributeOrderedService(OrderedConfiguration<Integer> configuration) 
     {
         configuration.add("1", 1);
+    }
+    
+    public static void contributeUnorderedService(Configuration<Integer> configuration) 
+    {
+        configuration.add(1);
     }
     
 }

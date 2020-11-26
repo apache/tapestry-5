@@ -26,4 +26,9 @@ public class ContributionOrderModule3
         configuration.add("3", 3);
     }
     
+    public static void contributeUnorderedService(Configuration<Integer> configuration) 
+    {
+        configuration.add(3);
+    }
+    
 }

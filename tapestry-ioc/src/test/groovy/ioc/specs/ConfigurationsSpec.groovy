@@ -330,4 +330,20 @@ class ConfigurationsSpec extends AbstractRegistrySpecification {
           
   }
   
+  // TAP5-2649
+  def "Configuration should have consistent ordering"() {
+
+      when:
+      buildRegistry ContributionOrderModule, ContributionOrderModule2, ContributionOrderModule3, ContributionOrderModule4
+      def configuration1 = getService(OrderedService).getContributions();
+      
+      buildRegistry ContributionOrderModule4, ContributionOrderModule3, ContributionOrderModule2, ContributionOrderModule
+      def configuration2 = getService(OrderedService).getContributions();
+
+      then:
+      configuration1.equals(configuration2)
+          
+  }
+
+  
 }

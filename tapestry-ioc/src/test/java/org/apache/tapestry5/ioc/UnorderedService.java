@@ -13,22 +13,22 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
-public class ContributionOrderModule4
+public class UnorderedService
 {
-    public static void contributeOrderedService(OrderedConfiguration<Integer> configuration) 
+    final private Collection<Integer> contributions;
+    
+
+    public UnorderedService(Collection<Integer> contributions)
     {
-        configuration.add("4", 4);
+        super();
+        this.contributions = contributions;
     }
 
-    public static void contributeUnorderedService(Configuration<Integer> configuration) 
+    public Collection<Integer> getContributions()
     {
-        configuration.add(4);
+        return contributions;
     }
 
 }
