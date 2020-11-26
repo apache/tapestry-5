@@ -540,7 +540,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final Collection<T> result = CollectionFactory.newList();
 
-        for (Module m : moduleToServiceDefs.keySet())
+        // TAP5-2649. NOTICE: if someday an ordering between modules is added, this should be reverted
+        // or a notice added to the documentation.
+        List<Module> modules = new ArrayList<Module>(moduleToServiceDefs.keySet());
+        Collections.sort(modules, new ModuleComparator());
+
+        for (Module m : modules)
             addToUnorderedConfiguration(result, objectType, serviceDef, m);
         
         if (!isServiceConfigurationListenerServiceDef(serviceDef))
