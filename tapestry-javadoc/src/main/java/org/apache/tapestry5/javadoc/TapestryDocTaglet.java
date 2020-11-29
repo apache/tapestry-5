@@ -301,10 +301,19 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
                         classDoc.getQualifiedName().toString(),
                         JavaFileObject.Kind.SOURCE);
 
+        File sourceFile;
         if (sourceFileObject == null) {
-            throw new RuntimeException("Source file object not found for " + classDoc.getQualifiedName().toString());
+            final String path = "./tapestry-core/src/main/java/" + 
+                    classDoc.getQualifiedName().toString().replace('.', '/') +
+                    ".java";
+            System.err.println("[WARNING] Source file object not found for " 
+                    + classDoc.getQualifiedName().toString()
+                    + ", so we'll guess it's in " + path);
+            sourceFile = new File(path);
         }
-        File sourceFile = new File(sourceFileObject.toUri());
+        else {
+            sourceFile = new File(sourceFileObject.toUri());
+        }
 
         // The .xdoc file will be adjacent to the sourceFile
 

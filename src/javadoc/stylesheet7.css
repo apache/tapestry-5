@@ -513,3 +513,14 @@ table.parameters td.description {
     left: -9999px;
     overflow: hidden;
 }
+
+body > dt > b, li.blockList > dt > h3 { 
+    display: block; 
+    padding: 0.3em 0 0 0.3em; 
+    margin-top: 1em; 
+    background: #569D2F; 
+    color: #fff; 
+    border: 1px solid black;
+    font-size: 14px; 
+    height: 26px; 
+}
