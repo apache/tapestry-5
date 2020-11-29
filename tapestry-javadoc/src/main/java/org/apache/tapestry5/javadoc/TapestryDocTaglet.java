@@ -113,7 +113,7 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             return writer.toString();
         } catch (Exception ex)
         {
-            System.err.println(ex);
+            ex.printStackTrace(System.err);
             System.exit(-1);
 
             return null; // unreachable
@@ -301,6 +301,9 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
                         classDoc.getQualifiedName().toString(),
                         JavaFileObject.Kind.SOURCE);
 
+        if (sourceFileObject == null) {
+            throw new RuntimeException("Source file object not found for " + classDoc.getQualifiedName().toString());
+        }
         File sourceFile = new File(sourceFileObject.toUri());
 
         // The .xdoc file will be adjacent to the sourceFile
