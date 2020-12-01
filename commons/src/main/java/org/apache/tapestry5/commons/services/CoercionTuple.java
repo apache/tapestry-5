@@ -36,6 +36,8 @@ public final class CoercionTuple<S, T>
     private final Class<T> targetType;
 
     private final Coercion<S, T> coercion;
+    
+    private final Key key;
 
     /**
      * Wraps an arbitrary coercion with an implementation of toString() that identifies the source and target types.
@@ -119,6 +121,7 @@ public final class CoercionTuple<S, T>
         this.sourceType = PlasticUtils.toWrapperType(sourceType);
         this.targetType = PlasticUtils.toWrapperType(targetType);
         this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
+        this.key = new Key();
     }
 
     @Override
@@ -140,6 +143,60 @@ public final class CoercionTuple<S, T>
     public Class<T> getTargetType()
     {
         return targetType;
+    }
+    
+    public Key getKey() 
+    {
+        return key;
+    }
+
+    /**
+     * Class that represents the key to be used to the mapped configuration of the
+     * {@link TypeCoercer} service.
+     */
+    public final class Key 
+    {
+        
+        @Override
+        public String toString() {
+            return String.format("%s -> %s", sourceType.getName(), targetType.getName());
+        }
+    
+        @Override
+        public int hashCode() 
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((sourceType == null) ? 0 : sourceType.hashCode());
+            result = prime * result + ((targetType == null) ? 0 : targetType.hashCode());
+            return result;
+        }
+    
+        @Override
+        public boolean equals(Object obj) 
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            CoercionTuple other = (CoercionTuple) obj;
+            if (sourceType == null) 
+            {
+                if (other.sourceType != null)
+                    return false;
+            } else if (!sourceType.equals(other.sourceType))
+                return false;
+            if (targetType == null) 
+            {
+                if (other.targetType != null)
+                    return false;
+            } else if (!targetType.equals(other.targetType))
+                return false;
+            return true;
+        }
+        
     }
 
 }

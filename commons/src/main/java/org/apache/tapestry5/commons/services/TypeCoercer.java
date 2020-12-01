@@ -12,14 +12,14 @@
 
 package org.apache.tapestry5.commons.services;
 
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Makes use of {@link org.apache.tapestry5.commons.services.Coercion}s to convert between an input value (of some specific
  * type) and a desired output type. Smart about coercing, even if it requires multiple coercion steps (i.e., via an
  * intermediate type, such as String).
  */
-@UsesConfiguration(CoercionTuple.class)
+@UsesMappedConfiguration(key = CoercionTuple.Key.class, value = CoercionTuple.class)
 public interface TypeCoercer
 {
     /**

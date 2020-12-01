@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.services.Coercion;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.services.TypeCoercer;
@@ -39,7 +39,8 @@ public class BasicTypeCoercions
     /**
      * Provides the basic type coercions to a {@link Configuration} instance. 
      */
-    public static void provideBasicTypeCoercions(Configuration<CoercionTuple> configuration)
+    public static void provideBasicTypeCoercions(
+            MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
         add(configuration, Object.class, String.class, new Coercion<Object, String>()
         {
@@ -310,31 +311,20 @@ public class BasicTypeCoercions
             }
         });
         
-        configuration.add(CoercionTuple.create(Flow.class, List.class, new Coercion<Flow, List>()
-        {
-            @Override
-            public List coerce(Flow input)
-            {
-                return input.toList();
-            }
-        }));
+        CoercionTuple<Flow, List> flowToListCoercion = CoercionTuple.create(Flow.class, List.class, Flow::toList);
+        configuration.add(flowToListCoercion.getKey(), flowToListCoercion);
 
-        configuration.add(CoercionTuple.create(Flow.class, Boolean.class, new Coercion<Flow, Boolean>()
-        {
-            @Override
-            public Boolean coerce(Flow input)
-            {
-                return !input.isEmpty();
-            }
-        }));
+        CoercionTuple<Flow, Boolean> flowToBooleanCoercion = CoercionTuple.create(Flow.class, Boolean.class, (i) -> !i.isEmpty());
+        configuration.add(flowToBooleanCoercion.getKey(), flowToBooleanCoercion);
         
 
     }
 
-    private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
+    private static <S, T> void add(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration, Class<S> sourceType,
                                    Class<T> targetType, Coercion<S, T> coercion)
     {
-        configuration.add(CoercionTuple.create(sourceType, targetType, coercion));
+        CoercionTuple<S, T> tuple = CoercionTuple.create(sourceType, targetType, coercion);
+        configuration.add(tuple.getKey(), tuple);
     }
     
     

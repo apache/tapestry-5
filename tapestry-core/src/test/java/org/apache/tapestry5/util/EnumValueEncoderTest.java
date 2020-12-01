@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.util;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tapestry5.commons.internal.services.TypeCoercerImpl;
 import org.apache.tapestry5.commons.services.Coercion;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.services.TypeCoercer;
-import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
@@ -74,7 +75,10 @@ public class EnumValueEncoderTest extends InternalBaseTestCase
 
         });
 
-        TypeCoercer typeCoercer =  new TypeCoercerImpl(CollectionFactory.<CoercionTuple, CoercionTuple>newList(stoogeToString, stringToStooge));
+        Map<CoercionTuple.Key, CoercionTuple> map = new HashMap<>();
+        map.put(stoogeToString.getKey(), stoogeToString);
+        map.put(stringToStooge.getKey(), stringToStooge);
+        TypeCoercer typeCoercer =  new TypeCoercerImpl(map);
 
 
         EnumValueEncoder<Stooge> encoder = new EnumValueEncoder<Stooge>(typeCoercer, Stooge.class);

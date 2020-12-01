@@ -127,9 +127,9 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         }
     };
 
-    public TypeCoercerImpl(Collection<CoercionTuple> tuples)
+    public TypeCoercerImpl(Map<CoercionTuple.Key, CoercionTuple> tuples)
     {
-        for (CoercionTuple tuple : tuples)
+        for (CoercionTuple tuple : tuples.values())
         {
             Class key = tuple.getSourceType();
 

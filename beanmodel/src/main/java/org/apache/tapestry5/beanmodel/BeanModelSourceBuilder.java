@@ -11,6 +11,10 @@
 // limitations under the License.
 package org.apache.tapestry5.beanmodel;
 
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tapestry5.beanmodel.internal.services.BeanModelSourceImpl;
 import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl;
 import org.apache.tapestry5.beanmodel.internal.services.PropertyConduitSourceImpl;
@@ -18,7 +22,7 @@ import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.commons.AnnotationProvider;
-import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.commons.internal.BasicDataTypeAnalyzers;
 import org.apache.tapestry5.commons.internal.BasicTypeCoercions;
@@ -27,15 +31,12 @@ import org.apache.tapestry5.commons.internal.services.StringInternerImpl;
 import org.apache.tapestry5.commons.internal.services.TypeCoercerImpl;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.CoercionTuple;
+import org.apache.tapestry5.commons.services.CoercionTuple.Key;
 import org.apache.tapestry5.commons.services.DataTypeAnalyzer;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.commons.services.PropertyAccess;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.slf4j.LoggerFactory;
-
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Utility class for creating {@link BeanModelSource} instances without
@@ -172,26 +173,37 @@ public class BeanModelSourceBuilder {
         typeCoercer = new TypeCoercerImpl(configuration.getTuples());
     }
 
-    final private static class CoercionTupleConfiguration implements Configuration<CoercionTuple> 
+    final private static class CoercionTupleConfiguration implements MappedConfiguration<CoercionTuple.Key, CoercionTuple> 
     {
 
-        final private Collection<CoercionTuple> tuples = new ArrayList<CoercionTuple>();
+        final private Map<CoercionTuple.Key, CoercionTuple> tuples = new HashMap<>();
 
         @Override
-        public void add(CoercionTuple tuble) 
+        public void add(CoercionTuple.Key key, CoercionTuple tuple) 
         {
-            tuples.add(tuble);
+            tuples.put(key, tuple);
         }
 
         @Override
-        public void addInstance(Class<? extends CoercionTuple> clazz) 
+        public void addInstance(CoercionTuple.Key key, Class<? extends CoercionTuple> clazz) 
         {
             throw new RuntimeException("Not implemented");
         }
 
-        public Collection<CoercionTuple> getTuples() 
+        public Map<CoercionTuple.Key, CoercionTuple> getTuples() 
         {
             return tuples;
+        }
+
+        @Override
+        public void override(Key key, CoercionTuple value) 
+        {
+            throw new RuntimeException("Not implemented");            
+        }
+
+        @Override
+        public void overrideInstance(Key key, Class<? extends CoercionTuple> clazz) {
+            throw new RuntimeException("Not implemented");            
         }
 
     }

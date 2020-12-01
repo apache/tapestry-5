@@ -255,7 +255,7 @@ public final class TapestryIOCModule
      * </ul>
      */
     @Contribute(TypeCoercer.class)
-    public static void provideBasicTypeCoercions(Configuration<CoercionTuple> configuration)
+    public static void provideBasicTypeCoercions(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
         BasicTypeCoercions.provideBasicTypeCoercions(configuration);
     }
