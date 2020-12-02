@@ -350,8 +350,7 @@ task aggregateJavadoc(type: Javadoc) {
         docTitle "Tapestry API - ($project.version)"
         bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
         use = true // 'use' seems to be a reserved word for the DSL
-        links "https://docs.oracle.com/javase/8/docs/api/"
-        links "https://docs.oracle.com/javaee/7/api/"
+        links "https://docs.oracle.com/javase/9/docs/api/" // Just to have javadoc not error out when running in Jenkins
         addStringOption "tagletpath", configurations.javadoc.asPath
         addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
