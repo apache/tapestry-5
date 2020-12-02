@@ -358,7 +358,7 @@ task aggregateJavadoc(type: Javadoc) {
         links "https://docs.oracle.com/javase/8/docs/api/"
         addStringOption "tagletpath", configurations.javadoc.asPath
         addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
-        options.addStringOption("--release", "8");
+        addStringOption("release", "8");
     
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
         exclude "org/apache/tapestry5/internal/webresources/**"
