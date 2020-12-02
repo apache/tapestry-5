@@ -949,7 +949,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Logger logger = getServiceLogger(serviceDef.getServiceId());
 
-        Orderer<ServiceAdvisor> orderer = new Orderer<ServiceAdvisor>(logger);
+        Orderer<ServiceAdvisor> orderer = new Orderer<ServiceAdvisor>(logger, true);
 
         for (Module module : moduleToServiceDefs.keySet())
         {

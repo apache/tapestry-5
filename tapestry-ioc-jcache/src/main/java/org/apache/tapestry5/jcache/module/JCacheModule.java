@@ -26,6 +26,7 @@ import javax.cache.annotation.CacheResult;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.jcache.internal.CacheLookupUtil;
 import org.apache.tapestry5.jcache.internal.CacheMethodAdvice;
@@ -70,6 +71,7 @@ public final class JCacheModule
      *            an {@link ObjectLocator}.
      */
     @Match("*")
+    @Advise(id = "JCache")
     public static void adviseCache(MethodAdviceReceiver receiver, ObjectLocator objectLocator)
     {
         advise(CachePut.class, objectLocator, CachePutMethodAdvice.class, receiver);
