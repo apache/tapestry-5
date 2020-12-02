@@ -148,8 +148,8 @@ subprojects {
     apply plugin: "project-report"
     apply plugin: "jacoco"
 
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "8"
+    targetCompatibility = "8"
 
     // See http://jira.codehaus.org/browse/GRADLE-784
 

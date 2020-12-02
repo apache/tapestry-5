@@ -37,7 +37,7 @@ import org.apache.tapestry5.func.Flow;
 public class BasicTypeCoercions
 {
     /**
-     * Provides the basic type coercions to a {@link Configuration} instance. 
+     * Provides the basic type coercions to a {@link MappedConfiguration} instance. 
      */
     public static void provideBasicTypeCoercions(
             MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)

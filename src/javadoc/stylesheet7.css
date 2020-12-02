@@ -524,3 +524,11 @@ body > dt > b, li.blockList > dt > h3 {
     font-size: 14px; 
     height: 26px; 
 }
+
+.tt {
+	font-family: "Lucida Console", "Menlo", "Monaco", "Courier", monospace;
+}
+
+.align-left {
+	text-align: left;
+}
