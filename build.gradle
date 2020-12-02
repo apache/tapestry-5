@@ -148,6 +148,11 @@ subprojects {
     apply plugin: "project-report"
     apply plugin: "jacoco"
 
+    // From https://github.com/gradle/gradle/issues/11182
+    javadoc {
+        options.addStringOption("-release", "8");
+    }
+    
     sourceCompatibility = "8"
     targetCompatibility = "8"
 
@@ -350,7 +355,7 @@ task aggregateJavadoc(type: Javadoc) {
         docTitle "Tapestry API - ($project.version)"
         bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
         use = true // 'use' seems to be a reserved word for the DSL
-        links "https://docs.oracle.com/javase/9/docs/api/" // Just to have javadoc not error out when running in Jenkins
+        links "https://docs.oracle.com/javase/8/docs/api/"
         addStringOption "tagletpath", configurations.javadoc.asPath
         addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
@@ -602,11 +607,6 @@ if (canDeploy) {
         group "Release artifact"
         description "Generates and uploads a final release to Apache Nexus and copies archives for deployment"
     }
-}
-
-// From https://github.com/gradle/gradle/issues/11182
-javadoc {
-    options.addStringOption("-release", "8");
 }
 
 boolean isSnapshot() {
