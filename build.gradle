@@ -604,6 +604,11 @@ if (canDeploy) {
     }
 }
 
+// From https://github.com/gradle/gradle/issues/11182
+javadoc {
+    options.addStringOption("-release", "8");
+}
+
 boolean isSnapshot() {
     project.version.contains("SNAPSHOT")
 }
