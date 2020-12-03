@@ -147,7 +147,11 @@ subprojects {
 
     apply plugin: "project-report"
     apply plugin: "jacoco"
-
+    
+    jacoco {
+        toolVersion = "0.8.6"
+    }
+    
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
 
