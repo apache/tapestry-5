@@ -43,7 +43,7 @@ public class CyclicMOPModule
         };
     }
 
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration, @Symbol("symbol-value")
+    public static void contributeTypeCoercer(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration, @Symbol("symbol-value")
     int value)
     {
         assert value == 99;

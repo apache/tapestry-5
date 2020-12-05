@@ -15,8 +15,10 @@ package org.apache.tapestry5.modules;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1060,7 +1062,7 @@ public final class TapestryModule
      * <li>{@link ValueEncoder} to {@link ValueEncoderFactory}</li>
      * </ul>
      */
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
+    public static void contributeTypeCoercer(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration,
 
                                              final ObjectLocator objectLocator,
 
@@ -1073,44 +1075,48 @@ public final class TapestryModule
                                              @Core
                                              final DynamicTemplateParser dynamicTemplateParser)
     {
-        configuration.add(CoercionTuple.create(ComponentResources.class, PropertyOverrides.class,
+        CoercionTuple<ComponentResources, PropertyOverrides> componentResourcesToPropertyOverrides = CoercionTuple.create(ComponentResources.class, PropertyOverrides.class,
                 new Coercion<ComponentResources, PropertyOverrides>()
                 {
                     public PropertyOverrides coerce(ComponentResources input)
                     {
                         return new PropertyOverridesImpl(input);
                     }
-                }));
+                });
+        configuration.add(componentResourcesToPropertyOverrides.getKey(), componentResourcesToPropertyOverrides);
 
 
         // See TAP5-2184 for why this causes some trouble!
-        configuration.add(CoercionTuple.create(String.class, SelectModel.class, new Coercion<String, SelectModel>()
+        CoercionTuple<String, SelectModel> stringToSelectModel = CoercionTuple.create(String.class, SelectModel.class, new Coercion<String, SelectModel>()
         {
             public SelectModel coerce(String input)
             {
                 return TapestryInternalUtils.toSelectModel(input);
             }
-        }));
+        });
+        configuration.add(stringToSelectModel.getKey(), stringToSelectModel);
 
-        configuration.add(CoercionTuple.create(Map.class, SelectModel.class, new Coercion<Map, SelectModel>()
+        CoercionTuple<Map, SelectModel> mapToSelectModel = CoercionTuple.create(Map.class, SelectModel.class, new Coercion<Map, SelectModel>()
         {
             @SuppressWarnings("unchecked")
             public SelectModel coerce(Map input)
             {
                 return TapestryInternalUtils.toSelectModel(input);
             }
-        }));
+        });
+        configuration.add(mapToSelectModel.getKey(), mapToSelectModel);
 
-        configuration.add(CoercionTuple.create(Collection.class, GridDataSource.class,
+        CoercionTuple<Collection, GridDataSource> collectionToGridDataSource = CoercionTuple.create(Collection.class, GridDataSource.class,
                 new Coercion<Collection, GridDataSource>()
                 {
                     public GridDataSource coerce(Collection input)
                     {
                         return new CollectionGridDataSource(input);
                     }
-                }));
+                });
+        configuration.add(collectionToGridDataSource.getKey(), collectionToGridDataSource);
 
-        configuration.add(CoercionTuple.create(void.class, GridDataSource.class, new Coercion<Void, GridDataSource>()
+        CoercionTuple<Void, GridDataSource> voidToGridDataSource = CoercionTuple.create(void.class, GridDataSource.class, new Coercion<Void, GridDataSource>()
         {
             private final GridDataSource source = new NullDataSource();
 
@@ -1118,9 +1124,10 @@ public final class TapestryModule
             {
                 return source;
             }
-        }));
+        });
+        configuration.add(voidToGridDataSource.getKey(), voidToGridDataSource);
 
-        configuration.add(CoercionTuple.create(List.class, SelectModel.class, new Coercion<List, SelectModel>()
+        CoercionTuple<List, SelectModel> listToSelectModel = CoercionTuple.create(List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {
             private SelectModelFactory selectModelFactory;
 
@@ -1136,17 +1143,19 @@ public final class TapestryModule
 
                 return selectModelFactory.create(input);
             }
-        }));
+        });
+        configuration.add(listToSelectModel.getKey(), listToSelectModel);
 
-        configuration.add(CoercionTuple.create(String.class, Pattern.class, new Coercion<String, Pattern>()
+        CoercionTuple<String, Pattern> stringToPattern = CoercionTuple.create(String.class, Pattern.class, new Coercion<String, Pattern>()
         {
             public Pattern coerce(String input)
             {
                 return Pattern.compile(input);
             }
-        }));
+        });
+        configuration.add(stringToPattern.getKey(), stringToPattern);
 
-        configuration.add(CoercionTuple.create(ComponentResourcesAware.class, ComponentResources.class,
+        CoercionTuple<ComponentResourcesAware, ComponentResources> componentResourcesAwareToComponentResources = CoercionTuple.create(ComponentResourcesAware.class, ComponentResources.class,
                 new Coercion<ComponentResourcesAware, ComponentResources>()
                 {
 
@@ -1154,25 +1163,28 @@ public final class TapestryModule
                     {
                         return input.getComponentResources();
                     }
-                }));
+                });
+        configuration.add(componentResourcesAwareToComponentResources.getKey(), componentResourcesAwareToComponentResources);
 
-        configuration.add(CoercionTuple.create(String.class, Renderable.class, new Coercion<String, Renderable>()
+        CoercionTuple<String, Renderable> stringToRenderable = CoercionTuple.create(String.class, Renderable.class, new Coercion<String, Renderable>()
         {
             public Renderable coerce(String input)
             {
                 return new StringRenderable(input);
             }
-        }));
+        });
+        configuration.add(stringToRenderable.getKey(), stringToRenderable);
 
-        configuration.add(CoercionTuple.create(Renderable.class, Block.class, new Coercion<Renderable, Block>()
+        CoercionTuple<Renderable, Block> renderableToBlock = CoercionTuple.create(Renderable.class, Block.class, new Coercion<Renderable, Block>()
         {
             public Block coerce(Renderable input)
             {
                 return new RenderableAsBlock(input);
             }
-        }));
+        });
+        configuration.add(renderableToBlock.getKey(), renderableToBlock);
 
-        configuration.add(CoercionTuple.create(String.class, DateFormat.class, new Coercion<String, DateFormat>()
+        CoercionTuple<String, DateFormat> stringToDateFormat = CoercionTuple.create(String.class, DateFormat.class, new Coercion<String, DateFormat>()
         {
             public DateFormat coerce(String input)
             {
@@ -1181,17 +1193,19 @@ public final class TapestryModule
                 dateFormat.setLenient(Boolean.parseBoolean(lenient));
                 return dateFormat;
             }
-        }));
+        });
+        configuration.add(stringToDateFormat.getKey(), stringToDateFormat);
 
-        configuration.add(CoercionTuple.create(String.class, Resource.class, new Coercion<String, Resource>()
+        CoercionTuple<String, Resource> stringToResource = CoercionTuple.create(String.class, Resource.class, new Coercion<String, Resource>()
         {
             public Resource coerce(String input)
             {
                 return assetSource.resourceForPath(input);
             }
-        }));
+        });
+        configuration.add(stringToResource.getKey(), stringToResource);
 
-        configuration.add(CoercionTuple.create(Renderable.class, RenderCommand.class,
+        CoercionTuple<Renderable, RenderCommand> renderableToRenderCommand = CoercionTuple.create(Renderable.class, RenderCommand.class,
                 new Coercion<Renderable, RenderCommand>()
                 {
                     public RenderCommand coerce(final Renderable input)
@@ -1204,9 +1218,10 @@ public final class TapestryModule
                             }
                         };
                     }
-                }));
+                });
+        configuration.add(renderableToRenderCommand.getKey(), renderableToRenderCommand);
 
-        configuration.add(CoercionTuple.create(Date.class, Calendar.class, new Coercion<Date, Calendar>()
+        CoercionTuple<Date, Calendar> dateToCalendar = CoercionTuple.create(Date.class, Calendar.class, new Coercion<Date, Calendar>()
         {
             public Calendar coerce(Date input)
             {
@@ -1214,32 +1229,36 @@ public final class TapestryModule
                 calendar.setTime(input);
                 return calendar;
             }
-        }));
+        });
+        configuration.add(dateToCalendar.getKey(), dateToCalendar);
 
-        configuration.add(CoercionTuple.create(Resource.class, DynamicTemplate.class,
+        CoercionTuple<Resource, DynamicTemplate> resourceToDynamicTemplate = CoercionTuple.create(Resource.class, DynamicTemplate.class,
                 new Coercion<Resource, DynamicTemplate>()
                 {
                     public DynamicTemplate coerce(Resource input)
                     {
                         return dynamicTemplateParser.parseTemplate(input);
                     }
-                }));
+                });
+        configuration.add(resourceToDynamicTemplate.getKey(), resourceToDynamicTemplate);
 
-        configuration.add(CoercionTuple.create(Asset.class, Resource.class, new Coercion<Asset, Resource>()
+        CoercionTuple<Asset, Resource> assetToResource = CoercionTuple.create(Asset.class, Resource.class, new Coercion<Asset, Resource>()
         {
             public Resource coerce(Asset input)
             {
                 return input.getResource();
             }
-        }));
+        });
+        configuration.add(assetToResource.getKey(), assetToResource);
 
-        configuration.add(CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
+        CoercionTuple<ValueEncoder, ValueEncoderFactory> valueEncoderToValueEncoderFactory = CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
         {
             public ValueEncoderFactory coerce(ValueEncoder input)
             {
                 return new GenericValueEncoderFactory(input);
             }
-        }));
+        });
+        configuration.add(valueEncoderToValueEncoderFactory.getKey(), valueEncoderToValueEncoderFactory);
     }
 
     /**
@@ -2755,5 +2774,5 @@ public final class TapestryModule
             return info;
         }
     }
-    
+
 }

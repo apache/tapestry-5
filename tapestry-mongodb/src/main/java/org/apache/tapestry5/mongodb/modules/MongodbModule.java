@@ -80,9 +80,9 @@ public class MongodbModule
      *
      * @param configuration lets help the {@link org.apache.tapestry5.commons.services.TypeCoercer} service
      */
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
+    public static void contributeTypeCoercer(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
-        configuration.add(new CoercionTuple(String.class, WriteConcern.class,
+        CoercionTuple stringToWriteConcern = new CoercionTuple(String.class, WriteConcern.class,
                 new Coercion<String, WriteConcern>() {
                     public WriteConcern coerce(String input)
                     {
@@ -120,9 +120,10 @@ public class MongodbModule
                         }
                     }
                 }
-        ));
+        );
+        configuration.add(stringToWriteConcern.getKey(), stringToWriteConcern);
 
-        configuration.add(new CoercionTuple(String.class, ReadPreference.class, new Coercion<String, ReadPreference>() {
+        CoercionTuple stringToReadPreference = new CoercionTuple(String.class, ReadPreference.class, new Coercion<String, ReadPreference>() {
             public ReadPreference coerce(String input)
             {
                 if (input.equalsIgnoreCase("SECONDARY"))
@@ -134,6 +135,7 @@ public class MongodbModule
                     return ReadPreference.primary();
                 }
             }
-        }));
+        });
+        configuration.add(stringToReadPreference.getKey(), stringToReadPreference);
     }
 }
