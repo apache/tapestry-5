@@ -389,7 +389,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         this.testContext = context;
 
         selenium = (Selenium) context.getAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
-        webDriver = ((WrapsDriver) selenium).getWrappedDriver();
+        webDriver = ((WebDriverBackedSelenium) selenium).getWrappedDriver();
         baseURL = (String) context.getAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
         errorReporter = (ErrorReporter) context.getAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
     }
