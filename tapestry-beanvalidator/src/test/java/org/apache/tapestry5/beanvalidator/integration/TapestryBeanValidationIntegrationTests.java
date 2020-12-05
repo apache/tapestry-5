@@ -107,6 +107,10 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     @Test
     public void beaneditform_validation() throws Exception
     {
+        openBaseURL();
+        System.out.println("===================================");
+        System.out.println(getHtmlSource());
+        System.out.println("===================================");
         openLinks("BeanEditForm Validation Demo");
 
         clickAndWait(SUBMIT);
