@@ -1,5 +1,22 @@
 package ioc.specs
 
+import java.time.DayOfWeek
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
+import java.time.MonthDay
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.Period
+import java.time.Year
+import java.time.YearMonth
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+
 import org.apache.tapestry5.commons.services.TypeCoercer
 import org.apache.tapestry5.commons.util.TimeInterval
 import org.apache.tapestry5.func.F
@@ -104,6 +121,66 @@ class TypeCoercerSpec extends AbstractSharedRegistrySpecification {
     Animal.DOG                        | String               | 'DOG'
     'CAT'                             | Animal               | Animal.CAT
 
+    // TAP5-2645
+    2020                              | Year                 | Year.of(2020)
+    Year.of(2020)                     | Integer              | 2020
+    2020                              | Year                 | Year.of(2020)
+    Month.OCTOBER                     | Integer              | 10
+    10                                | Month                | Month.OCTOBER
+    Month.OCTOBER                     | String               | "OCTOBER"
+    "oCTobER"                         | Month                | Month.OCTOBER
+    "--10-04"                         | MonthDay             | MonthDay.of(10, 4)
+    MonthDay.of(10, 4)                | String               | "--10-04"
+    "2020-10"                         | YearMonth            | YearMonth.of(2020, 10)
+    YearMonth.of(2020, 10)            | String               | "2020-10"
+    "2020-10-04"                      | LocalDate            | LocalDate.of(2020, 10, 4)
+    LocalDate.of(2020, 10, 4)         | Long                 | ZonedDateTime.of(LocalDate.of(2020, 10, 4), LocalTime.of(0, 0), ZoneId.systemDefault()).toEpochSecond() * 1_000
+    LocalDate.of(2020, 10, 4)         | String               | "2020-10-04"
+    LocalDate.of(2020, 10, 4)         | YearMonth            | YearMonth.of(2020, 10)
+    LocalDate.of(2020, 10, 4)         | MonthDay             | MonthDay.of( 10, 4)
+    YearMonth.of(2020, 10)            | Month                | Month.OCTOBER
+    YearMonth.of(2020, 10)            | Year                 | Year.of(2020)
+    DayOfWeek.THURSDAY                | Integer              | 4
+    4                                 | DayOfWeek            | DayOfWeek.THURSDAY
+    DayOfWeek.THURSDAY                | String               | "THURSDAY"
+    "THURSdaY"                        | DayOfWeek            | DayOfWeek.THURSDAY
+    LocalDate.of(2020, 10, 4)         | String               | "2020-10-04"
+    "2020-10-04"                      | LocalDate            | LocalDate.of(2020, 10, 4)
+    34862776991000L                   | LocalTime            | LocalTime.of(9, 41, 2, 776991000)
+    LocalTime.of(9, 41, 2, 776991000) | Long                 | 34862776991000L
+    "09:41:02.776991"                 | LocalTime            | LocalTime.of(9, 41, 2, 776991000)
+    LocalTime.of(9, 41, 2, 776991000) | String               | "09:41:02.776991"
+
+    "2020-10-04T16:59:51.713909"                         | LocalDateTime  | LocalDateTime.of(2020, 10, 4, 16, 59, 51, 713909000)
+    LocalDateTime.of(2020, 10, 4, 16, 59, 51, 713909000) | String         | "2020-10-04T16:59:51.713909"
+    LocalDateTime.of(2020, 10, 4, 16, 59, 51, 713909000) | LocalDate      | LocalDate.of(2020, 10, 4)
+    LocalDateTime.of(2020, 10, 4, 16, 59, 51, 0)         | Long           | ZonedDateTime.of(LocalDate.of(2020, 10, 4), LocalTime.of(16, 59, 51, 0), ZoneId.systemDefault()).toEpochSecond() * 1_000
+
+
+    "2020-10-04T16:59:51.713909+02:00"                                           | OffsetDateTime | OffsetDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneOffset.ofHours(2))
+    OffsetDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneOffset.ofHours(2)) | String         | "2020-10-04T16:59:51.713909+02:00"
+    OffsetDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneOffset.ofHours(2)) | OffsetTime     | OffsetTime.of(16, 59, 51, 713909000, ZoneOffset.ofHours(2))
+
+    "Europe/Berlin"                     | ZoneId     | ZoneId.of("Europe/Berlin")
+    ZoneId.of("Europe/Berlin")          | String     | "Europe/Berlin"
+    "+02:00"                            | ZoneOffset | ZoneOffset.ofHours(2)
+    ZoneOffset.ofHoursMinutes(-2, -30) | String     | "-02:30"
+
+    "2020-10-04T16:59:51.713909+02:00[Europe/Berlin]"                                | ZonedDateTime | ZonedDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneId.of("Europe/Berlin"))
+    ZonedDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneId.of("Europe/Berlin")) | String        | "2020-10-04T16:59:51.713909+02:00[Europe/Berlin]"
+    ZonedDateTime.of(2020, 10, 4, 16, 59, 51, 713909000, ZoneId.of("Europe/Berlin")) | ZoneId        | ZoneId.of("Europe/Berlin")
+
+    -1234L                            | Instant              | Instant.ofEpochMilli(-1234L)
+    Instant.ofEpochMilli(-1234L)      | Long                 | -1234L
+    new Date(1606653132000L)          | Instant              | Instant.ofEpochMilli(1606653132000L)
+    Instant.ofEpochMilli(-1234L)      | Long                 | -1234L
+    97200000000000L                   | Duration             | Duration.ofHours(27L)
+    Duration.ofMinutes(90L)           | Long                 | 5400000000000L
+    Period.of(12, 1, 7)               | String               | "P12Y1M7D"
+    "P12Y1M7D"                        | Period               | Period.of(12, 1, 7)
+
+    ZonedDateTime.of(LocalDate.of(2020, 11, 29), LocalTime.of(13, 32, 12, 0), ZoneId.of("Europe/Berlin")).toEpochSecond() * 1_000 | Date | new Date(1606653132000L)
+    
     inputTypeName = PlasticUtils.toTypeName(input.getClass())
     typeName = PlasticUtils.toTypeName(type)
   }
@@ -118,7 +195,7 @@ class TypeCoercerSpec extends AbstractSharedRegistrySpecification {
     where:
 
     from         | to         | expected
-    StringBuffer | Integer    | "Object --> String, String --> Long, Long --> Integer"
+    StringBuffer | Integer    | "Object --> String, String --> Integer"
     void         | Map        | "null --> null"
     void         | Boolean    | "null --> Boolean"
     Object[]     | Boolean    | "Object[] --> Boolean"

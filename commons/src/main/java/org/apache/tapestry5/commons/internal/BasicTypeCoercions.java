@@ -17,15 +17,34 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.services.Coercion;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.StringToEnumCoercion;
 import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.func.Flow;
 
@@ -107,6 +126,8 @@ public class BasicTypeCoercions
                 return Long.valueOf(input);
             }
         });
+
+        add(configuration, String.class, Integer.class, Integer::valueOf);
 
         add(configuration, Long.class, Byte.class, new Coercion<Long, Byte>()
         {
@@ -318,6 +339,129 @@ public class BasicTypeCoercions
         configuration.add(flowToBooleanCoercion.getKey(), flowToBooleanCoercion);
         
 
+    }
+
+    /**
+     * Provides the basic type coercions for JSR310 (java.time.*) to a {@link Configuration}
+     * instance.
+     * TAP5-2645
+     */
+    public static void provideJSR310TypeCoercions(
+            MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
+    {
+        {
+            add(configuration, Year.class, Integer.class, Year::getValue);
+            add(configuration, Integer.class, Year.class, Year::of);
+        }
+
+        {
+            add(configuration, Month.class, Integer.class, Month::getValue);
+            add(configuration, Integer.class, Month.class, Month::of);
+
+            add(configuration, String.class, Month.class, StringToEnumCoercion.create(Month.class));
+        }
+
+        {
+            add(configuration, String.class, YearMonth.class, YearMonth::parse);
+
+            add(configuration, YearMonth.class, Year.class, input -> Year.of(input.getYear()));
+            add(configuration, YearMonth.class, Month.class, YearMonth::getMonth);
+        }
+
+        {
+            add(configuration, String.class, MonthDay.class, MonthDay::parse);
+
+            add(configuration, MonthDay.class, Month.class, MonthDay::getMonth);
+        }
+
+        {
+            add(configuration, DayOfWeek.class, Integer.class, DayOfWeek::getValue);
+            add(configuration, Integer.class, DayOfWeek.class, DayOfWeek::of);
+
+            add(configuration, String.class, DayOfWeek.class,
+                    StringToEnumCoercion.create(DayOfWeek.class));
+        }
+
+        {
+            add(configuration, LocalDate.class, Instant.class, input -> {
+                return input.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            });
+            add(configuration, Instant.class, LocalDate.class, input -> {
+                return input.atZone(ZoneId.systemDefault()).toLocalDate();
+            });
+
+            add(configuration, String.class, LocalDate.class, LocalDate::parse);
+
+            add(configuration, LocalDate.class, YearMonth.class, input -> {
+                return YearMonth.of(input.getYear(), input.getMonth());
+            });
+
+            add(configuration, LocalDate.class, MonthDay.class, input -> {
+                return MonthDay.of(input.getMonth(), input.getDayOfMonth());
+            });
+        }
+
+        {
+            add(configuration, LocalTime.class, Long.class, LocalTime::toNanoOfDay);
+            add(configuration, Long.class, LocalTime.class, LocalTime::ofNanoOfDay);
+
+            add(configuration, String.class, LocalTime.class, LocalTime::parse);
+        }
+
+        {
+            add(configuration, String.class, LocalDateTime.class, LocalDateTime::parse);
+
+            add(configuration, LocalDateTime.class, Instant.class, input -> {
+                return input.atZone(ZoneId.systemDefault()).toInstant();
+            });
+            add(configuration, Instant.class, LocalDateTime.class, input -> {
+                return LocalDateTime.ofInstant(input, ZoneId.systemDefault());
+            });
+
+            add(configuration, LocalDateTime.class, LocalDate.class, LocalDateTime::toLocalDate);
+        }
+
+        {
+            add(configuration, String.class, OffsetDateTime.class, OffsetDateTime::parse);
+
+            add(configuration, OffsetDateTime.class, Instant.class, OffsetDateTime::toInstant);
+
+            add(configuration, OffsetDateTime.class, OffsetTime.class,
+                    OffsetDateTime::toOffsetTime);
+        }
+
+        {
+            add(configuration, String.class, ZoneId.class, ZoneId::of);
+        }
+
+        {
+            add(configuration, String.class, ZoneOffset.class, ZoneOffset::of);
+        }
+
+        {
+            add(configuration, String.class, ZonedDateTime.class, ZonedDateTime::parse);
+
+            add(configuration, ZonedDateTime.class, Instant.class, ZonedDateTime::toInstant);
+
+            add(configuration, ZonedDateTime.class, ZoneId.class, ZonedDateTime::getZone);
+        }
+
+        {
+            add(configuration, Instant.class, Long.class, Instant::toEpochMilli);
+            add(configuration, Long.class, Instant.class, Instant::ofEpochMilli);
+
+            add(configuration, Instant.class, Date.class, Date::from);
+            add(configuration, Date.class, Instant.class, Date::toInstant);
+        }
+
+        {
+            add(configuration, Duration.class, Long.class, Duration::toNanos);
+            add(configuration, Long.class, Duration.class, Duration::ofNanos);
+        }
+
+        {
+            add(configuration, String.class, Period.class, Period::parse);
+        }
     }
 
     private static <S, T> void add(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration, Class<S> sourceType,
