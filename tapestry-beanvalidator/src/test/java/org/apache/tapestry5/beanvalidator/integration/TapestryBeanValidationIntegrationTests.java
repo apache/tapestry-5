@@ -107,6 +107,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     @Test
     public void beaneditform_validation() throws Exception
     {
+        openLinks("BeanEditForm Validation Demo");
+        
         clickAndWait(SUBMIT);
 
         assertTextPresent("User Name may not be null", "Password may not be null");
