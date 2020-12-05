@@ -169,6 +169,7 @@ public class BeanModelSourceBuilder {
     {
         CoercionTupleConfiguration configuration = new CoercionTupleConfiguration();
         BasicTypeCoercions.provideBasicTypeCoercions(configuration);
+        BasicTypeCoercions.provideJSR310TypeCoercions(configuration);
         typeCoercer = new TypeCoercerImpl(configuration.getTuples());
     }
 
