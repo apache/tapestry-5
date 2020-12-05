@@ -1636,6 +1636,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     protected final void openLinks(String... linkText)
     {
         openBaseURL();
+        
+        if (getTitle().toLowerCase().contains("service unavailable")) {
+            throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
+        }
 
         for (String text : linkText)
         {
