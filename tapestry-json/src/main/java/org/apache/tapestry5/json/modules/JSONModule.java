@@ -15,6 +15,7 @@
 package org.apache.tapestry5.json.modules;
 
 import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.internal.json.StringToJSONArray;
@@ -40,10 +41,12 @@ public class JSONModule
      * @param configuration the configuration to provide the type coercer to
      */
     @Contribute(TypeCoercer.class)
-    public static void provideCoercions(Configuration<CoercionTuple> configuration)
+    public static void provideCoercions(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
-        configuration.add(CoercionTuple.create(String.class, JSONObject.class, new StringToJSONObject()));
+        CoercionTuple<String, JSONObject> stringToJsonObject = CoercionTuple.create(String.class, JSONObject.class, new StringToJSONObject());
+        configuration.add(stringToJsonObject.getKey(), stringToJsonObject);
 
-        configuration.add(CoercionTuple.create(String.class, JSONArray.class, new StringToJSONArray()));
+        CoercionTuple<String, JSONArray> stringToJsonArray = CoercionTuple.create(String.class, JSONArray.class, new StringToJSONArray());
+        configuration.add(stringToJsonArray.getKey(), stringToJsonArray);
     }
 }
