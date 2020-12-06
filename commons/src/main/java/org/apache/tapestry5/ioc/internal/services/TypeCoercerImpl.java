@@ -280,6 +280,17 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         {
             return searchForNullCoercion(targetType);
         }
+        
+        // Trying to find exact match.
+        Optional<CoercionTuple> maybeTuple = 
+                getTuples(sourceType, targetType).stream()
+                    .filter((t) -> sourceType.equals(t.getSourceType()) && 
+                            targetType.equals(t.getTargetType())).findFirst();
+        
+        if (maybeTuple.isPresent())
+        {
+            return maybeTuple.get().getCoercion();
+        }
 
         // These are instance variables because this method may be called concurrently.
         // On a true race, we may go to the work of seeking out and/or fabricating
