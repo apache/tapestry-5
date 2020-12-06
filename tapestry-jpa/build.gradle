@@ -7,7 +7,7 @@ dependencies {
 
 
   testCompile project(':tapestry-test')
-  testCompile 'org.eclipse.persistence:eclipselink:2.6.2'
+  testCompile 'org.eclipse.persistence:eclipselink:2.7.7'
 
   testRuntime "com.h2database:h2:1.2.145"
   testRuntime "org.apache.tomcat:dbcp:6.0.32"
@@ -31,3 +31,11 @@ jar {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.modules.JpaModule'
     }
 }
+
+task runTestApp6(type:JavaExec) {
+    description 'Start app6 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app6", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
+}
+  
