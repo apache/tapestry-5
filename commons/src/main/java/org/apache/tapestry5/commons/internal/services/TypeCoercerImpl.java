@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -285,6 +286,17 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         if (sourceType == Void.class)
         {
             return searchForNullCoercion(targetType);
+        }
+        
+        // Trying to find exact match.
+        Optional<CoercionTuple> maybeTuple = 
+                getTuples(sourceType, targetType).stream()
+                    .filter((t) -> sourceType.equals(t.getSourceType()) && 
+                            targetType.equals(t.getTargetType())).findFirst();
+        
+        if (maybeTuple.isPresent())
+        {
+            return maybeTuple.get().getCoercion();
         }
 
         // These are instance variables because this method may be called concurrently.
