@@ -12,7 +12,13 @@ class TimeIntervalDemo extends LocalDateDemo {
 
     void setupRender() {
         if (previousRender == null)
-            previousRender = new Date().clearTime()
+        {
+            previousRender = new Date()
+            previousRender.setHours(0)
+            previousRender.setMinutes(0)
+            previousRender.setSeconds(0)
+        }
+            
     }
 
     void afterRender() {
