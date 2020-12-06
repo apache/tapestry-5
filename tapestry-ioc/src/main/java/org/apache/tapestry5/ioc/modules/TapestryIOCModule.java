@@ -261,6 +261,58 @@ public final class TapestryIOCModule
     }
     
     /**
+     * Contributes coercions to and from Java Time API (JSR 310) classes.
+     * <ul>
+     * <li>java.time.Year to Integer</li>
+     * <li>Integer to java.time.Year</li>
+     * <li>java.time.Month to Integer</li>
+     * <li>Integer to Java.time.Month</li>
+     * <li>java.time.Month to String</li>
+     * <li>String to java.time.Month</li>
+     * <li>String to java.time.YearMonth</li>
+     * <li>java.time.YearMonth to java.time.Year</li>
+     * <li>java.time.YearMonth to java.time.Month</li>
+     * <li>String to java.time.MonthDay</li>
+     * <li>java.time.MonthDay to java.time.Month</li>
+     * <li>java.time.DayOfWeek to Integer</li>
+     * <li>Integer to java.time.DayOfWeek</li>
+     * <li>java.time.DayOfWeek to String</li>
+     * <li>String to java.time.DayOfWeek</li>
+     * <li>java.time.LocalDate to java.time.Instant</li>
+     * <li>java.time.Instant to java.time.LocalDate</li>
+     * <li>String to java.time.LocalDate</li>
+     * <li>java.time.LocalDate to java.time.YearMonth</li>
+     * <li>java.time.LocalDate to java.time.MonthDay</li>
+     * <li>java.time.LocalTime to Long</li>
+     * <li>Long to java.time.LocalTime</li>
+     * <li>String to java.time.LocalDateTime</li>
+     * <li>java.time.LocalDateTime to java.time.Instant</li>
+     * <li>java.time.Instant to LocalDateTime</li>
+     * <li>java.time.LocalDateTime to java.time.LocalDate</li>
+     * <li>String to java.time.OffsetDateTime</li>
+     * <li>java.time.OffsetDateTime to java.time.Instant</li>
+     * <li>java.time.Instant to java.time.OffsetDateTime</li>
+     * <li>String to java.time.ZoneId</li>
+     * <li>String to java.time.ZoneOffset</li>
+     * <li>String to java.time.ZonedDateTime</li>
+     * <li>java.time.ZonedDateTime to java.time.Instant</li>
+     * <li>java.time.ZonedDateTime to java.time.ZoneId</li>
+     * <li>java.time.Instant to Long</li>
+     * <li>Long to java.time.Instant</li>
+     * <li>java.time.Instant to java.util.Date</li>
+     * <li>java.util.Date to java.time.Instant</li>
+     * <li>java.time.Duration to Long</li>
+     * <li>Long to java.time.Duration</li>
+     * <li>String to java.time.Period</li>
+     * </ul>
+     */
+    @Contribute(TypeCoercer.class)
+    public static void provideJSR10TypeCoercions(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
+    {
+        BasicTypeCoercions.provideJSR310TypeCoercions(configuration);
+    }
+    
+    /**
      * <dl>
      * <dt>SystemProperties</dt>
      * <dd>Exposes JVM System properties as symbols (currently case-sensitive)</dd>
