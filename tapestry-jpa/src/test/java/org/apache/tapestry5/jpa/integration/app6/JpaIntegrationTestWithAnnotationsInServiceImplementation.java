@@ -98,6 +98,7 @@ public class JpaIntegrationTestWithAnnotationsInServiceImplementation extends Se
 
         // transient objects cannot be persisted
         clickAndWait("link=set to transient");
+        waitForCssSelectorToAppear(".panel-danger");
         assertTextPresent("Failed persisting the entity.");
     }
 
