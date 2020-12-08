@@ -2,7 +2,7 @@ description = "Integration of Tapestry with the Spring Inversion Of Control Cont
 
 dependencies {
   compile project(':tapestry-core')
-  compile "org.springframework:spring-web:3.1.0.RELEASE"
+  compile "org.springframework:spring-web:3.2.9.RELEASE"
 
   provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
@@ -13,4 +13,18 @@ jar {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.spring.modules.SpringModule'
     }
+}
+
+task runTestApp(type:JavaExec) {
+    description 'Start tapestry-spring integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/webapp", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
+}
+
+task runTestApp1(type:JavaExec) {
+    description 'Start tapestry-spring integration test app 1, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/webapp1", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
