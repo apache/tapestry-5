@@ -76,14 +76,14 @@ public class Main
             throw new RuntimeException(e);
         }
 
-        List<File> javaFiles = getJavaFiles();
+        List<File> sourceFiles = getJavaFiles();
         
         System.out.println("Number of renamed or moved classes: " + properties.size());
-        System.out.println("Number of Java source files found: " + javaFiles.size());
+        System.out.println("Number of source files found: " + sourceFiles.size());
         
         int totalCount = 0;
         int totalChanged = 0;
-        for (File file : javaFiles) 
+        for (File file : sourceFiles) 
         {
             boolean changed = upgrade(file, properties);
             if (changed) {
@@ -98,7 +98,7 @@ public class Main
             if (totalCount % 100 == 0)
             {
                 System.out.printf("Processed %5d out of %d files (%.1f%%)\n", 
-                        totalCount, javaFiles.size(), totalCount * 100.0 / javaFiles.size());
+                        totalCount, sourceFiles.size(), totalCount * 100.0 / sourceFiles.size());
             }
         }
         
@@ -140,7 +140,7 @@ public class Main
     
     private static void collectJavaFiles(File currentFolder, List<File> javaFiles) 
     {
-        File[] javaFilesInFolder = currentFolder.listFiles((f) -> f.isFile() && f.getName().endsWith(".java"));
+        File[] javaFilesInFolder = currentFolder.listFiles((f) -> f.isFile() && (f.getName().endsWith(".java") || f.getName().endsWith(".groovy")));
         for (File file : javaFilesInFolder) {
             javaFiles.add(file);
         }
