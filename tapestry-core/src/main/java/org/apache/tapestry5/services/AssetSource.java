@@ -30,7 +30,9 @@ import java.util.Locale;
  *
  * Since 5.1.0.0, is is preferred that
  * {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.commons.Resource)} return an instance
- * of {@link org.apache.tapestry5.Asset2}.
+ * of <code>org.apache.tapestry5.Asset2</code>.
+ * 
+ * Since 5.7.0, Asset2 was merged into Asset and removed.
  */
 @UsesMappedConfiguration(AssetFactory.class)
 public interface AssetSource

@@ -21,7 +21,7 @@ import org.apache.tapestry5.commons.Resource;
  *
  * An Asset's toString() will return the URL for the resource (the same value as {@link #toClientURL()}).
  *
- * Release 5.1.0.0 introduced {@link org.apache.tapestry5.Asset2}, which extends this interface with an additional
+ * Release 5.1.0.0 introduced <code>org.apache.tapestry5.Asset2</code>, which extends this interface with an additional
  * method.
  * 
  * Release 5.7.0 merged Asset2 into Asset and Asset2 got removed.

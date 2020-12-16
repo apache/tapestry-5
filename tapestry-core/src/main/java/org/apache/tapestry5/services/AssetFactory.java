@@ -38,8 +38,7 @@ public interface AssetFactory
     Resource getRootResource();
 
     /**
-     * Creates an instance of an asset. Starting with 5.1.0.0, it is preferred (but not required) that the factory
-     * return an instance of {@link org.apache.tapestry5.Asset2}.
+     * Creates an instance of an asset.
      *
      * @param resource
      *         a resource within this factories domain (derived from the {@linkplain #getRootResource() root
