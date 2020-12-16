@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Asset2;
+import org.apache.tapestry5.Asset;
 
 /**
  * Base class for assets.
  *
  * @since 5.1.0.0
  */
-public abstract class AbstractAsset implements Asset2
+public abstract class AbstractAsset implements Asset
 {
     private final boolean invariant;
 

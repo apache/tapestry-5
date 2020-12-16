@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2020 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,28 +15,26 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.Asset2;
 import org.apache.tapestry5.commons.Location;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 
 public class AssetBinding extends AbstractBinding
 {
     private final String description;
 
-    private final Asset2 asset;
+    private final Asset asset;
 
     public AssetBinding(Location location, String description, Asset asset)
     {
         super(location);
 
         this.description = description;
-        this.asset = TapestryInternalUtils.toAsset2(asset);
+        this.asset = asset;
     }
 
     @Override
     public Class getBindingType()
     {
-        return Asset2.class;
+        return Asset.class;
     }
 
     public Object get()

@@ -1041,11 +1041,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(ComponentRequestHandler.class);
     }
 
-    protected final Asset2 mockAsset2()
-    {
-        return newMock(Asset2.class);
-    }
-
     /**
      * @since 5.2.0
      */

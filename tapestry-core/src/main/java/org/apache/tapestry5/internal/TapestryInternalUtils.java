@@ -389,43 +389,6 @@ public class TapestryInternalUtils
         return true;
     }
 
-    /**
-     * Converts an Asset to an Asset2 if necessary. When actually wrapping an Asset as an Asset2, the asset is assumed
-     * to be variant (i.e., not cacheable).
-     *
-     * @since 5.1.0.0
-     */
-    public static Asset2 toAsset2(final Asset asset)
-    {
-        if (asset instanceof Asset2)
-            return (Asset2) asset;
-
-        return new Asset2()
-        {
-            /** Returns false. */
-            public boolean isInvariant()
-            {
-                return false;
-            }
-
-            public Resource getResource()
-            {
-                return asset.getResource();
-            }
-
-            public String toClientURL()
-            {
-                return asset.toClientURL();
-            }
-
-            @Override
-            public String toString()
-            {
-                return asset.toString();
-            }
-        };
-    }
-
     public static InternalPropertyConduit toInternalPropertyConduit(final PropertyConduit conduit)
     {
         if (conduit instanceof InternalPropertyConduit)

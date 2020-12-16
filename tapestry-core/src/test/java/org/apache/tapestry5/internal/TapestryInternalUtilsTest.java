@@ -383,42 +383,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     }
 
     @Test
-    public void to_asset2_no_wrapper_needed()
-    {
-        Asset2 asset2 = mockAsset2();
-
-        replay();
-
-        assertSame(TapestryInternalUtils.toAsset2(asset2), asset2);
-
-        verify();
-    }
-
-    @Test
-    public void asset_to_asset2_wrapper()
-    {
-        Asset asset = mockAsset();
-        Resource resource = mockResource();
-        String clientURL = "clientURL";
-
-        train_toClientURL(asset, clientURL);
-
-        expect(asset.getResource()).andReturn(resource);
-
-        replay();
-
-        Asset2 asset2 = TapestryInternalUtils.toAsset2(asset);
-
-        assertFalse(asset2.isInvariant());
-
-        assertSame(asset2.toClientURL(), clientURL);
-        assertSame(asset2.toString(), asset.toString());
-        assertSame(asset2.getResource(), resource);
-
-        verify();
-    }
-
-    @Test
     public void to_internal_property_conduit_no_wrapper_needed()
     {
         InternalPropertyConduit conduit2 = newMock(InternalPropertyConduit.class);
