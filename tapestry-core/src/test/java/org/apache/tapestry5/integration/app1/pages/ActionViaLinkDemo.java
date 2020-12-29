@@ -15,6 +15,8 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.DisableStrictChecks;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
@@ -48,4 +50,18 @@ public class ActionViaLinkDemo
 
         return link.toURI();
     }
+    
+    @DisableStrictChecks
+    void onActionFromNonExistent() 
+    {
+        
+    }
+    
+    @DisableStrictChecks
+    @OnEvent(value = "test", component = "nonExistent")
+    void someEventHandlerMethod() 
+    {
+        
+    }
+
 }
