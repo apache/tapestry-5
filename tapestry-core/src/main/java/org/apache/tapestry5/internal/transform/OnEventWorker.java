@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.DisableStrictChecks;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.PublishEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
@@ -403,6 +404,10 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             public ComponentIdValidator map(EventHandlerMethod element)
             {
                 if (element.componentId.equals(""))
+                {
+                    return null;
+                }
+                if (element.method.getAnnotation(DisableStrictChecks.class) != null)
                 {
                     return null;
                 }
