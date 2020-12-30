@@ -40,6 +40,10 @@ public class AssetNotFoundException extends RuntimeException {
         this.resource = resource;
     }
     
+    /**
+     * The resource which wasn't found. It may be null.
+     * @return a {@link Resource}.
+     */
     public Resource getResource() {
         return resource;
     }

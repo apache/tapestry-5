@@ -12,22 +12,28 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.AssetNotFoundException;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.assets.*;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
+import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.ResourceDependencies;
+import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Rewrites the {@code url()} attributes inside a CSS (MIME type "text/css")) resource.
@@ -174,7 +180,17 @@ public class CSSURLRewriter extends DelegatingSRS
                 url = url.substring(6);
             }
 
-            Asset asset = assetSource.getAsset(baseResource, url, null);
+            Asset asset;
+            
+            // TAP5-2656
+            try 
+            {
+                asset = assetSource.getAsset(baseResource, url, null);
+            }
+            catch (AssetNotFoundException e)
+            {
+                asset = null;
+            }
 
             if (asset != null)
             {
