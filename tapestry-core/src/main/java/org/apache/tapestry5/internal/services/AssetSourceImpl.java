@@ -29,6 +29,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetNotFoundException;
 import org.apache.tapestry5.services.AssetSource;
 import org.slf4j.Logger;
 
@@ -387,7 +388,7 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
 
         if (localized == null || !localized.exists())
         {
-            throw new RuntimeException(String.format("Unable to locate asset '%s' (the file does not exist).", unlocalized));
+            throw new AssetNotFoundException(String.format("Unable to locate asset '%s' (the file does not exist).", unlocalized), unlocalized);
         }
 
         return getAssetForResource(localized);

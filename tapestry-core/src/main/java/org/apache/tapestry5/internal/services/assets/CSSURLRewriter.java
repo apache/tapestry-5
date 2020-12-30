@@ -18,6 +18,7 @@ import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.ContentType;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.services.AssetNotFoundException;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.assets.*;
 import org.slf4j.Logger;
@@ -174,7 +175,17 @@ public class CSSURLRewriter extends DelegatingSRS
                 url = url.substring(6);
             }
 
-            Asset asset = assetSource.getAsset(baseResource, url, null);
+            Asset asset;
+            
+            // TAP5-2656
+            try 
+            {
+                asset = assetSource.getAsset(baseResource, url, null);
+            }
+            catch (AssetNotFoundException e)
+            {
+                asset = null;
+            }
 
             if (asset != null)
             {
