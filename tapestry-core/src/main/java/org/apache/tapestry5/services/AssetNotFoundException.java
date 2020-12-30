@@ -11,12 +11,10 @@
 // limitations under the License.
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Class that represents the exception of an asset not being found.
- * @author thiago
- *
  */
 public class AssetNotFoundException extends RuntimeException {
 
