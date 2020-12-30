@@ -12,6 +12,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.commons.Resource;
@@ -32,16 +42,6 @@ import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetNotFoundException;
 import org.apache.tapestry5.services.AssetSource;
 import org.slf4j.Logger;
-
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("all")
 public class AssetSourceImpl extends LockSupport implements AssetSource
