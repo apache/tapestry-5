@@ -22,7 +22,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException;
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException;
@@ -1106,6 +1108,46 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
     {
         return nameValuePairs.entrySet();
     }
-  
+
+    /**
+     * If the specified key is not already associated with a value or is
+     * associated with null, associates it with the given non-null value.
+     *
+     * Otherwise, replaces the associated value with the results of the given
+     * remapping function, or removes if the result is {@code null}.
+     *
+     * @param key
+     *            key with which the resulting value is to be associated
+     * @param value
+     *            the non-null value to be merged with the existing value
+     *            associated with the key or, if no existing value or a null value
+     *            is associated with the key, to be associated with the key
+     * @param remappingFunction
+     *            the function to recompute a value if present
+     * @return the new value associated with the specified key, or null if no
+     *         value is associated with the key
+     * @throws NullPointerException
+     *             if the specified key is null or the value or remappingFunction
+     *             is null
+     * @since 5.7
+     */
+    @Override
+    public Object merge(String key, Object value,
+            BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction)
+    {
+        // We need to override the merge method due to the default implementation using
+        // #get(String) to check for the key, which will throw a {@code JSONValueNotFoundException}
+        // if not found.
+
+        Objects.requireNonNull(remappingFunction);
+        Objects.requireNonNull(value);
+
+        Object oldValue = opt(key);
+        Object newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue, value);
+
+        put(key, newValue);
+
+        return newValue;
+    }
 
 }
