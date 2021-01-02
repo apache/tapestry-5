@@ -19,7 +19,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
- * Implementations of {@link java.util.streams.Collector} that implement reductions
+ * Implementations of {@link java.util.stream.Collector} that implement reductions
  * to {@code JSONArray} and to {@code JSONObject}.
  * 
  * @since 5.7
