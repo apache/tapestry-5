@@ -35,14 +35,16 @@ public final class JSONCollectors
      * Returns a {@code Collector} that accumulates the input elements into a
      * new {@code JSONArray}.
      *
+     * @param <T> the type of the input elements
      * @return a {@code Collector} which collects all the input elements into a
      *         {@code JSONArray}, in encounter order
      * @since 5.7
      */
-    public static Collector<?, ?, JSONArray> toArray()
+    public static <T> Collector<T, ?, JSONArray> toArray()
     {
-        return Collector.of(JSONArray::new, //
-                JSONArray::add, JSONArray::putAll);
+        return Collector.of(JSONArray::new,
+                            JSONArray::add,
+                            JSONArray::putAll);
     }
 
     /**
@@ -53,6 +55,7 @@ public final class JSONCollectors
      * In case of duplicate keys an {@code IllegalStateException} is
      * thrown when the collection operation is performed.
      *
+     * @param <T> the type of the input elements
      * @param keyMapper
      *            a mapping function to produce String keys
      * @param valueMapper
@@ -62,8 +65,8 @@ public final class JSONCollectors
      *         the input elements
      * @since 5.7
      */
-    public static Collector<?, ?, JSONObject> toMap(Function<?, String> keyMapper,
-            Function<?, Object> valueMapper)
+    public static <T> Collector<T, ?, JSONObject> toMap(Function<? super T, String> keyMapper,
+                                                        Function<? super T, Object> valueMapper)
     {
         return Collectors.toMap(keyMapper,
                                 valueMapper,
