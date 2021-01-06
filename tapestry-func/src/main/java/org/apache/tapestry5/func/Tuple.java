@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.Objects;
+
 /**
  * A Tuple holds two values of two different types.
  * 
@@ -86,6 +88,18 @@ public class Tuple<A, B>
             return false;
 
         return isMatch(obj);
+    }
+
+    /**
+     * Returns a hash code value for the tuple, based on its values.
+     *
+     * @return a hash code value for this tuple.
+     * @since 5.7
+     */
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.first, this.second);
     }
 
     /**

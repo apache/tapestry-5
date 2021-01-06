@@ -55,4 +55,16 @@ public class TupleTests extends BaseFuncTest
     {
         assertTrue(t.equals(Tuple.create("tapestry", 5)));
     }
+
+    @Test
+    public void equivalent_tuples_have_equal_hashcode()
+    {
+        assertTrue(t.hashCode() == Tuple.create("tapestry", 5).hashCode());
+    }
+
+    @Test
+    public void unequal_values_have_different_hashcode()
+    {
+        assertFalse(t.hashCode() == Tuple.create("tapestry", 4).hashCode());
+    }
 }
