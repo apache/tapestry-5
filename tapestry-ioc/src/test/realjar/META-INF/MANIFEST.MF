@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: Ben
+Build-Jdk: 1.8.0_271
+Tapestry-Module-Classes: com.example.ManifestModule
+
