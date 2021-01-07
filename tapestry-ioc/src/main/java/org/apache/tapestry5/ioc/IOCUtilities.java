@@ -18,7 +18,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.Manifest;
 
 import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
@@ -57,6 +60,8 @@ public final class IOCUtilities
      * Scans the classpath for JAR Manifests that contain the Tapestry-Module-Classes attribute and adds each
      * corresponding class to the RegistryBuilder. In addition, looks for a system property named "tapestry.modules" and
      * adds all of those modules as well. The tapestry.modules approach is intended for development.
+     * To prevent auto-loading of Manifest-defined modules the system property named "tapestry.manifest-modules-blacklist"
+     * can be used.
      *
      * @param builder
      *         the builder to which modules will be added
@@ -65,6 +70,19 @@ public final class IOCUtilities
      */
     public static void addDefaultModules(RegistryBuilder builder)
     {
+        Set<String> blacklistedManifestModules = new HashSet<>();
+        String modulesBlacklist = System.getProperty("tapestry.manifest-modules-blacklist");
+        if (modulesBlacklist != null)
+        {
+            String[] blacklistedClassnames = modulesBlacklist.split(",");
+
+            
+            for (String classname : blacklistedClassnames)
+            {
+                blacklistedManifestModules.add(classname.trim());
+            }
+        }
+
         try
         {
             Enumeration<URL> urls = builder.getClassLoader().getResources("META-INF/MANIFEST.MF");
@@ -73,7 +91,7 @@ public final class IOCUtilities
             {
                 URL url = urls.nextElement();
 
-                addModulesInManifest(builder, url);
+                addModulesInManifest(builder, url, blacklistedManifestModules);
             }
 
             addModulesInList(builder, System.getProperty("tapestry.modules"));
@@ -84,7 +102,7 @@ public final class IOCUtilities
         }
     }
 
-    private static void addModulesInManifest(RegistryBuilder builder, URL url)
+    private static void addModulesInManifest(RegistryBuilder builder, URL url, Set<String> blacklist)
     {
         InputStream in = null;
 
@@ -102,7 +120,7 @@ public final class IOCUtilities
 
             String list = mf.getMainAttributes().getValue(MODULE_BUILDER_MANIFEST_ENTRY_NAME);
 
-            addModulesInList(builder, list);
+            addModulesInList(builder, list, blacklist);
         } catch (RuntimeException ex)
         {
             fail = ex;
@@ -123,13 +141,24 @@ public final class IOCUtilities
 
     static void addModulesInList(RegistryBuilder builder, String list)
     {
+        addModulesInList(builder, list, Collections.emptySet());
+    }
+
+    static void addModulesInList(RegistryBuilder builder, String list, Set<String> blacklist)
+    {
         if (list == null) return;
 
         String[] classnames = list.split(",");
 
         for (String classname : classnames)
         {
-            builder.add(classname.trim());
+            String trimmedClassname = classname.trim();
+            if (blacklist != null && blacklist.contains(trimmedClassname))
+            {
+                continue;
+            }
+
+            builder.add(trimmedClassname);
         }
     }
 
