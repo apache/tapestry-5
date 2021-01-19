@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
@@ -128,7 +129,17 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         // might
         // have typos, i.e., "createFoo" that should be "buildFoo".
 
-        Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
+        Set<Method> methods;
+        try 
+        {
+            methods = CollectionFactory.newSet(moduleClass.getMethods());
+        }
+        catch (Exception e)
+        {
+            throw new TapestryException(
+                    "Exception while processing module class " + moduleClass.getName() +
+                    ": " + e.getMessage(), e);
+        }
 
         Iterator<Method> methodIterator = methods.iterator();
 
