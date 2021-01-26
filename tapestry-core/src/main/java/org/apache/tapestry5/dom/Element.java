@@ -125,6 +125,12 @@ public final class Element extends Node
         {
             return;
         }
+        
+        // TAP5-2660: handle empty namespace as the null one, since both represent no namespace
+        if ("".equals(namespace))
+        {
+            namespace = null;
+        }
 
         Attribute prior = null;
         Attribute cursor = firstAttribute;
