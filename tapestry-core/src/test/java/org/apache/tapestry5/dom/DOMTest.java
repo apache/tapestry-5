@@ -485,6 +485,23 @@ public class DOMTest extends InternalBaseTestCase
         assertEquals(extract(root, "class"), stringSet("fred", "barney", "wilma"));
     }
 
+    // TAP5-2660
+    @Test
+    public void add_class_names_empty_namespace()
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("div");
+
+        assertSame(root.attribute("", "class", "fred"), root);
+
+        assertEquals(root.toString(), "<div class=\"fred\"/>");
+
+        assertSame(root.addClassName("barney", "wilma"), root);
+
+        assertEquals(extract(root, "class"), stringSet("fred", "barney", "wilma"));
+    }
+
     private Set<String> extract(Element e, String attributeName)
     {
         String attribute = e.getAttribute(attributeName);
