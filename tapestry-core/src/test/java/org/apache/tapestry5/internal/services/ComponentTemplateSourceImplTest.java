@@ -22,12 +22,16 @@ import java.util.UUID;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.internal.services.ThreadLocaleImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -44,6 +48,11 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     private final ComponentResourceSelector english = new ComponentResourceSelector(Locale.ENGLISH);
 
     private final ComponentResourceSelector french = new ComponentResourceSelector(Locale.FRENCH);
+
+    private final ThreadLocale threadLocale = new ThreadLocaleImpl();
+
+    private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer = 
+        new DefaultComponentRequestSelectorAnalyzer(threadLocale);
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -102,7 +111,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
 
         assertSame(source.getTemplate(model, english), template);
 
@@ -151,7 +160,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -219,7 +228,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -257,7 +266,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
 
         ComponentTemplate template = source.getTemplate(model, Locale.ENGLISH);
 
@@ -289,7 +298,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
 
         assertSame(source.getTemplate(model, english), template);
 
