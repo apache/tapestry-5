@@ -18,16 +18,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+<<<<<<< HEAD
+=======
+import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
+>>>>>>> b4e776a80... TAP5-2659: wrong locale being picked up when using axis
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.internal.services.ThreadLocaleImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -47,6 +56,11 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     private final URLChangeTracker tracker = new URLChangeTracker(converter);
+    
+    private final ThreadLocale threadLocale = new ThreadLocaleImpl();
+
+    private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer = 
+        new DefaultComponentRequestSelectorAnalyzer(threadLocale);
 
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
@@ -61,7 +75,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         resourceLocator = getService(ComponentResourceLocator.class);
 
         source = new ComponentMessagesSourceImpl(false, simpleComponentResource.forFile("AppCatalog.properties"),
-                resourceLocator, new PropertiesFileParserImpl(), tracker);
+                resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale);
     }
 
     @AfterClass
@@ -231,7 +245,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         List<Resource> resources = Arrays.asList(resource);
 
         ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
-                new PropertiesFileParserImpl(), resourceLocator, converter);
+                new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 
@@ -241,4 +255,5 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+
 }

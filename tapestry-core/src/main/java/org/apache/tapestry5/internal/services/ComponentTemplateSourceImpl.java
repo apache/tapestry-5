@@ -12,6 +12,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
@@ -26,18 +31,15 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -50,6 +52,10 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     private final URLChangeTracker tracker;
 
     private final ComponentResourceLocator locator;
+    
+    private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer;
+    
+    private final ThreadLocale threadLocale;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
@@ -104,19 +110,24 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     public ComponentTemplateSourceImpl(@Inject
                                        @Symbol(SymbolConstants.PRODUCTION_MODE)
                                        boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-                                       ClasspathURLConverter classpathURLConverter)
+                                       ClasspathURLConverter classpathURLConverter,
+                                       ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
+                                       ThreadLocale threadLocale)
     {
-        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale);
     }
 
     ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-                                URLChangeTracker tracker)
+                                URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
+                                ThreadLocale threadLocale)
     {
         super(productionMode);
 
         this.parser = parser;
         this.locator = locator;
         this.tracker = tracker;
+        this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;
+        this.threadLocale = threadLocale;
     }
 
     @PostInjection
@@ -174,7 +185,15 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      */
     public ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale)
     {
-        return getTemplate(componentModel, new ComponentResourceSelector(locale));
+        final Locale original = threadLocale.getLocale();
+        try
+        {
+            threadLocale.setLocale(locale);
+            return getTemplate(componentModel, componentRequestSelectorAnalyzer.buildSelectorForRequest());
+        }
+        finally {
+            threadLocale.setLocale(original);
+        }
     }
 
     private ComponentTemplate parseTemplate(Resource r)
