@@ -18,12 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-<<<<<<< HEAD
-=======
-import org.apache.tapestry5.commons.Messages;
-import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
->>>>>>> b4e776a80... TAP5-2659: wrong locale being picked up when using axis
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
