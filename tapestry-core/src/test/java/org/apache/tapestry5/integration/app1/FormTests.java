@@ -571,10 +571,10 @@ public class FormTests extends App1TestCase
         // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label for=\"value\" class=\"control-label\">Value</label>[After label for Value]",
+                "[Before label for Value]<label for=\"value\" id=\"value-label\" class=\"control-label\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label for=\"requiredValue\" class=\"control-label\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label for=\"requiredValue\" id=\"requiredValue-label\" class=\"control-label\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
