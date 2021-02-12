@@ -252,6 +252,7 @@ public class BeanEditorTests extends App1TestCase
         openLinks("BeanEditor Demo");
         
         assertEquals("lastName-label", getAttribute("//input[@id='lastName']/@aria-labelledby"));
+        assertEquals("lastName", getAttribute("//label[@id='lastName-label']/@for"));
         
     }
     
