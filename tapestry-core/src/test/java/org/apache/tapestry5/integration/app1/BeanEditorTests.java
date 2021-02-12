@@ -245,4 +245,14 @@ public class BeanEditorTests extends App1TestCase
         
     }
     
+    /** TAP5-2662 */
+    public void bean_editor_accessibility() 
+    {
+
+        openLinks("BeanEditor Demo");
+        
+        assertEquals("lastName-label", getAttribute("//input[@id='lastName']/@aria-labelledby"));
+        
+    }
+    
 }

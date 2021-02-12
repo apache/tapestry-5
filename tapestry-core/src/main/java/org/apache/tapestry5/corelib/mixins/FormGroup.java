@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer layers of markup to correctly
@@ -83,6 +84,9 @@ public class FormGroup
 
     @Environmental
     private ValidationDecorator decorator;
+    
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
 
     void beginRender(MarkupWriter writer)
     {
@@ -116,9 +120,21 @@ public class FormGroup
 
     void afterRender(MarkupWriter writer)
     {
-        if (fieldWrapper != null) {
+        if (fieldWrapper != null) 
+        {
             writer.end(); // field wrapper
         }
+        
+        // TAP5-2662
+        final Element inputElement = writer.getDocument().getElementById(field.getClientId());
+        if (inputElement != null) 
+        {
+            final String clientId = field.getClientId();
+            final String labelId = javaScriptSupport.allocateClientId(clientId + "-label");
+            label.attribute("id", labelId);
+            inputElement.attribute("aria-labelledby", labelId);
+        }
+        
         writer.end(); // div.form-group
     }
 }
