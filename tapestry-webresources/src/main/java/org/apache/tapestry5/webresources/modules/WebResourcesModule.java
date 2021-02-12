@@ -31,6 +31,7 @@ import org.apache.tapestry5.services.ObjectRenderer;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.webresources.GoogleClosureMinimizerOptionsProvider;
 import org.apache.tapestry5.webresources.WebResourcesSymbols;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class WebResourcesModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(ResourceTransformerFactory.class, ResourceTransformerFactoryImpl.class);
+        binder.bind(GoogleClosureMinimizerOptionsProvider.class, GoogleClosureMinimizerOptionsProviderImpl.class);
     }
 
     @Contribute(SymbolProvider.class)

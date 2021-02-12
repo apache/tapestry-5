@@ -12,27 +12,29 @@
 
 package org.apache.tapestry5.internal.webresources;
 
-import com.google.javascript.jscomp.*;
-import com.google.javascript.jscomp.Compiler;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.webresources.WebResourcesSymbols;
+import org.apache.tapestry5.webresources.GoogleClosureMinimizerOptionsProvider;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.Result;
+import com.google.javascript.jscomp.SourceFile;
 
 /**
  * A wrapper around the Google Closure {@link Compiler} used to minimize
@@ -41,25 +43,25 @@ import java.util.logging.Level;
 public class GoogleClosureMinimizer extends AbstractMinimizer
 {
 
-    private final static Charset OUTPUT_CHARSET = StandardCharsets.UTF_8;
-
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
     private final Request request;
-    private final CompilationLevel compilationLevel;
+    private final GoogleClosureMinimizerOptionsProvider optionsProvider;
 
     static
     {
         Compiler.setLoggingLevel(Level.SEVERE);
     }
 
-    public GoogleClosureMinimizer(Logger logger, OperationTracker tracker, AssetChecksumGenerator checksumGenerator, Request request,
-                                  @Symbol(WebResourcesSymbols.COMPILATION_LEVEL)
-                                  CompilationLevel compilationLevel)
+    public GoogleClosureMinimizer(Logger logger,
+                                  OperationTracker tracker,
+                                  AssetChecksumGenerator checksumGenerator,
+                                  Request request,
+                                  GoogleClosureMinimizerOptionsProvider optionsProvider)
     {
         super(logger, tracker, checksumGenerator, "text/javascript");
         this.request = request;
-        this.compilationLevel = compilationLevel;
+        this.optionsProvider = optionsProvider;
     }
 
     @Override
@@ -71,16 +73,22 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
     @Override
     protected InputStream doMinimize(StreamableResource resource) throws IOException
     {
+
+        Optional<CompilerOptions> maybeOptions = optionsProvider.providerOptions(resource);
+
+        if (maybeOptions.isPresent() == false)
+        {
+            try (InputStream is = resource.openStream()) {
+                return is;
+            }
+        }
+
+        CompilerOptions options = maybeOptions.get();
+
+        // Ensure that UTF-8 is set
+        options.setOutputCharset(StandardCharsets.UTF_8);
+
         // Don't bother to pool the Compiler
-
-        CompilerOptions options = new CompilerOptions();
-
-        compilationLevel.setOptionsForCompilationLevel(options);
-
-        options.setCodingConvention(new ClosureCodingConvention());
-        options.setOutputCharset(OUTPUT_CHARSET);
-        options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES, CheckLevel.WARNING);
-
         Compiler compiler = new Compiler();
 
         compiler.disableThreads();
@@ -93,7 +101,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
         if (result.success)
         {
-            return IOUtils.toInputStream(compiler.toSource(), OUTPUT_CHARSET);
+            return IOUtils.toInputStream(compiler.toSource(), StandardCharsets.UTF_8);
         }
 
         throw new RuntimeException(String.format("Compilation failed: %s.",
