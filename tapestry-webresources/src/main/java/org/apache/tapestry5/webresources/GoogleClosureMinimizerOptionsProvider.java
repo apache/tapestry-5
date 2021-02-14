@@ -11,7 +11,7 @@ import com.google.javascript.jscomp.CompilerOptions;
  * Provide CompilerOptions for the GoogleClosureMinimizer.
  * TAP5-2661
  *
- * @since 5.7
+ * @since 5.6.2
  */
 public interface GoogleClosureMinimizerOptionsProvider
 {
