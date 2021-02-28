@@ -43,8 +43,16 @@ public class ChecksumPath
         checksum = extraPath.substring(0, slashx);
 
         String morePath = extraPath.substring(slashx + 1);
+        
+        // Slashes at the end of the path should be dropped because
+        // they don't make sense. TAP5-2663
+        while (morePath.endsWith("/")) 
+        {
+            morePath = morePath.substring(0, morePath.length() - 1);
+        }
 
-        if (!isBlank(morePath)) {
+        if (!isBlank(morePath)) 
+        {
             resourcePath = baseFolder == null
                     ? morePath
                     : baseFolder + "/" + morePath;
