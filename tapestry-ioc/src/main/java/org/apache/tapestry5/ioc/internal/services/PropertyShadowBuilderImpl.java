@@ -18,12 +18,21 @@ import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 {
     private final PropertyAccess propertyAccess;
 
     private final PlasticProxyFactory proxyFactory;
+    
+    final private static MethodSignatureUniqueComparator METHOD_COMPARATOR = new MethodSignatureUniqueComparator();
 
     public PropertyShadowBuilderImpl(@Builtin
                                      PlasticProxyFactory proxyFactory,
@@ -96,9 +105,13 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
                     }
                 });
 
-                for (Method m : propertyType.getMethods())
+                for (Method m : METHOD_COMPARATOR.getUniqueMethods(propertyType)) 
                 {
-                    plasticClass.introduceMethod(m).delegateTo(delegateMethod);
+                    final MethodDescription description = new MethodDescription(m);
+                    if (Modifier.isStatic(description.modifiers)) {
+                        continue;
+                    }
+                    plasticClass.introduceMethod(description).delegateTo(delegateMethod);
                 }
 
                 plasticClass.addToString(String.format("<Shadow: property %s of %s>", propertyName, source));
@@ -106,5 +119,51 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
         });
 
         return propertyType.cast(instantiator.newInstance());
+    }
+    
+    private final static class MethodSignatureUniqueComparator implements Comparator<Method> {
+
+        @Override
+        public int compare(Method o1, Method o2) {
+
+            int comparison = o1.getName().compareTo(o2.getName());
+
+            if (comparison == 0) {
+                comparison = o1.getParameterTypes().length - o2.getParameterTypes().length;
+            }
+
+            if (comparison == 0) {
+                final int count = o1.getParameterTypes().length;
+                for (int i = 0; i < count; i++) {
+                    Class p1 = o1.getParameterTypes()[i];
+                    Class p2 = o2.getParameterTypes()[i];
+                    if (!p1.equals(p2)) {
+                        comparison = p1.getName().compareTo(p2.getName());
+                        break;
+                    }
+                }
+            }
+
+            return comparison;
+        }
+
+        public List<Method> getUniqueMethods(Class interfaceType) 
+        {
+            final List<Method> unique = new ArrayList<>(Arrays.asList(interfaceType.getMethods()));
+            Collections.sort(unique, this);
+            Method last = null;
+            Iterator<Method> iterator = unique.iterator();
+            while (iterator.hasNext()) 
+            {
+                Method m = iterator.next();
+                if (last != null && compare(m, last) == 0) 
+                {
+                    iterator.remove();
+                }
+                last = m;
+            }
+            return unique;
+        }
+
     }
 }
