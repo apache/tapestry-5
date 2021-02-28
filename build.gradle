@@ -587,7 +587,7 @@ if (canDeploy) {
         destinationDir file(archiveDeployFolder())
 
         from generateMD5Checksums
-        //from generateSHA256Checksums
+        from generateSHA256Checksums
         from configurations.uploads.allArtifacts.files
     }
 
