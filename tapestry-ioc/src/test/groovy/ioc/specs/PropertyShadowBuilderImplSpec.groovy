@@ -3,7 +3,11 @@ package ioc.specs
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder
 import spock.lang.Shared
 
-interface FooService {
+interface AnotherCloseable {
+  void close();    
+}
+
+interface FooService extends java.io.Closeable, AnotherCloseable {
 
   void foo();
 }
