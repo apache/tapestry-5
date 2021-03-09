@@ -57,6 +57,9 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
         String assetURL = getAttribute("//img/@src")
 
         // Selenium now (sometimes?) adds unwanted port & host
+        if (assetURL == null) {
+            println("Asset URL is null. HTML: " + getHtmlSource())
+        }
         if (assetURL.startsWith("http")) {
             assetURL = new URL(assetURL).getPath()
         }
