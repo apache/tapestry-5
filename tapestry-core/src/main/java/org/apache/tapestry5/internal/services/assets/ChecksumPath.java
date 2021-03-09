@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public class ChecksumPath
 {
-    private static final String NON_EXISTING_RESOURCE = "_________________________";
+    static final String NON_EXISTING_RESOURCE = "_________________________";
 
     public final String checksum;
 

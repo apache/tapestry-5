@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.beanmodel.internal.services.*;
-import org.apache.tapestry5.beanmodel.services.*;
-import org.apache.tapestry5.commons.*;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.services.ApplicationGlobals;
@@ -35,11 +35,36 @@ import org.apache.tapestry5.internal.services.ExternalUrlAssetFactory;
 import org.apache.tapestry5.internal.services.IdentityAssetPathConverter;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
-import org.apache.tapestry5.internal.services.assets.*;
+import org.apache.tapestry5.internal.services.assets.AssetChecksumGeneratorImpl;
+import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
+import org.apache.tapestry5.internal.services.assets.CSSURLRewriter;
+import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.CompressionAnalyzerImpl;
+import org.apache.tapestry5.internal.services.assets.ContentTypeAnalyzerImpl;
+import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssembler;
+import org.apache.tapestry5.internal.services.assets.JavaScriptStackAssemblerImpl;
+import org.apache.tapestry5.internal.services.assets.JavaScriptStackMinimizeDisabler;
+import org.apache.tapestry5.internal.services.assets.MasterResourceMinimizer;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTrackerImpl;
+import org.apache.tapestry5.internal.services.assets.SRSCachingInterceptor;
+import org.apache.tapestry5.internal.services.assets.SRSCompressedCachingInterceptor;
+import org.apache.tapestry5.internal.services.assets.SRSCompressingInterceptor;
+import org.apache.tapestry5.internal.services.assets.SRSMinimizingInterceptor;
+import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.StreamableResourceSourceImpl;
+import org.apache.tapestry5.internal.services.assets.UTF8ForTextAssets;
 import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Decorate;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -53,7 +78,12 @@ import org.apache.tapestry5.services.ClasspathProvider;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextProvider;
 import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.assets.*;
+import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.ContentTypeAnalyzer;
+import org.apache.tapestry5.services.assets.ResourceMinimizer;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
@@ -399,6 +429,19 @@ public class AssetsModule
         configuration.add("PropertiesFile", propertiesFileRule);
         ClasspathAssetProtectionRule xmlFileRule = (s) -> s.toLowerCase().endsWith(".xml");
         configuration.add("XMLFile", xmlFileRule);
+        ClasspathAssetProtectionRule folderRule = (s) -> isFolderToBlock(s);
+        configuration.add("Folder", folderRule);
+    }
+    
+    final private static boolean isFolderToBlock(String path) 
+    {
+        path = path.replace('\\', '/');
+        final int lastIndex = path.lastIndexOf('/');
+        if (lastIndex >= 0)
+        {
+            path = path.substring(lastIndex);
+        }
+        return !path.contains(".");
     }
     
 }

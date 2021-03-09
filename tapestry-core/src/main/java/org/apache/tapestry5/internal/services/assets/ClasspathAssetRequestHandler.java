@@ -22,6 +22,8 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathAssetProtectionRule;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -33,6 +35,9 @@ import java.io.IOException;
  */
 public class ClasspathAssetRequestHandler implements AssetRequestHandler
 {
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(ClasspathAssetRequestHandler.class);
+    
     private final ResourceStreamer streamer;
 
     private final AssetSource assetSource;
@@ -56,8 +61,13 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
         ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
         
         final boolean handled;
-        if (classpathAssetProtectionRule.block(path.resourcePath)) 
+        if (classpathAssetProtectionRule.block(path.resourcePath) && !path.resourcePath.equals(ChecksumPath.NON_EXISTING_RESOURCE)) 
         {
+            if (LOGGER.isWarnEnabled()) 
+            {
+                LOGGER.warn("Blocked request for classpath asset '" + path.resourcePath + 
+                        "'. Contribute a new ClasspathAssetProtectionRule if you need this asset to be publicly accessible.");
+            }
             handled = false;
         }
         else
