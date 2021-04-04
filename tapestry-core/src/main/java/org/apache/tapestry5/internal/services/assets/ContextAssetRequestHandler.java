@@ -35,7 +35,7 @@ public class ContextAssetRequestHandler implements AssetRequestHandler
 
     private final Resource rootContextResource;
 
-    private final Pattern illegal = Pattern.compile("^(/*((web|meta)-inf.*)|(.*\\.tml$))", Pattern.CASE_INSENSITIVE);
+    private final Pattern illegal = Pattern.compile("^([\\\\/]*((web|meta)-inf.*)|(.*\\.tml$))", Pattern.CASE_INSENSITIVE);
 
     public ContextAssetRequestHandler(ResourceStreamer resourceStreamer, Resource rootContextResource)
     {

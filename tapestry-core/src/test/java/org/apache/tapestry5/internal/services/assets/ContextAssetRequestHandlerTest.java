@@ -30,7 +30,12 @@ public class ContextAssetRequestHandlerTest extends TestBase
                         {"web-Inf/classes/hibernate.cfg.xml"},
                         {"Meta-Inf/MANIFEST.mf"},
                         {"Index.tml"},
-                        {"folder/FolderIndex.TML"}};
+                        {"folder/FolderIndex.TML"},
+                        {"\\WEB-INF/something.jpg"},
+                        {"\\//WEB-INF/something.jpg"},
+                        {"//WEB-INF/something.jpg"},
+                        {"//\\\\WEB-INF/something.jpg"}
+                };
     }
 
     @Test(dataProvider = "invalid_paths")
