@@ -14,14 +14,19 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 
 /**
  * Demonstrates client-side field format validation.
  */
 public class ClientFormatDemo
 {
+    
     @Property
     @Validate("required,min=1")
     private int quantity;
@@ -29,4 +34,15 @@ public class ClientFormatDemo
     @Property
     @Validate("required,min=0")
     private float amount;
+
+    @Inject
+    private ComponentResources resources;
+
+    @Inject
+    private PageRenderLinkSource pageRenderLinkSource;
+    
+    public Link getLinkToSamePage() {
+        return pageRenderLinkSource.createPageRenderLink(ClientFormatDemo.class);
+    }
+
 }

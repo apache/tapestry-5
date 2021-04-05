@@ -1,5 +1,11 @@
 <html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <t:beaneditform object="this"/>
+    
+    <h2>Non-Tapestry form for testing TAP5-2669</h2>
+    
+    <form action="${linkToSamePage}">
+    	<input id="submitNonTapestryForm" type="submit"/>
+    </form>
 
 </html>
