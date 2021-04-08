@@ -201,6 +201,15 @@ define ["./dom", "underscore", "./bootstrap"],
         if modules and modules.length > 0
           message += """, modules #{modules.join(", ")}"""
 
+      if err.fileName
+        message += """, #{err.fileName}"""
+
+      if err.lineNumber
+        message += """, line #{err.lineNumber}"""
+
+      if err.columnNumber
+        message += """, line #{err.columnNumber}"""
+
       exports.error message
 
 
