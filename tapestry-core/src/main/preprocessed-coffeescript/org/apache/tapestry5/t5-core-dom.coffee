@@ -559,7 +559,7 @@ define ["underscore", "./utils", "./events", "jquery"],
       unless Prototype.Browser.WebKit and eventName == 'submit' and @element instanceof HTMLFormElement
         fireNativeEvent @element, eventName
       else
-        @element.submit()
+        @element.requestSubmit()
               
 #endif
 
