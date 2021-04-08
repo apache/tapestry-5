@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-import org.apache.tapestry5.internal.parser.TokenType;
-
-public class EnumBean
+public class Bedrock
 {
-    private TokenType token;
-
-    public TokenType getToken()
+    public String toName(boolean fred)
     {
-        return token;
+        return fred ? "Fred" : "Barney";
     }
-
-    public void setToken(TokenType token)
-    {
-        this.token = token;
-    }
-
 }

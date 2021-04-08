@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class Bedrock
+public class GenericBean<T>
 {
-    public String toName(boolean fred)
+    private T value;
+
+    public T getValue()
     {
-        return fred ? "Fred" : "Barney";
+        return value;
+    }
+
+    public void setValue(T value)
+    {
+        this.value = value;
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class SimpleBeanSubclass extends SimpleBean
+public class StringArrayBean
 {
-    public void notOverridden()
+    private String[] array;
+
+    public String[] getArray()
     {
+        return array;
     }
 
-    @Override
-    public void setAge(int age)
+    public void setArray(String[] array)
     {
-        super.setAge(age);
+        this.array = array;
     }
 }

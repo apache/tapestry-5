@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class StringArrayBean
+public class NestedObject
 {
-    private String[] array;
+    private final String name;
 
-    public String[] getArray()
+    public NestedObject(String name)
     {
-        return array;
+        this.name = name;
     }
 
-    public void setArray(String[] array)
+    public String getName()
     {
-        this.array = array;
+        return name;
     }
 }

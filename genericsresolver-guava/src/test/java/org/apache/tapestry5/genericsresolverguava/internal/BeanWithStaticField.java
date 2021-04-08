@@ -1,4 +1,4 @@
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
 public class BeanWithStaticField
 {

@@ -12,34 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-import org.apache.tapestry5.beaneditor.NonVisual;
-
-public class NonVisualBean
+public class WriteOnlyBean
 {
-    private int id;
-
-    private String name;
-
-    @NonVisual
-    public int getId()
+    public String getReadOnly()
     {
-        return id;
+        return null;
     }
 
-    public String getName()
+    public String getReadWrite()
     {
-        return name;
+        return null;
     }
 
-    public void setId(int id)
+    public void setReadWrite(String value)
     {
-        this.id = id;
     }
 
-    public void setName(String name)
+    public void setWriteOnly(String value)
     {
-        this.name = name;
     }
 }

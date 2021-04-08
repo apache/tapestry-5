@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2021 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,26 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+import org.apache.tapestry5.commons.services.GenericsResolver;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-public class WriteOnlyBean
-{
-    public String getReadOnly()
+@Test
+public class ServiceLocatorTest {
+    
+    @Test
+    public void guava__resolver_properly_added_to_service_locator()
     {
-        return null;
+        Assert.assertEquals(GenericsResolver.Provider.getInstance().getClass(), GuavaGenericsResolver.class);
     }
 
-    public String getReadWrite()
-    {
-        return null;
-    }
-
-    public void setReadWrite(String value)
-    {
-    }
-
-    public void setWriteOnly(String value)
-    {
-    }
 }

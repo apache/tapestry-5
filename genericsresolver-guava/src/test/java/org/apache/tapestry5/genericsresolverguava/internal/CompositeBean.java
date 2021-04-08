@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class StringSource
+public class CompositeBean
 {
-    private final String value;
+    private SimpleBean simple = new SimpleBean();
 
-    public StringSource(String value)
+    public SimpleBean getSimple()
     {
-        this.value = value;
+        return simple;
     }
 
-    public String getValue()
+    public void setSimple(SimpleBean simple)
     {
-        return value;
+        this.simple = simple;
     }
 }

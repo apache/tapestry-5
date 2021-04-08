@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class NestedObject
+public class ReadOnlyBean
 {
-    private final String name;
+    private String _value;
 
-    public NestedObject(String name)
+    public String getValue()
     {
-        this.name = name;
+        return _value;
     }
 
-    public String getName()
+    public void setValue(String value)
     {
-        return name;
+        _value = value;
+    }
+
+    public String getReadOnly()
+    {
+        return null;
     }
 }

@@ -12,53 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-import org.apache.tapestry5.beaneditor.ReorderProperties;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beaneditor.Width;
 
-@ReorderProperties("larry,moe,shemp,curly")
-public class StoogeBean
+public class SimpleBean
 {
-    private int moe, larry, curly, shemp;
+    @Validate("required")
+    private String firstName;
 
-    public int getMoe()
+    private String lastName;
+
+    private int age;
+
+    public String getFirstName()
     {
-        return moe;
+        return firstName;
     }
 
-    public int getCurly()
+    public String getLastName()
     {
-        return curly;
+        return lastName;
     }
 
-    public int getLarry()
+    @Width(2)
+    public int getAge()
     {
-        return larry;
+        return age;
     }
 
-    public int getShemp()
+    public void setAge(int age)
     {
-        return shemp;
+        this.age = age;
     }
 
-    public void setCurly(int curly)
+    public void setFirstName(String firstName)
     {
-        this.curly = curly;
+        this.firstName = firstName;
     }
 
-    public void setLarry(int larry)
+    public void setLastName(String lastName)
     {
-        this.larry = larry;
-    }
-
-    public void setMoe(int moe)
-    {
-        this.moe = moe;
-    }
-
-    public void setShemp(int shemp)
-    {
-        this.shemp = shemp;
+        this.lastName = lastName;
     }
 
 }

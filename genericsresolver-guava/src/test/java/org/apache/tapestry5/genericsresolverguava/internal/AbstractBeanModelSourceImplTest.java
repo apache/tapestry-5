@@ -1,4 +1,4 @@
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 //Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,7 +67,7 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
      assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
      assertEquals(model.toString(),
-             "BeanModel[org.apache.tapestry5.internal.genericsresolverguava.SimpleBean properties:firstName, lastName, age]");
+             "BeanModel[org.apache.tapestry5.genericsresolverguava.internal.SimpleBean properties:firstName, lastName, age]");
 
      PropertyModel age = model.get("age");
 
@@ -299,7 +299,7 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean already contains a property model for property \'age\'.");
+                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean already contains a property model for property \'age\'.");
      }
 
      verify();
@@ -324,7 +324,7 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean does not contain a property named \'frobozz\'.");
+                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property named \'frobozz\'.");
 
          assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName");
      }
@@ -353,7 +353,7 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
      {
          assertEquals(
                  ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.internal.genericsresolverguava.SimpleBean does not contain a property with id \'frobozz\'.");
+                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property with id \'frobozz\'.");
 
          assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName", "shrubfoo");
      }

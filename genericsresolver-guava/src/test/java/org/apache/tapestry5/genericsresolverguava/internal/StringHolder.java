@@ -12,19 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.genericsresolverguava;
+package org.apache.tapestry5.genericsresolverguava.internal;
 
-public class GenericBean<T>
+import org.apache.tapestry5.internal.util.Holder;
+
+public class StringHolder extends Holder<String>
 {
-    private T value;
-
-    public T getValue()
-    {
-        return value;
-    }
-
-    public void setValue(T value)
-    {
-        this.value = value;
-    }
 }
