@@ -9,16 +9,11 @@ dependencies {
 
 /** Returns the tools.jar/classes.jar of the Java runtime. */
 File getTools() {
-  def jreRelpath = isMacOSX_1_6() ? "../classes/classes.jar" : "../lib/tools.jar"
-  def jdkRelpath = isMacOSX_1_6() ? "classes/classes.jar" : "lib/tools.jar"
+  def jreRelpath = "../lib/tools.jar"
+  def jdkRelpath = "lib/tools.jar"
   
   def javaHome = System.properties['java.home']
 
   return new File(javaHome, jdkRelpath).exists() ? new File(javaHome, jdkRelpath) : new File(javaHome, jreRelpath)
-}
-
-boolean isMacOSX_1_6() {
-  System.properties['os.name'].toLowerCase().contains('mac os') &&
-      System.properties['java.version'].startsWith("1.6.")
 }
   
