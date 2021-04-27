@@ -12,6 +12,11 @@ dependencies {
     // of the top-level build:
 
     compile "javax.inject:javax.inject:1"
+    // TAP5-2677: Missing dependency for Java 11.
+    // To match 5.7 it's compile, even though it's runtime
+    if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+        compile "javax.annotation:javax.annotation-api:1.3.2"
+    }
 
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
