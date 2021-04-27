@@ -157,6 +157,16 @@ public final class CoercionTuple<S, T>
     public final class Key 
     {
         
+        protected Class<S> getSourceType()
+        {
+            return sourceType;
+        }
+
+        protected Class<T> getTargetType()
+        {
+            return targetType;
+        }
+        
         @Override
         public String toString() {
             return String.format("%s -> %s", sourceType.getName(), targetType.getName());
@@ -181,18 +191,19 @@ public final class CoercionTuple<S, T>
                 return false;
             if (getClass() != obj.getClass())
                 return false;
-            CoercionTuple other = (CoercionTuple) obj;
+
+            Key other = (Key) obj;
             if (sourceType == null) 
             {
-                if (other.sourceType != null)
+                if (other.getSourceType() != null)
                     return false;
-            } else if (!sourceType.equals(other.sourceType))
+            } else if (!sourceType.equals(other.getSourceType()))
                 return false;
             if (targetType == null) 
             {
-                if (other.targetType != null)
+                if (other.getTargetType() != null)
                     return false;
-            } else if (!targetType.equals(other.targetType))
+            } else if (!targetType.equals(other.getTargetType()))
                 return false;
             return true;
         }
