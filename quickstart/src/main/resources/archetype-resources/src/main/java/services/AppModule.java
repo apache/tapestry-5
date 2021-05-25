@@ -8,10 +8,10 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RequestFilter;
+import org.apache.tapestry5.http.services.RequestHandler;
+import org.apache.tapestry5.http.services.Response;
 import org.slf4j.Logger;
 
 import java.io.IOException;
