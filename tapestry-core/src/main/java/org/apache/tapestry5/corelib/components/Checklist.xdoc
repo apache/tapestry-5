@@ -99,18 +99,5 @@ public class OrderHandling {
             </subsection>
         </section>
 
-        <section name="Notes">
-
-            <p>The Checklist component can be customized through CSS. Following CSS rules are used:</p>
-
-
-            <dl>
-                    <dt>t-checklist-row</dt>
-                    <dd>Each checkbox and its label is enclosed by a div element whose css attribute is set to t-checklist-row.</dd>
-
-            </dl>
-
-        </section>
-
     </body>
 </document>
