@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.hibernate.web.modules;
 
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.SingularAttribute;
+
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -44,7 +50,6 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
 import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
-import org.hibernate.metadata.ClassMetadata;
 
 /**
  * Supplements the services defined by {@link org.apache.tapestry5.hibernate.modules.HibernateCoreModule} with additional
@@ -93,14 +98,14 @@ public class HibernateModule
         if (!provideEncoders)
             return;
 
-        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata()
-                .values())
+        Set<EntityType<?>> entities = sessionSource.getSessionFactory().getMetamodel().getEntities();
+        for (EntityType<?> entityType : entities)
         {
-            final Class entityClass = classMetadata.getMappedClass();
-            final String idenfierPropertyName = classMetadata.getIdentifierPropertyName();
-
+            Class<?> entityClass = entityType.getJavaType();
             if (entityClass != null)
             {
+                SingularAttribute<?, ?> id = entityType.getId(entityType.getIdType().getJavaType());
+                final String idenfierPropertyName = id.getName();
                 ValueEncoderFactory factory = new ValueEncoderFactory()
                 {
                     @Override
@@ -156,19 +161,19 @@ public class HibernateModule
      *         creates Hibernate session
      */
     public static void contributeApplicationStateManager(
-            MappedConfiguration<Class, ApplicationStateContribution> configuration,
+            final MappedConfiguration<Class, ApplicationStateContribution> configuration,
             @Symbol(HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED)
             boolean entitySessionStatePersistenceStrategyEnabled, HibernateSessionSource sessionSource)
     {
 
         if (!entitySessionStatePersistenceStrategyEnabled)
             return;
+        
+        sessionSource.getSessionFactory().getMetamodel().getEntities().stream()
+                .map(EntityType::getJavaType)
+                .filter(Objects::nonNull)
+                .forEach(e -> configuration.add(e, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY)));
 
-        for (ClassMetadata classMetadata : sessionSource.getSessionFactory().getAllClassMetadata().values())
-        {
-            final Class entityClass = classMetadata.getMappedClass();
-            configuration.add(entityClass, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
-        }
     }
 
     /**

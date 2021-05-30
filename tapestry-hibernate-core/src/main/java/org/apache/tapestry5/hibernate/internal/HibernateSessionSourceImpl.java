@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.hibernate.internal;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.persistence.metamodel.EntityType;
+
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -23,8 +29,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 public class HibernateSessionSourceImpl implements HibernateSessionSource
 {
@@ -48,8 +52,13 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
         long factoryCreated = System.currentTimeMillis();
 
         logger.info(String.format("Hibernate startup: %,d ms to configure, %,d ms overall.", configurationComplete - startTime, factoryCreated - startTime));
+        
+        List<Class<?>> classes = sessionFactory.getMetamodel().getEntities().stream()
+                .map(EntityType::getJavaType)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());        
 
-        logger.info(String.format("Configured Hibernate entities: %s", InternalUtils.joinSorted(sessionFactory.getAllClassMetadata().keySet())));
+        logger.info(String.format("Configured Hibernate entities: %s", InternalUtils.joinSorted(classes)));
     }
 
     @PostInjection
