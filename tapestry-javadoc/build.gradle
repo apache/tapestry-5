@@ -3,14 +3,22 @@ description = "JavaDoc Plugin for Tapestry that generates component reference do
 dependencies {
   compile project(':tapestry-core')
   compile "commons-lang:commons-lang:2.6"
-  compile files(getTools())
+  
+  if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
+    compile files(getTools())
+  }
   
 }
 
 /** Returns the tools.jar/classes.jar of the Java runtime. */
 File getTools() {
-  def jreRelpath = isMacOSX_1_6() ? "../classes/classes.jar" : "../lib/tools.jar"
-  def jdkRelpath = isMacOSX_1_6() ? "classes/classes.jar" : "lib/tools.jar"
+
+  def dir = isMacOSX_1_6() ? "classes" : "lib"
+	
+  def jar = isMacOSX_1_6() ? "classes" : "tools.jar"
+  
+  def jreRelpath = "../${dir}/${jar}"
+  def jdkRelpath = "$dir/${jar}"
   
   def javaHome = System.properties['java.home']
 
