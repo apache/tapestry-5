@@ -51,25 +51,25 @@ import org.apache.tapestry5.ioc.annotations.*;
  * }
  * </pre>
  * 
- * <p><tt>&#64;ImportModule</tt> indicates which Tapestry module(s) should be started
- *  (and subsequently shut down). The deprecated <tt>&#64;SubModule</tt> annotation
+ * <p><code>&#64;ImportModule</code> indicates which Tapestry module(s) should be started
+ *  (and subsequently shut down). The deprecated <code>&#64;SubModule</code> annotation
  *  is still supported for compatibility reasons.
  *  
- * <p><tt>&#64;Inject</tt> marks fields which should be injected with a Tapestry service or
- * symbol. Related Tapestry annotations, such as <tt>&#64;Service</tt> and <tt>&#64;Symbol</tt>,
+ * <p><code>&#64;Inject</code> marks fields which should be injected with a Tapestry service or
+ * symbol. Related Tapestry annotations, such as <code>&#64;Service</code> and <code>&#64;Symbol</code>,
  * are also supported.
  * 
  * <p>Note: Only field (and no constructor) injection is supported.
  * 
  * <p>To interact directly with the Tapestry registry, an injection point of type
- * <tt>ObjectLocator</tt> may be defined. However, this should be rarely needed.
+ * <code>ObjectLocator</code> may be defined. However, this should be rarely needed.
  *
- * <p>For every specification annotated with <tt>&#64;ImportModule</tt> or
- * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and subsequently shut down)
- * once. Because fields are injected <em>before</em> field initializers and the <tt>setup()</tt>/
- * <tt>setupSpec()</tt> methods are run, they can be safely accessed from these places.
+ * <p>For every specification annotated with <code>&#64;ImportModule</code> or
+ * <code>&#64;SubModule</code>, the Tapestry registry will be started up (and subsequently shut down)
+ * once. Because fields are injected <em>before</em> field initializers and the <code>setup()</code>/
+ * <code>setupSpec()</code> methods are run, they can be safely accessed from these places.
  *
- * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular
+ * <p>Fields marked as <code>&#64;Shared</code> are injected once per specification; regular
  * fields once per feature (iteration). However, this does <em>not</em> mean that each
  * feature will receive a fresh service instance; rather, it is left to the Tapestry
  * registry to control the lifecycle of a service. Most Tapestry services use the default
