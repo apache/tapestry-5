@@ -16,7 +16,7 @@
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["./events", "./dom", "underscore"],
+define ["t5/core/events", "t5/core/dom", "underscore"],
   (events, dom, _) ->
 
     # Meta-data name that indicates the next submission should skip validation (typically, because

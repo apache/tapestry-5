@@ -14,7 +14,7 @@
 #
 # Provides a document event handler that triggers an update a zone when the value
 # of a select element within the zone changes.
-define ["./events", "./dom", "./zone"],
+define ["t5/core/events", "t5/core/dom", "t5/core/zone"],
 
   (events, dom, zone) ->
 

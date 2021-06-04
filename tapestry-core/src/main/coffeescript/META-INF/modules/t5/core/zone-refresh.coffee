@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # ## t5/core/zone-refresh
-define ["./events", "./dom", "./console"],
+define ["t5/core/events", "t5/core/dom", "t5/core/console"],
   (events, dom, console) ->
 
     # Initialize a timer for the zone at the specified period (in seconds). The zone will be

@@ -18,7 +18,7 @@
 # The module name may also indicate the function exported by the module, as a suffix following a colon:
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define ["underscore", "./console", "./dom", "./events"],
+define ["underscore", "t5/core/console", "t5/core/dom", "t5/core/events"],
   (_, console, dom, events) ->
     pathPrefix = null
 
@@ -84,7 +84,7 @@ define ["underscore", "./console", "./dom", "./events"],
       [moduleName, functionName] = qualifiedName.split ':'
 
       require [moduleName], (moduleLib) ->
-
+      
         try
           # Some modules export nothing but do some full-page initialization, such as adding
           # event handlers to the body.
@@ -94,9 +94,15 @@ define ["underscore", "./console", "./dom", "./events"],
               console.debug "Loaded module #{moduleName}"
               return
 
+          unless moduleLib
+            throw new Error "require('#{moduleName}') returned #{moduleLib} when not expected"
+
           fn = if functionName? then moduleLib[functionName] else moduleLib
 
           unless fn?
+            if functionName
+              console.error "Could not locate function `#{qualifiedName}' in #{JSON.stringify(moduleLib)}"
+              console.error moduleLib
             throw new Error "Could not locate function `#{qualifiedName}'."
 
           if console.debugEnabled

@@ -15,7 +15,7 @@
 # ## t5/core/palette
 #
 # Support for the `core/Palette` component.
-define ["./dom", "underscore", "./events"],
+define ["t5/core/dom", "underscore", "t5/core/events"],
   (dom, _, events) ->
 
     isSelected = (option) -> option.selected

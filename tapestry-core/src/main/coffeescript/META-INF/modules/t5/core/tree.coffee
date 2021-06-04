@@ -15,7 +15,7 @@
 # ## t5/core/tree
 #
 # Handlers to support to the core/Tree Tapestry component.
-define ["./dom", "./ajax", "./zone"],
+define ["t5/core/dom", "t5/core/ajax", "t5/core/zone"],
   (dom, ajax) ->
     TREE = "[data-component-type='core/Tree']"
     NODE_ID = "data-node-id"

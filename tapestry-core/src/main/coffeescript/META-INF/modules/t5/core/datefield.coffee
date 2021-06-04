@@ -15,7 +15,7 @@
 # ## t5/core/datefield
 #
 # Provides support for the `core/DateField` component.
-define ["./dom", "./events", "./messages", "./ajax", "underscore", "./datepicker", "./fields"],
+define ["t5/core/dom", "t5/core/events", "t5/core/messages", "t5/core/ajax", "underscore", "t5/core/datepicker", "t5/core/fields"],
   (dom, events, messages, ajax, _, DatePicker) ->
 
 

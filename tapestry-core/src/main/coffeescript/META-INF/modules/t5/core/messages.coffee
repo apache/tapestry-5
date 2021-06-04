@@ -33,7 +33,7 @@
 # In the unexpected case that the data-locale attribute is missing, assume English
 locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-define ["./messages/#{locale}", "underscore", "./console"],
+define ["t5/core/messages/#{locale}", "underscore", "t5/core/console"],
   (messages, _, console) ->
 
     # Returns the application message catalog message for the given key. Returns

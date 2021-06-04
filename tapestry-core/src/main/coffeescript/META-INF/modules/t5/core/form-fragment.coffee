@@ -13,7 +13,7 @@
 
 # ## t5/core/form-fragment
 #
-define ["underscore", "./dom", "./events", "./forms"],
+define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/forms"],
   (_, dom, events) ->
 
     SELECTOR = "[data-component-type='core/FormFragment']"

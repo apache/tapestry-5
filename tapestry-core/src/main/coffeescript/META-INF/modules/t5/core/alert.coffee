@@ -16,7 +16,7 @@
 #
 # Support for the core/Alerts components.
 #
-define ["./dom", "./console", "./messages", "./ajax", "underscore", "./bootstrap"],
+define ["t5/core/dom", "t5/core/console", "t5/core/messages", "t5/core/ajax", "underscore", "t5/core/bootstrap"],
   (dom, console, messages, ajax, _, {glyph}) ->
 
     severityToClass =

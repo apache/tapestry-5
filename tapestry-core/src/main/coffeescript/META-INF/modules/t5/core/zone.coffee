@@ -20,9 +20,14 @@
 #
 # Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
 # to a core/Zone server-side component.
-define ["./dom", "./events", "./ajax", "./console", "./forms",  "underscore"],
+define ["t5/core/dom", "t5/core/events", "t5/core/ajax", "t5/core/console", "t5/core/forms",  "underscore"],
 
   (dom, events, ajax, console, forms, _) ->
+  
+    unless (typeof ajax) == "function"
+      console.error "ajax variable is not a function, but instead it is " + JSON.stringify(ajax)
+      console.error ajax
+      throw new Error "ajax variable is not a function"
 
     # For a given element that may have the `data-update-zone` attribute, locates the
     # zone element. May return null if the zone can not be found (after logging an error

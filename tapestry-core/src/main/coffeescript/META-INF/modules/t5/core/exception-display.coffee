@@ -16,7 +16,7 @@
 #
 # Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
 # filtering the stack trace.
-define ["./dom"],
+define ["t5/core/dom"],
   (dom) ->
 
     dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->

@@ -13,7 +13,7 @@
 # ## t5/core/console
 #
 # A wrapper around the native console, when it exists.
-define ["./dom", "underscore", "./bootstrap"],
+define ["t5/core/dom", "underscore", "t5/core/bootstrap"],
   (dom, _, { glyph }) ->
 
     nativeConsole = null

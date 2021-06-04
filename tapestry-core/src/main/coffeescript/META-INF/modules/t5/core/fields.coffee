@@ -16,7 +16,7 @@
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-define ["underscore", "./events", "./dom", "./utils", "./forms"],
+define ["underscore", "t5/core/events", "t5/core/dom", "t5/core/utils", "t5/core/forms"],
   (_, events, dom, utils) ->
 
     ensureFieldId = (field) ->

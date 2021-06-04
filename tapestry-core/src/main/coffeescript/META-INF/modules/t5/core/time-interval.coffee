@@ -16,7 +16,7 @@
 #
 # Used with the Interval component to express the interval between two timestamps,
 # or the dynamic difference between now and an end point in the past or future.
-define ["./dom", "./moment"],
+define ["t5/core/dom", "t5/core/moment"],
 (dom, moment) ->
 
   ATTR = "data-timeinterval"

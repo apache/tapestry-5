@@ -17,7 +17,7 @@
 # Used with the LocalDate component to present a Date in a particular format, in the
 # browser's time zone.
 
-define ["./dom", "./moment"],
+define ["t5/core/dom", "t5/core/moment"],
 (dom, moment) ->
 
   ATTR = "data-localdate-format"

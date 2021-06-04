@@ -14,7 +14,7 @@
 #
 # Support for the core/Autocomplete Tapestry mixin, a wrapper around
 # the Twitter autocomplete.js library.
-define ["./dom", "./ajax", "underscore", "jquery", "./utils", "./typeahead"],
+define ["t5/core/dom", "t5/core/ajax", "underscore", "jquery", "t5/core/utils", "t5/core/typeahead"],
   (dom, ajax, _, $, {extendURL}) ->
 
     init = (spec) ->

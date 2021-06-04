@@ -14,7 +14,7 @@
 #
 # Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["./dom"], (dom) ->
+define ["t5/core/dom"], (dom) ->
 
   write = (container, content) ->
     iframe = (container.findFirst "iframe").element

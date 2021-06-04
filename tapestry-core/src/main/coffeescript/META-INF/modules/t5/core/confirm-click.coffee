@@ -2,7 +2,7 @@
 #
 # Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
 
-define ["jquery", "./events", "bootstrap/modal"],
+define ["jquery", "t5/core/events", "bootstrap/modal"],
 
   ($, events) ->
 

@@ -14,7 +14,7 @@
 #
 # Support for Tapestry's built-in set of translators and validators.
 #
-define ["underscore", "./dom", "./events", "./utils", "./messages", "./fields"],
+define ["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/messages", "t5/core/fields"],
   (_, dom, events, utils, messages) ->
 
     REGEXP_META = "t5:regular-expression"

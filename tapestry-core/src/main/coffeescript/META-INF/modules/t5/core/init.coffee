@@ -17,7 +17,7 @@
 # Compatibility module, invokes functions on the T5.initializers namespace.
 #
 # Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-define ["./console"],
+define ["t5/core/console"],
 
   (console) ->
 

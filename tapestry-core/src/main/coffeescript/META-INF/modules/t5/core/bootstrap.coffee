@@ -15,7 +15,7 @@
 # ## t5/core/bootstrap
 #
 # Utilities for leveraging Bootstrap
-define [],
+define ["t5/core/bootstrap"],
   ->
 
     exports =

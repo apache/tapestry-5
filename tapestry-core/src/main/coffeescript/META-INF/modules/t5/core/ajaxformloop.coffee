@@ -16,7 +16,7 @@
 #
 # Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
 # core/RemoveRowLink).
-define ["./dom", "./events", "./console", "./ajax"],
+define ["t5/core/dom", "t5/core/events", "t5/core/console", "t5/core/ajax"],
   (dom, events, console, ajax) ->
 
     # "afl" is short for "AjaxFormLoop".
