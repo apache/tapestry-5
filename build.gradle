@@ -116,7 +116,9 @@ configurations {
 }
 
 dependencies {
-    javadoc project(":tapestry-javadoc")
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        javadoc project(":tapestry-javadoc")
+    }
 
     // From tapestry-ioc:
     binaries "javax.inject:javax.inject:1"
@@ -356,7 +358,9 @@ task aggregateJavadoc(type: Javadoc) {
         use = true // 'use' seems to be a reserved word for the DSL
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://docs.oracle.com/javaee/7/api/"
-        tagletPath List.copyOf((Set) configurations.javadoc.files)
+        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
+        }
         //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
 //        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
         addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
