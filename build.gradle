@@ -421,7 +421,9 @@ task coffeeScriptDocs(type: Exec) {
 
 
 dependencies {
-    meta aggregateJavadoc.outputs.files
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        meta aggregateJavadoc.outputs.files
+    }
 }
 
 task combinedJacocoReport(type:JacocoReport){
@@ -455,7 +457,12 @@ task combinedJacocoReport(type:JacocoReport){
 }
 
 task continuousIntegration {
-    dependsOn subprojects.build, 'tapestry-core:testWithPrototype', aggregateJavadoc, combinedJacocoReport
+    // tapestry-javadoc doesn't work with Java 8 anymore. That's why it's only added if != 8.
+    def dependants = [subprojects.build, 'tapestry-core:testWithPrototype', combinedJacocoReport]
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        dependants << aggregateJavadoc
+    }
+    dependsOn dependants
     description "Task executed on Jenkins CI server after Git commits"
 }
 
