@@ -22,6 +22,7 @@ import org.apache.tapestry5.services.assets.StreamableResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 public class StreamableResourceImpl implements StreamableResource
 {
@@ -136,4 +137,28 @@ public class StreamableResourceImpl implements StreamableResource
     {
         return new StreamableResourceImpl(description, contentType, compression, lastModified, bytestreamCache, assetChecksumGenerator, customizer);
     }
+
+    @Override
+    public int hashCode() 
+    {
+        return Objects.hash(bytestreamCache.size(), compression, contentType, description, lastModified);
+    }
+
+    @Override
+    public boolean equals(Object obj) 
+    {
+        if (this == obj) 
+        {
+            return true;
+        }
+        if (!(obj instanceof StreamableResourceImpl)) 
+        {
+            return false;
+        }
+        StreamableResourceImpl other = (StreamableResourceImpl) obj;
+        return Objects.equals(bytestreamCache.size(), other.bytestreamCache.size()) && compression == other.compression && Objects.equals(contentType, other.contentType)
+                && Objects.equals(description, other.description) && lastModified == other.lastModified;
+    }
+    
+    
 }

@@ -15,6 +15,7 @@ package org.apache.tapestry5.http;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,6 +105,12 @@ public final class ContentType
         ContentType ct = (ContentType) o;
 
         return baseType.equals(ct.baseType) && subType.equals(ct.subType) && parameters.equals(ct.parameters);
+    }
+
+    @Override
+    public int hashCode() 
+    {
+        return Objects.hash(baseType, subType, parameters);
     }
 
     /**

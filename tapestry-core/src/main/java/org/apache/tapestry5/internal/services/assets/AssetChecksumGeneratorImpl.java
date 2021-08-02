@@ -33,7 +33,7 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 
     private final ResourceChangeTracker tracker;
 
-    private final Map<StreamableResource, String> cache = CollectionFactory.newConcurrentMap();
+    private final Map<Integer, String> cache = CollectionFactory.newConcurrentMap();
 
     public AssetChecksumGeneratorImpl(StreamableResourceSource streamableResourceSource, ResourceChangeTracker tracker)
     {
@@ -53,16 +53,14 @@ public class AssetChecksumGeneratorImpl implements AssetChecksumGenerator
 
     public String generateChecksum(StreamableResource resource) throws IOException
     {
-        String result = cache.get(resource);
-
-        if (result == null)
-        {
-            result = toChecksum(resource.openStream());
-
-            cache.put(resource, result);
-        }
-
-        return result;
+        return cache.computeIfAbsent(resource.hashCode(), 
+                r -> {
+                    try {
+                        return toChecksum(resource.openStream());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     private String toChecksum(InputStream is) throws IOException
