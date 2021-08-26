@@ -418,12 +418,15 @@ public class Grid implements GridModel, ClientElement
         public List<SortConstraint> getSortConstraints()
         {
             // In a few limited cases we may not have yet hit the SetupRender phase, and the model may be null.
-            if (paginationModel == null || paginationModel.getSortColumnId() == null)
+            // Furthermore, because the sort column id is cached, an unknown value exception must be prevented in case of dynamically created bean models (e.g. usage of the 'include' parameter)
+            final BeanModel dataModel = getDataModel();
+
+            if ((paginationModel == null || paginationModel.getSortColumnId() == null) || !(dataModel.getPropertyNames().contains(TapestryInternalUtils.extractIdFromPropertyExpression(paginationModel.getSortColumnId()))))
             {
                 return Collections.emptyList();
             }
 
-            PropertyModel sortModel = getDataModel().getById(paginationModel.getSortColumnId());
+            PropertyModel sortModel = dataModel.getById(paginationModel.getSortColumnId());
 
             SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
 
