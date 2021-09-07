@@ -36,8 +36,43 @@ public interface ComponentEvent extends Event
      * @param parameterCount
      *            minimum number of context values
      * @return true if the event matches (and has not yet been aborted)
+     * @since 5.8.0
      */
     boolean matches(String eventType, String componentId, int parameterCount);
+
+    /**
+     * Returns true if the event matches the provided criteria and the event has not yet been aborted.
+     * 
+     * @param eventType
+     *            the type of event (case insensitive match)
+     * @param componentId
+     *            component is to match against (case insensitive), or the empty string
+     * @param parameterCount
+     *            minimum number of context values
+     * @param staticActivationContextValues
+     *            a String array. If null, there are no static activation context values. If
+     *            any value in the array is null, it's considered dynamic and ignored.
+     *            I any value in the arra isn't null, it's compared to the corresponding
+     *            activation context value. If it doesn't match, this method will return null.
+     * @return true if the event matches (and has not yet been aborted)
+     */
+    default boolean matches(String eventType, String componentId, int parameterCount, String[] staticActivationContextValues)
+    {
+        boolean matches = matches(eventType, componentId, parameterCount);
+        if (matches && staticActivationContextValues != null)
+        {
+            for (int i = 0; i < staticActivationContextValues.length; i++)
+            {
+                if (staticActivationContextValues[i] != null && 
+                        !staticActivationContextValues[i].equals(getEventContext().get(String.class, i)))
+                {
+                    matches = false;
+                    break;
+                }
+            }
+        }
+        return matches;
+    }
 
     /**
      * Coerces a context value to a particular type. The context is an array of objects; typically it is an array of

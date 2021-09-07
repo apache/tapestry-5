@@ -1,0 +1,27 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<h1>@StaticActivationContextValue Demo</h1>
+
+    <p>
+        This is way more of a test for <code>@StaticActivationContextValue</code>,
+        which is targeted at implementing multiple REST endpoints in a single component page
+        than an example of usage. Changing page or component
+        state is better done with <code>EventLink</code>. 
+    </p>
+
+    <p>
+        State: <span id="state">${state}</span>
+    </p>
+    
+    <p>
+        <a t:type="PageLink" t:page="staticActivationContextValueDemo" t:context="completed" id="completed">Mark as completed</a>
+    </p>
+
+    <p>
+        <a t:type="PageLink" t:page="staticActivationContextValueDemo" t:context="closed" id="closed">Mark as closed</a>
+    </p>
+
+    <p>
+        <a t:type="PageLink" t:page="staticActivationContextValueDemo" t:context="reset" id="reset">Reset state</a>
+    </p>
+
+</html>

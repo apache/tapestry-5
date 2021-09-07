@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.PublishEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.annotations.StaticActivationContextValue;
 import org.apache.tapestry5.annotations.DisableStrictChecks;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.util.CollectionFactory;
@@ -48,6 +50,7 @@ import org.apache.tapestry5.plastic.LocalVariableCallback;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.MethodParameter;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticMethod;
@@ -73,8 +76,6 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     private final ComponentClassCache classCache;
 
     private final OperationTracker operationTracker;
-
-    private final boolean componentIdCheck = true;
 
     private final InstructionBuilderCallback RETURN_TRUE = new InstructionBuilderCallback()
     {
@@ -167,6 +168,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
         boolean handleActivationEventContext = false;
         
+        final String[] staticActivationContextValues;
+        
         final PublishEvent publishEvent;
 
         EventHandlerMethod(PlasticMethod method)
@@ -184,6 +187,40 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             componentId = extractComponentId(methodName, onEvent);
             
             publishEvent = method.getAnnotation(PublishEvent.class);
+            staticActivationContextValues = extractStaticActivationContextValues(method);
+        }
+        
+        final private Pattern WHITESPACE = Pattern.compile(".*\\s.*");
+
+        private String[] extractStaticActivationContextValues(PlasticMethod method)
+        {
+            String[] values = null;
+            for (int i = 0; i < method.getParameters().size(); i++) 
+            {
+                MethodParameter parameter = method.getParameters().get(i);
+                final StaticActivationContextValue staticValue = parameter.getAnnotation(StaticActivationContextValue.class);
+                if (staticValue != null) 
+                {
+                    if (values == null) 
+                    {
+                        values = new String[method.getParameters().size()];
+                    }
+                    String value = staticValue.value();
+                    if (value != null && !value.isEmpty() && !WHITESPACE.matcher(value).matches())
+                    {
+                        values[i] = value;
+                    }
+                    else 
+                    {
+                        throw new RuntimeException(String.format("%s has at least one parameter "
+                                + "with a @%s annotation with an invalid value (empty string or "
+                                + "value containing whitespace)",
+                                method.getMethodIdentifier(),
+                                StaticActivationContextValue.class.getSimpleName()));
+                    }
+                }
+            }
+            return values;
         }
 
         void buildMatchAndInvocation(InstructionBuilder builder, final LocalVariable resultVariable)
@@ -192,8 +229,21 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                     parameterSource == null ? null
                             : method.getPlasticClass().introduceField(EventHandlerMethodParameterSource.class, description.methodName + "$parameterSource").inject(parameterSource);
 
+            final PlasticField staticActivationContextValueField =
+                    staticActivationContextValues == null ? null
+                            : method.getPlasticClass().introduceField(String[].class, description.methodName + "$staticActivationContextValues").inject(staticActivationContextValues);
+            
             builder.loadArgument(0).loadConstant(eventType).loadConstant(componentId).loadConstant(minContextValues);
-            builder.invoke(ComponentEvent.class, boolean.class, "matches", String.class, String.class, int.class);
+            if (staticActivationContextValueField != null)
+            {
+                builder.loadThis().getField(staticActivationContextValueField);
+            }
+            else
+            {
+                builder.loadNull();
+            }
+            
+        builder.invoke(ComponentEvent.class, boolean.class, "matches", String.class, String.class, int.class, String[].class);
 
             builder.when(Condition.NON_ZERO, new InstructionBuilderCallback()
             {
@@ -374,13 +424,13 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         {
             if (eventHandlerMethod.publishEvent != null)
             {
-                publishEvents.put(eventHandlerMethod.eventType.toLowerCase());
+                publishEvents.add(eventHandlerMethod.eventType.toLowerCase());
             }
         }
         
         // If we do have events to publish, we apply the mixin and pass
         // event information to it.
-        if (publishEvents.length() > 0) {
+        if (publishEvents.size() > 0) {
             model.addMixinClassName(PublishServerSideEvents.class.getName(), "after:*");
             model.setMeta(InternalConstants.PUBLISH_COMPONENT_EVENTS_META, publishEvents.toString());
         }

@@ -59,7 +59,9 @@ public class Index
             .newList(
                     
                     new Item("PublishEventDemo", "@PublishEvent Demo", "Publishing server-side events to client-side code (JavaScript)"),
-                    
+
+                    new Item("StaticActivationContextValueDemo", "@StaticActivationContextValue Demo", "Demonstrates the usage of @StaticActivationContextValue"),
+
                     new Item("Html5DateFieldDemo", "Html5DateField Demo", "Choosing dates using the native HTML5 date picker"),
 
 //                    new Item("ZoneFormDemo", "Zone Form Decoration", "Fields inside an Ajax-updatd Form are still decorated properly."),

@@ -95,5 +95,21 @@ class MiscTests extends App1TestCase {
         // it matches the name of a formal parameter of AltTitle.
         assertTextPresent "Parameter(s) 'AltTitle.title' are required for org.apache.tapestry5.corelib.components.ActionLink, but have not been bound."
     }
+    
+    @Test
+    void static_activation_context_value() {
+        openLinks "@StaticActivationContextValue Demo"
+        assertText "state", "none"
+        
+        click "completed"
+        assertText "state", "completed"
+
+        click "closed"
+        assertText "state", "closed"
+
+        click "reset"
+        assertText "state", "none"
+        
+    }
 
 }
