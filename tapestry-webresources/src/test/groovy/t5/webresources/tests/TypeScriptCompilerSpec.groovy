@@ -1,41 +1,29 @@
 package t5.webresources.tests;
 
-import org.apache.tapestry5.SymbolConstants
-import org.apache.tapestry5.commons.MappedConfiguration
-import org.apache.tapestry5.http.services.ApplicationGlobals
-import org.apache.tapestry5.internal.InternalSymbols
-import org.apache.tapestry5.internal.test.PageTesterContext
 import org.apache.tapestry5.internal.webresources.TypeScriptCompiler
-import org.apache.tapestry5.ioc.annotations.Autobuild
-import org.apache.tapestry5.ioc.annotations.Inject
-import org.apache.tapestry5.ioc.annotations.SubModule
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource
-import org.apache.tapestry5.modules.AssetsModule
-import org.apache.tapestry5.modules.TapestryModule
-import org.apache.tapestry5.webresources.modules.WebResourcesModule
 
-import spock.lang.Shared
 import spock.lang.Ignore
+import spock.lang.Shared
 import spock.lang.Specification
 
-@Ignore("spock-tapestry isn't ready for Tapestry 5.7.0 yet")
-@SubModule([TapestryModule, WebResourcesModule, TypeScriptCompilerSpec.TestModule, AssetsModule])
-class TypeScriptCompilerSpec /*extends Specification*/ {
+class TypeScriptCompilerSpec extends Specification {
 
-  @Autobuild
+  @Shared
   private TypeScriptCompiler typeScriptCompiler;
 
-  @Inject
-  @Shared
-  private ApplicationGlobals applicationGlobals
 
   def setupSpec(){
-    applicationGlobals.storeContext(new PageTesterContext("/test"));
+    def resource = new ClasspathResource("org/apache/tapestry5/webresources/internal/typescript.js")
+    def op = new QuietOperationTracker()
+    typeScriptCompiler = new TypeScriptCompiler(op, resource)
   }
 
   def "Compile Hello World example"(){
     when:
     def resource = new ClasspathResource("t5/webresources/greeter.ts")
+
     def compiled = typeScriptCompiler.transform(resource, null)
     then:
     compiled.text == TypeScriptCompilerSpec.class.getResourceAsStream('/t5/webresources/greeter-compiled.js').text
@@ -48,13 +36,16 @@ class TypeScriptCompilerSpec /*extends Specification*/ {
     then:
     compiled.text == TypeScriptCompilerSpec.class.getResourceAsStream('/t5/webresources/park-example-compiled.js').text
   }
-  
-  public static class TestModule {
 
-    def contributeApplicationDefaults(MappedConfiguration configuration){
-      configuration.add(InternalSymbols.APP_NAME, "test")
-      configuration.add("tapestry.app-package", "typescript")
-      configuration.add(SymbolConstants.MINIFICATION_ENABLED, false)
-    }
+  // TAP5-2691: Rhino has (sometimes) problems with ES6 code
+  // Ignored for now, because this works on my machine, but can be problematic
+  // on others
+  @Ignore
+  def "reserved keynamed as properties"(){
+    when:
+    def resource = new ClasspathResource("t5/webresources/keywords.ts")
+    def compiled = typeScriptCompiler.transform(resource, null)
+    then:
+    compiled.text == TypeScriptCompilerSpec.class.getResourceAsStream('/t5/webresources/keywords-compiled.js').text
   }
 }
