@@ -46,6 +46,7 @@ public class TestableRequestImpl implements TestableRequest
     public TestableRequest clear()
     {
         parameters.clear();
+        attributes.clear();
 
         return this;
     }
