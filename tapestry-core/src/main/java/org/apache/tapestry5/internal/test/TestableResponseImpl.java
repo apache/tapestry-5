@@ -171,6 +171,8 @@ public class TestableResponseImpl implements TestableResponse
         link = null;
         renderedDocument = null;
         headers.clear();
+        redirectURL = null;
+        printWriter = null;
         status = HttpServletResponse.SC_OK;
         errorMessage = null;
         contentLength = 0;
