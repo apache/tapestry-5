@@ -107,9 +107,9 @@ public class MethodDescription implements Comparable<MethodDescription>
         assert PlasticInternalUtils.isNonBlank(methodName);
 
         this.modifiers = modifiers;
-        this.returnType = returnType;
-        this.methodName = methodName;
-        this.genericSignature = genericSignature;
+        this.returnType = returnType.intern();
+        this.methodName = methodName.intern();
+        this.genericSignature = genericSignature.intern();
 
         this.argumentTypes = PlasticInternalUtils.orEmpty(argumentTypes);
         this.checkedExceptionTypes = PlasticInternalUtils.orEmpty(checkedExceptionTypes);

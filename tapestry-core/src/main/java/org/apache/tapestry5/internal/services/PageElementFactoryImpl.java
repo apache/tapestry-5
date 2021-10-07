@@ -45,7 +45,10 @@ public class PageElementFactoryImpl implements PageElementFactory
 
         LiteralStringProvider(String string)
         {
-            this.string = string;
+            // Trying to avoid interning too many strings. Longer ones
+            // are less likely to be used more than once. Threshold here
+            // is completely arbitrary.
+            this.string = (string != null && string.length() <= 10) ? string.intern() : string;
         }
 
         public String provideString()

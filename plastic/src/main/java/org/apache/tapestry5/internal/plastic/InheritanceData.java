@@ -180,7 +180,7 @@ public class InheritanceData
         // everything after the parameter list.
         int endOfParameterSpecIdx = desc.indexOf(')');
 
-        return name + ":" + desc.substring(0, endOfParameterSpecIdx+1);
+        return (name + ":" + desc.substring(0, endOfParameterSpecIdx+1)).intern();
     }
 
     /**

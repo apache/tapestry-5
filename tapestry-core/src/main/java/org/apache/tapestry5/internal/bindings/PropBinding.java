@@ -46,7 +46,7 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
 
         this.root = root;
         this.conduit = conduit;
-        this.expression = expression;
+        this.expression = expression.intern();
         this.toString = toString;
 
         invariant = conduit.getAnnotation(Invariant.class) != null;
