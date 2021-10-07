@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.commons.services;
 
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
@@ -89,6 +90,36 @@ public final class CoercionTuple<S, T>
         this(sourceType, targetType, coercion, true);
     }
 
+    /**
+     * Convenience method to create a coercion tuple using {@linkplain #create(Class, Class, Coercion)} 
+     * and add it to a {@linkplain MappedConfiguration} in a single step.
+     *
+     * @since 5.8.0
+     */
+    @SuppressWarnings("rawtypes")
+    public static <S, T> void add(
+            MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration, 
+            Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion)
+    {
+        CoercionTuple<S, T> coercionTuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
+        configuration.add(coercionTuple.getKey(), coercionTuple);
+    }
+    
+    /**
+     * Convenience method to create a coercion tuple using {@linkplain #create(Class, Class, Coercion)} 
+     * and override a matching one in a {@linkplain MappedConfiguration} in a single step.
+     *
+     * @since 5.8.0
+     */
+    @SuppressWarnings("rawtypes")
+    public static <S, T> void override(
+            MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration, 
+            Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion)
+    {
+        CoercionTuple<S, T> coercionTuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
+        configuration.override(coercionTuple.getKey(), coercionTuple);
+    }
+    
     /**
      * Convenience constructor to help with generics.
      *
