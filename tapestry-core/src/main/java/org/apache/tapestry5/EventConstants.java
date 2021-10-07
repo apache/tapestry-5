@@ -13,6 +13,7 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentSource;
@@ -213,7 +214,7 @@ public class EventConstants
     public static final String PREALLOCATE_FORM_CONTROL_NAMES = "preallocateFormControlNames";
 
     /**
-     * Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
+     * Event triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
      * component when a leaf node is selected.
      *
      * @since 5.3
@@ -221,7 +222,7 @@ public class EventConstants
     public static final String NODE_SELECTED = "nodeSelected";
 
     /**
-     * Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
+     * Event triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
      * component when a leaf node is unselected.
      *
      * @since 5.3
@@ -235,4 +236,47 @@ public class EventConstants
      * @since 5.3
      */
     public static final String REFRESH = "refresh";
+    
+    /**
+     * Event triggered when a page receives an HTTP GET request. 
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_GET = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Get";
+    
+    /**
+     * Event triggered when a page receives an HTTP POST request.
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_POST = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Post";
+    
+    /**
+     * Event triggered when a page receives an HTTP DELETE request.
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_DELETE = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Delete";
+    
+    /**
+     * Event triggered when a page receives an HTTP PUT request.
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_PUT = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Put";
+
+    /**
+     * Event triggered when a page receives an HTTP HEAD request.
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_HEAD = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Head";
+
+    /**
+     * Event triggered when a page receives an HTTP PATCH request.
+     * Handling this event creates a REST endpoint.
+     * @since 5.8.0
+     */
+    public static final String HTTP_PATCH = InternalConstants.HTTP_METHOD_EVENT_PREFIX + "Patch";
+
 }

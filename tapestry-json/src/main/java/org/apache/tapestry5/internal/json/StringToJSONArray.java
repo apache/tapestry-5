@@ -23,6 +23,6 @@ import org.apache.tapestry5.json.JSONArray;
 public class StringToJSONArray implements Coercion<String,JSONArray> {
     @Override
     public JSONArray coerce(String input) {
-        return new JSONArray(input);
+        return input != null ? new JSONArray(input) : null;
     }
 }

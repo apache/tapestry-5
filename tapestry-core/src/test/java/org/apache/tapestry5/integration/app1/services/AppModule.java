@@ -61,6 +61,7 @@ import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
@@ -181,6 +182,8 @@ public class AppModule
 
         configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js");
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.ALWAYS);
+        configuration.add(SymbolConstants.OPENAPI_APPLICATION_VERSION, "1.2.3.4");
+        configuration.add(SymbolConstants.OPENAPI_BASE_PATH, "/rest/");
 //        configuration.add(SymbolConstants.ERROR_CSS_CLASS, "yyyy");
 //        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/integration/app1/app1.css");
     }
@@ -401,6 +404,12 @@ public class AppModule
     public static void provideDefaultBeanBlocks(Configuration<BeanBlockContribution> configuration) 
 	{
 		configuration.add( new EditBlockContribution("address", "PropertyEditBlocks", "object"));
+	}
+	
+	@Contribute(MappedEntityManager.class)
+	public static void provideMappedEntities(Configuration<String> configuration)
+	{
+	    configuration.add("org.apache.tapestry5.integration.app1.data.rest.entities");
 	}
 
 }

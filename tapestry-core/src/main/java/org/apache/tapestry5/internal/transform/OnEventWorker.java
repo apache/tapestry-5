@@ -16,16 +16,19 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.DisableStrictChecks;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.PublishEvent;
+import org.apache.tapestry5.annotations.RequestBody;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.annotations.StaticActivationContextValue;
-import org.apache.tapestry5.annotations.DisableStrictChecks;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
@@ -36,11 +39,14 @@ import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.http.services.RestSupport;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.Condition;
 import org.apache.tapestry5.plastic.InstructionBuilder;
@@ -72,6 +78,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     private final Request request;
 
     private final ValueEncoderSource valueEncoderSource;
+    
+    private final RestSupport restSupport;
 
     private final ComponentClassCache classCache;
 
@@ -299,6 +307,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             final List<EventHandlerMethodParameterProvider> providers = CollectionFactory.newList();
 
             int contextIndex = 0;
+            boolean hasBodyRequestParameters = false;
 
             for (int i = 0; i < parameterTypes.length; i++)
             {
@@ -321,6 +330,24 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
                     providers.add(createQueryParameterProvider(method, i, parameterName, type,
                             parameterAnnotation.allowBlank()));
+                    continue;
+                }
+
+                RequestBody bodyAnnotation = method.getParameters().get(i).getAnnotation(RequestBody.class);
+
+                if (bodyAnnotation != null)
+                {
+                    if (!hasBodyRequestParameters)
+                    {
+                        providers.add(createRequestBodyProvider(method, i, type,
+                                bodyAnnotation.allowEmpty()));
+                        hasBodyRequestParameters = true;
+                    }
+                    else
+                    {
+                        throw new RuntimeException(
+                                String.format("Method %s has more than one @RequestBody parameter", method.getDescription()));
+                    }
                     continue;
                 }
 
@@ -378,12 +405,13 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         });
     }
 
-    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache, OperationTracker operationTracker)
+    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache, OperationTracker operationTracker, RestSupport restSupport)
     {
         this.request = request;
         this.valueEncoderSource = valueEncoderSource;
         this.classCache = classCache;
         this.operationTracker = operationTracker;
+        this.restSupport = restSupport;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
@@ -398,6 +426,9 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         addEventHandlingLogic(plasticClass, support.isRootTransformation(), methods, model);
     }
 
+    private static final Set<String> HTTP_EVENT_HANDLER_NAMES = InternalConstants.SUPPORTED_HTTP_METHOD_EVENT_HANDLER_METHOD_NAMES;
+    
+    private static final Set<String> HTTP_METHOD_EVENTS = InternalConstants.SUPPORTED_HTTP_METHOD_EVENTS;
 
     private void addEventHandlingLogic(final PlasticClass plasticClass, final boolean isRoot, final Flow<PlasticMethod> plasticMethods, final MutableComponentModel model)
     {
@@ -493,6 +524,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                             builder.loadConstant(false).storeVariable(resultVariable);
                         }
 
+                        boolean hasRestEndpointEventHandlerMethod = false;
+                        JSONArray restEndpointEventHandlerMethods = null;
                         for (EventHandlerMethod method : eventHandlerMethods)
                         {
                             method.buildMatchAndInvocation(builder, resultVariable);
@@ -500,11 +533,55 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                             model.addEventHandler(method.eventType);
 
                             if (method.handleActivationEventContext)
+                            {
                                 model.doHandleActivationEventContext();
+                            }
+
+                            // We're collecting this info for all components, even considering REST
+                            // events are only triggered in pages, because we can have REST event
+                            // handler methods in base classes too, and we need this info
+                            // for generating complete, correct OpenAPI documentation.
+                            final OnEvent onEvent = method.method.getAnnotation(OnEvent.class);
+                            final String methodName = method.method.getDescription().methodName;
+                            if (isRestEndpointEventHandlerMethod(onEvent, methodName))
+                            {
+                                hasRestEndpointEventHandlerMethod = true;
+                                if (restEndpointEventHandlerMethods == null)
+                                {
+                                    restEndpointEventHandlerMethods = new JSONArray();
+                                }
+                                JSONObject methodMeta = new JSONObject();
+                                methodMeta.put("name", methodName);
+                                JSONArray parameters = new JSONArray();
+                                for (MethodParameter parameter : method.method.getParameters())
+                                {
+                                    parameters.add(parameter.getType());
+                                }
+                                methodMeta.put("parameters", parameters);
+                                restEndpointEventHandlerMethods.add(methodMeta);
+                            }
+                        }
+                        
+                        // This meta property is only ever checked in pages, so we avoid using more
+                        // memory by not setting it to all component models.
+                        if (model.isPage())
+                        {
+                            model.setMeta(InternalConstants.REST_ENDPOINT_EVENT_HANDLER_METHOD_PRESENT, 
+                                    hasRestEndpointEventHandlerMethod ? InternalConstants.TRUE : InternalConstants.FALSE);
+                        }
+                        
+                        // See comment on the top of isRestEndpointEventHandlerMethod() above.
+                        // This shouldn't waste memory unless there are REST event handler
+                        // methods in components, something that would be ignored anyway.
+                        if (restEndpointEventHandlerMethods != null)
+                        {
+                            model.setMeta(InternalConstants.REST_ENDPOINT_EVENT_HANDLER_METHODS, 
+                                    restEndpointEventHandlerMethods.toCompactString());
                         }
 
                         builder.loadVariable(resultVariable).returnResult();
                     }
+
                 });
             }
         });
@@ -515,6 +592,27 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         return F.flow(plasticClass.getMethods()).filter(IS_EVENT_HANDLER);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private EventHandlerMethodParameterProvider createRequestBodyProvider(PlasticMethod method, final int parameterIndex, 
+            final String parameterTypeName, final boolean allowEmpty)
+    {
+        final String methodIdentifier = method.getMethodIdentifier();
+        return (event) -> {
+            Invokable<Object> operation = () -> {
+                Class parameterType = classCache.forName(parameterTypeName);
+                Optional result = restSupport.getRequestBodyAs(parameterType);
+                if (!allowEmpty && !result.isPresent())
+                {
+                    throw new RuntimeException(
+                            String.format("The request has an empty body and %s has one parameter with @RequestBody(allowEmpty=false)", methodIdentifier));
+                }
+                return result.orElse(null);
+            };
+            return operationTracker.invoke(
+                    "Converting HTTP request body for @RequestBody parameter", 
+                    operation);
+        };
+    }
 
     private EventHandlerMethodParameterProvider createQueryParameterProvider(PlasticMethod method, final int parameterIndex, final String parameterName,
                                                                              final String parameterTypeName, final boolean allowBlank)
@@ -595,7 +693,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             }
         };
     }
-
+    
     private EventHandlerMethodParameterProvider createEventContextProvider(final String type, final int parameterIndex)
     {
         return new EventHandlerMethodParameterProvider()
@@ -643,4 +741,14 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         // The first two characters are always "on" as in "onActionFromFoo".
         return fromx == -1 ? methodName.substring(2) : methodName.substring(2, fromx);
     }
+    
+    /**
+     * Tells whether a method with a given name and possibly {@link OnEvent} annotation
+     * is a REST endpoint event handler method or not.
+     */
+    public static boolean isRestEndpointEventHandlerMethod(final OnEvent onEvent, final String methodName) {
+        return onEvent != null && HTTP_METHOD_EVENTS.contains(onEvent.value().toLowerCase())
+            || HTTP_EVENT_HANDLER_NAMES.contains(methodName.toLowerCase());
+    }
+
 }

@@ -18,7 +18,9 @@ project.ext.versions = [
     hibernate: "5.4.32.Final",
     slf4j: "1.7.25",
     geb: "2.0",
-    selenium: "3.141.59"
+    selenium: "3.141.59",
+    jackson: "2.13.0",
+    jsonschemaGenerator: "4.20.0"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
@@ -33,7 +35,7 @@ project.version = tapestryVersion()
 
 def tapestryVersion() {
 
-    def major = "5.7.4"
+    def major = "5.8.0"
     def minor = ""
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.

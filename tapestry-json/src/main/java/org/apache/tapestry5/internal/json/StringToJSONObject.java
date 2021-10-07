@@ -23,6 +23,6 @@ import org.apache.tapestry5.json.JSONObject;
 public class StringToJSONObject  implements Coercion<String,JSONObject> {
     @Override
     public JSONObject coerce(String input) {
-        return new JSONObject(input);
+        return input != null ? new JSONObject(input) : null;
     }
 }

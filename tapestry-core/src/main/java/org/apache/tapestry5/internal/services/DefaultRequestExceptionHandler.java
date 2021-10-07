@@ -76,6 +76,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
     private final LinkSource linkSource;
 
     private final ExceptionReporter exceptionReporter;
+    
+    private final boolean productionMode;
 
     // should be Class<? extends Throwable>, Object but it's not allowed to configure subtypes
     private final Map<Class, Object> configuration;
@@ -96,6 +98,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                                           LinkSource linkSource,
                                           ServiceResources serviceResources,
                                           ExceptionReporter exceptionReporter,
+                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                          boolean productionMode,
                                           Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
@@ -106,6 +110,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         this.response = response;
         this.componentClassResolver = componentClassResolver;
         this.linkSource = linkSource;
+        this.productionMode = productionMode;
         this.exceptionReporter = exceptionReporter;
 
         Map<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant> handlerAssistants = new HashMap<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant>();
@@ -238,6 +243,19 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private void renderException(Throwable exception) throws IOException
     {
+        int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        // Some special handling for REST endpoint not found exceptions
+        if (exception instanceof RestEndpointNotFoundException ||
+                exception.getCause() instanceof RestEndpointNotFoundException)
+        {
+            if (productionMode)
+            {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "REST endpoint not found or endpoint found but no response provided");
+                return;
+            }
+            statusCode = HttpServletResponse.SC_NOT_FOUND;
+        }
+        
         logger.error("Processing of request failed with uncaught exception: {}", exception, exception);
 
         // In the case where one of the contributed rules, above, changes the behavior, then we don't report the
@@ -246,7 +264,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
         // TAP5-233: Make sure the client knows that an error occurred.
 
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(statusCode);
 
         String rawMessage = ExceptionUtils.toMessage(exception);
 

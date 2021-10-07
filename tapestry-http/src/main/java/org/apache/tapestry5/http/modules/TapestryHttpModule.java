@@ -12,7 +12,10 @@
 
 package org.apache.tapestry5.http.modules;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +23,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.http.OptimizedSessionPersistedObject;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TypeCoercerHttpRequestBodyConverter;
 import org.apache.tapestry5.http.internal.gzip.GZipFilter;
 import org.apache.tapestry5.http.internal.services.ApplicationGlobalsImpl;
 import org.apache.tapestry5.http.internal.services.BaseURLSourceImpl;
@@ -34,6 +41,7 @@ import org.apache.tapestry5.http.internal.services.RequestGlobalsImpl;
 import org.apache.tapestry5.http.internal.services.RequestImpl;
 import org.apache.tapestry5.http.internal.services.ResponseCompressionAnalyzerImpl;
 import org.apache.tapestry5.http.internal.services.ResponseImpl;
+import org.apache.tapestry5.http.internal.services.RestSupportImpl;
 import org.apache.tapestry5.http.internal.services.TapestrySessionFactory;
 import org.apache.tapestry5.http.internal.services.TapestrySessionFactoryImpl;
 import org.apache.tapestry5.http.services.ApplicationGlobals;
@@ -42,6 +50,7 @@ import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
 import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.http.services.Dispatcher;
+import org.apache.tapestry5.http.services.HttpRequestBodyConverter;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;
 import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.http.services.Request;
@@ -50,6 +59,7 @@ import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.http.services.RestSupport;
 import org.apache.tapestry5.http.services.ServletApplicationInitializer;
 import org.apache.tapestry5.http.services.ServletApplicationInitializerFilter;
 import org.apache.tapestry5.http.services.SessionPersistedObjectAnalyzer;
@@ -91,6 +101,7 @@ public final class TapestryHttpModule {
         binder.bind(TapestrySessionFactory.class, TapestrySessionFactoryImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
+        binder.bind(RestSupport.class, RestSupportImpl.class);
     }
     
     /**
@@ -292,6 +303,72 @@ public final class TapestryHttpModule {
         
     }
     
+    public static HttpRequestBodyConverter buildHttpRequestBodyConverter(
+            final List<HttpRequestBodyConverter> converters,
+            final ChainBuilder chainBuilder)
+    {
+        return chainBuilder.build(HttpRequestBodyConverter.class, converters);
+    }
+    
+    public static void contributeHttpRequestBodyConverter(
+            final OrderedConfiguration<HttpRequestBodyConverter> configuration)
+    {
+        configuration.addInstance("TypeCoercer", TypeCoercerHttpRequestBodyConverter.class);
+    }
+    
+    public static void contributeTypeCoercer(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
+    {
+        CoercionTuple.add(configuration, HttpServletRequest.class, String.class, TapestryHttpModule::toString);
+        CoercionTuple.add(configuration, HttpServletRequest.class, byte[].class, TapestryHttpModule::toByteArray);
+        CoercionTuple.add(configuration, HttpServletRequest.class, InputStream.class, TapestryHttpModule::toInputStream);
+        CoercionTuple.add(configuration, HttpServletRequest.class, Reader.class, TapestryHttpModule::toBufferedReader);
+        CoercionTuple.add(configuration, HttpServletRequest.class, BufferedReader.class, TapestryHttpModule::toBufferedReader);
+    }
+    
+    private final static InputStream toInputStream(HttpServletRequest request)
+    {
+        try 
+        {
+            return request.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private final static BufferedReader toBufferedReader(HttpServletRequest request)
+    {
+        try 
+        {
+            return request.getReader();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private final static String toString(HttpServletRequest request)
+    {
+        try (Reader reader = request.getReader())
+        {
+            String string = IOUtils.toString(reader);
+            return string.isEmpty() ? null : string;
+        }
+        catch (IOException e) {
+            throw new TapestryException(
+                    "Exception converting body from HttpServletRequest (getReader()) to String", e);
+        }        
+    }
+    
+    private final static byte[] toByteArray(HttpServletRequest request)
+    {
+        try (InputStream inputStream = request.getInputStream()) 
+        {
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            return byteArray.length == 0 ? null : byteArray;
+        } catch (IOException e) {
+            throw new TapestryException(
+                    "Exception converting from HttpServletRequest (getInputStream()) to String", e);
+        }
+    }
     
     // A bunch of classes "promoted" from inline inner class to nested classes,
     // just so that the stack trace would be more readable. Most of these

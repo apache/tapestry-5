@@ -12,7 +12,15 @@
 
 package org.apache.tapestry5.internal;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.PublishEvent;
+import org.apache.tapestry5.annotations.RequestBody;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.commons.util.CommonsUtils;
 import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.dom.MarkupModel;
@@ -242,5 +250,79 @@ public final class InternalConstants
      * @since 5.4.2
      */
     public static final String PUBLISH_COMPONENT_EVENTS_URL_PROPERTY = "url";
+
+    /**
+     * The prefix used to create the names of the events triggered for REST endpoint 
+     * event handler methods.
+     * 
+     * @since 5.8.0
+     */
+    public static final String HTTP_METHOD_EVENT_PREFIX = "http";
+
+    /**
+     * The name of the {@link ComponentModel} meta attribute which tells whether
+     * REST endpoint event handler methods are present
+     * 
+     * @since 5.8.0
+     */
+    public static final String REST_ENDPOINT_EVENT_HANDLER_METHOD_PRESENT = "restEndpointEventHandlerMethodsPresent";
+
+    /**
+     * The name of the {@link ComponentModel} meta attribute which lists the 
+     * REST endpoint event handler methods.
+     * 
+     * @since 5.8.0
+     */
+    public static final String REST_ENDPOINT_EVENT_HANDLER_METHODS = "restEndpointEventHandlerMethods";
+
+    /**
+     * Constant for a true boolean value to be used in {@link ComponentModel} meta attributes.
+     */
+    public static final String TRUE = "true";
+    
+    /**
+     * Constant for a false boolean value to be used in {@link ComponentModel} meta attributes.
+     */
+    public static final String FALSE = "false";
+    
+    /**
+     * Annotation types for event handler method parameters which have injected values, not ones 
+     * provided by the URL.
+     */
+    public static Class<?>[] INJECTED_PARAMETERS = new Class<?>[]{
+            RequestParameter.class, RequestBody.class
+    };
+    
+    /**
+     * 
+     */
+    public static final Set<String> SUPPORTED_HTTP_METHOD_EVENTS;
+    
+    public static final Set<String> SUPPORTED_HTTP_METHOD_EVENT_HANDLER_METHOD_NAMES;
+
+    static 
+    {
+        
+        String[] httpEvents = new String[] 
+        {
+            EventConstants.HTTP_GET,
+            EventConstants.HTTP_POST,
+            EventConstants.HTTP_PUT,
+            EventConstants.HTTP_DELETE,
+            EventConstants.HTTP_HEAD,
+            EventConstants.HTTP_PATCH
+        };
+        
+        SUPPORTED_HTTP_METHOD_EVENTS = Collections.unmodifiableSet(
+                Stream.of(httpEvents)
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toSet()));
+
+        SUPPORTED_HTTP_METHOD_EVENT_HANDLER_METHOD_NAMES = Collections.unmodifiableSet(
+                Stream.of(httpEvents)
+                    .map(s -> "on" + s.toLowerCase())
+                    .collect(Collectors.toSet()));
+
+    }
 
 }

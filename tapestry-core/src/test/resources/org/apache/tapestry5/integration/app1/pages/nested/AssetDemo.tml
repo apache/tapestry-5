@@ -85,7 +85,7 @@
 
 <div id="viz"></div>
 
-<p>Asset with good checksum: ${assetWithCorrectChecksum}</p>
+<p>Asset with good checksum: <span id="assetUrl">${assetWithCorrectChecksum}</span></p>
 <p>Asset with bad checksum: ${assetWithWrongChecksumUrl}</p>
 <p id="assetWithWrongChecksum" style="display: none">Asset with wrong checksum handled correctly.</p>
 

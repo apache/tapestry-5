@@ -102,7 +102,7 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase
             }
         };
 
-        exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, noopExceptionReporter, mockConfiguration);
+        exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, noopExceptionReporter, false, mockConfiguration);
     }
 
 

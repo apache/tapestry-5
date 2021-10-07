@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
 /**
  * A wrapper around {@link ComponentEventResultProcessor} that encapsulates capturing the exception.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ComponentResultProcessorWrapper implements TrackableComponentEventCallback
 {
     private boolean aborted;
@@ -30,6 +30,8 @@ public class ComponentResultProcessorWrapper implements TrackableComponentEventC
     private IOException exception;
 
     private final ComponentEventResultProcessor processor;
+    
+    private Object result;
 
     public ComponentResultProcessorWrapper(ComponentEventResultProcessor processor)
     {
@@ -42,6 +44,8 @@ public class ComponentResultProcessorWrapper implements TrackableComponentEventC
             throw new IllegalStateException(
                     "Event callback has already received and processed a result value and can not do so again.");
 
+        this.result = result;
+        
         try
         {
             processor.processResultValue(result);
@@ -71,6 +75,11 @@ public class ComponentResultProcessorWrapper implements TrackableComponentEventC
     {
         if (exception != null)
             throw exception;
+    }
+    
+    public Object getResult() 
+    {
+        return result;
     }
 
 }

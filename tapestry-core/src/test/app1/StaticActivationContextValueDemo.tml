@@ -3,8 +3,8 @@
 
     <p>
         This is way more of a test for <code>@StaticActivationContextValue</code>,
-        which is targeted at implementing multiple REST endpoints in a single component page
-        than an example of usage. Changing page or component
+        which is targeted at implementing multiple REST endpoints in a single component page,
+        than a good, real life example of usage. Changing page or component
         state is better done with <code>EventLink</code>. 
     </p>
 

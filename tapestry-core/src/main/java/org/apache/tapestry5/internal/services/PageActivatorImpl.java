@@ -16,15 +16,16 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.internal.EmptyEventContext;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.HttpError;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletResponse;
 
 public class PageActivatorImpl implements PageActivator
 {
@@ -33,16 +34,20 @@ public class PageActivatorImpl implements PageActivator
     private final MetaDataLocator metaDataLocator;
 
     private final UnknownActivationContextHandler unknownActivationContextHandler;
+    
+    private final Request request;
 
     public PageActivatorImpl(Logger logger, MetaDataLocator metaDataLocator,
-                             UnknownActivationContextHandler unknownActivationContextHandler)
+                             UnknownActivationContextHandler unknownActivationContextHandler,
+                             Request request)
     {
         this.logger = logger;
         this.metaDataLocator = metaDataLocator;
         this.unknownActivationContextHandler = unknownActivationContextHandler;
+        this.request = request;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public boolean activatePage(ComponentResources pageResources, EventContext activationContext,
             ComponentEventResultProcessor resultProcessor) throws IOException
     {
@@ -68,6 +73,28 @@ public class PageActivatorImpl implements PageActivator
         {
             callback.rethrow();
             return true;
+        }
+        else
+        {
+            if (InternalConstants.TRUE.equals(pageResources.getComponentModel().getMeta(
+                    InternalConstants.REST_ENDPOINT_EVENT_HANDLER_METHOD_PRESENT)))
+            {
+                callback = new ComponentResultProcessorWrapper(resultProcessor);
+                handled = pageResources.triggerContextEvent(
+                        InternalConstants.HTTP_METHOD_EVENT_PREFIX + request.getMethod(), activationContext, callback);
+                if (callback.isAborted())
+                {
+                    callback.rethrow();
+                    return true;
+                }
+                else
+                {
+                    throw new RestEndpointNotFoundException(
+                            String.format("Page %s (%s) has at least one REST endpoint event handler method "
+                                    + "but none handled %s for this request", pageResources.getPageName(),
+                                    pageResources.getPage().getClass().getName(), request.getMethod()));
+                }
+            }
         }
 
         return false;

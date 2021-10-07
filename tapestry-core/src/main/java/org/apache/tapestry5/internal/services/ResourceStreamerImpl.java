@@ -212,8 +212,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
             response.setHeader("Cache-Control", omitExpirationCacheControlHeader);
         }
 
-        response.setContentLength(streamable.getSize());
-
         if (streamable.getCompression() == CompressionStatus.COMPRESSED)
         {
             response.setHeader(TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER, TapestryHttpInternalConstants.GZIP_CONTENT_ENCODING);
@@ -226,11 +224,14 @@ public class ResourceStreamerImpl implements ResourceStreamer
             responseCustomizer.customizeResponse(streamable, response);
         }
 
-        OutputStream os = response.getOutputStream(streamable.getContentType().toString());
-
-        streamable.streamTo(os);
-
-        os.close();
+        if (!request.getMethod().equals("HEAD"))
+        {
+            response.setContentLength(streamable.getSize());
+            
+            OutputStream os = response.getOutputStream(streamable.getContentType().toString());
+            streamable.streamTo(os);
+            os.close();
+        }
 
         return true;
     }

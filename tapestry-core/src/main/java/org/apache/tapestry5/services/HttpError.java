@@ -16,6 +16,8 @@ package org.apache.tapestry5.services;
 
 /**
  * An event handler method may return an instance of this class to send an error response to the client.
+ * If you need something similar but not for errors, such as statuses in the 2xx range,
+ * use {@link HttpStatus instead}.
  *
  * @since 5.2.0
  */

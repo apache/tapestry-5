@@ -28,6 +28,8 @@ import org.apache.tapestry5.commons.services.Coercion;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CoercionFailedException;
+import org.apache.tapestry5.commons.util.CoercionNotFoundException;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StringToEnumCoercion;
 import org.apache.tapestry5.commons.util.UnknownValueException;
@@ -76,7 +78,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
                 return type.cast(c.coerce(input));
             } catch (Exception ex)
             {
-                throw new RuntimeException(ServiceMessages.failedCoercion(input, type, c, ex), ex);
+                throw new CoercionFailedException(ServiceMessages.failedCoercion(input, type, c, ex), ex);
             }
         }
 
@@ -338,8 +340,8 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         // Not found anywhere. Identify the source and target type and a (sorted) list of
         // all the known coercions.
 
-        throw new UnknownValueException(String.format("Could not find a coercion from type %s to type %s.",
-                sourceType.getName(), targetType.getName()), buildCoercionCatalog());
+        throw new CoercionNotFoundException(String.format("Could not find a coercion from type %s to type %s.",
+                sourceType.getName(), targetType.getName()), buildCoercionCatalog(), sourceType, targetType);
     }
 
     /**

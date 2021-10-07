@@ -101,13 +101,13 @@ class MiscTests extends App1TestCase {
         openLinks "@StaticActivationContextValue Demo"
         assertText "state", "none"
         
-        click "completed"
+        clickAndWait "completed"
         assertText "state", "completed"
 
-        click "closed"
+        clickAndWait "closed"
         assertText "state", "closed"
 
-        click "reset"
+        clickAndWait "reset"
         assertText "state", "none"
         
     }

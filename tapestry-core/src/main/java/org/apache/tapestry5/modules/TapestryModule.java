@@ -15,10 +15,8 @@ package org.apache.tapestry5.modules;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,10 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
@@ -118,29 +112,18 @@ import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalSymbols;
-import org.apache.tapestry5.http.internal.gzip.GZipFilter;
-import org.apache.tapestry5.http.internal.services.ApplicationGlobalsImpl;
-import org.apache.tapestry5.http.internal.services.RequestGlobalsImpl;
-import org.apache.tapestry5.http.internal.services.RequestImpl;
-import org.apache.tapestry5.http.internal.services.ResponseImpl;
-import org.apache.tapestry5.http.internal.services.TapestrySessionFactory;
-import org.apache.tapestry5.http.internal.services.TapestrySessionFactoryImpl;
 import org.apache.tapestry5.http.modules.TapestryHttpModule;
 import org.apache.tapestry5.http.services.ApplicationGlobals;
 import org.apache.tapestry5.http.services.ApplicationInitializer;
 import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
-import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.http.services.Context;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;
-import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.RequestFilter;
 import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.http.services.Response;
-import org.apache.tapestry5.http.services.ServletApplicationInitializer;
-import org.apache.tapestry5.http.services.ServletApplicationInitializerFilter;
 import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.ComponentOverrideImpl;
 import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
@@ -190,6 +173,9 @@ import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
 import org.apache.tapestry5.internal.services.meta.UnknownActivationContextExtractor;
+import org.apache.tapestry5.internal.services.rest.DefaultOpenApiDescriptionGenerator;
+import org.apache.tapestry5.internal.services.rest.DefaultOpenApiTypeDescriber;
+import org.apache.tapestry5.internal.services.rest.MappedEntityManagerImpl;
 import org.apache.tapestry5.internal.services.security.ClientWhitelistImpl;
 import org.apache.tapestry5.internal.services.security.LocalhostOnly;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
@@ -268,6 +254,7 @@ import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.apache.tapestry5.ioc.services.UpdateListenerHub;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.json.modules.JSONModule;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.MethodInvocation;
@@ -324,6 +311,7 @@ import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.HttpError;
+import org.apache.tapestry5.services.HttpStatus;
 import org.apache.tapestry5.services.InitializeActivePageName;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.LinkCreationHub;
@@ -376,6 +364,9 @@ import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
+import org.apache.tapestry5.services.rest.OpenApiTypeDescriber;
+import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -399,7 +390,7 @@ import org.slf4j.Logger;
  */
 @Marker(Core.class)
 @ImportModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class, TapestryHttpModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class, CompatibilityModule.class, DashboardModule.class, TapestryHttpModule.class, JSONModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
@@ -540,6 +531,7 @@ public final class TapestryModule
         binder.bind(ExceptionReportWriter.class, ExceptionReportWriterImpl.class);
         binder.bind(ComponentOverride.class, ComponentOverrideImpl.class).eagerLoad();
         binder.bind(Html5Support.class, Html5SupportImpl.class);
+        binder.bind(MappedEntityManager.class, MappedEntityManagerImpl.class);
     }
 
     // ========================================================================
@@ -1620,6 +1612,7 @@ public final class TapestryModule
         });
 
         configuration.addInstance(HttpError.class, HttpErrorComponentEventResultProcessor.class);
+        configuration.addInstance(HttpStatus.class, HttpStatusComponentEventResultProcessor.class);
 
         configuration.addInstance(String.class, PageNameComponentEventResultProcessor.class);
 
@@ -1630,6 +1623,9 @@ public final class TapestryModule
         configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
 
         configuration.addInstance(StreamPageContent.class, StreamPageContentResultProcessor.class);
+        
+        configuration.addInstance(JSONArray.class, JSONCollectionEventResultProcessor.class);
+        configuration.addInstance(JSONObject.class, JSONCollectionEventResultProcessor.class);
     }
 
     /**
@@ -1667,7 +1663,7 @@ public final class TapestryModule
         configuration.addInstance(RenderCommand.class, RenderCommandComponentEventResultProcessor.class);
         configuration.addInstance(Component.class, AjaxComponentInstanceEventResultProcessor.class);
         configuration.addInstance(JSONObject.class, JSONObjectEventResultProcessor.class);
-        configuration.addInstance(JSONArray.class, JSONArrayEventResultProcessor.class);
+        configuration.addInstance(JSONArray.class, JSONCollectionEventResultProcessor.class);
         configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
         configuration.addInstance(String.class, AjaxPageNameComponentEventResultProcessor.class);
         configuration.addInstance(Link.class, AjaxLinkComponentEventResultProcessor.class);
@@ -1692,8 +1688,15 @@ public final class TapestryModule
      * {@link ComponentEventRequestHandler}</dd>
      * </dl>
      */
-    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration)
+    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
+            @Symbol(SymbolConstants.PUBLISH_OPENAPI_DEFINITON) final boolean publishOpenApiDefinition)
     {
+        
+        if (publishOpenApiDefinition)
+        {
+            configuration.addInstance("OpenAPI", OpenApiDescriptionDispatcher.class, "before:PageRender", "before:ComponentEvent");
+        }
+        
         // Looks for the root path and renders the start page. This is
         // maintained for compatibility
         // with earlier versions of Tapestry 5, it is recommended that an Index
@@ -2187,6 +2190,11 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.ENABLE_PAGELOADING_MASK, true);
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.PRODUCTION);
+        
+        configuration.add(SymbolConstants.OPENAPI_VERSION, "3.0.0");
+        configuration.add(SymbolConstants.PUBLISH_OPENAPI_DEFINITON, "false");
+        configuration.add(SymbolConstants.OPENAPI_DESCRIPTION_PATH, "/openapi.json");
+        configuration.add(SymbolConstants.OPENAPI_BASE_PATH, "/");
     }
 
     /**
@@ -2727,6 +2735,30 @@ public final class TapestryModule
     {
         configuration.addInstance("Maven", MavenComponentLibraryInfoSource.class);
         configuration.add("TapestryCore", new TapestryCoreComponentLibraryInfoSource());
+    }
+    
+    public static OpenApiDescriptionGenerator buildOpenApiDocumentationGenerator(List<OpenApiDescriptionGenerator> configuration,
+            ChainBuilder chainBuilder) 
+    {
+        return chainBuilder.build(OpenApiDescriptionGenerator.class, configuration);
+    }
+
+    public static OpenApiTypeDescriber buildOpenApiTypeDescriber(List<OpenApiTypeDescriber> configuration,
+            ChainBuilder chainBuilder) 
+    {
+        return chainBuilder.build(OpenApiTypeDescriber.class, configuration);
+    }
+
+    @Contribute(OpenApiDescriptionGenerator.class)
+    public static void addBuiltInOpenApiDocumentationGenerator(
+            OrderedConfiguration<OpenApiDescriptionGenerator> configuration) {
+        configuration.addInstance("Default", DefaultOpenApiDescriptionGenerator.class, "before:*");
+    }
+
+    @Contribute(OpenApiTypeDescriber.class)
+    public static void addBuiltInOpenApiTypeDescriber(
+            OrderedConfiguration<OpenApiTypeDescriber> configuration) {
+        configuration.addInstance("Default", DefaultOpenApiTypeDescriber.class, "before:*");
     }
 
     private static final class TapestryCoreComponentLibraryInfoSource implements

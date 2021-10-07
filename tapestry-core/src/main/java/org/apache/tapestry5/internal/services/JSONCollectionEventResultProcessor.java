@@ -18,13 +18,13 @@ import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONCollection;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class JSONArrayEventResultProcessor implements ComponentEventResultProcessor<JSONArray>
+public class JSONCollectionEventResultProcessor implements ComponentEventResultProcessor<JSONCollection>
 {
     private final Response response;
 
@@ -32,7 +32,7 @@ public class JSONArrayEventResultProcessor implements ComponentEventResultProces
 
     private final ContentType contentType;
 
-    public JSONArrayEventResultProcessor(Response response,
+    public JSONCollectionEventResultProcessor(Response response,
 
                                          @Symbol(TapestryHttpSymbolConstants.CHARSET)
                                          String outputEncoding,
@@ -46,7 +46,7 @@ public class JSONArrayEventResultProcessor implements ComponentEventResultProces
         contentType = new ContentType(InternalConstants.JSON_MIME_TYPE).withCharset(outputEncoding);
     }
 
-    public void processResultValue(JSONArray value) throws IOException
+    public void processResultValue(JSONCollection value) throws IOException
     {
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 

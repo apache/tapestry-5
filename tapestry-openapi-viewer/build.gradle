@@ -1,0 +1,12 @@
+description = "Embedded OpenAPI (Swagger) viewer for Tapestry, based on Swagger UI"
+
+dependencies {
+    compile project(':tapestry-core')
+    testCompile "javax.servlet:javax.servlet-api:${versions.servletapi}"
+}
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.openapiviewer.modules.TapestryOpenApiViewerModule'
+    }
+}

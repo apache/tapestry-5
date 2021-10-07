@@ -17,16 +17,17 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.testng.annotations.Test;
 
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class JSONArrayEventResultProcessorTest extends InternalBaseTestCase
+public class JSONCollectionEventResultProcessorTest extends InternalBaseTestCase
 {
     @Test
-    public void response_sent() throws IOException
+    public void response_sent_jsonarray() throws IOException
     {
         String encoding = "UTF-8";
         Response response = mockResponse();
@@ -40,12 +41,39 @@ public class JSONArrayEventResultProcessorTest extends InternalBaseTestCase
 
         JSONArray array = new JSONArray("   [ \"fred\", \"barney\" \n\n]");
 
-        JSONArrayEventResultProcessor p = new JSONArrayEventResultProcessor(response, encoding, false);
+        JSONCollectionEventResultProcessor p = new JSONCollectionEventResultProcessor(response, encoding, false);
 
         p.processResultValue(array);
 
         verify();
 
         assertEquals(writer.toString(), "[\n  \"fred\",\n  \"barney\"\n]");
+        
+
+    }
+    
+    @Test
+    public void response_sent_jsonobject() throws IOException
+    {
+        String encoding = "UTF-8";
+        Response response = mockResponse();
+
+        CharArrayWriter writer = new CharArrayWriter();
+        PrintWriter pw = new PrintWriter(writer);
+
+        expect(response.getPrintWriter("application/json;charset=UTF-8")).andReturn(pw);
+
+        replay();
+
+        JSONObject object = new JSONObject("\n   { \n \"fred\" : \"barney\" \n } \n");
+
+        JSONCollectionEventResultProcessor p = new JSONCollectionEventResultProcessor(response, encoding, false);
+
+        p.processResultValue(object);
+
+        verify();
+
+        assertEquals(writer.toString(), "{\n  \"fred\" : \"barney\"\n}");
+        
     }
 }

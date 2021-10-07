@@ -20,13 +20,16 @@ import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.corelib.components.Errors;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.internal.services.rest.DefaultOpenApiDescriptionGenerator;
 import org.apache.tapestry5.modules.NoBootstrapModule;
 import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
 
 /**
  * Defines the names of symbols used to configure Tapestry.
@@ -643,4 +646,70 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String PRELOADER_MODE = "tapestry.page-preload-mode";
+    
+    /**
+     * Defines the OpenAPI version to be used in the generated OpenAPI description.
+     * Default value is <code>3.0.0</code>.
+     * @see DefaultOpenApiDescriptionGenerator
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_VERSION = "tapestry.openapi-version";
+    
+    /**
+     * Defines the title of this application in the generated OpenAPI description. No default value is provided.
+     * @see DefaultOpenApiDescriptionGenerator
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_TITLE = "tapestry.openapi-title";
+
+    /**
+     * Defines the description of this application in the generated OpenAPI description. 
+     * No default value is provided.
+     * @see DefaultOpenApiDescriptionGenerator
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_DESCRIPTION = "tapestry.openapi-description";
+
+    /**
+     * Defines the version of this application in the generated OpenAPI description (i.e. info/version). 
+     * No default value is provided.
+     * @see DefaultOpenApiDescriptionGenerator
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_APPLICATION_VERSION = "tapestry.openapi-application-version";
+
+    /**
+     * Defines whether the OpenAPI description file of this application's REST endpoints should be 
+     * published or not. The default value is <code>false</code>.
+     * @see OpenApiDescriptionGenerator
+     * @see #OPENAPI_DESCRIPTION_PATH
+     * @since 5.8.0
+     */
+    public static final String PUBLISH_OPENAPI_DEFINITON = "tapestry.publish-openapi-description";
+
+    /**
+     * Defines the path the OpenAPI description file of this application's REST endpoints will be
+     * published. It should start with a slash. The default value is <code>openapi.json</code>.
+     * Default value is <code>/openapi.json</code>.
+     * The description will only be published if {{@link #PUBLISH_OPENAPI_DEFINITON} is set to
+     * <code>true</code>.
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_DESCRIPTION_PATH = "tapestry.openapi-description-path";
+    
+    /**
+     * Defines a base path to the generated OpenAPI description relative to the application
+     * URL as defined by {@link BaseURLSource#getBaseURL(boolean)}. It should be either
+     * the empty string, meaning there's no base path, or a string starting and ending 
+     * with a slash. Default value is "/" (without the quotes)
+     * @see OpenApiDescriptionGenerator
+     * @since 5.8.0
+     */
+    public static final String OPENAPI_BASE_PATH = "tapestry.openapi-base-path";
+
 }

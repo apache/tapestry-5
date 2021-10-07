@@ -36,7 +36,6 @@ public interface ComponentEvent extends Event
      * @param parameterCount
      *            minimum number of context values
      * @return true if the event matches (and has not yet been aborted)
-     * @since 5.8.0
      */
     boolean matches(String eventType, String componentId, int parameterCount);
 
@@ -55,6 +54,7 @@ public interface ComponentEvent extends Event
      *            I any value in the arra isn't null, it's compared to the corresponding
      *            activation context value. If it doesn't match, this method will return null.
      * @return true if the event matches (and has not yet been aborted)
+     * @since 5.8.0
      */
     default boolean matches(String eventType, String componentId, int parameterCount, String[] staticActivationContextValues)
     {
