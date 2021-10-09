@@ -109,7 +109,7 @@ public class MethodDescription implements Comparable<MethodDescription>
         this.modifiers = modifiers;
         this.returnType = returnType.intern();
         this.methodName = methodName.intern();
-        this.genericSignature = genericSignature.intern();
+        this.genericSignature = genericSignature == null ? null : genericSignature.intern();
 
         this.argumentTypes = PlasticInternalUtils.orEmpty(argumentTypes);
         this.checkedExceptionTypes = PlasticInternalUtils.orEmpty(checkedExceptionTypes);
