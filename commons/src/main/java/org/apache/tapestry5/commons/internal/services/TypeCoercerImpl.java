@@ -304,7 +304,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         // a tuple twice, but it's more likely that different threads are looking
         // for different source/target coercions.
 
-        Set<CoercionTuple> consideredTuples = CollectionFactory.newSet();
+        Set<CoercionTuple.Key> consideredTuples = CollectionFactory.newSet();
         LinkedList<CoercionTuple> queue = CollectionFactory.newLinkedList();
 
         seedQueue(sourceType, targetType, consideredTuples, queue);
@@ -389,7 +389,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
     /**
      * Seeds the pool with the initial set of coercions for the given type.
      */
-    private void seedQueue(Class sourceType, Class targetType, Set<CoercionTuple> consideredTuples,
+    private void seedQueue(Class sourceType, Class targetType, Set<CoercionTuple.Key> consideredTuples,
                            LinkedList<CoercionTuple> queue)
     {
         // Work from the source type up looking for tuples
@@ -406,7 +406,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
             for (CoercionTuple tuple : tuples)
             {
                 queue.addLast(tuple);
-                consideredTuples.add(tuple);
+                consideredTuples.add(tuple.getKey());
             }
 
             // Don't pull in Object -> type coercions when doing
@@ -439,7 +439,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
      */
     @SuppressWarnings("unchecked")
     private void queueIntermediates(Class sourceType, Class targetType, CoercionTuple intermediateTuple,
-                                    Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
+                                    Set<CoercionTuple.Key> consideredTuples, LinkedList<CoercionTuple> queue)
     {
         Class intermediateType = intermediateTuple.getTargetType();
 
@@ -447,7 +447,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
         {
             for (CoercionTuple tuple : getTuples(c, targetType))
             {
-                if (consideredTuples.contains(tuple))
+                if (consideredTuples.contains(tuple.getKey()))
                 {
                     continue;
                 }
@@ -479,7 +479,7 @@ public class TypeCoercerImpl extends LockSupport implements TypeCoercer
                 // conclusion.
 
                 queue.addLast(compoundTuple);
-                consideredTuples.add(tuple);
+                consideredTuples.add(tuple.getKey());
             }
         }
     }
