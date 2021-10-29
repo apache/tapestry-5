@@ -2,8 +2,8 @@ package ${package}.pages;
 
 import org.apache.tapestry5.annotations.PageActivationContext;
 
-public class About
-{
+public class About {
+
     @PageActivationContext
     private String learn;
 

@@ -14,9 +14,9 @@ import java.time.LocalDate;
 /**
  * Layout component for pages of application test-project.
  */
-@Import(module="bootstrap/collapse")
-public class Layout
-{
+@Import(stylesheet = "context:css/app.css")
+public class Layout {
+
     @Inject
     private ComponentResources resources;
 
@@ -35,20 +35,15 @@ public class Layout
     @Symbol(SymbolConstants.APPLICATION_VERSION)
     private String appVersion;
 
-    public String getClassForPageName()
-    {
-        return resources.getPageName().equalsIgnoreCase(pageName)
-            ? "active"
-            : null;
+    public String getClassForPageName() {
+        return resources.getPageName().equalsIgnoreCase(pageName) ? "nav-link active" : "nav-link";
     }
 
-    public String[] getPageNames()
-    {
-        return new String[]{"Index", "About"};
+    public String[] getPageNames() {
+        return new String[]{ "Index", "About" };
     }
 
-    public int getYear()
-    {
+    public int getYear() {
         return LocalDate.now().getYear();
     }
 }

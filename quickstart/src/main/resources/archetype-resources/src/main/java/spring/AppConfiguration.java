@@ -1,10 +1,10 @@
-package ${package};
+package ${package}.spring;
 
 import org.apache.tapestry5.TapestryFilter;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.boot.web.server.ErrorPageRegistrar;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,14 +18,11 @@ import java.util.EnumSet;
 
 @Configuration
 @ComponentScan({ "${package}" })
-public class AppConfiguration
-{
+public class AppConfiguration {
 
     @Bean
-    public ServletContextInitializer initializer()
-    {
-        return new ServletContextInitializer()
-        {
+    public ServletContextInitializer initializer() {
+        return new ServletContextInitializer() {
             @Override
             public void onStartup(ServletContext servletContext) throws ServletException {
                 servletContext.setInitParameter("tapestry.app-package", "${package}");
@@ -40,10 +37,9 @@ public class AppConfiguration
     }
 
     @Bean
-    public ConfigurableServletWebServerFactory webServerFactory()
-    {
-        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-        factory.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/error404"));
-        return factory;
+    public ErrorPageRegistrar errorPageRegistrar() {
+        return registry -> {
+            registry.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/error404"));
+        };
     }
 }

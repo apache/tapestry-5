@@ -2,11 +2,19 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'java'
-    id 'org.gretty' version '@grettyVersion@'
+    id 'application'
+}
+
+application {
+    description = "${artifactId} application"
+    group = "${groupId}"
+    version = "${version}"
+    mainClass = '${package}.spring.App'
 }
 
 ext {
     versions = [
+        springBoot: "@springBootVersion@",
         tapestry: "@tapestryVersion@",
         jackson: "@jacksonVersion@",
         log4j: "@log4jVersion@",
@@ -32,6 +40,14 @@ configurations {
 }
 
 dependencies {
+    // Spring Boot
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${versions.springBoot}")
+    def excludeSpringBootStarterLogging = { exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging') }
+
+    implementation("org.springframework.boot:spring-boot-starter", excludeSpringBootStarterLogging)
+    implementation("org.springframework.boot:spring-boot-starter-web", excludeSpringBootStarterLogging)
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+
     // Apache Tapestry
     implementation("org.apache.tapestry:tapestry-core:${versions.tapestry}")
 
@@ -62,11 +78,6 @@ dependencies {
 }
 
 sourceSets {
-    main {
-        java {
-            exclude '${package.replaceAll("\.", "/")}/spring/*'
-        }
-    }
     test {
         java {
             exclude '${package.replaceAll("\.", "/")}/tapestry/*'
@@ -92,11 +103,6 @@ sourceSets {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
-}
-
-gretty {
-    servletContainer = 'tomcat9'
-    contextPath = '/'
 }
 
 test {

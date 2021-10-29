@@ -10,8 +10,8 @@ import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
-public class Login
-{
+public class Login {
+
     private static final Logger logger = LogManager.getLogger(Login.class);
 
     @Inject
@@ -32,8 +32,7 @@ public class Login
     @Property
     private String password;
 
-    void onValidateFromLogin()
-    {
+    void onValidateFromLogin() {
         if (!email.equals("users@tapestry.apache.org"))
             login.recordError(emailField, "Try with user: users@tapestry.apache.org");
 
@@ -41,15 +40,13 @@ public class Login
             login.recordError(passwordField, "Try with password: Tapestry5");
     }
 
-    Object onSuccessFromLogin()
-    {
+    Object onSuccessFromLogin() {
         logger.info("Login successful!");
         alertManager.success("Welcome aboard!");
         return Index.class;
     }
 
-    void onFailureFromLogin()
-    {
+    void onFailureFromLogin() {
         logger.warn("Login error!");
         alertManager.error("I'm sorry but I can't log you in!");
     }

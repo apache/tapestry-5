@@ -4,7 +4,9 @@
         <fileSet filtered="true" packaged="false">
             <directory/>
             <includes>
+                <include>pom-spring-boot.xml</include>
                 <include>build.gradle</include>
+                <include>build-spring-boot.gradle</include>
             </includes>
         </fileSet>
         <fileSet filtered="false" packaged="false">
@@ -29,7 +31,6 @@
             <directory>src/main/resources</directory>
             <includes>
                 <include>log4j2.yml</include>
-                <include>application.yml</include>
             </includes>
         </fileSet>
         <fileSet filtered="true" packaged="true">
@@ -41,18 +42,27 @@
         </fileSet>
         <fileSet filtered="false" packaged="false">
             <directory>src/main/</directory>
+            <excludes>
+                <exclude>webapp/WEB-INF/web.xml</exclude>
+            </excludes>
             <includes>
                 <include>webapp/**</include>
             </includes>
         </fileSet>
-        <!-- Test -->
-        <fileSet filtered="true" packaged="true">
-            <directory>src/test/groovy</directory>
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/</directory>
             <includes>
-                <include>**/*.groovy</include>
+                <include>webapp/WEB-INF/web.xml</include>
             </includes>
         </fileSet>
-        <fileSet filtered="false" packaged="false">
+        <!-- Test -->
+        <fileSet filtered="true" packaged="true">
+            <directory>src/test/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
             <directory>src/test/resources</directory>
             <includes>
                 <include>**/*</include>

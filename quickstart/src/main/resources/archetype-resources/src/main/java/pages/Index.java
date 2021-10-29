@@ -18,8 +18,8 @@ import java.time.ZonedDateTime;
 /**
  * Start page of application ${artifactId}.
  */
-public class Index
-{
+public class Index {
+
     private static final Logger logger = LogManager.getLogger(Index.class);
 
     @Inject

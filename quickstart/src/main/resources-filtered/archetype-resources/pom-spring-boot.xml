@@ -2,13 +2,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     #set( $D = '$' )
     <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>@springBootVersion@</version>
+		<relativePath/>
+	</parent>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
     <version>${version}</version>
-    <name>${artifactId} Tapestry 5 Application</name>
     <packaging>war</packaging>
+    <name>${artifactId} Tapestry 5 Application</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot-version>@springBootVersion@</spring-boot-version>
         <tapestry-version>@tapestryVersion@</tapestry-version>
         <jackson-version>@jacksonVersion@</jackson-version>
         <log4j-version>@log4jVersion@</log4j-version>
@@ -18,7 +25,6 @@
         <servlet-version>@servletVersion@</servlet-version>
         <maven-compiler-version>@mavenCompilerVersion@</maven-compiler-version>
         <maven-surefire-version>@mavenSurefireVersion@</maven-surefire-version>
-        <maven-jetty-version>@mavenJettyVersion@</maven-jetty-version>
     </properties>
     <repositories>
         <repository>
@@ -27,26 +33,40 @@
         </repository>
     </repositories>
     <dependencies>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <!-- Apache Tapestry -->
         <dependency>
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-core</artifactId>
             <version>${D}{tapestry-version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.ws</groupId>
-                    <artifactId>jaxws-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- CoffeeScript & Less support, plus resource minification -->
         <dependency>
@@ -163,12 +183,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-version}</version>
+                <version>${D}{maven-compiler-version}</version>
                 <configuration>
                     <release>11</release>
-                    <excludes>
-                        <exclude>${package.replaceAll("\.", "/")}/spring/*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -194,19 +211,8 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${maven-jetty-version}</version>
-                <configuration>
-                    <scan>10</scan>
-                    <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                    </webApp>
-                    <httpConnector>
-                        <port>8080</port>
-                    </httpConnector>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

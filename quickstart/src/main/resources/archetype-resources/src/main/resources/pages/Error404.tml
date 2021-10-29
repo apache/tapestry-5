@@ -3,7 +3,7 @@
       xmlns:p="tapestry:parameter">
 
 <div class="row">
-    <div class="span12">
+    <div class="col-12">
         <h1>Error 404 - Requested page not found!</h1>
     </div>
 </div>

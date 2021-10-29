@@ -7,10 +7,9 @@ import org.apache.tapestry5.commons.MappedConfiguration;
  * This module is automatically included as part of the Tapestry IoC Registry if <em>tapestry.execution-mode</em>
  * includes <code>development</code>.
  */
-public class DevelopmentModule
-{
-    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
-    {
+public class DevelopmentModule {
+
+    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration) {
         // The factory default is true but during the early stages of an application
         // overriding to false is a good idea. In addition, this is often overridden
         // on the command line as -Dtapestry.production-mode=false
@@ -20,6 +19,6 @@ public class DevelopmentModule
         // assets. Web browsers will cache assets because of the far future expires
         // header. If existing assets are changed, the version number should also
         // change, to force the browser to download new versions.
-        configuration.add(SymbolConstants.APPLICATION_VERSION, "${version}-DEV");
+        configuration.add(SymbolConstants.APPLICATION_VERSION, "${version}-dev");
     }
 }

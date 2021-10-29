@@ -4,35 +4,40 @@
 <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->
 
 <!-- Main hero unit for a primary marketing message or call to action -->
-<div class="row hero-unit">
-    <p>
-        <img src="${D}{asset:context:images/tapestry.png}" alt="${D}{message:greeting}" title="${D}{message:greeting}" width="550" height="230"/>
-    </p>
-    <h1>${D}{message:greeting}</h1>
-    <p>The current time is: <strong>${D}{currentTime}</strong></p>
-    <p>
-        This is a template for a simple marketing or informational website. It includes a large callout called
-        the hero unit and three supporting pieces of content. Use it as a starting point to create something
-        more unique.
-    </p>
-    <p><t:actionlink t:id="learnmore" class="btn btn-primary btn-large">Learn more &raquo;</t:actionlink></p>
+<div class="row">
+    <div class="col-12">
+        <p>
+            <img src="${D}{asset:context:images/apache-tapestry.png}" alt="${D}{message:greeting}" title="${D}{message:greeting}" width="600"/>
+        </p>
+        <h1 id="title">${D}{message:greeting}</h1>
+        <p>The current time is: <strong>${D}{currentTime}</strong></p>
+        <p>
+            This is a template for a simple marketing or informational website. It includes a large callout called
+            the hero unit and three supporting pieces of content. Use it as a starting point to create something
+            more unique.
+        </p>
+        <p><t:actionlink t:id="learnmore" class="btn btn-primary btn-large">Learn more &raquo;</t:actionlink></p>
+    </div>
 </div>
 
 <!-- Example row of columns -->
 <div class="row">
-    <div class="span4">
+    <div class="col-12">
         <h2>Normal link</h2>
-        <p>Clink the bottom link and the page refresh with event <code>complete</code></p>
-        <p><t:eventlink event="complete" class="btn btn-default">Complete&raquo;</t:eventlink></p>
+        <p>Click the link below and the page will refresh with event <code>complete</code></p>
+        <p><t:eventlink event="complete" class="btn btn-primary">Complete &raquo;</t:eventlink></p>
     </div>
+</div>
 
-    <t:zone t:id="middlezone" class="span4">
-    </t:zone>
+<div class="row">
+    <t:zone t:id="middlezone" class="col-12"></t:zone>
+</div>
 
-    <div class="span4">
+<div class="row">
+    <div class="col-12">
         <h2>Ajax link</h2>
         <p>Click the bottom link to update just the middle column with Ajax call with event <code>ajax</code></p>
-        <p><t:eventlink event="ajax" zone="middlezone" class="btn btn-default">Ajax&raquo;</t:eventlink></p>
+        <p><t:eventlink event="ajax" zone="middlezone" class="btn btn-primary">Ajax &raquo;</t:eventlink></p>
     </div>
 </div>
 

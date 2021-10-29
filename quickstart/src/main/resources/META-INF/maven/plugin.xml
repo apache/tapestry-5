@@ -1,5 +1,5 @@
 <plugin>
-    <description>Archetype for creating a basic Tapestry 5 application.</description>
+    <description>Tapestry 5 Quickstart Project</description>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>quickstart</artifactId>
     <version>@quickstartVersion@</version>
