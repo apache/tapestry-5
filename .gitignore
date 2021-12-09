@@ -19,4 +19,4 @@ gradle-app.setting
 *~
 \#*
 /.metadata/
-docs/
+docs/*
