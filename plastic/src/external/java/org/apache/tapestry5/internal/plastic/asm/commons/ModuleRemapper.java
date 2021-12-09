@@ -45,11 +45,11 @@ public class ModuleRemapper extends ModuleVisitor {
    * Constructs a new {@link ModuleRemapper}. <i>Subclasses must not use this constructor</i>.
    * Instead, they must use the {@link #ModuleRemapper(int,ModuleVisitor,Remapper)} version.
    *
-   * @param moduleVisitor the module visitor this remapper must deleted to.
+   * @param moduleVisitor the module visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited module.
    */
   public ModuleRemapper(final ModuleVisitor moduleVisitor, final Remapper remapper) {
-    this(/* latest api = */ Opcodes.ASM8, moduleVisitor, remapper);
+    this(/* latest api = */ Opcodes.ASM9, moduleVisitor, remapper);
   }
 
   /**
@@ -57,9 +57,9 @@ public class ModuleRemapper extends ModuleVisitor {
    *
    * @param api the ASM API version supported by this remapper. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
-   * @param moduleVisitor the module visitor this remapper must deleted to.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
+   * @param moduleVisitor the module visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited module.
    */
   protected ModuleRemapper(

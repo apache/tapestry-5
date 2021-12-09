@@ -68,15 +68,16 @@ public abstract class AnnotationVisitor {
    *     calls. May be {@literal null}.
    */
   public AnnotationVisitor(final int api, final AnnotationVisitor annotationVisitor) {
-    if (api != Opcodes.ASM8
+    if (api != Opcodes.ASM9
+        && api != Opcodes.ASM8
         && api != Opcodes.ASM7
         && api != Opcodes.ASM6
         && api != Opcodes.ASM5
         && api != Opcodes.ASM4
-        && api != Opcodes.ASM9_EXPERIMENTAL) {
+        && api != Opcodes.ASM10_EXPERIMENTAL) {
       throw new IllegalArgumentException("Unsupported api " + api);
     }
-    if (api == Opcodes.ASM9_EXPERIMENTAL) {
+    if (api == Opcodes.ASM10_EXPERIMENTAL) {
       Constants.checkAsmExperimental(this);
     }
     this.api = api;
@@ -130,9 +131,9 @@ public abstract class AnnotationVisitor {
   }
 
   /**
-   * Visits an array value of the annotation. Note that arrays of primitive types (such as byte,
+   * Visits an array value of the annotation. Note that arrays of primitive values (such as byte,
    * boolean, short, char, int, long, float or double) can be passed as value to {@link #visit
-   * visit}. This is what {@link ClassReader} does.
+   * visit}. This is what {@link ClassReader} does for non empty arrays of primitive values.
    *
    * @param name the value name.
    * @return a visitor to visit the actual array value elements, or {@literal null} if this visitor

@@ -28,6 +28,7 @@
 package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.List;
+
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
@@ -61,7 +62,7 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements Opcodes
    * version.
    */
   public BasicInterpreter() {
-    super(/* latest api = */ ASM8);
+    super(/* latest api = */ ASM9);
     if (getClass() != BasicInterpreter.class) {
       throw new IllegalStateException();
     }
@@ -72,8 +73,8 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements Opcodes
    *
    * @param api the ASM API version supported by this interpreter. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
    */
   protected BasicInterpreter(final int api) {
     super(api);

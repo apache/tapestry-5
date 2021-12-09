@@ -28,6 +28,7 @@
 package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.List;
+
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.FieldInsnNode;
@@ -47,7 +48,7 @@ public class BasicVerifier extends BasicInterpreter {
    * use this constructor</i>. Instead, they must use the {@link #BasicVerifier(int)} version.
    */
   public BasicVerifier() {
-    super(/* latest api = */ ASM8);
+    super(/* latest api = */ ASM9);
     if (getClass() != BasicVerifier.class) {
       throw new IllegalStateException();
     }
@@ -58,8 +59,8 @@ public class BasicVerifier extends BasicInterpreter {
    *
    * @param api the ASM API version supported by this interpreter. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
    */
   protected BasicVerifier(final int api) {
     super(api);

@@ -49,21 +49,21 @@ public class MethodRemapper extends MethodVisitor {
    * Constructs a new {@link MethodRemapper}. <i>Subclasses must not use this constructor</i>.
    * Instead, they must use the {@link #MethodRemapper(int,MethodVisitor,Remapper)} version.
    *
-   * @param methodVisitor the method visitor this remapper must deleted to.
+   * @param methodVisitor the method visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited method.
    */
   public MethodRemapper(final MethodVisitor methodVisitor, final Remapper remapper) {
-    this(/* latest api = */ Opcodes.ASM8, methodVisitor, remapper);
+    this(/* latest api = */ Opcodes.ASM9, methodVisitor, remapper);
   }
 
   /**
    * Constructs a new {@link MethodRemapper}.
    *
    * @param api the ASM API version supported by this remapper. Must be one of {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
-   * @param methodVisitor the method visitor this remapper must deleted to.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
+   * @param methodVisitor the method visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited method.
    */
   protected MethodRemapper(
@@ -77,7 +77,7 @@ public class MethodRemapper extends MethodVisitor {
     AnnotationVisitor annotationVisitor = super.visitAnnotationDefault();
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(/* descriptor = */ null, annotationVisitor);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class MethodRemapper extends MethodVisitor {
         super.visitAnnotation(remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   @Override
@@ -96,7 +96,7 @@ public class MethodRemapper extends MethodVisitor {
         super.visitTypeAnnotation(typeRef, typePath, remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   @Override
@@ -106,7 +106,7 @@ public class MethodRemapper extends MethodVisitor {
         super.visitParameterAnnotation(parameter, remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   @Override
@@ -210,7 +210,7 @@ public class MethodRemapper extends MethodVisitor {
         super.visitInsnAnnotation(typeRef, typePath, remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   @Override
@@ -226,7 +226,7 @@ public class MethodRemapper extends MethodVisitor {
         super.visitTryCatchAnnotation(typeRef, typePath, remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   @Override
@@ -260,7 +260,7 @@ public class MethodRemapper extends MethodVisitor {
             typeRef, typePath, start, end, index, remapper.mapDesc(descriptor), visible);
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(annotationVisitor);
+        : createAnnotationRemapper(descriptor, annotationVisitor);
   }
 
   /**
@@ -269,8 +269,24 @@ public class MethodRemapper extends MethodVisitor {
    *
    * @param annotationVisitor the AnnotationVisitor the remapper must delegate to.
    * @return the newly created remapper.
+   * @deprecated use {@link #createAnnotationRemapper(String, AnnotationVisitor)} instead.
    */
+  @Deprecated
   protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
-    return new AnnotationRemapper(api, annotationVisitor, remapper);
+    return new AnnotationRemapper(api, /* descriptor = */ null, annotationVisitor, remapper);
+  }
+
+  /**
+   * Constructs a new remapper for annotations. The default implementation of this method returns a
+   * new {@link AnnotationRemapper}.
+   *
+   * @param descriptor the descriptor of the visited annotation.
+   * @param annotationVisitor the AnnotationVisitor the remapper must delegate to.
+   * @return the newly created remapper.
+   */
+  protected AnnotationVisitor createAnnotationRemapper(
+      final String descriptor, final AnnotationVisitor annotationVisitor) {
+    return new AnnotationRemapper(api, descriptor, annotationVisitor, remapper)
+        .orDeprecatedValue(createAnnotationRemapper(annotationVisitor));
   }
 }

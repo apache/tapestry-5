@@ -29,6 +29,7 @@ package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 
 /**
@@ -487,12 +488,19 @@ public class InsnList implements Iterable<AbstractInsnNode> {
     AbstractInsnNode remove;
 
     InsnListIterator(final int index) {
-      if (index == size()) {
+      if (index < 0 || index > size()) {
+        throw new IndexOutOfBoundsException();
+      } else if (index == size()) {
         nextInsn = null;
         previousInsn = getLast();
       } else {
-        nextInsn = get(index);
-        previousInsn = nextInsn.previousInsn;
+        AbstractInsnNode currentInsn = getFirst();
+        for (int i = 0; i < index; i++) {
+          currentInsn = currentInsn.nextInsn;
+        }
+
+        nextInsn = currentInsn;
+        previousInsn = currentInsn.previousInsn;
       }
     }
 

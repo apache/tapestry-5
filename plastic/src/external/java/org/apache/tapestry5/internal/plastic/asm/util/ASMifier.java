@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
@@ -53,7 +54,7 @@ public class ASMifier extends Printer {
   /** The help message shown when command line arguments are incorrect. */
   private static final String USAGE =
       "Prints the ASM code to generate the given class.\n"
-          + "Usage: ASMifier [-debug] <fully qualified class name or class file name>";
+          + "Usage: ASMifier [-nodebug] <fully qualified class name or class file name>";
 
   /** A pseudo access flag used to distinguish class access flags. */
   private static final int ACCESS_CLASS = 0x40000;
@@ -105,6 +106,9 @@ public class ASMifier extends Printer {
     classVersions.put(Opcodes.V13, "V13");
     classVersions.put(Opcodes.V14, "V14");
     classVersions.put(Opcodes.V15, "V15");
+    classVersions.put(Opcodes.V16, "V16");
+    classVersions.put(Opcodes.V17, "V17");
+    classVersions.put(Opcodes.V18, "V18");
     CLASS_VERSIONS = Collections.unmodifiableMap(classVersions);
   }
 
@@ -124,7 +128,7 @@ public class ASMifier extends Printer {
    * @throws IllegalStateException If a subclass calls this constructor.
    */
   public ASMifier() {
-    this(/* latest api = */ Opcodes.ASM8, "classWriter", 0);
+    this(/* latest api = */ Opcodes.ASM9, "classWriter", 0);
     if (getClass() != ASMifier.class) {
       throw new IllegalStateException();
     }
@@ -134,7 +138,8 @@ public class ASMifier extends Printer {
    * Constructs a new {@link ASMifier}.
    *
    * @param api the ASM API version implemented by this class. Must be one of {@link Opcodes#ASM4},
-   *     {@link Opcodes#ASM5}, {@link Opcodes#ASM6}, {@link Opcodes#ASM7} or {@link Opcodes#ASM8}.
+   *     {@link Opcodes#ASM5}, {@link Opcodes#ASM6}, {@link Opcodes#ASM7}, {@link Opcodes#ASM8} or
+   *     {@link Opcodes#ASM9}.
    * @param visitorVariableName the name of the visitor variable in the produced code.
    * @param annotationVisitorId identifier of the annotation visitor variable in the produced code.
    */
@@ -148,7 +153,7 @@ public class ASMifier extends Printer {
   /**
    * Prints the ASM source code to generate the given class to the standard output.
    *
-   * <p>Usage: ASMifier [-debug] &lt;binary class name or class file name&gt;
+   * <p>Usage: ASMifier [-nodebug] &lt;binary class name or class file name&gt;
    *
    * @param args the command line arguments.
    * @throws IOException if the class cannot be found, or if an IOException occurs.
@@ -160,7 +165,7 @@ public class ASMifier extends Printer {
   /**
    * Prints the ASM source code to generate the given class to the given output.
    *
-   * <p>Usage: ASMifier [-debug] &lt;binary class name or class file name&gt;
+   * <p>Usage: ASMifier [-nodebug] &lt;binary class name or class file name&gt;
    *
    * @param args the command line arguments.
    * @param output where to print the result.
@@ -196,19 +201,19 @@ public class ASMifier extends Printer {
         simpleName = name.substring(lastSlashIndex + 1).replaceAll("[-\\(\\)]", "_");
       }
     }
-    text.add("import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.Attribute;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.ClassReader;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.ClassWriter;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.Handle;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.Label;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.Opcodes;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.RecordComponentVisitor;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.Type;\n");
-    text.add("import org.apache.tapestry5.internal.plastic.asm.TypePath;\n");
+    text.add("import org.objectweb.asm.AnnotationVisitor;\n");
+    text.add("import org.objectweb.asm.Attribute;\n");
+    text.add("import org.objectweb.asm.ClassReader;\n");
+    text.add("import org.objectweb.asm.ClassWriter;\n");
+    text.add("import org.objectweb.asm.ConstantDynamic;\n");
+    text.add("import org.objectweb.asm.FieldVisitor;\n");
+    text.add("import org.objectweb.asm.Handle;\n");
+    text.add("import org.objectweb.asm.Label;\n");
+    text.add("import org.objectweb.asm.MethodVisitor;\n");
+    text.add("import org.objectweb.asm.Opcodes;\n");
+    text.add("import org.objectweb.asm.RecordComponentVisitor;\n");
+    text.add("import org.objectweb.asm.Type;\n");
+    text.add("import org.objectweb.asm.TypePath;\n");
     text.add("public class " + simpleName + "Dump implements Opcodes {\n\n");
     text.add("public static byte[] dump () throws Exception {\n\n");
     text.add("ClassWriter classWriter = new ClassWriter(0);\n");
@@ -323,18 +328,11 @@ public class ASMifier extends Printer {
     text.add(stringBuilder.toString());
   }
 
-  /**
-   * <b>Experimental, use at your own risk.</b>.
-   *
-   * @param permittedSubtype the internal name of a permitted subtype.
-   * @deprecated this API is experimental.
-   */
   @Override
-  @Deprecated
-  public void visitPermittedSubtypeExperimental(final String permittedSubtype) {
+  public void visitPermittedSubclass(final String permittedSubclass) {
     stringBuilder.setLength(0);
-    stringBuilder.append("classWriter.visitPermittedSubtypeExperimental(");
-    appendConstant(permittedSubtype);
+    stringBuilder.append("classWriter.visitPermittedSubclass(");
+    appendConstant(permittedSubclass);
     stringBuilder.append(END_PARAMETERS);
     text.add(stringBuilder.toString());
   }
@@ -633,9 +631,7 @@ public class ASMifier extends Printer {
 
   @Override
   public void visitRecordComponentEnd() {
-    stringBuilder.setLength(0);
-    stringBuilder.append(name).append(VISIT_END);
-    text.add(stringBuilder.toString());
+    visitMemberEnd();
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -660,9 +656,7 @@ public class ASMifier extends Printer {
 
   @Override
   public void visitFieldEnd() {
-    stringBuilder.setLength(0);
-    stringBuilder.append(name).append(VISIT_END);
-    text.add(stringBuilder.toString());
+    visitMemberEnd();
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -1135,9 +1129,7 @@ public class ASMifier extends Printer {
 
   @Override
   public void visitMethodEnd() {
-    stringBuilder.setLength(0);
-    stringBuilder.append(name).append(VISIT_END);
-    text.add(stringBuilder.toString());
+    visitMemberEnd();
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -1244,6 +1236,13 @@ public class ASMifier extends Printer {
       stringBuilder.append(name).append(".visitAttribute(attribute);\n");
       stringBuilder.append("}\n");
     }
+    text.add(stringBuilder.toString());
+  }
+
+  /** Visits the end of a field, record component or method. */
+  private void visitMemberEnd() {
+    stringBuilder.setLength(0);
+    stringBuilder.append(name).append(VISIT_END);
     text.add(stringBuilder.toString());
   }
 

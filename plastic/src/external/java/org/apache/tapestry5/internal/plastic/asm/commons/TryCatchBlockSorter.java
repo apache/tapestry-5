@@ -30,6 +30,7 @@ package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.Collections;
 import java.util.Comparator;
+
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
@@ -71,7 +72,7 @@ public class TryCatchBlockSorter extends MethodNode {
       final String signature,
       final String[] exceptions) {
     this(
-        /* latest api = */ Opcodes.ASM8,
+        /* latest api = */ Opcodes.ASM9,
         methodVisitor,
         access,
         name,

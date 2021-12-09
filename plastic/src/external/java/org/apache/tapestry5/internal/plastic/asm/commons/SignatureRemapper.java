@@ -29,6 +29,7 @@
 package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.ArrayList;
+
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.signature.SignatureVisitor;
 
@@ -49,11 +50,11 @@ public class SignatureRemapper extends SignatureVisitor {
    * Constructs a new {@link SignatureRemapper}. <i>Subclasses must not use this constructor</i>.
    * Instead, they must use the {@link #SignatureRemapper(int,SignatureVisitor,Remapper)} version.
    *
-   * @param signatureVisitor the signature visitor this remapper must deleted to.
+   * @param signatureVisitor the signature visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited signature.
    */
   public SignatureRemapper(final SignatureVisitor signatureVisitor, final Remapper remapper) {
-    this(/* latest api = */ Opcodes.ASM8, signatureVisitor, remapper);
+    this(/* latest api = */ Opcodes.ASM9, signatureVisitor, remapper);
   }
 
   /**
@@ -61,9 +62,9 @@ public class SignatureRemapper extends SignatureVisitor {
    *
    * @param api the ASM API version supported by this remapper. Must be one of {@link
    *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5},{@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8}.
-   * @param signatureVisitor the signature visitor this remapper must deleted to.
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
+   * @param signatureVisitor the signature visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited signature.
    */
   protected SignatureRemapper(

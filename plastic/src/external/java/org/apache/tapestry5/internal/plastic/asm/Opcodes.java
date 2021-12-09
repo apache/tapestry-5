@@ -48,6 +48,7 @@ public interface Opcodes {
   int ASM6 = 6 << 16 | 0 << 8;
   int ASM7 = 7 << 16 | 0 << 8;
   int ASM8 = 8 << 16 | 0 << 8;
+  int ASM9 = 9 << 16 | 0 << 8;
 
   /**
    * <i>Experimental, use at your own risk. This field will be renamed when it becomes stable, this
@@ -55,7 +56,7 @@ public interface Opcodes {
    *
    * @deprecated This API is experimental.
    */
-  @Deprecated int ASM9_EXPERIMENTAL = 1 << 24 | 9 << 16 | 0 << 8;
+  @Deprecated int ASM10_EXPERIMENTAL = 1 << 24 | 10 << 16 | 0 << 8;
 
   /*
    * Internal flags used to redirect calls to deprecated methods. For instance, if a visitOldStuff
@@ -132,7 +133,7 @@ public interface Opcodes {
    * <pre>
    * public class StuffVisitor {
    *   &#64;Deprecated public void visitOldStuff(int arg, ...) {
-   *     visitNewStuf(arg | SOURCE_DEPRECATED, ...);
+   *     visitNewStuff(arg | SOURCE_DEPRECATED, ...);
    *   }
    *   public void visitNewStuff(int argAndSource...) {
    *     if ((argAndSource & SOURCE_DEPRECATED) == 0) {
@@ -154,7 +155,7 @@ public interface Opcodes {
    * <p>and there are two cases:
    *
    * <ul>
-   *   <li>call visitOldSuff: in the call to super.visitOldStuff, the source is set to
+   *   <li>call visitOldStuff: in the call to super.visitOldStuff, the source is set to
    *       SOURCE_DEPRECATED and visitNewStuff is called. Here 'do stuff' is run because the source
    *       was previously set to SOURCE_DEPRECATED, and execution eventually returns to
    *       UserStuffVisitor.visitOldStuff, where 'do user stuff' is run.
@@ -280,6 +281,9 @@ public interface Opcodes {
   int V13 = 0 << 16 | 57;
   int V14 = 0 << 16 | 58;
   int V15 = 0 << 16 | 59;
+  int V16 = 0 << 16 | 60;
+  int V17 = 0 << 16 | 61;
+  int V18 = 0 << 16 | 62;
 
   /**
    * Version flag indicating that the class is using 'preview' features.
