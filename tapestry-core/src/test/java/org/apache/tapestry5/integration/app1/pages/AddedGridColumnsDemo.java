@@ -50,7 +50,7 @@ public class AddedGridColumnsDemo
 
         model.addEmpty("viewlink");
 
-        model.add("title.length()").label("Title Length");
+        model.addExpression("titlelength", "title.length()").label("Title Length");
 
         // This is to test the case where there's no property conduit or override block.
 
