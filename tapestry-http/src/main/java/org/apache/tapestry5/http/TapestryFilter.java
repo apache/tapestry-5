@@ -14,6 +14,7 @@ package org.apache.tapestry5.http;
 
 import java.io.IOException;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -24,6 +25,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tapestry5.http.internal.AsyncRequestService;
 import org.apache.tapestry5.http.internal.ServletContextSymbolProvider;
 import org.apache.tapestry5.http.internal.SingleKeySymbolProvider;
 import org.apache.tapestry5.http.internal.TapestryAppInitializer;
@@ -67,6 +69,8 @@ public class TapestryFilter implements Filter
     private Registry registry;
 
     private HttpServletRequestHandler handler;
+    
+    private AsyncRequestService asyncRequestService;
 
     /**
      * Key under which the Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the
@@ -117,6 +121,7 @@ public class TapestryFilter implements Filter
         registry.performRegistryStartup();
 
         handler = registry.getService("HttpServletRequestHandler", HttpServletRequestHandler.class);
+        asyncRequestService = registry.getService("AsyncRequestService", AsyncRequestService.class);
 
         init(registry);
 
@@ -165,7 +170,7 @@ public class TapestryFilter implements Filter
         return new Class[0];
     }
 
-    public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public final void runFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException
     {
         try
@@ -180,6 +185,70 @@ public class TapestryFilter implements Filter
         } finally
         {
             registry.cleanupThread();
+        }
+    }
+    
+    public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException
+    {
+
+        AsyncRequestHandlerResponse handlerResponse = asyncRequestService.handle(
+                (HttpServletRequest) request, (HttpServletResponse) response);
+        
+        if (handlerResponse.isAsync())
+        {
+            AsyncContext asyncContext;
+            if (handlerResponse.isHasRequestAndResponse())
+            {
+                asyncContext = request.startAsync(handlerResponse.getRequest(), handlerResponse.getResponse());
+            }
+            else
+            {
+                asyncContext = request.startAsync();
+            }
+            if (handlerResponse.getListener() != null)
+            {
+                asyncContext.addListener(handlerResponse.getListener());
+            }
+            if (handlerResponse.getTimeout() > 0)
+            {
+                asyncContext.setTimeout(handlerResponse.getTimeout());
+            }
+            handlerResponse.getExecutor().execute(
+                    new ExceptionCatchingRunnable(() -> {
+                        runFilter(request, response, chain);
+                        asyncContext.complete();
+                    }));
+        }
+        else
+        {
+            runFilter(request, response, chain);
+        }
+    }
+    
+    private static interface ExceptionRunnable
+    {
+        void run() throws Exception;
+    }
+    
+    private final class ExceptionCatchingRunnable implements Runnable
+    {
+        private final ExceptionRunnable runnable;
+        
+        public ExceptionCatchingRunnable(ExceptionRunnable runnable) 
+        {
+            this.runnable = runnable;
+        }
+        public void run() 
+        {
+            try 
+            {
+                runnable.run();
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 

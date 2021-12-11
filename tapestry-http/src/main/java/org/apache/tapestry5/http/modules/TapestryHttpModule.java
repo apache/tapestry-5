@@ -30,9 +30,11 @@ import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.http.OptimizedSessionPersistedObject;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.AsyncRequestService;
 import org.apache.tapestry5.http.internal.TypeCoercerHttpRequestBodyConverter;
 import org.apache.tapestry5.http.internal.gzip.GZipFilter;
 import org.apache.tapestry5.http.internal.services.ApplicationGlobalsImpl;
+import org.apache.tapestry5.http.internal.services.AsyncRequestServiceImpl;
 import org.apache.tapestry5.http.internal.services.BaseURLSourceImpl;
 import org.apache.tapestry5.http.internal.services.ContextImpl;
 import org.apache.tapestry5.http.internal.services.DefaultSessionPersistedObjectAnalyzer;
@@ -102,6 +104,7 @@ public final class TapestryHttpModule {
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(RestSupport.class, RestSupportImpl.class);
+        binder.bind(AsyncRequestService.class, AsyncRequestServiceImpl.class);
     }
     
     /**
@@ -316,6 +319,7 @@ public final class TapestryHttpModule {
         configuration.addInstance("TypeCoercer", TypeCoercerHttpRequestBodyConverter.class);
     }
     
+    @SuppressWarnings("rawtypes")
     public static void contributeTypeCoercer(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
         CoercionTuple.add(configuration, HttpServletRequest.class, String.class, TapestryHttpModule::toString);
