@@ -54,7 +54,7 @@ task processFiltered(type: Copy) {
         junitVersion: '5.7.2',
         jacksonVersion: '2.12.5',
         jsonVersion: '1.1.4',
-        log4jVersion: '2.14.1',
+        log4jVersion: '2.16.0',
         yassonVersion: '2.0.2',
         servletVersion: '3.1.0',
         mavenCompilerVersion: '3.8.1',
