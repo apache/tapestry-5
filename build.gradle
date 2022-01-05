@@ -77,6 +77,10 @@ println "JDK: " + System.getProperty("java.version")
 //println "continuousIntegrationBuild? $continuousIntegrationBuild"
 
 allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.fork = true
+    }
+
 
     apply plugin: "eclipse"
     apply plugin: "idea"
