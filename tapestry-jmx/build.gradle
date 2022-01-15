@@ -1,9 +1,9 @@
 description = "Allows easy exposure of Tapestry Services as JMX MBeans"
 
 dependencies {
-  compile project(':tapestry-core')
+  implementation project(':tapestry-core')
 
-  testCompile project(':tapestry-test')
+  testImplementation project(':tapestry-test')
   }
 
 test {

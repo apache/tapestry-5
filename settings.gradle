@@ -1,8 +1,32 @@
+def getJavaLatestMajorVersion() {
+    return 17
+}
+
+def getJavaMajorVersion() {
+    String javaVersion = System.getProperty("java.version")
+    return Integer.parseInt(javaVersion.substring(0, javaVersion.indexOf(".")))
+}
+
+def isJavaLatestMajorVersion() {
+    return getJavaMajorVersion() == getJavaLatestMajorVersion() 
+}
+
+def isWrongJavaLatestMajorVersion() {
+    return getJavaMajorVersion() > getJavaLatestMajorVersion() 
+}
+
+if (isWrongJavaLatestMajorVersion()) {
+    println "Current major Java version is higher than the latest one configured in settings.gradle";
+}
+
 include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-http", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
 include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     include "tapestry-javadoc"
+}
+if (isJavaLatestMajorVersion()) {
+    include "tapestry-latest-java-tests"
 }
 include "quickstart", "tapestry-clojure", "tapestry-mongodb"
 include "tapestry-test-data", 'tapestry-internal-test', "tapestry-ioc-junit"

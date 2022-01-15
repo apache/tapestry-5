@@ -7,26 +7,26 @@ description = "Integration with WRO4J to perform runtime CoffeeScript compilatio
 //}
 
 dependencies {
-    compile project(":tapestry-core")
-    compile "com.github.sommeri:less4j:1.12.0"
-    compile "com.google.javascript:closure-compiler-unshaded:v20200504"
-    compile "org.mozilla:rhino:1.7.7.2"
+    implementation project(":tapestry-core")
+    implementation "com.github.sommeri:less4j:1.12.0"
+    implementation "com.google.javascript:closure-compiler-unshaded:v20200504"
+    implementation "org.mozilla:rhino:1.7.7.2"
 
-    testCompile project(":tapestry-runner")
-    testCompile "org.gebish:geb-spock:${versions.geb}", {
+    testImplementation project(":tapestry-runner")
+    testImplementation "org.gebish:geb-spock:${versions.geb}", {
 		exclude group: "org.codehaus.groovy", module: "groovy-all" // avoid multiple Groovy compilers on classpath
 	}
-    testCompile "org.spockframework:spock-tapestry:${versions.spock}", {
+    testImplementation "org.spockframework:spock-tapestry:${versions.spock}", {
     	exclude group: "org.apache.tapestry"
     }
     
-    testCompile "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
+    testImplementation "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
-    testCompile "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+    testImplementation "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
-    testCompile ("io.github.bonigarcia:webdrivermanager:2.2.4")
+    testImplementation ("io.github.bonigarcia:webdrivermanager:2.2.4")
     
 }
 

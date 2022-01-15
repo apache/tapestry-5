@@ -2,18 +2,18 @@ description = "[Deprecated] Utilities for integration testing of Tapestry applic
 
 dependencies {
 
-  compile project(":tapestry-test-data")
-  compile project(":tapestry-runner")
+  implementation project(":tapestry-test-data")
+  implementation project(":tapestry-runner")
 
-  compile ("io.github.bonigarcia:webdrivermanager:2.2.4")
+  implementation ("io.github.bonigarcia:webdrivermanager:2.2.4")
 
-  compile "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
+  implementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
       exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
       exclude group: "org.testng", module: "testng"
       exclude group: "javax.servlet", module: "javax.servlet-api"
   }
-  compile "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
+  implementation "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
 
-  compile "org.testng:testng:${versions.testng}"
-  compile "org.easymock:easymock:${versions.easymock}"
+  implementation "org.testng:testng:${versions.testng}"
+  implementation "org.easymock:easymock:${versions.easymock}"
 }

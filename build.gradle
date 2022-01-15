@@ -80,8 +80,6 @@ allprojects {
 
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: "signing"
-
 
     repositories {
         mavenCentral()
@@ -133,12 +131,28 @@ String jdkVersion = System.properties['java.version']
 def jdkMajorVersion = jdkVersion.substring(0, jdkVersion.indexOf(".")) // 1, 9, 10...
 
 subprojects {
-
-    def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
     
-    version = parent.version
+    def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
 
-    group = "org.apache.tapestry"
+    apply plugin: "maven-publish"  // for deployment
+    
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                version = parent.version
+                groupId = "org.apache.tapestry"
+                // from components.java
+            }
+        }
+    }
+    
+    if (doSign) {
+        apply plugin: "signing"
+        signing {
+            // sign publishing.publications.mavenJava
+            sign publishing.publications.maven
+        }
+    }
 
     configurations {
         provided
@@ -146,8 +160,6 @@ subprojects {
 
     apply plugin: "java"
     apply plugin: "groovy" // mostly for testing
-    apply plugin: "maven"  // for deployment
-    // TODO: replace the "maven" plugin above with the newer "maven-publish"
 
     apply plugin: "project-report"
     apply plugin: "jacoco"
@@ -179,9 +191,11 @@ subprojects {
 
     dependencies {
         
-        testCompile "org.spockframework:spock-core:${versions.spock}"
+        // https://docs.gradle.org/7.3.3/userguide/upgrading_version_6.html#potential_breaking_changes, 
+        // Table 1. Common configuration upgrades
+        testImplementation "org.spockframework:spock-core:${versions.spock}"
          
-        testRuntime "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+        testRuntimeOnly "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     }
 
     compileTestGroovy {
@@ -274,40 +288,38 @@ subprojects {
         }
     }
 
-    if (rootProject.doSign) {
-        // sign (create PGP signature for) archives (standard JARs)
-        // and meta (sources JARs)
-        signing { sign configurations.archives, configurations.meta }
-    }
-
-    uploadPublished {
-
-        doFirst {
-            if (!canDeploy) {
-                throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' root project properties.")
-            }
-        }
+//    uploadPublished {
+//
+//        doFirst {
+//            if (!canDeploy) {
+//                throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' root project properties.")
+//            }
+//        }
 
         if (canDeploy) {
             repositories {
-
-                project.ext.deployer = repositories.mavenDeployer {
-
-                    if (doSign) {
-                        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                    }
-
-                    repository(url: stagingUrl) {
-                        authentication(userName: deployUsername(), password: deployPassword())
-                    }
-
-                    snapshotRepository(url: snapshotUrl) {
-                        authentication(userName: deployUsername(), password: deployPassword())
+                
+                maven {
+                    name = "apacheSnapshots"
+                    url = snapshotUrl
+                    credentials {
+                        username = deployUsername()
+                        password = deployPassword()
                     }
                 }
+                
+                maven {
+                    name = "apacheStaging"
+                    url = stagingUrl
+                    credentials {
+                        username = deployUsername()
+                        password = deployPassword()
+                    }
+                }
+                
             }
         }
-    }
+//    }
 }
 
 subprojects.each { project.evaluationDependsOn(it.name) }

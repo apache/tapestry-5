@@ -6,7 +6,7 @@ repositories {
 
 
 dependencies {
-    compile ("ro.isdc.wro4j:wro4j-extensions:1.8.0"){
+    implementation ("ro.isdc.wro4j:wro4j-extensions:1.8.0"){
       exclude group: 'org.jruby'
       exclude module: 'spring-web'
       exclude module: 'closure-compiler'

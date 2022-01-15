@@ -1,11 +1,11 @@
 description = "Provides support Tapestry injections in Spock specifications"
 
 dependencies {
-	compile project(':commons')
-	compile project(':tapestry-ioc')
-	compile "org.spockframework:spock-core:${versions.spock}"
+	implementation project(':commons')
+	implementation project(':tapestry-ioc')
+	implementation "org.spockframework:spock-core:${versions.spock}"
 	
-	testCompile "javax.inject:javax.inject:1"
+	testImplementation "javax.inject:javax.inject:1"
 }
 
 test {

@@ -1,8 +1,8 @@
 description = "Utilities for junit testing a tapestry-ioc application"
 
 dependencies {
-    compile project(':tapestry-ioc')
-	compile 'junit:junit:4.11'
+    implementation project(':tapestry-ioc')
+	implementation 'junit:junit:4.11'
 }
 
 test {

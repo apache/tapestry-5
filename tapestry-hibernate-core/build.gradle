@@ -2,16 +2,16 @@ description = "Basic Hibernate services for Tapestry, useable outside of a Tapes
 
 
 dependencies {
-    compile project(':tapestry-ioc')
+    implementation project(':tapestry-ioc')
 
-    compile group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate
     
-    compile 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 
-    testCompile project(':tapestry-test')
-    testCompile "org.easymock:easymock:${versions.easymock}"
-    testCompile "org.testng:testng:${versions.testng}", { transitive = false }
-    testRuntime "org.hsqldb:hsqldb:2.2.8"
+    testImplementation project(':tapestry-test')
+    testImplementation "org.easymock:easymock:${versions.easymock}"
+    testImplementation "org.testng:testng:${versions.testng}", { transitive = false }
+    testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"
 }
 
 jar {

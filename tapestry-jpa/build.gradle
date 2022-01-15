@@ -1,17 +1,17 @@
 description = "Provides support for simple CRUD applications built on top of Tapestry and JPA"
 
 dependencies {
-  compile project(':tapestry-core')
-  compile "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
-  compile 'javax.enterprise:cdi-api:1.2'
+  implementation project(':tapestry-core')
+  implementation "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
+  implementation 'javax.enterprise:cdi-api:1.2'
 
 
-  testCompile project(':tapestry-test')
-  testCompile 'org.eclipse.persistence:eclipselink:2.7.7'
+  testImplementation project(':tapestry-test')
+  testImplementation 'org.eclipse.persistence:eclipselink:2.7.7'
 
-  testRuntime "com.h2database:h2:1.2.145"
-  testRuntime "org.apache.tomcat:dbcp:6.0.32"
-  testRuntime 'com.h2database:h2:1.3.175'
+  testRuntimeOnly "com.h2database:h2:1.2.145"
+  testRuntimeOnly "org.apache.tomcat:dbcp:6.0.32"
+  testRuntimeOnly 'com.h2database:h2:1.3.175'
 }
 
 repositories {

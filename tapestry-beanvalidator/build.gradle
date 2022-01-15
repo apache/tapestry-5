@@ -3,12 +3,12 @@ import t5build.*
 description = "Support for JSR-303 Bean Validation via the Hibernate validator implementation"
 
 dependencies {
-  compile project(':tapestry-core')
+  implementation project(':tapestry-core')
 
-  compile "javax.validation:validation-api:1.0.0.GA"
-  compile "org.hibernate:hibernate-validator:4.3.2.Final"
+  implementation "javax.validation:validation-api:1.0.0.GA"
+  implementation "org.hibernate:hibernate-validator:4.3.2.Final"
 
-  testCompile project(':tapestry-test')
+  testImplementation project(':tapestry-test')
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {

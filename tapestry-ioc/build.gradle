@@ -1,27 +1,27 @@
 description = "A code-centric, high-performance, simple Inversion of Control container"
 
 dependencies {
-    compile project(':tapestry-func')
-    compile project(':tapestry5-annotations')
-    compile project(":plastic")
-    compile project(":beanmodel")
+    implementation project(':tapestry-func')
+    implementation project(':tapestry5-annotations')
+    implementation project(":plastic")
+    implementation project(":beanmodel")
 
     provided project(':tapestry-test')
 
     // For now, keep these compile dependencies synchronized with the binaries dependencies
     // of the top-level build:
 
-    compile "javax.inject:javax.inject:1"
-    compile "javax.annotation:javax.annotation-api:1.3.2"
+    implementation "javax.inject:javax.inject:1"
+    implementation "javax.annotation:javax.annotation-api:1.3.2"
 
-    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
 
-    testCompile "commons-lang:commons-lang:2.6"
-    testCompile "org.apache.commons:commons-lang3:3.4"
+    testImplementation "commons-lang:commons-lang:2.6"
+    testImplementation "org.apache.commons:commons-lang3:3.4"
     
-    testCompile "org.apache.commons:commons-lang3:3.4"
-    testCompile "org.hibernate:hibernate-core:5.2.10.Final"
-    testRuntime "org.hsqldb:hsqldb:2.2.8"    
+    testImplementation "org.apache.commons:commons-lang3:3.4"
+    testImplementation "org.hibernate:hibernate-core:5.2.10.Final"
+    testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"    
     
     provided "org.testng:testng:${versions.testng}", { transitive = false }
 }

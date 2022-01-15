@@ -1,13 +1,13 @@
 description = "Provides support for simple CRUD applications built on top of Tapestry and Hibernate"
 
 dependencies {
-  compile project(':tapestry-core')
-  compile project(':tapestry-hibernate-core')
-  compile "org.jboss.logging:jboss-logging:3.3.0.Final"  
+  implementation project(':tapestry-core')
+  implementation project(':tapestry-hibernate-core')
+  implementation "org.jboss.logging:jboss-logging:3.3.0.Final"  
 
-  testCompile project(':tapestry-test')
+  testImplementation project(':tapestry-test')
   
-  testRuntime "org.hsqldb:hsqldb:2.2.8"
+  testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"
 }
 
 jar {
