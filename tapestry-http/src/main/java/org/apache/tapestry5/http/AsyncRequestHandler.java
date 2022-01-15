@@ -28,7 +28,7 @@ import org.apache.tapestry5.http.internal.AsyncRequestService;
  * but not necessarily) should handle it, possibly different {@link HttpServletRequest}
  * and {@link HttpServletResponse} objects to be used when calling 
  * {@linkplain} HttpServletRequest#startAsync()} and an optional {@linkplain AsyncListener}.
- * <p>
+ * </p>
  * <p>
  * If one {@link AsyncRequestHandler} doesn't tells the request should be asynchronous,
  * the next one contributed to {@link AsyncRequestService} will be called

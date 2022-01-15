@@ -13,6 +13,7 @@ class PreprocessCoffeeScript extends DefaultTask {
         group = "build"
     }
 
+    @Internal
     def flavors = ["prototype", "jquery"]
     def srcDir = "src/main/preprocessed-coffeescript"
     def outputDir = "${project.buildDir}/postprocessed-coffeescript"
@@ -60,6 +61,7 @@ class PreprocessCoffeeScript extends DefaultTask {
 
     // Very sloppy; doesn't actually differentiate between #if and #elseif (nesting is not actually
     // supported). Some more C Macro support would be nice, too.
+    @Internal
     def ifPattern = ~/^#(else)?if\s+(\w+)$/
 
     void split(File inputFile, File outputFile, String flavor) {

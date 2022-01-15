@@ -1,0 +1,5 @@
+description = "Test suite for making sure Tapestry runs on latest Java"
+
+dependencies {
+    api project(':tapestry-ioc')
+}

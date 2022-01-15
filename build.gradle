@@ -80,8 +80,6 @@ allprojects {
 
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: "signing"
-
 
     repositories {
         mavenCentral()
@@ -133,21 +131,35 @@ String jdkVersion = System.properties['java.version']
 def jdkMajorVersion = jdkVersion.substring(0, jdkVersion.indexOf(".")) // 1, 9, 10...
 
 subprojects {
-
-    def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
     
-    version = parent.version
+    def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
 
-    group = "org.apache.tapestry"
+    apply plugin: "maven-publish"  // for deployment
+    
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                version = parent.version
+                groupId = "org.apache.tapestry"
+                // from components.java
+            }
+        }
+    }
+    
+    if (doSign) {
+        apply plugin: "signing"
+        signing {
+            // sign publishing.publications.mavenJava
+            sign publishing.publications.maven
+        }
+    }
 
     configurations {
         provided
     }
 
-    apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "groovy" // mostly for testing
-    apply plugin: "maven"  // for deployment
-    // TODO: replace the "maven" plugin above with the newer "maven-publish"
 
     apply plugin: "project-report"
     apply plugin: "jacoco"
@@ -179,9 +191,11 @@ subprojects {
 
     dependencies {
         
-        testCompile "org.spockframework:spock-core:${versions.spock}"
+        // https://docs.gradle.org/7.3.3/userguide/upgrading_version_6.html#potential_breaking_changes, 
+        // Table 1. Common configuration upgrades
+        testImplementation "org.spockframework:spock-core:${versions.spock}"
          
-        testRuntime "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+        testRuntimeOnly "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     }
 
     compileTestGroovy {
@@ -204,7 +218,13 @@ subprojects {
         }else{
           maxHeapSize "600M"
         }
-
+    
+        // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
+            println "Java 9+ JVM arg: --add-opens=java.base/java.nio.charset=ALL-UNNAMED"
+            jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        }
+    
         // Turn off live service reloading
 
         systemProperties["tapestry.service-reloading-enabled"] = "false"
@@ -274,13 +294,7 @@ subprojects {
         }
     }
 
-    if (rootProject.doSign) {
-        // sign (create PGP signature for) archives (standard JARs)
-        // and meta (sources JARs)
-        signing { sign configurations.archives, configurations.meta }
-    }
-
-    uploadPublished {
+    task uploadPublished {
 
         doFirst {
             if (!canDeploy) {
@@ -290,21 +304,25 @@ subprojects {
 
         if (canDeploy) {
             repositories {
-
-                project.ext.deployer = repositories.mavenDeployer {
-
-                    if (doSign) {
-                        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                    }
-
-                    repository(url: stagingUrl) {
-                        authentication(userName: deployUsername(), password: deployPassword())
-                    }
-
-                    snapshotRepository(url: snapshotUrl) {
-                        authentication(userName: deployUsername(), password: deployPassword())
+                
+                maven {
+                    name = "apacheSnapshots"
+                    url = snapshotUrl
+                    credentials {
+                        username = deployUsername()
+                        password = deployPassword()
                     }
                 }
+                
+                maven {
+                    name = "apacheStaging"
+                    url = stagingUrl
+                    credentials {
+                        username = deployUsername()
+                        password = deployPassword()
+                    }
+                }
+                
             }
         }
     }
@@ -431,10 +449,10 @@ dependencies {
 task combinedJacocoReport(type:JacocoReport){
   def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart' && it.name != 'beanmodel' && it.name != 'commons' && it.name != 'genericsresolver-guava' && it.name != 'tapestry5-annotations' && it.name != 'tapestry-internal-test' && it.name != 'tapestry-runner' && it.name != 'tapestry-test-constants' && it.name != 'tapestry-test-data' && it.name != 'tapestry-ioc-jcache'}
   dependsOn = subprojectsToConsider.test
-  additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
-  sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
-  classDirectories = files(subprojectsToConsider.sourceSets.main.output)
-  executionData = files(subprojectsToConsider.jacocoTestReport.executionData)
+  additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
+  sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
+  classDirectories.from(files(subprojectsToConsider.sourceSets.main.output))
+  executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData).filter { it.exists() })
   jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
   reports {
       html {
@@ -450,11 +468,6 @@ task combinedJacocoReport(type:JacocoReport){
   }
   onlyIf = {
       true
-  }
-  doFirst {
-      executionData = files(executionData.findAll {
-          it.exists()
-      })
   }
 }
 
@@ -577,12 +590,6 @@ if (canDeploy) {
         description "Creates SHA-256 checksums for archives of source and JavaDoc"
         source tasks.withType(Zip)
         outputDir "$buildDir/sha256"
-    }
-
-    if (doSign) {
-        signing {
-            sign configurations.archives
-        }
     }
 
     // This requires that you have the apacheArchivesFolder property configured in your

@@ -1,12 +1,12 @@
 description = "Integration of Tapestry with the Spring Inversion Of Control Container"
 
 dependencies {
-  compile project(':tapestry-core')
-  compile "org.springframework:spring-web:3.2.9.RELEASE"
+  implementation project(':tapestry-core')
+  implementation "org.springframework:spring-web:3.2.9.RELEASE"
 
   provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
-  testCompile project(':tapestry-test')
+  testImplementation project(':tapestry-test')
 }
 
 jar {

@@ -12,11 +12,11 @@ project.ext.libraryVersions = [
 dependencies {
     /*compile "org.apache.tapestry:tapestry-ioc:${tapestryVersion()}"*/
 	provided project(":tapestry-ioc")
-	compile "javax.cache:cache-api:${libraryVersions.jcache}"
-	compile "org.jsr107.ri:cache-annotations-ri-common:${libraryVersions.jcache}"
-    testCompile "javax.cache:cache-tests:${libraryVersions.jcache}"
-    testCompile "javax.cache:test-domain:${libraryVersions.jcache}"
-    testRuntime "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
+	implementation "javax.cache:cache-api:${libraryVersions.jcache}"
+	implementation "org.jsr107.ri:cache-annotations-ri-common:${libraryVersions.jcache}"
+    testImplementation "javax.cache:cache-tests:${libraryVersions.jcache}"
+    testImplementation "javax.cache:test-domain:${libraryVersions.jcache}"
+    testRuntimeOnly "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
 }
 
 jar {

@@ -1,13 +1,13 @@
 description = "Kaptcha user verification support"
 
 dependencies {
-    compile project(':tapestry-core')
+    implementation project(':tapestry-core')
 
-    compile "com.github.axet:kaptcha:0.0.8"
+    implementation "com.github.axet:kaptcha:0.0.8"
 
     provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
-    testCompile project(':tapestry-test')
+    testImplementation project(':tapestry-test')
 }
 
 jar {

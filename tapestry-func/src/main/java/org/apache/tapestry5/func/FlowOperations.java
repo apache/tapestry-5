@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @param T
+ * @param <T>
  *         the type of data in the flow
- * @param FT
+ * @param <FT>
  *         the type of flow (either {@code Flow<T>} or {@code ZippedFlow<Tuple<T, ?>})
  * @since 5.3
  */

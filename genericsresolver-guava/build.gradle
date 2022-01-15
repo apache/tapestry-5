@@ -1,8 +1,8 @@
 description = "Replaces the Tapestry Commons's own Java Generics resolution code with the one from Google Guava's one"
 
 dependencies {
-  compile project(':commons')
-  testCompile project(':tapestry-core')
-  testCompile project(':tapestry-test')
-  provided compile ('com.google.guava:guava:27.0.1-jre')
+  implementation project(':commons')
+  testImplementation project(':tapestry-core')
+  testImplementation project(':tapestry-test')
+  provided implementation ('com.google.guava:guava:27.0.1-jre')
 }

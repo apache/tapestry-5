@@ -1,7 +1,7 @@
 description = "Tool to help migrate source code using Tapestry from one version to another. Initially built for 5.7.0"
 
 dependencies {
-    testCompile group: 'org.testng', name: 'testng', version: '7.3.0'
+    testImplementation group: 'org.testng', name: 'testng', version: '7.3.0'
 }
 
 test {

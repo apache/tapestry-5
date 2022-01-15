@@ -1,14 +1,14 @@
 description = "Basic MongoDB services for Tapestry, useable outside of a Tapestry web application"
 
 dependencies {
-    compile project(':tapestry-ioc')
-    testCompile project(':tapestry-test')
+    implementation project(':tapestry-ioc')
+    testImplementation project(':tapestry-test')
 
-    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '2.10.1'
+    implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '2.10.1'
 
-    testCompile group: 'org.jongo', name: 'jongo', version: '0.3'
+    testImplementation group: 'org.jongo', name: 'jongo', version: '0.3'
 
-    testCompile "de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28"
+    testImplementation "de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28"
 }
 
 test {

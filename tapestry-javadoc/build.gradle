@@ -1,11 +1,11 @@
 description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
 
 dependencies {
-  compile project(':tapestry-core')
-  compile "commons-lang:commons-lang:2.6"
+  implementation project(':tapestry-core')
+  implementation "commons-lang:commons-lang:2.6"
   
   if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
-    compile files(getTools())
+    implementation files(getTools())
   }
   
 }

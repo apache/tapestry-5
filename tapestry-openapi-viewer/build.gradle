@@ -1,8 +1,8 @@
 description = "Embedded OpenAPI (Swagger) viewer for Tapestry, based on Swagger UI"
 
 dependencies {
-    compile project(':tapestry-core')
-    testCompile "javax.servlet:javax.servlet-api:${versions.servletapi}"
+    implementation project(':tapestry-core')
+    testImplementation "javax.servlet:javax.servlet-api:${versions.servletapi}"
 }
 
 jar {

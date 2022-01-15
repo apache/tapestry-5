@@ -5,21 +5,21 @@ import t5build.*
 description = "Tapestry classes that handle HTTP requests"
 
 dependencies {
-    compile project(':tapestry-ioc')
-    compile project(':tapestry-json')
-    compile project(':beanmodel')
+    implementation project(':tapestry-ioc')
+    implementation project(':tapestry-json')
+    implementation project(':beanmodel')
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
 
     provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
-    compile "commons-codec:commons-codec:1.10"
-    compile "commons-io:commons-io:2.11.0"
+    implementation "commons-codec:commons-codec:1.10"
+    implementation "commons-io:commons-io:2.11.0"
 
-    testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
 
-    testRuntime 'com.google.inject:guice:3.0'
+    testRuntimeOnly 'com.google.inject:guice:3.0'
 }
 
 // Not sure why this is necessary:

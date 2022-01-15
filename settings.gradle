@@ -4,6 +4,9 @@ include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     include "tapestry-javadoc"
 }
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    include "tapestry-latest-java-tests"
+}
 include "quickstart", "tapestry-clojure", "tapestry-mongodb"
 include "tapestry-test-data", 'tapestry-internal-test', "tapestry-ioc-junit"
 include "tapestry-webresources", "tapestry-runner", "tapestry-test-constants"
