@@ -80,16 +80,6 @@ public class RestJacksonModule
     }
     
     /**
-     * Contributes the package "&lt;root&gt;.rest.entities" to the configuration, 
-     * so that it will be scanned for mapped entity classes.
-     */
-    public static void contributeMappedEntityManager(Configuration<String> configuration,
-            @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM) String appRootPackage)
-    {
-        configuration.add(appRootPackage + ".rest.entities");
-    }
-
-    /**
      * Contributes {@link JacksonHttpRequestBodyConverter} to the {@link HttpRequestBodyConverter} service.
      */
     public static void contributeHttpRequestBodyConverter(

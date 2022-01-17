@@ -2760,6 +2760,16 @@ public final class TapestryModule
             OrderedConfiguration<OpenApiTypeDescriber> configuration) {
         configuration.addInstance("Default", DefaultOpenApiTypeDescriber.class, "before:*");
     }
+    
+    /**
+     * Contributes the package "&lt;root&gt;.rest.entities" to the configuration, 
+     * so that it will be scanned for mapped entity classes.
+     */
+    public static void contributeMappedEntityManager(Configuration<String> configuration,
+            @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM) String appRootPackage)
+    {
+        configuration.add(appRootPackage + ".rest.entities");
+    }
 
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource

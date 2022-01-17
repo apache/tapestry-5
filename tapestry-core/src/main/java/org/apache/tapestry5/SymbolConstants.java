@@ -693,8 +693,7 @@ public class SymbolConstants
 
     /**
      * Defines the path the OpenAPI description file of this application's REST endpoints will be
-     * published. It should start with a slash. The default value is <code>openapi.json</code>.
-     * Default value is <code>/openapi.json</code>.
+     * published. It should start with a slash. Default value is <code>/openapi.json</code>.
      * The description will only be published if {{@link #PUBLISH_OPENAPI_DEFINITON} is set to
      * <code>true</code>.
      * @see OpenApiDescriptionGenerator

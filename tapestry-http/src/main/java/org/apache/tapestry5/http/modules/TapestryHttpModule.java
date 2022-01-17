@@ -316,7 +316,7 @@ public final class TapestryHttpModule {
     public static void contributeHttpRequestBodyConverter(
             final OrderedConfiguration<HttpRequestBodyConverter> configuration)
     {
-        configuration.addInstance("TypeCoercer", TypeCoercerHttpRequestBodyConverter.class);
+        configuration.addInstance("TypeCoercer", TypeCoercerHttpRequestBodyConverter.class, "after:*");
     }
     
     @SuppressWarnings("rawtypes")
