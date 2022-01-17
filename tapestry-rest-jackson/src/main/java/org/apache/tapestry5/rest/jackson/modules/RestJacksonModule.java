@@ -57,7 +57,7 @@ public class RestJacksonModule
      */
     public static void contributeObjectMapperSource(OrderedConfiguration<ObjectMapperSource> configuration)
     {
-        configuration.addInstance("Fallback", FallbackObjectMapperSource.class);
+        configuration.addInstance("Fallback", FallbackObjectMapperSource.class, "after:*");
     }
     
     /**
