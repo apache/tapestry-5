@@ -1,5 +1,5 @@
 description = "Test suite for making sure Tapestry runs on latest Java"
 
 dependencies {
-    compile project(':tapestry-ioc')
+    api project(':tapestry-ioc')
 }

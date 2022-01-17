@@ -12,10 +12,10 @@ project.ext {
 clean.delete mainGeneratedDir, testGeneratedDir
 
 dependencies {
-    implementation project(':tapestry-ioc')
-    implementation project(':tapestry-json')
-    implementation project(':beanmodel')
-    implementation project(':tapestry-http')
+    api project(':tapestry-ioc')
+    api project(':tapestry-json')
+    api project(':beanmodel')
+    api project(':tapestry-http')
     
     implementation 'jakarta.annotation:jakarta.annotation-api:1.3.4'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'

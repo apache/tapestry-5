@@ -16,8 +16,8 @@ package org.apache.tapestry5.func;
  * A reducer takes an accumulator value and a single value from a collection and computes a new
  * accumulator value.
  *
- * @param A type of accumulator
- * @param T type of collection value
+ * @param <A> type of accumulator
+ * @param <T> type of collection value
  * 
  * @since 5.2.0
  */

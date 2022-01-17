@@ -2,8 +2,8 @@ description = "[Deprecated] Utilities for integration testing of Tapestry applic
 
 dependencies {
 
-  implementation project(":tapestry-test-data")
-  implementation project(":tapestry-runner")
+  api project(":tapestry-test-data")
+  api project(":tapestry-runner")
 
   implementation ("io.github.bonigarcia:webdrivermanager:2.2.4")
 
@@ -14,6 +14,6 @@ dependencies {
   }
   implementation "org.seleniumhq.selenium:selenium-support:${versions.selenium}"
 
-  implementation "org.testng:testng:${versions.testng}"
-  implementation "org.easymock:easymock:${versions.easymock}"
+  api "org.testng:testng:${versions.testng}"
+  api "org.easymock:easymock:${versions.easymock}"
 }

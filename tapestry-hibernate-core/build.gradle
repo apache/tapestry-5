@@ -4,7 +4,7 @@ description = "Basic Hibernate services for Tapestry, useable outside of a Tapes
 dependencies {
     implementation project(':tapestry-ioc')
 
-    implementation group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate
+    api group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate
     
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 

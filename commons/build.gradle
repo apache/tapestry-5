@@ -8,8 +8,8 @@ description = "Project including common classes for tapestry-core, tapestry-ioc 
 buildDir = 'target/gradle-build'
        
 dependencies {
-	implementation project(":plastic")
-	implementation project(":tapestry5-annotations")
+	api project(":plastic")
+	api project(":tapestry5-annotations")
 	implementation project(":tapestry-func")
 }
 

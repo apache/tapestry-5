@@ -158,7 +158,7 @@ subprojects {
         provided
     }
 
-    apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "groovy" // mostly for testing
 
     apply plugin: "project-report"
@@ -288,13 +288,13 @@ subprojects {
         }
     }
 
-//    uploadPublished {
-//
-//        doFirst {
-//            if (!canDeploy) {
-//                throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' root project properties.")
-//            }
-//        }
+    task uploadPublished {
+
+        doFirst {
+            if (!canDeploy) {
+                throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' root project properties.")
+            }
+        }
 
         if (canDeploy) {
             repositories {
@@ -319,7 +319,7 @@ subprojects {
                 
             }
         }
-//    }
+    }
 }
 
 subprojects.each { project.evaluationDependsOn(it.name) }
@@ -443,10 +443,10 @@ dependencies {
 task combinedJacocoReport(type:JacocoReport){
   def subprojectsToConsider = subprojects.findAll {it.name != 'quickstart' && it.name != 'beanmodel' && it.name != 'commons' && it.name != 'genericsresolver-guava' && it.name != 'tapestry5-annotations' && it.name != 'tapestry-internal-test' && it.name != 'tapestry-runner' && it.name != 'tapestry-test-constants' && it.name != 'tapestry-test-data' && it.name != 'tapestry-ioc-jcache'}
   dependsOn = subprojectsToConsider.test
-  additionalSourceDirs = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
-  sourceDirectories = files(subprojectsToConsider.sourceSets.main.allSource.srcDirs)
-  classDirectories = files(subprojectsToConsider.sourceSets.main.output)
-  executionData = files(subprojectsToConsider.jacocoTestReport.executionData)
+  additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
+  sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
+  classDirectories.from(files(subprojectsToConsider.sourceSets.main.output))
+  executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData))
   jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
   reports {
       html {
@@ -589,12 +589,6 @@ if (canDeploy) {
         description "Creates SHA-256 checksums for archives of source and JavaDoc"
         source tasks.withType(Zip)
         outputDir "$buildDir/sha256"
-    }
-
-    if (doSign) {
-        signing {
-            sign configurations.archives
-        }
     }
 
     // This requires that you have the apacheArchivesFolder property configured in your

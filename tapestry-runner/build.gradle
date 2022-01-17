@@ -2,7 +2,7 @@ description = "Utilities for running a Tapestry application in Jetty or Tomcat a
 
 dependencies {
 
-    implementation project(":tapestry-test-constants")
+    api project(":tapestry-test-constants")
     implementation "org.eclipse.jetty:jetty-server:${versions.jetty}"
     implementation "org.eclipse.jetty:jetty-jndi:${versions.jetty}"
     implementation "org.eclipse.jetty:jetty-plus:${versions.jetty}"

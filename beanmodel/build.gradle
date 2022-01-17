@@ -9,7 +9,7 @@ apply plugin: 'antlr'
 buildDir = 'target/gradle-build'
 
 dependencies {
-    implementation project(":plastic")
+    api project(":plastic")
     api project(":tapestry5-annotations")
     api project(":commons")
     implementation "org.slf4j:slf4j-api:${versions.slf4j}"
