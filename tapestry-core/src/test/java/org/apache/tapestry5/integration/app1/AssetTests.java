@@ -14,16 +14,8 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.test.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 public class AssetTests extends App1TestCase
 {

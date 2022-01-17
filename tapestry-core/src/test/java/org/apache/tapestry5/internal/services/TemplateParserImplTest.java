@@ -21,7 +21,7 @@ import org.apache.tapestry5.internal.parser.*;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.AbstractResource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.test.TapestryRunnerConstants;
+import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

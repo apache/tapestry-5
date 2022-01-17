@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.http.services.Context;
-import org.apache.tapestry5.test.TapestryRunnerConstants;
+import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 
 import java.io.File;
 import java.net.MalformedURLException;
