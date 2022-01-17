@@ -24,7 +24,7 @@ import java.nio.file.Files;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.SeleniumTestCase;
-import org.apache.tapestry5.test.TapestryRunnerConstants;
+import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 
 public abstract class TapestryCoreTestCase extends SeleniumTestCase
 {

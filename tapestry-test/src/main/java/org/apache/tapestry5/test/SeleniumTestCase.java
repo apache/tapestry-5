@@ -17,6 +17,7 @@ import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
 
+import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;

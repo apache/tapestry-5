@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.test;
+package org.apache.tapestry5.test.constants;
 
 import java.io.File;
 

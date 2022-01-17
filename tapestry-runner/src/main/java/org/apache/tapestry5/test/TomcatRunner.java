@@ -17,6 +17,7 @@ package org.apache.tapestry5.test;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 
 import java.io.File;
 
