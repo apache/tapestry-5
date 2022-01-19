@@ -9,6 +9,12 @@ dependencies {
   implementation "org.hibernate:hibernate-validator:4.3.2.Final"
 
   testImplementation project(':tapestry-test')
+  implementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
+      exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
+      exclude group: "org.testng", module: "testng"
+      exclude group: "javax.servlet", module: "javax.servlet-api"
+  }
+  
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {
