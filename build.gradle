@@ -11,7 +11,7 @@ apply from: "sha256.gradle"
 project.ext.versions = [
     jetty: "8.1.19.v20160209",
     tomcat: "7.0.70",
-    testng: "6.8.21",
+    testng: "6.14.3",
     easymock: "3.3.1",
     servletapi: "3.0.1",
     spock: "2.1-M2-groovy-3.0",
@@ -165,7 +165,7 @@ subprojects {
     apply plugin: "jacoco"
     
     jacoco {
-        toolVersion = "0.8.6"
+        toolVersion = "0.8.7"
     }
     
     sourceCompatibility = "1.8"
@@ -221,7 +221,6 @@ subprojects {
     
         // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
         if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-            println "Java 9+ JVM arg: --add-opens=java.base/java.nio.charset=ALL-UNNAMED"
             jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
         }
     

@@ -14,23 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.commons.*;
-import org.apache.tapestry5.commons.internal.util.TapestryException;
-import org.apache.tapestry5.commons.services.PlasticProxyFactory;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.def.*;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.slf4j.Logger;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,6 +25,41 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.tapestry5.commons.Configuration;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.annotations.Advise;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Decorate;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.Optional;
+import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Startup;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef3;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.StartupDef;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.slf4j.Logger;
 
 /**
  * Starting from the Class for a module, identifies all the services (service builder methods),
@@ -157,6 +175,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         }
 
         removeSyntheticMethods(methods);
+        removeGroovyObjectMethods(methods);
 
         boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
 
@@ -214,6 +233,24 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     public ServiceDef getServiceDef(String serviceId)
     {
         return serviceDefs.get(serviceId);
+    }
+    
+    private void removeGroovyObjectMethods(Set<Method> methods)
+    {
+        Iterator<Method> iterator = methods.iterator();
+
+        while (iterator.hasNext())
+        {
+            Method m = iterator.next();
+            final String name = m.getName();
+
+            if (m.getDeclaringClass().getName().equals("groovy.lang.GroovyObject")
+                    || (name.equals("getMetaClass") && m.getReturnType().getName().equals("groovy.lang.MetaClass"))
+                || (m.getParameterCount() == 1 && m.getParameterTypes()[0].getName().equals("groovy.lang.MetaClass")))
+            {
+                iterator.remove();
+            }
+        }
     }
 
     private void removeSyntheticMethods(Set<Method> methods)

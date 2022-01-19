@@ -31,6 +31,11 @@ public class CookiesImplTest extends Assert
 {
     private static class ComparableCookie extends Cookie
     {
+        public ComparableCookie(Cookie cookie) 
+        {
+            this(cookie.getName(), cookie.getValue(), cookie.getMaxAge());
+        }
+        
         public ComparableCookie(String name, String value, int maxAge)
         {
             super(name, value);
@@ -118,7 +123,7 @@ public class CookiesImplTest extends Assert
         expectedCookie.setPath("/context/");
         expectedCookie.setDomain("fobar.com");
         assertEquals(cookies.size(), 1);
-        assertEquals(cookies.get(0), expectedCookie);
+        assertFirstCookieEquals(cookies, expectedCookie);
     }
 
     private CookiesImpl createCookiesFixture(String contextPath, final List<Cookie> cookies)
@@ -141,7 +146,7 @@ public class CookiesImplTest extends Assert
         Cookie expectedCookie = new ComparableCookie("foo", "bar", -1);
         expectedCookie.setPath("/ctx/");
         assertEquals(cookies.size(), 1);
-        assertEquals(cookies.get(0), expectedCookie);
+        assertFirstCookieEquals(cookies, expectedCookie);
     }
 
     public void test_Write_Cookie()
@@ -153,7 +158,7 @@ public class CookiesImplTest extends Assert
         Cookie expectedCookie = new ComparableCookie("foo", "bar", 1000);
         expectedCookie.setPath("/ctx/");
         assertEquals(cookies.size(), 1);
-        assertEquals(cookies.get(0), expectedCookie);
+        assertFirstCookieEquals(cookies, expectedCookie);
     }
 
     public void test_Remove_Cookie()
@@ -165,7 +170,7 @@ public class CookiesImplTest extends Assert
         Cookie expectedCookie = new ComparableCookie("foo", null, 0);
         expectedCookie.setPath("/ctx/");
         assertEquals(cookies.size(), 1);
-        assertEquals(cookies.get(0), expectedCookie);
+        assertFirstCookieEquals(cookies, expectedCookie);
     }
     
     public void test_remove_cookie_with_nondefault_path()
@@ -177,6 +182,15 @@ public class CookiesImplTest extends Assert
         Cookie expectedCookie = new ComparableCookie("foo", null, 0);
         expectedCookie.setPath("/nondefault/");
         assertEquals(cookies.size(), 1);
-        assertEquals(cookies.get(0), expectedCookie);
+        assertFirstCookieEquals(cookies, expectedCookie);
     }
+    
+    // Needed since assertEquals() tests both arg1.equals(arg2) and arg2.equals(arg1),
+    // something it apparently didn't in the past, and Cookie from Servlet API doesn't
+    // implements equals()
+    private void assertFirstCookieEquals(final List<Cookie> cookies, Cookie expectedCookie) {
+        assertEquals(new ComparableCookie(cookies.get(0)), 
+                new ComparableCookie(expectedCookie));
+    }
+
 }

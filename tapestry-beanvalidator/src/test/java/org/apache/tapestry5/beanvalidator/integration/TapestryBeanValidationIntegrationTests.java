@@ -15,6 +15,8 @@ package org.apache.tapestry5.beanvalidator.integration;
 
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
@@ -108,6 +110,12 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     public void beaneditform_validation() throws Exception
     {
         openLinks("BeanEditForm Validation Demo");
+
+        // Ugly hack to fix the "Unable to locate element: //input[@type='submit']" error.
+        // I have no idea why it's failing here but not in other tests and pages.
+        // I have no idea why it's falling to begin with.
+        // waitForCondition(ExpectedConditions.presenceOfElementLocated(By.xpath(SUBMIT)));
+        Thread.sleep(5000);
         
         clickAndWait(SUBMIT);
 
