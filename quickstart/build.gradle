@@ -59,6 +59,7 @@ task processFiltered(type: Copy) {
         servletVersion: '3.1.0',
         mavenCompilerVersion: '3.8.1',
         mavenSurefireVersion: '3.0.0-M5',
+        mavenWarVersion: '3.3.1',
         mavenJettyVersion: '10.0.6',
         grettyVersion: '3.0.6'
     ])

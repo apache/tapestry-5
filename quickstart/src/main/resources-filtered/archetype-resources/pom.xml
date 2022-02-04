@@ -18,6 +18,7 @@
         <servlet-version>@servletVersion@</servlet-version>
         <maven-compiler-version>@mavenCompilerVersion@</maven-compiler-version>
         <maven-surefire-version>@mavenSurefireVersion@</maven-surefire-version>
+        <maven-war-version>@mavenWarVersion@</maven-war-version>
         <maven-jetty-version>@mavenJettyVersion@</maven-jetty-version>
     </properties>
     <repositories>
@@ -160,6 +161,11 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-war-plugin</artifactId>
+			    <version>${maven-war-version}</version>
+			</plugin>            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
