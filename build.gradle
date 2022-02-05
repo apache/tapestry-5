@@ -463,11 +463,6 @@ task combinedJacocoReport(type:JacocoReport){
   onlyIf = {
       true
   }
-  doFirst {
-      executionData = files(executionData.findAll {
-          it.exists()
-      })
-  }
 }
 
 task continuousIntegration {
