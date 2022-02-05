@@ -72,6 +72,11 @@ jar {
     }
 }
 
+// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 17
+test {
+    jvmArgs '--add-opens=java.base/java.nio.charset=ALL-UNNAMED'    
+}
+
 task runTestApp1(type:JavaExec) {
   description 'Start app1 integration test app, useful when debugging failing integration tests'
   main = 'org.apache.tapestry5.test.JettyRunner'
