@@ -446,7 +446,7 @@ task combinedJacocoReport(type:JacocoReport){
   additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
   sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
   classDirectories.from(files(subprojectsToConsider.sourceSets.main.output))
-  executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData))
+  executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData).findAll { it.exists() })
   jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
   reports {
       html {
