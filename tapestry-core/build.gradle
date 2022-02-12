@@ -74,7 +74,9 @@ jar {
 
 // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 17
 test {
-    jvmArgs '--add-opens=java.base/java.nio.charset=ALL-UNNAMED'    
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+    }
 }
 
 task runTestApp1(type:JavaExec) {
