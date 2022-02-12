@@ -72,9 +72,10 @@ jar {
     }
 }
 
-// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 17
+// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
 test {
-    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_9)) {
+        println "Java 9+ JVM arg: --add-opens=java.base/java.nio.charset=ALL-UNNAMED"
         jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
     }
 }
