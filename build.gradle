@@ -218,6 +218,13 @@ subprojects {
         }else{
           maxHeapSize "600M"
         }
+    
+        // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_19)) {
+            println "Java 9+ JVM arg: --add-opens=java.base/java.nio.charset=ALL-UNNAMED"
+            jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        }
+    
 
         // Turn off live service reloading
 
