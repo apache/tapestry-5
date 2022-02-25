@@ -37,14 +37,18 @@ import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
@@ -60,6 +64,42 @@ public class ModuleImpl implements Module
     private final PlasticProxyFactory proxyFactory;
 
     private final Logger logger;
+    
+    private static final Predicate<Class> canBeProxiedPredicate;
+    
+    static 
+    {
+        Predicate<Class> predicate = null;
+        try {
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            final MethodType methodType = MethodType.methodType(boolean.class);
+            final java.lang.invoke.MethodHandle isSealedMethodHandle = 
+                    MethodHandles.lookup().findVirtual(Class.class, "isSealed", methodType);
+            predicate = c -> c.isInterface() && !callIsSealed(isSealedMethodHandle, c);
+        }
+        catch (NoSuchMethodException e)
+        {
+            LoggerFactory.getLogger(ModuleImpl.class)
+                .info("Method Class.isSealed() not found, so we're running in a pre-15 JVM.");
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        
+        canBeProxiedPredicate = predicate != null ? predicate : c -> c.isInterface();
+        
+    }
+
+    private static boolean callIsSealed(final java.lang.invoke.MethodHandle isSealedMethodHandle, Class clasz) 
+    {
+        try 
+        {
+            return (Boolean) isSealedMethodHandle.invoke(clasz);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Lazily instantiated. Access is guarded by BARRIER.
@@ -265,8 +305,9 @@ public class ModuleImpl implements Module
 
         final Class serviceInterface = def.getServiceInterface();
 
+        final boolean canBeProxied = canBeProxiedPredicate.test(serviceInterface);
         String description = String.format("Creating %s service %s",
-                serviceInterface.isInterface() ? "proxy for" : "non-proxied instance of",
+                canBeProxied ? "proxy for" : "non-proxied instance of",
                 serviceId);
 
         if (logger.isDebugEnabled())
@@ -296,7 +337,7 @@ public class ModuleImpl implements Module
 
                     ServiceLifecycle2 lifecycle = registry.getServiceLifecycle(def.getServiceScope());
 
-                    if (!serviceInterface.isInterface())
+                    if (!canBeProxied)
                     {
                         if (lifecycle.requiresProxy())
                             throw new IllegalArgumentException(
