@@ -1,0 +1,32 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+package org.apache.tapestry5.ioc.services;
+
+/**
+ * Just for use in Record Classes tests.
+ */
+public final class OrExpression implements BinaryExpression
+{
+    private final BinaryExpression operand1, operand2;
+    
+    public OrExpression(BinaryExpression operand1, BinaryExpression operand2) {
+        super();
+        this.operand1 = operand1;
+        this.operand2 = operand2;
+    }
+
+    @Override
+    public boolean evaluate()
+    {
+        return operand1.evaluate() || operand2.evaluate();
+    }
+}
