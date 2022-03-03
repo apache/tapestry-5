@@ -29,6 +29,9 @@ class ParameterTests extends App1TestCase
     void null_bound_to_primitive_field_is_an_error()
     {
         openLinks "Null Bound to Primitive Demo"
+        
+        // Hack to try to avoid test to fail in Jenkins even though it passes locally.
+        Thread.sleep(5000);
 
         assertTextPresent "Parameter 'value' of component NullBindingToPrimitive:showint is bound to null. This parameter is not allowed to be null."
     }
