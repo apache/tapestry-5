@@ -14,7 +14,7 @@ import java.time.LocalDate;
 /**
  * Layout component for pages of application test-project.
  */
-@Import(stylesheet = "context:css/app.css")
+@Import(stylesheet = "context:css/app.css",module = { "bootstrap/collapse", "bootstrap/dropdown"})
 public class Layout {
 
     @Inject
