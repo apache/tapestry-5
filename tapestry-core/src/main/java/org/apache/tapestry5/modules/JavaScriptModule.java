@@ -179,7 +179,7 @@ public class JavaScriptModule
 
         add(configuration, StackExtensionType.MODULE, "jquery");
         
-        addCoreStylesheets(configuration, "${" + SymbolConstants.FONT_AWESOME_ROOT + "}/css/font-awesome.css");
+        add(configuration, StackExtensionType.STYLESHEET, "${" + SymbolConstants.FONT_AWESOME_ROOT + "}/css/font-awesome.css");
 
         if (compatibility.enabled(Trait.BOOTSTRAP_3) && compatibility.enabled(Trait.BOOTSTRAP_4))
         {
@@ -194,7 +194,7 @@ public class JavaScriptModule
         if (compatibility.enabled(Trait.BOOTSTRAP_4))
         {
             addCoreStylesheets(configuration, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap.css");
-            addCoreStylesheets(configuration, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap-grid.css");
+            add(configuration, StackExtensionType.STYLESHEET, "${" + SymbolConstants.BOOTSTRAP_ROOT + "}/css/bootstrap-grid.css");
         }
         
         if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
