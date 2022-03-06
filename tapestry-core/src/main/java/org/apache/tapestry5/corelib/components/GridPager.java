@@ -14,16 +14,21 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentParameterConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.commons.Messages;
-import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
@@ -77,6 +82,9 @@ public class GridPager
 
     @Inject
     private Request request;
+    
+    @Inject
+    private Compatibility compatibility;
 
     void beginRender(MarkupWriter writer)
     {
@@ -129,10 +137,13 @@ public class GridPager
 
         if (pageIndex <= lastIndex) return;
 
+        final boolean isBootstrap4 = isBootstrap4();
+        
         if (pageIndex != lastIndex + 1)
         {
-            writer.element("li", "class", "disabled");
-            writer.element("a", "href", "#");
+            writer.element("li", "class", isBootstrap4 ? "disabled page-item" : "disabled");
+            writer.element("a", "href", "#", "aria-disabled", "true");
+            addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);
             writer.write(" ... ");
             writer.end();
             writer.end();
@@ -142,8 +153,9 @@ public class GridPager
 
         if (pageIndex == currentPage)
         {
-            writer.element("li", "class", "active");
-            writer.element("a", "href", "#");
+            writer.element("li", "aria-current", "page", "class", isBootstrap4 ? "active page-item" : "active");
+            writer.element("a", "href", "#", "aria-disabled", "true");
+            addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);            
             writer.write(Integer.toString(pageIndex));
             writer.end();
             writer.end();
@@ -151,6 +163,10 @@ public class GridPager
         }
 
         writer.element("li");
+        if (isBootstrap4)
+        {
+            writer.getElement().attribute("class", "page-item");
+        }
 
         Link link = resources.createEventLink(EventConstants.ACTION, pageIndex);
 
@@ -159,17 +175,25 @@ public class GridPager
             link.addParameter("t:inplace", "true");
         }
 
-        Element element = writer.element("a",
+        writer.element("a",
                 "href", link,
                 "data-update-zone", zone,
                 "title", messages.format("core-goto-page", pageIndex));
 
+        addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);
 
         writer.write(Integer.toString(pageIndex));
 
         writer.end();
 
         writer.end();   // li
+    }
+
+    private void addClassAttributeToPageLinkIfNeeded(MarkupWriter writer, final boolean isBootstrap4) {
+        if (isBootstrap4)
+        {
+            writer.getElement().attribute("class", "page-link");
+        }
     }
 
     /**
@@ -187,5 +211,10 @@ public class GridPager
         }
 
         return true;     // abort event
+    }
+    
+    protected boolean isBootstrap4()
+    {
+        return compatibility.enabled(Trait.BOOTSTRAP_4);
     }
 }
