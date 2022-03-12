@@ -10,6 +10,9 @@ dependencies {
     implementation project(":tapestry-core")
     implementation "com.github.sommeri:less4j:1.12.0"
     implementation "com.google.javascript:closure-compiler-unshaded:v20200504"
+    
+    compileOnly    "com.google.auto.value:auto-value-annotations:1.9"
+    
     implementation "org.mozilla:rhino:1.7.7.2"
 
     testImplementation project(":tapestry-runner")

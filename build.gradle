@@ -3,6 +3,7 @@ description = "Apache Tapestry 5 Project"
 import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: "base"
+apply plugin: "maven-publish"
 
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
@@ -82,6 +83,7 @@ allprojects {
     apply plugin: "idea"
 
     repositories {
+        mavenLocal()
         mavenCentral()
 
         // All things JBoss/Hibernate
@@ -135,34 +137,18 @@ subprojects {
     def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
 
     apply plugin: "maven-publish"  // for deployment
-    
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                version = parent.version
-                groupId = "org.apache.tapestry"
-                // from components.java
-            }
-        }
-    }
-    
-    if (doSign) {
-        apply plugin: "signing"
-        signing {
-            // sign publishing.publications.mavenJava
-            sign publishing.publications.maven
-        }
-    }
 
     configurations {
         provided
     }
 
+    apply plugin: "java"
     apply plugin: "java-library"
     apply plugin: "groovy" // mostly for testing
 
     apply plugin: "project-report"
     apply plugin: "jacoco"
+    apply plugin: "base"
     
     jacoco {
         toolVersion = "0.8.7"
@@ -233,7 +219,7 @@ subprojects {
 
         environment.LANG = 'en_US.UTF-8'
         
-        if (continuousIntegrationBuild){
+        if (continuousIntegrationBuild) {
           // Travis runs our builds with TERM=dumb and kills it if we don't produce any
           // output for 10 minutes, so we log some task execution progress 
 
@@ -267,6 +253,8 @@ subprojects {
         	}
         }
     }
+    
+    assemble.dependsOn(processResources, compileJava, jar)
 
     task sourcesJar(type: Jar) {
         dependsOn classes
@@ -283,13 +271,77 @@ subprojects {
         meta sourcesJar
     }
 
-
     configurations {
         // published -- what gets uploaded to the Nexus repository
         published.extendsFrom archives, meta
 
         if (rootProject.doSign) {
             published.extendsFrom signatures
+        }
+    }
+    
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                version = parent.version
+                groupId = "org.apache.tapestry"
+                from components.java
+                artifact sourcesJar
+                
+                pom {
+                    name = project.name
+                    // TODO: find some way to get the subproject description here.
+                    // description = 
+                    url = "https://tapestry.apache.org/"
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                                    url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://gitbox.apache.org/repos/asf/tapestry-5.git'
+                                developerConnection = 'scm:git://gitbox.apache.org/repos/asf/tapestry-5.git'
+                                url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary'
+                    }
+                }
+                matching {
+                    it.name.endsWith(".jar") || it.name.endsWith(".pom")
+                }
+            }
+        }
+        if (canDeploy) {
+            repositories {
+                mavenLocal()
+                if (continuousIntegrationBuild) {
+                    maven {
+                        name = "apacheSnapshots"
+                        url = snapshotUrl
+                        credentials {
+                            username = deployUsername()
+                            password = deployPassword()
+                        }
+                    }
+                }
+                else {
+                    maven {
+                        name = "apacheStaging"
+                        url = stagingUrl
+                        credentials {
+                            username = deployUsername()
+                            password = deployPassword()
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+
+    if (doSign) {
+        apply plugin: "signing"
+        signing {
+            sign publishing.publications.mavenJava
         }
     }
 
@@ -301,29 +353,6 @@ subprojects {
             }
         }
 
-        if (canDeploy) {
-            repositories {
-                
-                maven {
-                    name = "apacheSnapshots"
-                    url = snapshotUrl
-                    credentials {
-                        username = deployUsername()
-                        password = deployPassword()
-                    }
-                }
-                
-                maven {
-                    name = "apacheStaging"
-                    url = stagingUrl
-                    credentials {
-                        username = deployUsername()
-                        password = deployPassword()
-                    }
-                }
-                
-            }
-        }
     }
 }
 
@@ -385,11 +414,12 @@ task aggregateJavadoc(type: Javadoc) {
         addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
         addStringOption 'source', '8'
         taglets "org.apache.tapestry5.javadoc.TapestryDocTaglet"
-        exclude "org/apache/tapestry5/internal/plastic/asm/**"
-        exclude "org/apache/tapestry5/internal/webresources/**"
-        exclude "org/apache/tapestry5/webresources/modules/**"
     }
 
+    exclude "org/apache/tapestry5/internal/plastic/asm/**"
+    exclude "org/apache/tapestry5/internal/webresources/**"
+    exclude "org/apache/tapestry5/webresources/modules/**"
+    
     source allMainJavaFiles
 
     classpath += files(allMainSourceSets*.compileClasspath)
@@ -617,7 +647,7 @@ if (canDeploy) {
     }
 
     task generateRelease {
-        dependsOn subprojects.uploadPublished, copyArchives
+        dependsOn subprojects.assemble, subprojects.uploadPublished, subprojects.publish, copyArchives
         group "Release artifact"
         description "Generates and uploads a final release to Apache Nexus and copies archives for deployment"
     }
