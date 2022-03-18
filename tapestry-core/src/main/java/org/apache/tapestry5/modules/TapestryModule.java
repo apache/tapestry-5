@@ -52,7 +52,6 @@ import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ValidationDecorator;
 import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.VersionUtils;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
@@ -105,10 +104,12 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
+import org.apache.tapestry5.commons.util.VersionUtils;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalSymbols;
@@ -1779,7 +1780,7 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
 
-                                         @Symbol(SymbolConstants.TAPESTRY_VERSION)
+                                         @Symbol(TapestryHttpConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
 
                                          @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
@@ -2069,9 +2070,6 @@ public final class TapestryModule
         // locales for which we have (at least some) localized messages.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
                 "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr,da,pt_BR,ja,el,bg,nb,sr_RS,mk_MK");
-
-        configuration.add(SymbolConstants.TAPESTRY_VERSION,
-                VersionUtils.readVersionNumber("META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties"));
 
         configuration.add(SymbolConstants.COOKIE_MAX_AGE, "7 d");
 

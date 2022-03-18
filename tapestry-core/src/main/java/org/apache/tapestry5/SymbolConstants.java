@@ -19,6 +19,7 @@ import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.corelib.components.Errors;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
+import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
@@ -96,8 +97,9 @@ public class SymbolConstants
     /**
      * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
      * should only occur when developing Tapestry).
+     * This is an alias for {@link TapestryHttpSymbolConstants#CHARSET}.
      */
-    public static final String TAPESTRY_VERSION = "tapestry.version";
+    public static final String TAPESTRY_VERSION = TapestryHttpConstants.TAPESTRY_VERSION;
 
     /**
      * The location of the application-wide component messages catalog, relative to the web application context. This
@@ -108,7 +110,7 @@ public class SymbolConstants
     /**
      * The charset used when rendering page markup; the charset is also used as the request encoding when handling
      * incoming requests. The default is "UTF-8".
-     * This is an alias for {@link TapestryHttpSymbolConstants#CHARSET}
+     * This is an alias for {@link TapestryHttpSymbolConstants#CHARSET}.
      */
     public static final String CHARSET = TapestryHttpSymbolConstants.CHARSET;
 

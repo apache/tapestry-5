@@ -1,6 +1,6 @@
 package org.apache.tapestry5.root;
 
-import org.apache.tapestry5.VersionUtils;
+import org.apache.tapestry5.commons.util.VersionUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

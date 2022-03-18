@@ -26,5 +26,11 @@ final public class TapestryHttpConstants {
      * @since 5.1.0.0
      */
     public static final String SUPPRESS_COMPRESSION = "tapestry.supress-compression";
+    
+    /**
+     * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
+     * should only occur when developing Tapestry).
+     */
+    public static final String TAPESTRY_VERSION = "tapestry.version";
 
 }

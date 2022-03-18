@@ -2,10 +2,10 @@ package org.apache.tapestry5.internal.t5internal.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
@@ -28,7 +28,7 @@ public class InternalLayout
     private String title;
 
     @Inject
-    @Symbol(SymbolConstants.TAPESTRY_VERSION)
+    @Symbol(TapestryHttpConstants.TAPESTRY_VERSION)
     @Property
     private String frameworkVersion;
 
