@@ -31,6 +31,7 @@
             <directory>src/main/resources</directory>
             <includes>
                 <include>log4j2.yml</include>
+                <include>META-INF/**</include>
             </includes>
         </fileSet>
         <fileSet filtered="true" packaged="true">
