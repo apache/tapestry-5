@@ -29,6 +29,7 @@ public class Bootstrap4Module
     public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap4");
+        configuration.add(SymbolConstants.ERROR_CSS_CLASS, "form-text text-danger");        
 //        configuration.add(SymbolConstants.BEAN_DISPLAY_CSS_CLASS, "card");
     }
     
