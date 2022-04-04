@@ -1,8 +1,8 @@
 description = "Provides support for simple CRUD applications built on top of Tapestry and Hibernate"
 
 dependencies {
-  implementation project(':tapestry-core')
-  implementation project(':tapestry-hibernate-core')
+  api project(':tapestry-core')
+  api project(':tapestry-hibernate-core')
   implementation "org.jboss.logging:jboss-logging:3.3.0.Final"  
 
   testImplementation project(':tapestry-test')
