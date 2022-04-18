@@ -39,7 +39,7 @@ public final class ContentType
 
     private final Map<String, String> parameters;
 
-    private static final Pattern PATTERN = Pattern.compile("^(.+)/([^;]+)(;(.+=[^;]+))*$");
+    private static final Pattern PATTERN = Pattern.compile("^(.+)/([^;]+)(;(.+=[^;]+)){0,5}$");
 
     /**
      * Creates a new content type from the argument. The format of the argument has to be basetype/subtype(;key=value)*
