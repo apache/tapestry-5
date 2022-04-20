@@ -368,11 +368,11 @@ public class UserList
                 <source><![CDATA[
 public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
 {
-  configuration.add(GridConstants.ROWS_PER_PAGE, "show");
+  configuration.add(ComponentParameterConstants.GRID_ROWS_PER_PAGE, "25");
 
-  configuration.add(GridConstants.PAGER_POSITION, "bottom");
+  configuration.add(ComponentParameterConstants.GRID_PAGER_POSITION, "top");
 
-  configuration.add(GridConstants.TABLE_CLASS, "t-data-grid");
+  configuration.add(ComponentParameterConstants.GRID_TABLE_CSS_CLASS, "table table-hover table-bordered table-striped");
 }
 ]]></source>
             </subsection>
