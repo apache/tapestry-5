@@ -72,11 +72,13 @@ jar {
     }
 }
 
-// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
 test {
+	// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
         jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
     }
+	// TAP5-2722
+	systemProperty 'user.lang', 'en'
 }
 
 task runTestApp1(type:JavaExec) {
