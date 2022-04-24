@@ -75,7 +75,7 @@ jar {
 // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
 test {
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        jvmArgs("-Duser.language=en --add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
     }
 }
 
