@@ -78,7 +78,7 @@ test {
         jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
     }
 	// TAP5-2722
-	systemProperty 'user.lang', 'en'
+	systemProperty 'user.language', 'en'
 }
 
 task runTestApp1(type:JavaExec) {
