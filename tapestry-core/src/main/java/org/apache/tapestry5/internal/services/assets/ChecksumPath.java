@@ -40,6 +40,12 @@ public class ChecksumPath
         this.streamer = streamer;
         int slashx = extraPath.indexOf('/');
 
+        if (slashx == -1) {
+            checksum = "";
+            resourcePath = NON_EXISTING_RESOURCE;
+            return;
+        }
+
         checksum = extraPath.substring(0, slashx);
 
         String morePath = extraPath.substring(slashx + 1);
