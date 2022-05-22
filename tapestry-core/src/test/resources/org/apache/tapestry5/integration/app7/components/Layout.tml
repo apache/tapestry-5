@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd"
+      xmlns:p="tapestry:parameter">
+
+<head>
+    <title>${pageTitle} - ${appTitle}</title>
+</head>
+
+<body>
+
+<h1>${pageTitle}</h1>
+
+<t:body/>
+
+</body>
+
+</html> 

@@ -84,6 +84,12 @@
         </packages>
     </test>
 
+    <test name="Bootstrap 4 related Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.app7"/>
+        </packages>
+    </test>
+
     <test name="Components Param Symbols Tests" enabled="true">
         <parameter name="tapestry.web-app-folder" value="src/test/symbolparam"/>
         <packages>

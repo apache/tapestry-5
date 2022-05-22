@@ -1,0 +1,16 @@
+<div t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd"
+	xmlns:p="tapestry:parameter"
+	t:pageTitle="literal:Forms">
+
+
+<t:form>
+
+<t:textfield t:id="foo" validate="required"/>
+
+<input type="submit" id="submit"/>
+
+</t:form>
+
+
+</div>
+ 

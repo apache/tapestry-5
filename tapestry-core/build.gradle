@@ -111,6 +111,12 @@ task runTestApp5(type:JavaExec) {
   args "-d", "src/test/app5", "-p", "8080"
   classpath += project.sourceSets.test.runtimeClasspath
 }
+task runTestApp7(type:JavaExec) {
+  description 'Start app7 integration test app, useful when debugging failing integration tests'
+  main = 'org.apache.tapestry5.test.JettyRunner'
+  args "-d", "src/test/app7", "-p", "8080"
+  classpath += project.sourceSets.test.runtimeClasspath
+}
 task runTestAppfolder(type:JavaExec) {
   description 'Start appFolder integration test app, useful when debugging failing integration tests'
   main = 'org.apache.tapestry5.test.JettyRunner'

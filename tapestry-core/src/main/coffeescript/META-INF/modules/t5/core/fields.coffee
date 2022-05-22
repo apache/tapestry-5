@@ -78,7 +78,7 @@ define ["underscore", "t5/core/events", "t5/core/dom", "t5/core/utils", "t5/core
       container = field.parent()
 
       block = dom.create "p",
-        class: "help-block"
+        class: "help-block form-text text-danger"
         "data-error-block-for": fieldId
         "id": fieldId + "-help-block"
 
