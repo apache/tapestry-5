@@ -102,7 +102,6 @@ public class DateField extends AbstractField
      * generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
-    @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
     /**
@@ -327,7 +326,7 @@ public class DateField extends AbstractField
                 parsedValue = format.parse(value);
         } catch (ParseException ex)
         {
-            validationTracker.recordError(this, messages.format("core-date-value-not-parseable", value));
+            validationTracker.recordError(this, messages.format("core-date-value-not-parseable", controlName));
             return;
         }
 
