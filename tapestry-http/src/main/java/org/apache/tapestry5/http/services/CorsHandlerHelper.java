@@ -100,10 +100,10 @@ public interface CorsHandlerHelper {
     /**
      * Conditionally sets the Access-Control-Expose-Headers HTTP header.
      * Out-of-the-box, the value comes from 
-     * {@link TapestryHttpSymbolConstants#CORS_EXPOSED_HEADERS} symbol, if not empty.
+     * {@link TapestryHttpSymbolConstants#CORS_EXPOSE_HEADERS} symbol, if not empty.
      * Otherwise, the header isn't set.
      * @param response an {@link HttpServletResponse}.
-     * @see TapestryHttpSymbolConstants#CORS_EXPOSED_HEADERS
+     * @see TapestryHttpSymbolConstants#CORS_EXPOSE_HEADERS
      */
     void configureExposeHeaders(HttpServletResponse response);
 

@@ -27,7 +27,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
  * Default {@link CorsHandlerHelper} implementation.
  * 
  * @see CorsHandler
- * @see TapestryHttpSymbolConstants#CORS_ALLOWED_ORIGINS.
+ * @see TapestryHttpSymbolConstants#CORS_ENABLED 
+ * @see TapestryHttpSymbolConstants#CORS_ALLOWED_ORIGINS
  * @since 5.8.2
  */
 public class CorsHandlerHelperImpl implements CorsHandlerHelper 

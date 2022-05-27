@@ -756,7 +756,7 @@ public class SymbolConstants
 
     /**
      * Value to be used in the Access-Control-Allow-Methods in CORS preflight request responses.
-     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse)}.
+     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse, javax.servlet.http.HttpServletRequest)}.
      * Default value is the empty string.
      * This is an alias for {@link TapestryHttpSymbolConstants#CORS_ALLOWED_HEADERS}.
      * @since 5.8.2
