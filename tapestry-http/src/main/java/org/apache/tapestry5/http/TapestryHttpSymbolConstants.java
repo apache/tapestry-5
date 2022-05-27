@@ -11,6 +11,10 @@
 // limitations under the License.
 package org.apache.tapestry5.http;
 
+import org.apache.tapestry5.http.services.CorsHandler;
+import org.apache.tapestry5.http.services.CorsHandlerHelper;
+import org.apache.tapestry5.http.services.CorsHttpServletRequestFilter;
+
 /**
  * Class defining constants for Tapestry HTTP symbols.
  */
@@ -132,5 +136,63 @@ final public class TapestryHttpSymbolConstants {
      * @since 5.1.0.0
      */
     public static final String GZIP_COMPRESSION_ENABLED = "tapestry.gzip-compression-enabled";
+    /**
+     * Defines whether the CORS (Cross-Origing Resource Sharing) support 
+     * should be enabled or not. Default value is "false". If you set this to "true",
+     * you should also set {@link #CORS_ALLOWED_ORIGINS}.
+     * @see CorsHandler
+     * @see CorsHttpServletRequestFilter
+     * @since 5.8.2
+     */
+    public static final String CORS_ENABLED = "tapestry.cors-enabled";
+
+    /**
+     * Comma-delimited of origins allowed for CORS. The special value "*" means allowing all origins.
+     * This is used by {@link CorsHandlerHelper#getAllowedOrigin(javax.servlet.http.HttpServletRequest)}.
+     * Default value is the empty string (i.e. no origins allowed and CORS actually disabled).
+     * @since 5.8.2
+     */
+    public static final String CORS_ALLOWED_ORIGINS = "tapestry.cors-allowed-origins";
+    
+    /**
+     * Boolean value defining whether the Access-Control-Allow-Credentials HTTP header
+     * should be set automatically in the response for CORS requests. Default value is
+     * <code>false</code>. This is used in {@link CorsHandlerHelper#configureCredentials(javax.servlet.http.HttpServletResponse)}.
+     * @since 5.8.2
+     */
+    public static final String CORS_ALLOW_CREDENTIALS = "tapestry.cors-allow-credentials";
+
+    /**
+     * Value to be used in the Access-Control-Allow-Methods in CORS preflight request responses.
+     * This is used by {@link CorsHandlerHelper#configureMethods(javax.servlet.http.HttpServletResponse)}.
+     * Default value is <code>GET,HEAD,PUT,PATCH,POST,DELETE</code>.
+     * @since 5.8.2
+     */
+    public static final String CORS_ALLOW_METHODS = "tapestry.cors-allow-methods";
+    
+    /**
+     * Value to be used in the Access-Control-Allow-Methods in CORS preflight request responses.
+     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse)}.
+     * Default value is the empty string.
+     * @since 5.8.2
+     */
+    public static final String CORS_ALLOWED_HEADERS = "tapestry.cors-allowed-headers";
+    
+    /**
+     * Value to be used in the Access-Control-Expose-Headers in CORS preflight request responses.
+     * This is used by {@link CorsHandlerHelper#configureExposeHeaders(javax.servlet.http.HttpServletResponse)}.
+     * Default value is the empty string.
+     * @since 5.8.2
+     */
+    public static final String CORS_EXPOSE_HEADERS = "tapestry.cors-expose-headers";
+    
+    /**
+     * Value to be used in the Access-Control-Max-Age in responses to preflight CORS requests.
+     * This is used by {@link CorsHandlerHelper#configureMaxAge(javax.servlet.http.HttpServletResponse)}.
+     * Default value is the empty string.
+     * This is an alias for {@link TapestryHttpSymbolConstants#CORS_MAX_AGE}.
+     * @since 5.8.2
+     */
+    public static final String CORS_MAX_AGE = "tapestry.cors-max-age";
 
 }

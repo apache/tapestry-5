@@ -186,6 +186,13 @@ public class AppModule
         configuration.add(SymbolConstants.OPENAPI_BASE_PATH, "/rest/");
 //        configuration.add(SymbolConstants.ERROR_CSS_CLASS, "yyyy");
 //        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/integration/app1/app1.css");
+//        configuration.add(SymbolConstants.CORS_ENABLED, true);
+//        configuration.add(SymbolConstants.CORS_ALLOWED_ORIGINS, "localhost,localtest.machina.com.br");
+//        configuration.add(SymbolConstants.CORS_ALLOW_METHODS, "GET,PUT");
+//        configuration.add(SymbolConstants.CORS_ALLOWED_HEADERS, "X,Y,Z");
+//        configuration.add(SymbolConstants.CORS_MAX_AGE, "42");
+//        configuration.add(SymbolConstants.CORS_ALLOW_CREDENTIALS, "true");
+//        configuration.add(SymbolConstants.CORS_EXPOSE_HEADERS, "A,B,C");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)

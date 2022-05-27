@@ -39,6 +39,8 @@ import org.apache.tapestry5.http.internal.services.ApplicationGlobalsImpl;
 import org.apache.tapestry5.http.internal.services.AsyncRequestServiceImpl;
 import org.apache.tapestry5.http.internal.services.BaseURLSourceImpl;
 import org.apache.tapestry5.http.internal.services.ContextImpl;
+import org.apache.tapestry5.http.internal.services.CorsHandlerHelperImpl;
+import org.apache.tapestry5.http.internal.services.DefaultCorsHandler;
 import org.apache.tapestry5.http.internal.services.DefaultSessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.http.internal.services.OptimizedSessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.http.internal.services.RequestGlobalsImpl;
@@ -53,6 +55,9 @@ import org.apache.tapestry5.http.services.ApplicationInitializer;
 import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
 import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.http.services.Context;
+import org.apache.tapestry5.http.services.CorsHandler;
+import org.apache.tapestry5.http.services.CorsHandlerHelper;
+import org.apache.tapestry5.http.services.CorsHttpServletRequestFilter;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.HttpRequestBodyConverter;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;
@@ -107,6 +112,8 @@ public final class TapestryHttpModule {
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(RestSupport.class, RestSupportImpl.class);
         binder.bind(AsyncRequestService.class, AsyncRequestServiceImpl.class);
+        binder.bind(CorsHandlerHelper.class, CorsHandlerHelperImpl.class);
+        binder.bind(CorsHttpServletRequestFilter.class);
     }
     
     /**
@@ -122,6 +129,13 @@ public final class TapestryHttpModule {
         configuration.add(TapestryHttpSymbolConstants.MIN_GZIP_SIZE, 100);
         configuration.add(TapestryHttpConstants.TAPESTRY_VERSION,
                 VersionUtils.readVersionNumber("META-INF/gradle/org.apache.tapestry/tapestry-http/project.properties"));
+        
+        configuration.add(TapestryHttpSymbolConstants.CORS_ENABLED, "false");
+        configuration.add(TapestryHttpSymbolConstants.CORS_ALLOWED_ORIGINS, "");
+        configuration.add(TapestryHttpSymbolConstants.CORS_ALLOW_CREDENTIALS, "false");
+        configuration.add(TapestryHttpSymbolConstants.CORS_ALLOW_METHODS, "GET,HEAD,PUT,PATCH,POST,DELETE");
+        configuration.add(TapestryHttpSymbolConstants.CORS_ALLOWED_HEADERS, "");
+        configuration.add(TapestryHttpSymbolConstants.CORS_EXPOSE_HEADERS, "");
         
         // The default values denote "use values from request"
         configuration.add(TapestryHttpSymbolConstants.HOSTNAME, "");
@@ -290,6 +304,8 @@ public final class TapestryHttpModule {
      */
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,                         
             @Symbol(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED) boolean gzipCompressionEnabled, 
+            @Symbol(TapestryHttpSymbolConstants.CORS_ENABLED) boolean corsEnabled, 
+            CorsHttpServletRequestFilter corsHttpServletRequestFilter,
             @Autobuild GZipFilter gzipFilter)
     {
         
@@ -303,6 +319,12 @@ public final class TapestryHttpModule {
                 return handler.service(request, response);
             }
         };
+        
+        if (corsEnabled)
+        {
+            configuration.add("CORS", corsHttpServletRequestFilter, 
+                    "after:StoreIntoGlobals", "before:GZIP");
+        }
 
         configuration.add("StoreIntoGlobals", storeIntoGlobals, "before:*");
         
@@ -331,6 +353,11 @@ public final class TapestryHttpModule {
         CoercionTuple.add(configuration, HttpServletRequest.class, InputStream.class, TapestryHttpModule::toInputStream);
         CoercionTuple.add(configuration, HttpServletRequest.class, Reader.class, TapestryHttpModule::toBufferedReader);
         CoercionTuple.add(configuration, HttpServletRequest.class, BufferedReader.class, TapestryHttpModule::toBufferedReader);
+    }
+    
+    public static void contributeCorsHttpServletRequestFilter(OrderedConfiguration<CorsHandler> configuration)
+    {
+        configuration.addInstance("Default", DefaultCorsHandler.class, "after:*");
     }
     
     private final static InputStream toInputStream(HttpServletRequest request)
