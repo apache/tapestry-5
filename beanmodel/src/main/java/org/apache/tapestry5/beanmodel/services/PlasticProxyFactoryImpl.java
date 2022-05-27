@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
@@ -137,7 +138,11 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
                 for (Method method : interfaceType.getMethods())
                 {
-                    plasticClass.introduceMethod(method).delegateTo(delegateMethod);
+                    // TAP5-2667
+                    if (!Modifier.isStatic(method.getModifiers()))
+                    {
+                        plasticClass.introduceMethod(method).delegateTo(delegateMethod);
+                    }
                 }
                 
                 // TA5-2235

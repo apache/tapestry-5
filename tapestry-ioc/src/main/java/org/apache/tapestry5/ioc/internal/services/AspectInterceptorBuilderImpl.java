@@ -26,6 +26,7 @@ import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticField;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -59,7 +60,10 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
 
         for (Method method : allMethods)
         {
-            plasticClass.introduceMethod(method).delegateTo(delegateField);
+            if (!Modifier.isStatic(method.getModifiers()))
+            {
+                plasticClass.introduceMethod(method).delegateTo(delegateField);
+            }
         }
         
         // TAP5-2235
@@ -95,7 +99,11 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
     {
         for (Method m : serviceInterface.getMethods())
         {
-            adviseMethod(m, advice);
+            // TAP5-2667
+            if (!Modifier.isStatic(m.getModifiers()))
+            {
+                adviseMethod(m, advice);
+            }
         }
     }
 
