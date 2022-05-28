@@ -192,7 +192,7 @@ public class DateField extends AbstractField
             response.put(RESULT, new SimpleDateFormat("yyyy-MM-dd").format(date));
         } catch (ParseException ex)
         {
-            response.put(ERROR, "Unparseable date");
+            response.put(ERROR, ex.getMessage());
         }
 
         return response;
