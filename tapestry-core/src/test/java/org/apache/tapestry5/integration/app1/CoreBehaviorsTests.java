@@ -178,6 +178,22 @@ public class CoreBehaviorsTests extends App1TestCase
     }
 
     @Test
+    public void inject_component_optional() throws Exception
+    {
+        openLinks("InjectComponentOptional");
+
+        assertTextNotPresent("Unable to inject component 'form' into field form of org.apache.tapestry5.integration.app1.pages.InjectComponentOptional.");
+    }
+
+    @Test
+    public void inject_component_optional_exception() throws Exception
+    {
+        openLinks("InjectComponentOptionalException");
+
+        assertTextPresent("Unable to inject component into field form of class org.apache.tapestry5.integration.app1.pages.InjectComponentOptionalException");
+    }
+
+    @Test
     public void injection() throws Exception
     {
         openLinks("Inject Demo");

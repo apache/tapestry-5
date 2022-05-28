@@ -36,4 +36,9 @@ public @interface InjectComponent
      * The name of the component to inject. Defaults to the name of the annotated field.
      */
     String value() default "";
+
+    /**
+     * If true, allows the component to be missing without throwing an exception.
+     */
+    boolean optional() default false;
 }

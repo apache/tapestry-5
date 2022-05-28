@@ -40,8 +40,10 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
 
         private Component embedded;
 
+        private boolean optional; 
+
         private InjectedComponentFieldValueConduit(ComponentResources resources, String fieldName, String type,
-                                                   String componentId)
+                                                   String componentId, boolean optional)
         {
             super(resources, fieldName);
 
@@ -49,6 +51,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
             this.fieldName = fieldName;
             this.componentId = componentId;
             this.type = type;
+            this.optional = optional;
 
             resources.getPageLifecycleCallbackHub().addPageAttachedCallback(new Runnable()
             {
@@ -66,6 +69,10 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                 embedded = resources.getEmbeddedComponent(componentId);
             } catch (UnknownValueException ex)
             {
+                if (this.optional) {
+                    return;
+                }
+
                 throw new RuntimeException(String.format("Unable to inject component into field %s of class %s: %s",
                         fieldName, getComponentClassName(), ex.getMessage()), ex);
             }
@@ -112,6 +119,8 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
             final String componentId = getComponentId(field, annotation);
 
             final String fieldName = field.getName();
+            
+            final boolean optional = annotation.optional();
 
             ComputedValue<FieldConduit<Object>> provider = new ComputedValue<FieldConduit<Object>>()
             {
@@ -119,7 +128,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                 {
                     ComponentResources resources = context.get(ComponentResources.class);
 
-                    return new InjectedComponentFieldValueConduit(resources, fieldName, type, componentId);
+                    return new InjectedComponentFieldValueConduit(resources, fieldName, type, componentId, optional);
                 }
             };
 

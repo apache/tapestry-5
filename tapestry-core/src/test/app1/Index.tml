@@ -77,6 +77,16 @@
     </li>
 
     <li>
+        <a href="injectcomponentoptional">InjectComponentOptional</a>
+        -- check optional @InjectComponent is not throwing an exception
+    </li>
+
+    <li>
+        <a href="injectcomponentoptionalexception">InjectComponentOptionalException</a>
+        -- check missing non-optional @InjectComponent is throwing an exception
+    </li>
+
+    <li>
         <a href="recursivedemo">Recursive Demo</a>
         -- check for handling of recursive components
     </li>

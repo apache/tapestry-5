@@ -1536,6 +1536,17 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         }
     }
 
+    protected final void assertTextNotPresent(String... text)
+    {
+        for (String item : text)
+        {
+            if (isTextPresent(item))
+            {
+                reportAndThrowAssertionError("Page did contain '" + item + "'.");
+            }
+        }
+    }
+
     /**
      * Assets that each string provided is present somewhere in the current document.
      *
