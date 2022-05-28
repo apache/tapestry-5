@@ -146,7 +146,7 @@ public class Html5DateField extends AbstractField
                 parsedValue = getDateFormat().parse(value);
         } catch (ParseException ex)
         {
-            validationTracker.recordError(this, messages.format("core-date-value-not-parseable", controlName));
+            validationTracker.recordError(this, messages.format("core-date-value-not-parseable", value));
             return;
         }
 
