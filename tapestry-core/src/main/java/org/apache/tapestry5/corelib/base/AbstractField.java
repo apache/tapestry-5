@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.corelib.base;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
@@ -37,6 +38,7 @@ import java.io.Serializable;
  *
  * @tapestrydoc
  */
+@SuppressWarnings("deprecation")
 @SupportsInformalParameters
 public abstract class AbstractField implements Field
 {
@@ -290,6 +292,7 @@ public abstract class AbstractField implements Field
         decorator.afterField(this);
 
         String error = validationTracker.getError(this);
+        error = StringEscapeUtils.escapeHtml4(error);
 
         if (error != null)
         {
