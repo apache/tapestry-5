@@ -57,7 +57,7 @@ class GeneralIntegrationSpec extends AbstractSharedRegistrySpecification {
       Registry registry = RegistryBuilder.buildAndStartupRegistry(TestModule.class);
       InterfaceWithDefaultMethod service = registry.getService(InterfaceWithDefaultMethod.class)
       then:
-      service.staticMethod == InterfaceWithDefaultMethod.STATIC_METHOD_RETURN_VALUE;
+      service.staticMethod() == InterfaceWithDefaultMethod.STATIC_METHOD_RETURN_VALUE;
   }
 
   
