@@ -27,7 +27,7 @@ dependencies {
 }
 
 test {
-    useJUnit()
+	useJUnitPlatform()
     // Override the master build.gradle
     systemProperties.remove("tapestry.service-reloading-enabled")
 }
