@@ -2,6 +2,8 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.internal.services.cron.CronExpression
 import spock.lang.Ignore
+import spock.lang.Issue
+import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -100,5 +102,25 @@ class CronExpressionSpec extends Specification {
     where:
     expr << ["0 43 9 ? * 5L"]
   }
+  
+  @Issue("https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2723")
+  @PendingFeature(reason = "TAP5-2723 not yet fixed.")
+  def "getNextValidTimeAfter(#after) should be #expected for #expr"()
+  {
+	  given:
+	  def e = new CronExpression(expr)
+	  e.setTimeZone(TimeZone.getTimeZone("UTC"))
+	  
+	  expect:
+	  e.getNextValidTimeAfter(new Date(after)) == new Date(expected)
+	  
+	  where:
+	  expr               | after         || expected
+	  "0/5 * * ? * * *"  | 0             || 5000
+	  "0/5 * * ? * * *"  | 5000          || 10000
+	  "0 55 8 L-9 * ? *" | 1653939024971 || 1655801700000
+	  
+  }
+
 
 }
