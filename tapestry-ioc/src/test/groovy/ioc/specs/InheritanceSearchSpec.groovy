@@ -9,6 +9,7 @@ import org.apache.tapestry5.ioc.test.internal.util.ToyTruck
 import org.apache.tapestry5.ioc.test.internal.util.ToyTruckImpl
 import org.apache.tapestry5.plastic.PlasticUtils
 
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -57,7 +58,6 @@ class InheritanceSearchSpec extends Specification {
 
     clazz        | expected
     Object       | [Object]
-    String       | [String, Serializable, Comparable, CharSequence, Object]
     Comparable   | [Comparable, Object]
     ToyTruck     | [ToyTruck, Playable, Drivable, Object]
     ToyTruckImpl | [ToyTruckImpl, PlayableImpl, DrivableImpl, Drivable, ToyTruck, Playable, Object]
@@ -72,4 +72,52 @@ class InheritanceSearchSpec extends Specification {
     expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
 
   }
+
+  @IgnoreIf(value = { jvm.java12Compatible })
+  @Unroll
+  def "inheritance of #className is #expectedNames (Java < 12)"() {
+	def search = new InheritanceSearch(clazz)
+	def result = []
+	while (search.hasNext()) {
+	  result << search.next()
+	}
+
+	expect:
+
+	result == expected
+
+	where:
+
+	clazz        | expected
+	String       | [String, Serializable, Comparable, CharSequence, Object]
+
+	className = PlasticUtils.toTypeName(clazz)
+	expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
+
+  }
+
+    
+  @IgnoreIf(value = { !jvm.java12Compatible })
+  @Unroll
+  def "inheritance of #className is #expectedNames (Java 12+)"() {
+	def search = new InheritanceSearch(clazz)
+	def result = []
+	while (search.hasNext()) {
+	  result << search.next()
+	}
+
+	expect:
+
+	result == expected
+
+	where:
+
+	clazz        | expected
+	String       | [String, Serializable, Comparable, CharSequence, Constable, ConstantDesc, Object]
+
+	className = PlasticUtils.toTypeName(clazz)
+	expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
+
+  }
+
 }
