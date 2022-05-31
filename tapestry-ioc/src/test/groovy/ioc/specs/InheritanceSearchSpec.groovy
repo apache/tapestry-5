@@ -61,7 +61,6 @@ class InheritanceSearchSpec extends Specification {
     Comparable   | [Comparable, Object]
     ToyTruck     | [ToyTruck, Playable, Drivable, Object]
     ToyTruckImpl | [ToyTruckImpl, PlayableImpl, DrivableImpl, Drivable, ToyTruck, Playable, Object]
-    long         | [long, Long, Number, Comparable, Serializable, Object]
     void         | [void, Object]
     long[]       | [long[], Cloneable, Serializable, Object]
     int[][]      | [int[][], Cloneable, Serializable, Object]
@@ -73,7 +72,7 @@ class InheritanceSearchSpec extends Specification {
 
   }
 
-  @IgnoreIf(value = { jvm.java12Compatible })
+  @IgnoreIf(value = { jvm.java12Compatible }, reason = "The class hierarchy for the classes listed in the 'where' section changed in Java 12. A complementary spec was added to 'tapestry-latest-java-tests' to account for the added classes.")
   @Unroll
   def "inheritance of #className is #expectedNames (Java < 12)"() {
 	def search = new InheritanceSearch(clazz)
@@ -90,30 +89,8 @@ class InheritanceSearchSpec extends Specification {
 
 	clazz        | expected
 	String       | [String, Serializable, Comparable, CharSequence, Object]
-
-	className = PlasticUtils.toTypeName(clazz)
-	expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
-
-  }
-
-    
-  @IgnoreIf(value = { !jvm.java12Compatible })
-  @Unroll
-  def "inheritance of #className is #expectedNames (Java 12+)"() {
-	def search = new InheritanceSearch(clazz)
-	def result = []
-	while (search.hasNext()) {
-	  result << search.next()
-	}
-
-	expect:
-
-	result == expected
-
-	where:
-
-	clazz        | expected
-	String       | [String, Serializable, Comparable, CharSequence, Constable, ConstantDesc, Object]
+	long         | [long, Long, Number, Comparable, Serializable, Object]
+	
 
 	className = PlasticUtils.toTypeName(clazz)
 	expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")

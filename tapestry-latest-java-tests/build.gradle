@@ -8,6 +8,12 @@ tasks.withType(JavaCompile).each {
 }
 
 test {
+    dependsOn 'testNG'
+    useJUnitPlatform()
+    jvmArgs(["--enable-preview"])
+}
+
+tasks.register('testNG', Test) {
     useTestNG()
     jvmArgs(["--enable-preview"])
 }
