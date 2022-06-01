@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal;
 
+import java.util.Optional;
+
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.commons.util.CommonsUtils;
 
@@ -41,5 +43,17 @@ public class EmptyEventContext implements EventContext
     public String[] toStrings()
     {
         return CommonsUtils.EMPTY_STRING_ARRAY;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return true;
+    }
+
+    @Override
+    public <T> Optional<T> tryGet(Class<T> desiredType, int index)
+    {
+        return Optional.empty();
     }
 }

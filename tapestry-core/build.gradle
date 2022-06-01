@@ -30,8 +30,9 @@ dependencies {
 
     implementation "commons-codec:commons-codec:1.10"
 
-    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
+    testRuntimeOnly project(':tapestry-spock')
 
+    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
     testRuntimeOnly 'com.google.inject:guice:3.0'
 }
 
