@@ -155,7 +155,7 @@ public class ContentTypeTest extends TestBase
         assertEquals(charset.toString(), "text/html;charset=utf-8");
     }
     
-    @Test(timeOut = 750, expectedExceptions = IllegalArgumentException.class)
+    @Test(timeOut = 2000, expectedExceptions = IllegalArgumentException.class)
     public void constructor_timeout() throws Exception
     {
         new ContentType("a/a;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;a/=:;");
