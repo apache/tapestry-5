@@ -26,6 +26,7 @@ import java.util.*;
  * separated by white space. The fields respectively are described as follows:
  * 
  * <table>
+ * <caption>Supported Cron fields</caption>
  * <tr>
  * <th style="text-align: left;">Field Name</th>
  * <th style="text-align: left;">&nbsp;</th>
@@ -163,6 +164,7 @@ import java.util.*;
  * 
  * <p>
  * <b>NOTES:</b>
+ * </p>
  * <ul>
  * <li>Support for specifying both a day-of-week and a day-of-month value is
  * not complete (you'll need to use the '?' character in one of these fields).
@@ -175,7 +177,6 @@ import java.util.*;
  * interpretation CronExpression chooses. An example would be 
  * "0 0 14-6 ? * FRI-MON". </li>
  * </ul>
- * </p>
  * 
  * 
  * @author Sharada Jambula, James House
