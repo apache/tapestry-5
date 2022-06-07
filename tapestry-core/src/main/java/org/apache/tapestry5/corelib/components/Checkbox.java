@@ -21,6 +21,10 @@ import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 
 /**
  * A Checkbox component is simply a &lt;input type="checkbox"&gt;.
@@ -41,12 +45,20 @@ public class Checkbox extends AbstractField
      * generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE, allowNull = false)
-    @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
-    @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
+    
+    @Inject
+    private Compatibility compatibility;
+    
+    private boolean bootstrap4;
+    
+    void pageLoaded()
+    {
+        bootstrap4 = compatibility.enabled(Trait.BOOTSTRAP_4);
+    }
 
     @BeginRender
     void begin(MarkupWriter writer)
@@ -68,6 +80,13 @@ public class Checkbox extends AbstractField
 
         resources.renderInformalParameters(writer);
 
+        if (bootstrap4)
+        {
+            final Element element = writer.getElement();
+            String classAttribute = element.getAttribute("class");
+            classAttribute = classAttribute != null ? "form-check-input " + classAttribute : "form-check-input";
+            element.forceAttributes("class", classAttribute);
+        }
 
         decorateInsideField();
     }

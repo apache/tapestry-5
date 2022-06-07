@@ -22,6 +22,8 @@ import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.compatibility.Compatibility;
+import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
@@ -78,18 +80,24 @@ public class Label
      */
     @Parameter
     private boolean ignoreBody;
+    
+    @Inject
+    private Compatibility compatibility;
 
     private Element labelElement;
-
-    private String string;
-
-    private String string2;
+    
+    private String cssClass;
+    
+    void pageLoaded()
+    {
+        cssClass = compatibility.enabled(Trait.BOOTSTRAP_4) ? "form-check-label" : "control-label";
+    }
 
     boolean beginRender(MarkupWriter writer)
     {
         decorator.beforeLabel(field);
-
-        labelElement = writer.element("label", "class", "control-label");
+        
+        labelElement = writer.element("label", "class", cssClass);
 
         resources.renderInformalParameters(writer);
 
