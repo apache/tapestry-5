@@ -27,60 +27,60 @@ import java.util.*;
  * 
  * <table>
  * <tr>
- * <thstyle="text-align: left;">Field Name</th>
- * <thstyle="text-align: left;">&nbsp;</th>
- * <thstyle="text-align: left;">Allowed Values</th>
- * <thstyle="text-align: left;">&nbsp;</th>
- * <thstyle="text-align: left;">Allowed Special Characters</th>
+ * <th style="text-align: left;">Field Name</th>
+ * <th style="text-align: left;">&nbsp;</th>
+ * <th style="text-align: left;">Allowed Values</th>
+ * <th style="text-align: left;">&nbsp;</th>
+ * <th style="text-align: left;">Allowed Special Characters</th>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Seconds</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>0-59</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * /</code></td>
+ * <td style="text-align: left;"><code>Seconds</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>0-59</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Minutes</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>0-59</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * /</code></td>
+ * <td style="text-align: left;"><code>Minutes</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>0-59</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Hours</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>0-23</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * /</code></td>
+ * <td style="text-align: left;"><code>Hours</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>0-23</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Day-of-month</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>1-31</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * ? / L W</code></td>
+ * <td style="text-align: left;"><code>Day-of-month</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>1-31</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * ? / L W</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Month</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>0-11 or JAN-DEC</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * /</code></td>
+ * <td style="text-align: left;"><code>Month</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>0-11 or JAN-DEC</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Day-of-Week</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>1-7 or SUN-SAT</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * ? / L #</code></td>
+ * <td style="text-align: left;"><code>Day-of-Week</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>1-7 or SUN-SAT</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * ? / L #</code></td>
  * </tr>
  * <tr>
- * <tdstyle="text-align: left;"><code>Year (Optional)</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>empty, 1970-2199</code></td>
- * <tdstyle="text-align: left;">&nbsp;</th>
- * <tdstyle="text-align: left;"><code>, - * /</code></td>
+ * <td style="text-align: left;"><code>Year (Optional)</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>empty, 1970-2199</code></td>
+ * <td style="text-align: left;">&nbsp;</th>
+ * <td style="text-align: left;"><code>, - * /</code></td>
  * </tr>
  * </table>
  * <P>
