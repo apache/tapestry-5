@@ -22,7 +22,7 @@ dependencies {
     testImplementation "org.spockframework:spock-tapestry:${versions.spock}", {
     	exclude group: "org.apache.tapestry"
     }
-    
+    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }

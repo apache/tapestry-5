@@ -14,6 +14,7 @@ dependencies {
       exclude group: "org.testng", module: "testng"
       exclude group: "javax.servlet", module: "javax.servlet-api"
   }
+  testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
   
 }
 

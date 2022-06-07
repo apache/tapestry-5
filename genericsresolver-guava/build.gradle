@@ -5,4 +5,5 @@ dependencies {
   testImplementation project(':tapestry-core')
   testImplementation project(':tapestry-test')
   provided implementation ('com.google.guava:guava:27.0.1-jre')
+  testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }

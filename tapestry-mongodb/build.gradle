@@ -7,7 +7,7 @@ dependencies {
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '2.10.1'
 
     testImplementation group: 'org.jongo', name: 'jongo', version: '0.3'
-
+    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     testImplementation "de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28"
 }
 

@@ -22,4 +22,5 @@ dependencies {
     testImplementation project(':tapestry-ioc')
     testImplementation "org.slf4j:slf4j-api:${versions.slf4j}"
     testImplementation "org.testng:testng:${versions.testng}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }
