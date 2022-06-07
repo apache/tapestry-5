@@ -21,7 +21,8 @@ project.ext.versions = [
     geb: "2.0",
     selenium: "3.141.59",
     jackson: "2.13.1",
-    jsonschemaGenerator: "4.20.0"
+    jsonschemaGenerator: "4.20.0",
+    junitJupiter: "5.8.2"
 ]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
