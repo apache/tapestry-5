@@ -32,8 +32,9 @@ dependencies {
     
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 
-    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
+    testRuntimeOnly project(':tapestry-spock')
 
+    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
     testRuntimeOnly 'com.google.inject:guice:3.0'
 }
 

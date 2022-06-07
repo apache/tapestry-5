@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal;
 
+import java.util.Optional;
+
 import org.apache.tapestry5.EventContext;
 
 public abstract class AbstractEventContext implements EventContext
@@ -49,4 +51,32 @@ public abstract class AbstractEventContext implements EventContext
 
         return builder.append('>').toString();
     }
+    
+
+    @Override
+    public boolean isEmpty()
+    {
+        return getCount() == 0;
+    }
+
+    @Override
+    public <T> Optional<T> tryGet(Class<T> desiredType, int index)
+    {
+        if (index >= getCount())
+        {
+            return Optional.empty();
+        }
+
+        try
+        {
+            T value = get(desiredType, index);
+            return Optional.ofNullable(value);
+        } catch (RuntimeException e)
+        {
+            // Ignore any RuntimeException
+        }
+
+        return Optional.empty();
+    }
+
 }

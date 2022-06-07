@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import java.util.Optional;
+
 /**
  * A collection of parameters that may eventually be passed to an event handler method. Includes the
  * ability to coerce
@@ -30,6 +32,12 @@ public interface EventContext
     int getCount();
 
     /**
+     * Returns {@code true} if this context contains no elements.
+     * @since 5.8.2
+     */
+    boolean isEmpty();
+
+    /**
      * Extracts a parameter value and coerces or decodes it to the desired type.
      * 
      * @param desiredType
@@ -41,6 +49,19 @@ public interface EventContext
      *             if the value can't be converted or the index is out of range
      */
     <T> T get(Class<T> desiredType, int index);
+
+    /**
+     * Tries to extract a parameter value and coerces or decodes it to the desired type.
+     * 
+     * @param desiredType
+     *            the type of value required
+     * @param index
+     *            identifies which parameter value to extract
+     * @return the value extracted and converted or coerced, wrapped in an Optional, or {@link Optional#isEmpty()}
+     *         if index is out of bounds, or the value can't be converted.
+     * @since 5.8.2
+     */
+    <T> Optional<T> tryGet(Class<T> desiredType, int index);
 
     /**
      * Extracts the value of each context value as a string.
