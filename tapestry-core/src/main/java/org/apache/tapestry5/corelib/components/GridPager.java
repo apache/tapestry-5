@@ -85,6 +85,13 @@ public class GridPager
     
     @Inject
     private Compatibility compatibility;
+    
+    private boolean bootstrap4;
+    
+    void pageLoaded()
+    {
+        bootstrap4 = compatibility.enabled(Trait.BOOTSTRAP_4);
+    }
 
     void beginRender(MarkupWriter writer)
     {
@@ -137,13 +144,11 @@ public class GridPager
 
         if (pageIndex <= lastIndex) return;
 
-        final boolean isBootstrap4 = isBootstrap4();
-        
         if (pageIndex != lastIndex + 1)
         {
-            writer.element("li", "class", isBootstrap4 ? "disabled page-item" : "disabled");
+            writer.element("li", "class", bootstrap4 ? "disabled page-item" : "disabled");
             writer.element("a", "href", "#", "aria-disabled", "true");
-            addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);
+            addClassAttributeToPageLinkIfNeeded(writer, bootstrap4);
             writer.write(" ... ");
             writer.end();
             writer.end();
@@ -153,9 +158,9 @@ public class GridPager
 
         if (pageIndex == currentPage)
         {
-            writer.element("li", "aria-current", "page", "class", isBootstrap4 ? "active page-item" : "active");
+            writer.element("li", "aria-current", "page", "class", bootstrap4 ? "active page-item" : "active");
             writer.element("a", "href", "#", "aria-disabled", "true");
-            addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);            
+            addClassAttributeToPageLinkIfNeeded(writer, bootstrap4);            
             writer.write(Integer.toString(pageIndex));
             writer.end();
             writer.end();
@@ -163,7 +168,7 @@ public class GridPager
         }
 
         writer.element("li");
-        if (isBootstrap4)
+        if (bootstrap4)
         {
             writer.getElement().attribute("class", "page-item");
         }
@@ -180,7 +185,10 @@ public class GridPager
                 "data-update-zone", zone,
                 "title", messages.format("core-goto-page", pageIndex));
 
-        addClassAttributeToPageLinkIfNeeded(writer, isBootstrap4);
+        if (bootstrap4)
+        {
+            writer.getElement().attribute("class", "page-link");
+        }
 
         writer.write(Integer.toString(pageIndex));
 
@@ -189,8 +197,8 @@ public class GridPager
         writer.end();   // li
     }
 
-    private void addClassAttributeToPageLinkIfNeeded(MarkupWriter writer, final boolean isBootstrap4) {
-        if (isBootstrap4)
+    private void addClassAttributeToPageLinkIfNeeded(MarkupWriter writer, final boolean bootstrap4) {
+        if (bootstrap4)
         {
             writer.getElement().attribute("class", "page-link");
         }
@@ -213,8 +221,4 @@ public class GridPager
         return true;     // abort event
     }
     
-    protected boolean isBootstrap4()
-    {
-        return compatibility.enabled(Trait.BOOTSTRAP_4);
-    }
 }
