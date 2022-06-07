@@ -104,7 +104,6 @@ class CronExpressionSpec extends Specification {
   }
   
   @Issue("https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2723")
-  @PendingFeature(reason = "TAP5-2723 not yet fixed.")
   def "getNextValidTimeAfter(#after) should be #expected for #expr"()
   {
 	  given:
