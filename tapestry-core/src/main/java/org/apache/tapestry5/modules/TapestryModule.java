@@ -104,12 +104,10 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
-import org.apache.tapestry5.commons.util.VersionUtils;
 import org.apache.tapestry5.corelib.data.SecureOption;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
-import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalSymbols;
@@ -1780,7 +1778,7 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
 
-                                         @Symbol(TapestryHttpConstants.TAPESTRY_VERSION)
+                                         @Symbol(TapestryHttpSymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
 
                                          @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)

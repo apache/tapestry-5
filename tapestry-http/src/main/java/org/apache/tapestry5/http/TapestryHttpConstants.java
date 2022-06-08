@@ -30,7 +30,8 @@ final public class TapestryHttpConstants {
     /**
      * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
      * should only occur when developing Tapestry).
+     * @deprecated use {@link TapestryHttpSymbolConstants#TAPESTRY_VERSION} instead.
      */
-    public static final String TAPESTRY_VERSION = "tapestry.version";
+    public static final String TAPESTRY_VERSION = TapestryHttpSymbolConstants.TAPESTRY_VERSION;
 
 }

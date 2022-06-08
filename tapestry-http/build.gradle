@@ -27,6 +27,6 @@ compileTestGroovy.dependsOn compileTestJava
 
 jar {
     from("src/main/filtered-resources") {
-        filter(ReplaceTokens, tokens: [version: project.version])
+        filter(ReplaceTokens, tokens: [version: project.parent.version])
     }
 }

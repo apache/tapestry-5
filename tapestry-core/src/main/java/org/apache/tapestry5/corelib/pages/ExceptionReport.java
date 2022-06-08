@@ -25,7 +25,6 @@ import org.apache.tapestry5.corelib.base.AbstractInternalPage;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.http.Link;
-import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.services.BaseURLSource;
 import org.apache.tapestry5.http.services.RequestGlobals;
@@ -72,7 +71,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     private boolean productionMode;
 
     @Inject
-    @Symbol(TapestryHttpConstants.TAPESTRY_VERSION)
+    @Symbol(TapestryHttpSymbolConstants.TAPESTRY_VERSION)
     @Property(write = false)
     private String tapestryVersion;
 

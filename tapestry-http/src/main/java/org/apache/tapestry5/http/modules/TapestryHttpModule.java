@@ -30,7 +30,6 @@ import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.CoercionTuple;
 import org.apache.tapestry5.commons.util.VersionUtils;
 import org.apache.tapestry5.http.OptimizedSessionPersistedObject;
-import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.internal.AsyncRequestService;
 import org.apache.tapestry5.http.internal.TypeCoercerHttpRequestBodyConverter;
@@ -127,7 +126,7 @@ public final class TapestryHttpModule {
         configuration.add(TapestryHttpSymbolConstants.APPLICATION_VERSION, "0.0.1");
         configuration.add(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED, true);
         configuration.add(TapestryHttpSymbolConstants.MIN_GZIP_SIZE, 100);
-        configuration.add(TapestryHttpConstants.TAPESTRY_VERSION,
+        configuration.add(TapestryHttpSymbolConstants.TAPESTRY_VERSION,
                 VersionUtils.readVersionNumber("META-INF/gradle/org.apache.tapestry/tapestry-http/project.properties"));
         
         configuration.add(TapestryHttpSymbolConstants.CORS_ENABLED, "false");

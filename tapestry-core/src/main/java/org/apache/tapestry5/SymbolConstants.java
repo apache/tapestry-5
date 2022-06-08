@@ -100,9 +100,9 @@ public class SymbolConstants
     /**
      * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
      * should only occur when developing Tapestry).
-     * This is an alias for {@link TapestryHttpSymbolConstants#CHARSET}.
+     * This is an alias for {@link TapestryHttpSymbolConstants#TAPESTRY_VERSION}.
      */
-    public static final String TAPESTRY_VERSION = TapestryHttpConstants.TAPESTRY_VERSION;
+    public static final String TAPESTRY_VERSION = TapestryHttpSymbolConstants.TAPESTRY_VERSION;
 
     /**
      * The location of the application-wide component messages catalog, relative to the web application context. This

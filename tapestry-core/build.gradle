@@ -69,12 +69,6 @@ sourceSets {
 // Not sure why this is necessary:
 compileTestGroovy.dependsOn compileTestJava
 
-jar {
-    from("src/main/filtered-resources") {
-        filter(ReplaceTokens, tokens: [version: project.version])
-    }
-}
-
 test {
 	// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
