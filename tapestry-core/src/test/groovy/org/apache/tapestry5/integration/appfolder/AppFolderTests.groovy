@@ -52,6 +52,8 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     void asset_access()
     {
         openLinks "t5app/"
+        
+        Thread.sleep(3000);
 
         // there's only one image on page
         String assetURL = getAttribute("//img/@src")
