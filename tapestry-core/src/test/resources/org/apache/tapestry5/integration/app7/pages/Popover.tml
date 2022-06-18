@@ -1,0 +1,6 @@
+<div t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd"
+	xmlns:p="tapestry:parameter" t:pageTitle="literal:Popover">
+
+	<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here is some amazing content. It is very engaging. Right?">Click to toggle popover</button>
+
+</div> 

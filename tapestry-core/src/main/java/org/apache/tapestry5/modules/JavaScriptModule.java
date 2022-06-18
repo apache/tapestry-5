@@ -446,7 +446,7 @@ public class JavaScriptModule
                     bootstrapUtil.forFile("popper.js")));
             
             for (String name : new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
-                    "scrollspy", "tab", "tooltip"})
+                    "popover", "scrollspy", "tab", "tooltip"})
             {
                 Resource lib = bootstrapUtil.forFile(name + ".js");
                 if (lib.exists())

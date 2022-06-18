@@ -7,6 +7,9 @@
 		<li>
 			<t:pagelink t:page="Forms">Forms</t:pagelink>
 		</li>
+		<li>
+			<t:pagelink t:page="Popover">Popover</t:pagelink>
+		</li>
 	</ul>
 
 </div> 
