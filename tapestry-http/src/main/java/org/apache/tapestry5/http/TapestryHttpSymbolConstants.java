@@ -148,7 +148,7 @@ final public class TapestryHttpSymbolConstants {
 
     /**
      * Comma-delimited of origins allowed for CORS. The special value "*" means allowing all origins.
-     * This is used by {@link CorsHandlerHelper#getAllowedOrigin(javax.servlet.http.HttpServletRequest)}.
+     * This is used by the default implementation of {@link CorsHandlerHelper#getAllowedOrigin(javax.servlet.http.HttpServletRequest)}.
      * Default value is the empty string (i.e. no origins allowed and CORS actually disabled).
      * @since 5.8.2
      */
@@ -157,7 +157,7 @@ final public class TapestryHttpSymbolConstants {
     /**
      * Boolean value defining whether the Access-Control-Allow-Credentials HTTP header
      * should be set automatically in the response for CORS requests. Default value is
-     * <code>false</code>. This is used in {@link CorsHandlerHelper#configureCredentials(javax.servlet.http.HttpServletResponse)}.
+     * <code>false</code>. This is used by the default implementation of {@link CorsHandlerHelper#configureCredentials(javax.servlet.http.HttpServletResponse)}.
      * @since 5.8.2
      */
     public static final String CORS_ALLOW_CREDENTIALS = "tapestry.cors-allow-credentials";
@@ -171,8 +171,9 @@ final public class TapestryHttpSymbolConstants {
     public static final String CORS_ALLOW_METHODS = "tapestry.cors-allow-methods";
     
     /**
-     * Value to be used in the Access-Control-Allow-Methods in CORS preflight request responses.
-     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse, javax.servlet.http.HttpServletRequest)}.
+     * Value to be used in the Access-Control-Allow-Headers in CORS preflight request responses.
+     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse, javax.servlet.http.HttpServletRequest)},
+     * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * @since 5.8.2
      */
@@ -180,7 +181,8 @@ final public class TapestryHttpSymbolConstants {
     
     /**
      * Value to be used in the Access-Control-Expose-Headers in CORS preflight request responses.
-     * This is used by {@link CorsHandlerHelper#configureExposeHeaders(javax.servlet.http.HttpServletResponse)}.
+     * This is used by the default implementation of {@link CorsHandlerHelper#configureExposeHeaders(javax.servlet.http.HttpServletResponse)},
+     * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * @since 5.8.2
      */
@@ -188,7 +190,8 @@ final public class TapestryHttpSymbolConstants {
     
     /**
      * Value to be used in the Access-Control-Max-Age in responses to preflight CORS requests.
-     * This is used by {@link CorsHandlerHelper#configureMaxAge(javax.servlet.http.HttpServletResponse)}.
+     * This is used by {@link CorsHandlerHelper#configureMaxAge(javax.servlet.http.HttpServletResponse)},
+     * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * This is an alias for {@link TapestryHttpSymbolConstants#CORS_MAX_AGE}.
      * @since 5.8.2
