@@ -10,6 +10,7 @@ import org.apache.tapestry5.annotations.Import;
         "test-messages.js",
         "test-validation.js",
         "test-utils.js",
+        "test-jquery-migrate.js",
 
         // This must come last:
         "qunit-driver.js"},

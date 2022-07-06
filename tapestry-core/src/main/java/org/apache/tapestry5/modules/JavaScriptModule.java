@@ -409,6 +409,9 @@ public class JavaScriptModule
 
                                         @Path("${tapestry.asset.root}/jquery-shim.js")
                                         Resource jqueryShim,
+                                        
+                                        @Path("${tapestry.asset.root}/jquery-migrate.js")
+                                        Resource jqueryMigrate,                                        
 
                                         @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
@@ -422,11 +425,18 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/bootstrap4/js/bootstrap-util.js")
                                         Resource bootstrapUtil,
                                         
-                                        Compatibility compatibility)
+                                        Compatibility compatibility,
+                                        
+                                        @Symbol(SymbolConstants.PRODUCTION_MODE) boolean prodMode
+                                        )
     {
         // The underscore shim module allows Underscore to be injected
         configuration.add("underscore", new JavaScriptModuleConfiguration(underscoreShim));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
+        if (!prodMode)
+        {       	
+        	configuration.add("jquery-migrate", new JavaScriptModuleConfiguration(jqueryMigrate).dependsOn("jquery"));
+        }
         
         if (compatibility.enabled(Trait.BOOTSTRAP_3))
         {
