@@ -14,7 +14,7 @@ public class EnableJQueryModule
     @ApplicationDefaults
     public static void switchProviderToJQuery(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery-migrate");
     }
 
     @Contribute(Compatibility.class)

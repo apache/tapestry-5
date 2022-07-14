@@ -57,7 +57,7 @@ public class AppModule
 
         configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, "false");
 
-        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery-migrate");
         
         configuration.add(SymbolConstants.FORM_GROUP_LABEL_CSS_CLASS, FORM_GROUP_LABEL_CSS_CLASS_VALUE);
         configuration.add(SymbolConstants.FORM_GROUP_WRAPPER_CSS_CLASS, FORM_GROUP_WRAPPER_CSS_CLASS_VALUE);

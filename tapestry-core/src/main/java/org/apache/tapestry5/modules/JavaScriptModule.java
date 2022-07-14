@@ -179,6 +179,11 @@ public class JavaScriptModule
 
         add(configuration, StackExtensionType.MODULE, "jquery");
         
+        if (provider.equals("jquery-migrate"))
+        {
+        	configuration.add("jquery-migrate", StackExtension.module("jquery-migrate"));
+        }
+        
         add(configuration, StackExtensionType.STYLESHEET, "${" + SymbolConstants.FONT_AWESOME_ROOT + "}/css/font-awesome.css");
 
         if (compatibility.enabled(Trait.BOOTSTRAP_3) && compatibility.enabled(Trait.BOOTSTRAP_4))
@@ -427,13 +432,13 @@ public class JavaScriptModule
                                         
                                         Compatibility compatibility,
                                         
-                                        @Symbol(SymbolConstants.PRODUCTION_MODE) boolean prodMode
+                                        @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER) String provider
                                         )
     {
         // The underscore shim module allows Underscore to be injected
         configuration.add("underscore", new JavaScriptModuleConfiguration(underscoreShim));
         configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
-        if (!prodMode)
+        if (provider.equals("jquery-migrate"))
         {       	
         	configuration.add("jquery-migrate", new JavaScriptModuleConfiguration(jqueryMigrate).dependsOn("jquery"));
         }
@@ -516,7 +521,7 @@ public class JavaScriptModule
             configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domPrototype));
         }
 
-        if (provider.equals("jquery"))
+        if (provider.equals("jquery") || provider.equals("jquery-migrate"))
         {
             configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domJQuery));
         }

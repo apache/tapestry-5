@@ -178,7 +178,7 @@ public class AppModule
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "testing, testing, 1... 2... 3...");
 
         // This is the emphasis of testing at this point.
-        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
+        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery-migrate");
 
         configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js");
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.ALWAYS);
