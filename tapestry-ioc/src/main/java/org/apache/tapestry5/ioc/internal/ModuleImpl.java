@@ -116,6 +116,12 @@ public class ModuleImpl implements Module
      */
     private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
 
+
+    /**
+     * EagerLoadProxies collection into which proxies for eager loaded services are added. Guarded by BARRIER
+     */
+    private final Collection<EagerLoadServiceProxy> eagerLoadProxies = CollectionFactory.newList();
+
     private final Map<String, ServiceDef3> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
 
     /**
@@ -161,7 +167,7 @@ public class ModuleImpl implements Module
         // RegistryImpl should already have checked that the service exists.
         assert def != null;
 
-        Object service = findOrCreate(def, null);
+        Object service = findOrCreate(def);
 
         try
         {
@@ -225,10 +231,9 @@ public class ModuleImpl implements Module
      * Locates the service proxy for a particular service (from the service definition).
      *
      * @param def              defines the service
-     * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
-    private Object findOrCreate(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object findOrCreate(final ServiceDef3 def)
     {
         final String key = def.getServiceId();
 
@@ -247,7 +252,7 @@ public class ModuleImpl implements Module
 
                 if (result == null)
                 {
-                    result = create(def, eagerLoadProxies);
+                    result = create(def);
 
                     services.put(key, result);
                 }
@@ -284,8 +289,16 @@ public class ModuleImpl implements Module
                 for (ServiceDef3 def : serviceDefs.values())
                 {
                     if (def.isEagerLoad())
-                        findOrCreate(def, proxies);
+                        findOrCreate(def);
                 }
+
+                BARRIER.withWrite(new Runnable() {
+                    @Override
+                    public void run() {
+                        proxies.addAll(eagerLoadProxies);
+                        eagerLoadProxies.clear();
+                    }
+                });
             }
         };
 
@@ -294,10 +307,8 @@ public class ModuleImpl implements Module
 
     /**
      * Creates the service and updates the cache of created services.
-     *
-     * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
-    private Object create(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object create(final ServiceDef3 def)
     {
         final String serviceId = def.getServiceId();
 
@@ -376,11 +387,7 @@ public class ModuleImpl implements Module
 
                     registry.addRegistryShutdownListener(delegate);
 
-                    // Occasionally eager load service A may invoke service B from its service builder method; if
-                    // service B is eager loaded, we'll hit this method but eagerLoadProxies will be null. That's OK
-                    // ... service B is being realized anyway.
-
-                    if (def.isEagerLoad() && eagerLoadProxies != null)
+                    if (def.isEagerLoad())
                         eagerLoadProxies.add(delegate);
 
                     tracker.setStatus(serviceId, Status.VIRTUAL);

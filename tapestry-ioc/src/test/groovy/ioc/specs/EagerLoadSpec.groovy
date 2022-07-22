@@ -7,7 +7,9 @@ class EagerLoadSpec extends AbstractRegistrySpecification {
   def "proxied service does eager load"() {
     expect:
 
-    EagerProxyReloadModule.eagerLoadServiceDidLoad == false
+    EagerProxyReloadModule.eagerLoadService1DidLoad == false
+    EagerProxyReloadModule.nonProxyEagerLoadServiceDidLoad == false
+    EagerProxyReloadModule.eagerLoadService2DidLoad == false
 
     when:
 
@@ -17,6 +19,8 @@ class EagerLoadSpec extends AbstractRegistrySpecification {
 
     then:
 
-    EagerProxyReloadModule.eagerLoadServiceDidLoad == true
+    EagerProxyReloadModule.eagerLoadService1DidLoad == true
+    EagerProxyReloadModule.nonProxyEagerLoadServiceDidLoad == true
+    EagerProxyReloadModule.eagerLoadService2DidLoad == true
   }
 }

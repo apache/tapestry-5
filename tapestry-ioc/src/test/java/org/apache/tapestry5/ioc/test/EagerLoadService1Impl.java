@@ -14,19 +14,13 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
 
-//@ImportModule(EagerProxy2ReloadModule.class)
-public class EagerProxyReloadModule
+@EagerLoad
+public class EagerLoadService1Impl implements EagerLoadService1
 {
-    public static boolean eagerLoadService1DidLoad;
-    public static boolean nonProxyEagerLoadServiceDidLoad;
-    public static boolean eagerLoadService2DidLoad;
-
-    public static void bind(ServiceBinder binder)
+    public EagerLoadService1Impl()
     {
-        binder.bind(EagerLoadService1.class, EagerLoadService1Impl.class);
-        binder.bind(NonProxiedEagerLoadService.class).eagerLoad();
-        binder.bind(EagerLoadService2.class, EagerLoadService2Impl.class).eagerLoad();
+        EagerProxyReloadModule.eagerLoadService1DidLoad = true;
     }
 }

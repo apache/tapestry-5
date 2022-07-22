@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import org.apache.tapestry5.ioc.annotations.EagerLoad;
 
-@EagerLoad
-public class EagerLoadServiceImpl implements EagerLoadService
+public class EagerLoadService2Impl implements EagerLoadService2
 {
-    public EagerLoadServiceImpl()
+    public EagerLoadService2Impl()
     {
-        EagerProxyReloadModule.eagerLoadServiceDidLoad = true;
+        EagerProxyReloadModule.eagerLoadService2DidLoad = true;
     }
 }
