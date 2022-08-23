@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.test;
 
-public interface EagerLoadService
+public interface EagerLoadService2
 {
 
 }
