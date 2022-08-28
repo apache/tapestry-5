@@ -160,6 +160,12 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         threadLocale.setLocale(supported);
     }
+    
+    public void setNonPersistentLocaleFromRequest(Request request)
+    {
+        Locale locale = request.getLocale();
+        setNonPersistentLocaleFromLocaleName(locale.toString());
+    }
 
     private Locale findClosestSupportedLocale(Locale desiredLocale)
     {

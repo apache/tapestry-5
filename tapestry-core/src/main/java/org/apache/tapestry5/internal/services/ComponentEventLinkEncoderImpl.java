@@ -341,7 +341,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
                 if (explicitLocale == null)
                 {
-                    setLocaleFromRequest(request);
+                    localizationSetter.setNonPersistentLocaleFromRequest(request);
                 } else
                 {
                     localizationSetter.setLocaleFromLocaleName(explicitLocale);
@@ -385,15 +385,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
                 activationContext, eventContext);
-    }
-
-    private void setLocaleFromRequest(Request request)
-    {
-        Locale locale = request.getLocale();
-
-        // And explicit locale will have invoked setLocaleFromLocaleName().
-
-        localizationSetter.setNonPersistentLocaleFromLocaleName(locale.toString());
     }
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)
@@ -468,7 +459,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         if (result != null && !explicitLocale)
         {
-            setLocaleFromRequest(request);
+            localizationSetter.setNonPersistentLocaleFromRequest(request);
         }
 
         return result;

@@ -12,11 +12,12 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
-
 import java.util.List;
 import java.util.Locale;
+
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 
 /**
  * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It will try to honor it
@@ -53,6 +54,16 @@ public interface LocalizationSetter
      */
     @IncompatibleChange(release = "5.4", details = "typo is method name corrected")
     void setNonPersistentLocaleFromLocaleName(String localeName);
+
+    /**
+     * Allows the locale to be set from the locale of the client as determined from the request headers (which may
+     * be narrowed or defaulted to a supported locale). Does not set the persistent locale.
+     * 
+     * @param request
+     *            incoming request
+     * @since 5.8.3
+     */
+    void setNonPersistentLocaleFromRequest(Request request);
 
     /**
      * Returns a list of supported locales, as per the {@link org.apache.tapestry5.SymbolConstants#SUPPORTED_LOCALES}

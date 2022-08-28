@@ -239,8 +239,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         train_canonicalizePageName(resolver, "", "index");
 
-        train_getLocale(request, Locale.ITALIAN);
-        ls.setNonPersistentLocaleFromLocaleName("it");
+        ls.setNonPersistentLocaleFromRequest(request);
 
         replay();
 
@@ -427,9 +426,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
-        train_getLocale(request, Locale.ENGLISH);
 
-        ls.setNonPersistentLocaleFromLocaleName("en");
+        ls.setNonPersistentLocaleFromRequest(request);
 
         String path = "/foo-bar/baz.biff";
         train_getPath(request, path);
@@ -465,9 +463,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
-        train_getLocale(request, Locale.ENGLISH);
 
-        ls.setNonPersistentLocaleFromLocaleName("en");
+        ls.setNonPersistentLocaleFromRequest(request);
 
         train_getPath(request, "/foo/bar/page.component:event");
 
