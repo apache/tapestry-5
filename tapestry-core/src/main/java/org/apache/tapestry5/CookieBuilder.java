@@ -102,9 +102,9 @@ public abstract class CookieBuilder
      * 
      * @since 5.8.3
      */
-    public CookieBuilder setMaxAge(Duration duration)
+    public CookieBuilder setMaxAge(Duration maxAge)
     {
-        long maxAgeAsLong = duration.getSeconds();
+        long maxAgeAsLong = maxAge.getSeconds();
         if (maxAgeAsLong < 0L)
         {
             this.maxAge = -1;
