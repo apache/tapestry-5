@@ -180,7 +180,11 @@ class TypeCoercerSpec extends AbstractSharedRegistrySpecification {
     "P12Y1M7D"                        | Period               | Period.of(12, 1, 7)
 
     ZonedDateTime.of(LocalDate.of(2020, 11, 29), LocalTime.of(13, 32, 12, 0), ZoneId.of("Europe/Berlin")).toEpochSecond() * 1_000 | Date | new Date(1606653132000L)
-    
+
+    Duration.ofDays(7L)            | TimeInterval | new TimeInterval("7 d");
+    Duration.ofMillis(1234L)       | TimeInterval | new TimeInterval("1234 ms");
+    new TimeInterval("1d 3h 12ms") | Duration     | Duration.ofDays(1L).plusHours(3L).plusMillis(12)
+
     inputTypeName = PlasticUtils.toTypeName(input.getClass())
     typeName = PlasticUtils.toTypeName(type)
   }

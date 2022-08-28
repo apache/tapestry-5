@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import java.time.Duration;
+
 import org.apache.tapestry5.http.services.Request;
 
 /**
@@ -84,6 +86,37 @@ public abstract class CookieBuilder
     public CookieBuilder setMaxAge(int maxAge)
     {
         this.maxAge = maxAge;
+        return this;
+    }
+
+
+    /**
+     * Set how long the cookie should live. A value of <code>java.time.Duration.ZERO</code> deletes a cookie,
+     * a negative value deletes a cookie upon closing the browser. The default is defined by
+     * the symbol <code>org.apache.tapestry5.default-cookie-max-age</code>. The factory default for
+     * this value is the equivalent of one week.
+     *
+     * @param maxAge
+     *            the cookie's maximum age in seconds
+     * @return the modified {@link CookieBuilder}
+     * 
+     * @since 5.8.3
+     */
+    public CookieBuilder setMaxAge(Duration duration)
+    {
+        long maxAgeAsLong = duration.getSeconds();
+        if (maxAgeAsLong < 0L)
+        {
+            this.maxAge = -1;
+        }
+        else if (maxAgeAsLong >= Integer.MAX_VALUE) {
+            this.maxAge = Integer.MAX_VALUE;
+        }
+        else
+        {
+            this.maxAge = (int) maxAgeAsLong;
+        }
+
         return this;
     }
 

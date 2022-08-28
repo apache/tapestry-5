@@ -33,6 +33,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -457,6 +458,15 @@ public class BasicTypeCoercions
         {
             add(configuration, Duration.class, Long.class, Duration::toNanos);
             add(configuration, Long.class, Duration.class, Duration::ofNanos);
+            add(configuration, Duration.class, TimeInterval.class, input -> {
+                // Duration.toMillis() is Java 9+, so we need to do it ourselves
+                long millisFromSeconds = input.getSeconds() * 1_000L;
+                long millisFromNanos = input.getNano() / 1_000_000L;
+                return new TimeInterval(millisFromSeconds + millisFromNanos);
+            });
+            add(configuration, TimeInterval.class, Duration.class, input -> {
+                return Duration.ofMillis(input.milliseconds());
+            });
         }
 
         {

@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import javax.servlet.http.Cookie;
 
 import org.apache.tapestry5.CookieBuilder;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.util.TimeInterval;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.services.Request;
@@ -56,7 +57,7 @@ public class CookiesImpl implements Cookies
                        @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH)
                        String contextPath,
 
-                       @Symbol("tapestry.default-cookie-max-age") @IntermediateType(TimeInterval.class)
+                       @Symbol(SymbolConstants.COOKIE_MAX_AGE) @IntermediateType(TimeInterval.class)
                        long defaultMaxAge)
     {
         this.request = request;
