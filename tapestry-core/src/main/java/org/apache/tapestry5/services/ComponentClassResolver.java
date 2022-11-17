@@ -179,9 +179,13 @@ public interface ComponentClassResolver
     
     /**
      * Returns the library mappings.
-     * @return
      */
     @IncompatibleChange(release = "5.4", details = "Added method")
     Collection<LibraryMapping> getLibraryMappings();
     
+    /**
+     * Returns the logical name for a page, component or mixin fully classified class name.
+     */
+    @IncompatibleChange(release = "5.8.3", details = "Added method")
+    public String getLogicalName(String className);
 }

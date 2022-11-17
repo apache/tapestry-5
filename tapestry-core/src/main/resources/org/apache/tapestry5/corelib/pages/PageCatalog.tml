@@ -12,6 +12,11 @@
         <t:beandisplay t:id="totals"/>
 
         <t:grid source="pages" row="page" model="model">
+            <p:componentCountCell>
+                ${page.stats.componentCount} 
+                <a href="#" t:type="EventLink" t:event="pageStructure" t:zone="pageStructureZone"
+                	t:context="page.name">Structure info</a>
+            </p:componentCountCell>
             <p:assemblyTimeCell>
                 ${formatElapsed(page.stats.assemblyTime)}
             </p:assemblyTimeCell>
@@ -37,7 +42,28 @@
         </t:if>
         <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
     </div>
-
+    
+    
+    <t:zone t:id="pageStructureZone">
+	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+	        <div class="panel-heading">Component dependency information for ${selectedPage.name} (just direct dependencies)</div>
+	        <div class="panel-body">
+	        	<ul>
+	        		<li t:type="Loop" t:value="dependency" t:source="dependencies">
+	        			${displayLogicalName} (${dependency})
+	        		</li>
+	        	</ul>
+	        </div>
+	    </div>
+	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+	        <div class="panel-heading">${selectedPage.name}'s component tree</div>
+	        <div class="panel-body">
+	        	<ul>
+	        		<t:trigger t:event="componentTree"/>
+	        	</ul>
+	        </div>
+	    </div>
+	</t:zone>	   
 
     <div class="panel panel-default vert-offset">
         <div class="panel-heading">Load single page</div>

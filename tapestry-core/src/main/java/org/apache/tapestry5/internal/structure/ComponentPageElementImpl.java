@@ -842,21 +842,27 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         if (embeddedElement == null)
         {
-            Set<String> ids = CollectionFactory.newSet();
-
-            if (children != null)
-            {
-                for (ComponentPageElement child : children)
-                {
-                    ids.add(child.getId());
-                }
-            }
+            Set<String> ids = getEmbeddedElementIds();
 
             throw new UnknownValueException(String.format("Component %s does not contain embedded component '%s'.",
                     getCompleteId(), embeddedId), new AvailableValues("Embedded components", ids));
         }
 
         return embeddedElement;
+    }
+
+    @Override
+    public Set<String> getEmbeddedElementIds() {
+        Set<String> ids = CollectionFactory.newSet();
+
+        if (children != null)
+        {
+            for (ComponentPageElement child : children)
+            {
+                ids.add(child.getId());
+            }
+        }
+        return ids;
     }
 
     public String getId()

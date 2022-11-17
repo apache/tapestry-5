@@ -14,30 +14,46 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
+import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.func.*;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.Reducer;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.PageCatalogTotals;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.ReloadHelper;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Lists out the currently loaded pages, using a {@link org.apache.tapestry5.corelib.components.Grid}.
@@ -64,6 +80,9 @@ public class PageCatalog
 
     @Inject
     private ComponentClassResolver resolver;
+    
+    @Inject
+    private ComponentDependencyRegistry componentDependencyRegistry;
 
     @Inject
     private AlertManager alertManager;
@@ -71,8 +90,17 @@ public class PageCatalog
     @Property
     private Page page;
 
+    @Property
+    private Page selectedPage;
+
+    @Property
+    private String dependency;
+
     @InjectComponent
     private Zone pagesZone;
+    
+    @InjectComponent
+    private Zone pageStructureZone;
 
     @Persist
     private Set<String> failures;
@@ -90,12 +118,15 @@ public class PageCatalog
 
     @Inject
     private BeanModelSource beanModelSource;
-
+    
     @Inject
     private Messages messages;
 
     @Property
     public static BeanModel<Page> model;
+
+    @Inject 
+    private Request request;
 
     void pageLoaded()
     {
@@ -290,5 +321,99 @@ public class PageCatalog
     public String formatElapsed(double millis)
     {
         return String.format("%,.3f ms", millis);
+    }
+    
+    public List<String> getDependencies() 
+    {
+        List<String> dependencies = new ArrayList<>(componentDependencyRegistry.getDependencies(getSelectedPageClassName()));
+        Collections.sort(dependencies);
+        return dependencies;
+    }
+    
+    public Object onPageStructure(String name)
+    {
+        selectedPage = pageSource.getPage(name);
+        return request.isXHR() ? pageStructureZone.getBody() : null;
+    }
+    
+    public String getDisplayLogicalName() 
+    {
+        return getDisplayLogicalName(dependency);
+    }
+
+    public String getPageClassName() 
+    {
+        
+        return getClassName(page);
+    }
+
+    public String getSelectedPageClassName() 
+    {
+        return getClassName(selectedPage);
+    }
+    
+    private String getClassName(Page page) 
+    {
+        return page.getRootComponent().getComponentResources().getComponentModel().getComponentClassName();
+    }
+
+    private String getClassName(Component component) 
+    {
+        return component.getComponentResources().getComponentModel().getComponentClassName();
+    }
+
+    public void onComponentTree(MarkupWriter writer) 
+    {
+        render(selectedPage.getRootElement(), writer);
+    }
+    
+    private void render(ComponentPageElement componentPageElement, MarkupWriter writer) 
+    {
+        final Element li = writer.element("li");
+        final String className = getClassName(componentPageElement.getComponent());
+        final Set<String> embeddedElementIds = componentPageElement.getEmbeddedElementIds();
+        
+        if (componentPageElement.getComponent().getComponentResources().getComponentModel().isPage()) 
+        {
+            li.text(componentPageElement.getPageName());
+        }
+        else {
+            li.text(String.format("%s (%s)", getDisplayLogicalName(className), componentPageElement.getId()));
+        }
+        
+        if (!embeddedElementIds.isEmpty())
+        {
+            writer.element("ul");
+            for (String id : embeddedElementIds)
+            {
+                render(componentPageElement.getEmbeddedElement(id), writer);
+            }
+            writer.end();
+        }
+        
+        writer.end();
+    }
+
+    private String getDisplayLogicalName(final String className) 
+    {
+        final String logicalName = resolver.getLogicalName(className);
+        String displayName = logicalName;
+        if (logicalName == null || logicalName.trim().length() == 0)
+        {
+            if (className.contains(".base."))
+            {
+                displayName = "(base class)";
+            }
+            if (className.contains(".mixins."))
+            {
+                displayName = "(mixin)";
+            }
+        }
+        return displayName;
+    }
+
+    public String getLogicalName(String className) 
+    {
+        return resolver.getLogicalName(className);
     }
 }

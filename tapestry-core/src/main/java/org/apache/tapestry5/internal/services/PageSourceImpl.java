@@ -37,6 +37,8 @@ public class PageSourceImpl implements PageSource
 
     private final PageLoader pageLoader;
 
+    private final ComponentDependencyRegistry componentDependencyRegistry;
+
     private static final class CachedPageKey
     {
         final String pageName;
@@ -70,10 +72,12 @@ public class PageSourceImpl implements PageSource
 
     private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
 
-    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer)
+    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
+            ComponentDependencyRegistry componentDependencyRegistry)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
+        this.componentDependencyRegistry = componentDependencyRegistry;
     }
 
     public Page getPage(String canonicalPageName)
@@ -106,6 +110,8 @@ public class PageSourceImpl implements PageSource
             ref = new SoftReference<Page>(page);
 
             pageCache.put(key, ref);
+            
+            componentDependencyRegistry.register(page.getRootElement());
         }
     }
 

@@ -14,12 +14,18 @@
 
 package org.apache.tapestry5.internal.event;
 
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -27,8 +33,8 @@ import java.util.Map;
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {
-    private final List<Runnable> callbacks;
-
+    private final List<Function<List<String>, List<String>>> callbacks;
+    
     protected InvalidationEventHubImpl(boolean productionMode)
     {
         if (productionMode)
@@ -45,18 +51,36 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
      */
     protected final void fireInvalidationEvent()
     {
+        fireInvalidationEvent(Collections.emptyList());
+    }
+    
+    /**
+     * Notifies all listeners/callbacks.
+     */
+    protected final void fireInvalidationEvent(List<String> resources)
+    {
         if (callbacks == null)
         {
             return;
         }
-
-        for (Runnable callback : callbacks)
+        
+        do 
         {
-            callback.run();
+            Set<String> extraResources = new HashSet<>();
+            for (Function<List<String>, List<String>> callback : callbacks)
+            {
+                final List<String> newResources = callback.apply(resources);
+                if (newResources == null) {
+                    throw new TapestryException("InvalidationEventHub callback functions cannot return null", null);
+                }
+                extraResources.addAll(newResources);
+            }
+            resources = new ArrayList<>(extraResources);
         }
+        while (!resources.isEmpty());
     }
 
-    public final void addInvalidationCallback(Runnable callback)
+    public final void addInvalidationCallback(final Runnable callback)
     {
         assert callback != null;
 
@@ -64,7 +88,10 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         // ignore the callback.
         if (callbacks != null)
         {
-            callbacks.add(callback);
+            callbacks.add((r) -> {
+                callback.run();
+                return Collections.emptyList();
+            });
         }
     }
 
@@ -92,6 +119,11 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
                 listener.objectWasInvalidated();
             }
         });
+    }
+
+    @Override
+    public void addInvalidationCallback(Function<List<String>, List<String>> callback) {
+        callbacks.add(callback);
     }
 
 }

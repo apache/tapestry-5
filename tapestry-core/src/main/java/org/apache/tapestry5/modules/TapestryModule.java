@@ -163,6 +163,7 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReportWriterImpl;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
@@ -2765,6 +2766,18 @@ public final class TapestryModule
             @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM) String appRootPackage)
     {
         configuration.add(appRootPackage + ".rest.entities");
+    }
+    
+    public static ComponentDependencyRegistry buildComponentDependencyRegistry(
+            InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
+            ResourceChangeTracker resourceChangeTracker,
+            ComponentTemplateSource componentTemplateSource)
+    {
+        ComponentDependencyRegistry componentDependencyRegistry = new ComponentDependencyRegistryImpl();
+        componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
+        componentDependencyRegistry.listen(resourceChangeTracker);
+        componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
+        return componentDependencyRegistry;
     }
 
     private static final class TapestryCoreComponentLibraryInfoSource implements

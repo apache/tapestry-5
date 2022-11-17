@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.Set;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
@@ -20,6 +22,7 @@ import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.ioc.annotations.IncompatibleChange;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -102,6 +105,13 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      *         if no component exists with the given id
      */
     ComponentPageElement getEmbeddedElement(String id);
+    
+    /**
+     * Returns the ids of all embedded elements defined within the component.
+     * @since 5.8.3
+     */
+    @IncompatibleChange(release = "5.8.3", details = "Added method")
+    Set<String> getEmbeddedElementIds();
 
     /**
      * Returns the {@link org.apache.tapestry5.ComponentResources} for a mixin attached to this component element. Mixin
