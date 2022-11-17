@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
 /**
  * Given a (growing) set of URLs, can periodically check to see if any of the underlying resources has changed. This
@@ -30,12 +32,15 @@ import java.util.Map;
  * granularity is used by default. Second-level granularity is provided for compatibility with browsers vis-a-vis
  * resource caching -- that's how granular they get with their "If-Modified-Since", "Last-Modified" and "Expires"
  * headers.
+ * 
+ * @param <T> The type of the optional information about the tracked resource. This type should
+ * implement <code>equals()</code> and <code>hashCode()</code>.
  */
-public class URLChangeTracker
+public class URLChangeTracker<T>
 {
     private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1L;
 
-    private final Map<File, Long> fileToTimestamp = CollectionFactory.newConcurrentMap();
+    private final Map<File, TrackingInfo> fileToTimestamp = CollectionFactory.newConcurrentMap();
 
     private final boolean granularitySeconds;
 
@@ -136,6 +141,24 @@ public class URLChangeTracker
      */
     public long add(URL url)
     {
+        return add(url, null);
+    }
+    /**
+     * Stores a new URL and associated memo (most probably a related class name)
+     * into the tracker, or returns the previous time stamp for a previously added URL. Filters out all
+     * non-file URLs.
+     * 
+     * @param url
+     *            of the resource to add, or null if not known
+     * @param resourceInfo
+     *            an optional object containing information about the tracked URL. It's
+     *            returned in the {@link #getChangedResourcesInfo()} method.
+     * @return the current timestamp for the URL (possibly rounded off for granularity reasons), or 0 if the URL is
+     *         null
+     * @since 5.8.3
+     */
+    public long add(URL url, T resourceInfo)
+    {
         if (url == null)
             return 0;
 
@@ -147,14 +170,14 @@ public class URLChangeTracker
         File resourceFile = toFileFromFileProtocolURL(converted);
 
         if (fileToTimestamp.containsKey(resourceFile))
-            return fileToTimestamp.get(resourceFile);
+            return fileToTimestamp.get(resourceFile).timestamp;
 
         long timestamp = readTimestamp(resourceFile);
 
         // A quick and imperfect fix for TAPESTRY-1918. When a file
         // is added, add the directory containing the file as well.
 
-        fileToTimestamp.put(resourceFile, timestamp);
+        fileToTimestamp.put(resourceFile, new TrackingInfo(timestamp, resourceInfo));
 
         if (trackFolderChanges)
         {
@@ -163,7 +186,7 @@ public class URLChangeTracker
             if (!fileToTimestamp.containsKey(dir))
             {
                 long dirTimestamp = readTimestamp(dir);
-                fileToTimestamp.put(dir, dirTimestamp);
+                fileToTimestamp.put(dir, new TrackingInfo(dirTimestamp, null));
             }
         }
 
@@ -205,20 +228,48 @@ public class URLChangeTracker
         // concurrently, but CheckForUpdatesFilter ensures that it will be invoked
         // synchronously.
 
-        for (Map.Entry<File, Long> entry : fileToTimestamp.entrySet())
+        for (Map.Entry<File, TrackingInfo> entry : fileToTimestamp.entrySet())
         {
             long newTimestamp = readTimestamp(entry.getKey());
-            long current = entry.getValue();
+            long current = entry.getValue().timestamp;
 
             if (current == newTimestamp)
                 continue;
 
             result = true;
-            entry.setValue(newTimestamp);
+            entry.getValue().timestamp = newTimestamp;
         }
 
         return result;
     }
+    
+    /**
+     * Re-acquires the last updated timestamp for each URL and returns the non-null resource information for all files with a changed timestamp.
+     */
+    public Set<T> getChangedResourcesInfo()
+    {
+        
+        Set<T> changedResourcesInfo = new HashSet<>();
+
+        for (Map.Entry<File, TrackingInfo> entry : fileToTimestamp.entrySet())
+        {
+            long newTimestamp = readTimestamp(entry.getKey());
+            final TrackingInfo value = entry.getValue();
+            long current = value.timestamp;
+
+            if (current != newTimestamp)
+            {
+                if (value.resourceInfo != null)
+                {
+                    changedResourcesInfo.add(value.resourceInfo);
+                }
+                value.timestamp = newTimestamp;
+            }
+        }
+
+        return changedResourcesInfo;
+    }
+
 
     /**
      * Returns the time that the specified file was last modified, possibly rounded down to the nearest second.
@@ -249,9 +300,9 @@ public class URLChangeTracker
      */
     public void forceChange()
     {
-        for (Map.Entry<File, Long> e : fileToTimestamp.entrySet())
+        for (Map.Entry<File, TrackingInfo> e : fileToTimestamp.entrySet())
         {
-            e.setValue(0l);
+            e.getValue().timestamp = 0l;
         }
     }
 
@@ -261,6 +312,26 @@ public class URLChangeTracker
     int trackedFileCount()
     {
         return fileToTimestamp.size();
+    }
+    
+    private final class TrackingInfo
+    {
+        
+        private long timestamp;
+        private T resourceInfo;
+
+        public TrackingInfo(long timestamp, T resourceInfo) 
+        {
+            this.timestamp = timestamp;
+            this.resourceInfo = resourceInfo;
+        }
+
+        @Override
+        public String toString() 
+        {
+            return "Info [timestamp=" + timestamp + ", resourceInfo=" + resourceInfo + "]";
+        }
+        
     }
 
 }

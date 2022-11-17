@@ -13,10 +13,12 @@
 package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
 import org.apache.tapestry5.internal.pageload.PagePreloaderImpl;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentTemplateSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSourceImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -26,6 +28,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 
@@ -35,12 +39,22 @@ import org.apache.tapestry5.services.pageload.PreloaderMode;
 @Marker(Core.class)
 public class PageLoadModule
 {
+    
+    /**
+     * Contributes factory defaults that may be overridden.
+     */
+    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(SymbolConstants.MULTIPLE_CLASSLOADERS, false);
+    }
+    
     public static void bind(ServiceBinder binder)
     {
         binder.bind(ComponentRequestSelectorAnalyzer.class, DefaultComponentRequestSelectorAnalyzer.class);
         binder.bind(ComponentResourceLocator.class, DefaultComponentResourceLocator.class);
         binder.bind(ComponentTemplateSource.class, ComponentTemplateSourceImpl.class);
         binder.bind(PagePreloader.class, PagePreloaderImpl.class);
+        binder.bind(PageClassLoaderContextManager.class, PageClassLoaderContextManagerImpl.class);
     }
 
     @Startup
@@ -55,4 +69,25 @@ public class PageLoadModule
             preloader.preloadPages();
         }
     }
+    
+    @Startup
+    public void preloadPageClassLoaderContexts(
+            PageClassLoaderContextManager pageClassLoaderContextManager,
+            ComponentDependencyRegistry componentDependencyRegistry,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders)
+    {
+        if (!productionMode && multipleClassLoaders)
+        {
+            // Preload the page activation context tree for the already known classes
+            for (int i = 0; i < 5; i++)
+            {
+                for (String className : componentDependencyRegistry.getClassNames()) 
+                {
+                    pageClassLoaderContextManager.get(className);
+                }
+            }
+        }
+    }
+
 }

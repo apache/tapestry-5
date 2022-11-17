@@ -12,6 +12,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.commons.util.AvailableValues;
@@ -26,9 +34,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.slf4j.Logger;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
@@ -810,6 +815,49 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     public Collection<LibraryMapping> getLibraryMappings()
     {
         return libraryMappings;
+    }
+
+    @Override
+    public String getLogicalName(String className) 
+    {
+        final Data thisData = getData();
+        String result = thisData.pageClassNameToLogicalName.get(className);
+        if (result == null)
+        {
+            result = getKeyByValue(thisData.componentToClassName, className);
+        }
+        if (result == null )
+        {
+            result = getKeyByValue(thisData.mixinToClassName, className);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public String getClassName(String logicalName) 
+    {
+        final Data thisData = getData();
+        String result = getKeyByValue(thisData.pageClassNameToLogicalName, logicalName);
+        if (result == null)
+        {
+            result = thisData.componentToClassName.get(logicalName);
+        }
+        if (result == null )
+        {
+            result = thisData.mixinToClassName.get(logicalName);
+        }
+        return result;
+    }
+
+    
+    private String getKeyByValue(Map<String, String> map, String value)
+    {
+        return map.entrySet().stream()
+                .filter(e -> e.getValue().equals(value))
+                .map(e -> e.getKey())
+                .findAny()
+                .orElse(null);
     }
 
 }

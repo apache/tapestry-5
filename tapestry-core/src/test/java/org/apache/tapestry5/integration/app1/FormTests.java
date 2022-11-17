@@ -907,13 +907,19 @@ public class FormTests extends App1TestCase
     }
 
     @Test
-    public void calendar_field_inside_bean_editor()
+    public void calendar_field_inside_bean_editor() throws InterruptedException
     {
-        openLinks("BeanEditor / Calendar Demo", "Reset Page State");
+//        openLinks("BeanEditor / Calendar Demo", "Reset Page State");
+        open("/beaneditcalendardemo");
+        clickAndWait("link=Reset Page State");
 
         type("calendar", "04/06/1978");
+        
+        Thread.sleep(1000); // Test seems to go too fast
 
         clickAndWait(SUBMIT);
+        
+        Thread.sleep(1000); // Test seems to go too fast
 
         assertTextPresent("Apr 6, 1978");
 

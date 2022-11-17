@@ -345,4 +345,24 @@ public class PlasticManager implements PlasticClassListenerHub
     {
         pool.removePlasticClassListener(listener);
     }
+
+    /**
+     * Returns whether a given class will have it classloading intercepted for
+     * live class reloading.
+     * @since 5.8.3
+     */
+    public boolean shouldInterceptClassLoading(String className) 
+    {
+        return pool.shouldInterceptClassLoading(className);
+    }
+    
+    /**
+     * Returns the Plastic class pool used by this instance.
+     * @since 5.8.3
+     */
+    public PlasticClassPool getPool() 
+    {
+        return pool;
+    }
+    
 }

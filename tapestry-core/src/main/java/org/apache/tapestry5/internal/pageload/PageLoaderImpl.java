@@ -12,12 +12,16 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.beanmodel.internal.services.*;
-import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.internal.services.StringInterner;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
@@ -26,18 +30,36 @@ import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.commons.util.UnknownValueException;
-import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
-import org.apache.tapestry5.internal.parser.*;
+import org.apache.tapestry5.internal.parser.AttributeToken;
+import org.apache.tapestry5.internal.parser.BlockToken;
+import org.apache.tapestry5.internal.parser.CDATAToken;
+import org.apache.tapestry5.internal.parser.CommentToken;
+import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.internal.parser.DTDToken;
+import org.apache.tapestry5.internal.parser.DefineNamespacePrefixToken;
+import org.apache.tapestry5.internal.parser.ExpansionToken;
+import org.apache.tapestry5.internal.parser.ExtensionPointToken;
+import org.apache.tapestry5.internal.parser.ParameterToken;
+import org.apache.tapestry5.internal.parser.StartComponentToken;
+import org.apache.tapestry5.internal.parser.StartElementToken;
+import org.apache.tapestry5.internal.parser.TemplateToken;
+import org.apache.tapestry5.internal.parser.TextToken;
+import org.apache.tapestry5.internal.parser.TokenType;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.services.PageElementFactory;
 import org.apache.tapestry5.internal.services.PageLoader;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.internal.structure.BlockImpl;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.PageImpl;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
@@ -54,10 +76,6 @@ import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * There's still a lot of room to beef up {@link org.apache.tapestry5.internal.pageload.ComponentAssembler} and
@@ -157,13 +175,11 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 
     private final MetaDataLocator metaDataLocator;
 
-    private final RequestGlobals requestGlobals;
-
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
                           StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager,
-                          Logger logger, MetaDataLocator metaDataLocator, RequestGlobals requestGlobals)
+                          Logger logger, MetaDataLocator metaDataLocator)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -176,7 +192,6 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.perThreadManager = perThreadManager;
         this.logger = logger;
         this.metaDataLocator = metaDataLocator;
-        this.requestGlobals = requestGlobals;
     }
 
     @PostInjection
@@ -184,9 +199,38 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
                                   @ComponentTemplates InvalidationEventHub templatesHub,
                                   @ComponentMessages InvalidationEventHub messagesHub)
     {
-        classesHub.clearOnInvalidation(cache);
-        templatesHub.clearOnInvalidation(cache);
-        messagesHub.clearOnInvalidation(cache);
+        classesHub.addInvalidationCallback(this::listen);
+        templatesHub.addInvalidationCallback(this::listen);
+        messagesHub.addInvalidationCallback(this::listen);
+    }
+    
+    private List<String> listen(List<String> resources)
+    {
+        
+        if (resources.isEmpty())
+        {
+            cache.clear();
+        }
+        else
+        {
+        
+            final Iterator<Entry<Key, ComponentAssembler>> iterator = cache.entrySet().iterator();
+            
+            while (iterator.hasNext())
+            {
+                final Entry<Key, ComponentAssembler> entry = iterator.next();
+                for (String resource : resources) 
+                {
+                    if (resource.equals(entry.getKey().className))
+                    {
+                        iterator.remove();
+                    }
+                }
+            }
+            
+        }
+        
+        return Collections.emptyList();
     }
 
     public void clearCache()

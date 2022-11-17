@@ -24,7 +24,10 @@ public class NestedBeanDisplay
     @Property
     private Person parent;
 
-    Object initialize(Person person)
+    // Visibility changed from package-private to public due to smarter page invalidation
+    // (classes in different classloaders cannot access non-public method
+    // TODO: maybe find some way to avoid this?
+    public Object initialize(Person person)
     {
         parent = person;
 

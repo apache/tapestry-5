@@ -14,12 +14,20 @@
 
 package org.apache.tapestry5.internal.event;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.commons.util.CollectionFactory;
-
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -27,9 +35,11 @@ import java.util.Map;
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {
-    private final List<Runnable> callbacks;
-
-    protected InvalidationEventHubImpl(boolean productionMode)
+    private final List<Function<List<String>, List<String>>> callbacks;
+    
+    private final Logger logger;
+    
+    protected InvalidationEventHubImpl(boolean productionMode, Logger logger)
     {
         if (productionMode)
         {
@@ -38,6 +48,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         {
             callbacks = CollectionFactory.newThreadSafeList();
         }
+        this.logger = logger;
     }
 
     /**
@@ -45,18 +56,53 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
      */
     protected final void fireInvalidationEvent()
     {
+        fireInvalidationEvent(Collections.emptyList());
+    }
+    
+    /**
+     * Notifies all listeners/callbacks.
+     */
+    public final void fireInvalidationEvent(List<String> resources)
+    {
         if (callbacks == null)
         {
             return;
         }
-
-        for (Runnable callback : callbacks)
+        
+        final Set<String> alreadyProcessed = new HashSet<>();
+        
+        int level = 1;
+        do 
         {
-            callback.run();
+            final Set<String> extraResources = new HashSet<>();
+            Set<String> actuallyNewResources;
+            if (!resources.isEmpty())
+            {
+                logger.info("Invalidating {} resource(s) at level {}: {}", resources.size(), level, String.join(", ", resources));
+            }
+            else
+            {
+                logger.info("Invalidating all resources");
+            }
+            for (Function<List<String>, List<String>> callback : callbacks)
+            {
+                final List<String> newResources = callback.apply(resources);
+                if (newResources == null) {
+                    throw new TapestryException("InvalidationEventHub callback functions cannot return null", null);
+                }
+                actuallyNewResources = newResources.stream()
+                        .filter(r -> !alreadyProcessed.contains(r))
+                        .collect(Collectors.toSet());
+                extraResources.addAll(actuallyNewResources);
+                alreadyProcessed.addAll(newResources);
+            }
+            level++;
+            resources = new ArrayList<>(extraResources);
         }
+        while (!resources.isEmpty());
     }
 
-    public final void addInvalidationCallback(Runnable callback)
+    public final void addInvalidationCallback(final Runnable callback)
     {
         assert callback != null;
 
@@ -64,7 +110,10 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         // ignore the callback.
         if (callbacks != null)
         {
-            callbacks.add(callback);
+            callbacks.add((r) -> {
+                callback.run();
+                return Collections.emptyList();
+            });
         }
     }
 
@@ -92,6 +141,15 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
                 listener.objectWasInvalidated();
             }
         });
+    }
+
+    @Override
+    public void addInvalidationCallback(Function<List<String>, List<String>> callback) 
+    {
+        if (callbacks != null)
+        {
+            callbacks.add(callback);
+        }
     }
 
 }

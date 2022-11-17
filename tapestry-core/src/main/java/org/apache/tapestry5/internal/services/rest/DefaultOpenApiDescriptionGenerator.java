@@ -595,10 +595,10 @@ public class DefaultOpenApiDescriptionGenerator implements OpenApiDescriptionGen
                 }
             }
         }
-        if (method == null && pageClass.getName().equals("org.apache.tapestry5.integration.app1.pages.rest.RestTypeDescriptionsDemo"))
-        {
-            System.out.println("WTF!");
-        }
+//        if (method == null && pageClass.getName().equals("org.apache.tapestry5.integration.app1.pages.rest.RestTypeDescriptionsDemo"))
+//        {
+//            System.out.println("WTF!");
+//        }
         // In case of the same class being loaded from different classloaders,
         // let's try to find the method in a different way.
 //        if (method == null)

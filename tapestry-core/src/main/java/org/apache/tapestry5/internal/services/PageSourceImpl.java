@@ -14,22 +14,35 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-
-import java.lang.ref.SoftReference;
-import java.util.Map;
-import java.util.Set;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
 {
@@ -37,6 +50,18 @@ public class PageSourceImpl implements PageSource
 
     private final PageLoader pageLoader;
 
+    private final ComponentDependencyRegistry componentDependencyRegistry;
+    
+    private final ComponentClassResolver componentClassResolver;
+    
+    private final PageClassLoaderContextManager pageClassLoaderContextManager;
+    
+    private final Logger logger;
+    
+    final private boolean productionMode;
+    
+    final private boolean multipleClassLoaders;
+    
     private static final class CachedPageKey
     {
         final String pageName;
@@ -66,17 +91,55 @@ public class PageSourceImpl implements PageSource
 
             return pageName.equals(other.pageName) && selector.equals(other.selector);
         }
+
+        @Override
+        public String toString() {
+            return "CachedPageKey [pageName=" + pageName + ", selector=" + selector + "]";
+        }
+        
+        
     }
 
     private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
 
-    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer)
+    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
+            ComponentDependencyRegistry componentDependencyRegistry,
+            ComponentClassResolver componentClassResolver,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders,
+            Logger logger)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
+        this.componentDependencyRegistry = componentDependencyRegistry;
+        this.componentClassResolver = componentClassResolver;
+        this.productionMode = productionMode;
+        this.multipleClassLoaders = multipleClassLoaders;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
+        this.logger = logger;
+    }
+    
+    public Page getPage(String canonicalPageName)
+    {
+        if (!productionMode)
+        {
+            componentDependencyRegistry.disableInvalidations();
+        }
+        try
+        {
+            return getPage(canonicalPageName, true);
+        }
+        finally
+        {
+            if (!productionMode)
+            {
+                componentDependencyRegistry.enableInvalidations();
+            }
+        }
     }
 
-    public Page getPage(String canonicalPageName)
+    public Page getPage(String canonicalPageName, boolean invalidateUnknownContext)
     {
         ComponentResourceSelector selector = selectorAnalyzer.buildSelectorForRequest();
 
@@ -85,7 +148,7 @@ public class PageSourceImpl implements PageSource
         // The while loop looks superfluous, but it helps to ensure that the Page instance,
         // with all of its mutable construction-time state, is properly published to other
         // threads (at least, as I understand Brian Goetz's explanation, it should be).
-
+        
         while (true)
         {
             SoftReference<Page> ref = pageCache.get(key);
@@ -95,6 +158,21 @@ public class PageSourceImpl implements PageSource
             if (page != null)
             {
                 return page;
+            }
+            
+            final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
+            if (multipleClassLoaders)
+            {
+            
+                // Avoiding problems in PlasticClassPool.createTransformation()
+                // when the class being loaded has a page superclass
+                final List<String> pageDependencies = preprocessPageDependencies(className);
+                
+                for (String pageClassName : pageDependencies)
+                {
+                    page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), false);
+                }
+                
             }
 
             // In rare race conditions, we may see the same page loaded multiple times across
@@ -106,7 +184,83 @@ public class PageSourceImpl implements PageSource
             ref = new SoftReference<Page>(page);
 
             pageCache.put(key, ref);
+            
+            if (!productionMode)
+            {
+                final ComponentPageElement rootElement = page.getRootElement();
+                componentDependencyRegistry.clear(rootElement);
+                componentDependencyRegistry.register(rootElement);
+                PageClassLoaderContext context = pageClassLoaderContextManager.get(className);
+                
+                if (context.isUnknown() && multipleClassLoaders)
+                {
+                    this.pageCache.remove(key);
+                    if (invalidateUnknownContext)
+                    {
+                        pageClassLoaderContextManager.invalidateAndFireInvalidationEvents(context);
+                        preprocessPageDependencies(className);
+                    }
+                    context.getClassNames().clear();
+                    // Avoiding bad invalidations
+                    return getPage(canonicalPageName, false);
+                }
+            }
+            
         }
+        
+        
+    }
+
+    private List<String> preprocessPageDependencies(final String className) {
+        final List<String> pageDependencies = new ArrayList<>();
+        pageDependencies.addAll(
+                new ArrayList<String>(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE)));
+        pageDependencies.addAll(
+                new ArrayList<String>(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS)));
+        
+        final Iterator<String> iterator = pageDependencies.iterator();
+        while (iterator.hasNext())
+        {
+            if (!iterator.next().contains(".pages."))
+            {
+                iterator.remove();
+            }
+        }
+        
+        preprocessPageClassLoaderContexts(className, pageDependencies);
+        return pageDependencies;
+    }
+
+    private void preprocessPageClassLoaderContexts(String className, final List<String> pageDependencies) {
+        for (int i = 0; i < 5; i++)
+        {
+            pageClassLoaderContextManager.get(className);
+            for (String pageClassName : pageDependencies)
+            {
+                final PageClassLoaderContext context = pageClassLoaderContextManager.get(pageClassName);
+                if (i == 1)
+                {
+                    try 
+                    {
+                        context.getClassLoader().loadClass(pageClassName);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        
+        // TODO: remove
+//        for (String pageClassName : pageDependencies)
+//        {
+//            try 
+//            {
+//                pageClassLoaderContextManager.get(pageClassName).getClassLoader().loadClass(pageClassName);
+//            } catch (ClassNotFoundException e) 
+//            {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 
     @PostInjection
@@ -115,19 +269,56 @@ public class PageSourceImpl implements PageSource
                                   @ComponentMessages InvalidationEventHub messagesHub,
                                   ResourceChangeTracker resourceChangeTracker)
     {
-        classesHub.clearOnInvalidation(pageCache);
-        templatesHub.clearOnInvalidation(pageCache);
-        messagesHub.clearOnInvalidation(pageCache);
+        classesHub.addInvalidationCallback(this::listen);
+        templatesHub.addInvalidationCallback(this::listen);
+        messagesHub.addInvalidationCallback(this::listen);
 
         // Because Assets can be injected into pages, and Assets are invalidated when
         // an Asset's value is changed (partly due to the change, in 5.4, to include the asset's
         // checksum as part of the asset URL), then when we notice a change to
         // any Resource, it is necessary to discard all page instances.
-        resourceChangeTracker.clearOnInvalidation(pageCache);
+        // From 5.8.3 on, Tapestry tries to only invalidate the components and pages known as 
+        // using the changed resources. If a given resource is changed but not associated with any
+        // component, then all of them are invalidated.
+        resourceChangeTracker.addInvalidationCallback(this::listen);
+    }
+    
+    private List<String> listen(List<String> resources)
+    {
+    
+        if (resources.isEmpty())
+        {
+            clearCache();
+        }
+        else
+        {
+            String pageName;
+            for (String className : resources)
+            {
+                if (componentClassResolver.isPage(className))
+                {
+                    pageName = componentClassResolver.resolvePageClassNameToPageName(className);
+                    final Iterator<Entry<CachedPageKey, SoftReference<Page>>> iterator = pageCache.entrySet().iterator();
+                    while (iterator.hasNext())
+                    {
+                        final Entry<CachedPageKey, SoftReference<Page>> entry = iterator.next();
+                        final String entryPageName = entry.getKey().pageName;
+                        if (entryPageName.equalsIgnoreCase(pageName)) 
+                        {
+                            logger.info("Clearing cached page '{}'", pageName);
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+        }
+            
+        return Collections.emptyList();
     }
 
     public void clearCache()
     {
+        logger.info("Clearing page cache");
         pageCache.clear();
     }
 

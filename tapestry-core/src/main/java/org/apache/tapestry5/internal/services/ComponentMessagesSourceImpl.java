@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
@@ -31,11 +32,13 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
@@ -78,29 +81,36 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
     }
 
     public ComponentMessagesSourceImpl(@Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                       boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
+                                       boolean productionMode, 
+                                       @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                       boolean multipleClassLoaders, 
+                                       List<Resource> appCatalogResources, PropertiesFileParser parser,
                                        ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                       ThreadLocale threadLocale)
+                                       ThreadLocale threadLocale, ComponentClassResolver componentClassResolver,
+                                       Logger logger)
     {
-        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, multipleClassLoaders, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), 
+                componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
-    ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
+    ComponentMessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, Resource appCatalogResource,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+                                ThreadLocale threadLocale, ComponentClassResolver componentClassResolver, 
+                                Logger logger)
     {
-        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, multipleClassLoaders, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
-    ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
+    ComponentMessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, List<Resource> appCatalogResources,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+                                ThreadLocale threadLocale, ComponentClassResolver componentClassResolver,
+                                Logger logger)
     {
-        messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
-                parser);
+        messagesSource = new MessagesSourceImpl(productionMode, multipleClassLoaders, productionMode ? null : tracker, resourceLocator,
+                parser, componentClassResolver, logger);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
         this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;

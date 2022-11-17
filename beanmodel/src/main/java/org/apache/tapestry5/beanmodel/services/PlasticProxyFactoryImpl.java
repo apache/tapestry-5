@@ -297,4 +297,10 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         manager.removePlasticClassListener(listener);
     }
 
+    @Override
+    public PlasticManager getPlasticManager() 
+    {
+        return manager;
+    }
+
 }

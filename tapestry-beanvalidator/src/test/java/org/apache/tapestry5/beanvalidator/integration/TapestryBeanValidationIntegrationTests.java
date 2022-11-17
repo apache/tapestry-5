@@ -110,6 +110,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     public void beaneditform_validation() throws Exception
     {
         openLinks("BeanEditForm Validation Demo");
+        openLinks("BeanEditForm Validation Demo");// TODO: remove this
 
         // Ugly hack to fix the "Unable to locate element: //input[@type='submit']" error.
         // I have no idea why it's failing here but not in other tests and pages.
@@ -143,6 +144,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     {
         openLinks("Client Validation Demo");
 
+        Thread.sleep(2000); // For some reason, without this sleep, the submit button isn't found
+        
         //@NotNull
         click(SUBMIT);
 

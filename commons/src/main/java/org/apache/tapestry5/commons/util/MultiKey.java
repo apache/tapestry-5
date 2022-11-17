@@ -82,5 +82,13 @@ public final class MultiKey
 
         return builder.toString();
     }
-
+    
+    /**
+     * Returns a copy of the values array.
+     * @since 5.8.3
+     */
+    public Object[] getValues() {
+        return values.clone();
+    }
+    
 }

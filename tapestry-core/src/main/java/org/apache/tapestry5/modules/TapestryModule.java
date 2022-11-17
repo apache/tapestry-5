@@ -20,15 +20,19 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
@@ -104,7 +108,12 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
+import org.apache.tapestry5.corelib.components.BeanEditor;
+import org.apache.tapestry5.corelib.components.PropertyDisplay;
+import org.apache.tapestry5.corelib.components.PropertyEditor;
 import org.apache.tapestry5.corelib.data.SecureOption;
+import org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks;
+import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
@@ -163,6 +172,7 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReportWriterImpl;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
@@ -362,10 +372,12 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
 import org.apache.tapestry5.services.rest.OpenApiTypeDescriber;
-import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -516,7 +528,7 @@ public final class TapestryModule
         binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
         binder.bind(AlertManager.class, AlertManagerImpl.class);
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
-        binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
+        binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class).eagerLoad();
         binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
         binder.bind(MetaDataLocator.class, MetaDataLocatorImpl.class);
         binder.bind(ComponentClassCache.class, ComponentClassCacheImpl.class);
@@ -665,7 +677,8 @@ public final class TapestryModule
     public static void provideTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker2> configuration,
             MetaWorker metaWorker,
-            ComponentClassResolver resolver)
+            ComponentClassResolver resolver,
+            ComponentDependencyRegistry componentDependencyRegistry)
     {
         configuration.add("Property", new PropertyWorker());
 
@@ -954,7 +967,9 @@ public final class TapestryModule
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
                                          @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                         boolean productionMode)
+                                         boolean productionMode,
+                                         
+                                         final PageClassLoaderContextManager pageClassLoaderContextManager)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -997,6 +1012,7 @@ public final class TapestryModule
         configuration.add("EndOfRequest", fireEndOfRequestEvent);
 
         configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
+        
     }
 
     /**
@@ -2766,7 +2782,33 @@ public final class TapestryModule
     {
         configuration.add(appRootPackage + ".rest.entities");
     }
-
+    
+    public static ComponentDependencyRegistry buildComponentDependencyRegistry(
+            InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
+            ResourceChangeTracker resourceChangeTracker,
+            ComponentTemplateSource componentTemplateSource,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
+            ComponentInstantiatorSource componentInstantiatorSource,
+            ComponentClassResolver componentClassResolver,
+            TemplateParser templateParser,
+            ComponentTemplateLocator componentTemplateLocator,
+            PerthreadManager perthreadManager)
+    {
+        ComponentDependencyRegistryImpl componentDependencyRegistry = 
+                new ComponentDependencyRegistryImpl(
+                        pageClassLoaderContextManager,
+                        componentInstantiatorSource.getProxyFactory().getPlasticManager(),
+                        componentClassResolver,
+                        templateParser,
+                        componentTemplateLocator);
+        componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
+        componentDependencyRegistry.listen(resourceChangeTracker);
+        componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
+        // TODO: remove
+        componentDependencyRegistry.setupThreadCleanup(perthreadManager);
+        return componentDependencyRegistry;
+    }
+    
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource
     {
@@ -2787,8 +2829,8 @@ public final class TapestryModule
                 info.setDescription("Components provided out-of-the-box by Tapestry");
                 info.setDocumentationUrl("http://tapestry.apache.org/component-reference.html");
                 info.setJavadocUrl("http://tapestry.apache.org/current/apidocs/");
-                info.setSourceBrowseUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary");
-                info.setSourceRootUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java/");
+                info.setSourceBrowseUrl("https://gitbox.apache.org/repos/asf?p=tapestry-5.git;a=summary");
+                info.setSourceRootUrl("https://gitbox.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java/");
                 info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
                 info.setHomepageUrl("http://tapestry.apache.org");
                 info.setLibraryMapping(libraryMapping);

@@ -18,14 +18,15 @@ import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.slf4j.Logger;
 
 public class InternalComponentInvalidationEventHubImpl extends InvalidationEventHubImpl implements
         InternalComponentInvalidationEventHub
 {
     public InternalComponentInvalidationEventHubImpl(@Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                                     boolean productionMode)
+                                                     boolean productionMode, Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
     }
 
     @PostInjection

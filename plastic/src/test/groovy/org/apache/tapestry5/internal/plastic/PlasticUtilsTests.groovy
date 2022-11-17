@@ -155,4 +155,21 @@ class PlasticUtilsTests extends Specification
         "int"               | true
         "java.lang.Integer" | false
     }
+    
+    def "getEnclosingClass #name should be #expected"()
+    {
+        
+        expect:
+       
+        PlasticUtils.getEnclosingClassName(name) == expected
+        
+        where:
+        
+        name                               | expected
+    
+        "org.apache.tapestry5.corelib.components.PropertyEditor" | "org.apache.tapestry5.corelib.components.PropertyEditor"
+        "org.apache.tapestry5.corelib.components.PropertyEditor\$CleanupEnvironment" | "org.apache.tapestry5.corelib.components.PropertyEditor"
+        
+    }
+
 }

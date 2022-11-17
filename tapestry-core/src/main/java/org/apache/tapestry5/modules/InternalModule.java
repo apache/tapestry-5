@@ -116,7 +116,7 @@ public class InternalModule
         binder.bind(AjaxFormUpdateController.class);
         binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);  // Remove in Tapestry 5.5
         binder.bind(RequestPageCache.class, RequestPageCacheImpl.class);
-        binder.bind(ComponentInstantiatorSource.class);
+        binder.bind(ComponentInstantiatorSource.class).eagerLoad();
         binder.bind(InternalComponentInvalidationEventHub.class);
         binder.bind(PageSource.class, PageSourceImpl.class);
         binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();

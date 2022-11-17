@@ -17,7 +17,9 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ResourceDigestManagerImpl implements ResourceDigestManager
 {
@@ -42,4 +44,15 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager
     public void clearOnInvalidation(Map<?, ?> map)
     {
     }
+
+    @Override
+    public void addInvalidationCallback(Function<List<String>, List<String>> function) 
+    {
+    }
+
+    @Override
+    public void fireInvalidationEvent(List<String> resources) 
+    {
+    }
+    
 }

@@ -14,19 +14,23 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
-
-import java.util.Map;
 
 /**
  * In Tapestry 5.1, the implementation of this worked with the page pool (a pool of page instances, reserved
@@ -36,6 +40,8 @@ import java.util.Map;
  */
 @Scope(ScopeConstants.PERTHREAD)
 public class RequestPageCacheImpl implements RequestPageCache, Runnable
+
+/// This should have a listener too!
 {
     private final Logger logger;
 
@@ -46,8 +52,9 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
     private final RequestGlobals requestGlobals;
 
     private final Map<String, Page> cache = CollectionFactory.newMap();
-
-    public RequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource, RequestGlobals requestGlobals)
+    
+    public RequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, 
+            PageSource pageSource, RequestGlobals requestGlobals)
     {
         this.logger = logger;
         this.resolver = resolver;
@@ -56,9 +63,11 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
     }
 
     @PostInjection
-    public void listenForThreadCleanup(PerthreadManager perthreadManager)
+    public void listenForThreadCleanup(PerthreadManager perthreadManager,
+            @ComponentClasses InvalidationEventHub classesHub)
     {
         perthreadManager.addThreadCleanupCallback(this);
+        classesHub.addInvalidationCallback(this::listen);
     }
 
     public void run()
@@ -105,4 +114,20 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
 
         return page;
     }
+    
+    private List<String> listen(List<String> resources)
+    {
+        // TODO: we probably don't need this anymore
+        for (String resource : resources) 
+        {
+            if (resolver.isPage(resource))
+            {
+                final String canonicalName = resolver.canonicalizePageName(
+                        resolver.getLogicalName(resource));
+                cache.remove(canonicalName);
+            }
+        }
+        return Collections.emptyList();
+    }
+    
 }

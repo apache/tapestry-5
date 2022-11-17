@@ -54,7 +54,11 @@ public class MessageCatalogResource extends VirtualResource
                 // but that's the breaks). When that occurs, we tell the ResourceChangeTracker to fire its invalidation
                 // event. That flushes out all the assets it has cached, including StreamableResources for JavaScript files,
                 // including the one created here to represent the application message catalog.
-                changeTracker.forceInvalidationEvent();
+                
+                // TAP-2742: now we're doing smarter page cache invalidation,
+                // so we don't need to clear everything anymore.
+                
+                // changeTracker.forceInvalidationEvent();
             }
         });
     }

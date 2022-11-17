@@ -12,6 +12,17 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.Resource;
@@ -35,11 +46,7 @@ import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -49,13 +56,17 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 {
     private final TemplateParser parser;
 
-    private final URLChangeTracker tracker;
+    private final URLChangeTracker<TemplateTrackingInfo> tracker;
 
     private final ComponentResourceLocator locator;
     
     private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer;
     
     private final ThreadLocale threadLocale;
+    
+    private final Logger logger;
+    
+    private final boolean multipleClassLoaders;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
@@ -109,25 +120,31 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
     public ComponentTemplateSourceImpl(@Inject
                                        @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                       boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
+                                       boolean productionMode, 
+                                       @Inject
+                                       @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                       boolean multipleClassLoaders,                                        
+                                       TemplateParser parser, ComponentResourceLocator locator,
                                        ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                       ThreadLocale threadLocale)
+                                       ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, multipleClassLoaders, parser, locator, new URLChangeTracker<TemplateTrackingInfo>(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
-    ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-                                URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+    ComponentTemplateSourceImpl(boolean productionMode, boolean multipleClassLoaders, TemplateParser parser, ComponentResourceLocator locator,
+                                URLChangeTracker<TemplateTrackingInfo> tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
+                                ThreadLocale threadLocale, Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
 
         this.parser = parser;
         this.locator = locator;
         this.tracker = tracker;
         this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;
         this.threadLocale = threadLocale;
+        this.logger = logger;
+        this.multipleClassLoaders = multipleClassLoaders;
     }
 
     @PostInjection
@@ -170,7 +187,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         if (result == null)
         {
-            result = parseTemplate(resource);
+            result = parseTemplate(resource, componentModel.getComponentClassName());
             templates.put(resource, result);
         }
 
@@ -196,7 +213,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     }
 
-    private ComponentTemplate parseTemplate(Resource r)
+    private ComponentTemplate parseTemplate(Resource r, String className)
     {
         // In a race condition, we may parse the same template more than once. This will likely add
         // the resource to the tracker multiple times. Not likely this will cause a big issue.
@@ -204,7 +221,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         if (!r.exists())
             return missingTemplate;
 
-        tracker.add(r.toURL());
+        tracker.add(r.toURL(), new TemplateTrackingInfo(r.getPath(), className));
 
         return parser.parseTemplate(r);
     }
@@ -235,12 +252,43 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      * Checks to see if any parsed resource has changed. If so, then all internal caches are cleared, and an
      * invalidation event is fired. This is brute force ... a more targeted dependency management strategy may come
      * later.
+     * Actually, TAP5-2742 did exactly that! :D
      */
     public void checkForUpdates()
     {
-        if (tracker.containsChanges())
+        final Set<TemplateTrackingInfo> changedResourcesInfo = tracker.getChangedResourcesInfo();
+        if (!changedResourcesInfo.isEmpty())
         {
-            invalidate();
+            if (logger.isInfoEnabled())
+            {
+                logger.info("Changed template(s) found: {}", String.join(", ", 
+                        changedResourcesInfo.stream().map(TemplateTrackingInfo::getTemplate).collect(Collectors.toList())));
+            }
+            
+            if (multipleClassLoaders)
+            {
+            
+                final Iterator<Entry<MultiKey, Resource>> templateResourcesIterator = templateResources.entrySet().iterator();
+                for (TemplateTrackingInfo info : changedResourcesInfo) 
+                {
+                    while (templateResourcesIterator.hasNext())
+                    {
+                        final MultiKey key = templateResourcesIterator.next().getKey();
+                        if (info.getClassName().equals((String) key.getValues()[0]))
+                        {
+                            templates.remove(templateResources.get(key));
+                            templateResourcesIterator.remove();
+                        }
+                    }
+                }
+                
+                fireInvalidationEvent(changedResourcesInfo.stream().map(TemplateTrackingInfo::getClassName).collect(Collectors.toList()));
+                
+            }
+            else
+            {
+                invalidate();
+            }
         }
     }
 

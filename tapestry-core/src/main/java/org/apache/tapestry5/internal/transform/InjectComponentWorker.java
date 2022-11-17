@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -24,6 +25,7 @@ import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
+import org.slf4j.Logger;
 
 /**
  * Recognizes the {@link org.apache.tapestry5.annotations.InjectComponent} annotation, and converts the field into a
@@ -77,15 +79,29 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                         fieldName, getComponentClassName(), ex.getMessage()), ex);
             }
 
+            @SuppressWarnings("rawtypes")
             Class fieldType = classCache.forName(type);
 
             if (!fieldType.isInstance(embedded))
-                throw new RuntimeException(
-                        String
-                                .format(
-                                        "Unable to inject component '%s' into field %s of %s. Class %s is not assignable to a field of type %s.",
-                                        componentId, fieldName, getComponentClassName(),
-                                        embedded.getClass().getName(), fieldType.getName()));
+            {
+                final String className = fieldType.getName();
+                final String message = String
+                        .format(
+                                "Unable to inject component '%s' into field %s of %s. Class %s is not assignable to a field of type %s.",
+                                componentId, fieldName, getComponentClassName(),
+                                embedded.getClass().getName(), className);
+                if (embedded.getClass().getName().equals(className))
+                {
+                    logger.warn(message);
+                    throw new DifferentClassVersionsException(message, className, 
+                            fieldType.getClassLoader(), embedded.getClass().getClassLoader());
+                }
+                else
+                {
+                    throw new RuntimeException(message);
+                }
+            }
+                
         }
 
         private String getComponentClassName()
@@ -100,10 +116,13 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
     }
 
     private final ComponentClassCache classCache;
-
-    public InjectComponentWorker(ComponentClassCache classCache)
+    
+    private final Logger logger;
+    
+    public InjectComponentWorker(ComponentClassCache classCache, final Logger logger)
     {
         this.classCache = classCache;
+        this.logger = logger;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)

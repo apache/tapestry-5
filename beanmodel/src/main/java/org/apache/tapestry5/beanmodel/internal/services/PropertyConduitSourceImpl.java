@@ -41,9 +41,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -1387,9 +1390,42 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
     @PostInjection
     public void listenForInvalidations(@ComponentClasses InvalidationEventHub hub)
     {
-        hub.clearOnInvalidation(cache);
+        hub.addInvalidationCallback(this::listen);
     }
-
+    
+    private List<String> listen(List<String> resources)
+    {
+        
+        if (resources.isEmpty())
+        {
+            cache.clear();
+        }
+        else
+        {
+        
+            final Iterator<Entry<MultiKey, PropertyConduit>> iterator = cache.entrySet().iterator();
+            
+            while (iterator.hasNext())
+            {
+                
+                final Entry<MultiKey, PropertyConduit> entry = iterator.next();
+                
+                for (String resource : resources) {
+                    @SuppressWarnings("rawtypes")
+                    final Class clasz = (Class) entry.getKey().getValues()[0];
+                    if (clasz.getName().equals(resource))
+                    {
+                        iterator.remove();
+                    }   
+                }
+                
+            }
+            
+        }
+        
+        return Collections.emptyList();
+        
+    }
 
     public PropertyConduit create(Class rootClass, String expression)
     {
@@ -1488,7 +1524,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     break;
             }
 
-            return proxyFactory.createProxy(InternalPropertyConduit.class,
+            return proxyFactory.getProxyFactory(rootClass.getName()).createProxy(InternalPropertyConduit.class,
                     new PropertyConduitBuilder(rootClass, expression, tree)).newInstance();
         } catch (Exception ex)
         {

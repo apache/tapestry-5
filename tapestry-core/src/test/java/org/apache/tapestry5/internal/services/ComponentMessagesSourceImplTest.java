@@ -30,11 +30,16 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.easymock.EasyMock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -63,14 +68,27 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private ComponentMessagesSourceImpl source;
 
     private ComponentResourceLocator resourceLocator;
+    
+    private Logger logger = LoggerFactory.getLogger(ComponentMessagesSourceImplTest.class);
+    
+    private final ComponentClassResolver componentClassResolver = EasyMock.createMock(ComponentClassResolver.class);
+
+    @BeforeMethod
+    public void setupMethod()
+    {
+        EasyMock.reset(componentClassResolver);
+        EasyMock.expect(componentClassResolver.isPage(EasyMock.anyString())).andReturn(false).anyTimes();
+        EasyMock.replay(componentClassResolver);
+    }
+
 
     @BeforeClass
     public void setup()
     {
         resourceLocator = getService(ComponentResourceLocator.class);
 
-        source = new ComponentMessagesSourceImpl(false, simpleComponentResource.forFile("AppCatalog.properties"),
-                resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale);
+        source = new ComponentMessagesSourceImpl(false, false, simpleComponentResource.forFile("AppCatalog.properties"),
+                resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
     @AfterClass
@@ -239,8 +257,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         Resource resource = simpleComponentResource.forFile("NoSuchAppCatalog.properties");
         List<Resource> resources = Arrays.asList(resource);
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
-                new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, false, resources,
+                new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

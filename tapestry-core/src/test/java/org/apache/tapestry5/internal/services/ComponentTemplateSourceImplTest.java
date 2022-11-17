@@ -35,6 +35,8 @@ import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
@@ -53,6 +55,8 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
     private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer = 
         new DefaultComponentRequestSelectorAnalyzer(threadLocale);
+    
+    private final Logger logger = LoggerFactory.getLogger(ComponentTemplateSourceImplTest.class);
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -102,16 +106,18 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         Resource resource = mockResource();
         ComponentResourceLocator locator = mockLocator(model, english, resource);
 
-        train_getComponentClassName(model, PACKAGE + ".Fred");
+        final String className = PACKAGE + ".Fred";
+        train_getComponentClassName(model, className);
 
         expect(resource.exists()).andReturn(true);
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml");
         expect(resource.toURL()).andReturn(null);
 
         train_parseTemplate(parser, resource, template);
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 
@@ -160,7 +166,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -215,11 +221,13 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentResourceLocator locator = newMock(ComponentResourceLocator.class);
 
-        train_getComponentClassName(model, PACKAGE + ".Fred");
+        final String className = PACKAGE + ".Fred";
+        train_getComponentClassName(model, className);
 
         expect(locator.locateTemplate(model, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true).anyTimes();
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml").anyTimes();
         expect(resource.toURL()).andReturn(null).anyTimes();
 
         expect(locator.locateTemplate(model, french)).andReturn(resource).once();
@@ -228,7 +236,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -266,7 +274,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         ComponentTemplate template = source.getTemplate(model, Locale.ENGLISH);
 
@@ -285,20 +293,22 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         Resource resource = mockResource();
         ComponentResourceLocator locator = mockLocator(model, english, null);
 
-        train_getComponentClassName(model, "foo.Bar");
+        final String className = "foo.Bar";
+        train_getComponentClassName(model, className);
 
         train_getParentModel(model, parentModel);
 
         expect(locator.locateTemplate(parentModel, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true);
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml");
         expect(resource.toURL()).andReturn(null);
 
         train_parseTemplate(parser, resource, template);
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 

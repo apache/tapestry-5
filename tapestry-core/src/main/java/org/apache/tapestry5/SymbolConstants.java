@@ -33,6 +33,7 @@ import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
 
 /**
@@ -780,5 +781,14 @@ public class SymbolConstants
      * @since 5.8.2
      */
     public static final String CORS_MAX_AGE = TapestryHttpSymbolConstants.CORS_MAX_AGE;
+    
+    /**
+     * Defines whether multiple classloaders will be used instead of one for smarter page invalidation.
+     * This is ignored when in production mode.
+     * Default value is <code>false</code>.
+     * @see PageClassLoaderContextManager
+     * @since 5.8.3
+     */
+    public static final String MULTIPLE_CLASSLOADERS = "tapestry.multiple-classloaders";
 
 }

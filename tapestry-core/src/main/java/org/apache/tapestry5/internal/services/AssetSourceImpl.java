@@ -17,9 +17,12 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tapestry5.Asset;
@@ -109,7 +112,23 @@ public class AssetSourceImpl extends LockSupport implements AssetSource
     @PostInjection
     public void clearCacheWhenResourcesChange(ResourceChangeTracker tracker)
     {
-        tracker.clearOnInvalidation(cache);
+        tracker.addInvalidationCallback(this::invalidate);
+    }
+    
+    private List<String> invalidate(List<String> resources)
+    {
+        final Iterator<Entry<Resource, SoftReference<Asset>>> iterator = cache.entrySet().iterator();
+        for (String resource : resources) 
+        {
+            while (iterator.hasNext())
+            {
+                if (iterator.next().getKey().toString().equals(resource))
+                {
+                    iterator.remove();
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
     public Asset getClasspathAsset(String path)

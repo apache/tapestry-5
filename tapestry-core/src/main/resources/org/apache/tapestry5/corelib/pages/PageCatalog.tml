@@ -12,16 +12,23 @@
         <t:beandisplay t:id="totals"/>
 
         <t:grid source="pages" row="page" model="model">
+            <p:componentCountCell>
+                ${page.stats.componentCount} 
+                <a href="#" t:type="EventLink" t:event="pageStructure" t:zone="pageStructureZone"
+                	t:context="page.name">Structure info</a>
+            </p:componentCountCell>
             <p:assemblyTimeCell>
                 ${formatElapsed(page.stats.assemblyTime)}
             </p:assemblyTimeCell>
             <p:selectorCell>
                 ${page.selector.toShortString()}
             </p:selectorCell>
+            <p:clearCell>
+                <t:EventLink t:event="clearPage" t:context="pageClassName" t:zone="^">Clear cached instance</t:EventLink>
+            </p:clearCell>
             <p:empty>
                 <p>
-                    <em>There are no pages in the page cache. This can only occur immediately after clearing the cache.
-                    </em>
+                    <em>There are no pages in the page cache. This can only occur immediately after clearing the cache.</em>
                 </p>
             </p:empty>
         </t:grid>
@@ -36,8 +43,39 @@
             </t:actionlink>
         </t:if>
         <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
+        <t:actionlink t:id="storeDependencyInformation" zone="pages" class="btn btn-warning">Store dependency information</t:actionlink>
+        <t:if test="multipleClassLoaders">
+	        <t:actionlink t:id="preloadPageClassLoaderContexts" class="btn btn-default">Preload dependency information and page classloader contexts</t:actionlink>
+		</t:if>
     </div>
-
+    
+    
+    <t:zone t:id="pageStructureZone">
+	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+	        <div class="panel-heading">Component dependency information for ${selectedPage.name} (just direct dependencies)</div>
+	        <div class="panel-body">
+	        	<ul>
+	        		<li t:type="Loop" t:value="dependency" t:source="dependencies">
+	        			${displayLogicalName} (${dependency})
+	        		</li>
+	        	</ul>
+	        </div>
+	    </div>
+	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+	        <div class="panel-heading">${selectedPage.name}'s component tree</div>
+	        <div class="panel-body">
+	        	<ul>
+	        		<t:trigger t:event="componentTree"/>
+	        	</ul>
+	        </div>
+	    </div>
+	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+	        <div class="panel-heading">${selectedPage.name}'s dependency tree</div>
+	        <div class="panel-body">
+	        	<t:graphviz value="graphvizValue"/>
+	        </div>
+	    </div>
+	</t:zone>	   
 
     <div class="panel panel-default vert-offset">
         <div class="panel-heading">Load single page</div>

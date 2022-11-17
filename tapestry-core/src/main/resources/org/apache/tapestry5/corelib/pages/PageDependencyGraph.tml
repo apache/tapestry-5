@@ -1,0 +1,13 @@
+<t:block id="content" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+         xmlns:p="tapestry:parameter">
+
+	<p>
+		This page provides a graph, generated with <a href="http://graphviz.org">Graphviz</a>
+		and <a href="https://www.npmjs.com/package/@hpcc-js/wasm">@hpcc-js/wasm</a>,
+		showing the dependencies of all already loaded
+		pages and its components, mixins and base classes.
+	</p>
+	
+	<t:Graphviz value="graphvizValue" showDownloadLink="true" showSource="true"/>
+
+</t:block>

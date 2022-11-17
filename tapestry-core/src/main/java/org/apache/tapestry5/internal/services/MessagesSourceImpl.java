@@ -12,6 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.util.CaseInsensitiveMap;
@@ -20,13 +29,11 @@ import org.apache.tapestry5.commons.util.MultiKey;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
@@ -43,12 +50,18 @@ import java.util.Map;
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
-    private final URLChangeTracker tracker;
+    private final URLChangeTracker<MessagesTrackingInfo> tracker;
 
     private final PropertiesFileParser propertiesFileParser;
 
     private final ComponentResourceLocator resourceLocator;
-
+    
+    private final ComponentClassResolver componentClassResolver;
+    
+    private final boolean multipleClassLoaders;
+    
+    private final Logger logger;        
+    
     /**
      * Keyed on bundle id and ComponentResourceSelector.
      */
@@ -67,21 +80,97 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
-    public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
-                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
+    public MessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, URLChangeTracker tracker,
+                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser,
+                              ComponentClassResolver componentClassResolver,
+                              Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
 
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;
         this.resourceLocator = resourceLocator;
+        this.logger = logger;
+        this.componentClassResolver = componentClassResolver;
+        this.multipleClassLoaders = multipleClassLoaders;
     }
 
     public void checkForUpdates()
     {
-        if (tracker != null && tracker.containsChanges())
+        if (tracker != null)
         {
-            invalidate();
+            final Set<MessagesTrackingInfo> changedResources = tracker.getChangedResourcesInfo();
+            if (!changedResources.isEmpty() && logger.isInfoEnabled())
+            {
+                logger.info("Changed message file(s): {}", changedResources.stream()
+                        .map(MessagesTrackingInfo::getResource)
+                        .map(Resource::toString)
+                        .collect(Collectors.joining(", ")));
+            }
+            
+            boolean applicationLevelChange = false;
+            
+            for (MessagesTrackingInfo info : changedResources) 
+            {
+                
+                final String className = info.getClassName();
+                
+                // An application-level file was changed, so we need to invalidate everything.
+                if (className == null || !multipleClassLoaders)
+                {
+                    invalidate();
+                    applicationLevelChange = true;
+                    break;
+                }
+                else
+                {
+                    
+                    final Iterator<Entry<MultiKey, Messages>> messagesByBundleIdAndSelectorIterator = 
+                            messagesByBundleIdAndSelector.entrySet().iterator();
+                    
+                    while (messagesByBundleIdAndSelectorIterator.hasNext())
+                    {
+                        final Entry<MultiKey, Messages> entry = messagesByBundleIdAndSelectorIterator.next();
+                        if (className.equals(entry.getKey().getValues()[0]))
+                        {
+                            messagesByBundleIdAndSelectorIterator.remove();
+                        }
+                    }
+                    
+                    final Iterator<Entry<MultiKey, Map<String, String>>> cookedPropertiesIterator = 
+                            cookedProperties.entrySet().iterator();
+                    
+                    while (cookedPropertiesIterator.hasNext())
+                    {
+                        final Entry<MultiKey, Map<String, String>> entry = cookedPropertiesIterator.next();
+                        if (className.equals(entry.getKey().getValues()[0]))
+                        {
+                            cookedPropertiesIterator.remove();
+                        }
+                    }
+                    
+                    final String resourceFile = info.getResource().getFile();
+                    final Iterator<Entry<Resource, Map<String, String>>> rawPropertiesIterator = rawProperties.entrySet().iterator();
+                    while (rawPropertiesIterator.hasNext())
+                    {
+                        final Entry<Resource, Map<String, String>> entry = rawPropertiesIterator.next();
+                        if (resourceFile.equals(entry.getKey().getFile()))
+                        {
+                            rawPropertiesIterator.remove();
+                        }
+                    }
+                    
+                }
+            }
+            
+            if (!changedResources.isEmpty() && !applicationLevelChange)
+            {
+                fireInvalidationEvent(changedResources.stream()
+                        .filter(Objects::nonNull)
+                        .map(ClassNameHolder::getClassName)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
+            }
         }
     }
 
@@ -149,9 +238,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         for (Resource localization : F.flow(localizations).reverse())
         {
-            Map<String, String> rawProperties = getRawProperties(localization);
+            Map<String, String> rawProperties = getRawProperties(localization, bundle);
 
-            // Woould be nice to write into the cookedProperties cache here,
+            // Would be nice to write into the cookedProperties cache here,
             // but we can't because we don't know the selector part of the MultiKey.
 
             previous = extend(previous, rawProperties);
@@ -182,13 +271,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         return result;
     }
 
-    private Map<String, String> getRawProperties(Resource localization)
+    private Map<String, String> getRawProperties(Resource localization, MessagesBundle bundle)
     {
         Map<String, String> result = rawProperties.get(localization);
 
         if (result == null)
         {
-            result = readProperties(localization);
+            result = readProperties(localization, bundle);
 
             rawProperties.put(localization, result);
         }
@@ -198,15 +287,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     /**
      * Creates and returns a new map that contains properties read from the properties file.
+     * @param bundle 
      */
-    private Map<String, String> readProperties(Resource resource)
+    private Map<String, String> readProperties(Resource resource, MessagesBundle bundle)
     {
         if (!resource.exists())
             return emptyMap;
 
         if (tracker != null)
         {
-            tracker.add(resource.toURL());
+            MessagesTrackingInfo info = new MessagesTrackingInfo(
+                    resource, bundle != null ? bundle.getId() : bundle, getClassName(bundle));
+            tracker.add(resource.toURL(), info);
         }
 
         try
@@ -216,6 +308,24 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         {
             throw new RuntimeException(String.format("Unable to read message catalog from %s: %s", resource, ex), ex);
         }
+    }
+
+    private String getClassName(MessagesBundle bundle)
+    {
+        String className = null;
+        if (bundle != null && bundle.getBaseResource().getPath() != null)
+        {
+            final String path = bundle.getBaseResource().getPath();
+            if (path.endsWith(".class"))
+            {
+                className = path.replace('/', '.').replace(".class", "");
+                if (!componentClassResolver.isPage(className)) 
+                {
+                    className = null;
+                }
+            }
+        }
+        return className;
     }
 
 }

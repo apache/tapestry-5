@@ -1,4 +1,4 @@
-import io.github.bonigarcia.wdm.FirefoxDriverManager
+import io.github.bonigarcia.wdm.managers.FirefoxDriverManager
 
 driver = "firefox"
 
