@@ -14,11 +14,6 @@
 
 package org.apache.tapestry5.internal.event;
 
-import org.apache.tapestry5.commons.internal.util.TapestryException;
-import org.apache.tapestry5.commons.services.InvalidationEventHub;
-import org.apache.tapestry5.commons.services.InvalidationListener;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,6 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.services.InvalidationListener;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -64,16 +65,23 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
             return;
         }
         
+        final Set<String> alreadyProcessed = new HashSet<>();
+        
         do 
         {
-            Set<String> extraResources = new HashSet<>();
+            final Set<String> extraResources = new HashSet<>();
+            Set<String> actuallyNewResources;
             for (Function<List<String>, List<String>> callback : callbacks)
             {
                 final List<String> newResources = callback.apply(resources);
                 if (newResources == null) {
                     throw new TapestryException("InvalidationEventHub callback functions cannot return null", null);
                 }
-                extraResources.addAll(newResources);
+                actuallyNewResources = newResources.stream()
+                        .filter(r -> !alreadyProcessed.contains(r))
+                        .collect(Collectors.toSet());
+                extraResources.addAll(actuallyNewResources);
+                alreadyProcessed.addAll(newResources);
             }
             resources = new ArrayList<>(extraResources);
         }

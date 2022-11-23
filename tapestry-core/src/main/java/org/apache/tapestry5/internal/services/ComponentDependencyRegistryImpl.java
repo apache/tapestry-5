@@ -15,6 +15,7 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -133,7 +134,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getDependents(String className) 
     {
-        return map.get(className);
+        final Set<String> dependents = map.get(className);
+        return dependents != null ? dependents : Collections.emptySet();
     }
 
     @Override
@@ -150,7 +152,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         add(getClassName(component), getClassName(dependency));
     }
     
-    private void add(String component, String dependency) 
+    // Protected just for testing
+    void add(String component, String dependency) 
     {
         synchronized (map) 
         {
@@ -170,12 +173,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         invalidationEventHub.addInvalidationCallback(this::listen);
     }
     
-    private List<String> listen(List<String> resources)
+    // Protected just for testing
+    List<String> listen(List<String> resources)
     {
         List<String> furtherDependents = new ArrayList<>();
         for (String resource : resources) 
         {
-            final Set<String> dependents = map.get(resource);
+            final Set<String> dependents = getDependents(resource);
             for (String furtherDependent : dependents) 
             {
                 if (!resources.contains(furtherDependent) && !furtherDependents.contains(furtherDependent))

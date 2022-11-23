@@ -44,9 +44,11 @@ public class InvalidationEventHubImplTest
         Function<List<String>, List<String>> callback = (r) -> {
             callCount.incrementAndGet();
             if (r.size() == 2 && r.get(0).equals(firstInitialElement) && r.get(1).equals(secondInitialElement)) {
-                return Arrays.asList(firstInitialElement.toUpperCase(), secondInitialElement.toUpperCase());
+                return Arrays.asList(firstInitialElement.toUpperCase(), secondInitialElement.toUpperCase(), firstInitialElement);
             }
-            else if (r.size() == 2 && r.get(0).equals(firstInitialElement.toUpperCase()) && r.get(1).equals(secondInitialElement.toUpperCase())) {
+            else if (r.size() == 3 && r.contains(firstInitialElement.toUpperCase()) && 
+                    r.contains(secondInitialElement.toUpperCase()) &&
+                    r.contains(firstInitialElement)) {
                 return Arrays.asList("something", "else");
             }
             else {
