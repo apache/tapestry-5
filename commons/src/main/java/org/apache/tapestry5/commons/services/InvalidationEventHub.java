@@ -71,4 +71,12 @@ public interface InvalidationEventHub
      */
     @IncompatibleChange(release = "5.8.3", details = "Added method")
     void addInvalidationCallback(Function<List<String>, List<String>> function);
+    
+   /** 
+    * Notify resource-specific invalidations to listeners.
+    * @since 5.8.3
+    */
+   @IncompatibleChange(release = "5.8.3", details = "Added method")
+   void fireInvalidationEvent(List<String> resources);
+
 }

@@ -27,6 +27,7 @@ import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.InvalidationListener;
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.slf4j.Logger;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -36,7 +37,9 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
 {
     private final List<Function<List<String>, List<String>>> callbacks;
     
-    protected InvalidationEventHubImpl(boolean productionMode)
+    private final Logger logger;
+    
+    protected InvalidationEventHubImpl(boolean productionMode, Logger logger)
     {
         if (productionMode)
         {
@@ -45,6 +48,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         {
             callbacks = CollectionFactory.newThreadSafeList();
         }
+        this.logger = logger;
     }
 
     /**
@@ -58,7 +62,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
     /**
      * Notifies all listeners/callbacks.
      */
-    protected final void fireInvalidationEvent(List<String> resources)
+    public final void fireInvalidationEvent(List<String> resources)
     {
         if (callbacks == null)
         {
@@ -67,10 +71,19 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         
         final Set<String> alreadyProcessed = new HashSet<>();
         
+        int level = 1;
         do 
         {
             final Set<String> extraResources = new HashSet<>();
             Set<String> actuallyNewResources;
+            if (!resources.isEmpty())
+            {
+                logger.info("Invalidating {} resource(s) at level {}: {}", resources.size(), level, String.join(", ", resources));
+            }
+            else
+            {
+                logger.info("Invalidating all resources");
+            }
             for (Function<List<String>, List<String>> callback : callbacks)
             {
                 final List<String> newResources = callback.apply(resources);
@@ -83,6 +96,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
                 extraResources.addAll(actuallyNewResources);
                 alreadyProcessed.addAll(newResources);
             }
+            level++;
             resources = new ArrayList<>(extraResources);
         }
         while (!resources.isEmpty());

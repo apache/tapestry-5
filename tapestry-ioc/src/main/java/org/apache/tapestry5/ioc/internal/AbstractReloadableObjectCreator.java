@@ -284,7 +284,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         if (isFileURL(url))
         {
-            changeTracker.add(url);
+            changeTracker.add(url, className);
         }
     }
 

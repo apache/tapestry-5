@@ -19,6 +19,7 @@ import java.util.function.Function;
 
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.internal.services.ComponentTemplateSourceImplTest;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,7 +37,7 @@ public class InvalidationEventHubImplTest
     @Test
     public void add_invalidation_callback_with_parameter() 
     {
-        InvalidationEventHubImpl invalidationEventHub = new InvalidationEventHubImpl(false);
+        InvalidationEventHubImpl invalidationEventHub = new InvalidationEventHubImpl(false, LoggerFactory.getLogger(InvalidationEventHubImpl.class));
         final String firstInitialElement = "a";
         final String secondInitialElement = "b";
         final List<String> initialResources = Arrays.asList(firstInitialElement, secondInitialElement);
@@ -65,9 +66,9 @@ public class InvalidationEventHubImplTest
     @Test(expectedExceptions = TapestryException.class)
     public void null_check_for_callback_method() 
     {
-        InvalidationEventHubImpl invalidationEventHub = new InvalidationEventHubImpl(false);
+        InvalidationEventHubImpl invalidationEventHub = new InvalidationEventHubImpl(false, LoggerFactory.getLogger(InvalidationEventHubImpl.class));
         invalidationEventHub.addInvalidationCallback((s) -> null);
-        invalidationEventHub.fireInvalidationEvent();
+        invalidationEventHub.fireInvalidationEvent(Arrays.asList("a"));
     }
     
 }

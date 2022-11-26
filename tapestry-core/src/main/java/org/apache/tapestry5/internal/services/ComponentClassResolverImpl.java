@@ -820,13 +820,14 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     @Override
     public String getLogicalName(String className) 
     {
-        String result = getData().pageClassNameToLogicalName.get(className);
+        final Data thisData = getData();
+        String result = thisData.pageClassNameToLogicalName.get(className);
         if (result == null)
         {
-            result = getKeyByValue(getData().componentToClassName, className);
+            result = getKeyByValue(thisData.componentToClassName, className);
         }
-        else {
-            result = getKeyByValue(getData().mixinToClassName, className);
+        if (result == null ){
+            result = getKeyByValue(thisData.mixinToClassName, className);
         }
 
         return result;

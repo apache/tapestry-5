@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 /**
- * Forces a reload of all caches and invalidates the component class cache. This is only allowed
+ * Forces a reload of all caches and invalidates the component class cache. This is only allowed when production mode is off.
  *
  * @since 5.4
  */

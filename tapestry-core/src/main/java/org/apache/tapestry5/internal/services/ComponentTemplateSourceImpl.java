@@ -12,6 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.Resource;
@@ -34,12 +43,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -56,6 +60,8 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer;
     
     private final ThreadLocale threadLocale;
+    
+    private final Logger logger;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
@@ -112,22 +118,23 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
                                        boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
                                        ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                       ThreadLocale threadLocale)
+                                       ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
     ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+                                ThreadLocale threadLocale, Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
 
         this.parser = parser;
         this.locator = locator;
         this.tracker = tracker;
         this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;
         this.threadLocale = threadLocale;
+        this.logger = logger;
     }
 
     @PostInjection
@@ -170,7 +177,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         if (result == null)
         {
-            result = parseTemplate(resource);
+            result = parseTemplate(resource, componentModel.getComponentClassName());
             templates.put(resource, result);
         }
 
@@ -196,7 +203,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     }
 
-    private ComponentTemplate parseTemplate(Resource r)
+    private ComponentTemplate parseTemplate(Resource r, String className)
     {
         // In a race condition, we may parse the same template more than once. This will likely add
         // the resource to the tracker multiple times. Not likely this will cause a big issue.
@@ -204,7 +211,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         if (!r.exists())
             return missingTemplate;
 
-        tracker.add(r.toURL());
+        tracker.add(r.toURL(), className);
 
         return parser.parseTemplate(r);
     }
@@ -235,12 +242,30 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      * Checks to see if any parsed resource has changed. If so, then all internal caches are cleared, and an
      * invalidation event is fired. This is brute force ... a more targeted dependency management strategy may come
      * later.
+     * Actually, TAP5-2742 did exactly that! :D
      */
     public void checkForUpdates()
     {
-        if (tracker.containsChanges())
+        final Set<String> changedResourcesMemos = tracker.getChangedResourcesMemos();
+        if (!changedResourcesMemos.isEmpty())
         {
-            invalidate();
+            logger.info("Changed template(s) found: {}", String.join(", ", changedResourcesMemos));
+            
+            final Iterator<Entry<MultiKey, Resource>> templateResourcesIterator = templateResources.entrySet().iterator();
+            for (String className : changedResourcesMemos) 
+            {
+                while (templateResourcesIterator.hasNext())
+                {
+                    final MultiKey key = templateResourcesIterator.next().getKey();
+                    if (className.equals((String) key.getValues()[0]))
+                    {
+                        templates.remove(templateResources.get(key));
+                        templateResourcesIterator.remove();
+                    }
+                }
+            }
+            
+            fireInvalidationEvent(new ArrayList<>(changedResourcesMemos));
         }
     }
 

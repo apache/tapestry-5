@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.UpdateListener;
 import org.apache.tapestry5.ioc.services.UpdateListenerHub;
+import org.slf4j.Logger;
 
 public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implements ResourceChangeTracker,
         UpdateListener
@@ -38,9 +39,9 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
                                      @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                     boolean productionMode)
+                                     boolean productionMode, Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
 
         // Use granularity of seconds (not milliseconds) since that works properly
         // with response headers for identifying last modified. Don't track

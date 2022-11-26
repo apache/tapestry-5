@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,9 +69,10 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
     public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
-                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
+                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser,
+                              Logger logger)
     {
-        super(productionMode);
+        super(productionMode, logger);
 
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;

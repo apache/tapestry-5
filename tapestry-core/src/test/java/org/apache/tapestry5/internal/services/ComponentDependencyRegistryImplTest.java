@@ -53,6 +53,11 @@ public class ComponentDependencyRegistryImplTest
         Collections.sort(result);
         assertEquals(result, Arrays.asList("d", "dd"));
         
+        final List<String> returnValue = componentDependencyRegistry.listen(Collections.emptyList());
+        assertEquals(returnValue, Collections.emptyList());
+        assertEquals(componentDependencyRegistry.getDependents("bar").size(), 0);
+        assertEquals(componentDependencyRegistry.getDependencies("foo").size(), 0);
+        
     }
     
     @Test

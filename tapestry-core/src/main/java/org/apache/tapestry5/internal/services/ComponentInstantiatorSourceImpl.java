@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -172,9 +173,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public synchronized void checkForUpdates()
     {
-        if (changeTracker.containsChanges())
+        final Set<String> changedResources = changeTracker.getChangedResourcesMemos();
+        if (!changedResources.isEmpty())
         {
-            invalidationHub.classInControlledPackageHasChanged();
+            invalidationHub.fireInvalidationEvent(new ArrayList<>(changedResources));
         }
     }
 
@@ -306,7 +308,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         Resource baseResource = new ClasspathResource(parent, PlasticInternalUtils
                                 .toClassPath(className));
 
-                        changeTracker.add(baseResource.toURL());
+                        changeTracker.add(baseResource.toURL(), className);
 
                         if (isRoot)
                         {

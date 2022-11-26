@@ -35,6 +35,8 @@ import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
@@ -53,6 +55,8 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
     private final ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer = 
         new DefaultComponentRequestSelectorAnalyzer(threadLocale);
+    
+    private final Logger logger = LoggerFactory.getLogger(ComponentTemplateSourceImplTest.class);
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -111,7 +115,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 
@@ -160,7 +164,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -228,7 +232,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -266,7 +270,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         ComponentTemplate template = source.getTemplate(model, Locale.ENGLISH);
 
@@ -298,7 +302,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 

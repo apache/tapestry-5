@@ -33,6 +33,8 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -63,6 +65,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private ComponentMessagesSourceImpl source;
 
     private ComponentResourceLocator resourceLocator;
+    
+    private Logger logger = LoggerFactory.getLogger(ComponentMessagesSourceImplTest.class);
 
     @BeforeClass
     public void setup()
@@ -70,7 +74,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         resourceLocator = getService(ComponentResourceLocator.class);
 
         source = new ComponentMessagesSourceImpl(false, simpleComponentResource.forFile("AppCatalog.properties"),
-                resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale);
+                resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
     @AfterClass
@@ -240,7 +244,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         List<Resource> resources = Arrays.asList(resource);
 
         ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
-                new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale);
+                new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

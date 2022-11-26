@@ -36,6 +36,7 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
@@ -81,26 +82,26 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
                                        boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
                                        ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                       ThreadLocale threadLocale)
+                                       ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+                                ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale);
+        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
-                                ThreadLocale threadLocale)
+                                ThreadLocale threadLocale, Logger logger)
     {
         messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
-                parser);
+                parser, logger);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
         this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;

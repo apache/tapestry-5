@@ -22,13 +22,19 @@ import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 import java.lang.ref.SoftReference;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class PageSourceImpl implements PageSource
@@ -38,6 +44,10 @@ public class PageSourceImpl implements PageSource
     private final PageLoader pageLoader;
 
     private final ComponentDependencyRegistry componentDependencyRegistry;
+    
+    private final ComponentClassResolver componentClassResolver;
+    
+    private final Logger logger;
 
     private static final class CachedPageKey
     {
@@ -73,11 +83,15 @@ public class PageSourceImpl implements PageSource
     private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
 
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
-            ComponentDependencyRegistry componentDependencyRegistry)
+            ComponentDependencyRegistry componentDependencyRegistry,
+            ComponentClassResolver componentClassResolver,
+            Logger logger)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
         this.componentDependencyRegistry = componentDependencyRegistry;
+        this.componentClassResolver = componentClassResolver;
+        this.logger = logger;
     }
 
     public Page getPage(String canonicalPageName)
@@ -121,9 +135,9 @@ public class PageSourceImpl implements PageSource
                                   @ComponentMessages InvalidationEventHub messagesHub,
                                   ResourceChangeTracker resourceChangeTracker)
     {
-        classesHub.clearOnInvalidation(pageCache);
-        templatesHub.clearOnInvalidation(pageCache);
-        messagesHub.clearOnInvalidation(pageCache);
+        classesHub.addInvalidationCallback(this::listen);
+        templatesHub.addInvalidationCallback(this::listen);
+        messagesHub.addInvalidationCallback(this::listen);
 
         // Because Assets can be injected into pages, and Assets are invalidated when
         // an Asset's value is changed (partly due to the change, in 5.4, to include the asset's
@@ -131,9 +145,42 @@ public class PageSourceImpl implements PageSource
         // any Resource, it is necessary to discard all page instances.
         resourceChangeTracker.clearOnInvalidation(pageCache);
     }
+    
+    private List<String> listen(List<String> resources)
+    {
+    
+        if (resources.isEmpty())
+        {
+            clearCache();
+        }
+        else
+        {
+            String pageName;
+            for (String className : resources)
+            {
+                pageName = componentClassResolver.getLogicalName(className);
+                if (pageName != null && !pageName.isEmpty())
+                {
+                    final Iterator<Entry<CachedPageKey, SoftReference<Page>>> iterator = pageCache.entrySet().iterator();
+                    while (iterator.hasNext())
+                    {
+                        final Entry<CachedPageKey, SoftReference<Page>> entry = iterator.next();
+                        if (entry.getKey().pageName.equalsIgnoreCase(pageName)) 
+                        {
+                            logger.info("Clearing cached page '{}'", pageName);
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+        }
+            
+        return Collections.emptyList();
+    }
 
     public void clearCache()
     {
+        logger.info("Clearing page cache");
         pageCache.clear();
     }
 

@@ -176,18 +176,27 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     // Protected just for testing
     List<String> listen(List<String> resources)
     {
-        List<String> furtherDependents = new ArrayList<>();
-        for (String resource : resources) 
+        List<String> furtherDependents;
+        if (resources.isEmpty())
         {
-            final Set<String> dependents = getDependents(resource);
-            for (String furtherDependent : dependents) 
+            clear();
+            furtherDependents = Collections.emptyList();
+        }
+        else
+        {
+            furtherDependents = new ArrayList<>();
+            for (String resource : resources) 
             {
-                if (!resources.contains(furtherDependent) && !furtherDependents.contains(furtherDependent))
+                final Set<String> dependents = getDependents(resource);
+                for (String furtherDependent : dependents) 
                 {
-                    furtherDependents.add(furtherDependent);
+                    if (!resources.contains(furtherDependent) && !furtherDependents.contains(furtherDependent))
+                    {
+                        furtherDependents.add(furtherDependent);
+                    }
                 }
+                clear(resource);
             }
-            clear(resource);
         }
         return furtherDependents;
     }

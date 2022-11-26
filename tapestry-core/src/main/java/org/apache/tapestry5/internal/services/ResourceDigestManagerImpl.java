@@ -49,4 +49,10 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager
     public void addInvalidationCallback(Function<List<String>, List<String>> function) 
     {
     }
+
+    @Override
+    public void fireInvalidationEvent(List<String> resources) 
+    {
+    }
+    
 }
