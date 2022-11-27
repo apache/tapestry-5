@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Location;
@@ -53,7 +54,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 {
     private final TemplateParser parser;
 
-    private final URLChangeTracker tracker;
+    private final URLChangeTracker<TemplateTrackingInfo> tracker;
 
     private final ComponentResourceLocator locator;
     
@@ -120,11 +121,11 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                        ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
+        this(productionMode, parser, locator, new URLChangeTracker<TemplateTrackingInfo>(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
     ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
-                                URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
+                                URLChangeTracker<TemplateTrackingInfo> tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                 ThreadLocale threadLocale, Logger logger)
     {
         super(productionMode, logger);
@@ -211,7 +212,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         if (!r.exists())
             return missingTemplate;
 
-        tracker.add(r.toURL(), className);
+        tracker.add(r.toURL(), new TemplateTrackingInfo(r.getPath(), className));
 
         return parser.parseTemplate(r);
     }
@@ -246,18 +247,22 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      */
     public void checkForUpdates()
     {
-        final Set<String> changedResourcesMemos = tracker.getChangedResourcesMemos();
-        if (!changedResourcesMemos.isEmpty())
+        final Set<TemplateTrackingInfo> changedResourcesInfo = tracker.getChangedResourcesInfo();
+        if (!changedResourcesInfo.isEmpty())
         {
-            logger.info("Changed template(s) found: {}", String.join(", ", changedResourcesMemos));
+            if (logger.isInfoEnabled())
+            {
+                logger.info("Changed template(s) found: {}", String.join(", ", 
+                        changedResourcesInfo.stream().map(TemplateTrackingInfo::getTemplate).collect(Collectors.toList())));
+            }
             
             final Iterator<Entry<MultiKey, Resource>> templateResourcesIterator = templateResources.entrySet().iterator();
-            for (String className : changedResourcesMemos) 
+            for (TemplateTrackingInfo info : changedResourcesInfo) 
             {
                 while (templateResourcesIterator.hasNext())
                 {
                     final MultiKey key = templateResourcesIterator.next().getKey();
-                    if (className.equals((String) key.getValues()[0]))
+                    if (info.getClassName().equals((String) key.getValues()[0]))
                     {
                         templates.remove(templateResources.get(key));
                         templateResourcesIterator.remove();
@@ -265,7 +270,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
                 }
             }
             
-            fireInvalidationEvent(new ArrayList<>(changedResourcesMemos));
+            fireInvalidationEvent(changedResourcesInfo.stream().map(TemplateTrackingInfo::getClassName).collect(Collectors.toList()));
         }
     }
 

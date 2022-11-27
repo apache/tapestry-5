@@ -106,9 +106,11 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         Resource resource = mockResource();
         ComponentResourceLocator locator = mockLocator(model, english, resource);
 
-        train_getComponentClassName(model, PACKAGE + ".Fred");
+        final String className = PACKAGE + ".Fred";
+        train_getComponentClassName(model, className);
 
         expect(resource.exists()).andReturn(true);
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml");
         expect(resource.toURL()).andReturn(null);
 
         train_parseTemplate(parser, resource, template);
@@ -219,11 +221,13 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentResourceLocator locator = newMock(ComponentResourceLocator.class);
 
-        train_getComponentClassName(model, PACKAGE + ".Fred");
+        final String className = PACKAGE + ".Fred";
+        train_getComponentClassName(model, className);
 
         expect(locator.locateTemplate(model, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true).anyTimes();
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml").anyTimes();
         expect(resource.toURL()).andReturn(null).anyTimes();
 
         expect(locator.locateTemplate(model, french)).andReturn(resource).once();
@@ -289,13 +293,15 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         Resource resource = mockResource();
         ComponentResourceLocator locator = mockLocator(model, english, null);
 
-        train_getComponentClassName(model, "foo.Bar");
+        final String className = "foo.Bar";
+        train_getComponentClassName(model, className);
 
         train_getParentModel(model, parentModel);
 
         expect(locator.locateTemplate(parentModel, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true);
+        expect(resource.getPath()).andReturn(className.replace(".", "/") + ".tml");
         expect(resource.toURL()).andReturn(null);
 
         train_parseTemplate(parser, resource, template);

@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,14 +22,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+
 /**
  * Given a (growing) set of URLs, can periodically check to see if any of the underlying resources has changed. This
  * class is capable of using either millisecond-level granularity or second-level granularity. Millisecond-level
  * granularity is used by default. Second-level granularity is provided for compatibility with browsers vis-a-vis
  * resource caching -- that's how granular they get with their "If-Modified-Since", "Last-Modified" and "Expires"
  * headers.
+ * 
+ * @param <T> The type of the optional information about the tracked resource. This type should
+ * implement <code>equals()</code> and <code>hashCode().
  */
-public class URLChangeTracker
+public class URLChangeTracker<T>
 {
     private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1L;
 
@@ -147,13 +150,14 @@ public class URLChangeTracker
      * 
      * @param url
      *            of the resource to add, or null if not known
-     * @param memo
-     *            some information about the tracked URL, most probably the associated class name
+     * @param resourceInfo
+     *            an optional object containing information about the tracked URL. It's
+     *            returned in the {@link #getChangedResourcesInfo()} method.
      * @return the current timestamp for the URL (possibly rounded off for granularity reasons), or 0 if the URL is
      *         null
      * @since 5.8.3
      */
-    public long add(URL url, String memo)
+    public long add(URL url, T resourceInfo)
     {
         if (url == null)
             return 0;
@@ -173,7 +177,7 @@ public class URLChangeTracker
         // A quick and imperfect fix for TAPESTRY-1918. When a file
         // is added, add the directory containing the file as well.
 
-        fileToTimestamp.put(resourceFile, new TrackingInfo(timestamp, memo));
+        fileToTimestamp.put(resourceFile, new TrackingInfo(timestamp, resourceInfo));
 
         if (trackFolderChanges)
         {
@@ -240,12 +244,12 @@ public class URLChangeTracker
     }
     
     /**
-     * Re-acquires the last updated timestamp for each URL and returns the memo value for all files with a changed timestamp.
+     * Re-acquires the last updated timestamp for each URL and returns the non-null resource information for all files with a changed timestamp.
      */
-    public Set<String> getChangedResourcesMemos()
+    public Set<T> getChangedResourcesInfo()
     {
         
-        Set<String> changedResourcesMemos = new HashSet<>();
+        Set<T> changedResourcesInfo = new HashSet<>();
 
         for (Map.Entry<File, TrackingInfo> entry : fileToTimestamp.entrySet())
         {
@@ -255,15 +259,15 @@ public class URLChangeTracker
 
             if (current != newTimestamp)
             {
-                if (value.memo != null)
+                if (value.resourceInfo != null)
                 {
-                    changedResourcesMemos.add(value.memo);
+                    changedResourcesInfo.add(value.resourceInfo);
                 }
                 value.timestamp = newTimestamp;
             }
         }
 
-        return changedResourcesMemos;
+        return changedResourcesInfo;
     }
 
 
@@ -310,22 +314,22 @@ public class URLChangeTracker
         return fileToTimestamp.size();
     }
     
-    private static final class TrackingInfo
+    private final class TrackingInfo
     {
         
         private long timestamp;
-        private String memo;
+        private T resourceInfo;
 
-        public TrackingInfo(long timestamp, String memo) 
+        public TrackingInfo(long timestamp, T resourceInfo) 
         {
             this.timestamp = timestamp;
-            this.memo = memo;
+            this.resourceInfo = resourceInfo;
         }
 
         @Override
         public String toString() 
         {
-            return "Info [timestamp=" + timestamp + ", memo=" + memo + "]";
+            return "Info [timestamp=" + timestamp + ", resourceInfo=" + resourceInfo + "]";
         }
         
     }

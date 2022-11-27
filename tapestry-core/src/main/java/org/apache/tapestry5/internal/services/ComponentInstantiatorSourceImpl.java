@@ -12,10 +12,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
@@ -81,7 +82,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 {
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
-    private final URLChangeTracker changeTracker;
+    private final URLChangeTracker<ClassName> changeTracker;
 
     private final ClassLoader parent;
 
@@ -150,7 +151,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.transformerChain = transformerChain;
         this.logger = logger;
         this.loggerSource = loggerSource;
-        this.changeTracker = new URLChangeTracker(classpathURLConverter);
+        this.changeTracker = new URLChangeTracker<ClassName>(classpathURLConverter);
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
@@ -173,10 +174,12 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public synchronized void checkForUpdates()
     {
-        final Set<String> changedResources = changeTracker.getChangedResourcesMemos();
+        final Set<ClassName> changedResources = changeTracker.getChangedResourcesInfo();
         if (!changedResources.isEmpty())
         {
-            invalidationHub.fireInvalidationEvent(new ArrayList<>(changedResources));
+            invalidationHub.fireInvalidationEvent(changedResources.stream()
+                    .map(ClassNameHolder::getClassName)
+                    .collect(Collectors.toList()));
         }
     }
 
@@ -308,7 +311,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         Resource baseResource = new ClasspathResource(parent, PlasticInternalUtils
                                 .toClassPath(className));
 
-                        changeTracker.add(baseResource.toURL(), className);
+                        changeTracker.add(baseResource.toURL(), new ClassName(className));
 
                         if (isRoot)
                         {
@@ -502,4 +505,46 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             }
         }
     }
+    private static class ClassName implements ClassNameHolder
+    {
+        private String className;
+
+        public ClassName(String className) 
+        {
+            super();
+            this.className = className;
+        }
+
+        @Override
+        public String getClassName() 
+        {
+            return className;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(className);
+        }
+
+        @Override
+        public boolean equals(Object obj) 
+        {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof ClassName)) {
+                return false;
+            }
+            ClassName other = (ClassName) obj;
+            return Objects.equals(className, other.className);
+        }
+
+        @Override
+        public String toString() 
+        {
+            return className;
+        }
+        
+    }
+    
 }

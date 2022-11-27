@@ -44,7 +44,7 @@ import java.util.Map;
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
-    private final URLChangeTracker tracker;
+    private final URLChangeTracker<TemplateTrackingInfo> tracker;
 
     private final PropertiesFileParser propertiesFileParser;
 
