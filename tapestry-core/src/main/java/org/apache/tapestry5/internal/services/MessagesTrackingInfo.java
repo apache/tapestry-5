@@ -16,55 +16,64 @@ package org.apache.tapestry5.internal.services;
 import java.util.Objects;
 
 /**
- * Class that holds information about a template for tracking.
+ * Class that holds information about a messages properties file for tracking.
  */
-final public class TemplateTrackingInfo implements ClassNameHolder
+final public class MessagesTrackingInfo implements ClassNameHolder
 {
     
-    private String template;
+    private Object bundleId;
+    private String propertiesFile;
     private String className;
-    
-    public TemplateTrackingInfo(String template, String className) 
+
+    public MessagesTrackingInfo(String propertiesFile, Object bundleId, String className) 
     {
         super();
-        this.template = template;
+        this.propertiesFile = propertiesFile;
         this.className = className;
+        this.bundleId = bundleId;
     }
     
-    public String getTemplate() 
+    public Object getBundleId() 
     {
-        return template;
+        return bundleId;
+    }
+    
+    public String getPropertiesFile() 
+    {
+        return propertiesFile;
     }
     
     public String getClassName() 
     {
         return className;
     }
-    
+
     @Override
     public int hashCode() 
     {
-        return Objects.hash(className, template);
+        return Objects.hash(bundleId, className, propertiesFile);
     }
 
     @Override
     public boolean equals(Object obj) 
     {
-        if (this == obj) {
+        if (this == obj) 
+        {
             return true;
         }
-        if (!(obj instanceof TemplateTrackingInfo)) 
+        if (!(obj instanceof MessagesTrackingInfo)) 
         {
             return false;
         }
-        TemplateTrackingInfo other = (TemplateTrackingInfo) obj;
-        return Objects.equals(className, other.className) && Objects.equals(template, other.template);
+        MessagesTrackingInfo other = (MessagesTrackingInfo) obj;
+        return Objects.equals(bundleId, other.bundleId) && Objects.equals(className, other.className) && Objects.equals(propertiesFile, other.propertiesFile);
     }
 
     @Override
     public String toString() 
     {
-        return "TemplateTrackingInfo [template=" + template + ", className=" + className + "]";
+        return "MessagesTrackingInfo [className=" + className + ", bundleId=" + bundleId + ", propertiesFile=" + propertiesFile + "]";
     }
+
     
 }

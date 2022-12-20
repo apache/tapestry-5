@@ -28,6 +28,9 @@ import org.slf4j.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
@@ -44,7 +47,7 @@ import java.util.Map;
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
-    private final URLChangeTracker<TemplateTrackingInfo> tracker;
+    private final URLChangeTracker<MessagesTrackingInfo> tracker;
 
     private final PropertiesFileParser propertiesFileParser;
 
@@ -81,9 +84,29 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     public void checkForUpdates()
     {
-        if (tracker != null && tracker.containsChanges())
+        if (tracker != null)
         {
-            invalidate();
+            final Set<MessagesTrackingInfo> changedResources = tracker.getChangedResourcesInfo();
+            for (MessagesTrackingInfo info : changedResources) 
+            {
+                // An application-level file was changed, so we need to invalidate everything.
+                if (info == null)
+                {
+                    invalidate();
+                    break;
+                }
+                else
+                {
+                    
+                    
+                    
+                    
+                }
+            }
+            fireInvalidationEvent(changedResources.stream()
+                    .map(ClassNameHolder::getClassName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
         }
     }
 
@@ -151,9 +174,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         for (Resource localization : F.flow(localizations).reverse())
         {
-            Map<String, String> rawProperties = getRawProperties(localization);
+            Map<String, String> rawProperties = getRawProperties(localization, bundle);
 
-            // Woould be nice to write into the cookedProperties cache here,
+            // Would be nice to write into the cookedProperties cache here,
             // but we can't because we don't know the selector part of the MultiKey.
 
             previous = extend(previous, rawProperties);
@@ -184,13 +207,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         return result;
     }
 
-    private Map<String, String> getRawProperties(Resource localization)
+    private Map<String, String> getRawProperties(Resource localization, MessagesBundle bundle)
     {
         Map<String, String> result = rawProperties.get(localization);
 
         if (result == null)
         {
-            result = readProperties(localization);
+            result = readProperties(localization, bundle);
 
             rawProperties.put(localization, result);
         }
@@ -200,15 +223,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     /**
      * Creates and returns a new map that contains properties read from the properties file.
+     * @param bundle 
      */
-    private Map<String, String> readProperties(Resource resource)
+    private Map<String, String> readProperties(Resource resource, MessagesBundle bundle)
     {
         if (!resource.exists())
             return emptyMap;
 
         if (tracker != null)
         {
-            tracker.add(resource.toURL());
+            MessagesTrackingInfo info = bundle != null ? new MessagesTrackingInfo(
+                    resource.getFile(), bundle.getId(), bundle.getBaseResource().getFile()) : null;
+            tracker.add(resource.toURL(), info);
         }
 
         try
