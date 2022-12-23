@@ -12,6 +12,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.util.CaseInsensitiveMap;
@@ -20,17 +29,11 @@ import org.apache.tapestry5.commons.util.MultiKey;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
@@ -52,7 +55,11 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final PropertiesFileParser propertiesFileParser;
 
     private final ComponentResourceLocator resourceLocator;
-
+    
+    private final ComponentClassResolver componentClassResolver;
+    
+    private final Logger logger;        
+    
     /**
      * Keyed on bundle id and ComponentResourceSelector.
      */
@@ -73,6 +80,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
                               ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser,
+                              ComponentClassResolver componentClassResolver,
                               Logger logger)
     {
         super(productionMode, logger);
@@ -80,6 +88,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;
         this.resourceLocator = resourceLocator;
+        this.logger = logger;
+        this.componentClassResolver = componentClassResolver;
     }
 
     public void checkForUpdates()
@@ -87,26 +97,77 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         if (tracker != null)
         {
             final Set<MessagesTrackingInfo> changedResources = tracker.getChangedResourcesInfo();
+            if (!changedResources.isEmpty())
+            {
+                logger.info("Changed message files: {}", changedResources.stream()
+                        .map(MessagesTrackingInfo::getResource)
+                        .map(Resource::toString)
+                        .collect(Collectors.joining(", ")));
+            }
+            
+            boolean applicationLevelChange = false;
+            
             for (MessagesTrackingInfo info : changedResources) 
             {
+                
+                final String className = info.getClassName();
+                
                 // An application-level file was changed, so we need to invalidate everything.
-                if (info == null)
+                if (info.getClassName() == null)
                 {
                     invalidate();
+                    applicationLevelChange = true;
                     break;
                 }
                 else
                 {
                     
+                    final Iterator<Entry<MultiKey, Messages>> messagesByBundleIdAndSelectorIterator = 
+                            messagesByBundleIdAndSelector.entrySet().iterator();
                     
+                    while (messagesByBundleIdAndSelectorIterator.hasNext())
+                    {
+                        final Entry<MultiKey, Messages> entry = messagesByBundleIdAndSelectorIterator.next();
+                        if (className.equals(entry.getKey().getValues()[0]))
+                        {
+                            messagesByBundleIdAndSelectorIterator.remove();
+                        }
+                    }
                     
+                    final Iterator<Entry<MultiKey, Map<String, String>>> cookedPropertiesIterator = 
+                            cookedProperties.entrySet().iterator();
+                    
+                    while (cookedPropertiesIterator.hasNext())
+                    {
+                        final Entry<MultiKey, Map<String, String>> entry = cookedPropertiesIterator.next();
+                        if (className.equals(entry.getKey().getValues()[0]))
+                        {
+                            cookedPropertiesIterator.remove();
+                        }
+                    }
+                    
+                    final String resourceFile = info.getResource().getFile();
+                    final Iterator<Entry<Resource, Map<String, String>>> rawPropertiesIterator = rawProperties.entrySet().iterator();
+                    while (rawPropertiesIterator.hasNext())
+                    {
+                        final Entry<Resource, Map<String, String>> entry = rawPropertiesIterator.next();
+                        if (resourceFile.equals(entry.getKey().getFile()))
+                        {
+                            rawPropertiesIterator.remove();
+                        }
+                    }
                     
                 }
             }
-            fireInvalidationEvent(changedResources.stream()
-                    .map(ClassNameHolder::getClassName)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
+            
+            if (!changedResources.isEmpty() && !applicationLevelChange)
+            {
+                fireInvalidationEvent(changedResources.stream()
+                        .filter(Objects::nonNull)
+                        .map(ClassNameHolder::getClassName)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
+            }
         }
     }
 
@@ -232,8 +293,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         if (tracker != null)
         {
-            MessagesTrackingInfo info = bundle != null ? new MessagesTrackingInfo(
-                    resource.getFile(), bundle.getId(), bundle.getBaseResource().getFile()) : null;
+            MessagesTrackingInfo info = new MessagesTrackingInfo(
+                    resource, bundle != null ? bundle.getId() : bundle, getClassName(bundle));
             tracker.add(resource.toURL(), info);
         }
 
@@ -244,6 +305,24 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         {
             throw new RuntimeException(String.format("Unable to read message catalog from %s: %s", resource, ex), ex);
         }
+    }
+
+    private String getClassName(MessagesBundle bundle)
+    {
+        String className = null;
+        if (bundle != null && bundle.getBaseResource().getPath() != null)
+        {
+            final String path = bundle.getBaseResource().getPath();
+            if (path.endsWith(".class"))
+            {
+                className = path.replace('/', '.').replace(".class", "");
+                if (!componentClassResolver.isPage(className)) 
+                {
+                    className = null;
+                }
+            }
+        }
+        return className;
     }
 
 }

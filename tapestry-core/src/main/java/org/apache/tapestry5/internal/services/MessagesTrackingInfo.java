@@ -15,6 +15,8 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.Objects;
 
+import org.apache.tapestry5.commons.Resource;
+
 /**
  * Class that holds information about a messages properties file for tracking.
  */
@@ -22,13 +24,13 @@ final public class MessagesTrackingInfo implements ClassNameHolder
 {
     
     private Object bundleId;
-    private String propertiesFile;
+    private Resource resource;
     private String className;
 
-    public MessagesTrackingInfo(String propertiesFile, Object bundleId, String className) 
+    public MessagesTrackingInfo(Resource resource, Object bundleId, String className) 
     {
         super();
-        this.propertiesFile = propertiesFile;
+        this.resource = resource;
         this.className = className;
         this.bundleId = bundleId;
     }
@@ -38,9 +40,9 @@ final public class MessagesTrackingInfo implements ClassNameHolder
         return bundleId;
     }
     
-    public String getPropertiesFile() 
+    public Resource getResource() 
     {
-        return propertiesFile;
+        return resource;
     }
     
     public String getClassName() 
@@ -49,31 +51,31 @@ final public class MessagesTrackingInfo implements ClassNameHolder
     }
 
     @Override
-    public int hashCode() 
+    public int hashCode()
     {
-        return Objects.hash(bundleId, className, propertiesFile);
+        return Objects.hash(bundleId, className, resource);
     }
 
     @Override
-    public boolean equals(Object obj) 
+    public boolean equals(Object obj)
     {
-        if (this == obj) 
-        {
+        if (this == obj)
             return true;
-        }
-        if (!(obj instanceof MessagesTrackingInfo)) 
-        {
+        if (obj == null)
             return false;
-        }
+        if (getClass() != obj.getClass())
+            return false;
         MessagesTrackingInfo other = (MessagesTrackingInfo) obj;
-        return Objects.equals(bundleId, other.bundleId) && Objects.equals(className, other.className) && Objects.equals(propertiesFile, other.propertiesFile);
+        return Objects.equals(bundleId, other.bundleId)
+                && Objects.equals(className, other.className)
+                && Objects.equals(resource, other.resource);
     }
 
     @Override
-    public String toString() 
+    public String toString()
     {
-        return "MessagesTrackingInfo [className=" + className + ", bundleId=" + bundleId + ", propertiesFile=" + propertiesFile + "]";
+        return "MessagesTrackingInfo [resource=" + resource + ", className=" + className
+                + ", bundleId=" + bundleId + "]";
     }
-
     
 }
