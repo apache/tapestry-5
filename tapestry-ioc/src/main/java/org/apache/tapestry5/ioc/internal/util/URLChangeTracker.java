@@ -34,7 +34,7 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
  * headers.
  * 
  * @param <T> The type of the optional information about the tracked resource. This type should
- * implement <code>equals()</code> and <code>hashCode().
+ * implement <code>equals()</code> and <code>hashCode()</code>.
  */
 public class URLChangeTracker<T>
 {

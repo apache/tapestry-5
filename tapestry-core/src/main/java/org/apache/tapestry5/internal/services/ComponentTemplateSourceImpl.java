@@ -44,6 +44,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
 /**
