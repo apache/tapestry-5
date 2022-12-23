@@ -76,8 +76,9 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     @BeforeMethod
     public void setupMethod()
     {
+        EasyMock.reset(componentClassResolver);
         EasyMock.expect(componentClassResolver.isPage(EasyMock.anyString())).andReturn(false).anyTimes();
-
+        EasyMock.replay(componentClassResolver);
     }
 
 
