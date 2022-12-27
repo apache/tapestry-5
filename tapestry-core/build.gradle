@@ -34,7 +34,7 @@ dependencies {
     implementation "commons-codec:commons-codec:1.10"
     
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-
+    testImplementation "org.apache.httpcomponents:httpclient:4.5.14"
     testRuntimeOnly project(':tapestry-spock')
 
     testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
