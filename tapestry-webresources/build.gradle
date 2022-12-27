@@ -26,7 +26,7 @@ dependencies {
     testImplementation "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
         exclude group: "org.eclipse.jetty"
     }
-    testImplementation "org.seleniumhq.selenium:selenium-server:${versions.selenium}", {
+    testImplementation "org.seleniumhq.selenium:selenium-server:${versions.seleniumServer}", {
         exclude group: "org.eclipse.jetty"
     }
     testImplementation ("io.github.bonigarcia:webdrivermanager:2.2.4")
