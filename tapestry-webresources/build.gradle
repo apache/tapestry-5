@@ -23,13 +23,14 @@ dependencies {
     	exclude group: "org.apache.tapestry"
     }
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-    testImplementation "org.seleniumhq.selenium:selenium-java:${versions.selenium}", {
-        exclude group: "org.eclipse.jetty"
+    api "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
+        exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
+        exclude group: "org.testng", module: "testng"
+        exclude group: "javax.servlet", module: "javax.servlet-api"
+        exclude group: "org.seleniumhq.selenium", module: "selenium-firefox-driver"
     }
-    testImplementation "org.seleniumhq.selenium:selenium-server:${versions.seleniumServer}", {
-        exclude group: "org.eclipse.jetty"
-    }
-    testImplementation ("io.github.bonigarcia:webdrivermanager:2.2.4")
+    api "org.seleniumhq.selenium:selenium-java:${versions.seleniumServer}"
+    testImplementation ("io.github.bonigarcia:webdrivermanager:${versions.webdriverManager}")
 }
 
 jar.manifest {

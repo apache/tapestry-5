@@ -5,7 +5,7 @@ dependencies {
   api project(":tapestry-test-data")
   api project(":tapestry-runner")
 
-  implementation ("io.github.bonigarcia:webdrivermanager:5.3.1")
+  implementation ("io.github.bonigarcia:webdrivermanager:${versions.webdriverManager}")
 
   api "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
       exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
