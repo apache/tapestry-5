@@ -144,8 +144,12 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
     }
 
     @Override
-    public void addInvalidationCallback(Function<List<String>, List<String>> callback) {
-        callbacks.add(callback);
+    public void addInvalidationCallback(Function<List<String>, List<String>> callback) 
+    {
+        if (callbacks != null)
+        {
+            callbacks.add(callback);
+        }
     }
 
 }
