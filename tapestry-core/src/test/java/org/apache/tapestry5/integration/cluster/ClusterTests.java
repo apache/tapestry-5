@@ -18,7 +18,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
+import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 
 import org.apache.tapestry5.test.JettyRunner;
 import org.apache.tapestry5.test.TapestryTestConstants;

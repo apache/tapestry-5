@@ -19,15 +19,16 @@ import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
 
 import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -39,10 +40,11 @@ import org.testng.ITestContext;
 import org.testng.annotations.*;
 import org.testng.xml.XmlTest;
 
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
+import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -211,25 +213,33 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
-        FirefoxDriverManager.getInstance().setup();
+//        FirefoxDriverManager.getInstance().setup();
+        FirefoxDriverManager.firefoxdriver().setup();
 
         File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
-        DesiredCapabilities desiredCapabilities = DesiredCapabilities.firefox();
-        desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, true);
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-        FirefoxOptions options = new FirefoxOptions(desiredCapabilities);
-
-        if (ffProfileTemplate.isDirectory())
+        FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
+        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
+        
+        if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
         {
+            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
             FirefoxProfile profile = new FirefoxProfile(ffProfileTemplate);
             options.setProfile(profile);
+//            profile.layoutOnDisk();
         }
-
+        else 
+        {
+            FirefoxProfile profile = new FirefoxProfile();
+            options.setProfile(profile);
+            profile.setPreference("intl.accept_languages", "en,fr,de");
+        }
+        
         FirefoxDriver driver = new FirefoxDriver(options);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
-
 
         final ErrorReporterImpl errorReporter = new ErrorReporterImpl(driver, testContext);
 
@@ -1363,7 +1373,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected void waitForCondition(ExpectedCondition condition, long timeoutSeconds)
     {
-      WebDriverWait wait = new WebDriverWait(webDriver, timeoutSeconds);
+      WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(timeoutSeconds));
       wait.until(condition);
     }
 
