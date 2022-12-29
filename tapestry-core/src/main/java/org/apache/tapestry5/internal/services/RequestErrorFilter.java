@@ -1,12 +1,17 @@
 package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.RequestFilter;
 import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.http.services.Response;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.RequestExceptionHandler;
 
 /**
@@ -17,11 +22,16 @@ public class RequestErrorFilter implements RequestFilter
 {
     private final InternalRequestGlobals internalRequestGlobals;
     private final RequestExceptionHandler exceptionHandler;
+    private final InvalidationEventHub classesInvalidationHub;
+    private final ComponentEventLinkEncoder componentEventLinkEncoder;
 
-    public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler)
+    public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler,
+            @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder)
     {
         this.internalRequestGlobals = internalRequestGlobals;
         this.exceptionHandler = exceptionHandler;
+        this.classesInvalidationHub = classesInvalidationHub;
+        this.componentEventLinkEncoder = componentEventLinkEncoder;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler) throws IOException
@@ -37,6 +47,30 @@ public class RequestErrorFilter implements RequestFilter
         }
         catch (Throwable ex)
         {
+            
+            Throwable rootCause = ex.getCause();
+            while (rootCause != null && rootCause.getCause() != null)
+            {
+                rootCause = rootCause.getCause();
+            }
+            if (rootCause instanceof DifferentClassVersionsException)
+            {
+                DifferentClassVersionsException dcve = (DifferentClassVersionsException) rootCause;
+                classesInvalidationHub.fireInvalidationEvent(Arrays.asList(dcve.getClassName()));
+                final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
+                if (pageRenderParameters != null)
+                {
+                    response.sendRedirect(componentEventLinkEncoder.createPageRenderLink(pageRenderParameters));
+                    return true;
+                }
+//                final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
+//                if (componentEventParameters != null)
+//                {
+//                    response.sendRedirect(componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false));
+//                    return true;
+//                }
+            }
+            
             // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
             // get involved, things go screwy.  Exceptions when transforming classes can cause
             // a NoClassDefFoundError with no cause; here we're trying to link the cause back in.

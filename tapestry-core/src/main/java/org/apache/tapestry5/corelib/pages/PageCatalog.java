@@ -15,6 +15,7 @@
 package org.apache.tapestry5.corelib.pages;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beanmodel.BeanModel;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
 import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.dom.Element;
@@ -48,6 +50,7 @@ import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -127,7 +130,11 @@ public class PageCatalog
 
     @Inject 
     private Request request;
-
+    
+    @Inject
+    @ComponentClasses 
+    private InvalidationEventHub classesInvalidationEventHub;
+    
     void pageLoaded()
     {
         model = beanModelSource.createDisplayModel(Page.class, messages);
@@ -136,6 +143,7 @@ public class PageCatalog
         model.addExpression("assemblyTime", "stats.assemblyTime");
         model.addExpression("componentCount", "stats.componentCount");
         model.addExpression("weight", "stats.weight");
+        model.add("clear", null);
 
         model.reorder("name", "selector", "assemblyTime", "componentCount", "weight");
     }
@@ -184,7 +192,16 @@ public class PageCatalog
     {
         return pageSource.getAllPages();
     }
-
+    
+    Object onClearPage(String className)
+    {
+        final String logicalName = resolver.getLogicalName(className);
+        classesInvalidationEventHub.fireInvalidationEvent(Arrays.asList(className));
+        alertManager.warn(String.format("Page %s (%s) has been cleared from the page cache",
+                className, logicalName));
+        return pagesZone.getBody();
+    }
+    
     Object onSuccessFromSinglePageLoad()
     {
         boolean found = !F.flow(getPages()).filter(new Predicate<Page>()

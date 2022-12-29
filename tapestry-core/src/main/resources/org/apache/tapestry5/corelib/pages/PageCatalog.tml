@@ -23,10 +23,12 @@
             <p:selectorCell>
                 ${page.selector.toShortString()}
             </p:selectorCell>
+            <p:clearCell>
+                <t:EventLink t:event="clearPage" t:context="pageClassName" t:zone="^">Clear cached instance</t:EventLink>
+            </p:clearCell>
             <p:empty>
                 <p>
-                    <em>There are no pages in the page cache. This can only occur immediately after clearing the cache.
-                    </em>
+                    <em>There are no pages in the page cache. This can only occur immediately after clearing the cache.</em>
                 </p>
             </p:empty>
         </t:grid>
