@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.services;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -107,5 +108,23 @@ public interface PerThreadValue<T>
         set(newValue);
 
         return newValue;
+    }
+
+    /**
+     * If a value is set, performs the given action with it, otherwise it
+     * does nothing.
+     *
+     * @param action performed action if a value is set
+     * @throws NullPointerException if the action is null
+     * @since 5.8.3
+     */
+    default void ifSet(Consumer<? super T> action) {
+        Objects.requireNonNull(action);
+
+        if (!exists()) {
+            return;
+        }
+
+        action.accept(get());
     }
 }

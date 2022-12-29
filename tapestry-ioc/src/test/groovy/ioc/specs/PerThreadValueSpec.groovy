@@ -135,6 +135,54 @@ class PerThreadValueSpec extends Specification {
   
     then:
     thrown NullPointerException
-    }
-  
+  }
+
+  def "ifSet - value is set"() {
+    given:
+    PerThreadValue<String> perThreadValue = manager.createValue();
+    perThreadValue.set("a value");
+    def hasRun = false
+
+    when:
+    perThreadValue.ifSet { hasRun = true }
+
+    then:
+    hasRun == true
+  }
+
+  def "ifSet - no value set"() {
+    given:
+    PerThreadValue<String> perThreadValue = manager.createValue();
+    def hasRun = false
+
+    when:
+    perThreadValue.ifSet { hasRun = true }
+
+    then:
+    hasRun == false
+  }
+
+  def "ifSet - action is null with no value set"() {
+    given:
+    PerThreadValue<String> perThreadValue = manager.createValue();
+
+    when:
+    perThreadValue.ifSet(null)
+
+    then:
+    thrown NullPointerException
+  }
+
+  def "ifSet - action is null with value set"() {
+    given:
+    PerThreadValue<String> perThreadValue = manager.createValue();
+    perThreadValue.set("a value")
+
+    when:
+    perThreadValue.ifSet(null)
+
+    then:
+    thrown NullPointerException
+  }
+
 }
