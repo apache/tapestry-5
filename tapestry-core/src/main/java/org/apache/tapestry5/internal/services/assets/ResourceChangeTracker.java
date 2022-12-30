@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011, 2012, 2022 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,4 +51,21 @@ public interface ResourceChangeTracker extends InvalidationEventHub, ResourceDep
      * @since 5.4
      */
     void forceInvalidationEvent();
+    
+    /**
+     * Informs this service that the resources being loaded are associated with a given Tapestry 
+     * component (i.e. component, page, mixin and base) component class.
+     * 
+     * @param className The fully classified class name of the component or page associated with
+     * the current resources being processed.
+     * @since 5.8.3
+     */
+    void setCurrentClassName(String className);
+    
+    /**
+     * Informs this service that no component class is associated with the resources being loaded.
+     * @since 5.8.3
+     */
+    void clearCurrentClassName();
+    
 }

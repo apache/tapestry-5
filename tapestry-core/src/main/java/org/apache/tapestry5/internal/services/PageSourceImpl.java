@@ -19,6 +19,7 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -125,7 +126,10 @@ public class PageSourceImpl implements PageSource
 
             pageCache.put(key, ref);
             
-            componentDependencyRegistry.register(page.getRootElement());
+            final ComponentPageElement rootElement = page.getRootElement();
+            componentDependencyRegistry.clear(rootElement);
+            componentDependencyRegistry.register(rootElement);
+            
         }
     }
 
@@ -143,7 +147,10 @@ public class PageSourceImpl implements PageSource
         // an Asset's value is changed (partly due to the change, in 5.4, to include the asset's
         // checksum as part of the asset URL), then when we notice a change to
         // any Resource, it is necessary to discard all page instances.
-        resourceChangeTracker.clearOnInvalidation(pageCache);
+        // From 5.8.3 on, Tapestry tries to only invalidate the components and pages known as 
+        // using the changed resources. If a given resource is changed but not associated with any
+        // component, then all of them are invalidated.
+        resourceChangeTracker.addInvalidationCallback(this::listen);
     }
     
     private List<String> listen(List<String> resources)

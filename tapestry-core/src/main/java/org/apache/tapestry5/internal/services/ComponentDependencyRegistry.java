@@ -32,12 +32,17 @@ public interface ComponentDependencyRegistry {
     /**
      * Register all the dependencies of a given component.
      */
-    void register(ComponentPageElement resources);
+    void register(ComponentPageElement componentPageElement);
     
     /**
      * Clears all dependency information for a given component.
      */
     void clear(String className);
+    
+    /**
+     * Clears all dependency information for a given component.
+     */
+    void clear(ComponentPageElement componentPageElement);
     
     /**
      * Clears all dependency information.

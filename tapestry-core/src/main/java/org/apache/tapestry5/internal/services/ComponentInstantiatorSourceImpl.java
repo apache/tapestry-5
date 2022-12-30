@@ -505,6 +505,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             }
         }
     }
+    
     private static class ClassName implements ClassNameHolder
     {
         private String className;

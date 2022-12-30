@@ -126,6 +126,12 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     }
 
     @Override
+    public void clear(ComponentPageElement component) 
+    {
+        clear(getClassName(component));
+    }
+
+    @Override
     public void clear() {
         map.clear();
         alreadyProcessed.clear();
