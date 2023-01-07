@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
+import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.RequestFilter;
 import org.apache.tapestry5.http.services.RequestHandler;
@@ -24,6 +25,7 @@ public class RequestErrorFilter implements RequestFilter
     private final RequestExceptionHandler exceptionHandler;
     private final InvalidationEventHub classesInvalidationHub;
     private final ComponentEventLinkEncoder componentEventLinkEncoder;
+    private final static String QUERY_PARAMETER = "RequestErrorFilterRedirected";
 
     public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler,
             @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder)
@@ -58,9 +60,11 @@ public class RequestErrorFilter implements RequestFilter
                 DifferentClassVersionsException dcve = (DifferentClassVersionsException) rootCause;
                 classesInvalidationHub.fireInvalidationEvent(Arrays.asList(dcve.getClassName()));
                 final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
-                if (pageRenderParameters != null)
+                if (request.getParameter(QUERY_PARAMETER) == null && pageRenderParameters != null)
                 {
-                    response.sendRedirect(componentEventLinkEncoder.createPageRenderLink(pageRenderParameters));
+                    final Link link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
+                    link.addParameter(QUERY_PARAMETER, "tue");
+                    response.sendRedirect(link);
                     return true;
                 }
 //                final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);

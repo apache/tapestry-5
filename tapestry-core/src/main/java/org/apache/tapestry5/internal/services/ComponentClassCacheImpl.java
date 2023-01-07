@@ -24,7 +24,11 @@ import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.ComponentLayer;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class ComponentClassCacheImpl implements ComponentClassCache
 {
@@ -43,7 +47,25 @@ public class ComponentClassCacheImpl implements ComponentClassCache
 
     @PostInjection
     public void setupInvalidation(@ComponentClasses InvalidationEventHub hub) {
-        hub.clearOnInvalidation(cache);
+        hub.addInvalidationCallback(this::listen);;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private List<String> listen(List<String> resources)
+    {
+        
+        final Iterator<Entry<String, Class>> iterator = cache.entrySet().iterator();
+        
+        while (iterator.hasNext())
+        {
+            final Entry<String, Class> entry = iterator.next();
+            if (resources.contains(entry.getKey()))
+            {
+                iterator.remove();
+            }
+        }
+        
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")

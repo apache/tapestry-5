@@ -117,7 +117,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         }
     }
 
-    public /*final*/ void clearOnInvalidation(final Map<?, ?> map)
+    public final void clearOnInvalidation(final Map<?, ?> map)
     {
         assert map != null;
 

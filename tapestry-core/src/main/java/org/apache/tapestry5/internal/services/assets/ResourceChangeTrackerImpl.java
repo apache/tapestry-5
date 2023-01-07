@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services.assets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -203,9 +202,4 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
                 
     }
     
-    public final void clearOnInvalidation(final Map<?, ?> map)
-    {
-        super.clearOnInvalidation(map);
-    }
-
 }
