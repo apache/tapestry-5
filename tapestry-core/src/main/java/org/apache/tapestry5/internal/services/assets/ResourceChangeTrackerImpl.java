@@ -151,7 +151,10 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
     @Override
     public void clearCurrentClassName() 
     {
-        currentClassName.set(null);
+        if (currentClassName != null)
+        {
+            currentClassName.set(null);
+        }
     }
     
     private static class ResourceInfo implements ClassNameHolder
