@@ -73,7 +73,7 @@ public interface ComponentInstantiatorSource
 
     /**
      * Invalidates the caches for a given list of class names.
-     * @Since 5.8.3
+     * @since 5.8.3
      */
     void invalidate(List<String> classNames);
 }
