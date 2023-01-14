@@ -12,8 +12,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -177,9 +179,37 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         final Set<ClassName> changedResources = changeTracker.getChangedResourcesInfo();
         if (!changedResources.isEmpty())
         {
+            
+            final List<String> classNames = changedResources.stream().map(ClassName::getClassName).collect(Collectors.toList());
+            
+            invalidate(classNames);
+
             invalidationHub.fireInvalidationEvent(changedResources.stream()
                     .map(ClassNameHolder::getClassName)
                     .collect(Collectors.toList()));
+            
+        }
+    }
+
+    @Override
+    public void invalidate(final List<String> classNames) {
+        
+        final Iterator<Entry<String, Instantiator>> classToInstantiatorIterator = classToInstantiator.entrySet().iterator();
+        while (classToInstantiatorIterator.hasNext())
+        {
+            if (classNames.contains(classToInstantiatorIterator.next().getKey()))
+            {
+                classToInstantiatorIterator.remove();
+            }
+        }
+
+        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
+        while (classToModelIterator.hasNext())
+        {
+            if (classNames.contains(classToModelIterator.next().getKey()))
+            {
+                classToModelIterator.remove();
+            }
         }
     }
 

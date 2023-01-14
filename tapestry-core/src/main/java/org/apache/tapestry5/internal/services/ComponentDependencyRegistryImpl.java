@@ -20,20 +20,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.runtime.Component;
-
 
 public class ComponentDependencyRegistryImpl implements ComponentDependencyRegistry 
 {
     
+    private static final String META_ATTRIBUTE = "injectedComponentDependencies";
+    
+    private static final String META_ATTRIBUTE_SEPARATOR = ",";
+
     // Key is a component, values are the components that depend on it.
     final private Map<String, Set<String>> map;
     
@@ -94,12 +102,47 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     add(componentClassName, parent.getName());
                 }
                 
+                // Dependencies from injecting annotations: 
+                // @InjectPage, @InjectComponent, @InjectComponent
+                final String metaDependencies = component.getComponentResources().getComponentModel().getMeta(META_ATTRIBUTE);
+                if (metaDependencies != null)
+                {
+                    for (String dependency : metaDependencies.split(META_ATTRIBUTE_SEPARATOR)) 
+                    {
+                        add(componentClassName, dependency);
+                    }
+                }
+                
                 alreadyProcessed.add(componentClassName);
                 
             }            
             
         }
         
+    }
+    
+    @Override
+    public void register(PlasticField plasticField, MutableComponentModel componentModel) 
+    {
+        if (plasticField.hasAnnotation(InjectPage.class) || 
+                plasticField.hasAnnotation(InjectComponent.class) || 
+                plasticField.hasAnnotation(org.apache.tapestry5.annotations.Component.class))
+        {
+            String dependencies = componentModel.getMeta(META_ATTRIBUTE);
+            final String dependency = plasticField.getTypeName();
+            if (dependencies == null)
+            {
+                dependencies = dependency;
+            }
+            else
+            {
+                if (!dependencies.contains(dependency))
+                {
+                    dependencies = dependencies + META_ATTRIBUTE_SEPARATOR + dependency;
+                }
+            }
+            componentModel.setMeta(META_ATTRIBUTE, dependencies);
+        }
     }
     
     private String getClassName(ComponentPageElement component) 
@@ -113,7 +156,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         synchronized (map) 
         {
             alreadyProcessed.remove(className);
-            map.put(className, null);
+            map.remove(className);
             final Collection<Set<String>> allDependentSets = map.values();
             for (Set<String> dependents : allDependentSets) 
             {
@@ -161,6 +204,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     // Protected just for testing
     void add(String component, String dependency) 
     {
+        Objects.requireNonNull(component, "Parameter component cannot be null");
+        Objects.requireNonNull(dependency, "Parameter dependency cannot be null");
         synchronized (map) 
         {
             Set<String> dependents = map.get(dependency);

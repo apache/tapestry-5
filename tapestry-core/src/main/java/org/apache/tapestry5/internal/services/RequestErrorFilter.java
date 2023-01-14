@@ -2,6 +2,9 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
@@ -12,6 +15,7 @@ import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.RequestExceptionHandler;
 
@@ -25,15 +29,19 @@ public class RequestErrorFilter implements RequestFilter
     private final RequestExceptionHandler exceptionHandler;
     private final InvalidationEventHub classesInvalidationHub;
     private final ComponentEventLinkEncoder componentEventLinkEncoder;
+    private final ComponentInstantiatorSource componentInstantiatorSource;
     private final static String QUERY_PARAMETER = "RequestErrorFilterRedirected";
+    private final static Pattern CCE_PATTERN = Pattern.compile("((.*)\\scannot be cast to\\s(.*))");
 
     public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler,
-            @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder)
+            @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder,
+            ComponentInstantiatorSource componentInstantiatorSource)
     {
         this.internalRequestGlobals = internalRequestGlobals;
         this.exceptionHandler = exceptionHandler;
         this.classesInvalidationHub = classesInvalidationHub;
         this.componentEventLinkEncoder = componentEventLinkEncoder;
+        this.componentInstantiatorSource = componentInstantiatorSource;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler) throws IOException
@@ -50,29 +58,42 @@ public class RequestErrorFilter implements RequestFilter
         catch (Throwable ex)
         {
             
-            Throwable rootCause = ex.getCause();
-            while (rootCause != null && rootCause.getCause() != null)
+            if (request.getParameter(QUERY_PARAMETER) == null)
             {
-                rootCause = rootCause.getCause();
-            }
-            if (rootCause instanceof DifferentClassVersionsException)
-            {
-                DifferentClassVersionsException dcve = (DifferentClassVersionsException) rootCause;
-                classesInvalidationHub.fireInvalidationEvent(Arrays.asList(dcve.getClassName()));
-                final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
-                if (request.getParameter(QUERY_PARAMETER) == null && pageRenderParameters != null)
+            
+                Throwable rootCause = ex.getCause();
+                String classToInvalidate = getClassToInvalidate(rootCause);
+                
+                if (classToInvalidate != null)
                 {
-                    final Link link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
-                    link.addParameter(QUERY_PARAMETER, "tue");
-                    response.sendRedirect(link);
-                    return true;
+                    
+                    final List<String> classesToInvalidate = Arrays.asList(classToInvalidate);
+                    componentInstantiatorSource.invalidate(classesToInvalidate);
+                    classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
+
+                    Link link = null;
+                    
+                    final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
+                    if (componentEventParameters != null)
+                    {
+                        link = componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false);
+                    }
+                    
+                    final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
+                    if (pageRenderParameters != null)
+                    {
+                        link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
+                    }
+                    
+                    if (link != null)
+                    {
+                        link.addParameter(QUERY_PARAMETER, "true");
+                        response.sendRedirect(link);
+                        return true;
+                    }
+                    
                 }
-//                final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
-//                if (componentEventParameters != null)
-//                {
-//                    response.sendRedirect(componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false));
-//                    return true;
-//                }
+                
             }
             
             // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
@@ -89,6 +110,37 @@ public class RequestErrorFilter implements RequestFilter
 
             return true;
         }
+    }
+
+    private String getClassToInvalidate(Throwable rootCause) {
+        String classToInvalidate = null;
+        while (rootCause != null && rootCause.getCause() != null)
+        {
+            rootCause = rootCause.getCause();
+        }
+        if (rootCause instanceof DifferentClassVersionsException)
+        {
+            DifferentClassVersionsException dcve = (DifferentClassVersionsException) rootCause;
+            classToInvalidate = dcve.getClassName();
+        }
+        else if (rootCause instanceof ClassCastException)
+        {
+            final String message = rootCause.getMessage();
+            if (message != null)
+            {
+                final Matcher matcher = CCE_PATTERN.matcher(message);
+                if (matcher.matches() && matcher.groupCount() >= 3)
+                {
+                    final String class1 = matcher.group(2);
+                    final String class2 = matcher.group(3);
+                    if (class1.equals(class2))
+                    {
+                        classToInvalidate = class1;
+                    }
+                }
+            }
+        }
+        return classToInvalidate;
     }
 
     private Throwable attachNewCause(Throwable exception, Throwable underlyingCause)

@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ComputedValue;
@@ -83,6 +84,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                         fieldName, getComponentClassName(), ex.getMessage()), ex);
             }
 
+            @SuppressWarnings("rawtypes")
             Class fieldType = classCache.forName(type);
 
             if (!fieldType.isInstance(embedded))
@@ -120,10 +122,14 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
     private final ComponentClassCache classCache;
     
     private final Logger logger;
+    
+    private final ComponentDependencyRegistry componentDependencyRegistry;
 
-    public InjectComponentWorker(ComponentClassCache classCache, final Logger logger)
+    public InjectComponentWorker(ComponentClassCache classCache, 
+            ComponentDependencyRegistry componentDependencyRegistry,  final Logger logger)
     {
         this.classCache = classCache;
+        this.componentDependencyRegistry = componentDependencyRegistry;
         this.logger = logger;
     }
 
@@ -154,6 +160,9 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
             };
 
             field.setComputedConduit(provider);
+            
+            componentDependencyRegistry.register(field, model);
+            
         }
 
     }

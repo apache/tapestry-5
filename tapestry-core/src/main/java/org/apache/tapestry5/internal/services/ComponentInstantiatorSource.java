@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
@@ -68,4 +70,10 @@ public interface ComponentInstantiatorSource
      * @since 5.3
      */
     void forceComponentInvalidation();
+
+    /**
+     * Invalidates the caches for a given list of class names.
+     * @Since 5.8.3
+     */
+    void invalidate(List<String> classNames);
 }

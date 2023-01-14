@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.commons.ObjectCreator;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -65,22 +66,26 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
 
     private final PerthreadManager perThreadManager;
 
-    public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver, PerthreadManager perThreadManager)
+    private final ComponentDependencyRegistry componentDependencyRegistry;
+
+    public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver, PerthreadManager perThreadManager,
+            ComponentDependencyRegistry componentDependencyRegistry)
     {
         this.componentSource = componentSource;
         this.resolver = resolver;
         this.perThreadManager = perThreadManager;
+        this.componentDependencyRegistry = componentDependencyRegistry;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (PlasticField field : plasticClass.getFieldsWithAnnotation(InjectPage.class))
         {
-            addInjectedPage(field);
+            addInjectedPage(field, model);
         }
     }
 
-    private void addInjectedPage(PlasticField field)
+    private void addInjectedPage(PlasticField field, MutableComponentModel model)
     {
         InjectPage annotation = field.getAnnotation(InjectPage.class);
 
@@ -94,5 +99,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
                 .resolvePageClassNameToPageName(field.getTypeName()) : pageName;
 
         field.setConduit(new InjectedPageConduit(field.getPlasticClass().getClassName(), fieldName, injectedPageName));
+        
+        componentDependencyRegistry.register(field, model);
     }
 }

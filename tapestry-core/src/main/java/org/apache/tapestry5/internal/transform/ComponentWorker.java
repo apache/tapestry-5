@@ -25,6 +25,7 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.CommonsUtils;
 import org.apache.tapestry5.internal.KeyValue;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.ComponentModel;
@@ -46,10 +47,13 @@ import java.util.List;
 public class ComponentWorker implements ComponentClassTransformWorker2
 {
     private final ComponentClassResolver resolver;
+    
+    private final ComponentDependencyRegistry componentDependencyRegistry;
 
-    public ComponentWorker(ComponentClassResolver resolver)
+    public ComponentWorker(ComponentClassResolver resolver, ComponentDependencyRegistry componentDependencyRegistry)
     {
         this.resolver = resolver;
+        this.componentDependencyRegistry = componentDependencyRegistry;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
@@ -57,6 +61,7 @@ public class ComponentWorker implements ComponentClassTransformWorker2
         for (PlasticField field : plasticClass.getFieldsWithAnnotation(Component.class))
         {
             transformField(plasticClass, model, field);
+            componentDependencyRegistry.register(field, model);
         }
     }
 

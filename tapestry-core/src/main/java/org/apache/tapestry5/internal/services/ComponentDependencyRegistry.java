@@ -16,8 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.Set;
 
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.PlasticField;
 
 
 /**
@@ -33,6 +38,12 @@ public interface ComponentDependencyRegistry {
      * Register all the dependencies of a given component.
      */
     void register(ComponentPageElement componentPageElement);
+    
+    /**
+     * Register a dependency of a component class with another through annotations
+     * such as {@link InjectPage}, {@link InjectComponent} and {@link Component}.
+     */
+    void register(PlasticField plasticField, MutableComponentModel componentModel);
     
     /**
      * Clears all dependency information for a given component.

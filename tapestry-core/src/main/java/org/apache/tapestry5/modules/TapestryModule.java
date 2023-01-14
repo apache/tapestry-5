@@ -666,7 +666,8 @@ public final class TapestryModule
     public static void provideTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker2> configuration,
             MetaWorker metaWorker,
-            ComponentClassResolver resolver)
+            ComponentClassResolver resolver,
+            ComponentDependencyRegistry componentDependencyRegistry)
     {
         configuration.add("Property", new PropertyWorker());
 
@@ -685,7 +686,7 @@ public final class TapestryModule
         configuration.addInstance("ApplicationState", ApplicationStateWorker.class);
         configuration.addInstance("Environment", EnvironmentalWorker.class);
 
-        configuration.add("Component", new ComponentWorker(resolver));
+        configuration.add("Component", new ComponentWorker(resolver, componentDependencyRegistry));
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectComponent", InjectComponentWorker.class);
