@@ -1696,7 +1696,15 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         // openBaseURL() couldn't find it.
         if (linkText.length > 0)
         {
-            waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(linkText[0])), 3);
+            try 
+            {
+                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(linkText[0])), 3);
+            }
+            catch (org.openqa.selenium.TimeoutException e)
+            {
+                LOGGER.warn("Current URL: {} Page content: {}", getHtmlSource());
+                throw e;
+            }
         }
         
         if (getTitle().toLowerCase().contains("service unavailable")) {
