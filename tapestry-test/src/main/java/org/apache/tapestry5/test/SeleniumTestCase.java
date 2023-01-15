@@ -239,7 +239,15 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             profile.setPreference("intl.accept_languages", "en,fr,de");
         }
         
-        FirefoxDriver driver = new FirefoxDriver(createGeckoDriverService("/home/thiago/tmp/selenium"), options);
+        // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
+        String osName = System.getProperty("os.name");
+        String profileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
+                ? createProfileRootInUserHome()
+                : null;
+        FirefoxDriver driver = profileRoot != null
+                ? new FirefoxDriver(createGeckoDriverService(profileRoot), options)
+                : new FirefoxDriver(options);
+        
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
@@ -314,6 +322,17 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
         });
     }
+    
+    private static String createProfileRootInUserHome() {
+        String userHome = System.getProperty("user.home");
+        File profileRoot = new File(userHome, "snap/firefox/common/.firefox-profile-root");
+        if (!profileRoot.exists()) {
+            if (!profileRoot.mkdirs()) {
+                return null;
+            }
+        }
+        return profileRoot.getAbsolutePath();
+    }    
     
     private static GeckoDriverService createGeckoDriverService(String tempProfileDir) {
         return new GeckoDriverService.Builder() {
