@@ -29,6 +29,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -45,6 +46,8 @@ import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -236,7 +239,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             profile.setPreference("intl.accept_languages", "en,fr,de");
         }
         
-        FirefoxDriver driver = new FirefoxDriver(options);
+        FirefoxDriver driver = new FirefoxDriver(createGeckoDriverService("/home/thiago/tmp/selenium"), options);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
@@ -311,6 +314,17 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
         });
     }
+    
+    private static GeckoDriverService createGeckoDriverService(String tempProfileDir) {
+        return new GeckoDriverService.Builder() {
+            @Override
+            protected List<String> createArgs() {
+                List<String> args = new ArrayList<>(super.createArgs());
+                args.add(String.format("--profile-root=%s", tempProfileDir));
+                return args;
+            }
+        }.build();
+    }    
 
     private final String getParameter(XmlTest xmlTest, String key, String defaultValue)
     {
@@ -1658,6 +1672,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     protected final void openLinks(String... linkText)
     {
         openBaseURL();
+        
+        // Trying to solve some cases where the link is present on the page but somehow
+        // openBaseURL() couldn't find it.
+        if (linkText.length > 0)
+        {
+            waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(linkText[0])), 3);
+        }
         
         if (getTitle().toLowerCase().contains("service unavailable")) {
             throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
