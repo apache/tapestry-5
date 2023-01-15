@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.beanmodel.services.*;
+import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.base.AbstractInternalPage;
 import org.apache.tapestry5.func.F;
@@ -33,6 +34,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.PageActivationContextCollector;
 import org.apache.tapestry5.internal.services.ReloadHelper;
+import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -42,6 +44,8 @@ import org.apache.tapestry5.services.URLEncoder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -115,6 +119,10 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     @Inject
     private ComponentResources resources;
+    
+    @Inject
+    @ComponentClasses 
+    private InvalidationEventHub classesInvalidationHub;
 
     private String failurePage;
 
@@ -242,6 +250,8 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     Object onReloadFirst(EventContext reloadContext)
     {
+
+        classesInvalidationHub.fireInvalidationEvent(Collections.emptyList());
         reloadHelper.forceReload();
 
         return linkSource.createPageRenderLinkWithContext(urlEncoder.decode(request.getParameter("loadPage")), reloadContext);
