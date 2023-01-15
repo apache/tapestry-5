@@ -1702,7 +1702,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
             catch (org.openqa.selenium.TimeoutException e)
             {
-                LOGGER.warn("Current URL: {} Page content: {}", getHtmlSource());
+                LOGGER.warn("Page content: {}", getHtmlSource());
                 throw e;
             }
         }
