@@ -54,15 +54,23 @@ public class ComponentClassCacheImpl implements ComponentClassCache
     private List<String> listen(List<String> resources)
     {
         
-        final Iterator<Entry<String, Class>> iterator = cache.entrySet().iterator();
-        
-        while (iterator.hasNext())
+        if (resources.isEmpty())
         {
-            final Entry<String, Class> entry = iterator.next();
-            if (resources.contains(entry.getKey()))
+            cache.clear();
+        }
+        else {
+        
+            final Iterator<Entry<String, Class>> iterator = cache.entrySet().iterator();
+            
+            while (iterator.hasNext())
             {
-                iterator.remove();
+                final Entry<String, Class> entry = iterator.next();
+                if (resources.contains(entry.getKey()))
+                {
+                    iterator.remove();
+                }
             }
+            
         }
         
         return Collections.emptyList();
