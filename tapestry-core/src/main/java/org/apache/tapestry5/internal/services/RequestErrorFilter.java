@@ -106,15 +106,7 @@ public class RequestErrorFilter implements RequestFilter
 
             Throwable exceptionToReport = attachNewCause(ex, internalRequestGlobals.getClassLoaderException());
 
-            try
-            {
-                exceptionHandler.handleRequestException(exceptionToReport);
-            }
-            catch (Exception e)
-            {
-                classesInvalidationHub.fireInvalidationEvent(Collections.emptyList());
-                exceptionHandler.handleRequestException(exceptionToReport);
-            }
+            exceptionHandler.handleRequestException(exceptionToReport);
 
             // We assume a reponse has been sent and there's no need to handle the request
             // further.

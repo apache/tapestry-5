@@ -170,7 +170,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     @PostInjection
     public void listenForUpdates(UpdateListenerHub hub)
     {
-        invalidationHub.addInvalidationCallback(this);
+//        invalidationHub.addInvalidationCallback(this);
         hub.addUpdateListener(this);
     }
 
@@ -203,14 +203,14 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             }
         }
 
-        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
-        while (classToModelIterator.hasNext())
-        {
-            if (classNames.contains(classToModelIterator.next().getKey()))
-            {
-                classToModelIterator.remove();
-            }
-        }
+//        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
+//        while (classToModelIterator.hasNext())
+//        {
+//            if (classNames.contains(classToModelIterator.next().getKey()))
+//            {
+//                classToModelIterator.remove();
+//            }
+//        }
     }
 
     public void forceComponentInvalidation()
@@ -224,16 +224,13 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         changeTracker.clear();
         classToInstantiator.clear();
         proxyFactory.clearCache();
-
-        // Release the existing class pool, loader and so forth.
-        // Create a new one.
-
-        initializeService();
+//        classToModel.clear();
     }
 
     /**
      * Invoked at object creation, or when there are updates to class files (i.e., invalidation), to create a new set of
      * Javassist class pools and loaders.
+     * Since TAP5-2742, this method is only called once.
      */
     private void initializeService()
     {
