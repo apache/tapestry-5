@@ -2,12 +2,14 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
+import org.apache.tapestry5.corelib.pages.ExceptionReport;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.RequestFilter;
@@ -31,7 +33,7 @@ public class RequestErrorFilter implements RequestFilter
     private final ComponentEventLinkEncoder componentEventLinkEncoder;
     private final ComponentInstantiatorSource componentInstantiatorSource;
     private final static String QUERY_PARAMETER = "RequestErrorFilterRedirected";
-    private final static Pattern CCE_PATTERN = Pattern.compile("((.*)\\scannot be cast to\\s(.*))");
+    private final static Pattern CCE_PATTERN = Pattern.compile("((.*)\\scannot be cast to (.*))(.*)");
 
     public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler,
             @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder,
@@ -67,7 +69,8 @@ public class RequestErrorFilter implements RequestFilter
                 if (classToInvalidate != null)
                 {
                     
-                    final List<String> classesToInvalidate = Arrays.asList(classToInvalidate);
+                    final List<String> classesToInvalidate = 
+                            Arrays.asList(classToInvalidate, ExceptionReport.class.getName());
                     componentInstantiatorSource.invalidate(classesToInvalidate);
                     classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
 
@@ -103,7 +106,15 @@ public class RequestErrorFilter implements RequestFilter
 
             Throwable exceptionToReport = attachNewCause(ex, internalRequestGlobals.getClassLoaderException());
 
-            exceptionHandler.handleRequestException(exceptionToReport);
+            try
+            {
+                exceptionHandler.handleRequestException(exceptionToReport);
+            }
+            catch (Exception e)
+            {
+                classesInvalidationHub.fireInvalidationEvent(Collections.emptyList());
+                exceptionHandler.handleRequestException(exceptionToReport);
+            }
 
             // We assume a reponse has been sent and there's no need to handle the request
             // further.
@@ -125,9 +136,18 @@ public class RequestErrorFilter implements RequestFilter
         }
         else if (rootCause instanceof ClassCastException)
         {
-            final String message = rootCause.getMessage();
+            String message = rootCause.getMessage();
             if (message != null)
             {
+            
+                // Handling both Java 8 and Java 11 messages
+                message = message.replace("class ", "");
+                final int index = message.indexOf(" (");
+                if (index > 0)
+                {
+                    message = message.substring(0, index);
+                }
+                
                 final Matcher matcher = CCE_PATTERN.matcher(message);
                 if (matcher.matches() && matcher.groupCount() >= 3)
                 {
