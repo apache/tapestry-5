@@ -57,7 +57,7 @@ public interface EventContext
      *            the type of value required
      * @param index
      *            identifies which parameter value to extract
-     * @return the value extracted and converted or coerced, wrapped in an Optional, or {@link Optional#isEmpty()}
+     * @return the value extracted and converted or coerced, wrapped in an Optional, or {@link Optional#empty()}
      *         if index is out of bounds, or the value can't be converted.
      * @since 5.8.2
      */
