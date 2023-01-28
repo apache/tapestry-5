@@ -42,8 +42,8 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
 
         dotFile.append("\trankdir=LR;\n");
         dotFile.append("\tfontname=\"Helvetica,Arial,sans-serif\";\n");
-//      dotFile.append("\tnode [fontname=\"Helvetica,Arial,sans-serif\",fontsize=\"8pt\"];\n");
-        dotFile.append("\tedge [fontname=\"Helvetica,Arial,sans-serif\"];\n");
+        dotFile.append("\tsplines=ortho;\n\n");
+        dotFile.append("\tnode [fontname=\"Helvetica,Arial,sans-serif\",fontsize=\"10pt\"];\n");
         dotFile.append("\tnode [shape=rect];\n\n");
         
         final Set<String> allClasses = new HashSet<>();

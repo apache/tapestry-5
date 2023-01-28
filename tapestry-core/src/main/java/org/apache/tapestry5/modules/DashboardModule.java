@@ -1,4 +1,4 @@
-// Copyright 2013, 2014 The Apache Software Foundation
+// Copyright 2013, 2014, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
+import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGeneratorImpl;
 import org.apache.tapestry5.internal.services.dashboard.DashboardManagerImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -26,6 +28,7 @@ public class DashboardModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(DashboardManager.class, DashboardManagerImpl.class);
+        binder.bind(ComponentDependencyGraphvizGenerator.class, ComponentDependencyGraphvizGeneratorImpl.class);
     }
 
     @Contribute(DashboardManager.class)
@@ -34,5 +37,6 @@ public class DashboardModule
         configuration.add("Pages", new DashboardTab("Pages", "core/PageCatalog"));
         configuration.add("Services", new DashboardTab("Services", "core/ServiceStatus"));
         configuration.add("Libraries", new DashboardTab("ComponentLibraries", "core/ComponentLibraries"));
+        configuration.add("PageDependencyGraph", new DashboardTab("PageDependencyGraph", "core/PageDependencyGraph"));
     }
 }

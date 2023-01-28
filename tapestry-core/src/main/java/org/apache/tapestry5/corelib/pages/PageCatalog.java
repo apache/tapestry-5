@@ -21,11 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
@@ -152,10 +150,6 @@ public class PageCatalog
     @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
     
-    @Inject
-    @Path("classpath:/META-INF/assets/tapestry5/PageCatalog.js")
-    private Asset pageCatalogJs;
-
     void pageLoaded()
     {
         model = beanModelSource.createDisplayModel(Page.class, messages);
@@ -372,14 +366,6 @@ public class PageCatalog
     {
         selectedPage = pageSource.getPage(pageName);
         ajaxResponseRenderer.addRender("pageStructureZone", pageStructureZone.getBody());
-        ajaxResponseRenderer.addCallback((JavaScriptSupport js) -> {
-            js.importJavaScriptLibrary(pageCatalogJs);
-            js.importJavaScriptLibrary("https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.umd.js");
-            final String graphvizSource = getGraphvizSource(getSelectedPageClassName());
-            System.out.println(graphvizSource);
-            js.addScript("showGraphviz('%s', '%s');", pageName, 
-                    graphvizSource.replace("\n", " "));
-        });
     }
     
     public String getDisplayLogicalName() 
@@ -462,9 +448,9 @@ public class PageCatalog
         return resolver.getLogicalName(className);
     }
     
-    private String getGraphvizSource(String className)
+    public String getGraphvizValue()
     {
-        return componentDependencyGraphvizGenerator.generate(className);
+        return componentDependencyGraphvizGenerator.generate(getClassName(selectedPage));
     }
     
 }
