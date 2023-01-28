@@ -39,11 +39,12 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
     {
         
         final StringBuilder dotFile = new StringBuilder("digraph {\n\n");
-        
+
+        dotFile.append("\trankdir=LR;\n");
         dotFile.append("\tfontname=\"Helvetica,Arial,sans-serif\";\n");
-        dotFile.append("\tnode [fontname=\"Helvetica,Arial,sans-serif\"];\n");
+//      dotFile.append("\tnode [fontname=\"Helvetica,Arial,sans-serif\",fontsize=\"8pt\"];\n");
         dotFile.append("\tedge [fontname=\"Helvetica,Arial,sans-serif\"];\n");
-        dotFile.append("\tnode [shape=box];\n\n");
+        dotFile.append("\tnode [shape=rect];\n\n");
         
         final Set<String> allClasses = new HashSet<>();
         
@@ -117,10 +118,13 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
 
     private void addDependencies(String className, Set<String> allClasses) 
     {
-        allClasses.add(className);
-        for (String dependency : componentDependencyRegistry.getDependencies(className))
+        if (!allClasses.contains(className))
         {
-            addDependencies(dependency, allClasses);
+            allClasses.add(className);
+            for (String dependency : componentDependencyRegistry.getDependencies(className))
+            {
+                addDependencies(dependency, allClasses);
+            }
         }
     }
 
