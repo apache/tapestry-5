@@ -188,6 +188,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                     .map(ClassNameHolder::getClassName)
                     .collect(Collectors.toList()));
             
+            // TODO Remove this when multiple classloaders are figured out
+            initializeService();
+            
         }
     }
 
@@ -225,6 +228,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         classToInstantiator.clear();
         proxyFactory.clearCache();
 //        classToModel.clear();
+        initializeService();
     }
 
     /**
@@ -234,6 +238,14 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
      */
     private void initializeService()
     {
+        if (manager == null)
+        {
+            logger.info("Initializing page pool");
+        }
+        else 
+        {
+            logger.info("Restarting page pool");
+        }
         PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
                 .packages(controlledPackageNames);
 

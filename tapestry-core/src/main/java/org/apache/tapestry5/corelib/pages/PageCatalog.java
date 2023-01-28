@@ -21,9 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
@@ -44,6 +46,7 @@ import org.apache.tapestry5.func.Reducer;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.PageCatalogTotals;
+import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.ReloadHelper;
@@ -56,6 +59,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
@@ -135,6 +140,22 @@ public class PageCatalog
     @ComponentClasses 
     private InvalidationEventHub classesInvalidationEventHub;
     
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
+    
+    @Inject
+    private ComponentDependencyGraphvizGenerator componentDependencyGraphvizGenerator;
+
+    @Inject
+    private ComponentClassResolver componentClassResolver;
+
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
+    
+    @Inject
+    @Path("classpath:/META-INF/assets/tapestry5/PageCatalog.js")
+    private Asset pageCatalogJs;
+
     void pageLoaded()
     {
         model = beanModelSource.createDisplayModel(Page.class, messages);
@@ -347,10 +368,18 @@ public class PageCatalog
         return dependencies;
     }
     
-    public Object onPageStructure(String name)
+    public void onPageStructure(String pageName)
     {
-        selectedPage = pageSource.getPage(name);
-        return request.isXHR() ? pageStructureZone.getBody() : null;
+        selectedPage = pageSource.getPage(pageName);
+        ajaxResponseRenderer.addRender("pageStructureZone", pageStructureZone.getBody());
+        ajaxResponseRenderer.addCallback((JavaScriptSupport js) -> {
+            js.importJavaScriptLibrary(pageCatalogJs);
+            js.importJavaScriptLibrary("https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.umd.js");
+            final String graphvizSource = getGraphvizSource(getSelectedPageClassName());
+            System.out.println(graphvizSource);
+            js.addScript("showGraphviz('%s', '%s');", pageName, 
+                    graphvizSource.replace("\n", " "));
+        });
     }
     
     public String getDisplayLogicalName() 
@@ -360,7 +389,6 @@ public class PageCatalog
 
     public String getPageClassName() 
     {
-        
         return getClassName(page);
     }
 
@@ -433,4 +461,10 @@ public class PageCatalog
     {
         return resolver.getLogicalName(className);
     }
+    
+    private String getGraphvizSource(String className)
+    {
+        return componentDependencyGraphvizGenerator.generate(className);
+    }
+    
 }
