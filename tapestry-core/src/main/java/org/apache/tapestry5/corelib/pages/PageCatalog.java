@@ -333,6 +333,19 @@ public class PageCatalog
 
         return pagesZone.getBody();
     }
+    
+    Object onActionFromStoreDependencyInformation()
+    {
+        
+        componentDependencyRegistry.writeFile();
+        
+        alertManager.warn(String.format(
+                "Component dependency information written to %s.", 
+                ComponentDependencyRegistry.FILENAME));
+        
+        return pagesZone.getBody();
+        
+    }
 
     Object onActionFromRunGC()
     {

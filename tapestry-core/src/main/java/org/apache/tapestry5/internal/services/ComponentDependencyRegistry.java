@@ -74,5 +74,16 @@ public interface ComponentDependencyRegistry {
      * Signs up this registry to invalidation events from a given hub.
      */
     void listen(InvalidationEventHub invalidationEventHub);
-    
+
+    /**
+     * Writes the current component dependency data to a file so it can be reused in a new run later.
+     * @see #FILENAME
+     */
+    void writeFile();
+
+    /**
+     * Name of the file where the dependency information is stored between webapp runs.
+     */
+    String FILENAME = "tapestryComponentDependencies.json";
+
 }

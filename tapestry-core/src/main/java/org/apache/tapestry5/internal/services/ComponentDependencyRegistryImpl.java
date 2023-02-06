@@ -13,6 +13,12 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,8 +33,11 @@ import java.util.stream.Collectors;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -41,17 +50,49 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     private static final String META_ATTRIBUTE = "injectedComponentDependencies";
     
     private static final String META_ATTRIBUTE_SEPARATOR = ",";
-
+    
     // Key is a component, values are the components that depend on it.
     final private Map<String, Set<String>> map;
     
     // Cache to check which classes were already processed or not.
     final private Set<String> alreadyProcessed;
+    
+    final private File storedDependencies;
 
     public ComponentDependencyRegistryImpl()
     {
         map = new HashMap<>();
         alreadyProcessed = new HashSet<>();
+        
+        storedDependencies = new File(FILENAME);
+        if (storedDependencies.exists())
+        {
+            try (FileReader fileReader = new FileReader(storedDependencies);
+                    BufferedReader reader = new BufferedReader(fileReader))
+            {
+                StringBuilder builder = new StringBuilder();
+                String line = reader.readLine();
+                while (line != null)
+                {
+                    builder.append(line);
+                    line = reader.readLine();
+                }
+                JSONObject jsonObject = new JSONObject(builder.toString());
+                for (String className : jsonObject.keySet())
+                {
+                    final Set<String> dependencies = jsonObject.getJSONArray(className)
+                            .stream()
+                            .map(o -> (String) o)
+                            .collect(Collectors.toSet());
+                    map.put(className, new HashSet<>(dependencies));
+                    alreadyProcessed.add(className);
+                }
+            } catch (IOException e) 
+            {
+                throw new TapestryException("Exception trying to read " + ComponentDependencyRegistry.FILENAME, e);
+            }
+        }
+        
     }
 
     @Override
@@ -250,6 +291,29 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             }
         }
         return furtherDependents;
+    }
+
+    @Override
+    public void writeFile() 
+    {
+        synchronized (this) 
+        {
+            try (FileWriter fileWriter = new FileWriter(storedDependencies);
+                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter))
+            {
+                JSONObject jsonObject = new JSONObject();
+                for (String className : map.keySet())
+                {
+                    final Set<String> dependencies = getDependencies(className);
+                    jsonObject.put(className, JSONArray.from(dependencies));
+                }
+                bufferedWriter.write(jsonObject.toString());
+            }
+            catch (IOException e) 
+            {
+                throw new TapestryException("Exception trying to read " + ComponentDependencyRegistry.FILENAME, e);
+            }
+        } 
     }
     
 }
