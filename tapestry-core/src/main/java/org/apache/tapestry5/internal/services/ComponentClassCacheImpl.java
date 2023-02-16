@@ -105,7 +105,7 @@ public class ComponentClassCacheImpl implements ComponentClassCache
 
     private Class lookupClassForType(String className)
     {
-        ClassLoader componentLoader = plasticFactory.getClassLoader();
+        ClassLoader componentLoader = plasticFactory.getProxyFactory(className).getClassLoader();
         try
         {
             return PlasticInternalUtils.toClass(componentLoader, className);

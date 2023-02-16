@@ -33,6 +33,12 @@ import org.apache.tapestry5.plastic.PlasticField;
  * @since 5.8.3
  */
 public interface ComponentDependencyRegistry {
+
+    /**
+     * Name of the file where the dependency information is stored between webapp runs.
+     */
+    String FILENAME = "tapestryComponentDependencies.json";
+
     
     /**
      * Register all the dependencies of a given component.
@@ -80,10 +86,20 @@ public interface ComponentDependencyRegistry {
      * @see #FILENAME
      */
     void writeFile();
-
+    
     /**
-     * Name of the file where the dependency information is stored between webapp runs.
+     * Tells whether this registry already contans a given class name.
      */
-    String FILENAME = "tapestryComponentDependencies.json";
+    boolean contains(String className);
+    
+    /**
+     * Returns the set of all class names in the registry.
+     */
+    Set<String> getClassNames();
+    
+    /**
+     * Returns the set of all root classes (i.e. ones with no dependencies).
+     */
+    Set<String> getRootClasses();
 
 }

@@ -1524,7 +1524,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     break;
             }
 
-            return proxyFactory.createProxy(InternalPropertyConduit.class,
+            return proxyFactory.getProxyFactory(rootClass.getName()).createProxy(InternalPropertyConduit.class,
                     new PropertyConduitBuilder(rootClass, expression, tree)).newInstance();
         } catch (Exception ex)
         {

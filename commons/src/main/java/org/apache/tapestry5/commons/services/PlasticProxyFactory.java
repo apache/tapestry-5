@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011, 2012, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.PlasticClassListenerHub;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticManager;
 
 /**
  * A service used to create proxies of varying types. As a secondary concern, manages to identify the
@@ -169,6 +170,24 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      *
      * @since 5.3.3
      */
+    @IncompatibleChange(release = "5.3.3", details = "Added method")
     void clearCache();
+    
+    /**
+     * Returns the {@linkplain PlasticManager} instance used by this PlasticProxyFactory.
+     * @since 5.8.3
+     */
+    @IncompatibleChange(release = "5.8.3", details = "Added method")
+    PlasticManager getPlasticManager();
+
+    /**
+     * Returns the {@linkplain PlasticProxyFactory} instance to be used for a given class.
+     * Default implementation returns <code>this</code>.
+     * @since 5.8.3
+     */
+    default PlasticProxyFactory getProxyFactory(String className)
+    {
+        return this;
+    }
 
 }

@@ -6,6 +6,7 @@ Scratch pad for changes destined for the 5.8.3 release notes page.
 * getChangeResourcesMemos() to URLChangeTracker
 * getValues() to MultiKey
 * New getLogicalName() method in ComponentClassResolver.
+* New getPlasticManager() method in PlasticProxyFactory
 
 # Non-backward-compatible changes (but that probably won't cause problems)
 

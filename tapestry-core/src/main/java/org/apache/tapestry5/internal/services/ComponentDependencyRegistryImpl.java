@@ -242,8 +242,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         add(getClassName(component), getClassName(dependency));
     }
     
-    // Protected just for testing
-    void add(String component, String dependency) 
+    // Just for unit tests
+    void add(String component, String dependency, boolean markAsAlreadyProcessed)
+    {
+        if (markAsAlreadyProcessed)
+        {
+            alreadyProcessed.add(component);
+        }
+        if (dependency != null)
+        {
+            add(component, dependency);
+        }
+    }
+    
+    private void add(String component, String dependency) 
     {
         Objects.requireNonNull(component, "Parameter component cannot be null");
         Objects.requireNonNull(dependency, "Parameter dependency cannot be null");
@@ -258,7 +270,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             dependents.add(component);
         }
     }
-
+    
     @Override
     public void listen(InvalidationEventHub invalidationEventHub) 
     {
@@ -314,6 +326,25 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 throw new TapestryException("Exception trying to read " + ComponentDependencyRegistry.FILENAME, e);
             }
         } 
+    }
+
+    @Override
+    public boolean contains(String className) 
+    {
+        return alreadyProcessed.contains(className);
+    }
+
+    @Override
+    public Set<String> getClassNames() 
+    {
+        return Collections.unmodifiableSet(new HashSet<>(alreadyProcessed));
+    }
+
+    @Override
+    public Set<String> getRootClasses() {
+        return alreadyProcessed.stream()
+                .filter(c -> getDependencies(c).isEmpty())
+                .collect(Collectors.toSet());
     }
     
 }

@@ -14,6 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.ref.SoftReference;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
@@ -23,20 +32,13 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
-
-import java.lang.ref.SoftReference;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public class PageSourceImpl implements PageSource
 {
@@ -49,7 +51,9 @@ public class PageSourceImpl implements PageSource
     private final ComponentClassResolver componentClassResolver;
     
     private final Logger logger;
-
+    
+    final private boolean productionMode;
+    
     private static final class CachedPageKey
     {
         final String pageName;
@@ -86,12 +90,14 @@ public class PageSourceImpl implements PageSource
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             Logger logger)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
+        this.productionMode = productionMode;
         this.logger = logger;
     }
 
@@ -126,9 +132,12 @@ public class PageSourceImpl implements PageSource
 
             pageCache.put(key, ref);
             
-            final ComponentPageElement rootElement = page.getRootElement();
-            componentDependencyRegistry.clear(rootElement);
-            componentDependencyRegistry.register(rootElement);
+            if (!productionMode)
+            {
+                final ComponentPageElement rootElement = page.getRootElement();
+                componentDependencyRegistry.clear(rootElement);
+                componentDependencyRegistry.register(rootElement);
+            }
             
         }
     }

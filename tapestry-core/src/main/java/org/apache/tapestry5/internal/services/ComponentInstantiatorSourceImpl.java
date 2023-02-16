@@ -12,6 +12,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
+import org.apache.tapestry5.commons.Location;
+import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.commons.util.CollectionFactory;
@@ -57,6 +63,8 @@ import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticClassEvent;
 import org.apache.tapestry5.plastic.PlasticClassListener;
+import org.apache.tapestry5.plastic.PlasticClassTransformation;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PlasticManager.PlasticManagerBuilder;
@@ -71,6 +79,8 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventHandler;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.pageload.PageClassloaderContext;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.apache.tapestry5.services.transform.TransformationSupport;
@@ -101,10 +111,12 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final boolean productionMode;
 
     private final ComponentClassResolver resolver;
-
-    private volatile PlasticProxyFactory proxyFactory;
-
-    private volatile PlasticManager manager;
+    
+    private final PageClassloaderContextManager pageClassloaderContextManager;
+    
+    private PageClassloaderContext rootPageClassloaderContext;
+    
+    private PlasticProxyFactoryProxy plasticProxyFactoryProxy;
 
     /**
      * Map from class name to Instantiator.
@@ -147,7 +159,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                                            ComponentClassResolver resolver,
 
-                                           InternalComponentInvalidationEventHub invalidationHub)
+                                           InternalComponentInvalidationEventHub invalidationHub,
+                                           
+                                           PageClassloaderContextManager pageClassloaderContextManager                                         
+            )
     {
         this.parent = proxyFactory.getClassLoader();
         this.transformerChain = transformerChain;
@@ -158,6 +173,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
         this.resolver = resolver;
+        this.pageClassloaderContextManager = pageClassloaderContextManager;
 
         // For now, we just need the keys of the configuration. When there are more types of controlled
         // packages, we'll need to do more.
@@ -182,14 +198,23 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             
             final List<String> classNames = changedResources.stream().map(ClassName::getClassName).collect(Collectors.toList());
             
-            invalidate(classNames);
-
-            invalidationHub.fireInvalidationEvent(changedResources.stream()
-                    .map(ClassNameHolder::getClassName)
-                    .collect(Collectors.toList()));
+            final Set<String> classesToInvalidate = new HashSet<>();
             
-            // TODO Remove this when multiple classloaders are figured out
-            initializeService();
+            for (String className : classNames) 
+            {
+                final PageClassloaderContext context = rootPageClassloaderContext.findByClassName(className);
+                if (context != rootPageClassloaderContext && context != null)
+                {
+                    classesToInvalidate.addAll(pageClassloaderContextManager.invalidate(context));
+                }
+            }
+            
+            classNames.clear();
+            classNames.addAll(classesToInvalidate);
+            
+            invalidate(classNames);
+            
+            invalidationHub.fireInvalidationEvent(classNames);
             
         }
     }
@@ -220,14 +245,16 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     {
         changeTracker.clear();
         invalidationHub.classInControlledPackageHasChanged();
+        pageClassloaderContextManager.clear();
     }
 
     public void run()
     {
         changeTracker.clear();
         classToInstantiator.clear();
-        proxyFactory.clearCache();
+        // TODO fix this
 //        classToModel.clear();
+        pageClassloaderContextManager.clear();
         initializeService();
     }
 
@@ -238,30 +265,41 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
      */
     private void initializeService()
     {
-        if (manager == null)
+        
+        pageClassloaderContextManager.clear();
+        
+        if (rootPageClassloaderContext == null)
         {
             logger.info("Initializing page pool");
+            
+            pageClassloaderContextManager.clear();
+            
+            PlasticProxyFactory proxyFactory = createPlasticProxyFactory(parent);
+            rootPageClassloaderContext = new PageClassloaderContext(
+                    "root", null, Collections.emptySet(), proxyFactory);
         }
         else 
         {
             logger.info("Restarting page pool");
         }
-        PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
-                .packages(controlledPackageNames);
 
+        classToInstantiator.clear();
+        classToModel.clear();
+    }
+
+    private PlasticProxyFactory createPlasticProxyFactory(final ClassLoader parentClassloader) 
+    {
+        PlasticManagerBuilder builder = PlasticManager.withClassLoader(parentClassloader)
+                .delegate(this)
+                .packages(controlledPackageNames);
         if (!productionMode)
         {
             builder.enable(TransformationOption.FIELD_WRITEBEHIND);
         }
-
-        manager = builder.create();
-
-        manager.addPlasticClassListener(this);
-
-        proxyFactory = new PlasticProxyFactoryImpl(manager, logger);
-
-        classToInstantiator.clear();
-        classToModel.clear();
+        PlasticManager plasticManager = builder.create();
+        plasticManager.addPlasticClassListener(this);
+        PlasticProxyFactory proxyFactory = new PlasticProxyFactoryImpl(plasticManager, logger);
+        return proxyFactory;
     }
 
     public Instantiator getInstantiator(final String className)
@@ -279,7 +317,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         // Force the creation of the class (and the transformation of the class). This will first
                         // trigger transformations of any base classes.
 
-                        final ClassInstantiator<Component> plasticInstantiator = manager.getClassInstantiator(className);
+                        final PageClassloaderContext context = pageClassloaderContextManager.get(
+                                className, rootPageClassloaderContext, ComponentInstantiatorSourceImpl.this::createPlasticProxyFactory);
+                        final ClassInstantiator<Component> plasticInstantiator = 
+                                context.getPlasticManager().getClassInstantiator(className);
 
                         final ComponentModel model = classToModel.get(className);
 
@@ -313,9 +354,13 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public PlasticProxyFactory getProxyFactory()
     {
-        return proxyFactory;
+        if (plasticProxyFactoryProxy == null)
+        {
+            plasticProxyFactoryProxy = new PlasticProxyFactoryProxy();
+        }
+        return plasticProxyFactoryProxy;
     }
-
+    
     public void transform(final PlasticClass plasticClass)
     {
         tracker.run(String.format("Running component class transformations on %s", plasticClass.getClassName()),
@@ -467,7 +512,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         {
             try
             {
-                return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
+                final PageClassloaderContext context = pageClassloaderContextManager.get(
+                        typeName, rootPageClassloaderContext, ComponentInstantiatorSourceImpl.this::createPlasticProxyFactory);
+                return PlasticInternalUtils.toClass(context.getPlasticManager().getClassLoader(), typeName);
             } catch (ClassNotFoundException ex)
             {
                 throw new RuntimeException(String.format(
@@ -586,5 +633,115 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         }
         
     }
-    
+
+    private class PlasticProxyFactoryProxy implements PlasticProxyFactory
+    {
+
+        @Override
+        public void addPlasticClassListener(PlasticClassListener listener) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void removePlasticClassListener(PlasticClassListener listener) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ClassLoader getClassLoader() {
+            return rootPageClassloaderContext.getProxyFactory().getClassLoader();
+        }
+
+        @Override
+        public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback) 
+        {
+            return getProxyFactory(interfaceType.getName()).createProxy(interfaceType, callback);
+        }
+
+        @Override
+        public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType,
+                Class<? extends T> implementationType,
+                PlasticClassTransformer callback,
+                boolean introduceInterface) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, Class<? extends T> implementationType, PlasticClassTransformer callback) 
+        {
+            throw new UnsupportedOperationException();            
+        }
+
+        @Override
+        public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType, Class<? extends T> implementationType) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, String description) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T createProxy(Class<T> interfaceType, Class<? extends T> implementationType, ObjectCreator<T> creator, String description) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Location getMethodLocation(Method method) {
+            return getProxyFactory(method.getDeclaringClass().getName()).getMethodLocation(method);
+        }
+
+        @Override
+        public Location getConstructorLocation(Constructor constructor) 
+        {
+            return getProxyFactory(constructor.getDeclaringClass().getName()).getConstructorLocation(constructor);
+        }
+
+        @Override
+        public void clearCache() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PlasticManager getPlasticManager() {
+            throw new UnsupportedOperationException();
+        }
+        
+        @Override
+        public PlasticProxyFactory getProxyFactory(String className)
+        {
+            PageClassloaderContext context = rootPageClassloaderContext.findByClassName(className);
+            if (context == null)
+            {
+                context = pageClassloaderContextManager.get(
+                        className, rootPageClassloaderContext, ComponentInstantiatorSourceImpl.this::createPlasticProxyFactory);
+            }
+//            System.out.println("Class: " + className);
+//            System.out.println("Root classloader    : " + rootPageClassloaderContext);
+//            System.out.println("Parent classloader  : " + parent);
+//            if (!rootPageClassloaderContext.getChildren().isEmpty())
+//            {
+//                System.out.println("Unknown classloader : " + rootPageClassloaderContext.getChildren().iterator().next());
+//            }
+//            System.out.println("Returned context    : " + context);
+//            System.out.println("Returned classloader: " + context.getProxyFactory().getClassLoader());
+//            System.out.println();
+            return context.getProxyFactory();
+        }
+        
+    }
+
 }
