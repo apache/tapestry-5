@@ -27,16 +27,32 @@ public class DifferentClassVersionsException extends TapestryException
     private static final long serialVersionUID = 1L;
     
     private final String className;
+    
+    private final ClassLoader classLoader1;
+    
+    private final ClassLoader classLoader2;
 
-    public DifferentClassVersionsException(String message, String className) 
+    public DifferentClassVersionsException(String message, String className, ClassLoader classLoader1, ClassLoader classLoader2) 
     {
         super(message, null);
         this.className = className;
+        this.classLoader1 = classLoader1;
+        this.classLoader2 = classLoader2;
     }
     
     public String getClassName() 
     {
         return className;
+    }
+    
+    public ClassLoader getClassLoader1() 
+    {
+        return classLoader1;
+    }
+    
+    public ClassLoader getClassLoader2() 
+    {
+        return classLoader2;
     }
     
 }

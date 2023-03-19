@@ -363,10 +363,11 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
 import org.apache.tapestry5.services.rest.OpenApiTypeDescriber;
-import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
@@ -517,7 +518,7 @@ public final class TapestryModule
         binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
         binder.bind(AlertManager.class, AlertManagerImpl.class);
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
-        binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
+        binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class).eagerLoad();
         binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
         binder.bind(MetaDataLocator.class, MetaDataLocatorImpl.class);
         binder.bind(ComponentClassCache.class, ComponentClassCacheImpl.class);
@@ -2772,9 +2773,20 @@ public final class TapestryModule
     public static ComponentDependencyRegistry buildComponentDependencyRegistry(
             InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
             ResourceChangeTracker resourceChangeTracker,
-            ComponentTemplateSource componentTemplateSource)
+            ComponentTemplateSource componentTemplateSource,
+            PageClassloaderContextManager pageClassloaderContextManager,
+            ComponentInstantiatorSource componentInstantiatorSource,
+            ComponentClassResolver componentClassResolver,
+            TemplateParser templateParser,
+            ComponentTemplateLocator componentTemplateLocator)
     {
-        ComponentDependencyRegistry componentDependencyRegistry = new ComponentDependencyRegistryImpl();
+        ComponentDependencyRegistry componentDependencyRegistry = 
+                new ComponentDependencyRegistryImpl(
+                        pageClassloaderContextManager,
+                        componentInstantiatorSource.getProxyFactory().getPlasticManager(),
+                        componentClassResolver,
+                        templateParser,
+                        componentTemplateLocator);
         componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
         componentDependencyRegistry.listen(resourceChangeTracker);
         componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());

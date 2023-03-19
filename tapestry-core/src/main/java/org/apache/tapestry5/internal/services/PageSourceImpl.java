@@ -38,6 +38,8 @@ import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.pageload.PageClassloaderContext;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
@@ -49,6 +51,8 @@ public class PageSourceImpl implements PageSource
     private final ComponentDependencyRegistry componentDependencyRegistry;
     
     private final ComponentClassResolver componentClassResolver;
+    
+    private final PageClassloaderContextManager pageClassloaderContextManager;
     
     private final Logger logger;
     
@@ -83,6 +87,13 @@ public class PageSourceImpl implements PageSource
 
             return pageName.equals(other.pageName) && selector.equals(other.selector);
         }
+
+        @Override
+        public String toString() {
+            return "CachedPageKey [pageName=" + pageName + ", selector=" + selector + "]";
+        }
+        
+        
     }
 
     private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
@@ -90,6 +101,7 @@ public class PageSourceImpl implements PageSource
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
+            PageClassloaderContextManager pageClassloaderContextManager,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             Logger logger)
     {
@@ -98,6 +110,7 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
+        this.pageClassloaderContextManager = pageClassloaderContextManager;
         this.logger = logger;
     }
 
@@ -126,7 +139,27 @@ public class PageSourceImpl implements PageSource
             // different threads. The last built one will "evict" the others from the page cache,
             // and the earlier ones will be GCed.
 
-            page = pageLoader.loadPage(canonicalPageName, selector);
+//            if (!productionMode)
+//            {
+//                // Make sure you get a fresh version of the class before processing its
+//                // dependencies
+//                final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
+//                pageClassloaderContextManager.clear(className);
+//                final PageClassloaderContext context = pageClassloaderContextManager.get(className);
+//                final Class<?> clasz;
+//                try {
+//                    clasz = context.getProxyFactory().getClassLoader().loadClass(className);
+//                    pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
+//                    componentDependencyRegistry.register(clasz);
+//                    pageClassloaderContextManager.get(className);
+//                } catch (ClassNotFoundException e) 
+//                {
+//                    logger.error(e.getMessage(), e);
+//                }
+//                
+//            }
+            
+             page = pageLoader.loadPage(canonicalPageName, selector);
 
             ref = new SoftReference<Page>(page);
 
@@ -174,14 +207,15 @@ public class PageSourceImpl implements PageSource
             String pageName;
             for (String className : resources)
             {
-                pageName = componentClassResolver.getLogicalName(className);
-                if (pageName != null && !pageName.isEmpty())
+                if (componentClassResolver.isPage(className))
                 {
+                    pageName = componentClassResolver.resolvePageClassNameToPageName(className);
                     final Iterator<Entry<CachedPageKey, SoftReference<Page>>> iterator = pageCache.entrySet().iterator();
                     while (iterator.hasNext())
                     {
                         final Entry<CachedPageKey, SoftReference<Page>> entry = iterator.next();
-                        if (entry.getKey().pageName.equalsIgnoreCase(pageName)) 
+                        final String entryPageName = entry.getKey().pageName;
+                        if (entryPageName.equalsIgnoreCase(pageName)) 
                         {
                             logger.info("Clearing cached page '{}'", pageName);
                             iterator.remove();

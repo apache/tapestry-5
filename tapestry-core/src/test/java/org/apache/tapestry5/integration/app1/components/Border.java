@@ -17,6 +17,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 
 import java.util.Calendar;
 
@@ -33,6 +34,9 @@ public class Border
 
     @Inject
     private ComponentResources resources;
+    
+    @Inject @Property
+    private PageClassloaderContextManager pccm; 
 
     public static final int year;
 

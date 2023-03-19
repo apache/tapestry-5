@@ -39,7 +39,11 @@ public interface ComponentDependencyRegistry {
      */
     String FILENAME = "tapestryComponentDependencies.json";
 
-    
+    /**
+     * Register all the dependencies of a given class.
+     */
+    void register(Class<?> clasz);
+
     /**
      * Register all the dependencies of a given component.
      */
@@ -101,5 +105,20 @@ public interface ComponentDependencyRegistry {
      * Returns the set of all root classes (i.e. ones with no dependencies).
      */
     Set<String> getRootClasses();
+    
+    /**
+     * Returns whether stored dependency information is present.
+     */
+    boolean isStoredDependencyInformationPresent();
+    
+    /**
+     * Tells this service to ignore invalidations in this thread.
+     */
+    void disableInvalidations();
+    
+    /**
+     * Tells this service to stop ignoring invalidations in this thread.
+     */
+    void enableInvalidations();
 
 }

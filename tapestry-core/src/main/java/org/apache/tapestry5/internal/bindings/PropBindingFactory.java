@@ -18,7 +18,10 @@ import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.internal.services.StringInterner;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.pageload.PageClassloaderContext;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 
 /**
  * Binding factory for reading and updating JavaBean properties.
@@ -31,18 +34,25 @@ public class PropBindingFactory implements BindingFactory
     private final PropertyConduitSource source;
 
     private final StringInterner interner;
+    
+    private final PageClassloaderContextManager pageClassloaderContextManager;
 
-    public PropBindingFactory(PropertyConduitSource propertyConduitSource, StringInterner interner)
+    public PropBindingFactory(PropertyConduitSource propertyConduitSource, StringInterner interner,
+            PageClassloaderContextManager pageClassloaderContextManager)
     {
         source = propertyConduitSource;
         this.interner = interner;
+        this.pageClassloaderContextManager = pageClassloaderContextManager;
     }
 
     public Binding newBinding(String description, ComponentResources container,
                               ComponentResources component, String expression, Location location)
     {
+        
+        // TODO: need to get correct classloader here, probably
         Object target = container.getComponent();
         Class targetClass = target.getClass();
+        targetClass = getClassLoaderAppropriateClass(targetClass);
 
         PropertyConduit conduit = source.create(targetClass, expression);
 
@@ -50,5 +60,22 @@ public class PropBindingFactory implements BindingFactory
                 .getCompleteId(), expression);
 
         return new PropBinding(location, target, conduit, expression, toString);
+    }
+
+    private Class getClassLoaderAppropriateClass(Class targetClass)
+    {
+        final String className = targetClass.getName();
+        try 
+        {
+            final PageClassloaderContext context = pageClassloaderContextManager.get(className);
+            System.out.printf("XXXXX Target class (before): %s classloader : %s\n", targetClass.getSimpleName(), targetClass.getClassLoader());
+            targetClass = context.getProxyFactory()
+                    .getClassLoader().loadClass(className);
+            System.out.printf("XXXXX Target class (after) : %s classloader : %s context %s\n", targetClass.getSimpleName(), targetClass.getClassLoader(), context.getName());
+        } catch (ClassNotFoundException e) 
+        {
+            throw new TapestryException(e.getMessage(), e);
+        }
+        return targetClass;
     }
 }

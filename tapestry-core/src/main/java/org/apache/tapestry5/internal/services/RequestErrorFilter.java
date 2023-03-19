@@ -20,6 +20,8 @@ import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.RequestExceptionHandler;
+import org.apache.tapestry5.services.pageload.PageClassloaderContext;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 
 /**
  * Filter for the {@link org.apache.tapestry5.http.services.RequestHandler} pipeline used to intercept and report
@@ -32,18 +34,21 @@ public class RequestErrorFilter implements RequestFilter
     private final InvalidationEventHub classesInvalidationHub;
     private final ComponentEventLinkEncoder componentEventLinkEncoder;
     private final ComponentInstantiatorSource componentInstantiatorSource;
+    private final PageClassloaderContextManager pageClassloaderContextManager;
     private final static String QUERY_PARAMETER = "RequestErrorFilterRedirected";
     private final static Pattern CCE_PATTERN = Pattern.compile("((.*)\\scannot be cast to (.*))(.*)");
 
     public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler,
             @ComponentClasses InvalidationEventHub classesInvalidationHub, ComponentEventLinkEncoder componentEventLinkEncoder,
-            ComponentInstantiatorSource componentInstantiatorSource)
+            ComponentInstantiatorSource componentInstantiatorSource, 
+            PageClassloaderContextManager pageClassloaderContextManager)
     {
         this.internalRequestGlobals = internalRequestGlobals;
         this.exceptionHandler = exceptionHandler;
         this.classesInvalidationHub = classesInvalidationHub;
         this.componentEventLinkEncoder = componentEventLinkEncoder;
         this.componentInstantiatorSource = componentInstantiatorSource;
+        this.pageClassloaderContextManager = pageClassloaderContextManager;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler) throws IOException
@@ -60,49 +65,51 @@ public class RequestErrorFilter implements RequestFilter
         catch (Throwable ex)
         {
             
-            if (request.getParameter(QUERY_PARAMETER) == null)
-            {
-            
-                Throwable rootCause = ex.getCause();
-                String classToInvalidate = getClassToInvalidate(rootCause);
-                
-                if (classToInvalidate != null)
-                {
-                    
-                    final List<String> classesToInvalidate = 
-                            Arrays.asList(classToInvalidate, ExceptionReport.class.getName());
-                    componentInstantiatorSource.invalidate(classesToInvalidate);
-                    classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
-
-                    Link link = null;
-                    
-                    final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
-                    if (componentEventParameters != null)
-                    {
-                        link = componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false);
-                    }
-                    
-                    final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
-                    if (pageRenderParameters != null)
-                    {
-                        link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
-                    }
-                    
-                    if (link != null)
-                    {
-                        link.addParameter(QUERY_PARAMETER, "true");
-                        response.sendRedirect(link);
-                        return true;
-                    }
-                    
-                }
-                
-            }
+//            if (request.getParameter(QUERY_PARAMETER) == null)
+//            {
+//            
+//                Throwable rootCause = ex.getCause();
+//                String classToInvalidate = getClassToInvalidate(rootCause);
+//                
+//                if (classToInvalidate != null)
+//                {
+//                    
+//                    final List<String> classesToInvalidate = 
+//                            Arrays.asList(classToInvalidate, ExceptionReport.class.getName());
+//                    componentInstantiatorSource.invalidate(classesToInvalidate);
+//                    classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
+//
+//                    Link link = null;
+//                    
+//                    final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
+//                    if (componentEventParameters != null)
+//                    {
+//                        link = componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false);
+//                    }
+//                    
+//                    final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
+//                    if (pageRenderParameters != null)
+//                    {
+//                        link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
+//                    }
+//                    
+//                    if (link != null)
+//                    {
+//                        link.addParameter(QUERY_PARAMETER, "true");
+//                        response.sendRedirect(link);
+//                        return true;
+//                    }
+//                    
+//                }
+//                
+//            }
             
             // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
             // get involved, things go screwy.  Exceptions when transforming classes can cause
             // a NoClassDefFoundError with no cause; here we're trying to link the cause back in.
             // TAPESTRY-2078
+            
+            System.out.println("YYYYYY" + pageClassloaderContextManager.getRoot().toRecursiveString());
 
             Throwable exceptionToReport = attachNewCause(ex, internalRequestGlobals.getClassLoaderException());
 

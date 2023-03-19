@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.bindings;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.tapestry5.beanmodel.PropertyConduit;
 import org.apache.tapestry5.beanmodel.PropertyConduit2;
@@ -39,6 +40,10 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
     private boolean invariant;
     
     private final String expression;
+    
+    // TODO remove
+    private static final AtomicInteger COUNTER = new AtomicInteger();
+    private final int id;
 
     public PropBinding(final Location location, final Object root, final PropertyConduit conduit, final String expression, final String toString)
     {
@@ -50,6 +55,10 @@ public class PropBinding extends AbstractBinding implements InternalPropBinding
         this.toString = toString;
 
         invariant = conduit.getAnnotation(Invariant.class) != null;
+
+        System.out.println("TTTTT new PropBinding: " + root.getClass().getSimpleName() + ":" + expression);
+        id = COUNTER.getAndIncrement();
+        
     }
 
     /**

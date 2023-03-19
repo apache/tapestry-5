@@ -14,3 +14,6 @@ Scratch pad for changes destined for the 5.8.3 release notes page.
 * New getEmbeddedElementIds() method in ComponentPageElement (internal service)
 * New registerClassName() method in ResourceChangeTracker (internal service)
 * New clearClassName() method in ResourceChangeTracker (internal service)
+
+# Overall notes
+* Before 

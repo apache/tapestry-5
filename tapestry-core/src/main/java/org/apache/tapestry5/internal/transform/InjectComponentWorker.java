@@ -98,7 +98,8 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                 if (embedded.getClass().getName().equals(className))
                 {
                     logger.warn(message);
-                    throw new DifferentClassVersionsException(message, className);
+                    throw new DifferentClassVersionsException(message, className, 
+                            fieldType.getClassLoader(), embedded.getClass().getClassLoader());
                 }
                 else
                 {

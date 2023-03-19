@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 
 /**
@@ -38,20 +39,44 @@ public interface PageClassloaderContextManager
      * {@linkplain} ClassLoader} and returns a new {@linkplain PlasticProxyFactory}.
      * @return the {@link PageClassloaderContext} associated with that class.
      */
-    PageClassloaderContext get(
-            String className, 
-            PageClassloaderContext root,
-            Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider);
+    PageClassloaderContext get(String className);
     
     /**
-     * Invalidates one page classloader context and returns a set containing the names
+     * Invalidates page classloader contexts and returns a set containing the names
      * of all classes that should be invalidated.
      */
-    Set<String> invalidate(PageClassloaderContext context);
+    Set<String> invalidate(PageClassloaderContext... contexts);
+    
+    /**
+     * Invalidates page classloader contexts and invalidates the classes in the context as well.
+     */
+    void invalidateAndFireInvalidationEvents(PageClassloaderContext... contexts);
+    
+    /**
+     * Returns the root context.
+     */
+    PageClassloaderContext getRoot();
     
     /**
      * Clears any state held by this manager.
      */
     void clear();
+    
+    /**
+     * Returns whether contexts are being merged.
+     */
+    boolean isMerging();
+
+    /**
+     * Removes one specific class from this manager, invalidating the context where
+     * it is.
+     */
+    void clear(String className);
+
+    /**
+     * Initializes this service with the root context and a Plastic proxy factory provider.
+     * Method can only be called once. None of the parameters may be null.
+     */
+    void initialize(PageClassloaderContext root, Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider);
     
 }

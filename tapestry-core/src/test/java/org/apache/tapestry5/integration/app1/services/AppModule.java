@@ -395,9 +395,9 @@ public class AppModule
     @Contribute(PagePreloader.class)
     public static void setupPagePreload(Configuration<String> configuration)
     {
-        configuration.add("index");
-        configuration.add("core/exceptionreport");
-        configuration.add("core/t5dashboard");
+//        configuration.add("index");
+//        configuration.add("core/exceptionreport");
+//        configuration.add("core/t5dashboard");
     }
     
 

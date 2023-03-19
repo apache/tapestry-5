@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.apache.tapestry5.services.pageload;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -43,6 +45,12 @@ public class PageClassloaderContext
     private final PlasticManager plasticManager;
     
     private final PlasticProxyFactory proxyFactory;
+
+    /**
+     * Name of the <code>unknown</code> context (i.e. the one for controlled classes
+     * without dependency information at the moment).
+     */
+    public static final String UNKOWN_CONTEXT_NAME = "unknown";
     
     public PageClassloaderContext(String name, 
             PageClassloaderContext parent, 
@@ -114,11 +122,22 @@ public class PageClassloaderContext
         classNames.add(className);
     }
     
-    public void addChildren(PageClassloaderContext context)
+    /**
+     * Adds a child context.
+     */
+    public void addChild(PageClassloaderContext context)
     {
         children.add(context);
     }
-    
+
+    /**
+     * Removes a child context.
+     */
+    public void removeChildren(PageClassloaderContext context)
+    {
+        children.remove(context);
+    }
+
     /**
      * Searches for the context that contains the given class in itself and recursivel in its children.
      */
@@ -156,32 +175,67 @@ public class PageClassloaderContext
      */
     public void invalidate() 
     {
-        LOGGER.info("Invalidating page classloader context '{}' (class loader {}, classes : {})", 
+        for (PageClassloaderContext child : new ArrayList<>(children)) 
+        {
+            child.invalidate();
+        }
+        LOGGER.debug("Invalidating page classloader context '{}' (class loader {}, classes : {})", 
                 name, proxyFactory.getClassLoader(), classNames);
         classNames.clear();
         parent.getChildren().remove(this);
         proxyFactory.clearCache();
-        for (PageClassloaderContext child : children) 
+    }
+
+    /**
+     * Returns whether this is the root context.
+     */
+    public boolean isRoot()
+    {
+        return parent == null;
+    }
+
+    /**
+     * Returns whether this is the <code>unknwon</code> context.
+     * @see #UNKOWN_CONTEXT_NAME
+     */
+    public boolean isUnknown()
+    {
+        return name.equals(UNKOWN_CONTEXT_NAME);
+    }
+    
+    /**
+     * Returns the set of descendents (children and their children recursively
+     * of this context.
+     */
+    public Set<PageClassloaderContext> getDescendents()
+    {
+        Set<PageClassloaderContext> descendents;
+        if (children.isEmpty())
         {
-            child.invalidate();
+            descendents = Collections.emptySet();
         }
+        else
+        {
+            descendents = new HashSet<>(children);
+            for (PageClassloaderContext child : children) 
+            {
+                descendents.addAll(child.getDescendents());
+            }
+        }
+        return descendents;
     }
 
     @Override
-    public int hashCode() 
-    {
+    public int hashCode() {
         return Objects.hash(name);
     }
-
+    
     @Override
-    public boolean equals(Object obj) 
-    {
-        if (this == obj) 
-        {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PageClassloaderContext)) 
-        {
+        if (!(obj instanceof PageClassloaderContext)) {
             return false;
         }
         PageClassloaderContext other = (PageClassloaderContext) obj;
@@ -194,9 +248,29 @@ public class PageClassloaderContext
         return "PageClassloaderContext [name=" + name + 
                 ", parent=" + (parent != null ? parent.getName() : "null" ) + 
                 ", classLoader=" + afterAt(proxyFactory.getClassLoader().toString()) +
-                ", object id" + afterAt(super.toString()) +
-//                ", classNames=" + classNames + 
+                (isRoot() ? ""  : ", classNames=" + classNames) + 
                 "]";
+    }
+    
+    public String toRecursiveString()
+    {
+        StringBuilder builder = new StringBuilder();
+        toRecursiveString(builder, "");
+        return builder.toString();
+    }
+    
+    private void toRecursiveString(StringBuilder builder, String tabs)
+    {
+        builder.append(tabs);
+        builder.append(name);
+        builder.append(" : ");
+        builder.append(afterAt(proxyFactory.getClassLoader().toString()));
+        builder.append(" : ");
+        builder.append(classNames);
+        builder.append("\n");
+        for (PageClassloaderContext child : children) {
+            child.toRecursiveString(builder, tabs + "\t");
+        }
     }
 
     private static String afterAt(String string) 

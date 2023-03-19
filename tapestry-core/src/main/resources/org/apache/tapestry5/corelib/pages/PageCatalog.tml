@@ -43,6 +43,7 @@
             </t:actionlink>
         </t:if>
         <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
+        <t:actionlink t:id="storeDependencyInformation" zone="pages" class="btn btn-warning">Store dependency information</t:actionlink>
     </div>
     
     

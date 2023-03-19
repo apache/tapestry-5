@@ -826,12 +826,30 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             result = getKeyByValue(thisData.componentToClassName, className);
         }
-        if (result == null ){
+        if (result == null )
+        {
             result = getKeyByValue(thisData.mixinToClassName, className);
         }
 
         return result;
     }
+    
+    @Override
+    public String getClassName(String logicalName) 
+    {
+        final Data thisData = getData();
+        String result = getKeyByValue(thisData.pageClassNameToLogicalName, logicalName);
+        if (result == null)
+        {
+            result = thisData.componentToClassName.get(logicalName);
+        }
+        if (result == null )
+        {
+            result = thisData.mixinToClassName.get(logicalName);
+        }
+        return result;
+    }
+
     
     private String getKeyByValue(Map<String, String> map, String value)
     {

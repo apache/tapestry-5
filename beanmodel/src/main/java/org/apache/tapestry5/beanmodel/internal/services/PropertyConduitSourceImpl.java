@@ -1390,6 +1390,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
     @PostInjection
     public void listenForInvalidations(@ComponentClasses InvalidationEventHub hub)
     {
+        System.out.println("WWWWWW hub " + hub);
         hub.addInvalidationCallback(this::listen);
     }
     

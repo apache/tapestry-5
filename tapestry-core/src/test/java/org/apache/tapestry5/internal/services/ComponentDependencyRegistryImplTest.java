@@ -14,17 +14,57 @@
 
 package org.apache.tapestry5.internal.services;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.testng.annotations.BeforeClass;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.corelib.base.AbstractLink;
+import org.apache.tapestry5.corelib.base.AbstractTextField;
+import org.apache.tapestry5.corelib.components.ActionLink;
+import org.apache.tapestry5.corelib.components.Any;
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.corelib.components.EventLink;
+import org.apache.tapestry5.corelib.components.If;
+import org.apache.tapestry5.corelib.components.TextField;
+import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.integration.app1.components.Border;
+import org.apache.tapestry5.integration.app1.components.ErrorComponent;
+import org.apache.tapestry5.integration.app1.components.OuterAny;
+import org.apache.tapestry5.integration.app1.components.TextOnlyOnDisabledTextField;
+import org.apache.tapestry5.integration.app1.mixins.AltTitleDefault;
+import org.apache.tapestry5.integration.app1.mixins.EchoValue;
+import org.apache.tapestry5.integration.app1.mixins.EchoValue2;
+import org.apache.tapestry5.integration.app1.mixins.TextOnlyOnDisabled;
+import org.apache.tapestry5.integration.app1.pages.AlertsDemo;
+import org.apache.tapestry5.integration.app1.pages.BlockCaller;
+import org.apache.tapestry5.integration.app1.pages.BlockHolder;
+import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
+import org.apache.tapestry5.integration.app1.pages.InstanceMixinDependencies;
+import org.apache.tapestry5.integration.app1.pages.MixinParameterDefault;
+import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
+import org.apache.tapestry5.modules.TapestryModule;
+import org.apache.tapestry5.plastic.PlasticManager;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.easymock.EasyMock;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -35,19 +75,78 @@ public class ComponentDependencyRegistryImplTest
     
     private ComponentDependencyRegistryImpl componentDependencyRegistry;
     
-    @BeforeClass
+    private PageClassloaderContextManager pageClassloaderContextManager;
+    
+    private ComponentClassResolver resolver;
+    
+    private PlasticManager plasticManager;
+    
+    private TemplateParser templateParser;
+    
+    @SuppressWarnings("deprecation")
+    private ComponentTemplateLocator componentTemplateLocator;
+    
+    @BeforeMethod
     public void setup()
     {
         assertFalse(
                 String.format("During testing, %s shouldn't exist", ComponentDependencyRegistry.FILENAME), 
                 new File(ComponentDependencyRegistry.FILENAME).exists());
-        componentDependencyRegistry = new ComponentDependencyRegistryImpl();
+        
+        MockMappedConfiguration<String, URL> templateConfiguration = new MockMappedConfiguration<String, URL>();
+        TapestryModule.contributeTemplateParser(templateConfiguration);
+        templateParser = new TemplateParserImpl(templateConfiguration.map, false, new QuietOperationTracker());
+        
+        componentTemplateLocator = new DefaultTemplateLocator();
+        
+        resolver = EasyMock.createMock(ComponentClassResolver.class);
+        
+        expectResolveComponent(TextField.class);
+        expectResolveComponent(Border.class);
+        expectResolveComponent(BeanEditForm.class);
+        expectResolveComponent(Zone.class);
+        expectResolveComponent(ActionLink.class);
+        expectResolveComponent(If.class);
+        expectResolveComponent(ErrorComponent.class);
+        expectResolveComponent(EventLink.class);        
+        
+        EasyMock.expect(resolver.resolveMixinTypeToClassName("textonlyondisabled"))
+            .andReturn(TextOnlyOnDisabled.class.getName()).anyTimes();
+        EasyMock.expect(resolver.resolveMixinTypeToClassName("echovalue2"))
+            .andReturn(EchoValue2.class.getName()).anyTimes();
+        EasyMock.expect(resolver.resolveMixinTypeToClassName("alttitledefault"))
+            .andReturn(AltTitleDefault.class.getName()).anyTimes();
+        
+        pageClassloaderContextManager = EasyMock.createMock(PageClassloaderContextManager.class);
+        plasticManager = EasyMock.createMock(PlasticManager.class);
+        EasyMock.expect(plasticManager.shouldInterceptClassLoading(EasyMock.anyString()))
+            .andAnswer(() -> {
+                String className = (String) EasyMock.getCurrentArguments()[0];
+                return className.contains(".pages.") || className.contains(".mixins.") ||
+                        className.contains(".components.") || className.contains(".base.");
+            }).anyTimes();
+        componentDependencyRegistry = new ComponentDependencyRegistryImpl(
+                pageClassloaderContextManager, plasticManager, resolver, templateParser, componentTemplateLocator);
+        EasyMock.replay(pageClassloaderContextManager, plasticManager, resolver);
+    }
+
+    private void expectResolveComponent(final Class<?> clasz) {
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(clasz.getSimpleName()))
+            .andReturn(clasz.getName()).anyTimes();
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(clasz.getSimpleName().toLowerCase()))
+            .andReturn(clasz.getName()).anyTimes();
+    }
+    
+    private void configurePCCM(boolean merging)
+    {
+        EasyMock.reset(pageClassloaderContextManager);
+        EasyMock.expect(pageClassloaderContextManager.isMerging()).andReturn(merging).anyTimes();
+        EasyMock.replay(pageClassloaderContextManager);
     }
     
     @Test(timeOut = 5000)
     public void listen()
     {
-        
         add("foo", "bar");
         add("d", "a");
         add("dd", "aa");
@@ -55,12 +154,21 @@ public class ComponentDependencyRegistryImplTest
         add("dd", "a");
         
         final List<String> resources = Arrays.asList("a", "aa", "none");
-        final List<String> result = componentDependencyRegistry.listen(resources);
+        
+        configurePCCM(true);
+        List<String> result = componentDependencyRegistry.listen(resources);
+        assertEquals(0, result.size());
+        
+        configurePCCM(false);
+        result = componentDependencyRegistry.listen(resources);
         Collections.sort(result);
         assertEquals(result, Arrays.asList("d", "dd"));
+        assertEquals("bar", componentDependencyRegistry.getDependencies("foo").iterator().next());
+        assertEquals("foo", componentDependencyRegistry.getDependents("bar").iterator().next());        
         
-        final List<String> returnValue = componentDependencyRegistry.listen(Collections.emptyList());
-        assertEquals(returnValue, Collections.emptyList());
+        configurePCCM(false);
+        result = componentDependencyRegistry.listen(Collections.emptyList());
+        assertEquals(result, Collections.emptyList());
         assertEquals(componentDependencyRegistry.getDependents("bar").size(), 0);
         assertEquals(componentDependencyRegistry.getDependencies("foo").size(), 0);
         
@@ -77,11 +185,15 @@ public class ComponentDependencyRegistryImplTest
         final String fulano = "a";
         final String beltrano = "aa";
         
-        assertEquals(componentDependencyRegistry.getDependencies(foo), Collections.emptySet(), 
-                "getDependents() should never return null");
+        assertEquals(
+                "getDependents() should never return null", 
+                Collections.emptySet(),
+                componentDependencyRegistry.getDependencies(foo));
 
-        assertEquals(componentDependencyRegistry.getDependents(foo), Collections.emptySet(), 
-                "getDependents() should never return null");
+        assertEquals(
+                "getDependents() should never return null", 
+                Collections.emptySet(),
+                componentDependencyRegistry.getDependents(foo));
 
         add(foo, bar);
         add(something, fulano);
@@ -92,17 +204,17 @@ public class ComponentDependencyRegistryImplTest
         add(fulano, null);
         add(beltrano, null);
         
-        assertEquals(componentDependencyRegistry.getDependencies(other), new HashSet<>(Arrays.asList(fulano, beltrano)));
-        assertEquals(componentDependencyRegistry.getDependencies(something), new HashSet<>(Arrays.asList(fulano)));
-        assertEquals(componentDependencyRegistry.getDependencies(fulano), new HashSet<>(Arrays.asList()));
-        assertEquals(componentDependencyRegistry.getDependencies(foo), new HashSet<>(Arrays.asList(bar)));
-        assertEquals(componentDependencyRegistry.getDependencies(bar), new HashSet<>(Arrays.asList()));
+        assertEquals(new HashSet<>(Arrays.asList(fulano, beltrano)), componentDependencyRegistry.getDependencies(other));
+        assertEquals(new HashSet<>(Arrays.asList(fulano)), componentDependencyRegistry.getDependencies(something));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependencies(fulano));
+        assertEquals(new HashSet<>(Arrays.asList(bar)), componentDependencyRegistry.getDependencies(foo));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependencies(bar));
 
-        assertEquals(componentDependencyRegistry.getDependents(bar), new HashSet<>(Arrays.asList(foo)));
-        assertEquals(componentDependencyRegistry.getDependents(fulano), new HashSet<>(Arrays.asList(other, something)));
-        assertEquals(componentDependencyRegistry.getDependents(foo), new HashSet<>(Arrays.asList()));
+        assertEquals(new HashSet<>(Arrays.asList(foo)), componentDependencyRegistry.getDependents(bar));
+        assertEquals(new HashSet<>(Arrays.asList(other, something)), componentDependencyRegistry.getDependents(fulano));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(foo));
         
-        assertEquals(componentDependencyRegistry.getRootClasses(), new HashSet<>(Arrays.asList(bar, fulano, beltrano)));
+        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, beltrano)), componentDependencyRegistry.getRootClasses());
         
         assertTrue(componentDependencyRegistry.contains(foo));
         assertTrue(componentDependencyRegistry.contains(bar));
@@ -122,9 +234,115 @@ public class ComponentDependencyRegistryImplTest
         
     }
     
+    @Test
+    public void register()
+    {
+        
+        componentDependencyRegistry.clear();
+        
+        // Superclass
+        componentDependencyRegistry.register(EventLink.class);
+
+        // Superclass, recursively
+        assertDependencies(AbstractComponentEventLink.class, AbstractLink.class);
+        assertDependencies(AbstractLink.class);        
+        
+        // @InjectPage and circular dependencies
+        componentDependencyRegistry.register(BlockCaller.class);
+        assertDependencies(BlockCaller.class, BlockHolder.class);
+        assertDependencies(BlockHolder.class, BlockCaller.class);        
+        
+        // @InjectComponent 
+        // Components declared in templates
+        componentDependencyRegistry.register(AlertsDemo.class);
+        assertDependencies(AlertsDemo.class, Zone.class, // @InjectComponent
+                // Components declared in template
+                Border.class, BeanEditForm.class, Zone.class, If.class, 
+                ActionLink.class, ErrorComponent.class, EventLink.class);
+        
+        // Mixins defined in in templates (t:mixins="...").
+        componentDependencyRegistry.register(MixinParameterDefault.class);
+        assertDependencies(MixinParameterDefault.class, AltTitleDefault.class, // Mixin
+                ActionLink.class, Border.class); // Components declared in template);
+        
+        // @Component, type() not defined
+        componentDependencyRegistry.register(OuterAny.class);
+        assertDependencies(OuterAny.class, Any.class);
+        
+        // @Component, type() defined
+        componentDependencyRegistry.register(EmbeddedComponentTypeConflict.class);
+        assertDependencies(EmbeddedComponentTypeConflict.class, TextField.class);
+
+        // @Mixin, type() not defined
+        componentDependencyRegistry.register(AbstractTextField.class);
+        assertDependencies(AbstractTextField.class, 
+                RenderDisabled.class, AbstractField.class);
+
+        // @Mixin, type() defined
+        componentDependencyRegistry.register(TextOnlyOnDisabledTextField.class);
+        assertDependencies(TextOnlyOnDisabledTextField.class, 
+                TextOnlyOnDisabled.class, TextField.class);
+        
+        // @MixinClasses and @Mixins
+        componentDependencyRegistry.register(InstanceMixinDependencies.class);
+        assertDependencies(InstanceMixinDependencies.class, 
+                EchoValue.class, EchoValue2.class, TextField.class);
+        
+
+    }
+
+    private void assertDependencies(Class clasz, Class... dependencies) {
+        assertEquals(
+                setOf(dependencies),
+                componentDependencyRegistry.getDependencies(clasz.getName()));
+    }
+
+    private static Set<String> setOf(Class ... classes)
+    {
+        return Arrays.asList(classes).stream()
+            .map(Class::getName)
+            .collect(Collectors.toSet());
+    }
+
+    private static Set<String> setOf(String ... strings)
+    {
+        return new HashSet<>(Arrays.asList(strings));
+    }
+    
     private void add(String component, String dependency)
     {
         componentDependencyRegistry.add(component, dependency, true);
     }
 
+    private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>
+    {
+        
+        private final Map<String, URL> map = new HashMap<>();
+
+        @Override
+        public void add(String key, URL value) 
+        {
+            map.put(key, value);
+        }
+
+        @Override
+        public void override(String key, URL value) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addInstance(String key, Class<? extends URL> clazz) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void overrideInstance(String key, Class<? extends URL> clazz) 
+        {
+            throw new UnsupportedOperationException();            
+        }
+        
+    }
+    
 }
