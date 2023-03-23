@@ -72,9 +72,14 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
 
             Object sso = session.getAttribute(key);
 
-            return sso != null ? (T)sso : null;
+            return transformPersistedValue(sso);
         }
         return null;
+    }
+
+    protected <T> T transformPersistedValue(Object value)
+    {
+        return (T) value;
     }
 
     protected <T> String buildKey(Class<T> ssoClass)

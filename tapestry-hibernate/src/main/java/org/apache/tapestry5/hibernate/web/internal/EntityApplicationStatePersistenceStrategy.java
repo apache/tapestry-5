@@ -37,6 +37,12 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
     }
 
     @Override
+    protected <T> T transformPersistedValue(Object value)
+    {
+        return value instanceof SessionRestorable ? (T) delegate.convertPersistedToApplicationValue(value) : (T) value;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> ssoClass, ApplicationStateCreator<T> creator)
     {
@@ -44,7 +50,7 @@ public class EntityApplicationStatePersistenceStrategy extends SessionApplicatio
 
         if (persistedValue instanceof SessionRestorable)
         {
-            Object restored = delegate.convertPersistedToApplicationValue(persistedValue);
+            Object restored = transformPersistedValue(persistedValue);
 
             // Maybe throw an exception instead?
             if (restored == null)
