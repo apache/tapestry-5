@@ -1,0 +1,15 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<head>
+		<title>Start Page</title>
+	</head>
+	<body>
+		<div>
+			<t:if test="loggedIn">
+				<span>Logged as ${username}</span>
+			</t:if>
+			<t:if test="notLogged">
+				<t:actionlink t:id="signIn">Sign in</t:actionlink>
+			</t:if>
+		</div>
+	</body>
+</html>

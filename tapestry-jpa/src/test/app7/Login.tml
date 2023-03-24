@@ -1,0 +1,18 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<body>
+		<div>
+			<t:form t:id="login">
+				<h2>Please sign in</h2>
+				<div>
+					<t:textfield t:id="username" placeholder="Username"/>
+				</div>
+				<div>
+					<t:passwordfield t:id="password" placeholder="Password"/>
+				</div>
+				<div>
+					<t:submit t:id="register" />
+				</div>
+			</t:form>
+		</div>
+	</body>
+</html>
