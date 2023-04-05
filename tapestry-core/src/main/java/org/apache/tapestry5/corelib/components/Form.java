@@ -20,6 +20,7 @@ import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.PropertyAccess;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
+import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
@@ -719,7 +720,7 @@ public class Form implements ClientElement, FormValidationControl
         String[] values = request.getParameters(FORM_DATA);
 
         if (!request.getMethod().equals("POST") || values == null)
-            throw new RuntimeException(messages.format("core-invalid-form-request", FORM_DATA));
+            throw new FormsRequirePostException(messages.format("core-invalid-form-request", FORM_DATA), null);
 
         // Due to Ajax there may be multiple values here, so
         // handle each one individually.
