@@ -38,7 +38,7 @@ public class FontAwesomeIcon
      * The name of the icon, e.g., "arrow-up", "flag", "fire" etc.
      */
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    String name;
+    private String name;
 
     @Inject
     ComponentResources resources;
