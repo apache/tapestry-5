@@ -374,7 +374,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
                 configuration);
 
-        assertEquals(locator.findMeta(key, resources, Integer.class), new Integer(99));
+        assertEquals(locator.findMeta(key, resources, Integer.class), Integer.valueOf(99));
 
         verify();
     }

@@ -217,7 +217,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     @Test
     public void to_client_via_translator()
     {
-        Object value = new Integer(99);
+        Object value = Integer.valueOf(99);
         ComponentResources resources = mockComponentResources();
         FieldTranslator translator = mockFieldTranslator();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();

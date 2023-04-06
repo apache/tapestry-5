@@ -121,7 +121,7 @@ public class IntegerRangeTest extends Assert
 
         Iterator<Integer> i = r.iterator();
 
-        assertEquals(i.next(), new Integer(1));
+        assertEquals(i.next(), Integer.valueOf(1));
 
         try
         {
@@ -133,7 +133,7 @@ public class IntegerRangeTest extends Assert
             // Expected, ignored.
         }
 
-        assertEquals(i.next(), new Integer(2));
+        assertEquals(i.next(), Integer.valueOf(2));
     }
 
     private final void unreachable()

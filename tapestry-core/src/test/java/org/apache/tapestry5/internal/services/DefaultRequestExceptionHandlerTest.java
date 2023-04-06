@@ -141,7 +141,7 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase
     @Test
     public void contextIsProvidedByContextAwareException()
     {
-        Object[] sourceContext = new Object[]{new Integer(10), this};
+        Object[] sourceContext = new Object[]{Integer.valueOf(10), this};
 
         Object[] context = exceptionHandler.formExceptionContext(new MyContextAwareException(sourceContext)
         {

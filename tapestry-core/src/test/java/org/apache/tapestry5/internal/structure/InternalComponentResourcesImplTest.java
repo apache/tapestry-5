@@ -111,7 +111,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        Object rawValue = new Long(97);
+        Object rawValue = Long.valueOf(97);
 
         train_getModel(ins, model);
 

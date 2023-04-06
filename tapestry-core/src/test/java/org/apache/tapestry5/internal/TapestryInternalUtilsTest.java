@@ -145,7 +145,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @Test
     public void object_to_option_model()
     {
-        Object object = new Integer(27);
+        Object object = Integer.valueOf(27);
         OptionModel model = TapestryInternalUtils.toOptionModel(object);
 
         assertEquals(model.getLabel(), "27");

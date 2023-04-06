@@ -59,7 +59,7 @@ public class FormInjectorDemo
 
             public DoubleItem toValue(String clientValue)
             {
-                Long key = new Long(clientValue);
+                Long key = Long.valueOf(clientValue);
 
                 return database.get(key);
             }

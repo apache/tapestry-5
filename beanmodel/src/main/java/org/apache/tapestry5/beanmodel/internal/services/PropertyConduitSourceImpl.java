@@ -814,13 +814,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
                     case INTEGER:
 
-                        builder.loadConstant(new Long(node.getText()));
+                        builder.loadConstant(Long.valueOf(node.getText()));
 
                         return long.class;
 
                     case DECIMAL:
 
-                        builder.loadConstant(new Double(node.getText()));
+                        builder.loadConstant(Double.valueOf(node.getText()));
 
                         return double.class;
 
@@ -1448,14 +1448,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     // Leading '+' may screw this up.
                     // TODO: Singleton instance for "0", maybe "1"?
 
-                    return createLiteralConduit(Long.class, new Long(tree.getText()));
+                    return createLiteralConduit(Long.class, Long.valueOf(tree.getText()));
 
                 case DECIMAL:
 
                     // Leading '+' may screw this up.
                     // TODO: Singleton instance for "0.0"?
 
-                    return createLiteralConduit(Double.class, new Double(tree.getText()));
+                    return createLiteralConduit(Double.class, Double.valueOf(tree.getText()));
 
                 case STRING:
 

@@ -491,7 +491,7 @@ public class FuncTest extends BaseFuncTest
         Iterator<Integer> it = flow.iterator();
 
         assertTrue(it.hasNext());
-        assertEquals(it.next(), new Integer(2));
+        assertEquals(it.next(), Integer.valueOf(2));
 
         it.remove();
     }

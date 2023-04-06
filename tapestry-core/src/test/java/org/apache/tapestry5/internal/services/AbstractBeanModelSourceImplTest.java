@@ -522,7 +522,7 @@ public abstract class AbstractBeanModelSourceImplTest extends InternalBaseTestCa
 
         bean.getSimple().setAge(24);
 
-        assertEquals(age.getConduit().get(bean), new Integer(24));
+        assertEquals(age.getConduit().get(bean), Integer.valueOf(24));
 
         verify();
     }

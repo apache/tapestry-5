@@ -514,7 +514,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         for (int i = 0; i < 10; i++)
         {
             bean.setStoredInt(i);
-            assertEquals(conduit.get(bean), new Integer(i * 3));
+            assertEquals(conduit.get(bean), Integer.valueOf(i * 3));
         }
     }
 
@@ -528,7 +528,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         bean.setStoredDouble(value);
 
-        assertEquals(conduit.get(bean), new Double(2. * value));
+        assertEquals(conduit.get(bean), Double.valueOf(2. * value));
     }
 
     @Test
@@ -566,7 +566,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List l = (List) conduit.get(bean);
 
-        assertListsEquals(l, new Long(1), new Double(2.0), "Lisa");
+        assertListsEquals(l, Long.valueOf(1), Double.valueOf(2.0), "Lisa");
     }
 
     @Test
@@ -592,7 +592,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List l = (List) conduit.get(bean);
 
-        assertListsEquals(l, new Long(1), new Double(2.0), "Bart");
+        assertListsEquals(l, Long.valueOf(1), Double.valueOf(2.0), "Bart");
     }
 
     @Test
@@ -804,7 +804,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         PropertyConduit pc = source.create(PublicFieldBean.class, "IntField");
 
-        assertEquals(pc.get(bean), new Integer(99));
+        assertEquals(pc.get(bean), Integer.valueOf(99));
 
         pc.set(bean, 37);
 

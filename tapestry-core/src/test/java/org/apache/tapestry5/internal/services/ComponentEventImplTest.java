@@ -172,7 +172,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         ComponentPageElementResources resources = mockComponentPageElementResources();
         EventContext context = mockEventContext();
-        Integer value = new Integer(27);
+        Integer value = Integer.valueOf(27);
         Logger logger = mockLogger();
 
         ComponentModel model = mockComponentModel();

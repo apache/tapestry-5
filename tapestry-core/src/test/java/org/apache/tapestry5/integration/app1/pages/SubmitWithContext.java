@@ -25,7 +25,7 @@ public class SubmitWithContext
     
     public Object[] getFormContext()
     {
-        return new Object[]{new Integer(7), new Double(3.14159)};
+        return new Object[]{Integer.valueOf(7), Double.valueOf(3.14159)};
      }
 
     void onSelected(Integer first, Double second)

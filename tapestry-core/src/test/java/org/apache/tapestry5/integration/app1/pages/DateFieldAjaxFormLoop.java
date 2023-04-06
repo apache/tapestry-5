@@ -51,7 +51,7 @@ public class DateFieldAjaxFormLoop
 
             public DateHolder toValue(String clientValue)
             {
-                Integer key = new Integer(clientValue);
+                Integer key = Integer.valueOf(clientValue);
 
                 return database.get(key);
             }
