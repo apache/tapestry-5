@@ -1,3 +1,5 @@
+// Copyright 2008, 2009, 2010, 2011, 2015, 2020, 2023 The Apache Software Foundation
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,8 +24,8 @@ import org.apache.tapestry5.commons.ObjectLocator;
  * so, the service can invalidate its internal cache, or notify other services (typically via
  * {@link org.apache.tapestry5.commons.services.InvalidationListener} that they should do the same.
  *
- * Note that this interface has moved from module tapestry-core to tapestry-ioc, but has kept the same package (for
- * backwards compatibility reasons).
+ * Note that this interface has moved from module tapestry-core to tapestry-ioc. It was, however, not possible to keep
+ * the same package (for backwards compatibility reasons) without causing a split package (in terms of Java 9 Modules).
  *
  * A <em>weak reference</em> to the listener is kept; this ensures that registering as a listener will not prevent a
  * listener instance from being reclaimed by the garbage collector (this is useful as proxies created by
