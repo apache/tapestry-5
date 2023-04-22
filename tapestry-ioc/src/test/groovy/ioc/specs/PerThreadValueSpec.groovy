@@ -33,7 +33,7 @@ class PerThreadValueSpec extends Specification {
 
   def "computeIfAbsent - pre-existing value"() {
     given:
-    def currentValue = "inital value"
+    def currentValue = "initial value"
     def newValue = "a computed value"
     PerThreadValue<String> perThreadValue = manager.createValue();
     perThreadValue.set(currentValue)
@@ -60,7 +60,7 @@ class PerThreadValueSpec extends Specification {
 
   def "computeIfPresent - no value"() {
     given:
-    def currentValue = "inital value"
+    def currentValue = "initial value"
     def newValue = "a computed value"
     PerThreadValue<String> perThreadValue = manager.createValue();
 
@@ -74,7 +74,7 @@ class PerThreadValueSpec extends Specification {
 
   def "computeIfPresent - pre-existing value"() {
     given:
-    def currentValue = "inital value"
+    def currentValue = "initial value"
     def newValue = "a computed value"
     PerThreadValue<String> perThreadValue = manager.createValue();
     perThreadValue.set(currentValue)
@@ -113,7 +113,7 @@ class PerThreadValueSpec extends Specification {
 
   def "compute - pre-existing value"() {
     given:
-    def currentValue = "inital value"
+    def currentValue = "initial value"
     def newValue = "a computed value"
     PerThreadValue<String> perThreadValue = manager.createValue();
     perThreadValue.set(currentValue)
