@@ -178,6 +178,4 @@ class PerthreadManagerImplSpec extends Specification {
     !value.exists()
 
   }
-
-
 }
