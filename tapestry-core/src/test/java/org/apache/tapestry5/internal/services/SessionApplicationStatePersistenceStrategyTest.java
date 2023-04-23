@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -154,4 +154,70 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         verify();
     }
+
+    @Test(description = "TAP5-2537")
+    public void getIfExists_where_no_session()
+    {
+        Request request = mockRequest();
+        Class asoClass = ReadOnlyBean.class;
+
+        train_getSession(request, false, null);
+
+        ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        replay();
+
+        assertNull(strategy.getIfExists(asoClass));
+
+        verify();
+
+    }
+
+
+    @Test
+    public void getIfExists_where_it_does_not()
+    {
+        Request request = mockRequest();
+        Session session = mockSession();
+        Class asoClass = ReadOnlyBean.class;
+        Object aso = new ReadOnlyBean();
+        String key = "sso:" + asoClass.getName();
+        ApplicationStateCreator creator = mockApplicationStateCreator();
+
+        train_getSession(request, false, session);
+        train_getAttribute(session, key, null);
+
+        ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        replay();
+
+        assertNull(strategy.getIfExists(asoClass));
+
+        verify();
+
+    }
+
+    @Test
+    public void getIfExists_where_it_does()
+    {
+        Request request = mockRequest();
+        Session session = mockSession();
+        Class asoClass = ReadOnlyBean.class;
+        Object aso = new ReadOnlyBean();
+        String key = "sso:" + asoClass.getName();
+        ApplicationStateCreator creator = mockApplicationStateCreator();
+
+        train_getSession(request, false, session);
+        train_getAttribute(session, key, aso);
+
+        ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        replay();
+
+        assertSame(strategy.getIfExists(asoClass), aso);
+
+        verify();
+
+    }
+
 }
