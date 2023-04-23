@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ApplicationStateManager;
 import org.example.app6.entities.User;
 import org.example.app6.services.UserDAO;
 
@@ -34,6 +35,14 @@ public class SSOEntity
 
     @Inject
     private Request request;
+
+    @Inject
+    ApplicationStateManager manager;
+
+    public User getUserIfExists()
+    {
+        return manager.getIfExists(User.class);
+    }
 
     void onPersistEntity()
     {

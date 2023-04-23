@@ -51,10 +51,4 @@
 		</packages>
 	</test>
 	
-	<test name="Tapestry JPA Integration Test with EntityApplicationStatePersistenceStrategy" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/app7" />
-		<packages>
-			<package name="org.apache.tapestry5.jpa.integration.app7" />
-		</packages>
-	</test>
 </suite>
