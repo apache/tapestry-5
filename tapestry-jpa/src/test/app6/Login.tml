@@ -4,10 +4,10 @@
 			<t:form t:id="login">
 				<h2>Please sign in</h2>
 				<div>
-					<t:textfield t:id="username" placeholder="Username"/>
+					<t:textfield t:id="firstname" placeholder="First name"/>
 				</div>
 				<div>
-					<t:passwordfield t:id="password" placeholder="Password"/>
+					<t:textfield t:id="lastname" placeholder="Last name"/>
 				</div>
 				<div>
 					<t:submit t:id="register" />

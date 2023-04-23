@@ -12,46 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app7.pages;
+package org.example.app6.pages;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.example.app6.AppConstants;
-import org.example.app7.entities.User;
 import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
+import org.example.app6.entities.User;
 
-public class Login
+public class Sign
 {
-	@Property
-	private String username;
-	
-	@Property
-	private String password;
-	
-	@Inject
-	@PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
-	private EntityManager entityManager;
-	
+	public static final String GREETING = "Signed as ";
 	@Inject
 	private ApplicationStateManager applicationStateManager;
 	
 	@InjectPage
-	private Index index;
+	private Login login;
 	
-	Object onSuccessFromLogin()
+	public String getGreeting()
 	{
-		entityManager.getTransaction().begin();
-		User user = new User();
-		user.setUsername(username);
-		user.setPassword(password);
-		entityManager.persist(user);
-		entityManager.getTransaction().commit();
-		
-		applicationStateManager.set(User.class, user);
-		return index;
+		User user = applicationStateManager.getIfExists(User.class);
+		return user != null ? GREETING + user.getFirstName() : null;
+	}
+	
+	public boolean isLoggedIn()
+	{
+		return applicationStateManager.exists(User.class);
+	}
+	
+	public boolean isNotLogged()
+	{
+		return !isLoggedIn();
+	}
+	
+	Object onActionFromSignIn()
+	{
+		return login;
 	}
 }

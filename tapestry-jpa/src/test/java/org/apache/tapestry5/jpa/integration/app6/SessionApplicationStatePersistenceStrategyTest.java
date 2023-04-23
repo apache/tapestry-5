@@ -12,25 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.jpa.integration.app7;
+package org.apache.tapestry5.jpa.integration.app6;
 
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
+import org.example.app6.pages.Sign;
 import org.testng.annotations.Test;
 
-@TapestryTestConfiguration(webAppFolder = "src/test/app7")
+@TapestryTestConfiguration(webAppFolder = "src/test/app6")
 public class SessionApplicationStatePersistenceStrategyTest extends SeleniumTestCase
 {
 
     @Test
     public void check()
     {
-        open("/");
+        deleteAllVisibleCookies();
+        open("/sign");
         clickAndWait("link=Sign in");
-        String username = "test-user";
-        typeKeys("//input[@id='username']", username);
-        typeKeys("//input[@id='password']", "test-password");
+        String firstname = "test-firstname";
+        typeKeys("//input[@id='firstname']", firstname);
+        typeKeys("//input[@id='lastname']", "test-lastname");
         clickAndWait("//input[@id='register']");
-        assertTextPresent("Logged as " + username);
+        assertTextPresent(Sign.GREETING + firstname);
     }
 }

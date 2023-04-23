@@ -5,7 +5,7 @@
 	<body>
 		<div>
 			<t:if test="loggedIn">
-				<span>Logged as ${username}</span>
+				<span>${greeting}</span>
 			</t:if>
 			<t:if test="notLogged">
 				<t:actionlink t:id="signIn">Sign in</t:actionlink>
