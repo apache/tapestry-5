@@ -38,4 +38,3 @@ task runTestApp6(type:JavaExec) {
     args "-d", "src/test/app6", "-p", "8080"
     classpath += project.sourceSets.test.runtimeClasspath
 }
-  

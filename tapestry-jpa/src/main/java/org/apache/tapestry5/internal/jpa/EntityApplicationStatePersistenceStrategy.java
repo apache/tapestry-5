@@ -33,6 +33,12 @@ public class EntityApplicationStatePersistenceStrategy extends
     }
 
     @Override
+    protected <T> T transformPersistedValue(Object value)
+    {
+        return value instanceof PersistedEntity ? (T) ((PersistedEntity) value).restore(entityManagerManager) : (T) value;
+    }
+
+    @Override
     public <T> T get(final Class<T> ssoClass, final ApplicationStateCreator<T> creator)
     {
         final Object persistedValue = getOrCreate(ssoClass, creator);
@@ -41,7 +47,7 @@ public class EntityApplicationStatePersistenceStrategy extends
         {
             final PersistedEntity persisted = (PersistedEntity) persistedValue;
 
-            final Object restored = persisted.restore(entityManagerManager);
+            final Object restored = transformPersistedValue(persisted);
 
             // shall we maybe throw an exception instead?
             if (restored == null)
