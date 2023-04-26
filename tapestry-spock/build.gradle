@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Provides support Tapestry injections in Spock specifications"
 
 dependencies {
@@ -9,6 +13,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }
 
-test {
-	useJUnit()
+testing {
+	suites { // a test suite is a collection of JVM-based tests
+		test { // this is the built-in 'test' test suite
+			useJUnitJupiter()
+		}
+	}
 }

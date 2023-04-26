@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 import t5build.*
 
 description = "Support for JSR-303 Bean Validation via the Hibernate validator implementation"

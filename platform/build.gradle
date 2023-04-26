@@ -1,0 +1,35 @@
+plugins {
+       id 'tapestry.base'
+       id 'java-platform'
+       id 'maven-publish'
+}
+
+description = 'Gradle platform project for sharing settings across projects.'
+
+dependencies {
+       constraints {
+               def slf4jVersion = '1.7.25'
+               api "org.slf4j:slf4j-api:${slf4jVersion}"
+               api "org.slf4j:slf4j-log4j12:${slf4jVersion}"
+               api 'javax.servlet:javax.servlet-api:3.0.1'
+       }
+}
+
+javaPlatform {
+       // Allow this platform project to have own dependencies, not only dependency constraints.
+       // This is necessary to have this platform include the constraints from third party platforms, specifically Spock.
+       allowDependencies()
+}
+
+dependencies {
+       api platform("org.spockframework:spock-bom:2.3-groovy-3.0")
+}
+
+publishing {
+    publications {
+        tapestryPlatform(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
+

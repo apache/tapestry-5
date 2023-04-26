@@ -1,7 +1,17 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Test suite for making sure Tapestry runs on latest Java"
 
-sourceCompatibility = "17"
-targetCompatibility = "17"
+//sourceCompatibility = "17"
+//targetCompatibility = "17"
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
 
 tasks.withType(JavaCompile).each { 
     it.options.compilerArgs.add("--enable-preview")

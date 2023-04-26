@@ -1,4 +1,15 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}
+
 
 dependencies {
   implementation project(':tapestry-core')

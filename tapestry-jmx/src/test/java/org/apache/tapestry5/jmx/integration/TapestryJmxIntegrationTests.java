@@ -16,7 +16,7 @@ package org.apache.tapestry5.jmx.integration;
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.testng.annotations.Test;
 
-@Test(sequential = true, groups = "integration")
+@Test(singleThreaded = true, groups = "integration")
 public class TapestryJmxIntegrationTests extends SeleniumTestCase
 {
     /** TAP5-978 */

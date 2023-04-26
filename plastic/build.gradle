@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "High-level runtime transformations of Java classes"
 
 dependencies {

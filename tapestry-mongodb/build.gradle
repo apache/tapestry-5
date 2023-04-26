@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Basic MongoDB services for Tapestry, useable outside of a Tapestry web application"
 
 dependencies {

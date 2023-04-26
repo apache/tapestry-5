@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json"
 
 dependencies {
