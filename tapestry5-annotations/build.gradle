@@ -1,1 +1,5 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Annotations used with Tapestry, Tapestry-IoC and BeanModel applications"

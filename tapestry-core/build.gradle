@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 import org.gradle.plugins.ide.idea.model.*
 import org.apache.tools.ant.filters.ReplaceTokens
 import t5build.*
@@ -75,7 +79,7 @@ compileTestGroovy.dependsOn compileTestJava
 test {
 	// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        // jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
     }
 	// TAP5-2722
 	systemProperty 'user.language', 'en'

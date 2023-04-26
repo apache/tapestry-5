@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more."
 
 //configurations {

@@ -32,6 +32,10 @@ buildCache {
     }
 }
 
+
+//rootProject.name='tapestry-5'
+include "platform"
+
 include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-http", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
 include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
@@ -47,3 +51,25 @@ include "tapestry-webresources", "tapestry-runner", "tapestry-test-constants"
 include "tapestry-ioc-jcache", "beanmodel", "commons", "genericsresolver-guava", "tapestry-version-migrator"
 // include "tapestry-cdi"
 include "tapestry-spock", "tapestry-openapi-viewer", "tapestry-rest-jackson"
+
+dependencyResolutionManagement {
+
+	// Warn if a project declares its own repository
+	repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
+	repositories {
+
+		mavenLocal()
+
+		mavenCentral()
+
+        // All things JBoss/Hibernate
+		maven {
+			name "JBoss"
+			url "https://repository.jboss.org/nexus/content/repositories/releases/"
+		}
+
+	}
+
+}
+
