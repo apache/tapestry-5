@@ -356,4 +356,13 @@ public class PlasticManager implements PlasticClassListenerHub
         return pool.shouldInterceptClassLoading(className);
     }
     
+    /**
+     * Returns the Plastic class pool used by this instance.
+     * @since 5.8.3
+     */
+    public PlasticClassPool getPool() 
+    {
+        return pool;
+    }
+    
 }

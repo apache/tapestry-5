@@ -14,13 +14,11 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
-import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
@@ -46,10 +44,6 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private final SymbolSource symbolSource;
 
     private final AssetSource assetSource;
-    
-    private final ResourceChangeTracker resourceChangeTracker;
-    
-    private final boolean productionMode;
 
     private final Worker<Asset> importLibrary = new Worker<Asset>()
     {
@@ -75,27 +69,21 @@ public class ImportWorker implements ComponentClassTransformWorker2
         }
     };
 
-    public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource,
-            ResourceChangeTracker resourceChangeTracker)
+    public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
     {
         this.javascriptSupport = javascriptSupport;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
-        this.resourceChangeTracker = resourceChangeTracker;
-        this.productionMode = Boolean.valueOf(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
     }
 
     public void transform(PlasticClass componentClass, TransformationSupport support, MutableComponentModel model)
     {
-        resourceChangeTracker.setCurrentClassName(model.getComponentClassName());
         processClassAnnotationAtSetupRenderPhase(componentClass, model);
 
         for (PlasticMethod m : componentClass.getMethodsWithAnnotation(Import.class))
         {
             decorateMethod(componentClass, model, m);
         }
-        
-        resourceChangeTracker.clearCurrentClassName();
     }
 
     private void processClassAnnotationAtSetupRenderPhase(PlasticClass componentClass, MutableComponentModel model)
@@ -123,6 +111,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
                                 Import annotation)
     {
         importStacks(method, annotation.stack());
+
+        String libraryName = model.getLibraryName();
 
         importLibraries(componentClass, model, method, annotation.library());
 
@@ -274,7 +264,6 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private void addMethodAssetOperationAdvice(PlasticMethod method, final FieldHandle access,
                                                final Worker<Asset> operation)
     {
-        final String className = method.getPlasticClass().getClassName();
         method.addAdvice(new MethodAdvice()
         {
             public void advise(MethodInvocation invocation)
@@ -283,17 +272,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
                 Asset[] assets = (Asset[]) access.get(invocation.getInstance());
 
-                if (!productionMode)
-                {
-                    resourceChangeTracker.setCurrentClassName(className);
-                }
-                
                 F.flow(assets).each(operation);
-                
-                if (!productionMode)
-                {
-                    resourceChangeTracker.clearCurrentClassName();
-                }
             }
         });
     }

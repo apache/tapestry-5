@@ -19,14 +19,9 @@ import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.commons.util.DifferentClassVersionsException;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.FieldConduit;
-import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
@@ -124,13 +119,9 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
     
     private final Logger logger;
     
-    private final ComponentDependencyRegistry componentDependencyRegistry;
-
-    public InjectComponentWorker(ComponentClassCache classCache, 
-            ComponentDependencyRegistry componentDependencyRegistry,  final Logger logger)
+    public InjectComponentWorker(ComponentClassCache classCache, final Logger logger)
     {
         this.classCache = classCache;
-        this.componentDependencyRegistry = componentDependencyRegistry;
         this.logger = logger;
     }
 
@@ -161,9 +152,6 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
             };
 
             field.setComputedConduit(provider);
-            
-            componentDependencyRegistry.register(field, model);
-            
         }
 
     }

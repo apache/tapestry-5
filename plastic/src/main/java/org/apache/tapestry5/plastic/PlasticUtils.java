@@ -141,4 +141,14 @@ public class PlasticUtils
     {
         return PrimitiveType.getByName(typeName) != null;
     }
+
+    /**
+     * If the given class is an inner class, returns the enclosing class.
+     * Otherwise, returns the class name unchanged.
+     */
+    public static String getEnclosingClassName(String className)
+    {
+        int index = className.indexOf('$');
+        return index <= 0 ? className : className.substring(0, index);
+    }
 }

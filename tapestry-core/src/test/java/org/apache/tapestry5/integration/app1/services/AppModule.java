@@ -139,7 +139,7 @@ public class AppModule
                 {
                     long elapsed = System.nanoTime() - startTime;
 
-//                    log.info(String.format("Request time: %5.2f s -- %s", elapsed * 10E-10d, request.getPath()));
+                    log.info(String.format("Request time: %5.2f s -- %s", elapsed * 10E-10d, request.getPath()));
                 }
             }
         };
@@ -395,9 +395,9 @@ public class AppModule
     @Contribute(PagePreloader.class)
     public static void setupPagePreload(Configuration<String> configuration)
     {
-//        configuration.add("index");
-//        configuration.add("core/exceptionreport");
-//        configuration.add("core/t5dashboard");
+        configuration.add("index");
+        configuration.add("core/exceptionreport");
+        configuration.add("core/t5dashboard");
     }
     
 

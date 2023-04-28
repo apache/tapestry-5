@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,6 +77,10 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     // Key is a component, values are the components that depend on it.
     final private Map<String, Set<String>> map;
     
+    // Dependencies that are only for invalidation (i.e. from one component to 
+    // a page injected through @InjectPage
+    final private Set<InvalidationOnlyDependency> invalidationOnlyDependencies;
+    
     // Cache to check which classes were already processed or not.
     final private Set<String> alreadyProcessed;
     
@@ -104,6 +109,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         this.pageClassloaderContextManager = pageClassloaderContextManager;
         map = new HashMap<>();
         alreadyProcessed = new HashSet<>();
+        invalidationOnlyDependencies = new HashSet<InvalidationOnlyDependency>();
         this.plasticManager = plasticManager;
         this.resolver = componentClassResolver;
         this.templateParser = templateParser;
@@ -150,6 +156,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     public void register(Class<?> component) 
     {
         
+        final String className = component.getName();
         final Set<Class<?>> furtherDependencies = new HashSet<>();
         Consumer<Class<?>> processClass = furtherDependencies::add;
         Consumer<String> processClassName = s -> {
@@ -168,13 +175,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         for (Field field : component.getDeclaredFields())
         {
             
-            // Component and page injection annotation
-            if (field.isAnnotationPresent(InjectPage.class) || 
-                    field.isAnnotationPresent(InjectComponent.class))
+            // Component injection annotation
+            if (field.isAnnotationPresent(InjectComponent.class))
             {
                 final Class<?> dependency = field.getType();
                 add(component, dependency);
                 processClass.accept(dependency);
+            }
+            
+            // Page injection annotation
+            if (field.isAnnotationPresent(InjectComponent.class))
+            {
+                final Class<?> dependency = field.getType();
+                invalidationOnlyDependencies.add(
+                        new InvalidationOnlyDependency(className, dependency.getName()));
             }
             
             // @Component
@@ -195,14 +209,16 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             add(component, superclass);
         }
         
-        alreadyProcessed.add(component.getName());
+        Set<String> dynamicDependencies;
+
+        alreadyProcessed.add(className);
         
         for (Class<?> dependency : furtherDependencies) 
         {
             // Avoid infinite recursion
             final String dependencyClassName = dependency.getName();
             if (!alreadyProcessed.contains(dependencyClassName)
-                    && !plasticManager.shouldInterceptClassLoading(dependency.getName()))
+                    && plasticManager.shouldInterceptClassLoading(dependency.getName()))
             {
                 register(dependency);
             }
@@ -443,6 +459,18 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 }
             }
         }
+        synchronized (invalidationOnlyDependencies) 
+        {
+            final Iterator<InvalidationOnlyDependency> iterator = invalidationOnlyDependencies.iterator();
+            while (iterator.hasNext())
+            {
+                InvalidationOnlyDependency dependency = iterator.next();
+                if (dependency.className.equals(className) || dependency.dependency.equals(className))
+                {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     @Override
@@ -467,10 +495,16 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getDependencies(String className) 
     {
-        return map.entrySet().stream()
+        Set<String> dependencies = Collections.emptySet();
+        if (alreadyProcessed.contains(className))
+        {
+            dependencies = map.entrySet().stream()
                 .filter(e -> e.getValue().contains(className))
                 .map(e -> e.getKey())
                 .collect(Collectors.toSet());
+        }
+        
+        return dependencies;
     }
 
     private void add(ComponentPageElement component, ComponentPageElement dependency) 
@@ -491,7 +525,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
     }
     
-    private void add(Class component, Class dependency) 
+    private void add(Class<?> component, Class<?> dependency) 
     {
         if (plasticManager.shouldInterceptClassLoading(dependency.getName()))
         {
@@ -536,11 +570,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
         // Don't invalidate component dependency information when 
         // PageClassloaderContextManager is merging contexts
+        // TODO is this still needed since the inception of INVALIDATIONS_ENABLED? 
         else if (!pageClassloaderContextManager.isMerging())
         {
             furtherDependents = new ArrayList<>();
             for (String resource : resources) 
             {
+                
                 final Set<String> dependents = getDependents(resource);
                 for (String furtherDependent : dependents) 
                 {
@@ -549,6 +585,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                         furtherDependents.add(furtherDependent);
                     }
                 }
+                
+                for (InvalidationOnlyDependency invalidationOnlyDependency : invalidationOnlyDependencies) 
+                {
+                    if (invalidationOnlyDependency.dependency.equals(resource))
+                    {
+                        furtherDependents.add(invalidationOnlyDependency.dependency);
+                    }
+                }
+                
                 clear(resource);
             }
         }
@@ -783,5 +828,42 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
 
     }
 
+    final private class InvalidationOnlyDependency
+    {
+        
+        private String className;
+        private String dependency;
+        
+        public InvalidationOnlyDependency(String className, String dependency) 
+        {
+            super();
+            this.className = className;
+            this.dependency = dependency;
+        }
+
+        @Override
+        public int hashCode() 
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Objects.hash(className, dependency);
+            return result;
+        }
+        
+        @Override
+        public boolean equals(Object obj) 
+        {
+            if (this == obj) 
+            {
+                return true;
+            }
+            if (!(obj instanceof InvalidationOnlyDependency)) {
+                return false;
+            }
+            InvalidationOnlyDependency other = (InvalidationOnlyDependency) obj;
+            return Objects.equals(className, other.className) && Objects.equals(dependency, other.dependency);
+        }
+        
+    }
     
 }

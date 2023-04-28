@@ -25,12 +25,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +113,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         else
         {
             
-            final String enclosingClassName = getEnclosingClassName(className);
+            final String enclosingClassName = PlasticUtils.getEnclosingClassName(className);
             context = root.findByClassName(enclosingClassName);
             
             if (context == null)
@@ -132,7 +134,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
 
                 if (!className.equals(enclosingClassName))
                 {
-                    context.addClass(className);
+                    loadClass(className, context);
                 }
                 
             }
@@ -143,18 +145,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         
     }
 
-    /**
-     * If the given class is an inner class, returns the enclosing class.
-     * Otherwise, returns the class name unchanged.
-     */
-    private String getEnclosingClassName(String className)
-    {
-        int index = className.indexOf('$');
-        return index <= 0 ? className : className.substring(0, index);
-    }
-
     private PageClassloaderContext getUnknownContext(final PageClassloaderContext root,
-            final Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider) {
+            final Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider) 
+    {
+        
         PageClassloaderContext unknownContext = null;
         
         for (PageClassloaderContext child : root.getChildren()) 
@@ -186,16 +180,29 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         return processUsingDependencies(className, root, unknownContextProvider, plasticProxyFactoryProvider, classesToInvalidate, new HashSet<>());
     }
 
+    private PageClassloaderContext processUsingDependencies(
+            String className, 
+            PageClassloaderContext root, 
+            Supplier<PageClassloaderContext> unknownContextProvider, 
+            Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, 
+            Set<String> classesToInvalidate,
+            Set<String> alreadyProcessed) 
+    {
+        return processUsingDependencies(className, root, unknownContextProvider, 
+                plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed, true);
+    }
+
 
     private PageClassloaderContext processUsingDependencies(
             String className, 
             PageClassloaderContext root, 
             Supplier<PageClassloaderContext> unknownContextProvider, 
-            Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, Set<String> classesToInvalidate,
-            Set<String> alreadyProcessed) 
+            Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, 
+            Set<String> classesToInvalidate,
+            Set<String> alreadyProcessed,
+            boolean processCircularDependencies) 
     {
         PageClassloaderContext context = root.findByClassName(className);
-        Set<String> circularDependencies = new HashSet<>(1);
         if (context == null)
         {
             
@@ -209,18 +216,23 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                         !componentDependencyRegistry.contains(className) && 
                         componentDependencyRegistry.getDependents(className).isEmpty())
                 {
-                    // Make sure you get a fresh version of the class before processing its
-                    // dependencies
-                    Class<?> clasz;
-                    PlasticProxyFactory throwaway = plasticProxyFactoryProvider.apply(root.getClassLoader());
-                    try {
-                        clasz = throwaway.getClassLoader().loadClass(className);
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                    componentDependencyRegistry.register(clasz);
-                    alreadyProcessed.remove(className);
-                    return processUsingDependencies(className, root, unknownContextProvider, plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
+                    context = unknownContextProvider.get();
+//                    // Make sure you get a fresh version of the class before processing its
+//                    // dependencies
+//                    PageClassloaderContext throwaway = new PageClassloaderContext(
+//                            "Throwaway", 
+//                            root, 
+//                            Collections.singleton(className), 
+//                            plasticProxyFactoryProvider.apply(root.getClassLoader()));
+//
+//                    Class<?> clasz = loadClass(className, throwaway);
+//                    componentDependencyRegistry.register(clasz);
+//                    
+//                    throwaway.getProxyFactory().clearCache();
+//                    throwaway.getClassNames().clear();
+//                    
+//                    alreadyProcessed.remove(className);
+//                    return processUsingDependencies(className, root, unknownContextProvider, plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
                 }
                 else 
                 {
@@ -228,17 +240,18 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     alreadyProcessed.add(className);
 
                     // Sorting dependencies alphabetically so we have consistent results.
-                    List<String> dependencies = new ArrayList<>(componentDependencyRegistry.getDependencies(className));
+                    List<String> dependencies = new ArrayList<>(getDependenciesWithoutPages(className));
                     Collections.sort(dependencies);
                     
                     // Process dependencies depth-first
                     for (String dependency : dependencies)
                     {
                         // Avoid infinite recursion loops
-                        if (!alreadyProcessed.contains(dependency))
+                        if (!alreadyProcessed.contains(dependency)/* && 
+                                !circularDependencies.contains(dependency)*/)
                         {
                             processUsingDependencies(dependency, root, unknownContextProvider, 
-                                    plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
+                                    plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed, false);
                         }
                     }
                     
@@ -246,13 +259,9 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     Set<PageClassloaderContext> contextDependencies = new HashSet<>();
                     for (String dependency : dependencies) 
                     {
-                        // Direct circular dependency
-                        if (componentDependencyRegistry.getDependencies(dependency).contains(className))
-                        {
-                            circularDependencies.add(dependency);
-                        }
-                        else
-                        {
+                        // Circular dependency
+//                        if (!circularDependencies.contains(dependency))
+//                        {
                             PageClassloaderContext dependencyContext = root.findByClassName(dependency);
                             if (dependencyContext == null)
                             {
@@ -261,7 +270,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
 
                             }
                             contextDependencies.add(dependencyContext);
-                        }
+//                        }
                     }
                     
                     if (contextDependencies.size() == 0)
@@ -287,10 +296,19 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                                 getContextName(className), 
                                 parentContext, 
                                 Collections.singleton(className), 
-                                plasticProxyFactoryProvider.apply(root.getClassLoader()));
+                                plasticProxyFactoryProvider.apply(parentContext.getClassLoader()));
                     }
                     
                     context.getParent().addChild(context);
+                    
+                    // Ensure non-page class is initialized in the correct context and classloader.
+                    // Pages get their own context and classloader, so this initialization
+                    // is both non-needed and a cause for an NPE if it happened.
+                    if (!componentClassResolver.isPage(className)/*
+                            && circularDependencies.isEmpty()*/)
+                    {
+                        loadClass(className, context);
+                    }
 
                     LOGGER.debug("New context: {}", context);
                     
@@ -299,11 +317,64 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             
         }
         context.addClass(className);
-        for (String circularDependency : circularDependencies) 
-        {
-            context.addClass(circularDependency);
-        }
+        
+        // Merge contexts of circular dependencies into a single one
+        
+//        if (processCircularDependencies && !circularDependencies.isEmpty())
+//        {
+//            Set<PageClassloaderContext> contexts = new HashSet<>(circularDependencies.size() + 1);
+//            contexts.add(context);
+//            for (String circularDependency : circularDependencies) 
+//            {
+//                PageClassloaderContext toMerge = 
+//                    processUsingDependencies(
+//                        circularDependency, root, unknownContextProvider, 
+//                        plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed,
+//                        false);
+//                contexts.add(toMerge);
+//            }
+//            if (contexts.size() > 1)
+//            {
+//                
+//                context = merge(contexts, plasticProxyFactoryProvider, root, classesToInvalidate);
+//                
+//                // Avoiding an infinite recursion
+//                classesToInvalidate.removeAll(context.getClassNames());
+//                
+//                // Ensure non-page class is initialized in the correct context and classloader
+//                for (String clasz : context.getClassNames()) {
+//                    if (!componentClassResolver.isPage(clasz))
+//                    {
+//                        loadClass(clasz, context);
+//                    }
+//                }
+//            }
+//        }
         return context;
+    }
+
+    private Set<String> getDependenciesWithoutPages(String className) {
+        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className);
+        return dependencies.stream()
+                .filter(c -> !componentClassResolver.isPage(c))
+                .collect(Collectors.toSet());
+    }
+
+    private Class<?> loadClass(String className, PageClassloaderContext context) 
+    {
+        try 
+        {
+            final ClassLoader classLoader = context.getPlasticManager().getClassLoader();
+            final Class<?> clasz = classLoader.loadClass(className);
+            // TODO: do were really need this loop?
+            for (Class<?> c : clasz.getDeclaredClasses()) 
+            {
+                final Class<?> cccc = classLoader.loadClass(c.getName());
+            }
+            return clasz;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     
     private PageClassloaderContext merge(
@@ -403,6 +474,11 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         
         parent.addChild(merged);
         
+//        for (String className : classNames) 
+//        {
+//            loadClass(className, merged);
+//        }
+        
         NESTED_MERGE_COUNT.set(NESTED_MERGE_COUNT.get() - 1);
         if (LOGGER.isDebugEnabled())
         {
@@ -488,6 +564,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             LOGGER.debug("Invalidating classes {}", classesToInvalidate);
             INVALIDATING_CONTEXT.set(true);
             final ArrayList<String> classesToInvalidateAsList = new ArrayList<>(classesToInvalidate);
+            // TODO: do we really need both invalidation hubs to be invoked here?
             invalidationHub.fireInvalidationEvent(classesToInvalidateAsList);
             componentClassesInvalidationEventHub.fireInvalidationEvent(classesToInvalidateAsList);
             INVALIDATING_CONTEXT.set(false);
@@ -517,4 +594,45 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     {
     }
 
+    @Override
+    public Class<?> getClassInstance(Class<?> clasz, String pageName) 
+    {
+        final String className = clasz.getName();
+        PageClassloaderContext context = root.findByClassName(className);
+        if (context == null)
+        {
+            context = get(className);
+        }
+//        final String pageClassName = componentClassResolver.resolvePageNameToClassName(pageName);
+//        final PageClassloaderContext context = get(pageClassName);
+//        PageClassloaderContext ancestor = context.getParent();
+//        
+//        if (!className.equals(pageClassName))
+//        {
+//        
+//            while (ancestor != null && !ancestor.getClassNames().contains(className))
+//            {
+//                ancestor = ancestor.getParent();
+//            }
+//            
+//            if (ancestor == null)
+//            {
+//                ancestor = context;
+//            }
+//            
+//            if (clasz.getSimpleName().equals("TextField"))
+//            {
+//                System.out.printf("XXXXX Target class (before): %s page %s context : %s\n", clasz.getSimpleName(), pageName, clasz.getClassLoader());
+//            }
+            try 
+            {
+                clasz = context.getProxyFactory().getClassLoader().loadClass(className);
+            } catch (ClassNotFoundException e) 
+            {
+                throw new TapestryException(e.getMessage(), e);
+            }
+//        }
+        return clasz;
+    }
+    
 }

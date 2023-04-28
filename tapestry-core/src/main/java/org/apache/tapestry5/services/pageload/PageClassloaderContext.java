@@ -20,7 +20,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
+import org.apache.tapestry5.internal.plastic.PlasticClassPool;
 import org.apache.tapestry5.plastic.PlasticManager;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +48,15 @@ public class PageClassloaderContext
     private final PlasticManager plasticManager;
     
     private final PlasticProxyFactory proxyFactory;
+    
+    private PageClassloaderContext root;
 
     /**
      * Name of the <code>unknown</code> context (i.e. the one for controlled classes
      * without dependency information at the moment).
      */
     public static final String UNKOWN_CONTEXT_NAME = "unknown";
-    
+
     public PageClassloaderContext(String name, 
             PageClassloaderContext parent, 
             Set<String> classNames, 
@@ -64,6 +69,66 @@ public class PageClassloaderContext
         this.plasticManager = plasticProxyFactory.getPlasticManager();
         this.proxyFactory = plasticProxyFactory;
         children = new HashSet<>();
+        if (plasticProxyFactory.getClassLoader() instanceof PlasticClassLoader)
+        {
+           final PlasticClassLoader plasticClassLoader = (PlasticClassLoader) plasticManager.getClassLoader();
+           plasticClassLoader.setTag(name);
+           plasticClassLoader.setFilter(this::filter);
+           plasticClassLoader.setAlternativeClassloading(this::alternativeClassLoading);
+           if (parent != null)
+           {
+               getPlasticManager().getPool().setParent(parent.getPlasticManager().getPool());
+           }
+        }
+    }
+
+    private Class<?> alternativeClassLoading(String className) 
+    {
+        Class<?> clasz = null;
+        setRootFieldIfNeeded();
+        PageClassloaderContext context = root.findByClassName(
+                PlasticUtils.getEnclosingClassName(className));
+        if (isRoot() && context == null)
+        {
+            context = this;
+        }
+        if (context != null)
+        {
+            try 
+            {
+                final PlasticClassLoader classLoader = (PlasticClassLoader) context.getClassLoader();
+                // Avoiding infinite recursion
+                synchronized (classLoader) 
+                {
+                    classLoader.setAlternativeClassloading(null);
+                    clasz = classLoader.loadClass(className);
+                    classLoader.setAlternativeClassloading(this::alternativeClassLoading);
+                }
+            } catch (ClassNotFoundException e) 
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        return clasz;
+    }
+    
+    private void setRootFieldIfNeeded()
+    {
+        if (root == null)
+        {
+            if (isRoot())
+            {
+                root = this;
+            }
+            else
+            {
+                root = this;
+                while (!root.isRoot())
+                {
+                    root = root.getParent();
+                }
+            }
+        }
     }
 
     /**
@@ -181,7 +246,7 @@ public class PageClassloaderContext
         }
         LOGGER.debug("Invalidating page classloader context '{}' (class loader {}, classes : {})", 
                 name, proxyFactory.getClassLoader(), classNames);
-        classNames.clear();
+//        classNames.clear();
         parent.getChildren().remove(this);
         proxyFactory.clearCache();
     }
@@ -282,4 +347,16 @@ public class PageClassloaderContext
         }
         return string;
     }
+    
+    private boolean filter(String className)
+    {
+        final int index = className.indexOf("$");
+        if (index > 0)
+        {
+            className = className.substring(0, index);
+        }
+        // TODO: do we really need the className.contains(".base.") part?
+        return classNames.contains(className) || className.contains(".base.") || isUnknown();
+    }
+
 }

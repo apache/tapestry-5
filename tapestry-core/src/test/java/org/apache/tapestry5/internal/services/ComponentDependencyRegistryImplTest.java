@@ -33,15 +33,35 @@ import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.base.AbstractLink;
+import org.apache.tapestry5.corelib.base.AbstractPropertyOutput;
 import org.apache.tapestry5.corelib.base.AbstractTextField;
 import org.apache.tapestry5.corelib.components.ActionLink;
+import org.apache.tapestry5.corelib.components.Alerts;
 import org.apache.tapestry5.corelib.components.Any;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.corelib.components.BeanEditor;
+import org.apache.tapestry5.corelib.components.Delegate;
+import org.apache.tapestry5.corelib.components.DevTool;
+import org.apache.tapestry5.corelib.components.Errors;
 import org.apache.tapestry5.corelib.components.EventLink;
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.components.Glyphicon;
 import org.apache.tapestry5.corelib.components.If;
+import org.apache.tapestry5.corelib.components.Label;
+import org.apache.tapestry5.corelib.components.Loop;
+import org.apache.tapestry5.corelib.components.Output;
+import org.apache.tapestry5.corelib.components.PageLink;
+import org.apache.tapestry5.corelib.components.PropertyDisplay;
+import org.apache.tapestry5.corelib.components.PropertyEditor;
+import org.apache.tapestry5.corelib.components.RenderObject;
+import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.corelib.components.TextField;
+import org.apache.tapestry5.corelib.components.TextOutput;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks;
+import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.integration.app1.components.Border;
 import org.apache.tapestry5.integration.app1.components.ErrorComponent;
 import org.apache.tapestry5.integration.app1.components.OuterAny;
@@ -51,6 +71,7 @@ import org.apache.tapestry5.integration.app1.mixins.EchoValue;
 import org.apache.tapestry5.integration.app1.mixins.EchoValue2;
 import org.apache.tapestry5.integration.app1.mixins.TextOnlyOnDisabled;
 import org.apache.tapestry5.integration.app1.pages.AlertsDemo;
+import org.apache.tapestry5.integration.app1.pages.BeanEditorWithFormFragmentDemo;
 import org.apache.tapestry5.integration.app1.pages.BlockCaller;
 import org.apache.tapestry5.integration.app1.pages.BlockHolder;
 import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
@@ -109,6 +130,22 @@ public class ComponentDependencyRegistryImplTest
         expectResolveComponent(If.class);
         expectResolveComponent(ErrorComponent.class);
         expectResolveComponent(EventLink.class);        
+        expectResolveComponent(Output.class);
+        expectResolveComponent(Delegate.class);
+        expectResolveComponent(TextOutput.class);
+        expectResolveComponent(Label.class);
+        expectResolveComponent(BeanEditor.class);
+        expectResolveComponent(Loop.class);
+        expectResolveComponent(PropertyEditor.class);
+        expectResolveComponent(PropertyDisplay.class);
+        expectResolveComponent(Errors.class);
+        expectResolveComponent(Submit.class);
+        expectResolveComponent(PageLink.class);
+        expectResolveComponent(DevTool.class);
+        expectResolveComponent(Alerts.class);
+        expectResolveComponent(RenderObject.class);
+        expectResolveComponent(Form.class);
+        expectResolveComponent(Glyphicon.class);
         
         EasyMock.expect(resolver.resolveMixinTypeToClassName("textonlyondisabled"))
             .andReturn(TextOnlyOnDisabled.class.getName()).anyTimes();
@@ -116,6 +153,15 @@ public class ComponentDependencyRegistryImplTest
             .andReturn(EchoValue2.class.getName()).anyTimes();
         EasyMock.expect(resolver.resolveMixinTypeToClassName("alttitledefault"))
             .andReturn(AltTitleDefault.class.getName()).anyTimes();
+        EasyMock.expect(resolver.resolveMixinTypeToClassName("formgroup"))
+            .andReturn(FormGroup.class.getName()).anyTimes();
+        
+        // TODO: remove this
+//        EasyMock.expect(resolver.getLogicalName(EasyMock.anyString())).andAnswer(() -> (String) EasyMock.getCurrentArguments()[0]).anyTimes();
+        EasyMock.expect(resolver.isPage(EasyMock.anyString())).andAnswer(() -> {
+            String string = (String) EasyMock.getCurrentArguments()[0];
+            return string.contains(".pages.");
+        }).anyTimes();
         
         pageClassloaderContextManager = EasyMock.createMock(PageClassloaderContextManager.class);
         plasticManager = EasyMock.createMock(PlasticManager.class);
@@ -125,16 +171,23 @@ public class ComponentDependencyRegistryImplTest
                 return className.contains(".pages.") || className.contains(".mixins.") ||
                         className.contains(".components.") || className.contains(".base.");
             }).anyTimes();
+        
         componentDependencyRegistry = new ComponentDependencyRegistryImpl(
-                pageClassloaderContextManager, plasticManager, resolver, templateParser, componentTemplateLocator);
+                pageClassloaderContextManager, plasticManager, resolver, templateParser, 
+                componentTemplateLocator);
         EasyMock.replay(pageClassloaderContextManager, plasticManager, resolver);
     }
 
     private void expectResolveComponent(final Class<?> clasz) {
-        EasyMock.expect(resolver.resolveComponentTypeToClassName(clasz.getSimpleName()))
-            .andReturn(clasz.getName()).anyTimes();
-        EasyMock.expect(resolver.resolveComponentTypeToClassName(clasz.getSimpleName().toLowerCase()))
-            .andReturn(clasz.getName()).anyTimes();
+        final String className = clasz.getName();
+        final java.lang.String simpleName = clasz.getSimpleName();
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(simpleName))
+            .andReturn(className).anyTimes();
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(simpleName.toLowerCase()))
+            .andReturn(className).anyTimes();
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(
+                simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1)))
+            .andReturn(className).anyTimes();
     }
     
     private void configurePCCM(boolean merging)
@@ -240,6 +293,14 @@ public class ComponentDependencyRegistryImplTest
         
         componentDependencyRegistry.clear();
         
+        // Dynamic dependency definitions
+        componentDependencyRegistry.register(PropertyDisplay.class);
+        assertDependencies(PropertyDisplay.class, 
+                PropertyDisplayBlocks.class, AbstractPropertyOutput.class);
+
+        componentDependencyRegistry.register(PropertyEditor.class);
+        assertDependencies(PropertyEditor.class, PropertyEditBlocks.class);
+        
         // Superclass
         componentDependencyRegistry.register(EventLink.class);
 
@@ -289,6 +350,32 @@ public class ComponentDependencyRegistryImplTest
                 EchoValue.class, EchoValue2.class, TextField.class);
         
 
+    }
+    
+    @Test
+    public void getCircularDependencies()
+    {
+//        componentDependencyRegistry.clear();
+//        componentDependencyRegistry.register(BeanEditor.class);
+//        Set<String> expected = setOf(PropertyEditor.class, PropertyEditBlocks.class);
+//        assertEquals(expected, 
+//                componentDependencyRegistry.getCircularDependencies(BeanEditor.class.getName()));
+//        
+//        componentDependencyRegistry.register(BlockCaller.class);
+//        assertEquals(setOf(BlockHolder.class), 
+//                componentDependencyRegistry.getCircularDependencies(BlockCaller.class.getName()));
+//        assertEquals(setOf(BlockCaller.class), 
+//                componentDependencyRegistry.getCircularDependencies(BlockHolder.class.getName()));
+//        
+//        // An infinite recursion happened in this call.
+//        componentDependencyRegistry.register(Index.class);
+//        assertEquals(new HashSet<String>(), 
+//                componentDependencyRegistry.getCircularDependencies(Delegate.class.getName()));
+        
+        componentDependencyRegistry.register(BeanEditorWithFormFragmentDemo.class);
+        
+        ComponentDependencyGraphvizGenerator generator = new ComponentDependencyGraphvizGeneratorImpl(componentDependencyRegistry, resolver);
+        System.out.println(generator.generate(BeanEditorWithFormFragmentDemo.class.getName()));
     }
 
     private void assertDependencies(Class clasz, Class... dependencies) {

@@ -65,44 +65,44 @@ public class RequestErrorFilter implements RequestFilter
         catch (Throwable ex)
         {
             
-//            if (request.getParameter(QUERY_PARAMETER) == null)
-//            {
-//            
-//                Throwable rootCause = ex.getCause();
-//                String classToInvalidate = getClassToInvalidate(rootCause);
-//                
-//                if (classToInvalidate != null)
-//                {
-//                    
-//                    final List<String> classesToInvalidate = 
-//                            Arrays.asList(classToInvalidate, ExceptionReport.class.getName());
-//                    componentInstantiatorSource.invalidate(classesToInvalidate);
-//                    classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
-//
-//                    Link link = null;
-//                    
-//                    final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
-//                    if (componentEventParameters != null)
-//                    {
-//                        link = componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false);
-//                    }
-//                    
-//                    final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
-//                    if (pageRenderParameters != null)
-//                    {
-//                        link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
-//                    }
-//                    
-//                    if (link != null)
-//                    {
-//                        link.addParameter(QUERY_PARAMETER, "true");
-//                        response.sendRedirect(link);
-//                        return true;
-//                    }
-//                    
-//                }
-//                
-//            }
+            // TODO: evaluate removing this
+            if (request.getParameter(QUERY_PARAMETER) == null)
+            {
+            
+                Throwable rootCause = ex.getCause();
+                String classToInvalidate = getClassToInvalidate(rootCause);
+                
+                if (classToInvalidate != null)
+                {
+                    
+                    final List<String> classesToInvalidate = 
+                            Arrays.asList(classToInvalidate, ExceptionReport.class.getName());
+                    classesInvalidationHub.fireInvalidationEvent(classesToInvalidate);
+
+                    Link link = null;
+                    
+                    final ComponentEventRequestParameters componentEventParameters = componentEventLinkEncoder.decodeComponentEventRequest(request);
+                    if (componentEventParameters != null)
+                    {
+                        link = componentEventLinkEncoder.createComponentEventLink(componentEventParameters, false);
+                    }
+                    
+                    final PageRenderRequestParameters pageRenderParameters = componentEventLinkEncoder.decodePageRenderRequest(request);
+                    if (pageRenderParameters != null)
+                    {
+                        link = componentEventLinkEncoder.createPageRenderLink(pageRenderParameters);
+                    }
+                    
+                    if (link != null)
+                    {
+                        link.addParameter(QUERY_PARAMETER, "true");
+                        response.sendRedirect(link);
+                        return true;
+                    }
+                    
+                }
+                
+            }
             
             // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
             // get involved, things go screwy.  Exceptions when transforming classes can cause
@@ -110,6 +110,7 @@ public class RequestErrorFilter implements RequestFilter
             // TAPESTRY-2078
             
             System.out.println("YYYYYY" + pageClassloaderContextManager.getRoot().toRecursiveString());
+            ex.printStackTrace();
 
             Throwable exceptionToReport = attachNewCause(ex, internalRequestGlobals.getClassLoaderException());
 

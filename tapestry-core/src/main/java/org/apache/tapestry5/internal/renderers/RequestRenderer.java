@@ -77,6 +77,8 @@ public class RequestRenderer implements ObjectRenderer<Request>
         headers(request, writer);
         attributes(request, writer);
         context(writer);
+        
+        // TODO: remove methods below
         pageClassloaderContext(writer);
         pages(writer);
     }

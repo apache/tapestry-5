@@ -14,21 +14,43 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.*;
-import org.apache.tapestry5.plastic.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.FieldInsnNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.InsnList;
+import org.apache.tapestry5.internal.plastic.asm.tree.MethodInsnNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.plastic.AnnotationAccess;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.ClassType;
+import org.apache.tapestry5.plastic.PlasticClassEvent;
+import org.apache.tapestry5.plastic.PlasticClassListener;
+import org.apache.tapestry5.plastic.PlasticClassListenerHub;
+import org.apache.tapestry5.plastic.PlasticClassTransformation;
+import org.apache.tapestry5.plastic.PlasticConstants;
+import org.apache.tapestry5.plastic.PlasticManagerDelegate;
+import org.apache.tapestry5.plastic.TransformationOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for managing a class loader that allows ASM {@link ClassNode}s
@@ -63,6 +85,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     private final StaticContext emptyStaticContext = new StaticContext();
 
     private final List<PlasticClassListener> listeners = new CopyOnWriteArrayList<PlasticClassListener>();
+    
+    private PlasticClassPool parent;
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
@@ -482,9 +506,17 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         if (shouldInterceptClassLoading(baseClassName))
         {
             loader.loadClass(baseClassName);
+            
+            PlasticClassPool current = this;
 
-            BaseClassDef def = baseClassDefs.get(baseClassName);
-
+            BaseClassDef def = current.baseClassDefs.get(baseClassName);
+            
+            while (def == null && current.parent != null)
+            {
+                current = current.parent;
+                def = current.baseClassDefs.get(baseClassName);
+            }
+            
             assert def != null;
 
             return new PlasticClassImpl(classNode, implementationClassNode, this, def.inheritanceData, def.staticContext, proxy);
@@ -668,6 +700,15 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         assert listener != null;
 
         listeners.remove(listener);
+    }
+    
+    /**
+     * Sets the parent of this instance. Only used to look up baseClassDefs.
+     * @since 5.8.3
+     */
+    public void setParent(PlasticClassPool parent) 
+    {
+        this.parent = parent;
     }
 
     boolean isEnabled(TransformationOption option)

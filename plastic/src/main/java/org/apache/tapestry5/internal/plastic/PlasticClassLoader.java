@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import org.apache.tapestry5.plastic.PlasticUtils;
+
 public class PlasticClassLoader extends ClassLoader
 {
     static
@@ -23,11 +28,16 @@ public class PlasticClassLoader extends ClassLoader
     }
 
     private final ClassLoaderDelegate delegate;
-
-    public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate)
+    
+    private Predicate<String> filter;
+    
+    private Function<String, Class<?>> alternativeClassloading;
+    
+    private String tag;
+    
+    public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate) 
     {
         super(parent);
-
         this.delegate = delegate;
     }
 
@@ -41,9 +51,27 @@ public class PlasticClassLoader extends ClassLoader
             if (loadedClass != null)
                 return loadedClass;
 
-            if (delegate.shouldInterceptClassLoading(name))
+            if (shouldInterceptClassLoading(name))
             {
-                Class<?> c = delegate.loadAndTransformClass(name);
+                Class<?> c = null;
+                if (filter == null || filter.test(name))
+                {
+                    c = delegate.loadAndTransformClass(name);
+                }
+                else if (alternativeClassloading != null)
+                {
+                    c = alternativeClassloading.apply(name);
+                }
+                
+                if (c == null)
+                {
+                    return super.loadClass(name, resolve);                    
+                }
+                    
+                if (name.endsWith(".BeanEditor$Prepare"))
+                {
+                    System.out.printf("LLLL Loading %s in classloader '%s' : %s\n", name, tag, this);
+                }
 
                 if (resolve)
                     resolveClass(c);
@@ -56,6 +84,11 @@ public class PlasticClassLoader extends ClassLoader
         }
     }
 
+    private boolean shouldInterceptClassLoading(String name) {
+        return delegate.shouldInterceptClassLoading(
+                PlasticUtils.getEnclosingClassName(name));
+    }
+
     public synchronized Class<?> defineClassWithBytecode(String className, byte[] bytecode)
     {
         synchronized(getClassLoadingLock(className))
@@ -63,4 +96,44 @@ public class PlasticClassLoader extends ClassLoader
             return defineClass(className, bytecode, 0, bytecode.length);
         }
     }
+
+    /**
+     * When alternatingClassloader is set, this classloader delegates to it the 
+     * call to {@linkplain ClassLoader#loadClass(String)}. If it returns a non-null object,
+     * it's returned by <code>loadClass(String)</code>. Otherwise, it returns 
+     * <code>super.loadClass(name)</code>.
+     * @since 5.8.3
+     */
+    public void setAlternativeClassloading(Function<String, Class<?>> alternateClassloading) 
+    {
+        this.alternativeClassloading = alternateClassloading;
+    }
+    
+    /**
+     * @since 5.8.3
+     */
+    public void setTag(String tag) 
+    {
+        this.tag = tag;
+    }
+    
+    /**
+     * When a filter is set, only classes accepted by it will be loaded by this classloader.
+     * Instead, it will be delegated to alternate classloading first and the parent classloader
+     * in case the alternate doesn't handle it.
+     * @since 5.8.3
+     */
+    public void setFilter(Predicate<String> filter) 
+    {
+        this.filter = filter;
+    }
+
+    @Override
+    public String toString()
+    {
+        final String superToString = super.toString();
+        final String id = superToString.substring(superToString.indexOf('@')).trim();
+        return String.format("PlasticClassLoader[%s, tag=%s, parent=%s]", id, tag, getParent());
+    }
+
 }

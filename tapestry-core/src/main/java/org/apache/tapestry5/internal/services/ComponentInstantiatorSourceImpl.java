@@ -117,6 +117,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private PageClassloaderContext rootPageClassloaderContext;
     
     private PlasticProxyFactoryProxy plasticProxyFactoryProxy;
+    
+    private ComponentDependencyRegistry componentDependencyRegistry;
+    
+    private static final ThreadLocal<String> CURRENT_PAGE = ThreadLocal.withInitial(() -> null);
 
     /**
      * Map from class name to Instantiator.
@@ -161,7 +165,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                                            InternalComponentInvalidationEventHub invalidationHub,
                                            
-                                           PageClassloaderContextManager pageClassloaderContextManager                                         
+                                           PageClassloaderContextManager pageClassloaderContextManager,
+                                           
+                                           ComponentDependencyRegistry componentDependencyRegistry
             )
     {
         this.parent = proxyFactory.getClassLoader();
@@ -174,6 +180,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.productionMode = productionMode;
         this.resolver = resolver;
         this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.componentDependencyRegistry = componentDependencyRegistry;
 
         // For now, we just need the keys of the configuration. When there are more types of controlled
         // packages, we'll need to do more.
@@ -191,7 +198,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     @PostInjection
     public void listenForUpdates(UpdateListenerHub hub)
     {
-//        invalidationHub.addInvalidationCallback(this);
+        invalidationHub.addInvalidationCallback(this::invalidate);
         hub.addUpdateListener(this);
     }
 
@@ -224,27 +231,32 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         }
     }
 
-    @Override
-    public void invalidate(final List<String> classNames) {
+    private List<String> invalidate(final List<String> classNames) {
+
+        final String currentPage = CURRENT_PAGE.get();
         
         final Iterator<Entry<String, Instantiator>> classToInstantiatorIterator = classToInstantiator.entrySet().iterator();
         while (classToInstantiatorIterator.hasNext())
         {
-            if (classNames.contains(classToInstantiatorIterator.next().getKey()))
+            final String className = classToInstantiatorIterator.next().getKey();
+            if (!className.equals(currentPage) && classNames.contains(className))
             {
+//              System.out.println("WWWWW Removing class instantiator " + className);
                 classToInstantiatorIterator.remove();
             }
         }
 
-        // TODO: fix this
-//        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
-//        while (classToModelIterator.hasNext())
-//        {
-//            if (classNames.contains(classToModelIterator.next().getKey()))
-//            {
-//                classToModelIterator.remove();
-//            }
-//        }
+        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
+        while (classToModelIterator.hasNext())
+        {
+            final String className = classToModelIterator.next().getKey();
+            if (!className.equals(currentPage) && classNames.contains(className))
+            {
+//                System.out.println("WWWWW Removing class model " + className);
+                classToModelIterator.remove();
+            }
+        }
+        return Collections.emptyList();
     }
 
     public void forceComponentInvalidation()
@@ -252,14 +264,14 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         changeTracker.clear();
         invalidationHub.classInControlledPackageHasChanged();
         pageClassloaderContextManager.clear();
+        classToModel.clear();
     }
 
     public void run()
     {
         changeTracker.clear();
         classToInstantiator.clear();
-        // TODO fix this
-//        classToModel.clear();
+        classToModel.clear();
         pageClassloaderContextManager.clear();
         initializeService();
     }
@@ -312,6 +324,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     {
         return classToInstantiator.computeIfAbsent(className, this::createInstantiatorForClass);
     }
+    
+    private static final ThreadLocal<Set<String>> OPEN_INSTANTIATORS = 
+            ThreadLocal.withInitial(HashSet::new);
 
     private Instantiator createInstantiatorForClass(final String className)
     {
@@ -320,14 +335,33 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                 {
                     public Instantiator invoke()
                     {
+                        
                         // Force the creation of the class (and the transformation of the class). This will first
                         // trigger transformations of any base classes.
-
-                        final PageClassloaderContext context = pageClassloaderContextManager.get(className);
-                        final ClassInstantiator<Component> plasticInstantiator = 
-                                context.getPlasticManager().getClassInstantiator(className);
-
+                        
+                        OPEN_INSTANTIATORS.get().add(className);
+                        
+                        componentDependencyRegistry.disableInvalidations();
+                        PageClassloaderContext context = pageClassloaderContextManager.get(className);
+                        componentDependencyRegistry.enableInvalidations();
+                        
+                        // Make sure the dependencies have been processed in case
+                        // there was some invalidation going on and they're not there.
+                        
+                        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className);
+                        for (String dependency : dependencies)
+                        {
+                            if (!OPEN_INSTANTIATORS.get().contains(dependency))
+                            {
+//                                System.out.println("TTTTT calling createInstaniatoForClass " + dependency);
+                                createInstantiatorForClass(dependency);
+                            }
+                        }
+                        
+                        ClassInstantiator<Component> plasticInstantiator = context.getPlasticManager().getClassInstantiator(className);
                         final ComponentModel model = classToModel.get(className);
+                        
+                        OPEN_INSTANTIATORS.get().remove(className);
 
                         return new Instantiator()
                         {
@@ -345,7 +379,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                             @Override
                             public String toString()
                             {
-                                return String.format("[Instantiator[%s]", className);
+                                return String.format("[Instantiator[%s:%s]", className, context);
                             }
                         };
                     }

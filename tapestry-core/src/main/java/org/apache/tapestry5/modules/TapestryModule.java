@@ -20,15 +20,19 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
@@ -104,7 +108,12 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
+import org.apache.tapestry5.corelib.components.BeanEditor;
+import org.apache.tapestry5.corelib.components.PropertyDisplay;
+import org.apache.tapestry5.corelib.components.PropertyEditor;
 import org.apache.tapestry5.corelib.data.SecureOption;
+import org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks;
+import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
@@ -364,6 +373,7 @@ import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
@@ -687,7 +697,7 @@ public final class TapestryModule
         configuration.addInstance("ApplicationState", ApplicationStateWorker.class);
         configuration.addInstance("Environment", EnvironmentalWorker.class);
 
-        configuration.add("Component", new ComponentWorker(resolver, componentDependencyRegistry));
+        configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectComponent", InjectComponentWorker.class);
@@ -2792,7 +2802,7 @@ public final class TapestryModule
         componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
         return componentDependencyRegistry;
     }
-
+    
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource
     {
@@ -2813,8 +2823,8 @@ public final class TapestryModule
                 info.setDescription("Components provided out-of-the-box by Tapestry");
                 info.setDocumentationUrl("http://tapestry.apache.org/component-reference.html");
                 info.setJavadocUrl("http://tapestry.apache.org/current/apidocs/");
-                info.setSourceBrowseUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary");
-                info.setSourceRootUrl("https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java/");
+                info.setSourceBrowseUrl("https://gitbox.apache.org/repos/asf?p=tapestry-5.git;a=summary");
+                info.setSourceRootUrl("https://gitbox.apache.org/repos/asf?p=tapestry-5.git;a=blob;f=tapestry-core/src/main/java/");
                 info.setIssueTrackerUrl("https://issues.apache.org/jira/browse/TAP5");
                 info.setHomepageUrl("http://tapestry.apache.org");
                 info.setLibraryMapping(libraryMapping);
