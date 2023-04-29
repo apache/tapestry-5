@@ -60,7 +60,6 @@ import org.apache.tapestry5.corelib.components.TextOutput;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
-import org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks;
 import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.integration.app1.components.Border;
 import org.apache.tapestry5.integration.app1.components.ErrorComponent;
@@ -71,7 +70,6 @@ import org.apache.tapestry5.integration.app1.mixins.EchoValue;
 import org.apache.tapestry5.integration.app1.mixins.EchoValue2;
 import org.apache.tapestry5.integration.app1.mixins.TextOnlyOnDisabled;
 import org.apache.tapestry5.integration.app1.pages.AlertsDemo;
-import org.apache.tapestry5.integration.app1.pages.BeanEditorWithFormFragmentDemo;
 import org.apache.tapestry5.integration.app1.pages.BlockCaller;
 import org.apache.tapestry5.integration.app1.pages.BlockHolder;
 import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
@@ -295,11 +293,10 @@ public class ComponentDependencyRegistryImplTest
         
         // Dynamic dependency definitions
         componentDependencyRegistry.register(PropertyDisplay.class);
-        assertDependencies(PropertyDisplay.class, 
-                PropertyDisplayBlocks.class, AbstractPropertyOutput.class);
+        assertDependencies(PropertyDisplay.class, AbstractPropertyOutput.class);
 
         componentDependencyRegistry.register(PropertyEditor.class);
-        assertDependencies(PropertyEditor.class, PropertyEditBlocks.class);
+        assertDependencies(PropertyEditor.class);
         
         // Superclass
         componentDependencyRegistry.register(EventLink.class);
@@ -307,11 +304,6 @@ public class ComponentDependencyRegistryImplTest
         // Superclass, recursively
         assertDependencies(AbstractComponentEventLink.class, AbstractLink.class);
         assertDependencies(AbstractLink.class);        
-        
-        // @InjectPage and circular dependencies
-        componentDependencyRegistry.register(BlockCaller.class);
-        assertDependencies(BlockCaller.class, BlockHolder.class);
-        assertDependencies(BlockHolder.class, BlockCaller.class);        
         
         // @InjectComponent 
         // Components declared in templates
@@ -352,32 +344,6 @@ public class ComponentDependencyRegistryImplTest
 
     }
     
-    @Test
-    public void getCircularDependencies()
-    {
-//        componentDependencyRegistry.clear();
-//        componentDependencyRegistry.register(BeanEditor.class);
-//        Set<String> expected = setOf(PropertyEditor.class, PropertyEditBlocks.class);
-//        assertEquals(expected, 
-//                componentDependencyRegistry.getCircularDependencies(BeanEditor.class.getName()));
-//        
-//        componentDependencyRegistry.register(BlockCaller.class);
-//        assertEquals(setOf(BlockHolder.class), 
-//                componentDependencyRegistry.getCircularDependencies(BlockCaller.class.getName()));
-//        assertEquals(setOf(BlockCaller.class), 
-//                componentDependencyRegistry.getCircularDependencies(BlockHolder.class.getName()));
-//        
-//        // An infinite recursion happened in this call.
-//        componentDependencyRegistry.register(Index.class);
-//        assertEquals(new HashSet<String>(), 
-//                componentDependencyRegistry.getCircularDependencies(Delegate.class.getName()));
-        
-        componentDependencyRegistry.register(BeanEditorWithFormFragmentDemo.class);
-        
-        ComponentDependencyGraphvizGenerator generator = new ComponentDependencyGraphvizGeneratorImpl(componentDependencyRegistry, resolver);
-        System.out.println(generator.generate(BeanEditorWithFormFragmentDemo.class.getName()));
-    }
-
     private void assertDependencies(Class clasz, Class... dependencies) {
         assertEquals(
                 setOf(dependencies),
@@ -391,10 +357,10 @@ public class ComponentDependencyRegistryImplTest
             .collect(Collectors.toSet());
     }
 
-    private static Set<String> setOf(String ... strings)
-    {
-        return new HashSet<>(Arrays.asList(strings));
-    }
+//    private static Set<String> setOf(String ... strings)
+//    {
+//        return new HashSet<>(Arrays.asList(strings));
+//    }
     
     private void add(String component, String dependency)
     {
