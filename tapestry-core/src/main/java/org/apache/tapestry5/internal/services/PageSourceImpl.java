@@ -38,8 +38,6 @@ import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-import org.apache.tapestry5.services.pageload.PageClassloaderContext;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
@@ -51,8 +49,6 @@ public class PageSourceImpl implements PageSource
     private final ComponentDependencyRegistry componentDependencyRegistry;
     
     private final ComponentClassResolver componentClassResolver;
-    
-    private final PageClassloaderContextManager pageClassloaderContextManager;
     
     private final Logger logger;
     
@@ -101,7 +97,6 @@ public class PageSourceImpl implements PageSource
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
-            PageClassloaderContextManager pageClassloaderContextManager,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             Logger logger)
     {
@@ -110,7 +105,6 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
         this.logger = logger;
     }
 
@@ -139,43 +133,6 @@ public class PageSourceImpl implements PageSource
             // different threads. The last built one will "evict" the others from the page cache,
             // and the earlier ones will be GCed.
 
-            // TODO: maybe remove this
-            if (!productionMode)
-            {
-                
-                final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
-                if (!componentDependencyRegistry.contains(canonicalPageName))
-                {
-                    // Make sure you get a fresh version of the class before processing its
-                    // dependencies
-                    pageClassloaderContextManager.clear(className);
-                    final PageClassloaderContext context = pageClassloaderContextManager.get(className);
-                    final Class<?> clasz;
-                    try {
-                        
-                        clasz = context.getProxyFactory().getClassLoader().loadClass(className);
-                        pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
-                        componentDependencyRegistry.register(clasz);
-                        
-                        // The call to register() above will potentially cause some dependencies
-                        // to wrongly end in the the page's context's classloader instead of one of its parent
-                        // context/classloader. That's why we need to invalidate the page's current 
-                        // context and classloader and create a new instance of each.
-//                        componentDependencyRegistry.disableInvalidations();
-//                        final PageClassloaderContext toInvalidate = 
-//                                pageClassloaderContextManager.get(className);
-//                        pageClassloaderContextManager.invalidate(toInvalidate);
-//                        componentDependencyRegistry.disableInvalidations();
-                        pageClassloaderContextManager.get(className);
-                    } catch (ClassNotFoundException e) 
-                    {
-                        throw new RuntimeException(e);
-                    }
-                    
-                }
-                
-            }
-            
             page = pageLoader.loadPage(canonicalPageName, selector);
 
             ref = new SoftReference<Page>(page);
