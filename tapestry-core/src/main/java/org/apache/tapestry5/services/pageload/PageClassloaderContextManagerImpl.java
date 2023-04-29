@@ -349,13 +349,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         try 
         {
             final ClassLoader classLoader = context.getPlasticManager().getClassLoader();
-            final Class<?> clasz = classLoader.loadClass(className);
-            // TODO: do were really need this loop?
-            for (Class<?> c : clasz.getDeclaredClasses()) 
-            {
-                final Class<?> cccc = classLoader.loadClass(c.getName());
-            }
-            return clasz;
+            return classLoader.loadClass(className);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -510,7 +504,6 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     
     private List<String> listen(List<String> resources)
     {
-//        System.out.println("XXXXXX Before PageClassloaderContextManager listen: " + root.toRecursiveString());
         if (INVALIDATING_CONTEXT.get())
         {
             return Collections.emptyList();
@@ -587,35 +580,13 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         {
             context = get(className);
         }
-//        final String pageClassName = componentClassResolver.resolvePageNameToClassName(pageName);
-//        final PageClassloaderContext context = get(pageClassName);
-//        PageClassloaderContext ancestor = context.getParent();
-//        
-//        if (!className.equals(pageClassName))
-//        {
-//        
-//            while (ancestor != null && !ancestor.getClassNames().contains(className))
-//            {
-//                ancestor = ancestor.getParent();
-//            }
-//            
-//            if (ancestor == null)
-//            {
-//                ancestor = context;
-//            }
-//            
-//            if (clasz.getSimpleName().equals("TextField"))
-//            {
-//                System.out.printf("XXXXX Target class (before): %s page %s context : %s\n", clasz.getSimpleName(), pageName, clasz.getClassLoader());
-//            }
-            try 
-            {
-                clasz = context.getProxyFactory().getClassLoader().loadClass(className);
-            } catch (ClassNotFoundException e) 
-            {
-                throw new TapestryException(e.getMessage(), e);
-            }
-//        }
+        try 
+        {
+            clasz = context.getProxyFactory().getClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) 
+        {
+            throw new TapestryException(e.getMessage(), e);
+        }
         return clasz;
     }
     

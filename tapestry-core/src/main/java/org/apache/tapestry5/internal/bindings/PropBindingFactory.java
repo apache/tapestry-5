@@ -49,7 +49,6 @@ public class PropBindingFactory implements BindingFactory
                               ComponentResources component, String expression, Location location)
     {
         
-        // TODO: need to get correct classloader here, probably
         Object target = container.getComponent();
         Class targetClass = target.getClass();
         targetClass = getClassLoaderAppropriateClass(targetClass);
@@ -68,10 +67,8 @@ public class PropBindingFactory implements BindingFactory
         try 
         {
             final PageClassloaderContext context = pageClassloaderContextManager.get(className);
-//            System.out.printf("XXXXX Target class (before): %s classloader : %s\n", targetClass.getSimpleName(), targetClass.getClassLoader());
             targetClass = context.getProxyFactory()
                     .getClassLoader().loadClass(className);
-//            System.out.printf("XXXXX Target class (after) : %s classloader : %s context %s\n", targetClass.getSimpleName(), targetClass.getClassLoader(), context.getName());
         } catch (ClassNotFoundException e) 
         {
             throw new TapestryException(e.getMessage(), e);

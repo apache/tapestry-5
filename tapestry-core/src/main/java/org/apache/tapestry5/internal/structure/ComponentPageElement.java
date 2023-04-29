@@ -106,7 +106,6 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      */
     ComponentPageElement getEmbeddedElement(String id);
     
-    // TODO: remove
     /**
      * Returns the ids of all embedded elements defined within the component.
      * @since 5.8.3

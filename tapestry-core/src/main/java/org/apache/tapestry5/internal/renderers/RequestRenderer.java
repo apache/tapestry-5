@@ -78,9 +78,8 @@ public class RequestRenderer implements ObjectRenderer<Request>
         attributes(request, writer);
         context(writer);
         
-        // TODO: remove methods below
-        pageClassloaderContext(writer);
-        pages(writer);
+//        pageClassloaderContext(writer);
+//        pages(writer);
     }
 
     private void coreProperties(Request request, MarkupWriter writer)
@@ -276,89 +275,89 @@ public class RequestRenderer implements ObjectRenderer<Request>
         writer.end(); // dl
     }
 
-    private void pageClassloaderContext(MarkupWriter writer) 
-    {
-        if (!productionMode)
-        {
-            section(writer, "Page Classloader Context");
-            writer.element("ul");
-            render(pageClassloaderContextManager.getRoot(), writer);
-            writer.end(); // ul
-        }
-    }
-
-    private void render(PageClassloaderContext context, MarkupWriter writer) 
-    {
-        if (context != null)
-        {
-        
-            writer.element("li");
-            
-            writer.element("p");
-            writer.element("em");
-            writer.write(context.getName());
-            writer.write(", ");
-            writer.write(context.getClassLoader().toString());
-            writer.end(); // em
-            writer.end(); // p
-            
-            writer.element("p");
-            writer.write(context.getClassNames().stream().collect(Collectors.joining(", ")));
-            writer.end(); // p
-            
-            if (!context.getChildren().isEmpty())
-            {
-                writer.element("ul");
-                for (PageClassloaderContext child : context.getChildren())
-                {
-                    render(child, writer);
-                }
-                writer.end(); // ul
-            }
-            writer.end(); // li
-            
-        }
-        
-    }
-    
-    private void pages(MarkupWriter writer) 
-    {
-        if (!productionMode)
-        {
-            section(writer, "Pages");
-            writer.element("table", "class", "table table-condensed table-hover table-striped exception-report-threads");
-            writer.element("thead");
-            
-            writer.element("td");
-            writer.write("Name");
-            writer.end(); //td Name
-
-            writer.element("td");
-            writer.write("Context");
-            writer.end(); //td Context
-
-            writer.end(); // thead
-            
-            writer.element("tbody");
-            
-            List<Page> pages = new ArrayList<>(pageSource.getAllPages());
-            Collections.sort(pages, Comparator.comparing(Page::getName));
-            
-            for (Page page : pages) {
-                writer.element("tr");
-                writer.element("td");
-                writer.write(page.getName());
-                writer.end(); // td                
-                writer.element("td");
-                writer.write(pageClassloaderContextManager.getRoot().findByClassName(componentClassResolver.getClassName(page.getName())).toString());
-                writer.end(); // td                
-                writer.end(); // tr
-            }
-            
-            writer.end(); // tbody
-            
-            writer.end(); // table
-        }        
-    }
+//    private void pageClassloaderContext(MarkupWriter writer) 
+//    {
+//        if (!productionMode)
+//        {
+//            section(writer, "Page Classloader Context");
+//            writer.element("ul");
+//            render(pageClassloaderContextManager.getRoot(), writer);
+//            writer.end(); // ul
+//        }
+//    }
+//
+//    private void render(PageClassloaderContext context, MarkupWriter writer) 
+//    {
+//        if (context != null)
+//        {
+//        
+//            writer.element("li");
+//            
+//            writer.element("p");
+//            writer.element("em");
+//            writer.write(context.getName());
+//            writer.write(", ");
+//            writer.write(context.getClassLoader().toString());
+//            writer.end(); // em
+//            writer.end(); // p
+//            
+//            writer.element("p");
+//            writer.write(context.getClassNames().stream().collect(Collectors.joining(", ")));
+//            writer.end(); // p
+//            
+//            if (!context.getChildren().isEmpty())
+//            {
+//                writer.element("ul");
+//                for (PageClassloaderContext child : context.getChildren())
+//                {
+//                    render(child, writer);
+//                }
+//                writer.end(); // ul
+//            }
+//            writer.end(); // li
+//            
+//        }
+//        
+//    }
+//    
+//    private void pages(MarkupWriter writer) 
+//    {
+//        if (!productionMode)
+//        {
+//            section(writer, "Pages");
+//            writer.element("table", "class", "table table-condensed table-hover table-striped exception-report-threads");
+//            writer.element("thead");
+//            
+//            writer.element("td");
+//            writer.write("Name");
+//            writer.end(); //td Name
+//
+//            writer.element("td");
+//            writer.write("Context");
+//            writer.end(); //td Context
+//
+//            writer.end(); // thead
+//            
+//            writer.element("tbody");
+//            
+//            List<Page> pages = new ArrayList<>(pageSource.getAllPages());
+//            Collections.sort(pages, Comparator.comparing(Page::getName));
+//            
+//            for (Page page : pages) {
+//                writer.element("tr");
+//                writer.element("td");
+//                writer.write(page.getName());
+//                writer.end(); // td                
+//                writer.element("td");
+//                writer.write(pageClassloaderContextManager.getRoot().findByClassName(componentClassResolver.getClassName(page.getName())).toString());
+//                writer.end(); // td                
+//                writer.end(); // tr
+//            }
+//            
+//            writer.end(); // tbody
+//            
+//            writer.end(); // table
+//        }        
+//    }
     
 }

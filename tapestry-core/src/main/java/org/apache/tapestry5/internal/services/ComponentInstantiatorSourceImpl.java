@@ -241,7 +241,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             final String className = classToInstantiatorIterator.next().getKey();
             if (!className.equals(currentPage) && classNames.contains(className))
             {
-//              System.out.println("WWWWW Removing class instantiator " + className);
                 classToInstantiatorIterator.remove();
             }
         }
@@ -252,7 +251,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             final String className = classToModelIterator.next().getKey();
             if (!className.equals(currentPage) && classNames.contains(className))
             {
-//                System.out.println("WWWWW Removing class model " + className);
                 classToModelIterator.remove();
             }
         }
@@ -353,7 +351,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         {
                             if (!OPEN_INSTANTIATORS.get().contains(dependency))
                             {
-//                                System.out.println("TTTTT calling createInstaniatoForClass " + dependency);
                                 createInstantiatorForClass(dependency);
                             }
                         }
