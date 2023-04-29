@@ -20,11 +20,11 @@
 			<h1>test 2</h1>
 			<t:BeanEditForm object="bean">
 				<p:number>
-					<t:comp t:id="group2">
+					<t:RadioGroup t:id="group2">
 						<t:radio value="1"/>1<br/>
 						<t:radio value="2"/>2<br/>
 						<t:radio value="3"/>3<br/>
-					</t:comp>
+					</t:RadioGroup>
 				</p:number>
 			</t:BeanEditForm>
 		</div>
