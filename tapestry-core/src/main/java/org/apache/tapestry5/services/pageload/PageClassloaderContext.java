@@ -236,7 +236,7 @@ public class PageClassloaderContext
 
     /**
      * Invalidates this context and its children recursively. This shouldn't
-     * be called directly, just through {@link PageClassloaderContextManager#invalidate(PageClassloaderContext)}.
+     * be called directly, just through {@link PageClassloaderContextManager#invalidate(PageClassloaderContext...)}.
      */
     public void invalidate() 
     {

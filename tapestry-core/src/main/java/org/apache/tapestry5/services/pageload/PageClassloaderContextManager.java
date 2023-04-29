@@ -18,7 +18,6 @@ import java.util.function.Function;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
  * Service that creates {@linkplain PageClassloaderContext} instances (except the root one)
@@ -26,7 +25,6 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
  * contexts may be reused for a given class, specially when in production mode.
  * 
  * @see ComponentInstantiatorSource
- * @see DynamicDependenciesDefinition
  * @since 5.8.3
  */
 public interface PageClassloaderContextManager 
@@ -35,8 +33,6 @@ public interface PageClassloaderContextManager
     /**
      * Processes a class, given its class name and the root context.
      * @param className the class fully qualified name.
-     * @param root the root {@link PageClassloaderContext}.
-     * @param plasticProxyFactoryProvider a function that receives a 
      * {@linkplain} ClassLoader} and returns a new {@linkplain PlasticProxyFactory}.
      * @return the {@link PageClassloaderContext} associated with that class.
      */
