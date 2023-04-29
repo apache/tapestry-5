@@ -44,7 +44,7 @@
         <t:devtool class="pull-right"/>
 
         <t:remove>alert-class is for the AlertsTest.check_informal_parameters test</t:remove>
-        <pre>${pccm.root.toRecursiveString().trim()}</pre>
+<!--         <pre>${pccm.root.toRecursiveString().trim()}</pre> -->
         <t:alerts class="alert-class"/>
 
         <t:body/>

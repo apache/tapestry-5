@@ -24,14 +24,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
@@ -55,8 +53,6 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     
     private final InvalidationEventHub componentClassesInvalidationEventHub;
     
-    private final boolean productionMode;
-    
     private final static ThreadLocal<Integer> NESTED_MERGE_COUNT = ThreadLocal.withInitial(() -> 0);
     
     private final static ThreadLocal<Boolean> INVALIDATING_CONTEXT = ThreadLocal.withInitial(() -> false);
@@ -71,15 +67,13 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             final ComponentDependencyRegistry componentDependencyRegistry, 
             final ComponentClassResolver componentClassResolver,
             final InternalComponentInvalidationEventHub invalidationHub,
-            final @ComponentClasses InvalidationEventHub componentClassesInvalidationEventHub,
-            @Symbol(SymbolConstants.PRODUCTION_MODE) final boolean productionMode) 
+            final @ComponentClasses InvalidationEventHub componentClassesInvalidationEventHub) 
     {
         super();
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.invalidationHub = invalidationHub;
         this.componentClassesInvalidationEventHub = componentClassesInvalidationEventHub;
-        this.productionMode = productionMode;
         invalidationHub.addInvalidationCallback(this::listen);
         NESTED_MERGE_COUNT.set(0);
     }
@@ -105,38 +99,28 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     {
         PageClassloaderContext context;
         
-        if (productionMode)
+        final String enclosingClassName = PlasticUtils.getEnclosingClassName(className);
+        context = root.findByClassName(enclosingClassName);
+        
+        if (context == null)
         {
-            root.addClass(className);
-            context = root;
-        }
-        else
-        {
+            Set<String> classesToInvalidate = new HashSet<>();
             
-            final String enclosingClassName = PlasticUtils.getEnclosingClassName(className);
-            context = root.findByClassName(enclosingClassName);
+            context = processUsingDependencies(
+                    enclosingClassName, 
+                    root, 
+                    () -> getUnknownContext(root, plasticProxyFactoryProvider),
+                    plasticProxyFactoryProvider,
+                    classesToInvalidate);
             
-            if (context == null)
+            if (!classesToInvalidate.isEmpty())
             {
-                Set<String> classesToInvalidate = new HashSet<>();
-                
-                context = processUsingDependencies(
-                        enclosingClassName, 
-                        root, 
-                        () -> getUnknownContext(root, plasticProxyFactoryProvider),
-                        plasticProxyFactoryProvider,
-                        classesToInvalidate);
-                
-                if (!classesToInvalidate.isEmpty())
-                {
-                    invalidate(classesToInvalidate);
-                }
+                invalidate(classesToInvalidate);
+            }
 
-                if (!className.equals(enclosingClassName))
-                {
-                    loadClass(className, context);
-                }
-                
+            if (!className.equals(enclosingClassName))
+            {
+                loadClass(className, context);
             }
             
         }

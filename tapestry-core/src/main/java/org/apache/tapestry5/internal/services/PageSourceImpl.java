@@ -182,6 +182,7 @@ public class PageSourceImpl implements PageSource
 
             pageCache.put(key, ref);
             
+            // TODO: remove this?
             if (!productionMode)
             {
                 final ComponentPageElement rootElement = page.getRootElement();
