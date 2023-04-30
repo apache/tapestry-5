@@ -1,4 +1,4 @@
-// Copyright 2008-2013 The Apache Software Foundation
+// Copyright 2008-2013, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
+import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
@@ -87,7 +88,7 @@ public class OperationTrackerImpl implements OperationTracker
 
         } catch (RuntimeException ex)
         {
-            return logAndRethrow(ex);
+            return handleRuntimeException(ex);
         } catch (Error ex)
         {
             return handleError(ex);
@@ -115,7 +116,7 @@ public class OperationTrackerImpl implements OperationTracker
 
         } catch (RuntimeException ex)
         {
-            return logAndRethrow(ex);
+            return handleRuntimeException(ex);
         } catch (Error ex)
         {
             return handleError(ex);
@@ -126,6 +127,16 @@ public class OperationTrackerImpl implements OperationTracker
         {
             handleFinally();
         }
+    }
+
+    private <T> T handleRuntimeException(RuntimeException ex)
+    {
+        // This is to prevent the error level log messages
+        if (ExceptionUtils.findCause(ex, FormsRequirePostException.class) != null)
+            // pass through without logging
+            throw ex;
+        else
+            return logAndRethrow(ex);
     }
 
     private void handleFinally()
