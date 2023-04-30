@@ -107,6 +107,7 @@ import org.apache.tapestry5.commons.services.PropertyAccess;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.corelib.components.PropertyDisplay;
@@ -136,6 +137,7 @@ import org.apache.tapestry5.http.services.Session;
 import org.apache.tapestry5.internal.ComponentOverrideImpl;
 import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
 import org.apache.tapestry5.internal.DefaultValueLabelProvider;
+import org.apache.tapestry5.internal.FormsRequirePostExceptionHandlerAssistant;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.InternalSymbols;
 import org.apache.tapestry5.internal.PropertyOverridesImpl;
@@ -2854,5 +2856,14 @@ public final class TapestryModule
             return info;
         }
     }
-
+    
+    // TAP5-1733
+    @Contribute(RequestExceptionHandler.class)
+    public static void gracefullyHandleFormsRequirePostException(MappedConfiguration<Class, Object> configuration,
+        @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    {
+        if (productionMode)
+            configuration.addInstance(FormsRequirePostException.class, FormsRequirePostExceptionHandlerAssistant.class);
+    }
+    
 }
