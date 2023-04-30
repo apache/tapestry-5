@@ -54,7 +54,7 @@ public class PlasticClassLoader extends ClassLoader
             if (shouldInterceptClassLoading(name))
             {
                 Class<?> c = null;
-                if (filter == null || filter.test(name))
+                if ((filter == null || filter.test(name)) && !(filter == null && !name.contains("$")))
                 {
                     c = delegate.loadAndTransformClass(name);
                 }
@@ -68,11 +68,6 @@ public class PlasticClassLoader extends ClassLoader
                     return super.loadClass(name, resolve);                    
                 }
                     
-                if (name.endsWith(".BeanEditor$Prepare"))
-                {
-                    System.out.printf("LLLL Loading %s in classloader '%s' : %s\n", name, tag, this);
-                }
-
                 if (resolve)
                     resolveClass(c);
 
