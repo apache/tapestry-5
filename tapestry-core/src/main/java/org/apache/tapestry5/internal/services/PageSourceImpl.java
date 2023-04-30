@@ -38,6 +38,8 @@ import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.pageload.PageClassloaderContext;
+import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
 import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
@@ -49,6 +51,8 @@ public class PageSourceImpl implements PageSource
     private final ComponentDependencyRegistry componentDependencyRegistry;
     
     private final ComponentClassResolver componentClassResolver;
+    
+    private final PageClassloaderContextManager pageClassloaderContextManager;
     
     private final Logger logger;
     
@@ -97,6 +101,7 @@ public class PageSourceImpl implements PageSource
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
+            PageClassloaderContextManager pageClassloaderContextManager,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             Logger logger)
     {
@@ -105,6 +110,7 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
+        this.pageClassloaderContextManager = pageClassloaderContextManager;
         this.logger = logger;
     }
 
@@ -145,6 +151,16 @@ public class PageSourceImpl implements PageSource
                 final ComponentPageElement rootElement = page.getRootElement();
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
+                final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
+                final PageClassloaderContext context = pageClassloaderContextManager.get(className);
+                if (context.isUnknown())
+                {
+                    componentDependencyRegistry.disableInvalidations();
+                    pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
+                    componentDependencyRegistry.disableInvalidations();
+                    pageClassloaderContextManager.get(className);
+                }
+                
             }
             
         }
