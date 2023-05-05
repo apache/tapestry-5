@@ -54,7 +54,7 @@ public class PlasticClassLoader extends ClassLoader
             if (shouldInterceptClassLoading(name))
             {
                 Class<?> c = null;
-                if ((filter == null || filter.test(name)) && !(filter == null && !name.contains("$")))
+                if ((filter != null && filter.test(name)) || (filter == null && delegate.shouldInterceptClassLoading(name)))
                 {
                     c = delegate.loadAndTransformClass(name);
                 }
