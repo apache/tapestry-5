@@ -143,6 +143,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     {
         openLinks("Client Validation Demo");
 
+        Thread.sleep(2000); // For some reason, without this sleep, the submit button isn't found
+        
         //@NotNull
         click(SUBMIT);
 
