@@ -223,7 +223,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
+//        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
         
         if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
         {
