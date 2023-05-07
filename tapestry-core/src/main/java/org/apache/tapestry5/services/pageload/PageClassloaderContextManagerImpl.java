@@ -79,6 +79,21 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
     
     @Override
+    public void invalidateUnknownContext()
+    {
+        for (PageClassloaderContext context : root.getChildren())
+        {
+            if (context.isUnknown())
+            {
+                componentDependencyRegistry.disableInvalidations();
+                invalidateAndFireInvalidationEvents(context);
+                componentDependencyRegistry.enableInvalidations();
+                break;
+            }
+        }
+    }
+    
+    @Override
     public void initialize(
             final PageClassloaderContext root,
             final Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider)
@@ -148,7 +163,8 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         {
             unknownContext = new PageClassloaderContext(PageClassloaderContext.UNKOWN_CONTEXT_NAME, root, 
                     Collections.emptySet(), 
-                    plasticProxyFactoryProvider.apply(root.getClassLoader()));
+                    plasticProxyFactoryProvider.apply(root.getClassLoader()),
+                    this::get);
             root.addChild(unknownContext);
             LOGGER.debug("Unknown context: {}", unknownContext);
         }
@@ -263,7 +279,8 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                                 getContextName(className), 
                                 root, 
                                 Collections.singleton(className), 
-                                plasticProxyFactoryProvider.apply(root.getClassLoader()));
+                                plasticProxyFactoryProvider.apply(root.getClassLoader()),
+                                this::get);
                     }
                     else 
                     {
@@ -280,16 +297,16 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                                 getContextName(className), 
                                 parentContext, 
                                 Collections.singleton(className), 
-                                plasticProxyFactoryProvider.apply(parentContext.getClassLoader()));
+                                plasticProxyFactoryProvider.apply(parentContext.getClassLoader()),
+                                this::get);
                     }
                     
                     context.getParent().addChild(context);
                     
                     // Ensure non-page class is initialized in the correct context and classloader.
                     // Pages get their own context and classloader, so this initialization
-                    // is both non-needed and a cause for an NPE if it happened.
-                    if (!componentClassResolver.isPage(className)/*
-                            && circularDependencies.isEmpty()*/)
+                    // is both non-needed and a cause for an NPE if it happens.
+                    if (!componentClassResolver.isPage(className))
                     {
                         loadClass(className, context);
                     }
@@ -448,7 +465,8 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             "merged " + MERGED_COUNTER.getAndIncrement(),
             parent, 
             classNames, 
-            plasticProxyFactoryProvider.apply(parent.getClassLoader()));
+            plasticProxyFactoryProvider.apply(parent.getClassLoader()),
+            this::get);
         
         parent.addChild(merged);
         

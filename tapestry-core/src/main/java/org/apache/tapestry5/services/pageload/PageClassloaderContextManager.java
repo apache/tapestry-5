@@ -83,5 +83,11 @@ public interface PageClassloaderContextManager
      * @return a Class instance.
      */
     Class<?> getClassInstance(Class<?> clasz, String pageName);
+
+    /**
+     * Invalidates the <code>unknown</code> context.
+     * TODO: remove this
+     */
+    void invalidateUnknownContext();
     
 }

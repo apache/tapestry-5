@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     private final List<PlasticClassListener> listeners = new CopyOnWriteArrayList<PlasticClassListener>();
     
     private PlasticClassPool parent;
+    
+    private Collection<PlasticClassPool> children = new ArrayList<>();
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
@@ -517,6 +520,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
                 def = current.baseClassDefs.get(baseClassName);
             }
             
+            // Usually, when df is still null, that's because the superclass
+            // is a page class too
+            if (def == null)
+            {
+                def = findBaseClassDef(baseClassName, current);
+            }
+            
             assert def != null;
 
             return new PlasticClassImpl(classNode, implementationClassNode, this, def.inheritanceData, def.staticContext, proxy);
@@ -525,6 +535,23 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         // When the base class is Object, or otherwise not in a transformed package,
         // then start with the empty
         return new PlasticClassImpl(classNode, implementationClassNode, this, emptyInheritanceData, emptyStaticContext, proxy);
+    }
+
+    private BaseClassDef findBaseClassDef(String baseClassName, PlasticClassPool plasticClassPool) 
+    {
+        BaseClassDef def = plasticClassPool.baseClassDefs.get(baseClassName);
+        if (def == null)
+        {
+            for (PlasticClassPool child : plasticClassPool.children) 
+            {
+                def = child.findBaseClassDef(baseClassName, child);
+                if (def != null)
+                {
+                    break;
+                }
+            }
+        }
+        return def;
     }
 
     /**
@@ -709,6 +736,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     public void setParent(PlasticClassPool parent) 
     {
         this.parent = parent;
+        parent.children.add(this);
     }
 
     boolean isEnabled(TransformationOption option)

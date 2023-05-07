@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
@@ -50,6 +51,8 @@ public class PageClassloaderContext
     private final PlasticProxyFactory proxyFactory;
     
     private PageClassloaderContext root;
+    
+    private final Function<String, PageClassloaderContext> provider;
 
     /**
      * Name of the <code>unknown</code> context (i.e. the one for controlled classes
@@ -60,7 +63,8 @@ public class PageClassloaderContext
     public PageClassloaderContext(String name, 
             PageClassloaderContext parent, 
             Set<String> classNames, 
-            PlasticProxyFactory plasticProxyFactory) 
+            PlasticProxyFactory plasticProxyFactory,
+            Function<String, PageClassloaderContext> provider) 
     {
         super();
         this.name = name;
@@ -68,6 +72,7 @@ public class PageClassloaderContext
         this.classNames.addAll(classNames);
         this.plasticManager = plasticProxyFactory.getPlasticManager();
         this.proxyFactory = plasticProxyFactory;
+        this.provider = provider;
         children = new HashSet<>();
         if (plasticProxyFactory.getClassLoader() instanceof PlasticClassLoader)
         {
@@ -75,6 +80,7 @@ public class PageClassloaderContext
            plasticClassLoader.setTag(name);
            plasticClassLoader.setFilter(this::filter);
            plasticClassLoader.setAlternativeClassloading(this::alternativeClassLoading);
+           // getPlasticManager().getPool().setName(name);
            if (parent != null)
            {
                getPlasticManager().getPool().setParent(parent.getPlasticManager().getPool());
@@ -108,6 +114,10 @@ public class PageClassloaderContext
             {
                 throw new RuntimeException(e);
             }
+        }
+        else if (root.getPlasticManager().shouldInterceptClassLoading(className))
+        {
+            context = provider.apply(className);
         }
         return clasz;
     }

@@ -292,7 +292,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             
             PlasticProxyFactory proxyFactory = createPlasticProxyFactory(parent);
             rootPageClassloaderContext = new PageClassloaderContext(
-                    "root", null, Collections.emptySet(), proxyFactory);
+                    "root", null, Collections.emptySet(), proxyFactory, pageClassloaderContextManager::get);
         }
         else 
         {

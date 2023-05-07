@@ -967,7 +967,9 @@ public final class TapestryModule
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
                                          @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                         boolean productionMode)
+                                         boolean productionMode,
+                                         
+                                         final PageClassloaderContextManager pageClassloaderContextManager)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -1010,6 +1012,29 @@ public final class TapestryModule
         configuration.add("EndOfRequest", fireEndOfRequestEvent);
 
         configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
+        
+        if (!productionMode)
+        {
+            
+            // TODO: change this to only invalidate the current page
+            RequestFilter invalidateUnknownContext = new RequestFilter()
+            {
+                public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+                {
+                    try
+                    {
+                        return handler.service(request, response);
+                    } finally
+                    {
+                        pageClassloaderContextManager.invalidateUnknownContext();
+                    }
+                }
+            };
+
+            configuration.add(PageClassloaderContextManager.class.getName(), 
+                    invalidateUnknownContext, "before:EndOfRequest");
+        }
+        
     }
 
     /**

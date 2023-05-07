@@ -113,8 +113,13 @@ public class PageSourceImpl implements PageSource
         this.pageClassloaderContextManager = pageClassloaderContextManager;
         this.logger = logger;
     }
-
+    
     public Page getPage(String canonicalPageName)
+    {
+        return getPage(canonicalPageName, true);
+    }
+
+    public Page getPage(String canonicalPageName, boolean invalidateUnknownContext)
     {
         ComponentResourceSelector selector = selectorAnalyzer.buildSelectorForRequest();
 
@@ -134,6 +139,17 @@ public class PageSourceImpl implements PageSource
             {
                 return page;
             }
+            
+            // Avoiding problems in PlasticClassPool.createTransformation()
+            // when the class being loaded has a page superclass
+            final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
+            PageClassloaderContext context = pageClassloaderContextManager.get(className);
+            final Class<?> superclass = getSuperclass(className, context);
+            final String superclassName = superclass.getName();
+            if (componentClassResolver.isPage(superclassName)) 
+            {
+                getPage(componentClassResolver.resolvePageClassNameToPageName(superclassName), false);
+            }
 
             // In rare race conditions, we may see the same page loaded multiple times across
             // different threads. The last built one will "evict" the others from the page cache,
@@ -151,18 +167,20 @@ public class PageSourceImpl implements PageSource
                 final ComponentPageElement rootElement = page.getRootElement();
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
-                final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
-                final PageClassloaderContext context = pageClassloaderContextManager.get(className);
-                if (context.isUnknown())
-                {
-                    componentDependencyRegistry.disableInvalidations();
-                    pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
-                    componentDependencyRegistry.disableInvalidations();
-                    pageClassloaderContextManager.get(className);
-                }
+                context = pageClassloaderContextManager.get(className);
+                pageClassloaderContextManager.get(className);
                 
             }
             
+        }
+    }
+
+    private Class<?> getSuperclass(final String className, PageClassloaderContext context) 
+    {
+        try {
+            return context.getClassLoader().loadClass(className).getSuperclass();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
