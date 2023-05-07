@@ -1013,28 +1013,6 @@ public final class TapestryModule
 
         configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
         
-        if (!productionMode)
-        {
-            
-            // TODO: change this to only invalidate the current page
-            RequestFilter invalidateUnknownContext = new RequestFilter()
-            {
-                public boolean service(Request request, Response response, RequestHandler handler) throws IOException
-                {
-                    try
-                    {
-                        return handler.service(request, response);
-                    } finally
-                    {
-                        pageClassloaderContextManager.invalidateUnknownContext();
-                    }
-                }
-            };
-
-            configuration.add(PageClassloaderContextManager.class.getName(), 
-                    invalidateUnknownContext, "before:EndOfRequest");
-        }
-        
     }
 
     /**

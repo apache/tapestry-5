@@ -168,8 +168,14 @@ public class PageSourceImpl implements PageSource
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
                 context = pageClassloaderContextManager.get(className);
-                pageClassloaderContextManager.get(className);
-                
+                if (context.isUnknown())
+                {
+                    componentDependencyRegistry.disableInvalidations();
+                    pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
+                    componentDependencyRegistry.enableInvalidations();
+                    pageClassloaderContextManager.get(className);
+                    return getPage(canonicalPageName);
+                }
             }
             
         }
