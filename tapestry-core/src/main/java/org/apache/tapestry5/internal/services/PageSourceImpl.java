@@ -143,12 +143,20 @@ public class PageSourceImpl implements PageSource
             // Avoiding problems in PlasticClassPool.createTransformation()
             // when the class being loaded has a page superclass
             final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
-            PageClassloaderContext context = pageClassloaderContextManager.get(className);
-            final Class<?> superclass = getSuperclass(className, context);
-            final String superclassName = superclass.getName();
-            if (componentClassResolver.isPage(superclassName)) 
+//            PageClassloaderContext context = pageClassloaderContextManager.get(className);
+//            final Class<?> superclass = getSuperclass(className, context);
+//            final String superclassName = superclass.getName();
+//            if (componentClassResolver.isPage(superclassName)) 
+//            {
+//                getPage(componentClassResolver.resolvePageClassNameToPageName(superclassName), false);
+//            }
+            final Set<String> pageDependencies = componentDependencyRegistry.getPageDependencies(className);
+            
+            preprocessPageClassLoaderContexts(className, pageDependencies);
+            
+            for (String pageClassName : pageDependencies)
             {
-                getPage(componentClassResolver.resolvePageClassNameToPageName(superclassName), false);
+                page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), false);
             }
 
             // In rare race conditions, we may see the same page loaded multiple times across
@@ -167,17 +175,28 @@ public class PageSourceImpl implements PageSource
                 final ComponentPageElement rootElement = page.getRootElement();
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
-                context = pageClassloaderContextManager.get(className);
-                if (context.isUnknown())
+                PageClassloaderContext context = pageClassloaderContextManager.get(className);
+                if (invalidateUnknownContext && context.isUnknown())
                 {
                     componentDependencyRegistry.disableInvalidations();
                     pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
                     componentDependencyRegistry.enableInvalidations();
                     pageClassloaderContextManager.get(className);
-                    return getPage(canonicalPageName);
+                    return getPage(canonicalPageName, false);
                 }
             }
             
+        }
+    }
+
+    private void preprocessPageClassLoaderContexts(String className, final Set<String> pageDependencies) {
+        for (int i = 0; i < 2; i++)
+        {
+            pageClassloaderContextManager.get(className);
+            for (String pageClassName : pageDependencies)
+            {
+                pageClassloaderContextManager.get(pageClassName);
+            }
         }
     }
 

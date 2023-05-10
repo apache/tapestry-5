@@ -31,7 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
@@ -93,6 +95,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     final private ComponentClassResolver resolver;
     
     final private TemplateParser templateParser;
+    
+    final private Map<String, Boolean> isPageCache = new WeakHashMap<>();
     
     @SuppressWarnings("deprecation")
     final private ComponentTemplateLocator componentTemplateLocator;
@@ -209,8 +213,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             add(component, superclass);
         }
         
-        Set<String> dynamicDependencies;
-
         alreadyProcessed.add(className);
         
         for (Class<?> dependency : furtherDependencies) 
@@ -240,12 +242,12 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         // by listening separaterly to ComponentTemplateSource to invalidate caches
         // just when template changes.
         
-        ComponentModel mock = new ComponentModelMock(component, resolver.isPage(component.getName()));
+        final String className = component.getName();
+        ComponentModel mock = new ComponentModelMock(component, isPage(className));
         final Resource templateResource = componentTemplateLocator.locateTemplate(mock, Locale.getDefault());
         String dependency;
         if (templateResource != null)
         {
-            final String className = component.getName();
             final ComponentTemplate template = templateParser.parseTemplate(templateResource);
             for (TemplateToken token:  template.getTokens())
             {
@@ -268,6 +270,22 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 }
             }
         }
+    }
+    
+    private boolean isNotPage(final String className) 
+    {
+        return !isPage(className);
+    }
+
+    private boolean isPage(final String className) 
+    {
+        Boolean result = isPageCache.get(className);
+        if (result == null)
+        {
+            result = resolver.isPage(className);
+            isPageCache.put(className, result);
+        }
+        return result;
     }
 
     private void registerComponentInstance(Field field, Consumer<String> processClassName)
@@ -491,9 +509,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         final Set<String> dependents = map.get(className);
         return dependents != null ? dependents : Collections.emptySet();
     }
-
-    @Override
-    public Set<String> getDependencies(String className) 
+    
+    private Set<String> getDependencies(String className, Predicate<String> filter) 
     {
         Set<String> dependencies = Collections.emptySet();
         if (alreadyProcessed.contains(className))
@@ -501,10 +518,23 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             dependencies = map.entrySet().stream()
                 .filter(e -> e.getValue().contains(className))
                 .map(e -> e.getKey())
+                .filter(filter)
                 .collect(Collectors.toSet());
         }
         
         return dependencies;
+    }
+
+    @Override
+    public Set<String> getDependencies(String className) 
+    {
+        return getDependencies(className, this::isNotPage);
+    }
+    
+    @Override
+    public Set<String> getPageDependencies(String className) 
+    {
+        return getDependencies(className, this::isPage);
     }
 
     private void add(ComponentPageElement component, ComponentPageElement dependency) 
@@ -570,7 +600,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
         // Don't invalidate component dependency information when 
         // PageClassloaderContextManager is merging contexts
-        // TODO is this still needed since the inception of INVALIDATIONS_ENABLED? 
+        // TODO: is this still needed since the inception of INVALIDATIONS_ENABLED? 
         else if (!pageClassloaderContextManager.isMerging())
         {
             furtherDependents = new ArrayList<>();

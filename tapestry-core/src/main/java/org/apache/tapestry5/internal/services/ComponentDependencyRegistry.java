@@ -77,8 +77,15 @@ public interface ComponentDependencyRegistry {
     
     /**
      * Returns the fully qualified names of the direct dependencies of a given component.
+     * Doesn't include dependencies that are pages.
      */
     Set<String> getDependencies(String className);
+    
+    /**
+     * Returns the fully qualified names of the direct dependencies of a given component,
+     * but just the ones that are pages.
+     */
+    Set<String> getPageDependencies(String className);
     
     /**
      * Signs up this registry to invalidation events from a given hub.
