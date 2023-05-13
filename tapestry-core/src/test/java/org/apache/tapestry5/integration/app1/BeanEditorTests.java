@@ -151,9 +151,11 @@ public class BeanEditorTests extends App1TestCase
      * TAPESTRY-1869
      */
     @Test
-    public void null_fields_and_bean_editor()
+    public void null_fields_and_bean_editor() throws InterruptedException
     {
         openLinks("Number BeanEditor Demo");
+        
+        Thread.sleep(2000);// Another of that weird sitations ...
 
         clickAndWait(SUBMIT);
 

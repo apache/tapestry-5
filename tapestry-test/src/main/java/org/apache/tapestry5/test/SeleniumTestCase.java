@@ -1692,6 +1692,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         openBaseURL();
         
+        if (getTitle().toLowerCase().contains("service unavailable")) {
+            throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
+        }
+        
         // Trying to solve some cases where the link is present on the page but somehow
         // openBaseURL() couldn't find it.
         if (linkText.length > 0)
@@ -1707,12 +1711,17 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
         }
         
-        if (getTitle().toLowerCase().contains("service unavailable")) {
-            throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
-        }
-
         for (String text : linkText)
         {
+            try 
+            {
+                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
+            }
+            catch (org.openqa.selenium.TimeoutException e)
+            {
+                LOGGER.warn("Page content: {}", getHtmlSource());
+                throw e;
+            }
             clickAndWait("link=" + text);
         }
     }
