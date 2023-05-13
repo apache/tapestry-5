@@ -22,7 +22,8 @@ public class NumberBeanDisplayDemo
     @Persist
     private IntegerHolder holder;
 
-    Object initialize(IntegerHolder holder)
+    // public needed for smarter page invalidation
+    public Object initialize(IntegerHolder holder)
     {
         this.holder = holder;
 
