@@ -37,6 +37,7 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -345,8 +346,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         
                         // Make sure the dependencies have been processed in case
                         // there was some invalidation going on and they're not there.
-                        
-                        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className);
+
+                        // TODO: maybe we need superclasses here too?
+                        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
                         for (String dependency : dependencies)
                         {
                             if (!OPEN_INSTANTIATORS.get().contains(dependency))

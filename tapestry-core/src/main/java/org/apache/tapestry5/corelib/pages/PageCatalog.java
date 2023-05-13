@@ -46,6 +46,7 @@ import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.PageCatalogTotals;
 import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.services.ReloadHelper;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
@@ -370,7 +371,14 @@ public class PageCatalog
     
     public List<String> getDependencies() 
     {
-        List<String> dependencies = new ArrayList<>(componentDependencyRegistry.getDependencies(getSelectedPageClassName()));
+        final String selectedPageClassName = getSelectedPageClassName();
+        List<String> dependencies = new ArrayList<>();
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(selectedPageClassName, DependencyType.USAGE));
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(selectedPageClassName, DependencyType.INJECT_PAGE));
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(selectedPageClassName, DependencyType.SUPERCLASS));
         Collections.sort(dependencies);
         return dependencies;
     }

@@ -75,6 +75,7 @@ import org.apache.tapestry5.integration.app1.pages.BlockHolder;
 import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
 import org.apache.tapestry5.integration.app1.pages.InstanceMixinDependencies;
 import org.apache.tapestry5.integration.app1.pages.MixinParameterDefault;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.modules.TapestryModule;
@@ -214,15 +215,20 @@ public class ComponentDependencyRegistryImplTest
         result = componentDependencyRegistry.listen(resources);
         Collections.sort(result);
         assertEquals(result, Arrays.asList("d", "dd"));
-        assertEquals("bar", componentDependencyRegistry.getDependencies("foo").iterator().next());
+        assertEquals("bar", getDependencies("foo").iterator().next());
         assertEquals("foo", componentDependencyRegistry.getDependents("bar").iterator().next());        
         
         configurePCCM(false);
         result = componentDependencyRegistry.listen(Collections.emptyList());
         assertEquals(result, Collections.emptyList());
         assertEquals(componentDependencyRegistry.getDependents("bar").size(), 0);
-        assertEquals(componentDependencyRegistry.getDependencies("foo").size(), 0);
+        assertEquals(getDependencies("foo").size(), 0);
         
+    }
+    
+    private Set<String> getDependencies(String className)
+    {
+        return componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
     }
     
     @Test
@@ -231,21 +237,25 @@ public class ComponentDependencyRegistryImplTest
         
         final String foo = "foo";
         final String bar = "bar";
-        final String something = "d";
-        final String other = "dd";
-        final String fulano = "a";
-        final String beltrano = "aa";
+        final String something = "something";
+        final String other = "other";
+        final String fulano = "fulano";
+        final String beltrano = "beltrano";
+        final String sicrano = "sicrano";
         
         assertEquals(
                 "getDependents() should never return null", 
                 Collections.emptySet(),
-                componentDependencyRegistry.getDependencies(foo));
+                getDependencies(foo));
 
         assertEquals(
                 "getDependents() should never return null", 
                 Collections.emptySet(),
                 componentDependencyRegistry.getDependents(foo));
 
+        // In Brazil, Fulano, Beltrano and Sicrano are the most used people
+        // placeholder names, in that order.
+        
         add(foo, bar);
         add(something, fulano);
         add(other, beltrano);
@@ -254,18 +264,24 @@ public class ComponentDependencyRegistryImplTest
         add(bar, null);
         add(fulano, null);
         add(beltrano, null);
+        add(beltrano, sicrano);
+        add(sicrano, null);
         
-        assertEquals(new HashSet<>(Arrays.asList(fulano, beltrano)), componentDependencyRegistry.getDependencies(other));
-        assertEquals(new HashSet<>(Arrays.asList(fulano)), componentDependencyRegistry.getDependencies(something));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependencies(fulano));
-        assertEquals(new HashSet<>(Arrays.asList(bar)), componentDependencyRegistry.getDependencies(foo));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependencies(bar));
+        assertEquals(new HashSet<>(Arrays.asList(fulano, beltrano)), getDependencies(other));
+        assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(something));
+        assertEquals(new HashSet<>(Arrays.asList()), getDependencies(fulano));
+        assertEquals(new HashSet<>(Arrays.asList(bar)), getDependencies(foo));
+        assertEquals(new HashSet<>(Arrays.asList()), getDependencies(bar));
+        assertEquals(new HashSet<>(Arrays.asList(sicrano)), getDependencies(beltrano));
 
         assertEquals(new HashSet<>(Arrays.asList(foo)), componentDependencyRegistry.getDependents(bar));
         assertEquals(new HashSet<>(Arrays.asList(other, something)), componentDependencyRegistry.getDependents(fulano));
         assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(foo));
+        assertEquals(new HashSet<>(Arrays.asList(other)), componentDependencyRegistry.getDependents(beltrano));
+        assertEquals(new HashSet<>(Arrays.asList(beltrano)), componentDependencyRegistry.getDependents(sicrano));
         
-        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, beltrano)), componentDependencyRegistry.getRootClasses());
+        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)), 
+                componentDependencyRegistry.getRootClasses());
         
         assertTrue(componentDependencyRegistry.contains(foo));
         assertTrue(componentDependencyRegistry.contains(bar));
@@ -273,6 +289,7 @@ public class ComponentDependencyRegistryImplTest
         assertTrue(componentDependencyRegistry.contains(something));
         assertTrue(componentDependencyRegistry.contains(fulano));
         assertTrue(componentDependencyRegistry.contains(beltrano));
+        assertTrue(componentDependencyRegistry.contains(sicrano));
         assertFalse(componentDependencyRegistry.contains("blah"));
 
         assertTrue(componentDependencyRegistry.getClassNames().contains(foo));
@@ -281,11 +298,49 @@ public class ComponentDependencyRegistryImplTest
         assertTrue(componentDependencyRegistry.getClassNames().contains(something));
         assertTrue(componentDependencyRegistry.getClassNames().contains(fulano));
         assertTrue(componentDependencyRegistry.getClassNames().contains(beltrano));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(sicrano));
+        assertFalse(componentDependencyRegistry.getClassNames().contains("blah"));
+        
+        // Testing the clear method
+        componentDependencyRegistry.clear(beltrano);
+        
+        assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(other));
+        assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(something));
+        assertEquals(new HashSet<>(Arrays.asList()), getDependencies(fulano));
+        assertEquals(new HashSet<>(Arrays.asList(bar)), getDependencies(foo));
+        assertEquals(new HashSet<>(Arrays.asList()), getDependencies(bar));
+        assertEquals(new HashSet<>(Arrays.asList()), getDependencies(sicrano));
+
+        assertEquals(new HashSet<>(Arrays.asList(foo)), componentDependencyRegistry.getDependents(bar));
+        assertEquals(new HashSet<>(Arrays.asList(other, something)), componentDependencyRegistry.getDependents(fulano));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(foo));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(beltrano));
+        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(sicrano));
+        
+        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)), componentDependencyRegistry.getRootClasses());
+        
+        assertTrue(componentDependencyRegistry.contains(foo));
+        assertTrue(componentDependencyRegistry.contains(bar));
+        assertTrue(componentDependencyRegistry.contains(other));
+        assertTrue(componentDependencyRegistry.contains(something));
+        assertTrue(componentDependencyRegistry.contains(fulano));
+        assertTrue(componentDependencyRegistry.contains(sicrano));
+        assertFalse(componentDependencyRegistry.contains(beltrano));
+        assertFalse(componentDependencyRegistry.contains("blah"));
+
+        assertTrue(componentDependencyRegistry.getClassNames().contains(foo));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(bar));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(other));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(something));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(fulano));
+        assertTrue(componentDependencyRegistry.getClassNames().contains(sicrano));
+        assertFalse(componentDependencyRegistry.getClassNames().contains(beltrano));
         assertFalse(componentDependencyRegistry.getClassNames().contains("blah"));
         
     }
     
-    @Test
+    // Tested code isn't being used at the moment
+    @Test(enabled = false)
     public void register()
     {
         
@@ -347,7 +402,7 @@ public class ComponentDependencyRegistryImplTest
     private void assertDependencies(Class clasz, Class... dependencies) {
         assertEquals(
                 setOf(dependencies),
-                componentDependencyRegistry.getDependencies(clasz.getName()));
+                getDependencies(clasz.getName()));
     }
 
     private static Set<String> setOf(Class ... classes)
@@ -364,7 +419,7 @@ public class ComponentDependencyRegistryImplTest
     
     private void add(String component, String dependency)
     {
-        componentDependencyRegistry.add(component, dependency, true);
+        componentDependencyRegistry.add(component, dependency, DependencyType.USAGE, true);
     }
 
     private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>

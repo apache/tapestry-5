@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
@@ -128,6 +130,11 @@ public class PageSourceImpl implements PageSource
         // The while loop looks superfluous, but it helps to ensure that the Page instance,
         // with all of its mutable construction-time state, is properly published to other
         // threads (at least, as I understand Brian Goetz's explanation, it should be).
+        
+        if (!productionMode && invalidateUnknownContext)
+        {
+            componentDependencyRegistry.disableInvalidations();
+        }
 
         while (true)
         {
@@ -137,6 +144,10 @@ public class PageSourceImpl implements PageSource
 
             if (page != null)
             {
+                if (invalidateUnknownContext && !productionMode)
+                {
+                    componentDependencyRegistry.enableInvalidations();
+                }
                 return page;
             }
             
@@ -150,9 +161,7 @@ public class PageSourceImpl implements PageSource
 //            {
 //                getPage(componentClassResolver.resolvePageClassNameToPageName(superclassName), false);
 //            }
-            final Set<String> pageDependencies = componentDependencyRegistry.getPageDependencies(className);
-            
-            preprocessPageClassLoaderContexts(className, pageDependencies);
+            final List<String> pageDependencies = preprocessPageDependencies(className);
             
             for (String pageClassName : pageDependencies)
             {
@@ -169,7 +178,6 @@ public class PageSourceImpl implements PageSource
 
             pageCache.put(key, ref);
             
-            // TODO: remove this?
             if (!productionMode)
             {
                 final ComponentPageElement rootElement = page.getRootElement();
@@ -178,18 +186,39 @@ public class PageSourceImpl implements PageSource
                 PageClassloaderContext context = pageClassloaderContextManager.get(className);
                 if (invalidateUnknownContext && context.isUnknown())
                 {
-                    componentDependencyRegistry.disableInvalidations();
                     pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
-                    componentDependencyRegistry.enableInvalidations();
                     pageClassloaderContextManager.get(className);
+                    preprocessPageDependencies(className);
                     return getPage(canonicalPageName, false);
                 }
             }
             
         }
+        
+        
     }
 
-    private void preprocessPageClassLoaderContexts(String className, final Set<String> pageDependencies) {
+    private List<String> preprocessPageDependencies(final String className) {
+        final List<String> pageDependencies = new ArrayList<>();
+        pageDependencies.addAll(
+                new ArrayList<String>(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE)));
+        pageDependencies.addAll(
+                new ArrayList<String>(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS)));
+        
+        final Iterator<String> iterator = pageDependencies.iterator();
+        while (iterator.hasNext())
+        {
+            if (!iterator.next().contains(".pages."))
+            {
+                iterator.remove();
+            }
+        }
+        
+        preprocessPageClassLoaderContexts(className, pageDependencies);
+        return pageDependencies;
+    }
+
+    private void preprocessPageClassLoaderContexts(String className, final List<String> pageDependencies) {
         for (int i = 0; i < 2; i++)
         {
             pageClassloaderContextManager.get(className);

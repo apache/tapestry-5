@@ -1,4 +1,4 @@
-// Copyright 2022 The Apache Software Foundation
+// Copyright 2022, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
@@ -53,7 +52,6 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -77,18 +75,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     private static final String META_ATTRIBUTE_SEPARATOR = ",";
     
     // Key is a component, values are the components that depend on it.
-    final private Map<String, Set<String>> map;
-    
-    // Dependencies that are only for invalidation (i.e. from one component to 
-    // a page injected through @InjectPage
-    final private Set<InvalidationOnlyDependency> invalidationOnlyDependencies;
+    final private Map<String, Set<Dependency>> map;
     
     // Cache to check which classes were already processed or not.
     final private Set<String> alreadyProcessed;
     
     final private File storedDependencies;
     
-    final private static ThreadLocal<Boolean> INVALIDATIONS_ENABLED = ThreadLocal.withInitial(() -> Boolean.TRUE);
+    final private static ThreadLocal<Integer> INVALIDATIONS_DISABLED = ThreadLocal.withInitial(() -> 0);
     
     final private PlasticManager plasticManager;
     
@@ -113,7 +107,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         this.pageClassloaderContextManager = pageClassloaderContextManager;
         map = new HashMap<>();
         alreadyProcessed = new HashSet<>();
-        invalidationOnlyDependencies = new HashSet<InvalidationOnlyDependency>();
         this.plasticManager = plasticManager;
         this.resolver = componentClassResolver;
         this.templateParser = templateParser;
@@ -141,14 +134,16 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                             .collect(Collectors.toSet());
                     for (String dependency : dependencies) 
                     {
-                        add(className, dependency);
+                        
+                        // TODO: fix storing and reading dependency file
+//                        add(className, dependency);
                         alreadyProcessed.add(dependency);
                     }
                     alreadyProcessed.add(className);
                 }
             } catch (IOException e) 
             {
-                throw new TapestryException("Exception trying to read " + ComponentDependencyRegistry.FILENAME, e);
+                throw new TapestryException("Exception trying to read " + FILENAME, e);
             }
         }
         
@@ -183,16 +178,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             if (field.isAnnotationPresent(InjectComponent.class))
             {
                 final Class<?> dependency = field.getType();
-                add(component, dependency);
+                add(component, dependency, DependencyType.USAGE);
                 processClass.accept(dependency);
             }
             
             // Page injection annotation
-            if (field.isAnnotationPresent(InjectComponent.class))
+            if (field.isAnnotationPresent(InjectPage.class))
             {
                 final Class<?> dependency = field.getType();
-                invalidationOnlyDependencies.add(
-                        new InvalidationOnlyDependency(className, dependency.getName()));
+                add(component, dependency, DependencyType.INJECT_PAGE);
             }
             
             // @Component
@@ -210,7 +204,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         if (isTransformed(superclass))
         {
             processClass.accept(superclass);
-            add(component, superclass);
+            add(component, superclass, DependencyType.SUPERCLASS);
         }
         
         alreadyProcessed.add(className);
@@ -258,13 +252,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     if (logicalName != null)
                     {
                         dependency = resolver.resolveComponentTypeToClassName(logicalName);
-                        add(className, dependency);
+                        add(className, dependency, DependencyType.USAGE);
                         processClassName.accept(dependency);
                     }
                     for (String mixin : TapestryInternalUtils.splitAtCommas(componentToken.getMixins()))
                     {
                         dependency = resolver.resolveMixinTypeToClassName(mixin);
-                        add(className, dependency);
+                        add(className, dependency, DependencyType.USAGE);
                         processClassName.accept(dependency);
                     }
                 }
@@ -305,7 +299,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             {
                 dependency = resolver.resolveComponentTypeToClassName(typeFromAnnotation);
             }
-            add(field.getDeclaringClass().getName(), dependency);
+            add(field.getDeclaringClass().getName(), dependency, DependencyType.USAGE);
             processClassName.accept(dependency);
         }
     }
@@ -319,7 +313,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     getFieldTypeClassName(field) : 
                     resolver.resolveMixinTypeToClassName(mixinType);
             
-            add(getDeclaringClassName(field), mixinClassName);
+            add(getDeclaringClassName(field), mixinClassName, DependencyType.USAGE);
             processClassName.accept(mixinClassName);
         }
     }
@@ -343,7 +337,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             {
                 for (Class dependency : mixinClasses.value()) 
                 {
-                    add(field.getDeclaringClass(), dependency);
+                    add(field.getDeclaringClass(), dependency, DependencyType.USAGE);
                     processClass.accept(dependency);
                 }
             }
@@ -356,7 +350,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     // Logic adapted from MixinsWorker
                     Orderable<String> typeAndOrder = TapestryInternalUtils.mixinTypeAndOrder(mixin);
                     final String dependency = resolver.resolveMixinTypeToClassName(typeAndOrder.getTarget());
-                    add(getDeclaringClassName(field), dependency);
+                    add(getDeclaringClassName(field), dependency, DependencyType.USAGE);
                     processClassName.accept(dependency);
                 }
             }
@@ -379,7 +373,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 for (String id : componentPageElement.getEmbeddedElementIds()) 
                 {
                     final ComponentPageElement child = componentPageElement.getEmbeddedElement(id);
-                    add(componentPageElement, child);
+                    add(componentPageElement, child, DependencyType.USAGE);
                     register(child);
                 }
                 
@@ -388,7 +382,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 final ComponentModel componentModel = componentResources.getComponentModel();
                 for (String mixinClassName : componentModel.getMixinClassNames()) 
                 {
-                    add(componentClassName, mixinClassName);
+                    add(componentClassName, mixinClassName, DependencyType.USAGE);
                 }
                 
                 // Mixins applied to embedded component instances
@@ -401,7 +395,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     final List<String> mixinClassNames = embeddedComponentModel
                             .getMixinClassNames();
                     for (String mixinClassName : mixinClassNames) {
-                        add(componentClassName, mixinClassName);
+                        add(componentClassName, mixinClassName, DependencyType.USAGE);
                     }
                 }
                 
@@ -410,7 +404,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 Class<?> parent = component.getClass().getSuperclass();
                 if (parent != null && !Object.class.equals(parent))
                 {
-                    add(componentClassName, parent.getName());
+                    add(componentClassName, parent.getName(), DependencyType.SUPERCLASS);
                 }
                 
                 // Dependencies from injecting annotations: 
@@ -420,7 +414,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 {
                     for (String dependency : metaDependencies.split(META_ATTRIBUTE_SEPARATOR)) 
                     {
-                        add(componentClassName, dependency);
+                        add(componentClassName, dependency, 
+                                isPage(dependency) ? DependencyType.INJECT_PAGE : DependencyType.USAGE);
                     }
                 }
                 
@@ -468,24 +463,19 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         {
             alreadyProcessed.remove(className);
             map.remove(className);
-            final Collection<Set<String>> allDependentSets = map.values();
-            for (Set<String> dependents : allDependentSets) 
+            final Collection<Set<Dependency>> allDependentSets = map.values();
+            for (Set<Dependency> dependents : allDependentSets) 
             {
                 if (dependents != null) 
                 {
-                    dependents.remove(className);
-                }
-            }
-        }
-        synchronized (invalidationOnlyDependencies) 
-        {
-            final Iterator<InvalidationOnlyDependency> iterator = invalidationOnlyDependencies.iterator();
-            while (iterator.hasNext())
-            {
-                InvalidationOnlyDependency dependency = iterator.next();
-                if (dependency.className.equals(className) || dependency.dependency.equals(className))
-                {
-                    iterator.remove();
+                    final Iterator<Dependency> iterator = dependents.iterator();
+                    while (iterator.hasNext())
+                    {
+                        if (className.equals(iterator.next().className))
+                        {
+                            iterator.remove();
+                        }
+                    }
                 }
             }
         }
@@ -506,44 +496,49 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getDependents(String className) 
     {
-        final Set<String> dependents = map.get(className);
-        return dependents != null ? dependents : Collections.emptySet();
+        final Set<Dependency> dependents = map.get(className);
+        return dependents != null 
+                ? dependents.stream().map(d -> d.className).collect(Collectors.toSet()) 
+                : Collections.emptySet();
     }
     
-    private Set<String> getDependencies(String className, Predicate<String> filter) 
+    @Override
+    public Set<String> getDependencies(String className, DependencyType type) 
     {
         Set<String> dependencies = Collections.emptySet();
         if (alreadyProcessed.contains(className))
         {
             dependencies = map.entrySet().stream()
-                .filter(e -> e.getValue().contains(className))
+                .filter(e -> contains(e.getValue(), className, type))
                 .map(e -> e.getKey())
-                .filter(filter)
                 .collect(Collectors.toSet());
         }
         
         return dependencies;
     }
 
-    @Override
-    public Set<String> getDependencies(String className) 
+
+    private boolean contains(Set<Dependency> dependencies, String className, DependencyType type) 
     {
-        return getDependencies(className, this::isNotPage);
-    }
-    
-    @Override
-    public Set<String> getPageDependencies(String className) 
-    {
-        return getDependencies(className, this::isPage);
+        boolean contains = false;
+        for (Dependency dependency : dependencies) 
+        {
+            if (dependency.type.equals(type) && dependency.className.equals(className))
+            {
+                contains = true;
+                break;
+            }
+        }
+        return contains;
     }
 
-    private void add(ComponentPageElement component, ComponentPageElement dependency) 
+    private void add(ComponentPageElement component, ComponentPageElement dependency, DependencyType type) 
     {
-        add(getClassName(component), getClassName(dependency));
+        add(getClassName(component), getClassName(dependency), type);
     }
     
     // Just for unit tests
-    void add(String component, String dependency, boolean markAsAlreadyProcessed)
+    void add(String component, String dependency, DependencyType type, boolean markAsAlreadyProcessed)
     {
         if (markAsAlreadyProcessed)
         {
@@ -551,31 +546,32 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
         if (dependency != null)
         {
-            add(component, dependency);
+            add(component, dependency, type);
         }
     }
     
-    private void add(Class<?> component, Class<?> dependency) 
+    private void add(Class<?> component, Class<?> dependency, DependencyType type) 
     {
         if (plasticManager.shouldInterceptClassLoading(dependency.getName()))
         {
-            add(component.getName(), dependency.getName());
+            add(component.getName(), dependency.getName(), type);
         }
     }
     
-    private void add(String component, String dependency) 
+    private void add(String component, String dependency, DependencyType type) 
     {
         Objects.requireNonNull(component, "Parameter component cannot be null");
         Objects.requireNonNull(dependency, "Parameter dependency cannot be null");
+        Objects.requireNonNull(dependency, "Parameter type cannot be null");
         synchronized (map) 
         {
-            Set<String> dependents = map.get(dependency);
+            Set<Dependency> dependents = map.get(dependency);
             if (dependents == null) 
             {
                 dependents = new HashSet<>();
                 map.put(dependency, dependents);
             }
-            dependents.add(component);
+            dependents.add(new Dependency(component, type));
         }
     }
     
@@ -589,7 +585,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     List<String> listen(List<String> resources)
     {
         List<String> furtherDependents;
-        if (!INVALIDATIONS_ENABLED.get())
+        if (INVALIDATIONS_DISABLED.get() > 0)
         {
             furtherDependents = Collections.emptyList();
         }
@@ -616,14 +612,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     }
                 }
                 
-                for (InvalidationOnlyDependency invalidationOnlyDependency : invalidationOnlyDependencies) 
-                {
-                    if (invalidationOnlyDependency.dependency.equals(resource))
-                    {
-                        furtherDependents.add(invalidationOnlyDependency.dependency);
-                    }
-                }
-                
                 clear(resource);
             }
         }
@@ -645,14 +633,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 JSONObject jsonObject = new JSONObject();
                 for (String className : map.keySet())
                 {
-                    final Set<String> dependencies = getDependencies(className);
-                    jsonObject.put(className, JSONArray.from(dependencies));
+                    // TODO: rewrite this
+//                    final Set<String> dependencies = getDependencies(className);
+//                    jsonObject.put(className, JSONArray.from(dependencies));
                 }
                 bufferedWriter.write(jsonObject.toString());
             }
             catch (IOException e) 
             {
-                throw new TapestryException("Exception trying to read " + ComponentDependencyRegistry.FILENAME, e);
+                throw new TapestryException("Exception trying to read " + FILENAME, e);
             }
         } 
     }
@@ -672,7 +661,9 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getRootClasses() {
         return alreadyProcessed.stream()
-                .filter(c -> getDependencies(c).isEmpty())
+                .filter(c -> getDependencies(c, DependencyType.USAGE).isEmpty() &&
+                        getDependencies(c, DependencyType.INJECT_PAGE).isEmpty() &&
+                        getDependencies(c, DependencyType.SUPERCLASS).isEmpty())
                 .collect(Collectors.toSet());
     }
     
@@ -690,13 +681,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public void disableInvalidations() 
     {
-        INVALIDATIONS_ENABLED.set(false);
+        INVALIDATIONS_DISABLED.set(INVALIDATIONS_DISABLED.get() + 1);
     }
 
     @Override
     public void enableInvalidations() 
     {
-        INVALIDATIONS_ENABLED.set(true);
+        INVALIDATIONS_DISABLED.set(INVALIDATIONS_DISABLED.get() - 1);
     }
 
     /**
@@ -892,6 +883,46 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             }
             InvalidationOnlyDependency other = (InvalidationOnlyDependency) obj;
             return Objects.equals(className, other.className) && Objects.equals(dependency, other.dependency);
+        }
+        
+    }
+    
+    private static final class Dependency
+    {
+        private final String className;
+        private final DependencyType type;
+        
+        public Dependency(String className, DependencyType dependencyType) 
+        {
+            super();
+            this.className = className;
+            this.type = dependencyType;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(className, type);
+        }
+
+        @Override
+        public boolean equals(Object obj) 
+        {
+            if (this == obj) 
+            {
+                return true;
+            }
+            if (!(obj instanceof Dependency)) 
+            {
+                return false;
+            }
+            Dependency other = (Dependency) obj;
+            return Objects.equals(className, other.className) && type == other.type;
+        }
+
+        @Override
+        public String toString() 
+        {
+            return "Dependency [className=" + className + ", dependencyType=" + type + "]";
         }
         
     }

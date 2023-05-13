@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.services.ComponentClassResolver;
 
 public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDependencyGraphvizGenerator {
@@ -48,34 +49,41 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         
         final Set<String> allClasses = new HashSet<>();
         
-        for (String className : classNames)
+        for (DependencyType dependencyType : DependencyType.values()) 
         {
-            addDependencies(className, allClasses);
-        }
-        
-        final StringBuilder dependencySection = new StringBuilder();
-        
-        for (String className : allClasses) 
-        {
-            final Node node = createNode(componentClassResolver.getLogicalName(className), className);
-            dotFile.append(getNodeDefinition(node));
-            for (String dependency : node.dependencies)
+
+            for (String className : classNames)
             {
-                dependencySection.append(getNodeDependencyDefinition(node, dependency));
+                addDependencies(className, allClasses, dependencyType);
             }
+            
+            final StringBuilder dependencySection = new StringBuilder();
+            
+            for (String className : allClasses) 
+            {
+                final Node node = createNode(componentClassResolver.getLogicalName(className), className, dependencyType);
+                dotFile.append(getNodeDefinition(node, dependencyType));
+                for (String dependency : node.dependencies)
+                {
+                    dependencySection.append(getNodeDependencyDefinition(node, dependency));
+                }
+            }
+            
+            dotFile.append("\n");
+            dotFile.append(dependencySection);
+            dotFile.append("\n");
+
         }
         
-        dotFile.append("\n");
-        dotFile.append(dependencySection);
-        dotFile.append("\n");
 
         dotFile.append("}");
         
         return dotFile.toString();
     }
     
-    private String getNodeDefinition(Node node) 
+    private String getNodeDefinition(Node node, DependencyType dependencyType) 
     {
+        // TODO: add some diferentiation between dependency types
         return String.format("\t%s [label=\"%s\", tooltip=\"%s\"];\n", node.id, node.label, node.className);
     }
     
@@ -116,21 +124,21 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         return label.replace('.', '_').replace('/', '_');
     }
 
-    private void addDependencies(String className, Set<String> allClasses) 
+    private void addDependencies(String className, Set<String> allClasses, DependencyType type) 
     {
         if (!allClasses.contains(className))
         {
             allClasses.add(className);
-            for (String dependency : componentDependencyRegistry.getDependencies(className))
+            for (String dependency : componentDependencyRegistry.getDependencies(className, type))
             {
-                addDependencies(dependency, allClasses);
+                addDependencies(dependency, allClasses, type);
             }
         }
     }
 
-    private Node createNode(String logicalName, String className) 
+    private Node createNode(String logicalName, String className, DependencyType type) 
     {
-        return new Node(logicalName, className, componentDependencyRegistry.getDependencies(className));
+        return new Node(logicalName, className, componentDependencyRegistry.getDependencies(className, type));
     }
 
     private static final class Node {

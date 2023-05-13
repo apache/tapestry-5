@@ -28,6 +28,7 @@ import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
 import org.apache.tapestry5.plastic.PlasticUtils;
@@ -238,7 +239,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                 {
 
                     alreadyProcessed.add(className);
-
+                    
                     // Sorting dependencies alphabetically so we have consistent results.
                     List<String> dependencies = new ArrayList<>(getDependenciesWithoutPages(className));
                     Collections.sort(dependencies);
@@ -354,11 +355,9 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         return context;
     }
 
-    private Set<String> getDependenciesWithoutPages(String className) {
-        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className);
-        return dependencies.stream()
-                .filter(c -> !componentClassResolver.isPage(c))
-                .collect(Collectors.toSet());
+    private Set<String> getDependenciesWithoutPages(String className) 
+    {
+        return componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
     }
 
     private Class<?> loadClass(String className, PageClassloaderContext context) 

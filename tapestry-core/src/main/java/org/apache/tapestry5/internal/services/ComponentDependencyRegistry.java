@@ -35,6 +35,29 @@ import org.apache.tapestry5.plastic.PlasticField;
 public interface ComponentDependencyRegistry {
 
     /**
+     * Enum class defining the types of dependency components, pages and mixins can
+     * have among them.
+     */
+    public static enum DependencyType
+    {
+        
+        /**
+         * Simple usage of components and mixins in components and pages
+         */
+        USAGE,
+        
+        /**
+         * Superclass/subclass dependency.
+         */
+        SUPERCLASS,
+        
+        /**
+         * Dependency by usage of the {@linkplain InjectPage} annotation.
+         */
+        INJECT_PAGE;
+    }
+
+    /**
      * Name of the file where the dependency information is stored between webapp runs.
      */
     String FILENAME = "tapestryComponentDependencies.json";
@@ -76,16 +99,11 @@ public interface ComponentDependencyRegistry {
     Set<String> getDependents(String className);
     
     /**
-     * Returns the fully qualified names of the direct dependencies of a given component.
-     * Doesn't include dependencies that are pages.
+     * Returns the fully qualified names of the direct dependencies of a given component
+     * and a given dependency type.
+     * @see DependencyType
      */
-    Set<String> getDependencies(String className);
-    
-    /**
-     * Returns the fully qualified names of the direct dependencies of a given component,
-     * but just the ones that are pages.
-     */
-    Set<String> getPageDependencies(String className);
+    Set<String> getDependencies(String className, DependencyType type);
     
     /**
      * Signs up this registry to invalidation events from a given hub.
