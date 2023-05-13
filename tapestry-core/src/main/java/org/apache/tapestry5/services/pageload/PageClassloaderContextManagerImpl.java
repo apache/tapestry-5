@@ -260,18 +260,17 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     Set<PageClassloaderContext> contextDependencies = new HashSet<>();
                     for (String dependency : dependencies) 
                     {
-                        // Circular dependency
-//                        if (!circularDependencies.contains(dependency))
-//                        {
-                            PageClassloaderContext dependencyContext = root.findByClassName(dependency);
-                            if (dependencyContext == null)
-                            {
-                                dependencyContext = processUsingDependencies(dependency, root, unknownContextProvider,
-                                        plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
+                        PageClassloaderContext dependencyContext = root.findByClassName(dependency);
+                        if (dependencyContext == null)
+                        {
+                            dependencyContext = processUsingDependencies(dependency, root, unknownContextProvider,
+                                    plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
 
-                            }
+                        }
+                        if (!dependencyContext.isRoot())
+                        {
                             contextDependencies.add(dependencyContext);
-//                        }
+                        }
                     }
                     
                     if (contextDependencies.size() == 0)
@@ -422,7 +421,8 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             final PageClassloaderContext parent = context.getParent();
             // We don't want the merged context to have a further dependency on 
             // the root context (it's not mergeable) nor on itself.
-            if (!parent.isRoot() && !allContextsIncludingDescendents.contains(parent))
+            if (!parent.isRoot() && 
+                    !allContextsIncludingDescendents.contains(parent))
             {
                 furtherDependencies.add(parent);
             }
