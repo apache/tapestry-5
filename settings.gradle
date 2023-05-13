@@ -1,6 +1,6 @@
 include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-http", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
-include "tapestry-beanvalidator", "tapestry-jpa", "tapestry-kaptcha"
+include /*"tapestry-beanvalidator", */"tapestry-jpa", "tapestry-kaptcha"
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     include "tapestry-javadoc"
 }
