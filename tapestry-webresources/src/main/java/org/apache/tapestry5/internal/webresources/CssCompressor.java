@@ -18,6 +18,13 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.ArrayList;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.ArrayList;
+
 public class CssCompressor {
 
     private StringBuffer srcsb = new StringBuffer();
@@ -138,8 +145,7 @@ public class CssCompressor {
         css = sb.toString();
 
 
-        css = this.preserveToken(css, "url", "(?i)url\\(\\s*([\"']?)data\\:\\s*image/svg\\+xml", false, preservedTokens);
-        css = this.preserveToken(css, "url", "(?i)url\\(\\s*([\"']?)data\\:\\s*(?!(image/svg\\+xml))", true, preservedTokens);
+        css = this.preserveToken(css, "url", "(?i)url\\(\\s*([\"']?)data\\:", true, preservedTokens);
         css = this.preserveToken(css, "calc",  "(?i)calc\\(\\s*([\"']?)", false, preservedTokens);
         css = this.preserveToken(css, "progid:DXImageTransform.Microsoft.Matrix",  "(?i)progid:DXImageTransform.Microsoft.Matrix\\s*([\"']?)", false, preservedTokens);
 
@@ -329,13 +335,29 @@ public class CssCompressor {
         // remove unnecessary semicolons
         css = css.replaceAll(";+}", "}");
 
-        // Replace 0(px,em,%) with 0.
+        // Replace 0(px,em) with 0. (don't replace seconds are they are needed for transitions to be valid)
         String oldCss;
-        p = Pattern.compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)");
+        p = Pattern.compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|in|cm|mm|pc|pt|ex|deg|g?rad|k?hz)");
         do {
           oldCss = css;
           m = p.matcher(css);
           css = m.replaceAll("$1$20");
+        } while (!(css.equals(oldCss)));
+        
+        // We do the same with % but don't replace the 0% in keyframes
+        p = Pattern.compile("(?i)(: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:%)");
+        do {
+          oldCss = css;
+          m = p.matcher(css);
+          css = m.replaceAll("$1$20");
+        } while (!(css.equals(oldCss)));
+        
+        //Replace the keyframe 100% step with 'to' which is shorter
+        p = Pattern.compile("(?i)(^|,|\\{) ?(?:100% ?\\{)");
+        do {
+          oldCss = css;
+          m = p.matcher(css);
+          css = m.replaceAll("$1to{");
         } while (!(css.equals(oldCss)));
 
         // Replace 0(px,em,%) with 0 inside groups (e.g. -MOZ-RADIAL-GRADIENT(CENTER 45DEG, CIRCLE CLOSEST-SIDE, ORANGE 0%, RED 100%))
@@ -347,12 +369,15 @@ public class CssCompressor {
         } while (!(css.equals(oldCss)));
 
         // Replace x.0(px,em,%) with x(px,em,%).
-        css = css.replaceAll("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz| |;)", "$1$2");
+        css = css.replaceAll("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)", "$1$2");
+
+        // Replace .0(px,em,%) with 0(px,em,%).
+        css = css.replaceAll("([ |:])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)", "$1\\0$2");
 
         // Replace 0 0 0 0; with 0.
         css = css.replaceAll(":0 0 0 0(;|})", ":0$1");
         css = css.replaceAll(":0 0 0(;|})", ":0$1");
-        css = css.replaceAll("(?<!flex):0 0(;|})", ":0$1");
+        css = css.replaceAll("(?<!flex):0 0(;|\\})", ":0$1");
 
 
         // Replace background-position:0; with background-position:0 0;
@@ -380,7 +405,7 @@ public class CssCompressor {
             for (i = 0; i < rgbcolors.length; i++) {
                 int val = Integer.parseInt(rgbcolors[i]);
                 if (val < 16) {
-                    hexcolor.append('0');
+                    hexcolor.append("0");
                 }
 
                 // If someone passes an RGB value that's too big to express in two characters, round down.
