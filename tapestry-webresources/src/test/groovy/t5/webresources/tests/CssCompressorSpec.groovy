@@ -23,6 +23,23 @@ class CssCompressorSpec extends Specification {
         writer.toString() == '''@keyframes anim{0%{opacity:0}100%{opacity:1}}'''
     }
 
+    @Issue('TAP5-2753')
+    def "preserve space for calc operators"() {
+        given:
+        def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css")
+        def reader = new InputStreamReader(is)
+        def compressor = new CssCompressor(reader)
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text.strip()
+
+        def writer = new StringWriter()
+
+        when:
+        def result = compressor.compress(writer, -1)
+
+        then:
+        writer.toString() == expected
+    }
+
     def "yui compressor test '#rawFile'"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/$rawFile")

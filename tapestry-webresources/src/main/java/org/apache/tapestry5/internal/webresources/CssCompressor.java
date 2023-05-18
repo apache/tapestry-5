@@ -538,7 +538,7 @@ public class CssCompressor {
             String s = m.group();
             
             s = s.replaceAll("(?<=[-|%|px|em|rem|vw|\\d]+)\\+", " + ");
-            s = s.replaceAll("(?<=[-|%|px|em|rem|vw|\\d]+)\\-", " - ");
+            s = s.replaceAll("(?<=[-|%|px|em|rem|vw|\\)|\\d]+)(?<!var\\([a-z-0-9]+)\\-", " - ");
             s = s.replaceAll("(?<=[-|%|px|em|rem|vw|\\d]+)\\*", " * ");
             s = s.replaceAll("(?<=[-|%|px|em|rem|vw|\\d]+)\\/", " / ");
             

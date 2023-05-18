@@ -1,0 +1,4 @@
+.some-class
+{
+padding-top: calc(10px + var(--default-page-header-height));
+}
