@@ -9,53 +9,56 @@ class CssCompressorSpec extends Specification {
 
     @Issue('TAP5-2524')
     def "minify CSS with keyframes "() {
-        setup:
+        given:
         def css = '''@keyframes anim {
     0% { opacity: 0; }
   100% { opacity: 1; }
 }'''
-        StringWriter writer = new StringWriter()
+        def expected = "@keyframes anim{0%{opacity:0}100%{opacity:1}}" 
 
         when:
-        new CssCompressor(new StringReader(css)).compress(writer, -1)
+        def result = CssCompressor.compress(css)
 
         then:
-        writer.toString() == '''@keyframes anim{0%{opacity:0}100%{opacity:1}}'''
+        result == expected
     }
 
     @Issue('TAP5-2753')
     def "preserve space for calc operators"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css")
-        def reader = new InputStreamReader(is)
-        def compressor = new CssCompressor(reader)
         def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text.strip()
 
-        def writer = new StringWriter()
-
         when:
-        def result = compressor.compress(writer, -1)
+        def result = CssCompressor.compress(is)
 
         then:
-        writer.toString() == expected
+        result == expected
+    }
+
+    def "bootstrap.css integry check"() {
+        given:
+        def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css")
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css.min").text.strip()
+
+        when:
+        def result = CssCompressor.compress(is)
+
+        then:
+        result == expected
     }
 
     def "yui compressor test '#rawFile'"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/$rawFile")
-        def reader = new InputStreamReader(is)
-        def compressor = new CssCompressor(reader)
         def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/${rawFile}.min").text.strip()
-        
-        def writer = new StringWriter()
-        
+
         when:
-        def result = compressor.compress(writer, -1)
-        
+        def result = CssCompressor.compress(is)
+
         then:
-        writer.toString() == expected
-        
-        
+        result == expected
+
         where:
         rawFile << [
         "background-position.css",
