@@ -2791,9 +2791,10 @@ public final class TapestryModule
             ComponentInstantiatorSource componentInstantiatorSource,
             ComponentClassResolver componentClassResolver,
             TemplateParser templateParser,
-            ComponentTemplateLocator componentTemplateLocator)
+            ComponentTemplateLocator componentTemplateLocator,
+            PerthreadManager perthreadManager)
     {
-        ComponentDependencyRegistry componentDependencyRegistry = 
+        ComponentDependencyRegistryImpl componentDependencyRegistry = 
                 new ComponentDependencyRegistryImpl(
                         pageClassloaderContextManager,
                         componentInstantiatorSource.getProxyFactory().getPlasticManager(),
@@ -2803,6 +2804,8 @@ public final class TapestryModule
         componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
         componentDependencyRegistry.listen(resourceChangeTracker);
         componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
+        // TODO: remove
+        componentDependencyRegistry.setupThreadCleanup(perthreadManager);
         return componentDependencyRegistry;
     }
     

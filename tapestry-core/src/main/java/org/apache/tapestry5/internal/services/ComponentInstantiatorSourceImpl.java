@@ -341,8 +341,15 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         OPEN_INSTANTIATORS.get().add(className);
                         
                         componentDependencyRegistry.disableInvalidations();
-                        PageClassloaderContext context = pageClassloaderContextManager.get(className);
-                        componentDependencyRegistry.enableInvalidations();
+                        PageClassloaderContext context;
+                        try
+                        {
+                            context = pageClassloaderContextManager.get(className);
+                        }
+                        finally
+                        {
+                            componentDependencyRegistry.enableInvalidations();
+                        }
                         
                         // Make sure the dependencies have been processed in case
                         // there was some invalidation going on and they're not there.

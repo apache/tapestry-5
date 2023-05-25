@@ -52,6 +52,7 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -68,6 +69,8 @@ import org.slf4j.Logger;
 public class ComponentDependencyRegistryImpl implements ComponentDependencyRegistry 
 {
     
+    private static final List<String> EMPTY_LIST = Collections.emptyList();
+
     final private PageClassloaderContextManager pageClassloaderContextManager;
     
     private static final String META_ATTRIBUTE = "injectedComponentDependencies";
@@ -149,6 +152,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         
         storedDependencyInformationPresent = !map.isEmpty();
         
+    }
+    
+    public void setupThreadCleanup(final PerthreadManager perthreadManager)
+    {
+        perthreadManager.addThreadCleanupCallback(() -> {
+            INVALIDATIONS_DISABLED.set(0);
+        });
     }
     
     @Override
@@ -584,14 +594,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     // Protected just for testing
     List<String> listen(List<String> resources)
     {
-        List<String> furtherDependents;
-        if (INVALIDATIONS_DISABLED.get() > 0)
-        {
-            furtherDependents = Collections.emptyList();
-        }
-        else if (resources.isEmpty())
+        List<String> furtherDependents = EMPTY_LIST;
+        if (resources.isEmpty())
         {
             clear();
+            furtherDependents = EMPTY_LIST;
+        }
+        else if (INVALIDATIONS_DISABLED.get() > 0)
+        {
             furtherDependents = Collections.emptyList();
         }
         // Don't invalidate component dependency information when 
@@ -613,11 +623,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 }
                 
                 clear(resource);
+                
             }
-        }
-        else
-        {
-            furtherDependents = Collections.emptyList();
         }
         return furtherDependents;
     }
@@ -688,6 +695,10 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     public void enableInvalidations() 
     {
         INVALIDATIONS_DISABLED.set(INVALIDATIONS_DISABLED.get() - 1);
+        if (INVALIDATIONS_DISABLED.get() < 0)
+        {
+            INVALIDATIONS_DISABLED.set(0);
+        }
     }
 
     /**
@@ -847,44 +858,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             return false;
         }
 
-    }
-
-    final private class InvalidationOnlyDependency
-    {
-        
-        private String className;
-        private String dependency;
-        
-        public InvalidationOnlyDependency(String className, String dependency) 
-        {
-            super();
-            this.className = className;
-            this.dependency = dependency;
-        }
-
-        @Override
-        public int hashCode() 
-        {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Objects.hash(className, dependency);
-            return result;
-        }
-        
-        @Override
-        public boolean equals(Object obj) 
-        {
-            if (this == obj) 
-            {
-                return true;
-            }
-            if (!(obj instanceof InvalidationOnlyDependency)) {
-                return false;
-            }
-            InvalidationOnlyDependency other = (InvalidationOnlyDependency) obj;
-            return Objects.equals(className, other.className) && Objects.equals(dependency, other.dependency);
-        }
-        
     }
     
     private static final class Dependency

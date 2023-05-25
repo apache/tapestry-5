@@ -82,14 +82,29 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     @Override
     public void invalidateUnknownContext()
     {
-        for (PageClassloaderContext context : root.getChildren())
-        {
-            if (context.isUnknown())
+        synchronized (this) {
+            markAsNotInvalidatingContext();
+            for (PageClassloaderContext context : root.getChildren())
             {
-                componentDependencyRegistry.disableInvalidations();
-                invalidateAndFireInvalidationEvents(context);
-                componentDependencyRegistry.enableInvalidations();
-                break;
+                if (context.isUnknown())
+                {
+//                    componentDependencyRegistry.disableInvalidations();
+//                    final Set<String> classNames = invalidate(context);
+//                    List<String> toInvalidate = new ArrayList<>();
+//                    for (String className : classNames) 
+//                    {
+//                        if (root.findByClassName(className) == null)
+//                        {
+//                            toInvalidate.add(className);
+//                        }
+//                    }
+//                    componentClassesInvalidationEventHub.fireInvalidationEvent(toInvalidate);
+//                    invalidationHub.fireInvalidationEvent(toInvalidate);
+//                    
+//                    componentDependencyRegistry.enableInvalidations();
+                    invalidateAndFireInvalidationEvents(context);
+                    break;
+                }
             }
         }
     }
@@ -214,8 +229,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                 context = root;
             } else {
                 if (
-                        !componentDependencyRegistry.contains(className) && 
-                        componentDependencyRegistry.getDependents(className).isEmpty())
+                        !componentDependencyRegistry.contains(className) 
+                        // TODO: review this
+//                        && componentDependencyRegistry.getDependents(className).isEmpty()
+                        )
                 {
                     context = unknownContextProvider.get();
 //                    // Make sure you get a fresh version of the class before processing its
@@ -306,7 +323,8 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     // Ensure non-page class is initialized in the correct context and classloader.
                     // Pages get their own context and classloader, so this initialization
                     // is both non-needed and a cause for an NPE if it happens.
-                    if (!componentClassResolver.isPage(className))
+                    if (!componentClassResolver.isPage(className)
+                            || componentDependencyRegistry.getDependencies(className, DependencyType.USAGE).isEmpty())
                     {
                         loadClass(className, context);
                     }
@@ -547,21 +565,31 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     @Override
     public void invalidateAndFireInvalidationEvents(PageClassloaderContext... contexts) {
         final Set<String> classNames = invalidate(contexts);
-        INVALIDATING_CONTEXT.set(true);
+        markAsInvalidatingContext();
         invalidate(classNames);
+        markAsNotInvalidatingContext();
+    }
+
+    private void markAsNotInvalidatingContext() {
+//        System.out.println("XXXX Mark as NOT invalidating. Current: " + INVALIDATING_CONTEXT.get());
         INVALIDATING_CONTEXT.set(false);
+    }
+
+    private void markAsInvalidatingContext() {
+//        System.out.println("XXXX Mark as invalidating. Current: " + INVALIDATING_CONTEXT.get());
+        INVALIDATING_CONTEXT.set(true);
     }
     
     private void invalidate(Set<String> classesToInvalidate) {
         if (!classesToInvalidate.isEmpty())
         {
             LOGGER.debug("Invalidating classes {}", classesToInvalidate);
-            INVALIDATING_CONTEXT.set(true);
+            markAsInvalidatingContext();
             final ArrayList<String> classesToInvalidateAsList = new ArrayList<>(classesToInvalidate);
             // TODO: do we really need both invalidation hubs to be invoked here?
             invalidationHub.fireInvalidationEvent(classesToInvalidateAsList);
             componentClassesInvalidationEventHub.fireInvalidationEvent(classesToInvalidateAsList);
-            INVALIDATING_CONTEXT.set(false);
+            markAsNotInvalidatingContext();
         }
     }
 

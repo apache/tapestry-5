@@ -118,7 +118,21 @@ public class PageSourceImpl implements PageSource
     
     public Page getPage(String canonicalPageName)
     {
-        return getPage(canonicalPageName, true);
+        if (!productionMode)
+        {
+            componentDependencyRegistry.disableInvalidations();
+        }
+        try
+        {
+            return getPage(canonicalPageName, true);
+        }
+        finally
+        {
+            if (!productionMode)
+            {
+                componentDependencyRegistry.enableInvalidations();
+            }
+        }
     }
 
     public Page getPage(String canonicalPageName, boolean invalidateUnknownContext)
@@ -131,11 +145,6 @@ public class PageSourceImpl implements PageSource
         // with all of its mutable construction-time state, is properly published to other
         // threads (at least, as I understand Brian Goetz's explanation, it should be).
         
-        if (!productionMode && invalidateUnknownContext)
-        {
-            componentDependencyRegistry.disableInvalidations();
-        }
-
         while (true)
         {
             SoftReference<Page> ref = pageCache.get(key);
@@ -144,10 +153,6 @@ public class PageSourceImpl implements PageSource
 
             if (page != null)
             {
-                if (invalidateUnknownContext && !productionMode)
-                {
-                    componentDependencyRegistry.enableInvalidations();
-                }
                 return page;
             }
             
@@ -184,11 +189,19 @@ public class PageSourceImpl implements PageSource
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
                 PageClassloaderContext context = pageClassloaderContextManager.get(className);
-                if (invalidateUnknownContext && context.isUnknown())
+                
+                if (context.isUnknown())
                 {
-                    pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
-                    pageClassloaderContextManager.get(className);
-                    preprocessPageDependencies(className);
+                    this.pageCache.remove(key);
+                    if (invalidateUnknownContext)
+                    {
+//                        pageClassloaderContextManager.invalidate(context);
+                        pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
+                        preprocessPageDependencies(className);
+                    }
+//                    context.getClassNames().remove(className);
+                    context.getClassNames().clear();
+                    // Avoiding bad invalidations
                     return getPage(canonicalPageName, false);
                 }
             }
@@ -224,18 +237,30 @@ public class PageSourceImpl implements PageSource
             pageClassloaderContextManager.get(className);
             for (String pageClassName : pageDependencies)
             {
-                pageClassloaderContextManager.get(pageClassName);
+                final PageClassloaderContext context = pageClassloaderContextManager.get(pageClassName);
+                if (i == 1)
+                {
+                    try 
+                    {
+                        context.getClassLoader().loadClass(pageClassName);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }
-    }
-
-    private Class<?> getSuperclass(final String className, PageClassloaderContext context) 
-    {
-        try {
-            return context.getClassLoader().loadClass(className).getSuperclass();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        
+        // TODO: remove
+//        for (String pageClassName : pageDependencies)
+//        {
+//            try 
+//            {
+//                pageClassloaderContextManager.get(pageClassName).getClassLoader().loadClass(pageClassName);
+//            } catch (ClassNotFoundException e) 
+//            {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 
     @PostInjection
