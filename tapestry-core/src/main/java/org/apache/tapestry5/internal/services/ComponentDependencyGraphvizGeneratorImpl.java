@@ -49,24 +49,20 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         
         final Set<String> allClasses = new HashSet<>();
         
-        for (DependencyType dependencyType : DependencyType.values()) 
+        for (String className : classNames) 
         {
-
-            for (String className : classNames)
+            final Node node = createNode(componentClassResolver.getLogicalName(className), className);
+            dotFile.append(getNodeDefinition(node));
+            for (DependencyType dependencyType : DependencyType.values()) 
             {
                 addDependencies(className, allClasses, dependencyType);
             }
             
             final StringBuilder dependencySection = new StringBuilder();
             
-            for (String className : allClasses) 
+            for (Dependency dependency : node.dependencies)
             {
-                final Node node = createNode(componentClassResolver.getLogicalName(className), className, dependencyType);
-                dotFile.append(getNodeDefinition(node, dependencyType));
-                for (String dependency : node.dependencies)
-                {
-                    dependencySection.append(getNodeDependencyDefinition(node, dependency));
-                }
+                dependencySection.append(getNodeDependencyDefinition(node, dependency.className, dependency.type));
             }
             
             dotFile.append("\n");
@@ -81,15 +77,21 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         return dotFile.toString();
     }
     
-    private String getNodeDefinition(Node node, DependencyType dependencyType) 
+    private String getNodeDefinition(Node node) 
     {
-        // TODO: add some diferentiation between dependency types
         return String.format("\t%s [label=\"%s\", tooltip=\"%s\"];\n", node.id, node.label, node.className);
     }
     
-    private String getNodeDependencyDefinition(Node node, String dependency) 
+    private String getNodeDependencyDefinition(Node node, String dependency, DependencyType dependencyType) 
     {
-        return String.format("\t%s -> %s\n", node.id, escapeNodeId(getNodeLabel(dependency)));
+        String extraDefinition;
+        switch (dependencyType)
+        {
+            case INJECT_PAGE: extraDefinition = " [style=dashed]"; break;
+            case SUPERCLASS: extraDefinition = " [arrowhead=empty]"; break;
+            default: extraDefinition = "";
+        }
+        return String.format("\t%s -> %s%s\n", node.id, escapeNodeId(getNodeLabel(dependency)), extraDefinition);
     }
 
     private String getNodeLabel(String className) 
@@ -136,9 +138,30 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         }
     }
 
-    private Node createNode(String logicalName, String className, DependencyType type) 
+    private Node createNode(String logicalName, String className) 
     {
-        return new Node(logicalName, className, componentDependencyRegistry.getDependencies(className, type));
+        Collection<Dependency> deps = new HashSet<>();
+        for (DependencyType type : DependencyType.values()) 
+        {
+            final Set<String> dependencies = componentDependencyRegistry.getDependencies(className, type);
+            for (String dependency : dependencies) 
+            {
+                deps.add(new Dependency(dependency, type));
+            }
+        }
+        return new Node(logicalName, className, deps);
+    }
+    
+    private static final class Dependency
+    {
+        final private String className;
+        final private DependencyType type;
+        public Dependency(String className, DependencyType type) 
+        {
+            super();
+            this.className = className;
+            this.type = type;
+        }
     }
 
     private static final class Node {
@@ -146,9 +169,9 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         final private String id;
         final private String className;
         final private String label;
-        final private Set<String> dependencies = new HashSet<>();
+        final private Set<Dependency> dependencies = new HashSet<>();
         
-        public Node(String logicalName, String className, Collection<String> dependencies) 
+        public Node(String logicalName, String className, Collection<Dependency> dependencies) 
         {
             super();
             this.label = getNodeLabel(className, logicalName, true);
