@@ -17,15 +17,11 @@ package org.apache.tapestry5.corelib.pages;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
-import org.apache.tapestry5.internal.services.PageSource;
-import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 
 /**
  * Shows graph showing the dependencies of all already loaded pages and its compnoents, mixins and base classes.
@@ -36,36 +32,17 @@ public class PageDependencyGraph
 {
 
     @Inject
-    private ComponentClassResolver resolver;
-    
-    @Inject
     private ComponentDependencyGraphvizGenerator componentDependencyGraphvizGenerator;
     
     @Inject
-    private PageSource pageSource;
-
-    @Inject
-    private ComponentClassResolver componentClassResolver;
-
-    @Inject
-    private AjaxResponseRenderer ajaxResponseRenderer;
+    private ComponentDependencyRegistry componentDependencyRegistry;
     
-    @Property
-    private Page page;
-    
-    private String getClassName(Page page) 
-    {
-        return page.getRootComponent().getComponentResources().getComponentModel().getComponentClassName();
-    }
-
     public String getGraphvizValue()
     {
-        final Set<Page> allPages = pageSource.getAllPages();
-        return componentDependencyGraphvizGenerator.generate(
-                allPages.stream()
-                    .map(this::getClassName)
-                    .collect(Collectors.toList())
-                    .toArray(new String[allPages.size()]));
+        final Set<String> pages = componentDependencyRegistry.getClassNames().stream()
+                .filter(c -> c.contains(".pages"))
+                .collect(Collectors.toSet());
+        return componentDependencyGraphvizGenerator.generate(pages.toArray(new String[pages.size()]));
     }
     
 }
