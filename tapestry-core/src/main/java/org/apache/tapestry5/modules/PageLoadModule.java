@@ -17,6 +17,7 @@ import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
 import org.apache.tapestry5.internal.pageload.PagePreloaderImpl;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentTemplateSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSourceImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -58,4 +59,25 @@ public class PageLoadModule
             preloader.preloadPages();
         }
     }
+    
+    @Startup
+    public void preloadPageClassLoaderContexts(
+            PageClassloaderContextManager pageClassloaderContextManager,
+            ComponentDependencyRegistry componentDependencyRegistry,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    {
+        if (!productionMode)
+        {
+            // Preload the page activation context tree for the already known classes
+            for (int i = 0; i < 5; i++)
+            {
+                System.out.println();
+                for (String className : componentDependencyRegistry.getClassNames()) 
+                {
+                    pageClassloaderContextManager.get(className);
+                }
+            }
+        }
+    }
+
 }

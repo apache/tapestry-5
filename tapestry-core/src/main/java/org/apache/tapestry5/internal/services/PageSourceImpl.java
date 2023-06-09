@@ -232,7 +232,7 @@ public class PageSourceImpl implements PageSource
     }
 
     private void preprocessPageClassLoaderContexts(String className, final List<String> pageDependencies) {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 5; i++)
         {
             pageClassloaderContextManager.get(className);
             for (String pageClassName : pageDependencies)
