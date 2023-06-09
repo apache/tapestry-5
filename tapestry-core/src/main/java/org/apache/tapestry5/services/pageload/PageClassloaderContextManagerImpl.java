@@ -235,22 +235,6 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                         )
                 {
                     context = unknownContextProvider.get();
-//                    // Make sure you get a fresh version of the class before processing its
-//                    // dependencies
-//                    PageClassloaderContext throwaway = new PageClassloaderContext(
-//                            "Throwaway", 
-//                            root, 
-//                            Collections.singleton(className), 
-//                            plasticProxyFactoryProvider.apply(root.getClassLoader()));
-//
-//                    Class<?> clasz = loadClass(className, throwaway);
-//                    componentDependencyRegistry.register(clasz);
-//                    
-//                    throwaway.getProxyFactory().clearCache();
-//                    throwaway.getClassNames().clear();
-//                    
-//                    alreadyProcessed.remove(className);
-//                    return processUsingDependencies(className, root, unknownContextProvider, plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
                 }
                 else 
                 {
@@ -337,38 +321,6 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         }
         context.addClass(className);
         
-        // Merge contexts of circular dependencies into a single one
-        
-//        if (processCircularDependencies && !circularDependencies.isEmpty())
-//        {
-//            Set<PageClassloaderContext> contexts = new HashSet<>(circularDependencies.size() + 1);
-//            contexts.add(context);
-//            for (String circularDependency : circularDependencies) 
-//            {
-//                PageClassloaderContext toMerge = 
-//                    processUsingDependencies(
-//                        circularDependency, root, unknownContextProvider, 
-//                        plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed,
-//                        false);
-//                contexts.add(toMerge);
-//            }
-//            if (contexts.size() > 1)
-//            {
-//                
-//                context = merge(contexts, plasticProxyFactoryProvider, root, classesToInvalidate);
-//                
-//                // Avoiding an infinite recursion
-//                classesToInvalidate.removeAll(context.getClassNames());
-//                
-//                // Ensure non-page class is initialized in the correct context and classloader
-//                for (String clasz : context.getClassNames()) {
-//                    if (!componentClassResolver.isPage(clasz))
-//                    {
-//                        loadClass(clasz, context);
-//                    }
-//                }
-//            }
-//        }
         return context;
     }
 
@@ -571,12 +523,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
 
     private void markAsNotInvalidatingContext() {
-//        System.out.println("XXXX Mark as NOT invalidating. Current: " + INVALIDATING_CONTEXT.get());
         INVALIDATING_CONTEXT.set(false);
     }
 
     private void markAsInvalidatingContext() {
-//        System.out.println("XXXX Mark as invalidating. Current: " + INVALIDATING_CONTEXT.get());
         INVALIDATING_CONTEXT.set(true);
     }
     
@@ -585,11 +535,22 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         {
             LOGGER.debug("Invalidating classes {}", classesToInvalidate);
             markAsInvalidatingContext();
-            final ArrayList<String> classesToInvalidateAsList = new ArrayList<>(classesToInvalidate);
-            // TODO: do we really need both invalidation hubs to be invoked here?
-            invalidationHub.fireInvalidationEvent(classesToInvalidateAsList);
-            componentClassesInvalidationEventHub.fireInvalidationEvent(classesToInvalidateAsList);
-            markAsNotInvalidatingContext();
+            final List<String> classesToInvalidateAsList = new ArrayList<>(classesToInvalidate);
+            
+            componentDependencyRegistry.disableInvalidations();
+            
+            try 
+            {
+                // TODO: do we really need both invalidation hubs to be invoked here?
+                invalidationHub.fireInvalidationEvent(classesToInvalidateAsList);
+                componentClassesInvalidationEventHub.fireInvalidationEvent(classesToInvalidateAsList);
+                markAsNotInvalidatingContext();
+            }
+            finally
+            {
+                componentDependencyRegistry.enableInvalidations();
+            }
+            
         }
     }
 
