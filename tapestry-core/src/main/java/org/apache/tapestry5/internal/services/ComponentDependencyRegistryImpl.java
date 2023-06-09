@@ -53,6 +53,7 @@ import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -128,26 +129,22 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     builder.append(line);
                     line = reader.readLine();
                 }
-                JSONObject jsonObject = new JSONObject(builder.toString());
-                for (String className : jsonObject.keySet())
+                JSONArray jsonArray = new JSONArray(builder.toString());
+                for (int i = 0; i < jsonArray.size(); i++)
                 {
-                    final Set<String> dependencies = jsonObject.getJSONArray(className)
-                            .stream()
-                            .map(o -> (String) o)
-                            .collect(Collectors.toSet());
-                    for (String dependency : dependencies) 
-                    {
-                        
-                        // TODO: fix storing and reading dependency file
-//                        add(className, dependency);
-                        alreadyProcessed.add(dependency);
-                    }
+                    final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    final String className = jsonObject.getString("class");
+                    final DependencyType dependencyType = DependencyType.valueOf(jsonObject.getString("type"));
+                    final String dependency = jsonObject.getString("dependency");
+                    add(className, dependency, dependencyType);
+                    alreadyProcessed.add(dependency);
                     alreadyProcessed.add(className);
                 }
             } catch (IOException e) 
             {
                 throw new TapestryException("Exception trying to read " + FILENAME, e);
             }
+            
         }
         
         storedDependencyInformationPresent = !map.isEmpty();
@@ -637,14 +634,26 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             try (FileWriter fileWriter = new FileWriter(storedDependencies);
                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter))
             {
-                JSONObject jsonObject = new JSONObject();
-                for (String className : map.keySet())
+                Set<String> classNames = new HashSet<>(alreadyProcessed.size());
+                classNames.addAll(map.keySet());
+                classNames.addAll(alreadyProcessed);
+                JSONArray jsonArray = new JSONArray();
+                for (String className : classNames)
                 {
-                    // TODO: rewrite this
-//                    final Set<String> dependencies = getDependencies(className);
-//                    jsonObject.put(className, JSONArray.from(dependencies));
+                    for (DependencyType dependencyType : DependencyType.values())
+                    {
+                        final Set<String> dependencies = getDependencies(className, dependencyType);
+                        for (String dependency : dependencies)
+                        {
+                            JSONObject object = new JSONObject();
+                            object.put("class", className);
+                            object.put("type", dependencyType.name());
+                            object.put("dependency", dependency);
+                            jsonArray.add(object);
+                        }
+                    }
                 }
-                bufferedWriter.write(jsonObject.toString());
+                bufferedWriter.write(jsonArray.toString());
             }
             catch (IOException e) 
             {
