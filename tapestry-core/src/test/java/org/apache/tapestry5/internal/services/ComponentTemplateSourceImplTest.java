@@ -117,7 +117,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 
@@ -166,7 +166,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(false, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -236,7 +236,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -274,7 +274,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         ComponentTemplate template = source.getTemplate(model, Locale.ENGLISH);
 
@@ -308,7 +308,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, false, parser, locator, converter, componentRequestSelectorAnalyzer, threadLocale, logger);
 
         assertSame(source.getTemplate(model, english), template);
 

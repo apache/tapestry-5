@@ -89,4 +89,6 @@
 <p>Asset with bad checksum: ${assetWithWrongChecksumUrl}</p>
 <p id="assetWithWrongChecksum" style="display: none">Asset with wrong checksum handled correctly.</p>
 
+<p>Message: ${message:note}</p>
+
 </html>

@@ -60,6 +60,8 @@ public class PageSourceImpl implements PageSource
     
     final private boolean productionMode;
     
+    final private boolean multipleClassLoaders;
+    
     private static final class CachedPageKey
     {
         final String pageName;
@@ -105,6 +107,7 @@ public class PageSourceImpl implements PageSource
             ComponentClassResolver componentClassResolver,
             PageClassLoaderContextManager pageClassLoaderContextManager,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders,
             Logger logger)
     {
         this.pageLoader = pageLoader;
@@ -112,6 +115,7 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
+        this.multipleClassLoaders = multipleClassLoaders;
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.logger = logger;
     }
@@ -156,21 +160,19 @@ public class PageSourceImpl implements PageSource
                 return page;
             }
             
-            // Avoiding problems in PlasticClassPool.createTransformation()
-            // when the class being loaded has a page superclass
             final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
-//            PageClassloaderContext context = pageClassLoaderContextManager.get(className);
-//            final Class<?> superclass = getSuperclass(className, context);
-//            final String superclassName = superclass.getName();
-//            if (componentClassResolver.isPage(superclassName)) 
-//            {
-//                getPage(componentClassResolver.resolvePageClassNameToPageName(superclassName), false);
-//            }
-            final List<String> pageDependencies = preprocessPageDependencies(className);
-            
-            for (String pageClassName : pageDependencies)
+            if (multipleClassLoaders)
             {
-                page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), false);
+            
+                // Avoiding problems in PlasticClassPool.createTransformation()
+                // when the class being loaded has a page superclass
+                final List<String> pageDependencies = preprocessPageDependencies(className);
+                
+                for (String pageClassName : pageDependencies)
+                {
+                    page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), false);
+                }
+                
             }
 
             // In rare race conditions, we may see the same page loaded multiple times across
@@ -190,16 +192,14 @@ public class PageSourceImpl implements PageSource
                 componentDependencyRegistry.register(rootElement);
                 PageClassLoaderContext context = pageClassLoaderContextManager.get(className);
                 
-                if (context.isUnknown())
+                if (context.isUnknown() && multipleClassLoaders)
                 {
                     this.pageCache.remove(key);
                     if (invalidateUnknownContext)
                     {
-//                        pageClassLoaderContextManager.invalidate(context);
                         pageClassLoaderContextManager.invalidateAndFireInvalidationEvents(context);
                         preprocessPageDependencies(className);
                     }
-//                    context.getClassNames().remove(className);
                     context.getClassNames().clear();
                     // Avoiding bad invalidations
                     return getPage(canonicalPageName, false);

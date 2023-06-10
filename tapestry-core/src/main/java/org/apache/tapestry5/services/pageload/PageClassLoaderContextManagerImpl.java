@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
@@ -31,6 +32,7 @@ import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
 import org.apache.tapestry5.ioc.annotations.ComponentClasses;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
@@ -54,6 +56,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     
     private final InvalidationEventHub componentClassesInvalidationEventHub;
     
+    private final boolean multipleClassLoaders;
+    
     private final static ThreadLocal<Integer> NESTED_MERGE_COUNT = ThreadLocal.withInitial(() -> 0);
     
     private final static ThreadLocal<Boolean> INVALIDATING_CONTEXT = ThreadLocal.withInitial(() -> false);
@@ -68,13 +72,15 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             final ComponentDependencyRegistry componentDependencyRegistry, 
             final ComponentClassResolver componentClassResolver,
             final InternalComponentInvalidationEventHub invalidationHub,
-            final @ComponentClasses InvalidationEventHub componentClassesInvalidationEventHub) 
+            final @ComponentClasses InvalidationEventHub componentClassesInvalidationEventHub,
+            final @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders) 
     {
         super();
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.invalidationHub = invalidationHub;
         this.componentClassesInvalidationEventHub = componentClassesInvalidationEventHub;
+        this.multipleClassLoaders = multipleClassLoaders;
         invalidationHub.addInvalidationCallback(this::listen);
         NESTED_MERGE_COUNT.set(0);
     }
@@ -88,20 +94,6 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             {
                 if (context.isUnknown())
                 {
-//                    componentDependencyRegistry.disableInvalidations();
-//                    final Set<String> classNames = invalidate(context);
-//                    List<String> toInvalidate = new ArrayList<>();
-//                    for (String className : classNames) 
-//                    {
-//                        if (root.findByClassName(className) == null)
-//                        {
-//                            toInvalidate.add(className);
-//                        }
-//                    }
-//                    componentClassesInvalidationEventHub.fireInvalidationEvent(toInvalidate);
-//                    invalidationHub.fireInvalidationEvent(toInvalidate);
-//                    
-//                    componentDependencyRegistry.enableInvalidations();
                     invalidateAndFireInvalidationEvents(context);
                     break;
                 }
@@ -122,7 +114,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         Objects.requireNonNull(plasticProxyFactoryProvider);
         this.root = root;
         this.plasticProxyFactoryProvider = plasticProxyFactoryProvider;
-        LOGGER.debug("Root context: {}", root);
+        if (multipleClassLoaders)
+        {
+            LOGGER.debug("Root context: {}", root);
+        }
     }
 
     @Override
@@ -182,7 +177,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                     plasticProxyFactoryProvider.apply(root.getClassLoader()),
                     this::get);
             root.addChild(unknownContext);
-            LOGGER.debug("Unknown context: {}", unknownContext);
+            if (multipleClassLoaders)
+            {
+                LOGGER.debug("Unknown context: {}", unknownContext);
+            }
         }
         return unknownContext;
     }
@@ -229,7 +227,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                 context = root;
             } else {
                 if (
-                        !componentDependencyRegistry.contains(className) 
+                        !componentDependencyRegistry.contains(className) ||
+                        !multipleClassLoaders
                         // TODO: review this
 //                        && componentDependencyRegistry.getDependents(className).isEmpty()
                         )
@@ -491,34 +490,60 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     
     private List<String> listen(List<String> resources)
     {
-        if (INVALIDATING_CONTEXT.get())
+
+        List<String> returnValue;
+        
+        if (!multipleClassLoaders)
         {
-            return Collections.emptyList();
-        }
-        Set<PageClassLoaderContext> contextsToInvalidate = new HashSet<>();
-        for (String resource : resources) 
-        {
-            PageClassLoaderContext context = root.findByClassName(resource);
-            if (context != null && !context.isRoot())
+            for (PageClassLoaderContext context : root.getChildren()) 
             {
-                contextsToInvalidate.add(context);
+                context.invalidate();
             }
+            returnValue = Collections.emptyList();
+        }
+        else if (INVALIDATING_CONTEXT.get())
+        {
+            returnValue = Collections.emptyList();
+        }
+        else
+        {
+        
+            Set<PageClassLoaderContext> contextsToInvalidate = new HashSet<>();
+            for (String resource : resources) 
+            {
+                PageClassLoaderContext context = root.findByClassName(resource);
+                if (context != null && !context.isRoot())
+                {
+                    contextsToInvalidate.add(context);
+                }
+            }
+            
+            Set<String> furtherResources = invalidate(contextsToInvalidate.toArray(
+                    new PageClassLoaderContext[contextsToInvalidate.size()]));
+            
+            // We don't want to invalidate resources more than once
+            furtherResources.removeAll(resources);
+            
+            returnValue = new ArrayList<>(furtherResources);
         }
         
-        Set<String> furtherResources = invalidate(contextsToInvalidate.toArray(
-                new PageClassLoaderContext[contextsToInvalidate.size()]));
-        
-        // We don't want to invalidate resources more than once
-        furtherResources.removeAll(resources);
-        
-        return new ArrayList<>(furtherResources);
+        return returnValue;
+            
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void invalidateAndFireInvalidationEvents(PageClassLoaderContext... contexts) {
-        final Set<String> classNames = invalidate(contexts);
         markAsInvalidatingContext();
-        invalidate(classNames);
+        if (multipleClassLoaders)
+        {
+            final Set<String> classNames = invalidate(contexts);
+            invalidate(classNames);
+        }
+        else
+        {
+            invalidate(Collections.EMPTY_SET);            
+        }
         markAsNotInvalidatingContext();
     }
 

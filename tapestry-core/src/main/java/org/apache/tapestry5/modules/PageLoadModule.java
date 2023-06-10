@@ -13,6 +13,7 @@
 package org.apache.tapestry5.modules;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
@@ -38,6 +39,15 @@ import org.apache.tapestry5.services.pageload.PreloaderMode;
 @Marker(Core.class)
 public class PageLoadModule
 {
+    
+    /**
+     * Contributes factory defaults that may be overridden.
+     */
+    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(SymbolConstants.MULTIPLE_CLASSLOADERS, false);
+    }
+    
     public static void bind(ServiceBinder binder)
     {
         binder.bind(ComponentRequestSelectorAnalyzer.class, DefaultComponentRequestSelectorAnalyzer.class);
@@ -64,14 +74,14 @@ public class PageLoadModule
     public void preloadPageClassLoaderContexts(
             PageClassLoaderContextManager pageClassLoaderContextManager,
             ComponentDependencyRegistry componentDependencyRegistry,
-            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders)
     {
-        if (!productionMode)
+        if (!productionMode && multipleClassLoaders)
         {
             // Preload the page activation context tree for the already known classes
             for (int i = 0; i < 5; i++)
             {
-                System.out.println();
                 for (String className : componentDependencyRegistry.getClassNames()) 
                 {
                     pageClassLoaderContextManager.get(className);

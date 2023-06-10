@@ -1,5 +1,10 @@
 Scratch pad for changes destined for the 5.8.3 release notes page.
 
+# New configuration symbol
+
+* SymbolConstants.MULTIPLE_CLASSLOADERS: when set to true (default false), enables
+multiple classloaders for smarter page cache invalidation.
+
 # Added methods
 
 * add(URL url, String memo) to URLChangeTracker

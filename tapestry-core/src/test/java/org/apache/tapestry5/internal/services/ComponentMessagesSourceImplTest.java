@@ -87,7 +87,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     {
         resourceLocator = getService(ComponentResourceLocator.class);
 
-        source = new ComponentMessagesSourceImpl(false, simpleComponentResource.forFile("AppCatalog.properties"),
+        source = new ComponentMessagesSourceImpl(false, false, simpleComponentResource.forFile("AppCatalog.properties"),
                 resourceLocator, new PropertiesFileParserImpl(), tracker, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
@@ -257,7 +257,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         Resource resource = simpleComponentResource.forFile("NoSuchAppCatalog.properties");
         List<Resource> resources = Arrays.asList(resource);
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, false, resources,
                 new PropertiesFileParserImpl(), resourceLocator, converter, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);

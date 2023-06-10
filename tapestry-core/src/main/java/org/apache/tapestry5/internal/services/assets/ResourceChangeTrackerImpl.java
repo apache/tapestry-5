@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
@@ -40,6 +41,8 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
     private final ThreadLocal<String> currentClassName;
     
     private final Logger logger;
+    
+    private final boolean multipleClassLoaders;
 
     /**
      * Used in production mode as the last modified time of any resource exposed to the client. Remember that
@@ -50,10 +53,13 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
                                      @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                     boolean productionMode, Logger logger)
+                                     boolean productionMode, 
+                                     @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                     boolean multipleClassLoaders, Logger logger)
     {
         super(productionMode, logger);
         this.logger = logger;
+        this.multipleClassLoaders = multipleClassLoaders;
 
         // Use granularity of seconds (not milliseconds) since that works properly
         // with response headers for identifying last modified. Don't track
@@ -112,7 +118,7 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
             {
                 
                 // An application-level file was changed, so we need to invalidate everything.
-                if (info.getClassName() == null)
+                if (info.getClassName() == null || !multipleClassLoaders)
                 {
                     forceInvalidationEvent();
                     applicationLevelChange = true;

@@ -207,18 +207,27 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
     private List<String> listen(List<String> resources)
     {
         
-        final Iterator<Entry<Key, ComponentAssembler>> iterator = cache.entrySet().iterator();
-        
-        while (iterator.hasNext())
+        if (resources.isEmpty())
         {
-            final Entry<Key, ComponentAssembler> entry = iterator.next();
-            for (String resource : resources) 
+            cache.clear();
+        }
+        else
+        {
+        
+            final Iterator<Entry<Key, ComponentAssembler>> iterator = cache.entrySet().iterator();
+            
+            while (iterator.hasNext())
             {
-                if (resource.equals(entry.getKey().className))
+                final Entry<Key, ComponentAssembler> entry = iterator.next();
+                for (String resource : resources) 
                 {
-                    iterator.remove();
+                    if (resource.equals(entry.getKey().className))
+                    {
+                        iterator.remove();
+                    }
                 }
             }
+            
         }
         
         return Collections.emptyList();

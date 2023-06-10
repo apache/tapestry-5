@@ -58,6 +58,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     
     private final ComponentClassResolver componentClassResolver;
     
+    private final boolean multipleClassLoaders;
+    
     private final Logger logger;        
     
     /**
@@ -78,7 +80,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
-    public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
+    public MessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, URLChangeTracker tracker,
                               ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser,
                               ComponentClassResolver componentClassResolver,
                               Logger logger)
@@ -90,6 +92,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         this.resourceLocator = resourceLocator;
         this.logger = logger;
         this.componentClassResolver = componentClassResolver;
+        this.multipleClassLoaders = multipleClassLoaders;
     }
 
     public void checkForUpdates()
@@ -97,9 +100,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         if (tracker != null)
         {
             final Set<MessagesTrackingInfo> changedResources = tracker.getChangedResourcesInfo();
-            if (!changedResources.isEmpty())
+            if (!changedResources.isEmpty() && logger.isInfoEnabled())
             {
-                logger.info("Changed message files: {}", changedResources.stream()
+                logger.info("Changed message file(s): {}", changedResources.stream()
                         .map(MessagesTrackingInfo::getResource)
                         .map(Resource::toString)
                         .collect(Collectors.joining(", ")));
@@ -113,7 +116,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
                 final String className = info.getClassName();
                 
                 // An application-level file was changed, so we need to invalidate everything.
-                if (info.getClassName() == null)
+                if (className == null || !multipleClassLoaders)
                 {
                     invalidate();
                     applicationLevelChange = true;

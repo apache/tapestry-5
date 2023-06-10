@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.Resource;
@@ -64,6 +65,8 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     private final ThreadLocale threadLocale;
     
     private final Logger logger;
+    
+    private final boolean multipleClassLoaders;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
@@ -117,15 +120,19 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
     public ComponentTemplateSourceImpl(@Inject
                                        @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                       boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
+                                       boolean productionMode, 
+                                       @Inject
+                                       @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                       boolean multipleClassLoaders,                                        
+                                       TemplateParser parser, ComponentResourceLocator locator,
                                        ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                        ThreadLocale threadLocale, Logger logger)
     {
-        this(productionMode, parser, locator, new URLChangeTracker<TemplateTrackingInfo>(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
+        this(productionMode, multipleClassLoaders, parser, locator, new URLChangeTracker<TemplateTrackingInfo>(classpathURLConverter), componentRequestSelectorAnalyzer, threadLocale, logger);
     }
 
-    ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
+    ComponentTemplateSourceImpl(boolean productionMode, boolean multipleClassLoaders, TemplateParser parser, ComponentResourceLocator locator,
                                 URLChangeTracker<TemplateTrackingInfo> tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                 ThreadLocale threadLocale, Logger logger)
     {
@@ -137,6 +144,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         this.componentRequestSelectorAnalyzer = componentRequestSelectorAnalyzer;
         this.threadLocale = threadLocale;
         this.logger = logger;
+        this.multipleClassLoaders = multipleClassLoaders;
     }
 
     @PostInjection
@@ -257,21 +265,30 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
                         changedResourcesInfo.stream().map(TemplateTrackingInfo::getTemplate).collect(Collectors.toList())));
             }
             
-            final Iterator<Entry<MultiKey, Resource>> templateResourcesIterator = templateResources.entrySet().iterator();
-            for (TemplateTrackingInfo info : changedResourcesInfo) 
+            if (multipleClassLoaders)
             {
-                while (templateResourcesIterator.hasNext())
+            
+                final Iterator<Entry<MultiKey, Resource>> templateResourcesIterator = templateResources.entrySet().iterator();
+                for (TemplateTrackingInfo info : changedResourcesInfo) 
                 {
-                    final MultiKey key = templateResourcesIterator.next().getKey();
-                    if (info.getClassName().equals((String) key.getValues()[0]))
+                    while (templateResourcesIterator.hasNext())
                     {
-                        templates.remove(templateResources.get(key));
-                        templateResourcesIterator.remove();
+                        final MultiKey key = templateResourcesIterator.next().getKey();
+                        if (info.getClassName().equals((String) key.getValues()[0]))
+                        {
+                            templates.remove(templateResources.get(key));
+                            templateResourcesIterator.remove();
+                        }
                     }
                 }
+                
+                fireInvalidationEvent(changedResourcesInfo.stream().map(TemplateTrackingInfo::getClassName).collect(Collectors.toList()));
+                
             }
-            
-            fireInvalidationEvent(changedResourcesInfo.stream().map(TemplateTrackingInfo::getClassName).collect(Collectors.toList()));
+            else
+            {
+                invalidate();
+            }
         }
     }
 

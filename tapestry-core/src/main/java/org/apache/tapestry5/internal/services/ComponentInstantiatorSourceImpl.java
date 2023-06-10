@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.ObjectCreator;
@@ -110,6 +111,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final InternalComponentInvalidationEventHub invalidationHub;
 
     private final boolean productionMode;
+    
+    private final boolean multipleClassLoaders;
 
     private final ComponentClassResolver resolver;
     
@@ -162,6 +165,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                                            @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                            boolean productionMode,
 
+                                           @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                           boolean multipleClassLoaders,
+
                                            ComponentClassResolver resolver,
 
                                            InternalComponentInvalidationEventHub invalidationHub,
@@ -179,6 +185,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
+        this.multipleClassLoaders = multipleClassLoaders;
         this.resolver = resolver;
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.componentDependencyRegistry = componentDependencyRegistry;
@@ -211,59 +218,86 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             
             final List<String> classNames = changedResources.stream().map(ClassName::getClassName).collect(Collectors.toList());
             
-            final Set<String> classesToInvalidate = new HashSet<>();
-            
-            for (String className : classNames) 
+            if (logger.isInfoEnabled())
             {
-                final PageClassLoaderContext context = rootPageClassloaderContext.findByClassName(className);
-                if (context != rootPageClassloaderContext && context != null)
-                {
-                    classesToInvalidate.addAll(pageClassLoaderContextManager.invalidate(context));
-                }
+                logger.info("Component class(es) changed: {}", String.join(", ", classNames));
             }
             
-            classNames.clear();
-            classNames.addAll(classesToInvalidate);
-            
-            invalidate(classNames);
-            
-            invalidationHub.fireInvalidationEvent(classNames);
+            if (multipleClassLoaders)
+            {
+                
+                final Set<String> classesToInvalidate = new HashSet<>();
+                
+                for (String className : classNames) 
+                {
+                    final PageClassLoaderContext context = rootPageClassloaderContext.findByClassName(className);
+                    if (context != rootPageClassloaderContext && context != null)
+                    {
+                        classesToInvalidate.addAll(pageClassLoaderContextManager.invalidate(context));
+                    }
+                }
+                
+                classNames.clear();
+                classNames.addAll(classesToInvalidate);
+                
+                invalidate(classNames);
+                
+                invalidationHub.fireInvalidationEvent(classNames);
+            }
+            else
+            {
+                invalidationHub.classInControlledPackageHasChanged();
+            }
             
         }
     }
 
     private List<String> invalidate(final List<String> classNames) {
 
-        final String currentPage = CURRENT_PAGE.get();
+        if (classNames.isEmpty())
+        {
+            clearCaches();
+        }
+        else
+        {
         
-        final Iterator<Entry<String, Instantiator>> classToInstantiatorIterator = classToInstantiator.entrySet().iterator();
-        while (classToInstantiatorIterator.hasNext())
-        {
-            final String className = classToInstantiatorIterator.next().getKey();
-            if (!className.equals(currentPage) && classNames.contains(className))
+            final String currentPage = CURRENT_PAGE.get();
+            
+            final Iterator<Entry<String, Instantiator>> classToInstantiatorIterator = classToInstantiator.entrySet().iterator();
+            while (classToInstantiatorIterator.hasNext())
             {
-                classToInstantiatorIterator.remove();
+                final String className = classToInstantiatorIterator.next().getKey();
+                if (!className.equals(currentPage) && classNames.contains(className))
+                {
+                    classToInstantiatorIterator.remove();
+                }
             }
-        }
-
-        final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
-        while (classToModelIterator.hasNext())
-        {
-            final String className = classToModelIterator.next().getKey();
-            if (!className.equals(currentPage) && classNames.contains(className))
+    
+            final Iterator<Entry<String, ComponentModel>> classToModelIterator = classToModel.entrySet().iterator();
+            while (classToModelIterator.hasNext())
             {
-                classToModelIterator.remove();
+                final String className = classToModelIterator.next().getKey();
+                if (!className.equals(currentPage) && classNames.contains(className))
+                {
+                    classToModelIterator.remove();
+                }
             }
+            
         }
+        
         return Collections.emptyList();
     }
 
     public void forceComponentInvalidation()
     {
-        changeTracker.clear();
+        clearCaches();
         invalidationHub.classInControlledPackageHasChanged();
+    }
+
+    private void clearCaches() 
+    {
+        classToInstantiator.clear();
         pageClassLoaderContextManager.clear();
-        classToModel.clear();
     }
 
     public void run()

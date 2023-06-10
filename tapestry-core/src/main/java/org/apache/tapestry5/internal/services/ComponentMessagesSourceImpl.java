@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
@@ -80,32 +81,35 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
     }
 
     public ComponentMessagesSourceImpl(@Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                                       boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
+                                       boolean productionMode, 
+                                       @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+                                       boolean multipleClassLoaders, 
+                                       List<Resource> appCatalogResources, PropertiesFileParser parser,
                                        ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter,
                                        ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                        ThreadLocale threadLocale, ComponentClassResolver componentClassResolver,
                                        Logger logger)
     {
-        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), 
+        this(productionMode, multipleClassLoaders, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), 
                 componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
-    ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
+    ComponentMessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, Resource appCatalogResource,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                 ThreadLocale threadLocale, ComponentClassResolver componentClassResolver, 
                                 Logger logger)
     {
-        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
+        this(productionMode, multipleClassLoaders, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, componentRequestSelectorAnalyzer, threadLocale, componentClassResolver, logger);
     }
 
-    ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
+    ComponentMessagesSourceImpl(boolean productionMode, boolean multipleClassLoaders, List<Resource> appCatalogResources,
                                 ComponentResourceLocator resourceLocator, PropertiesFileParser parser, 
                                 URLChangeTracker tracker, ComponentRequestSelectorAnalyzer componentRequestSelectorAnalyzer,
                                 ThreadLocale threadLocale, ComponentClassResolver componentClassResolver,
                                 Logger logger)
     {
-        messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
+        messagesSource = new MessagesSourceImpl(productionMode, multipleClassLoaders, productionMode ? null : tracker, resourceLocator,
                 parser, componentClassResolver, logger);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
