@@ -63,7 +63,7 @@ import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
@@ -72,7 +72,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     
     private static final List<String> EMPTY_LIST = Collections.emptyList();
 
-    final private PageClassloaderContextManager pageClassloaderContextManager;
+    final private PageClassLoaderContextManager pageClassLoaderContextManager;
     
     private static final String META_ATTRIBUTE = "injectedComponentDependencies";
     
@@ -102,13 +102,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     final private boolean storedDependencyInformationPresent;
     
     public ComponentDependencyRegistryImpl(
-            final PageClassloaderContextManager pageClassloaderContextManager,
+            final PageClassLoaderContextManager pageClassLoaderContextManager,
             final PlasticManager plasticManager,
             final ComponentClassResolver componentClassResolver,
             final TemplateParser templateParser,
             final ComponentTemplateLocator componentTemplateLocator)
     {
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         map = new HashMap<>();
         alreadyProcessed = new HashSet<>();
         this.plasticManager = plasticManager;
@@ -604,7 +604,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         // Don't invalidate component dependency information when 
         // PageClassloaderContextManager is merging contexts
         // TODO: is this still needed since the inception of INVALIDATIONS_ENABLED? 
-        else if (!pageClassloaderContextManager.isMerging())
+        else if (!pageClassLoaderContextManager.isMerging())
         {
             furtherDependents = new ArrayList<>();
             for (String resource : resources) 

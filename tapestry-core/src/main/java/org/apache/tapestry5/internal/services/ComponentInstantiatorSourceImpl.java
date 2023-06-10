@@ -80,8 +80,8 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventHandler;
 import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.pageload.PageClassloaderContext;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.apache.tapestry5.services.transform.TransformationSupport;
@@ -113,9 +113,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     private final ComponentClassResolver resolver;
     
-    private final PageClassloaderContextManager pageClassloaderContextManager;
+    private final PageClassLoaderContextManager pageClassLoaderContextManager;
     
-    private PageClassloaderContext rootPageClassloaderContext;
+    private PageClassLoaderContext rootPageClassloaderContext;
     
     private PlasticProxyFactoryProxy plasticProxyFactoryProxy;
     
@@ -166,7 +166,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                                            InternalComponentInvalidationEventHub invalidationHub,
                                            
-                                           PageClassloaderContextManager pageClassloaderContextManager,
+                                           PageClassLoaderContextManager pageClassLoaderContextManager,
                                            
                                            ComponentDependencyRegistry componentDependencyRegistry
             )
@@ -180,7 +180,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
         this.resolver = resolver;
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.componentDependencyRegistry = componentDependencyRegistry;
 
         // For now, we just need the keys of the configuration. When there are more types of controlled
@@ -190,7 +190,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         initializeService();
         
-        pageClassloaderContextManager.initialize(
+        pageClassLoaderContextManager.initialize(
                 rootPageClassloaderContext, 
                 ComponentInstantiatorSourceImpl.this::createPlasticProxyFactory);
         
@@ -215,10 +215,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             
             for (String className : classNames) 
             {
-                final PageClassloaderContext context = rootPageClassloaderContext.findByClassName(className);
+                final PageClassLoaderContext context = rootPageClassloaderContext.findByClassName(className);
                 if (context != rootPageClassloaderContext && context != null)
                 {
-                    classesToInvalidate.addAll(pageClassloaderContextManager.invalidate(context));
+                    classesToInvalidate.addAll(pageClassLoaderContextManager.invalidate(context));
                 }
             }
             
@@ -262,7 +262,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     {
         changeTracker.clear();
         invalidationHub.classInControlledPackageHasChanged();
-        pageClassloaderContextManager.clear();
+        pageClassLoaderContextManager.clear();
         classToModel.clear();
     }
 
@@ -271,7 +271,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         changeTracker.clear();
         classToInstantiator.clear();
         classToModel.clear();
-        pageClassloaderContextManager.clear();
+        pageClassLoaderContextManager.clear();
         initializeService();
     }
 
@@ -283,17 +283,17 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private void initializeService()
     {
         
-        pageClassloaderContextManager.clear();
+        pageClassLoaderContextManager.clear();
         
         if (rootPageClassloaderContext == null)
         {
             logger.info("Initializing page pool");
             
-            pageClassloaderContextManager.clear();
+            pageClassLoaderContextManager.clear();
             
             PlasticProxyFactory proxyFactory = createPlasticProxyFactory(parent);
-            rootPageClassloaderContext = new PageClassloaderContext(
-                    "root", null, Collections.emptySet(), proxyFactory, pageClassloaderContextManager::get);
+            rootPageClassloaderContext = new PageClassLoaderContext(
+                    "root", null, Collections.emptySet(), proxyFactory, pageClassLoaderContextManager::get);
         }
         else 
         {
@@ -341,10 +341,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         OPEN_INSTANTIATORS.get().add(className);
                         
                         componentDependencyRegistry.disableInvalidations();
-                        PageClassloaderContext context;
+                        PageClassLoaderContext context;
                         try
                         {
-                            context = pageClassloaderContextManager.get(className);
+                            context = pageClassLoaderContextManager.get(className);
                         }
                         finally
                         {
@@ -557,7 +557,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         {
             try
             {
-                final PageClassloaderContext context = pageClassloaderContextManager.get(typeName);
+                final PageClassLoaderContext context = pageClassLoaderContextManager.get(typeName);
                 return PlasticInternalUtils.toClass(context.getPlasticManager().getClassLoader(), typeName);
             } catch (ClassNotFoundException ex)
             {
@@ -767,10 +767,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         @Override
         public PlasticProxyFactory getProxyFactory(String className)
         {
-            PageClassloaderContext context = rootPageClassloaderContext.findByClassName(className);
+            PageClassLoaderContext context = rootPageClassloaderContext.findByClassName(className);
             if (context == null)
             {
-                context = pageClassloaderContextManager.get(className);
+                context = pageClassLoaderContextManager.get(className);
             }
             return context.getProxyFactory();
         }

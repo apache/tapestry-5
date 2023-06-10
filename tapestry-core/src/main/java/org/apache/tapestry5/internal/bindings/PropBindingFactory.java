@@ -20,8 +20,8 @@ import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.internal.services.StringInterner;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
-import org.apache.tapestry5.services.pageload.PageClassloaderContext;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 
 /**
  * Binding factory for reading and updating JavaBean properties.
@@ -35,14 +35,14 @@ public class PropBindingFactory implements BindingFactory
 
     private final StringInterner interner;
     
-    private final PageClassloaderContextManager pageClassloaderContextManager;
+    private final PageClassLoaderContextManager pageClassLoaderContextManager;
 
     public PropBindingFactory(PropertyConduitSource propertyConduitSource, StringInterner interner,
-            PageClassloaderContextManager pageClassloaderContextManager)
+            PageClassLoaderContextManager pageClassLoaderContextManager)
     {
         source = propertyConduitSource;
         this.interner = interner;
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -66,7 +66,7 @@ public class PropBindingFactory implements BindingFactory
         final String className = targetClass.getName();
         try 
         {
-            final PageClassloaderContext context = pageClassloaderContextManager.get(className);
+            final PageClassLoaderContext context = pageClassLoaderContextManager.get(className);
             targetClass = context.getProxyFactory()
                     .getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) 

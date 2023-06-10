@@ -33,26 +33,26 @@ import org.slf4j.LoggerFactory;
  * Each instance contains basically a classloader, a set of classnames, a parent
  * context (possibly null) and child contexts (possibly empty).
  */
-public class PageClassloaderContext 
+public class PageClassLoaderContext 
 {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageClassloaderContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageClassLoaderContext.class);
     
     private final String name;
     
-    private final PageClassloaderContext parent;
+    private final PageClassLoaderContext parent;
     
     private final Set<String> classNames = new HashSet<>();
     
-    private final Set<PageClassloaderContext> children;
+    private final Set<PageClassLoaderContext> children;
     
     private final PlasticManager plasticManager;
     
     private final PlasticProxyFactory proxyFactory;
     
-    private PageClassloaderContext root;
+    private PageClassLoaderContext root;
     
-    private final Function<String, PageClassloaderContext> provider;
+    private final Function<String, PageClassLoaderContext> provider;
 
     /**
      * Name of the <code>unknown</code> context (i.e. the one for controlled classes
@@ -60,11 +60,11 @@ public class PageClassloaderContext
      */
     public static final String UNKOWN_CONTEXT_NAME = "unknown";
 
-    public PageClassloaderContext(String name, 
-            PageClassloaderContext parent, 
+    public PageClassLoaderContext(String name, 
+            PageClassLoaderContext parent, 
             Set<String> classNames, 
             PlasticProxyFactory plasticProxyFactory,
-            Function<String, PageClassloaderContext> provider) 
+            Function<String, PageClassLoaderContext> provider) 
     {
         super();
         this.name = name;
@@ -92,7 +92,7 @@ public class PageClassloaderContext
     {
         Class<?> clasz = null;
         setRootFieldIfNeeded();
-        PageClassloaderContext context = root.findByClassName(
+        PageClassLoaderContext context = root.findByClassName(
                 PlasticUtils.getEnclosingClassName(className));
         if (isRoot() && context == null)
         {
@@ -152,7 +152,7 @@ public class PageClassloaderContext
     /**
      * Returns the parent of this context.
      */
-    public PageClassloaderContext getParent() 
+    public PageClassLoaderContext getParent() 
     {
         return parent;
     }
@@ -168,7 +168,7 @@ public class PageClassloaderContext
     /**
      * Returns the children of this context.
      */
-    public Set<PageClassloaderContext> getChildren() 
+    public Set<PageClassLoaderContext> getChildren() 
     {
         return children;
     }
@@ -200,7 +200,7 @@ public class PageClassloaderContext
     /**
      * Adds a child context.
      */
-    public void addChild(PageClassloaderContext context)
+    public void addChild(PageClassLoaderContext context)
     {
         children.add(context);
     }
@@ -208,7 +208,7 @@ public class PageClassloaderContext
     /**
      * Removes a child context.
      */
-    public void removeChildren(PageClassloaderContext context)
+    public void removeChildren(PageClassLoaderContext context)
     {
         children.remove(context);
     }
@@ -216,16 +216,16 @@ public class PageClassloaderContext
     /**
      * Searches for the context that contains the given class in itself and recursivel in its children.
      */
-    public PageClassloaderContext findByClassName(String className)
+    public PageClassLoaderContext findByClassName(String className)
     {
-        PageClassloaderContext context = null;
+        PageClassLoaderContext context = null;
         if (classNames.contains(className))
         {
             context = this;
         }
         else
         {
-            for (PageClassloaderContext child : children) {
+            for (PageClassLoaderContext child : children) {
                 context = child.findByClassName(className);
                 if (context != null)
                 {
@@ -246,11 +246,11 @@ public class PageClassloaderContext
 
     /**
      * Invalidates this context and its children recursively. This shouldn't
-     * be called directly, just through {@link PageClassloaderContextManager#invalidate(PageClassloaderContext...)}.
+     * be called directly, just through {@link PageClassLoaderContextManager#invalidate(PageClassLoaderContext...)}.
      */
     public void invalidate() 
     {
-        for (PageClassloaderContext child : new ArrayList<>(children)) 
+        for (PageClassLoaderContext child : new ArrayList<>(children)) 
         {
             child.invalidate();
         }
@@ -282,9 +282,9 @@ public class PageClassloaderContext
      * Returns the set of descendents (children and their children recursively
      * of this context.
      */
-    public Set<PageClassloaderContext> getDescendents()
+    public Set<PageClassLoaderContext> getDescendents()
     {
-        Set<PageClassloaderContext> descendents;
+        Set<PageClassLoaderContext> descendents;
         if (children.isEmpty())
         {
             descendents = Collections.emptySet();
@@ -292,7 +292,7 @@ public class PageClassloaderContext
         else
         {
             descendents = new HashSet<>(children);
-            for (PageClassloaderContext child : children) 
+            for (PageClassLoaderContext child : children) 
             {
                 descendents.addAll(child.getDescendents());
             }
@@ -310,10 +310,10 @@ public class PageClassloaderContext
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PageClassloaderContext)) {
+        if (!(obj instanceof PageClassLoaderContext)) {
             return false;
         }
-        PageClassloaderContext other = (PageClassloaderContext) obj;
+        PageClassLoaderContext other = (PageClassLoaderContext) obj;
         return Objects.equals(name, other.name);
     }
 
@@ -343,7 +343,7 @@ public class PageClassloaderContext
         builder.append(" : ");
         builder.append(classNames);
         builder.append("\n");
-        for (PageClassloaderContext child : children) {
+        for (PageClassLoaderContext child : children) {
             child.toRecursiveString(builder, tabs + "\t");
         }
     }

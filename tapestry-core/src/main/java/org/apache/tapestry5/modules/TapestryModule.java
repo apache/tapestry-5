@@ -372,8 +372,8 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManagerImpl;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
@@ -969,7 +969,7 @@ public final class TapestryModule
                                          @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                                          boolean productionMode,
                                          
-                                         final PageClassloaderContextManager pageClassloaderContextManager)
+                                         final PageClassLoaderContextManager pageClassLoaderContextManager)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -2787,7 +2787,7 @@ public final class TapestryModule
             InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
             ResourceChangeTracker resourceChangeTracker,
             ComponentTemplateSource componentTemplateSource,
-            PageClassloaderContextManager pageClassloaderContextManager,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
             ComponentInstantiatorSource componentInstantiatorSource,
             ComponentClassResolver componentClassResolver,
             TemplateParser templateParser,
@@ -2796,7 +2796,7 @@ public final class TapestryModule
     {
         ComponentDependencyRegistryImpl componentDependencyRegistry = 
                 new ComponentDependencyRegistryImpl(
-                        pageClassloaderContextManager,
+                        pageClassLoaderContextManager,
                         componentInstantiatorSource.getProxyFactory().getPlasticManager(),
                         componentClassResolver,
                         templateParser,

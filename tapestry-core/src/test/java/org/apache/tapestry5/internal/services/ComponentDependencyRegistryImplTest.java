@@ -81,7 +81,7 @@ import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.modules.TapestryModule;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
@@ -95,7 +95,7 @@ public class ComponentDependencyRegistryImplTest
     
     private ComponentDependencyRegistryImpl componentDependencyRegistry;
     
-    private PageClassloaderContextManager pageClassloaderContextManager;
+    private PageClassLoaderContextManager pageClassLoaderContextManager;
     
     private ComponentClassResolver resolver;
     
@@ -162,7 +162,7 @@ public class ComponentDependencyRegistryImplTest
             return string.contains(".pages.");
         }).anyTimes();
         
-        pageClassloaderContextManager = EasyMock.createMock(PageClassloaderContextManager.class);
+        pageClassLoaderContextManager = EasyMock.createMock(PageClassLoaderContextManager.class);
         plasticManager = EasyMock.createMock(PlasticManager.class);
         EasyMock.expect(plasticManager.shouldInterceptClassLoading(EasyMock.anyString()))
             .andAnswer(() -> {
@@ -172,9 +172,9 @@ public class ComponentDependencyRegistryImplTest
             }).anyTimes();
         
         componentDependencyRegistry = new ComponentDependencyRegistryImpl(
-                pageClassloaderContextManager, plasticManager, resolver, templateParser, 
+                pageClassLoaderContextManager, plasticManager, resolver, templateParser, 
                 componentTemplateLocator);
-        EasyMock.replay(pageClassloaderContextManager, plasticManager, resolver);
+        EasyMock.replay(pageClassLoaderContextManager, plasticManager, resolver);
     }
 
     private void expectResolveComponent(final Class<?> clasz) {
@@ -191,9 +191,9 @@ public class ComponentDependencyRegistryImplTest
     
     private void configurePCCM(boolean merging)
     {
-        EasyMock.reset(pageClassloaderContextManager);
-        EasyMock.expect(pageClassloaderContextManager.isMerging()).andReturn(merging).anyTimes();
-        EasyMock.replay(pageClassloaderContextManager);
+        EasyMock.reset(pageClassLoaderContextManager);
+        EasyMock.expect(pageClassLoaderContextManager.isMerging()).andReturn(merging).anyTimes();
+        EasyMock.replay(pageClassLoaderContextManager);
     }
     
     @Test(timeOut = 5000)

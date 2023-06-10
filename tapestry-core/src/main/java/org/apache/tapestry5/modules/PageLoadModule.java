@@ -27,8 +27,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManagerImpl;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 
@@ -44,7 +44,7 @@ public class PageLoadModule
         binder.bind(ComponentResourceLocator.class, DefaultComponentResourceLocator.class);
         binder.bind(ComponentTemplateSource.class, ComponentTemplateSourceImpl.class);
         binder.bind(PagePreloader.class, PagePreloaderImpl.class);
-        binder.bind(PageClassloaderContextManager.class, PageClassloaderContextManagerImpl.class);
+        binder.bind(PageClassLoaderContextManager.class, PageClassLoaderContextManagerImpl.class);
     }
 
     @Startup
@@ -62,7 +62,7 @@ public class PageLoadModule
     
     @Startup
     public void preloadPageClassLoaderContexts(
-            PageClassloaderContextManager pageClassloaderContextManager,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
             ComponentDependencyRegistry componentDependencyRegistry,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
@@ -74,7 +74,7 @@ public class PageLoadModule
                 System.out.println();
                 for (String className : componentDependencyRegistry.getClassNames()) 
                 {
-                    pageClassloaderContextManager.get(className);
+                    pageClassLoaderContextManager.get(className);
                 }
             }
         }

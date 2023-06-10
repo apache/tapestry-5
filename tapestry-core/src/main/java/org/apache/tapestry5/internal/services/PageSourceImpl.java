@@ -40,8 +40,8 @@ import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-import org.apache.tapestry5.services.pageload.PageClassloaderContext;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
@@ -54,7 +54,7 @@ public class PageSourceImpl implements PageSource
     
     private final ComponentClassResolver componentClassResolver;
     
-    private final PageClassloaderContextManager pageClassloaderContextManager;
+    private final PageClassLoaderContextManager pageClassLoaderContextManager;
     
     private final Logger logger;
     
@@ -103,7 +103,7 @@ public class PageSourceImpl implements PageSource
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
-            PageClassloaderContextManager pageClassloaderContextManager,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             Logger logger)
     {
@@ -112,7 +112,7 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.logger = logger;
     }
     
@@ -159,7 +159,7 @@ public class PageSourceImpl implements PageSource
             // Avoiding problems in PlasticClassPool.createTransformation()
             // when the class being loaded has a page superclass
             final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
-//            PageClassloaderContext context = pageClassloaderContextManager.get(className);
+//            PageClassloaderContext context = pageClassLoaderContextManager.get(className);
 //            final Class<?> superclass = getSuperclass(className, context);
 //            final String superclassName = superclass.getName();
 //            if (componentClassResolver.isPage(superclassName)) 
@@ -188,15 +188,15 @@ public class PageSourceImpl implements PageSource
                 final ComponentPageElement rootElement = page.getRootElement();
                 componentDependencyRegistry.clear(rootElement);
                 componentDependencyRegistry.register(rootElement);
-                PageClassloaderContext context = pageClassloaderContextManager.get(className);
+                PageClassLoaderContext context = pageClassLoaderContextManager.get(className);
                 
                 if (context.isUnknown())
                 {
                     this.pageCache.remove(key);
                     if (invalidateUnknownContext)
                     {
-//                        pageClassloaderContextManager.invalidate(context);
-                        pageClassloaderContextManager.invalidateAndFireInvalidationEvents(context);
+//                        pageClassLoaderContextManager.invalidate(context);
+                        pageClassLoaderContextManager.invalidateAndFireInvalidationEvents(context);
                         preprocessPageDependencies(className);
                     }
 //                    context.getClassNames().remove(className);
@@ -234,10 +234,10 @@ public class PageSourceImpl implements PageSource
     private void preprocessPageClassLoaderContexts(String className, final List<String> pageDependencies) {
         for (int i = 0; i < 5; i++)
         {
-            pageClassloaderContextManager.get(className);
+            pageClassLoaderContextManager.get(className);
             for (String pageClassName : pageDependencies)
             {
-                final PageClassloaderContext context = pageClassloaderContextManager.get(pageClassName);
+                final PageClassLoaderContext context = pageClassLoaderContextManager.get(pageClassName);
                 if (i == 1)
                 {
                     try 
@@ -255,7 +255,7 @@ public class PageSourceImpl implements PageSource
 //        {
 //            try 
 //            {
-//                pageClassloaderContextManager.get(pageClassName).getClassLoader().loadClass(pageClassName);
+//                pageClassLoaderContextManager.get(pageClassName).getClassLoader().loadClass(pageClassName);
 //            } catch (ClassNotFoundException e) 
 //            {
 //                throw new RuntimeException(e);

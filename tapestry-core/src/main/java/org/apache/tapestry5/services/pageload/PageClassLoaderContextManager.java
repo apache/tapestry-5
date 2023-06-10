@@ -20,39 +20,39 @@ import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 
 /**
- * Service that creates {@linkplain PageClassloaderContext} instances (except the root one)
+ * Service that creates {@linkplain PageClassLoaderContext} instances (except the root one)
  * when a class in a controlled page is first used in the Tapestry page pool. Existing 
  * contexts may be reused for a given class, specially when in production mode.
  * 
  * @see ComponentInstantiatorSource
  * @since 5.8.3
  */
-public interface PageClassloaderContextManager 
+public interface PageClassLoaderContextManager 
 {
 
     /**
      * Processes a class, given its class name and the root context.
      * @param className the class fully qualified name.
      * {@linkplain} ClassLoader} and returns a new {@linkplain PlasticProxyFactory}.
-     * @return the {@link PageClassloaderContext} associated with that class.
+     * @return the {@link PageClassLoaderContext} associated with that class.
      */
-    PageClassloaderContext get(String className);
+    PageClassLoaderContext get(String className);
     
     /**
      * Invalidates page classloader contexts and returns a set containing the names
      * of all classes that should be invalidated.
      */
-    Set<String> invalidate(PageClassloaderContext... contexts);
+    Set<String> invalidate(PageClassLoaderContext... contexts);
     
     /**
      * Invalidates page classloader contexts and invalidates the classes in the context as well.
      */
-    void invalidateAndFireInvalidationEvents(PageClassloaderContext... contexts);
+    void invalidateAndFireInvalidationEvents(PageClassLoaderContext... contexts);
     
     /**
      * Returns the root context.
      */
-    PageClassloaderContext getRoot();
+    PageClassLoaderContext getRoot();
     
     /**
      * Clears any state held by this manager.
@@ -74,7 +74,7 @@ public interface PageClassloaderContextManager
      * Initializes this service with the root context and a Plastic proxy factory provider.
      * Method can only be called once. None of the parameters may be null.
      */
-    void initialize(PageClassloaderContext root, Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider);
+    void initialize(PageClassLoaderContext root, Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider);
     
     /**
      * Returns the Class instance appropriate for a given component given a page name.

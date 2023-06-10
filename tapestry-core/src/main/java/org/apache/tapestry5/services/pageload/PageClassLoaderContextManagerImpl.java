@@ -37,14 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@linkplain PageClassloaderContextManager} implementation.
+ * Default {@linkplain PageClassLoaderContextManager} implementation.
  *
  * @since 5.8.3
  */
-public class PageClassloaderContextManagerImpl implements PageClassloaderContextManager
+public class PageClassLoaderContextManagerImpl implements PageClassLoaderContextManager
 {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageClassloaderContextManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageClassLoaderContextManager.class);
     
     private final ComponentDependencyRegistry componentDependencyRegistry;
     
@@ -62,9 +62,9 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     
     private Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider;
     
-    private PageClassloaderContext root;
+    private PageClassLoaderContext root;
     
-    public PageClassloaderContextManagerImpl(
+    public PageClassLoaderContextManagerImpl(
             final ComponentDependencyRegistry componentDependencyRegistry, 
             final ComponentClassResolver componentClassResolver,
             final InternalComponentInvalidationEventHub invalidationHub,
@@ -84,7 +84,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     {
         synchronized (this) {
             markAsNotInvalidatingContext();
-            for (PageClassloaderContext context : root.getChildren())
+            for (PageClassLoaderContext context : root.getChildren())
             {
                 if (context.isUnknown())
                 {
@@ -111,7 +111,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     
     @Override
     public void initialize(
-            final PageClassloaderContext root,
+            final PageClassLoaderContext root,
             final Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider)
     {
         if (this.root != null)
@@ -126,9 +126,9 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
 
     @Override
-    public PageClassloaderContext get(final String className)
+    public PageClassLoaderContext get(final String className)
     {
-        PageClassloaderContext context;
+        PageClassLoaderContext context;
         
         final String enclosingClassName = PlasticUtils.getEnclosingClassName(className);
         context = root.findByClassName(enclosingClassName);
@@ -160,15 +160,15 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         
     }
 
-    private PageClassloaderContext getUnknownContext(final PageClassloaderContext root,
+    private PageClassLoaderContext getUnknownContext(final PageClassLoaderContext root,
             final Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider) 
     {
         
-        PageClassloaderContext unknownContext = null;
+        PageClassLoaderContext unknownContext = null;
         
-        for (PageClassloaderContext child : root.getChildren()) 
+        for (PageClassLoaderContext child : root.getChildren()) 
         {
-            if (child.getName().equals(PageClassloaderContext.UNKOWN_CONTEXT_NAME))
+            if (child.getName().equals(PageClassLoaderContext.UNKOWN_CONTEXT_NAME))
             {
                 unknownContext = child;
                 break;
@@ -177,7 +177,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         
         if (unknownContext == null)
         {
-            unknownContext = new PageClassloaderContext(PageClassloaderContext.UNKOWN_CONTEXT_NAME, root, 
+            unknownContext = new PageClassLoaderContext(PageClassLoaderContext.UNKOWN_CONTEXT_NAME, root, 
                     Collections.emptySet(), 
                     plasticProxyFactoryProvider.apply(root.getClassLoader()),
                     this::get);
@@ -187,19 +187,19 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         return unknownContext;
     }
     
-    private PageClassloaderContext processUsingDependencies(
+    private PageClassLoaderContext processUsingDependencies(
             String className, 
-            PageClassloaderContext root, 
-            Supplier<PageClassloaderContext> unknownContextProvider, 
+            PageClassLoaderContext root, 
+            Supplier<PageClassLoaderContext> unknownContextProvider, 
             Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, Set<String> classesToInvalidate) 
     {
         return processUsingDependencies(className, root, unknownContextProvider, plasticProxyFactoryProvider, classesToInvalidate, new HashSet<>());
     }
 
-    private PageClassloaderContext processUsingDependencies(
+    private PageClassLoaderContext processUsingDependencies(
             String className, 
-            PageClassloaderContext root, 
-            Supplier<PageClassloaderContext> unknownContextProvider, 
+            PageClassLoaderContext root, 
+            Supplier<PageClassLoaderContext> unknownContextProvider, 
             Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, 
             Set<String> classesToInvalidate,
             Set<String> alreadyProcessed) 
@@ -209,16 +209,16 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
 
 
-    private PageClassloaderContext processUsingDependencies(
+    private PageClassLoaderContext processUsingDependencies(
             String className, 
-            PageClassloaderContext root, 
-            Supplier<PageClassloaderContext> unknownContextProvider, 
+            PageClassLoaderContext root, 
+            Supplier<PageClassLoaderContext> unknownContextProvider, 
             Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider, 
             Set<String> classesToInvalidate,
             Set<String> alreadyProcessed,
             boolean processCircularDependencies) 
     {
-        PageClassloaderContext context = root.findByClassName(className);
+        PageClassLoaderContext context = root.findByClassName(className);
         if (context == null)
         {
             
@@ -258,10 +258,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     }
                     
                     // Collect context dependencies
-                    Set<PageClassloaderContext> contextDependencies = new HashSet<>();
+                    Set<PageClassLoaderContext> contextDependencies = new HashSet<>();
                     for (String dependency : dependencies) 
                     {
-                        PageClassloaderContext dependencyContext = root.findByClassName(dependency);
+                        PageClassLoaderContext dependencyContext = root.findByClassName(dependency);
                         if (dependencyContext == null)
                         {
                             dependencyContext = processUsingDependencies(dependency, root, unknownContextProvider,
@@ -276,7 +276,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     
                     if (contextDependencies.size() == 0)
                     {
-                        context = new PageClassloaderContext(
+                        context = new PageClassLoaderContext(
                                 getContextName(className), 
                                 root, 
                                 Collections.singleton(className), 
@@ -285,7 +285,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                     }
                     else 
                     {
-                        PageClassloaderContext parentContext;
+                        PageClassLoaderContext parentContext;
                         if (contextDependencies.size() == 1)
                         {
                             parentContext = contextDependencies.iterator().next();
@@ -294,7 +294,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
                         {
                             parentContext = merge(contextDependencies, plasticProxyFactoryProvider, root, classesToInvalidate);
                         }
-                        context = new PageClassloaderContext(
+                        context = new PageClassLoaderContext(
                                 getContextName(className), 
                                 parentContext, 
                                 Collections.singleton(className), 
@@ -329,7 +329,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         return componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
     }
 
-    private Class<?> loadClass(String className, PageClassloaderContext context) 
+    private Class<?> loadClass(String className, PageClassLoaderContext context) 
     {
         try 
         {
@@ -340,10 +340,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         }
     }
     
-    private PageClassloaderContext merge(
-            Set<PageClassloaderContext> contextDependencies,
+    private PageClassLoaderContext merge(
+            Set<PageClassLoaderContext> contextDependencies,
             Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider,
-            PageClassloaderContext root, Set<String> classesToInvalidate) 
+            PageClassLoaderContext root, Set<String> classesToInvalidate) 
     {
         
         NESTED_MERGE_COUNT.set(NESTED_MERGE_COUNT.get() + 1);
@@ -356,7 +356,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             String classes;
             StringBuilder builder = new StringBuilder();
             builder.append("Merging the following page classloader contexts into one:\n");
-            for (PageClassloaderContext context : contextDependencies) 
+            for (PageClassLoaderContext context : contextDependencies) 
             {
                 classes = context.getClassNames().stream()
                         .map(this::getContextName)
@@ -367,28 +367,28 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             LOGGER.debug(builder.toString().trim());
         }
         
-        Set<PageClassloaderContext> allContextsIncludingDescendents = new HashSet<>();
-        for (PageClassloaderContext context : contextDependencies) 
+        Set<PageClassLoaderContext> allContextsIncludingDescendents = new HashSet<>();
+        for (PageClassLoaderContext context : contextDependencies) 
         {
             allContextsIncludingDescendents.add(context);
             allContextsIncludingDescendents.addAll(context.getDescendents());
         }
 
-        PageClassloaderContext merged;
+        PageClassLoaderContext merged;
         
         // Collect the classes in these dependencies, then invalidate the contexts
         
-        Set<PageClassloaderContext> furtherDependencies = new HashSet<>();
+        Set<PageClassLoaderContext> furtherDependencies = new HashSet<>();
         
         Set<String> classNames = new HashSet<>();
         
-        for (PageClassloaderContext context : contextDependencies) 
+        for (PageClassLoaderContext context : contextDependencies) 
         {
             if (!context.isRoot())
             {
                 classNames.addAll(context.getClassNames());
             }
-            final PageClassloaderContext parent = context.getParent();
+            final PageClassLoaderContext parent = context.getParent();
             // We don't want the merged context to have a further dependency on 
             // the root context (it's not mergeable) nor on itself.
             if (!parent.isRoot() && 
@@ -398,16 +398,16 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             }
         }
         
-        final List<PageClassloaderContext> contextsToInvalidate = contextDependencies.stream()
+        final List<PageClassLoaderContext> contextsToInvalidate = contextDependencies.stream()
             .filter(c -> !c.isRoot())
             .collect(Collectors.toList());
         
         if (!contextsToInvalidate.isEmpty())
         {
-            classesToInvalidate.addAll(invalidate(contextsToInvalidate.toArray(new PageClassloaderContext[contextsToInvalidate.size()])));
+            classesToInvalidate.addAll(invalidate(contextsToInvalidate.toArray(new PageClassLoaderContext[contextsToInvalidate.size()])));
         }
         
-        PageClassloaderContext parent;
+        PageClassLoaderContext parent;
         
         // No context dependencies, so parent is going to be the root one
         if (furtherDependencies.size() == 0)
@@ -430,7 +430,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
             }
         }
         
-        merged = new PageClassloaderContext(
+        merged = new PageClassLoaderContext(
             "merged " + MERGED_COUNTER.getAndIncrement(),
             parent, 
             classNames, 
@@ -456,7 +456,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     @Override
     public void clear(String className) 
     {
-        final PageClassloaderContext context = root.findByClassName(className);
+        final PageClassLoaderContext context = root.findByClassName(className);
         if (context != null)
         {
 //            invalidationHub.fireInvalidationEvent(new ArrayList<>(invalidate(context)));
@@ -475,10 +475,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
 
     @Override
-    public Set<String> invalidate(PageClassloaderContext ... contexts) 
+    public Set<String> invalidate(PageClassLoaderContext ... contexts) 
     {
         Set<String> classNames = new HashSet<>();
-        for (PageClassloaderContext context : contexts) {
+        for (PageClassLoaderContext context : contexts) {
             addClassNames(context, classNames);
             context.invalidate();
             if (context.getParent() != null)
@@ -495,10 +495,10 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         {
             return Collections.emptyList();
         }
-        Set<PageClassloaderContext> contextsToInvalidate = new HashSet<>();
+        Set<PageClassLoaderContext> contextsToInvalidate = new HashSet<>();
         for (String resource : resources) 
         {
-            PageClassloaderContext context = root.findByClassName(resource);
+            PageClassLoaderContext context = root.findByClassName(resource);
             if (context != null && !context.isRoot())
             {
                 contextsToInvalidate.add(context);
@@ -506,7 +506,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         }
         
         Set<String> furtherResources = invalidate(contextsToInvalidate.toArray(
-                new PageClassloaderContext[contextsToInvalidate.size()]));
+                new PageClassLoaderContext[contextsToInvalidate.size()]));
         
         // We don't want to invalidate resources more than once
         furtherResources.removeAll(resources);
@@ -515,7 +515,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     }
 
     @Override
-    public void invalidateAndFireInvalidationEvents(PageClassloaderContext... contexts) {
+    public void invalidateAndFireInvalidationEvents(PageClassLoaderContext... contexts) {
         final Set<String> classNames = invalidate(contexts);
         markAsInvalidatingContext();
         invalidate(classNames);
@@ -554,15 +554,15 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
         }
     }
 
-    private void addClassNames(PageClassloaderContext context, Set<String> classNames) {
+    private void addClassNames(PageClassLoaderContext context, Set<String> classNames) {
         classNames.addAll(context.getClassNames());
-        for (PageClassloaderContext child : context.getChildren()) {
+        for (PageClassLoaderContext child : context.getChildren()) {
             addClassNames(child, classNames);
         }
     }
 
     @Override
-    public PageClassloaderContext getRoot() {
+    public PageClassLoaderContext getRoot() {
         return root;
     }
 
@@ -581,7 +581,7 @@ public class PageClassloaderContextManagerImpl implements PageClassloaderContext
     public Class<?> getClassInstance(Class<?> clasz, String pageName) 
     {
         final String className = clasz.getName();
-        PageClassloaderContext context = root.findByClassName(className);
+        PageClassLoaderContext context = root.findByClassName(className);
         if (context == null)
         {
             context = get(className);

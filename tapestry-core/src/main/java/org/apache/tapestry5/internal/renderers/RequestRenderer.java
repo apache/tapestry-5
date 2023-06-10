@@ -27,8 +27,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ObjectRenderer;
-import org.apache.tapestry5.services.pageload.PageClassloaderContext;
-import org.apache.tapestry5.services.pageload.PageClassloaderContextManager;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
     
     private final boolean productionMode;
     
-    private final PageClassloaderContextManager pageClassloaderContextManager;
+    private final PageClassLoaderContextManager pageClassLoaderContextManager;
     
     private final PageSource pageSource;
     
@@ -57,7 +57,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
             Context context, 
             @Symbol(TapestryHttpSymbolConstants.CONTEXT_PATH) String contextPath,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
-            PageClassloaderContextManager pageClassloaderContextManager,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
             PageSource pageSource,
             ComponentClassResolver componentClassResolver)
     {
@@ -65,7 +65,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
         this.context = context;
         this.contextPath = contextPath;
         this.productionMode = productionMode;
-        this.pageClassloaderContextManager = pageClassloaderContextManager;
+        this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.pageSource = pageSource;
         this.componentClassResolver = componentClassResolver;
     }
@@ -281,7 +281,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 //        {
 //            section(writer, "Page Classloader Context");
 //            writer.element("ul");
-//            render(pageClassloaderContextManager.getRoot(), writer);
+//            render(pageClassLoaderContextManager.getRoot(), writer);
 //            writer.end(); // ul
 //        }
 //    }
@@ -349,7 +349,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 //                writer.write(page.getName());
 //                writer.end(); // td                
 //                writer.element("td");
-//                writer.write(pageClassloaderContextManager.getRoot().findByClassName(componentClassResolver.getClassName(page.getName())).toString());
+//                writer.write(pageClassLoaderContextManager.getRoot().findByClassName(componentClassResolver.getClassName(page.getName())).toString());
 //                writer.end(); // td                
 //                writer.end(); // tr
 //            }
