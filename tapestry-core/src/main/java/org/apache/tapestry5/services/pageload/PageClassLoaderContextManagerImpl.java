@@ -482,7 +482,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             context.invalidate();
             if (context.getParent() != null)
             {
-                context.getParent().removeChildren(context);
+                context.getParent().removeChild(context);
             }
         }
         return classNames;
@@ -619,6 +619,65 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             throw new TapestryException(e.getMessage(), e);
         }
         return clasz;
+    }
+    
+    @Override
+    public void preload() 
+    {
+        
+        final PageClassLoaderContext context = new PageClassLoaderContext(PageClassLoaderContext.UNKOWN_CONTEXT_NAME, root, 
+                Collections.emptySet(), 
+                plasticProxyFactoryProvider.apply(root.getClassLoader()),
+                this::get);
+        
+        final List<String> pageNames = componentClassResolver.getPageNames();
+        final List<String> classNames = new ArrayList<>(pageNames.size());
+        
+        long start = System.currentTimeMillis();
+        
+        LOGGER.info("Preloading dependency information for {} pages", pageNames.size());
+        
+        for (String page : pageNames)
+        {
+            try 
+            {
+                final String className = componentClassResolver.resolvePageNameToClassName(page);
+                componentDependencyRegistry.register(context.getClassLoader().loadClass(className));
+                classNames.add(className);
+            } catch (ClassNotFoundException e) 
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        long finish = System.currentTimeMillis();
+        
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info(String.format("Dependency information gathered in %.3f ms", (finish - start) / 1000.0));
+        }
+        
+        context.invalidate();
+        
+        LOGGER.info("Starting preloading page classloader contexts");
+        
+        start = System.currentTimeMillis();
+        
+        for (int i = 0; i < 10; i++)
+        {
+            for (String className : classNames) 
+            {
+                get(className);
+            }
+        }
+        
+        finish = System.currentTimeMillis();
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info(String.format("Preloading of page classloadercontexts finished in %.3f ms", (finish - start) / 1000.0));
+        }
+
     }
     
 }

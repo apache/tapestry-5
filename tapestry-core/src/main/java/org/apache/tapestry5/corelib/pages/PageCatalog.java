@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
@@ -61,6 +62,7 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 
 /**
  * Lists out the currently loaded pages, using a {@link org.apache.tapestry5.corelib.components.Grid}.
@@ -78,6 +80,11 @@ public class PageCatalog
     @Inject
     @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
     private boolean productionMode;
+    
+    @Property
+    @Inject
+    @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
+    private boolean multipleClassLoaders;
 
     @Inject
     private PageSource pageSource;
@@ -151,6 +158,9 @@ public class PageCatalog
     @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
     
+    @Inject
+    private PageClassLoaderContextManager pageClassLoaderContextManager;
+    
     void pageLoaded()
     {
         model = beanModelSource.createDisplayModel(Page.class, messages);
@@ -207,6 +217,11 @@ public class PageCatalog
     public Collection<Page> getPages()
     {
         return pageSource.getAllPages();
+    }
+    
+    void onActionFromPreloadPageClassLoaderContexts()
+    {
+        pageClassLoaderContextManager.preload();
     }
     
     Object onClearPage(String className)

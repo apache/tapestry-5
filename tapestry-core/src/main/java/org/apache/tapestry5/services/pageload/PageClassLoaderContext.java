@@ -208,7 +208,7 @@ public class PageClassLoaderContext
     /**
      * Removes a child context.
      */
-    public void removeChildren(PageClassLoaderContext context)
+    public void removeChild(PageClassLoaderContext context)
     {
         children.remove(context);
     }

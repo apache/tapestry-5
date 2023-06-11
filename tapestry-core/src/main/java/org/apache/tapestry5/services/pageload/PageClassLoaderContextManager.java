@@ -88,5 +88,12 @@ public interface PageClassLoaderContextManager
      * Invalidates the "unknown" page classloader context context.
      */
     void invalidateUnknownContext();
+    
+    /**
+     * Preloads all data, first by collecting dependency data for all existing pages
+     * and the components, mixins and superclasses they use, then creating the
+     * page classloader contexts.
+     */
+    void preload();
 
 }
