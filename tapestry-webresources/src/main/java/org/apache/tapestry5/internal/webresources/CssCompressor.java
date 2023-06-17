@@ -24,16 +24,13 @@ public class CssCompressor {
 
     private static final Pattern PRESERVE_TOKEN_URL = Pattern.compile("(?i)url\\(\\s*([\"']?)data\\:");
     private static final Pattern PRESERVE_TOKEN_CALC = Pattern.compile("(?i)calc\\(\\s*([\"']?)");
-    private static final Pattern PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX = Pattern
-            .compile("(?i)progid:DXImageTransform.Microsoft.Matrix\\s*([\"']?)");
+    private static final Pattern PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX = Pattern.compile("(?i)progid:DXImageTransform.Microsoft.Matrix\\s*([\"']?)");
     private static final Pattern PRESERVE_CSS_VARS = Pattern.compile("var\\(--[a-zA-Z0-9-\\-]+(\\))");
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
-    private static final Pattern PRESERVE_STRINGS = Pattern
-            .compile("(\"([^\\\\\"]|\\\\.|\\\\)*\")|(\'([^\\\\\']|\\\\.|\\\\)*\')");
-    private static final Pattern MINIFY_ALPHA_OPACITY_FILTER_STRINGS = Pattern
-            .compile("(?i)progid:DXImageTransform.Microsoft.Alpha\\(Opacity=");
+    private static final Pattern PRESERVE_STRINGS = Pattern.compile("(\"([^\\\\\"]|\\\\.|\\\\)*\")|(\'([^\\\\\']|\\\\.|\\\\)*\')");
+    private static final Pattern MINIFY_ALPHA_OPACITY_FILTER_STRINGS = Pattern.compile("(?i)progid:DXImageTransform.Microsoft.Alpha\\(Opacity=");
     private static final Pattern UNNECESSARY_SPACES1 = Pattern.compile("(^|\\})((^|([^\\{:])+):)+([^\\{]*\\{)");
     private static final Pattern UNNECESSARY_SPACES2 = Pattern.compile("\\s+([!{};:>+\\(\\)\\],])");
     private static final Pattern IMPORTANT = Pattern.compile("!important");
@@ -41,37 +38,26 @@ public class CssCompressor {
     private static final Pattern IE6_SPACE = Pattern.compile("(?i):first\\-(line|letter)(\\{|,)");
     private static final Pattern CHARSET_DIRECTIVE = Pattern.compile("(?i)^(.*)(@charset)( \"[^\"]*\";)");
     private static final Pattern CHARSET_MULTIPLE = Pattern.compile("(?i)^((\\s*)(@charset)( [^;]+;\\s*))+");
-    private static final Pattern LOWERCASE_DIRECTIVES = Pattern
-            .compile("(?i)@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)");
-    private static final Pattern LOWERCAUSE_PSEUDO_CLASSES = Pattern.compile(
-            "(?i):(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)");
-    private static final Pattern LOWERCASE_FUNCTIONS1 = Pattern.compile(
-            "(?i):(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:moz|webkit)-)?any)\\(");
-    private static final Pattern LOWERCASE_FUNCTIONS2 = Pattern.compile(
-            "(?i)([:,\\( ]\\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)");
+    private static final Pattern LOWERCASE_DIRECTIVES = Pattern.compile("(?i)@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)");
+    private static final Pattern LOWERCAUSE_PSEUDO_CLASSES = Pattern.compile("(?i):(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)");
+    private static final Pattern LOWERCASE_FUNCTIONS1 = Pattern.compile("(?i):(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:moz|webkit)-)?any)\\(");
+    private static final Pattern LOWERCASE_FUNCTIONS2 = Pattern.compile("(?i)([:,\\( ]\\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)");
     private static final Pattern RESTORE_AND_SPACE = Pattern.compile("(?i)\\band\\(");
     private static final Pattern TRAILING_SPACES = Pattern.compile("([!{}:;>+\\(\\[,])\\s+");
     private static final Pattern UNNECESSARY_SEMICOLON = Pattern.compile(";+}");
-    private static final Pattern ZERO_UNITS = Pattern
-            .compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|in|cm|mm|pc|pt|ex|deg|g?rad|k?hz)");
+    private static final Pattern ZERO_UNITS = Pattern.compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|in|cm|mm|pc|pt|ex|deg|g?rad|k?hz)");
     private static final Pattern ZERO_PERCENTAGE = Pattern.compile("(?i)(: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:%)");
     private static final Pattern KEYFRAME_TO = Pattern.compile("(?i)(^|,|\\{) ?(?:100% ?\\{)");
-    private static final Pattern ZERO_UNITS_GROUPS = Pattern
-            .compile("(?i)\\( ?((?:[0-9a-z-.]+[ ,])*)?(?:0?\\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)");
-    private static final Pattern UNNECESSARY_DOT_ZERO1 = Pattern
-            .compile("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
-    private static final Pattern UNNECESSARY_DOT_ZERO2 = Pattern
-            .compile("([ |:])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
+    private static final Pattern ZERO_UNITS_GROUPS = Pattern.compile("(?i)\\( ?((?:[0-9a-z-.]+[ ,])*)?(?:0?\\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)");
+    private static final Pattern UNNECESSARY_DOT_ZERO1 = Pattern.compile("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
+    private static final Pattern UNNECESSARY_DOT_ZERO2 = Pattern.compile("([ |:])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
     private static final Pattern ZERO_VALUE_1 = Pattern.compile(":0 0 0 0(;|})");
     private static final Pattern ZERO_VALUE_2 = Pattern.compile(":0 0 0(;|})");
     private static final Pattern ZERO_VALUE_3 = Pattern.compile("(?<!flex):0 0(;|\\})");
-    private static final Pattern BACKGROUND_POSITION_TRANSFORM_ORIGIN = Pattern.compile(
-            "(?i)(background-position|webkit-mask-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|})");
+    private static final Pattern BACKGROUND_POSITION_TRANSFORM_ORIGIN = Pattern.compile("(?i)(background-position|webkit-mask-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|})");
     private static final Pattern RESTORE_DOT_ZERO = Pattern.compile("(:|\\s)0+\\.(\\d+)");
     private static final Pattern RGB = Pattern.compile("rgb\\s*\\(\\s*([0-9,\\s]+)\\s*\\)");
-    private static final Pattern HEX_COLORS = Pattern.compile(
-            "(\\=\\s*?[\"']?)?" + "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])"
-                    + "(:?\\}|[^0-9a-fA-F{][^{]*?\\})");
+    private static final Pattern HEX_COLORS = Pattern.compile("(\\=\\s*?[\"']?)?" + "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])(:?\\}|[^0-9a-fA-F{][^{]*?\\})");
     private static final Pattern COLOR_RED = Pattern.compile("(:|\\s)(#f00)(;|})");
     private static final Pattern COLOR_NAVY = Pattern.compile("(:|\\s)(#000080)(;|})");
     private static final Pattern COLOR_GRAY = Pattern.compile("(:|\\s)(#808080)(;|})");
@@ -81,8 +67,7 @@ public class CssCompressor {
     private static final Pattern COLOR_TEAL = Pattern.compile("(:|\\s)(#008080)(;|})");
     private static final Pattern COLOR_ORANGE = Pattern.compile("(:|\\s)(#ffa500)(;|})");
     private static final Pattern COLOR_MAROON = Pattern.compile("(:|\\s)(#800000)(;|})");
-    private static final Pattern NONE = Pattern
-            .compile("(?i)(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|})");
+    private static final Pattern NONE = Pattern.compile("(?i)(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|})");
     private static final Pattern OPERA_DEVICE_PIXEL_RATIO = Pattern.compile("\\(([\\-A-Za-z]+):([0-9]+)\\/([0-9]+)\\)");
     private static final Pattern EMPTY_RULE = Pattern.compile("[^\\}\\{/;]+\\{\\}");
     private static final Pattern MULTI_SEMICOLON = Pattern.compile(";;+");
@@ -93,12 +78,16 @@ public class CssCompressor {
     private static final Pattern CALC_DIV = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\d]+)\\/");
 
     /**
-     * @param css              - full css string
-     * @param preservedToken   - token to preserve
-     * @param tokenRegex       - regex to find token
-     * @param removeWhiteSpace - remove any white space in the token
-     * @param preservedTokens  - array of token values
-     * @return
+     * Preserves a token by replacing it with string based on preserverIdentifier
+     * and add the replaced CSS to preservedTokens for later restoration.
+     *
+     * @param css the full CSS
+     * @param preservedToken the token to be preserved 
+     * @param tokenRegex regex to find the token
+     * @param removeWhiteSpace remove any white space in the token
+     * @param preserverIdentifier identifier used for the replacement
+     * @param preservedTokens List of token values
+     * @return the updated CSS
      */
     private static String preserveToken(String css, String preservedToken, Pattern tokenRegex, boolean removeWhiteSpace,
             String preserverIdentifier, List<String> preservedTokens) {
