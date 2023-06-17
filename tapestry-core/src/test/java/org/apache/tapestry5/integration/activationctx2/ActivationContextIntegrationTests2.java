@@ -15,11 +15,13 @@
 package org.apache.tapestry5.integration.activationctx2;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
 /**
  * To test TAP5-2070
  */
+@TapestryTestConfiguration(webAppFolder = "src/test/activationctx2")
 public class ActivationContextIntegrationTests2 extends TapestryCoreTestCase
 {
     @Test
