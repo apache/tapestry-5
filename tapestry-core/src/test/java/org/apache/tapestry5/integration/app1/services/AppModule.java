@@ -59,8 +59,10 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueLabelProvider;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
+import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.pageload.ReferenceType;
 import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
@@ -418,5 +420,13 @@ public class AppModule
 	{
 	    configuration.add("org.apache.tapestry5.integration.app1.data.rest.entities");
 	}
+	
+    public static void contributePageCachingReferenceTypeService(
+            OrderedConfiguration<PageCachingReferenceTypeService> configuration)
+    {
+        // Just some pages to make sure the feature doesn't cause regressions.
+        configuration.add("Index", p -> p.equals("Index") || p.contains("Bean")
+                ? ReferenceType.STRONG : null);
+    }
 
 }

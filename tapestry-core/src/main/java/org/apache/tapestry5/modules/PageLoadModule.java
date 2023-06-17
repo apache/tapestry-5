@@ -12,8 +12,11 @@
 
 package org.apache.tapestry5.modules;
 
+import java.util.List;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
@@ -25,13 +28,17 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.services.ComponentLibraryInfoSource;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
+import org.apache.tapestry5.services.pageload.ReferenceType;
 
 /**
  * @since 5.3
@@ -88,6 +95,19 @@ public class PageLoadModule
                 }
             }
         }
+    }
+    
+    public static PageCachingReferenceTypeService buildPageCachingReferenceTypeService(
+            List<PageCachingReferenceTypeService> configuration,
+            ChainBuilder chainBuilder) 
+    {
+        return chainBuilder.build(PageCachingReferenceTypeService.class, configuration);
+    }
+    
+    public static void contributePageCachingReferenceTypeService(
+            OrderedConfiguration<PageCachingReferenceTypeService> configuration)
+    {
+        configuration.add("Fallback", p -> ReferenceType.SOFT, "after:*");
     }
 
 }

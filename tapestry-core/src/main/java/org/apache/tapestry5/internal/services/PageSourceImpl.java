@@ -40,8 +40,10 @@ import org.apache.tapestry5.services.ComponentMessages;
 import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContext;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
+import org.apache.tapestry5.services.pageload.ReferenceType;
 import org.slf4j.Logger;
 
 public class PageSourceImpl implements PageSource
@@ -55,6 +57,8 @@ public class PageSourceImpl implements PageSource
     private final ComponentClassResolver componentClassResolver;
     
     private final PageClassLoaderContextManager pageClassLoaderContextManager;
+    
+    private final PageCachingReferenceTypeService pageCachingReferenceTypeService;
     
     private final Logger logger;
     
@@ -100,12 +104,13 @@ public class PageSourceImpl implements PageSource
         
     }
 
-    private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
+    private final Map<CachedPageKey, Object> pageCache = CollectionFactory.newConcurrentMap();
 
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
             ComponentClassResolver componentClassResolver,
             PageClassLoaderContextManager pageClassLoaderContextManager,
+            PageCachingReferenceTypeService pageCachingReferenceTypeService,
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders,
             Logger logger)
@@ -115,6 +120,7 @@ public class PageSourceImpl implements PageSource
         this.componentDependencyRegistry = componentDependencyRegistry;
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
+        this.pageCachingReferenceTypeService = pageCachingReferenceTypeService;
         this.multipleClassLoaders = multipleClassLoaders;
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.logger = logger;
@@ -151,9 +157,11 @@ public class PageSourceImpl implements PageSource
         
         while (true)
         {
-            SoftReference<Page> ref = pageCache.get(key);
-
-            Page page = ref == null ? null : ref.get();
+            
+            Page page;
+            Object object = pageCache.get(key);
+            
+            page = toPage(object);
 
             if (page != null)
             {
@@ -181,9 +189,15 @@ public class PageSourceImpl implements PageSource
 
             page = pageLoader.loadPage(canonicalPageName, selector);
 
-            ref = new SoftReference<Page>(page);
-
-            pageCache.put(key, ref);
+            final ReferenceType referenceType = pageCachingReferenceTypeService.get(canonicalPageName);
+            if (referenceType.equals(ReferenceType.SOFT))
+            {
+                pageCache.put(key, new SoftReference<Page>(page));
+            }
+            else
+            {
+                pageCache.put(key, page);
+            }
             
             if (!productionMode)
             {
@@ -298,10 +312,10 @@ public class PageSourceImpl implements PageSource
                 if (componentClassResolver.isPage(className))
                 {
                     pageName = componentClassResolver.resolvePageClassNameToPageName(className);
-                    final Iterator<Entry<CachedPageKey, SoftReference<Page>>> iterator = pageCache.entrySet().iterator();
+                    final Iterator<Entry<CachedPageKey, Object>> iterator = pageCache.entrySet().iterator();
                     while (iterator.hasNext())
                     {
-                        final Entry<CachedPageKey, SoftReference<Page>> entry = iterator.next();
+                        final Entry<CachedPageKey, Object> entry = iterator.next();
                         final String entryPageName = entry.getKey().pageName;
                         if (entryPageName.equalsIgnoreCase(pageName)) 
                         {
@@ -324,12 +338,29 @@ public class PageSourceImpl implements PageSource
 
     public Set<Page> getAllPages()
     {
-        return F.flow(pageCache.values()).map(new Mapper<SoftReference<Page>, Page>()
+        return F.flow(pageCache.values()).map(new Mapper<Object, Page>()
         {
-            public Page map(SoftReference<Page> element)
+            public Page map(Object object)
             {
-                return element.get();
+                return toPage(object);
             }
         }).removeNulls().toSet();
     }
+    
+    private Page toPage(Object object) 
+    {
+        Page page;
+        if (object instanceof SoftReference)
+        {
+            @SuppressWarnings("unchecked")
+            SoftReference<Page> ref = (SoftReference<Page>) object;
+            page = ref == null ? null : ref.get();
+        }
+        else
+        {
+            page = (Page) object;
+        }
+        return page;
+    }
+    
 }
