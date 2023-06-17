@@ -24,12 +24,16 @@ public class CssCompressor {
 
     private static final Pattern PRESERVE_TOKEN_URL = Pattern.compile("(?i)url\\(\\s*([\"']?)data\\:");
     private static final Pattern PRESERVE_TOKEN_CALC = Pattern.compile("(?i)calc\\(\\s*([\"']?)");
-    private static final Pattern PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX = Pattern.compile("(?i)progid:DXImageTransform.Microsoft.Matrix\\s*([\"']?)");
+    private static final Pattern PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX = Pattern
+            .compile("(?i)progid:DXImageTransform.Microsoft.Matrix\\s*([\"']?)");
+    private static final Pattern PRESERVE_CSS_VARS = Pattern.compile("var\\(--[a-zA-Z0-9-\\-]+(\\))");
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
-    private static final Pattern PRESERVE_STRINGS = Pattern.compile("(\"([^\\\\\"]|\\\\.|\\\\)*\")|(\'([^\\\\\']|\\\\.|\\\\)*\')");
-    private static final Pattern MINIFY_ALPHA_OPACITY_FILTER_STRINGS = Pattern.compile("(?i)progid:DXImageTransform.Microsoft.Alpha\\(Opacity=");
+    private static final Pattern PRESERVE_STRINGS = Pattern
+            .compile("(\"([^\\\\\"]|\\\\.|\\\\)*\")|(\'([^\\\\\']|\\\\.|\\\\)*\')");
+    private static final Pattern MINIFY_ALPHA_OPACITY_FILTER_STRINGS = Pattern
+            .compile("(?i)progid:DXImageTransform.Microsoft.Alpha\\(Opacity=");
     private static final Pattern UNNECESSARY_SPACES1 = Pattern.compile("(^|\\})((^|([^\\{:])+):)+([^\\{]*\\{)");
     private static final Pattern UNNECESSARY_SPACES2 = Pattern.compile("\\s+([!{};:>+\\(\\)\\],])");
     private static final Pattern IMPORTANT = Pattern.compile("!important");
@@ -37,26 +41,37 @@ public class CssCompressor {
     private static final Pattern IE6_SPACE = Pattern.compile("(?i):first\\-(line|letter)(\\{|,)");
     private static final Pattern CHARSET_DIRECTIVE = Pattern.compile("(?i)^(.*)(@charset)( \"[^\"]*\";)");
     private static final Pattern CHARSET_MULTIPLE = Pattern.compile("(?i)^((\\s*)(@charset)( [^;]+;\\s*))+");
-    private static final Pattern LOWERCASE_DIRECTIVES = Pattern.compile("(?i)@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)");
-    private static final Pattern LOWERCAUSE_PSEUDO_CLASSES = Pattern.compile("(?i):(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)");
-    private static final Pattern LOWERCASE_FUNCTIONS1 = Pattern.compile("(?i):(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:moz|webkit)-)?any)\\(");
-    private static final Pattern LOWERCASE_FUNCTIONS2 = Pattern.compile("(?i)([:,\\( ]\\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)");
+    private static final Pattern LOWERCASE_DIRECTIVES = Pattern
+            .compile("(?i)@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)");
+    private static final Pattern LOWERCAUSE_PSEUDO_CLASSES = Pattern.compile(
+            "(?i):(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)");
+    private static final Pattern LOWERCASE_FUNCTIONS1 = Pattern.compile(
+            "(?i):(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:moz|webkit)-)?any)\\(");
+    private static final Pattern LOWERCASE_FUNCTIONS2 = Pattern.compile(
+            "(?i)([:,\\( ]\\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)");
     private static final Pattern RESTORE_AND_SPACE = Pattern.compile("(?i)\\band\\(");
     private static final Pattern TRAILING_SPACES = Pattern.compile("([!{}:;>+\\(\\[,])\\s+");
     private static final Pattern UNNECESSARY_SEMICOLON = Pattern.compile(";+}");
-    private static final Pattern ZERO_UNITS = Pattern.compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|in|cm|mm|pc|pt|ex|deg|g?rad|k?hz)");
+    private static final Pattern ZERO_UNITS = Pattern
+            .compile("(?i)(^|: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:px|em|in|cm|mm|pc|pt|ex|deg|g?rad|k?hz)");
     private static final Pattern ZERO_PERCENTAGE = Pattern.compile("(?i)(: ?)((?:[0-9a-z-.]+ )*?)?(?:0?\\.)?0(?:%)");
     private static final Pattern KEYFRAME_TO = Pattern.compile("(?i)(^|,|\\{) ?(?:100% ?\\{)");
-    private static final Pattern ZERO_UNITS_GROUPS = Pattern.compile("(?i)\\( ?((?:[0-9a-z-.]+[ ,])*)?(?:0?\\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)");
-    private static final Pattern UNNECESSARY_DOT_ZERO1 = Pattern.compile("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
-    private static final Pattern UNNECESSARY_DOT_ZERO2 = Pattern.compile("([ |:])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
+    private static final Pattern ZERO_UNITS_GROUPS = Pattern
+            .compile("(?i)\\( ?((?:[0-9a-z-.]+[ ,])*)?(?:0?\\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)");
+    private static final Pattern UNNECESSARY_DOT_ZERO1 = Pattern
+            .compile("([0-9])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
+    private static final Pattern UNNECESSARY_DOT_ZERO2 = Pattern
+            .compile("([ |:])\\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|m?s|g?rad|k?hz| |;)");
     private static final Pattern ZERO_VALUE_1 = Pattern.compile(":0 0 0 0(;|})");
     private static final Pattern ZERO_VALUE_2 = Pattern.compile(":0 0 0(;|})");
     private static final Pattern ZERO_VALUE_3 = Pattern.compile("(?<!flex):0 0(;|\\})");
-    private static final Pattern BACKGROUND_POSITION_TRANSFORM_ORIGIN = Pattern.compile("(?i)(background-position|webkit-mask-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|})");
+    private static final Pattern BACKGROUND_POSITION_TRANSFORM_ORIGIN = Pattern.compile(
+            "(?i)(background-position|webkit-mask-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|})");
     private static final Pattern RESTORE_DOT_ZERO = Pattern.compile("(:|\\s)0+\\.(\\d+)");
     private static final Pattern RGB = Pattern.compile("rgb\\s*\\(\\s*([0-9,\\s]+)\\s*\\)");
-    private static final Pattern HEX_COLORS = Pattern.compile("(\\=\\s*?[\"']?)?" + "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])" + "(:?\\}|[^0-9a-fA-F{][^{]*?\\})");
+    private static final Pattern HEX_COLORS = Pattern.compile(
+            "(\\=\\s*?[\"']?)?" + "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])"
+                    + "(:?\\}|[^0-9a-fA-F{][^{]*?\\})");
     private static final Pattern COLOR_RED = Pattern.compile("(:|\\s)(#f00)(;|})");
     private static final Pattern COLOR_NAVY = Pattern.compile("(:|\\s)(#000080)(;|})");
     private static final Pattern COLOR_GRAY = Pattern.compile("(:|\\s)(#808080)(;|})");
@@ -66,26 +81,27 @@ public class CssCompressor {
     private static final Pattern COLOR_TEAL = Pattern.compile("(:|\\s)(#008080)(;|})");
     private static final Pattern COLOR_ORANGE = Pattern.compile("(:|\\s)(#ffa500)(;|})");
     private static final Pattern COLOR_MAROON = Pattern.compile("(:|\\s)(#800000)(;|})");
-    private static final Pattern NONE = Pattern.compile("(?i)(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|})");
+    private static final Pattern NONE = Pattern
+            .compile("(?i)(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|})");
     private static final Pattern OPERA_DEVICE_PIXEL_RATIO = Pattern.compile("\\(([\\-A-Za-z]+):([0-9]+)\\/([0-9]+)\\)");
     private static final Pattern EMPTY_RULE = Pattern.compile("[^\\}\\{/;]+\\{\\}");
     private static final Pattern MULTI_SEMICOLON = Pattern.compile(";;+");
     private static final Pattern CALC = Pattern.compile("calc\\([^\\)]*\\)");
     private static final Pattern CALC_PLUS = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\d]+)\\+");
-    private static final Pattern CALC_MINUS = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\)|\\d]+)(?<!var\\([a-z-0-9]+)\\-");
+    private static final Pattern CALC_MINUS = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\d]+)\\-");
     private static final Pattern CALC_MULTI = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\d]+)\\*");
     private static final Pattern CALC_DIV = Pattern.compile("(?<=[-|%|px|em|rem|vw|\\d]+)\\/");
 
     /**
-     * @param css - full css string
-     * @param preservedToken - token to preserve
-     * @param tokenRegex - regex to find token
+     * @param css              - full css string
+     * @param preservedToken   - token to preserve
+     * @param tokenRegex       - regex to find token
      * @param removeWhiteSpace - remove any white space in the token
-     * @param preservedTokens - array of token values
+     * @param preservedTokens  - array of token values
      * @return
      */
-    private static String preserveToken(String css, String preservedToken,
-            Pattern tokenRegex, boolean removeWhiteSpace, List<String> preservedTokens) {
+    private static String preserveToken(String css, String preservedToken, Pattern tokenRegex, boolean removeWhiteSpace,
+            String preserverIdentifier, List<String> preservedTokens) {
 
         int maxIndex = css.length() - 1;
         int appendIndex = 0;
@@ -111,12 +127,12 @@ public class CssCompressor {
             boolean foundTerminator = false;
 
             int endIndex = m.end() - 1;
-            while(foundTerminator == false && endIndex+1 <= maxIndex) {
-                endIndex = css.indexOf(terminator, endIndex+1);
+            while (foundTerminator == false && endIndex + 1 <= maxIndex) {
+                endIndex = css.indexOf(terminator, endIndex + 1);
 
                 if (endIndex <= 0) {
                     break;
-                } else if ((endIndex > 0) && (css.charAt(endIndex-1) != '\\')) {
+                } else if ((endIndex > 0) && (css.charAt(endIndex - 1) != '\\')) {
                     foundTerminator = true;
                     if (!")".equals(terminator)) {
                         endIndex = css.indexOf(")", endIndex);
@@ -129,11 +145,12 @@ public class CssCompressor {
 
             if (foundTerminator) {
                 String token = css.substring(startIndex, endIndex);
-                if(removeWhiteSpace)
+                if (removeWhiteSpace)
                     token = WHITESPACE.matcher(token).replaceAll("");
                 preservedTokens.add(token);
 
-                String preserver = preservedToken + "(___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___)";
+                String preserver = preservedToken + "(___YUICSSMIN_PRESERVED_" + preserverIdentifier + "_"
+                        + (preservedTokens.size() - 1) + "___)";
                 sb.append(preserver);
 
                 appendIndex = endIndex + 1;
@@ -149,13 +166,19 @@ public class CssCompressor {
         return sb.toString();
     }
 
-    public static String compress(InputStream is)
-            throws IOException {
+    private static String restorePreservedTokens(String css, String preserverIdentifier, List<String> preservedTokens) {
+        String prefix = "___YUICSSMIN_PRESERVED_" + preserverIdentifier + "_";
+        for (int idx = 0; idx < preservedTokens.size(); idx++) {
+            css = css.replace(prefix + idx + "___", preservedTokens.get(idx));
+        }
+        return css;
+    }
+
+    public static String compress(InputStream is) throws IOException {
         return compress(IOUtils.toString(is));
     }
-    
-    public static String compress(String uncompressedCss)
-            throws IOException {
+
+    public static String compress(String uncompressedCss) throws IOException {
 
         Pattern p;
         Matcher m;
@@ -166,11 +189,11 @@ public class CssCompressor {
         int i = 0;
         int max = 0;
         List<String> preservedTokens = new ArrayList<>();
+        List<String> preservedCssVars = new ArrayList<>();
         List<String> comments = new ArrayList<>();
         String token;
         int totallen = css.length();
         String placeholder;
-
 
         StringBuilder sb = new StringBuilder(css);
 
@@ -183,19 +206,23 @@ public class CssCompressor {
 
             token = sb.substring(startIndex + 2, endIndex);
             comments.add(token);
-            sb.replace(startIndex + 2, endIndex, "___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + (comments.size() - 1) + "___");
+            sb.replace(startIndex + 2, endIndex,
+                    "___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + (comments.size() - 1) + "___");
             startIndex += 2;
         }
         css = sb.toString();
 
-
-        css = preserveToken(css, "url", PRESERVE_TOKEN_URL, true, preservedTokens);
-        css = preserveToken(css, "calc",  PRESERVE_TOKEN_CALC, false, preservedTokens);
-        css = preserveToken(css, "progid:DXImageTransform.Microsoft.Matrix", PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX , false, preservedTokens);
-
+        // we need to preserve tokens in two steps, as the "var" is inside of "calc", but
+        // thanks to TAP5-2753, the calc tokens needs to be restored, some optimizations
+        // around operators, and then css vars would be broken.
+        css = preserveToken(css, "var", PRESERVE_CSS_VARS, false, "CSS_VAR", preservedCssVars);
+        css = preserveToken(css, "url", PRESERVE_TOKEN_URL, true, "TOKEN", preservedTokens);
+        css = preserveToken(css, "calc", PRESERVE_TOKEN_CALC, false, "TOKEN", preservedTokens);
+        css = preserveToken(css, "progid:DXImageTransform.Microsoft.Matrix",
+                PRESERVE_TOKEN_PROGID_DX_IMAGE_TRANSFORM_MICROSOFT_MATRIX, false, "TOKEN", preservedTokens);
 
         // preserve strings so their content doesn't get accidentally minified
-        sb = new StringBuilder();
+        StringBuffer sbuffer = new StringBuffer();
         p = PRESERVE_STRINGS;
         m = p.matcher(css);
         while (m.find()) {
@@ -207,7 +234,8 @@ public class CssCompressor {
             // one, maybe more? put'em back then
             if (token.indexOf("___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_") >= 0) {
                 for (i = 0, max = comments.size(); i < max; i += 1) {
-                    token = token.replace("___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + i + "___", comments.get(i).toString());
+                    token = token.replace("___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + i + "___",
+                            comments.get(i).toString());
                 }
             }
 
@@ -216,11 +244,10 @@ public class CssCompressor {
 
             preservedTokens.add(token);
             String preserver = quote + "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___" + quote;
-            m.appendReplacement(sb, preserver);
+            m.appendReplacement(sbuffer, preserver);
         }
-        m.appendTail(sb);
-        css = sb.toString();
-
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // strings are safe, now wrestle the comments
         for (i = 0, max = comments.size(); i < max; i += 1) {
@@ -232,7 +259,7 @@ public class CssCompressor {
             // so push to the preserved tokens while stripping the !
             if (token.startsWith("!")) {
                 preservedTokens.add(token);
-                css = css.replace(placeholder,  "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
+                css = css.replace(placeholder, "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
                 continue;
             }
 
@@ -240,10 +267,11 @@ public class CssCompressor {
             // shorten that to /*\*/ and the next one to /**/
             if (token.endsWith("\\")) {
                 preservedTokens.add("\\");
-                css = css.replace(placeholder,  "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
+                css = css.replace(placeholder, "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
                 i = i + 1; // attn: advancing the loop
                 preservedTokens.add("");
-                css = css.replace("___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + i + "___",  "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
+                css = css.replace("___YUICSSMIN_PRESERVE_CANDIDATE_COMMENT_" + i + "___",
+                        "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
                 continue;
             }
 
@@ -254,7 +282,8 @@ public class CssCompressor {
                 if (startIndex > 2) {
                     if (css.charAt(startIndex - 3) == '>') {
                         preservedTokens.add("");
-                        css = css.replace(placeholder,  "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
+                        css = css.replace(placeholder,
+                                "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
                     }
                 }
             }
@@ -264,30 +293,32 @@ public class CssCompressor {
         }
 
         // preserve \9 IE hack
-        final String backslash9 = "\\9"; 
+        final String backslash9 = "\\9";
         while (css.indexOf(backslash9) > -1) {
             preservedTokens.add(backslash9);
-            css = css.replace(backslash9,  "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
+            css = css.replace(backslash9, "___YUICSSMIN_PRESERVED_TOKEN_" + (preservedTokens.size() - 1) + "___");
         }
 
-        // Normalize all whitespace strings to single spaces. Easier to work with that way.
+        // Normalize all whitespace strings to single spaces. Easier to work with that
+        // way.
         css = WHITESPACE.matcher(css).replaceAll(" ");
 
         // Remove the spaces before the things that should not have spaces before them.
         // But, be careful not to turn "p :link {...}" into "p:link{...}"
         // Swap out any pseudo-class colons with the token, and then swap back.
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = UNNECESSARY_SPACES1;
         m = p.matcher(css);
         while (m.find()) {
             String s = m.group();
             s = s.replace(":", PSEUDO_CLASS_COLON.pattern());
-            s = s.replace( "\\", "\\\\" );
-            s = s.replace( "$", "\\$" );
-            m.appendReplacement(sb, s);
+            s = s.replace("\\", "\\\\");
+            s = s.replace("$", "\\$");
+            m.appendReplacement(sbuffer, s);
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
+
         // Remove spaces before the things that should not have spaces before them.
         css = UNNECESSARY_SPACES2.matcher(css).replaceAll("$1");
         // Restore spaces for !important
@@ -296,14 +327,14 @@ public class CssCompressor {
         css = PSEUDO_CLASS_COLON.matcher(css).replaceAll(":");
 
         // retain space for special IE6 cases
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = IE6_SPACE;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, ":first-" + m.group(1).toLowerCase() + " " + m.group(2));
+            m.appendReplacement(sbuffer, ":first-" + m.group(1).toLowerCase() + " " + m.group(2));
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // no space after the end of a preserved comment
         css = css.replace("*/ ", "*/");
@@ -311,69 +342,71 @@ public class CssCompressor {
         // TODO: Charset handling is broken if more than two charsets
 
         // If there are multiple @charset directives, push them to the top of the file.
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = CHARSET_DIRECTIVE;
         m = p.matcher(css);
         while (m.find()) {
             String s = m.group(1).replace("\\", "\\\\").replace("$", "\\$");
-            m.appendReplacement(sb, m.group(2).toLowerCase() + m.group(3) + s);
+            m.appendReplacement(sbuffer, m.group(2).toLowerCase() + m.group(3) + s);
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
-        // When all @charset are at the top, remove the second and after (as they are completely ignored).
-        sb = new StringBuilder();
+        // When all @charset are at the top, remove the second and after (as they are
+        // completely ignored).
+        sbuffer = new StringBuffer();
         p = CHARSET_MULTIPLE;
         m = p.matcher(css);
         while (m.find()) {
             String group2 = m.group(2);
             String group3 = m.group(3);
             String group4 = m.group(4);
-            m.appendReplacement(sb, group2 + group3.toLowerCase() + group4);
+            m.appendReplacement(sbuffer, group2 + group3.toLowerCase() + group4);
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // lowercase some popular @directives (@charset is done right above)
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = LOWERCASE_DIRECTIVES;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, '@' + m.group(1).toLowerCase());
+            m.appendReplacement(sbuffer, '@' + m.group(1).toLowerCase());
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // lowercase some more common pseudo-elements
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = LOWERCAUSE_PSEUDO_CLASSES;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, ':' + m.group(1).toLowerCase());
+            m.appendReplacement(sbuffer, ':' + m.group(1).toLowerCase());
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // lowercase some more common functions
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = LOWERCASE_FUNCTIONS1;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, ':' + m.group(1).toLowerCase() + '(');
+            m.appendReplacement(sbuffer, ':' + m.group(1).toLowerCase() + '(');
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // lower case some common function that can be values
-        // NOTE: rgb() isn't useful as we replace with #hex later, as well as and() is already done for us right after this
-        sb = new StringBuilder();
+        // NOTE: rgb() isn't useful as we replace with #hex later, as well as and() is
+        // already done for us right after this
+        sbuffer = new StringBuffer();
         p = LOWERCASE_FUNCTIONS2;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, m.group(1) + m.group(2).toLowerCase());
+            m.appendReplacement(sbuffer, m.group(1) + m.group(2).toLowerCase());
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // Put the space back in some cases, to support stuff like
         // @media screen and (-webkit-min-device-pixel-ratio:0){
@@ -385,37 +418,39 @@ public class CssCompressor {
         // remove unnecessary semicolons
         css = UNNECESSARY_SEMICOLON.matcher(css).replaceAll("}");
 
-        // Replace 0(px,em) with 0. (don't replace seconds are they are needed for transitions to be valid)
+        // Replace 0(px,em) with 0. (don't replace seconds are they are needed for
+        // transitions to be valid)
         String oldCss;
         p = ZERO_UNITS;
         do {
-          oldCss = css;
-          m = p.matcher(css);
-          css = m.replaceAll("$1$20");
+            oldCss = css;
+            m = p.matcher(css);
+            css = m.replaceAll("$1$20");
         } while (!(css.equals(oldCss)));
-        
+
         // We do the same with % but don't replace the 0% in keyframes
         p = ZERO_PERCENTAGE;
         do {
-          oldCss = css;
-          m = p.matcher(css);
-          css = m.replaceAll("$1$20");
-        } while (!(css.equals(oldCss)));
-        
-        //Replace the keyframe 100% step with 'to' which is shorter
-        p = KEYFRAME_TO;
-        do {
-          oldCss = css;
-          m = p.matcher(css);
-          css = m.replaceAll("$1to{");
+            oldCss = css;
+            m = p.matcher(css);
+            css = m.replaceAll("$1$20");
         } while (!(css.equals(oldCss)));
 
-        // Replace 0(px,em,%) with 0 inside groups (e.g. -MOZ-RADIAL-GRADIENT(CENTER 45DEG, CIRCLE CLOSEST-SIDE, ORANGE 0%, RED 100%))
+        // Replace the keyframe 100% step with 'to' which is shorter
+        p = KEYFRAME_TO;
+        do {
+            oldCss = css;
+            m = p.matcher(css);
+            css = m.replaceAll("$1to{");
+        } while (!(css.equals(oldCss)));
+
+        // Replace 0(px,em,%) with 0 inside groups (e.g. -MOZ-RADIAL-GRADIENT(CENTER
+        // 45DEG, CIRCLE CLOSEST-SIDE, ORANGE 0%, RED 100%))
         p = ZERO_UNITS_GROUPS;
         do {
-          oldCss = css;
-          m = p.matcher(css);
-          css = m.replaceAll("($10");
+            oldCss = css;
+            m = p.matcher(css);
+            css = m.replaceAll("($10");
         } while (!(css.equals(oldCss)));
 
         // Replace x.0(px,em,%) with x(px,em,%).
@@ -429,17 +464,16 @@ public class CssCompressor {
         css = ZERO_VALUE_2.matcher(css).replaceAll(":0$1");
         css = ZERO_VALUE_3.matcher(css).replaceAll(":0$1");
 
-
         // Replace background-position:0; with background-position:0 0;
         // same for transform-origin
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = BACKGROUND_POSITION_TRANSFORM_ORIGIN;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, m.group(1).toLowerCase() + ":0 0" + m.group(2));
+            m.appendReplacement(sbuffer, m.group(1).toLowerCase() + ":0 0" + m.group(2));
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // Replace 0.6 to .6, but only when preceded by : or a white-space
         css = RESTORE_DOT_ZERO.matcher(css).replaceAll("$1.$2");
@@ -448,7 +482,7 @@ public class CssCompressor {
         // This makes it more likely that it'll get further compressed in the next step.
         p = RGB;
         m = p.matcher(css);
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         while (m.find()) {
             String[] rgbcolors = m.group(1).split(",");
             StringBuffer hexcolor = new StringBuffer("#");
@@ -458,25 +492,28 @@ public class CssCompressor {
                     hexcolor.append("0");
                 }
 
-                // If someone passes an RGB value that's too big to express in two characters, round down.
-                // Probably should throw out a warning here, but generating valid CSS is a bigger concern.
+                // If someone passes an RGB value that's too big to express in two characters,
+                // round down.
+                // Probably should throw out a warning here, but generating valid CSS is a
+                // bigger concern.
                 if (val > 255) {
                     val = 255;
                 }
                 hexcolor.append(Integer.toHexString(val));
             }
-            m.appendReplacement(sb, hexcolor.toString());
+            m.appendReplacement(sbuffer, hexcolor.toString());
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // Shorten colors from #AABBCC to #ABC. Note that we want to make sure
         // the color is not preceded by either ", " or =. Indeed, the property
-        //     filter: chroma(color="#FFFFFF");
+        // filter: chroma(color="#FFFFFF");
         // would become
-        //     filter: chroma(color="#FFF");
+        // filter: chroma(color="#FFF");
         // which makes the filter break in IE.
-        // We also want to make sure we're only compressing #AABBCC patterns inside { }, not id selectors ( #FAABAC {} )
+        // We also want to make sure we're only compressing #AABBCC patterns inside { },
+        // not id selectors ( #FAABAC {} )
         // We also want to avoid compressing invalid values (e.g. #AABBCCD to #ABCD)
         p = HEX_COLORS;
 
@@ -492,11 +529,11 @@ public class CssCompressor {
 
             if (isFilter) {
                 // Restore, as is. Compression will break filters
-                sb.append(m.group(1).concat("#").concat(m.group(2)).concat(m.group(3)).concat(m.group(4)).concat(m.group(5)).concat(m.group(6)).concat(m.group(7)));
+                sb.append(m.group(1).concat("#").concat(m.group(2)).concat(m.group(3)).concat(m.group(4))
+                        .concat(m.group(5)).concat(m.group(6)).concat(m.group(7)));
             } else {
-                if( m.group(2).equalsIgnoreCase(m.group(3)) &&
-                    m.group(4).equalsIgnoreCase(m.group(5)) &&
-                    m.group(6).equalsIgnoreCase(m.group(7))) {
+                if (m.group(2).equalsIgnoreCase(m.group(3)) && m.group(4).equalsIgnoreCase(m.group(5))
+                        && m.group(6).equalsIgnoreCase(m.group(7))) {
 
                     // #AABBCC pattern
                     sb.append("#".concat(m.group(3)).concat(m.group(5)).concat(m.group(7)).toLowerCase());
@@ -504,7 +541,8 @@ public class CssCompressor {
                 } else {
 
                     // Non-compressible color, restore, but lower case.
-                    sb.append("#".concat(m.group(2)).concat(m.group(3)).concat(m.group(4)).concat(m.group(5) + m.group(6) + m.group(7)).toLowerCase());
+                    sb.append("#".concat(m.group(2)).concat(m.group(3)).concat(m.group(4))
+                            .concat(m.group(5) + m.group(6) + m.group(7)).toLowerCase());
                 }
             }
 
@@ -527,14 +565,14 @@ public class CssCompressor {
         css = COLOR_MAROON.matcher(css).replaceAll("$1maroon$3");
 
         // border: none -> border:0
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = NONE;
         m = p.matcher(css);
         while (m.find()) {
-            m.appendReplacement(sb, m.group(1).toLowerCase().concat(":0").concat(m.group(2)));
+            m.appendReplacement(sbuffer, m.group(1).toLowerCase().concat(":0").concat(m.group(2)));
         }
-        m.appendTail(sb);
-        css = sb.toString();
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
 
         // TODO: Why are we doing this again?
         // shorter opacity IE filter
@@ -554,15 +592,13 @@ public class CssCompressor {
         // See SF bug #1980989
         css = MULTI_SEMICOLON.matcher(css).replaceAll(";");
 
-        // restore preserved comments and strings
-        for(i = 0, max = preservedTokens.size(); i < max; i++) {
-            css = css.replace("___YUICSSMIN_PRESERVED_TOKEN_" + i + "___", preservedTokens.get(i).toString());
-        }
-        
+        // restore preserved tokens
+        css = restorePreservedTokens(css, "TOKEN", preservedTokens);
+
         // Add spaces back in between operators for css calc function
         // https://developer.mozilla.org/en-US/docs/Web/CSS/calc
         // Added by Eric Arnol-Martin (earnolmartin@gmail.com)
-        sb = new StringBuilder();
+        sbuffer = new StringBuffer();
         p = CALC;
         m = p.matcher(css);
         while (m.find()) {
@@ -571,13 +607,17 @@ public class CssCompressor {
             s = CALC_MINUS.matcher(s).replaceAll(" - ");
             s = CALC_MULTI.matcher(s).replaceAll(" * ");
             s = CALC_DIV.matcher(s).replaceAll(" / ");
-            
-            m.appendReplacement(sb, s);
+
+            m.appendReplacement(sbuffer, s);
         }
-        m.appendTail(sb);
-        css = sb.toString(); 
+        m.appendTail(sbuffer);
+        css = sbuffer.toString();
+
+        // restore css variables AFTER calc func optimization
+        css = restorePreservedTokens(css, "CSS_VAR", preservedCssVars);
 
         // Trim the final string (for any leading or trailing white spaces)
         return css.trim();
     }
+
 }

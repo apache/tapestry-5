@@ -27,7 +27,8 @@ class CssCompressorSpec extends Specification {
     def "preserve space for calc operators"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css")
-        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text.strip()
+        def t = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text.trim()
 
         when:
         def result = CssCompressor.compress(is)
@@ -39,7 +40,7 @@ class CssCompressorSpec extends Specification {
     def "bootstrap.css integry check"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css")
-        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css.min").text.strip()
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css.min").text.trim()
 
         when:
         def result = CssCompressor.compress(is)
@@ -51,7 +52,7 @@ class CssCompressorSpec extends Specification {
     def "yui compressor test '#rawFile'"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/$rawFile")
-        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/${rawFile}.min").text.strip()
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/${rawFile}.min").text.trim()
 
         when:
         def result = CssCompressor.compress(is)
