@@ -29,6 +29,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -45,6 +46,8 @@ import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -220,7 +223,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
+//        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
         
         if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
         {
@@ -236,7 +239,15 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             profile.setPreference("intl.accept_languages", "en,fr,de");
         }
         
-        FirefoxDriver driver = new FirefoxDriver(options);
+        // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
+        String osName = System.getProperty("os.name");
+        String profileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
+                ? createProfileRootInUserHome()
+                : null;
+        FirefoxDriver driver = profileRoot != null
+                ? new FirefoxDriver(createGeckoDriverService(profileRoot), options)
+                : new FirefoxDriver(options);
+        
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
@@ -311,6 +322,28 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
         });
     }
+    
+    private static String createProfileRootInUserHome() {
+        String userHome = System.getProperty("user.home");
+        File profileRoot = new File(userHome, "snap/firefox/common/.firefox-profile-root");
+        if (!profileRoot.exists()) {
+            if (!profileRoot.mkdirs()) {
+                return null;
+            }
+        }
+        return profileRoot.getAbsolutePath();
+    }    
+    
+    private static GeckoDriverService createGeckoDriverService(String tempProfileDir) {
+        return new GeckoDriverService.Builder() {
+            @Override
+            protected List<String> createArgs() {
+                List<String> args = new ArrayList<>(super.createArgs());
+                args.add(String.format("--profile-root=%s", tempProfileDir));
+                return args;
+            }
+        }.build();
+    }    
 
     private final String getParameter(XmlTest xmlTest, String key, String defaultValue)
     {
@@ -1662,9 +1695,33 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         if (getTitle().toLowerCase().contains("service unavailable")) {
             throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
         }
-
+        
+        // Trying to solve some cases where the link is present on the page but somehow
+        // openBaseURL() couldn't find it.
+        if (linkText.length > 0)
+        {
+            try 
+            {
+                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(linkText[0])), 3);
+            }
+            catch (org.openqa.selenium.TimeoutException e)
+            {
+                LOGGER.warn("Page content: {}", getHtmlSource());
+                throw e;
+            }
+        }
+        
         for (String text : linkText)
         {
+            try 
+            {
+                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
+            }
+            catch (org.openqa.selenium.TimeoutException e)
+            {
+                LOGGER.warn("Page content: {}", getHtmlSource());
+                throw e;
+            }
             clickAndWait("link=" + text);
         }
     }
