@@ -1,10 +1,10 @@
 package t5.webresources.tests
 
-import geb.spock.GebReportingSpec
+import geb.spock.GebSpec
 import org.apache.tapestry5.test.JettyRunner
 import spock.lang.Shared
 
-class WebResourcesSpec extends GebReportingSpec {
+class WebResourcesSpec extends GebSpec {
 
     @Shared
     def runner;
