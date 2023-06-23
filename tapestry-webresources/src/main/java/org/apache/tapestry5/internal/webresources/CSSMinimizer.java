@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import java.io.*;
 
 /**
- * A wrapper around YUI Compressor. This module does not have a dependency on YUICompressor;
- * isntead a local copy of the YUICompressor CSS minimizer is kept (because the reset of YUICompressor
+ * A wrapper around a customized YUI Compressor. This module does not have a dependency on YUICompressor;
+ * instead a local copy of the YUICompressor CSS minimizer is kept (because the reset of YUICompressor
  * is painful to mix due to how it attempts to patch Rhino).
  */
 public class CSSMinimizer extends AbstractMinimizer
@@ -38,20 +38,15 @@ public class CSSMinimizer extends AbstractMinimizer
     @Override
     protected InputStream doMinimize(StreamableResource resource) throws IOException
     {
-        StringWriter writer = new StringWriter(1000);
-        Reader reader = new InputStreamReader(resource.openStream());
+        InputStream is = resource.openStream();
 
         try
         {
-            new CssCompressor(reader).compress(writer, -1);
-
-            writer.flush();
-
-            return IOUtils.toInputStream(writer.getBuffer());
+            String compressed = CssCompressor.compress(is);
+            return IOUtils.toInputStream(compressed);
         } finally
         {
-            InternalUtils.close(reader);
-            InternalUtils.close(writer);
+            InternalUtils.close(is);
         }
     }
 }

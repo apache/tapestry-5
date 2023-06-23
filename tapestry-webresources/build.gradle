@@ -39,7 +39,7 @@ jar.manifest {
 
 
 test {
-    useJUnit()
+    useJUnitPlatform()
 
     systemProperties("geb.build.reportsDir": "$reporting.baseDir/geb",
         "tapestry.compiled-asset-cache-dir": "$buildDir/compiled-asset-cache",
