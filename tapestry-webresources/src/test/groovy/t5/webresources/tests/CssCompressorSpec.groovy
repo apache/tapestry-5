@@ -7,48 +7,37 @@ import spock.lang.Specification;
 
 class CssCompressorSpec extends Specification {
 
-    @Issue('TAP5-2524')
-    def "minify CSS with keyframes "() {
+    // To add a new CssCompressor test, add a file named after the issue
+    // in tapestry-webresources/src/test/resources/t5/webresources/css/ in the format:
+    //
+    // * <#basename>.css
+    // * <#basename>.css.min
+    //
+    // Add the issue to the "where:" clause in the test below with a sensible description.
+
+    def "#basename: #description"() {
         given:
-        def css = '''@keyframes anim {
-    0% { opacity: 0; }
-  100% { opacity: 1; }
-}'''
-        def expected = "@keyframes anim{0%{opacity:0}100%{opacity:1}}" 
-
-        when:
-        def result = CssCompressor.compress(css)
-
-        then:
-        result == expected
-    }
-
-    @Issue('TAP5-2753')
-    def "preserve space for calc operators"() {
-        given:
-        def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css")
-        def t = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text
-        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/tap5-2753.css.min").text.trim()
+        def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/${basename}.css")
+        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/${basename}.css.min").text.trim()
 
         when:
         def result = CssCompressor.compress(is)
 
         then:
         result == expected
+
+        where:
+        basename    | description
+        'bootstrap' | 'bootstrap minification integrity check'
+        'TAP5-2524' | 'minify CSS with keyframes'
+        'TAP5-2600' | 'preserve 0s in transition'
+        'TAP5-2753' | 'preserve space for calc operators'
     }
 
-    def "bootstrap.css integry check"() {
-        given:
-        def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css")
-        def expected = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/bootstrap.css.min").text.trim()
-
-        when:
-        def result = CssCompressor.compress(is)
-
-        then:
-        result == expected
-    }
-
+    /**
+     * These tests were moved over from https://github.com/yui/yuicompressor to ensure that the
+     * CssCompressor behaves as identical as possible after any modifications.
+     */
     def "yui compressor test '#rawFile'"() {
         given:
         def is = CssCompressorSpec.class.getResourceAsStream("/t5/webresources/css/yui/$rawFile")
