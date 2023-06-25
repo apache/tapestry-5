@@ -133,7 +133,6 @@ public class DefaultTreeModel<T> implements TreeModel<T>
         assert encoder != null;
         assert adapter != null;
         assert roots != null;
-        assert !roots.isEmpty();
 
         this.encoder = encoder;
         this.adapter = adapter;

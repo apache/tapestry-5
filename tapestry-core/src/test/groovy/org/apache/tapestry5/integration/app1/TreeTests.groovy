@@ -16,6 +16,8 @@ package org.apache.tapestry5.integration.app1
 
 import org.testng.annotations.Test
 
+import spock.lang.Issue
+
 class TreeTests extends App1TestCase {
 
     @Test
@@ -67,5 +69,14 @@ class TreeTests extends App1TestCase {
         // Make sure it is still there after a redraw
 
         waitForCssSelectorToAppear "span.selected-leaf-node"
+    }
+
+    @Issue("TAP5-2745")
+    @Test
+    void no_roots() {
+        openLinks "Tree Component No Roots Demo"
+
+        assertTrue isElementPresent('css=.tree-container')
+        assertFalse isElementPresent('css=.tree-container span.tree-icon')
     }
 }

@@ -129,6 +129,8 @@ public class Index
 
                     new Item("TreeSelectionDemo", "Tree Component Selection Demo", "Demo of Selection with Tree Component"),
 
+                    new Item("TreeNoRootsDemo", "Tree Component No Roots Demo", "Demo of No Roots with Tree Component"),
+
                     new Item("InvalidExpressionInDynamicTemplate", "Invalid Dynamic Expression",
                             "Invalid expression in a Dynamic Template"),
 
