@@ -19,6 +19,7 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.tree.DefaultTreeModel;
 import org.apache.tapestry5.tree.TreeModel;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -98,8 +99,18 @@ public class Stuff
 
     public static TreeModel<Stuff> createTreeModel()
     {
+        return createTreeModel(Stuff.ROOT.children);
+    }
+
+    public static TreeModel<Stuff> createEmptyTreeModel()
+    {
+        return createTreeModel(Collections.emptyList());
+    }
+
+    private static TreeModel<Stuff> createTreeModel(List<Stuff> children)
+    {
         ValueEncoder<Stuff> encoder = new StuffValueEncoder();
 
-        return new DefaultTreeModel<Stuff>(encoder, new StuffTreeModelAdapter(), Stuff.ROOT.children);
+        return new DefaultTreeModel<Stuff>(encoder, new StuffTreeModelAdapter(), children);
     }
 }

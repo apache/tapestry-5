@@ -255,8 +255,6 @@ public class Tree
 
         public RenderNodes(List<TreeNode> nodes)
         {
-            assert !nodes.isEmpty();
-
             this.nodes = F.flow(nodes).reverse();
         }
 
@@ -264,6 +262,11 @@ public class Tree
         {
             writer.element("ul");
             queue.push(RENDER_CLOSE_TAG);
+
+            // TAP5-2745: Support empty tree model
+            if (nodes.isEmpty()) {
+                return;
+            }
 
             queue.push(toRenderCommand(nodes.first(), true));
 
