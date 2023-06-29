@@ -45,7 +45,6 @@ import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
