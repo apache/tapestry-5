@@ -286,7 +286,7 @@ public class JavaScriptModule
                     assetPathPrefix, false),
                 "after:Asset", "before:ComponentEvent");
 
-        configuration.add("ComnpressedModules",
+        configuration.add("CompressedModules",
                 new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
                     javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, modulePathPrefix,
                     assetPathPrefix, true),
