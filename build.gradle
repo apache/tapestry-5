@@ -319,6 +319,7 @@ subprojects {
 //
 //// Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 //
+<<<<<<< HEAD
 tasks.register('aggregateJavadoc', Javadoc) {
     dependsOn configurations.javadoc
     group "Documentation"
@@ -386,6 +387,73 @@ tasks.register('aggregateJavadoc', Javadoc) {
         }
     }
 }
+=======
+//task aggregateJavadoc(type: Javadoc) {
+//    dependsOn configurations.javadoc
+//    group "Documentation"
+//
+//    description "Build the aggregated JavaDocs for all modules"
+//    maxMemory "512m"
+//    destinationDir file("$buildDir/documentation/javadocs")
+//
+//    def tapestryStylesheet = file("src/javadoc/stylesheet7.css")
+//    int thisYear = java.time.Year.now().getValue()
+//
+//    def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
+//    def allMainJavaFiles = allMainSourceSets*.java
+//    def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
+//
+//    options {
+//        splitIndex true
+//        linkSource true
+//        stylesheetFile tapestryStylesheet
+//        windowTitle "Tapestry API - ${project.version}"
+//        header "Tapestry API - ${project.version}"
+//        docTitle "Tapestry API - ($project.version)"
+//        bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
+//        use = true // 'use' seems to be a reserved word for the DSL
+//        links "https://docs.oracle.com/javase/8/docs/api/"
+//        links "https://docs.oracle.com/javaee/7/api/"
+//        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+//            tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
+//        }
+//        //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
+////        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+//        addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
+//        addStringOption 'source', '8'
+//        taglets "org.apache.tapestry5.javadoc.TapestryDocTaglet"
+//    }
+//
+//    exclude "org/apache/tapestry5/internal/plastic/asm/**"
+//    exclude "org/apache/tapestry5/internal/webresources/**"
+//    exclude "org/apache/tapestry5/webresources/modules/**"
+//    
+//    source allMainJavaFiles
+//
+//    classpath += files(allMainSourceSets*.compileClasspath)
+//
+//    inputs.files allMainJavaSrcDirs
+//
+//    // As part of generating the documentation, ALSO copy any related files:
+//    // Any extra images (Tapestry logo)
+//    // Any images stored under src/main/java ... everything but .java, .xdoc and package.html
+//
+//    doLast {
+//        copy {
+//            from allMainJavaSrcDirs
+//            into aggregateJavadoc.destinationDir
+//            exclude "**/*.java"
+//            exclude "**/*.xdoc"
+//            exclude "**/package.html"
+//        }
+//
+//        copy {
+//            from file("src/javadoc/images")
+//            into aggregateJavadoc.destinationDir
+//        }
+//    }
+//}
+>>>>>>> branch 'TAP5-2741' of git@github.com:apache/tapestry-5.git
 
 task coffeeScriptDocs(type: Exec) {
     group "Documentation"
