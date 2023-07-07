@@ -1,0 +1,57 @@
+plugins {
+	id 'tapestry.java'
+	id 'java-library-distribution'
+	id 'maven-publish'
+}
+
+sourceSets {
+	jakarta {
+		java {
+			srcDir 'build/generated/sources/jakarta/java/main'
+		}
+	}
+}
+
+java {
+	registerFeature('javax') {
+		usingSourceSet(sourceSets.main)
+		capability('org.apache.tapestry', 'servlet-api', '3.0.1')
+	}
+	registerFeature('jakarta') {
+		usingSourceSet(sourceSets.jakarta)
+		capability('org.apache.tapestry', 'servlet-api', '5.0.0')
+	}
+}
+
+dependencies {
+	javaxApi 'javax.servlet:javax.servlet-api:3.0.1'
+	jakartaApi ('jakarta.servlet:jakarta.servlet-api:5.0.0') {
+		because 'this is the first version to support the jakarta namespace'
+	}
+}
+
+tasks.register('generateJakartaSources', Copy) {
+	from 'src/main/java'
+	into 'build/generated/sources/jakarta/java/main'
+	filter {
+	  line -> line.replace("javax", "jakarta")
+	}
+}
+
+compileJakartaJava.configure {
+	dependsOn generateJakartaSources
+}
+
+publishing {
+	publications {
+		myLibrary(MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			name = 'test'
+			url = layout.buildDirectory.dir("testRepo")
+		}
+	}
+}
