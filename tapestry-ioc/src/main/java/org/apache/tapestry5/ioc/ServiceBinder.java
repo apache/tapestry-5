@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,16 +25,24 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 public interface ServiceBinder
 {
     /**
-     * Defines a service in terms of an implementation class, without a service interface. In this case, the service
+     * Binds the service interface to a conventionally named service implementation class or defines a service in terms of an implementation class, without a service interface.
+     * <p>
+     * The conventional name for the service implementation class is the same as the name of the service interface with "Impl" appended.
+     * For example, {@code bind(Service.class)} will implicitly attempt to bind to {@code ServiceImpl.class}.
+     * Use {@link #bind(Class, Class)} if the name of the service implementation class does not follow the convention.
+     * <p>
+     * In case the service is defined through the implementation class, the service
      * will not be proxiable (proxying requires a service interface) and {@link ServiceDef#getServiceInterface()} will
      * return the implementation class. In this situation, the service will not be proxied; it will be instantiated
      * fully on first reference (ignoring its scope, if any) and will not be decorated.
      *
      * @param <T>
-     * @param implementationClass class to instantiate as the service
+     * @param interfaceClassOrImplementationClass service interface class to bind implicitly or implementation class
+     * to instantiate as the service
      * @return binding options, used to specify additional details about the service
+     * @see #bind(Class, Class)
      */
-    <T> ServiceBindingOptions bind(Class<T> implementationClass);
+    <T> ServiceBindingOptions bind(Class<T> interfaceClassOrImplementationClass);
 
     /**
      * Alternative implementation that supports a callback to build the service, rather than instantiating a particular
@@ -50,11 +58,15 @@ public interface ServiceBinder
      * Binds the service interface to a service implementation class. The default service name is the unqualified name
      * of the service interface. The default service scope is "singleton", unless the service implementation class
      * includes the {@link Scope} annotation.
-     *
+     * <p>
+     * The service implementation class may be omitted (in other words, {@link #bind(Class)} used instead) if the name
+     * of the service implementation class is the same as the name of the service interface with "Impl" appended.
+     * 
      * @param <T>
      * @param serviceInterface      service interface (used when locating services, and when building proxies)
      * @param serviceImplementation implementation class that implements the service interface
      * @return binding options, used to specify additional details about the service
+     * @see #bind(Class)
      */
     <T> ServiceBindingOptions bind(Class<T> serviceInterface,
                                    Class<? extends T> serviceImplementation);
