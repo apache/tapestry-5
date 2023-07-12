@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal;
 import java.io.IOException;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentSource;
@@ -27,8 +26,9 @@ import org.testng.annotations.Test;
 
 public class FormsRequirePostExceptionHandlerAssistantTest extends TapestryTestCase
 {
+    @SuppressWarnings("deprecation")
     @Test
-    public void foo()
+    public void test()
     {
         ComponentSource componentSource = newMock(ComponentSource.class);
         Component page = newMock(Component.class);

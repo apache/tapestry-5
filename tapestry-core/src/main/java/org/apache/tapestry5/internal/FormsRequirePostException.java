@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.commons.util;
+package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.commons.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.OperationTracker.NonLoggableException;
 
 /**
  * Exception thrown by Tapestry's {@link org.apache.tapestry5.corelib.components.Form} component
@@ -25,6 +26,7 @@ import org.apache.tapestry5.commons.internal.util.TapestryException;
  * 
  * @since 5.8.3
  */
+@NonLoggableException
 public class FormsRequirePostException extends TapestryException {
 
     private static final long serialVersionUID = 1L;

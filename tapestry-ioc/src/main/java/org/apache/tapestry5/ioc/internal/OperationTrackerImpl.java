@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
-import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.commons.util.Stack;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.Invokable;
@@ -132,7 +131,7 @@ public class OperationTrackerImpl implements OperationTracker
     private <T> T handleRuntimeException(RuntimeException ex)
     {
         // This is to prevent the error level log messages
-        if (ExceptionUtils.findCause(ex, FormsRequirePostException.class) != null)
+        if (ExceptionUtils.isAnnotationInStackTrace(ex, NonLoggableException.class))
             // pass through without logging
             throw ex;
         else

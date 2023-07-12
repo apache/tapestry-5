@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.commons.util.FormsRequirePostException;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -36,6 +35,7 @@ import org.apache.tapestry5.services.RequestExceptionHandler;
  * @see ExceptionHandlerAssistant
  * @see RequestExceptionHandler
  * @see SymbolConstants#PRODUCTION_MODE
+ * @since 5.8.3
  */
 public class FormsRequirePostExceptionHandlerAssistant implements ExceptionHandlerAssistant
 {

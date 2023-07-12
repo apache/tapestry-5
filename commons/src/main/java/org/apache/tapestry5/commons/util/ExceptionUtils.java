@@ -1,4 +1,4 @@
-// Copyright 2008-2013 The Apache Software Foundation
+// Copyright 2008-2013, 2023 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.commons.util;
+
+import java.lang.annotation.Annotation;
 
 import org.apache.tapestry5.commons.services.ClassPropertyAdapter;
 import org.apache.tapestry5.commons.services.PropertyAccess;
@@ -111,5 +113,32 @@ public class ExceptionUtils
             return message;
 
         return exception.getClass().getName();
+    }
+    
+    /**
+     * Tells whether an exception annotated with a given annotation is found in the stack
+     * trace.
+     * @return <code>true</code> or </code>false</code>
+     * @since 5.8.3
+     */
+    public static boolean isAnnotationInStackTrace(Throwable t, Class<? extends Annotation> annotationClass)
+    {
+        boolean answer = false;
+        Throwable current = t;
+
+        while (current != null)
+        {
+            if (current.getClass().isAnnotationPresent(annotationClass))
+            {
+                answer = true;
+                break;
+            }
+
+            // Not a match, work down.
+
+            current = current.getCause();
+        }
+
+        return answer;
     }
 }
