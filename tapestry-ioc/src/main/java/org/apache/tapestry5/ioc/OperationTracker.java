@@ -15,6 +15,10 @@
 package org.apache.tapestry5.ioc;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Used to track some set of operations in such a way that a failure (a thrown RuntimeException) will be logged along
@@ -55,4 +59,16 @@ public interface OperationTracker
      * @since 5.4
      */
     <T> T perform(String description, IOOperation<T> operation) throws IOException;
+    
+    /**
+     * Annotation to be be used in exception classes whose instances are not meant to be 
+     * logged in  {@linkplain OperationTracker}.
+     * @since 5.8.3
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public static @interface NonLoggableException 
+    {
+    }
+    
 }
