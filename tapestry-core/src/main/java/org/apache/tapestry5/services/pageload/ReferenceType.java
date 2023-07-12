@@ -14,6 +14,10 @@
 package org.apache.tapestry5.services.pageload;
 
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Defines the types of reference the page cache can use.
@@ -30,5 +34,20 @@ public enum ReferenceType
     /**
      * Use a strong (normal) reference to cached page instances.
      */
-    STRONG
+    STRONG;
+    
+    /**
+     * Utility method that returns {@linkplain PageCachingReferenceTypeService}
+     * matching page names in a case-insensitive way.
+     * @return a {@linkplain PageCachingReferenceTypeService} instance.
+     */
+    public PageCachingReferenceTypeService forPages(String... canonicalPageNames)
+    {
+        final Set<String> pageNames = Collections.unmodifiableSet(
+                Arrays.stream(canonicalPageNames).
+                    map(String::toLowerCase).
+                    collect(Collectors.toSet()));
+        return (p) -> pageNames.contains(p.toLowerCase()) ? this : null;
+    }
+    
 }

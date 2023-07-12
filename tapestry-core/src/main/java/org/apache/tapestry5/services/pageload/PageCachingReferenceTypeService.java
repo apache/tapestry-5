@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 /**
  * A service which defines whether cache page instances should have soft references pointing to
  * it (the default) or strong, non-garbage-collectable ones. This service is a chain of command
- * of itself
+ * of itself.
  *
  * @see ReferenceType
  * @since 5.8.3
