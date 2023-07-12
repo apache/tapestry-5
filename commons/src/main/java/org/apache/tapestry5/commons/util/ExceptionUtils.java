@@ -118,7 +118,7 @@ public class ExceptionUtils
     /**
      * Tells whether an exception annotated with a given annotation is found in the stack
      * trace.
-     * @return <code>true</code> or </code>false</code>
+     * @return <code>true</code> or <code>false</code>
      * @since 5.8.3
      */
     public static boolean isAnnotationInStackTrace(Throwable t, Class<? extends Annotation> annotationClass)
