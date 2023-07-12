@@ -28,9 +28,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * Component that renders a <a href="http://graphviz.org">Graphviz</a> graph using
  * <a href="https://www.npmjs.com/package/@hpcc-js/wasm">@hpcc-js/wasm</a>. It's mostly 
- * intended to be used internally at Tapestry, hence the lack of options.
+ * intended to be used internally at Tapestry, hence the limited set of options.
  * 
  * @tapestrydoc
+ * @since 5.8.3
  */
 public class Graphviz
 {

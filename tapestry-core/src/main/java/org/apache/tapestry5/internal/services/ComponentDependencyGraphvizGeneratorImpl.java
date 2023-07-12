@@ -13,8 +13,14 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
@@ -25,7 +31,6 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
     final private ComponentClassResolver componentClassResolver;
     
     final private ComponentDependencyRegistry componentDependencyRegistry;
-
 
     public ComponentDependencyGraphvizGeneratorImpl(ComponentDependencyRegistry componentDependencyRegistry, 
             ComponentClassResolver componentClassResolver) 
@@ -48,30 +53,40 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         dotFile.append("\tnode [shape=rect];\n\n");
         
         final Set<String> allClasses = new HashSet<>();
+//        final Set<String> dependenciesAlreadyOutput = new HashSet<>();
         
+        final Map<String, Node> nodeMap = new HashMap<>();
         for (String className : classNames) 
         {
-            final Node node = createNode(componentClassResolver.getLogicalName(className), className);
-            dotFile.append(getNodeDefinition(node));
+            createNode(className, nodeMap);
             for (DependencyType dependencyType : DependencyType.values()) 
             {
-                addDependencies(className, allClasses, dependencyType);
+                addDependencies(className, allClasses, dependencyType, nodeMap);
             }
             
-            final StringBuilder dependencySection = new StringBuilder();
-            
-            for (Dependency dependency : node.dependencies)
-            {
-                dependencySection.append(getNodeDependencyDefinition(node, dependency.className, dependency.type));
-            }
-            
-            dotFile.append("\n");
-            dotFile.append(dependencySection);
-            dotFile.append("\n");
 
         }
         
+        final List<Node> nodes = new ArrayList<>(nodeMap.values());
+        Collections.sort(nodes, Comparator.comparing(n -> n.id));
+        
+        for (Node node : nodes)
+        {
+            dotFile.append(getNodeDefinition(node));
+        }
+        
+        dotFile.append("\n");
+        
+        for (Node node : nodes)
+        {
+            for (Dependency dependency : node.dependencies)
+            {
+                dotFile.append(getNodeDependencyDefinition(node, dependency.className, dependency.type));
+            }
+        }
+    
 
+        dotFile.append("\n");
         dotFile.append("}");
         
         return dotFile.toString();
@@ -126,30 +141,34 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         return label.replace('.', '_').replace('/', '_');
     }
 
-    private void addDependencies(String className, Set<String> allClasses, DependencyType type) 
+    private void addDependencies(String className, Set<String> allClasses, DependencyType type, Map<String, Node> nodeMap) 
     {
         if (!allClasses.contains(className))
         {
-            allClasses.add(className);
+            createNode(className, nodeMap);
             for (String dependency : componentDependencyRegistry.getDependencies(className, type))
             {
-                addDependencies(dependency, allClasses, type);
+                addDependencies(dependency, allClasses, type, nodeMap);
             }
+            allClasses.add(className);
         }
     }
 
-    private Node createNode(String logicalName, String className) 
+    private void createNode(String className, Map<String, Node> nodeMap) 
     {
-        Collection<Dependency> deps = new HashSet<>();
-        for (DependencyType type : DependencyType.values()) 
+        if (!nodeMap.containsKey(className)) 
         {
-            final Set<String> dependencies = componentDependencyRegistry.getDependencies(className, type);
-            for (String dependency : dependencies) 
+            Collection<Dependency> deps = new HashSet<>();
+            for (DependencyType type : DependencyType.values()) 
             {
-                deps.add(new Dependency(dependency, type));
+                final Set<String> dependencies = componentDependencyRegistry.getDependencies(className, type);
+                for (String dependency : dependencies) 
+                {
+                    deps.add(new Dependency(dependency, type));
+                }
             }
+            nodeMap.put(className, new Node(getNodeLabel(className), className, deps));
         }
-        return new Node(logicalName, className, deps);
     }
     
     private static final class Dependency
@@ -161,6 +180,11 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
             super();
             this.className = className;
             this.type = type;
+        }
+        @Override
+        public String toString() 
+        {
+            return "Dependency [className=" + className + ", type=" + type + "]";
         }
     }
 
