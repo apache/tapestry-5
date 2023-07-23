@@ -205,6 +205,22 @@ public class InternalUtils
             return asObjectCreator(locator.getService(named.value(), injectionType));
         }
 
+        // TAP5-2758: An @Symbol is treated as an explicit signal that the injected value
+        // should not be autowired, but resolved using the MasterObjectProvider instead.
+        // The check needs to be done before the @Inject one, or the value is solely treated
+        // by its type.
+        // Without this check, if any configuration is used, no List/Collection/Map value as
+        // Symbol can be used without both @Inject and @Symbol, as @Symbol has no explicit
+        // meaning on how to inject the value, and the configuration detector strikes before
+        // the final fallback to the MasterObjectProvider.
+
+        Symbol symbol = provider.getAnnotation(Symbol.class);
+
+        if (symbol != null)
+        {
+            return asObjectCreator(locator.getObject(injectionType, provider));
+        }
+
         // In the absence of @InjectService, try some autowiring. First, does the
         // parameter type match one of the resources (the parameter defaults)?
 

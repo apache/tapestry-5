@@ -14,16 +14,19 @@
 
 package org.apache.tapestry5.ioc.test.internal;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Named;
+
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
 
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Used by {@link ioc.specs.ServiceBuilderMethodInvokerSpec}.
@@ -52,6 +55,20 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService buildWithOrderedConfiguration(List<Runnable> configuration)
+    {
+        assertSame(configuration, expectedConfiguration);
+
+        return fie;
+    }
+
+    public FieService buildWithOrderedConfigurationAndList(List<Runnable> configuration, List<Runnable> noConfiguration)
+    {
+        assertSame(configuration, expectedConfiguration);
+
+        return fie;
+    }
+
+    public FieService buildWithOrderedConfigurationAndSymbolList(List<Runnable> configuration, @Symbol("ignored") List<Runnable> noConfiguration)
     {
         assertSame(configuration, expectedConfiguration);
 

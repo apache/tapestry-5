@@ -3,6 +3,7 @@ package ioc.specs
 import org.apache.tapestry5.commons.AnnotationProvider
 import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.ServiceBuilderResources
+import org.apache.tapestry5.ioc.internal.IOCMessages
 import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvoker
 import org.apache.tapestry5.ioc.test.internal.FieService
 import org.apache.tapestry5.ioc.test.internal.FoeService
@@ -125,6 +126,40 @@ class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecificatio
     when:
 
     def actual = invoke "buildWithOrderedConfiguration"
+
+    then:
+
+    actual.is implementation
+
+    1 * resources.getOrderedConfiguration(Runnable) >> configuration
+  }
+
+  def "injection of ordered configuration as List and another List"() {
+
+    List<Runnable> configuration = Mock()
+
+    fixture.expectedConfiguration = configuration
+      
+    when:
+
+    def actual = invoke "buildWithOrderedConfigurationAndList"
+
+    then:
+
+    RuntimeException e = thrown()
+
+    e.message == IOCMessages.tooManyConfigurationParameters(DESCRIPTION)
+  }
+
+  def "injection of ordered configuration as List and another List as Symbol"() {
+
+    List<Runnable> configuration = Mock()
+
+    fixture.expectedConfiguration = configuration
+      
+    when:
+
+    def actual = invoke "buildWithOrderedConfigurationAndSymbolList"
 
     then:
 
