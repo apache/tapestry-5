@@ -538,7 +538,7 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      *                       to a long.
      * @since 5.7
      */
-    public long getLongOrDefault(String name, int defaultValue)
+    public long getLongOrDefault(String name, long defaultValue)
     {
         Object object = opt(name);
         if (object == null)

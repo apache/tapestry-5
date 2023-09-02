@@ -9,6 +9,7 @@ import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
 import org.apache.tapestry5.json.exceptions.JSONValueNotFoundException
 
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -945,5 +946,23 @@ class JSONObjectSpec extends Specification {
         then:
 
         source == copy
+    }
+
+    @Issue("TAP5-2759")
+    def "getLongOrDefault correct type for default value"() {
+		// This test seems obvious, but it fails if the getLongOrDefault method
+		// isn't using long as the type for the default value in its method declaration
+		given:
+
+		def object = new JSONObject()
+		def defaultValue = 2_147_483_648L
+
+        when:
+
+        def value = object.getLongOrDefault("key", defaultValue)
+
+        then:
+
+        value == defaultValue
     }
 }
