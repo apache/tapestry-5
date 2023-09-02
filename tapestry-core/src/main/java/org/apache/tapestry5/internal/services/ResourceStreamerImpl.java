@@ -92,6 +92,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.contextAssetFactory = contextAssetFactory;
     }
 
+    @Override
     public boolean streamResource(final Resource resource, final String providedChecksum, final Set<Options> options) throws IOException
     {
         if (!resource.exists())
@@ -103,7 +104,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return true;
         }
 
-        final boolean compress = providedChecksum.startsWith("z");
+        final boolean compress = providedChecksum != null && providedChecksum.startsWith("z");
 
         return tracker.perform("Streaming " + resource + (compress ? " (compressed)" : ""), new IOOperation<Boolean>()
         {
@@ -120,6 +121,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         });
     }
 
+    @Override
     public boolean streamResource(StreamableResource streamable, String providedChecksum, Set<Options> options) throws IOException
     {
         return streamResource(null, streamable, providedChecksum, options);
@@ -128,12 +130,11 @@ public class ResourceStreamerImpl implements ResourceStreamer
     public boolean streamResource(Resource resource, StreamableResource streamable, String providedChecksum, Set<Options> options) throws IOException
     {
         assert streamable != null;
-        assert providedChecksum != null;
         assert options != null;
 
         String actualChecksum = streamable.getChecksum();
 
-        if (providedChecksum.length() > 0 && !providedChecksum.equals(actualChecksum))
+        if (providedChecksum != null && !providedChecksum.isEmpty() && !providedChecksum.equals(actualChecksum))
         {
             
             // TAP5-2185: Trying to find the wrongly-checksummed resource in the classpath and context,

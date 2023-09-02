@@ -58,7 +58,7 @@ public interface ResourceStreamer
      * @param resource
      *         to stream
      * @param providedChecksum
-     *         checksum from URL (or null to not validate against checksum, which is normal for modules)
+     *         checksum from URL (or null/blank to not validate against checksum, which is normal for modules)
      * @param options
      *         enable or disable certain features
      * @see StreamableResourceSource
@@ -73,7 +73,7 @@ public interface ResourceStreamer
      *         content to stream
      * @param providedChecksum
      *         checksum provided (in the URL) to validate against the {@linkplain org.apache.tapestry5.services.assets.StreamableResource#getChecksum()} actual checksum}
-     *         for the resource, may be blank to not validate against the checksum
+     *         for the resource, may be null/blank to not validate against the checksum
      * @param options
      *         enable or disable certain features
      * @return true if the request was handled (even if sending a {@link HttpServletResponse#SC_NOT_MODIFIED} response),
