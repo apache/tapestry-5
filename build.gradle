@@ -20,7 +20,7 @@ project.ext.versions = [
     slf4j: "1.7.25",
     geb: "2.0",
     selenium: "4.5.0",
-    seleniumServer: "4.7.2",
+    seleniumServer: "4.12.1",
     jackson: "2.13.1",
     jsonschemaGenerator: "4.20.0",
     junitJupiter: "5.8.2",
