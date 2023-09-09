@@ -321,7 +321,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         
         if (rootPageClassloaderContext == null)
         {
-            logger.info("Initializing page pool");
+            logger.info("Initializing page pool. Multiple classloaders " + (!productionMode && multipleClassLoaders ? "enabled" : "disabled") + ".");
             
             pageClassLoaderContextManager.clear();
             

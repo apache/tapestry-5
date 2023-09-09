@@ -26,6 +26,7 @@ import org.apache.tapestry5.http.services.CorsHandler;
 import org.apache.tapestry5.http.services.CorsHandlerHelper;
 import org.apache.tapestry5.http.services.CorsHttpServletRequestFilter;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.rest.DefaultOpenApiDescriptionGenerator;
 import org.apache.tapestry5.modules.NoBootstrapModule;
 import org.apache.tapestry5.services.Html5Support;
@@ -790,5 +791,23 @@ public class SymbolConstants
      * @since 5.8.3
      */
     public static final String MULTIPLE_CLASSLOADERS = "tapestry.multiple-classloaders";
+
+    /**
+     * <p>
+     * Defines what file should be used to store and read component dependency information.
+     * It can be either an absolute path or a path relative to the current folder where
+     * the JVM is running.
+     * </p>
+     * <p>
+     * This symbol is ignored when in production mode.
+     * </p>
+     * <p>
+     * Default value is <code>tapestryComponentDependencies.json</code>
+     * ({@linkplain ComponentDependencyRegistry#FILENAME}).
+     * </p>
+     * @see ComponentDependencyRegistry
+     * @since 5.8.4
+     */
+    public static final String COMPONENT_DEPENDENCY_FILE = "tapestry.component-dependency-file";
 
 }

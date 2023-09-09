@@ -22,14 +22,20 @@ import org.apache.tapestry5.internal.pageload.DefaultComponentRequestSelectorAna
 import org.apache.tapestry5.internal.pageload.DefaultComponentResourceLocator;
 import org.apache.tapestry5.internal.pageload.PagePreloaderImpl;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistryImpl;
+import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSource;
 import org.apache.tapestry5.internal.services.ComponentTemplateSourceImpl;
+import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
+import org.apache.tapestry5.internal.services.TemplateParser;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
-import org.apache.tapestry5.services.ComponentLibraryInfoSource;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
@@ -39,10 +45,12 @@ import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.pageload.ReferenceType;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 
 /**
  * @since 5.3
  */
+@SuppressWarnings("deprecation")
 @Marker(Core.class)
 public class PageLoadModule
 {
@@ -53,6 +61,7 @@ public class PageLoadModule
     public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(SymbolConstants.MULTIPLE_CLASSLOADERS, false);
+        configuration.add(SymbolConstants.COMPONENT_DEPENDENCY_FILE, ComponentDependencyRegistry.FILENAME);
     }
     
     public static void bind(ServiceBinder binder)
@@ -108,6 +117,36 @@ public class PageLoadModule
             OrderedConfiguration<PageCachingReferenceTypeService> configuration)
     {
         configuration.add("Fallback", p -> ReferenceType.SOFT, "after:*");
+    }
+    
+    public static ComponentDependencyRegistry buildComponentDependencyRegistry(
+            InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
+            ResourceChangeTracker resourceChangeTracker,
+            ComponentTemplateSource componentTemplateSource,
+            PageClassLoaderContextManager pageClassLoaderContextManager,
+            ComponentInstantiatorSource componentInstantiatorSource,
+            ComponentClassResolver componentClassResolver,
+            TemplateParser templateParser,
+            ComponentTemplateLocator componentTemplateLocator,
+            PerthreadManager perthreadManager,
+            @Symbol(SymbolConstants.COMPONENT_DEPENDENCY_FILE) String componentDependencyFile,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    {
+        ComponentDependencyRegistryImpl componentDependencyRegistry = 
+                new ComponentDependencyRegistryImpl(
+                        pageClassLoaderContextManager,
+                        componentInstantiatorSource.getProxyFactory().getPlasticManager(),
+                        componentClassResolver,
+                        templateParser,
+                        componentTemplateLocator,
+                        componentDependencyFile,
+                        productionMode);
+        componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
+        componentDependencyRegistry.listen(resourceChangeTracker);
+        componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
+        // TODO: remove
+        componentDependencyRegistry.setupThreadCleanup(perthreadManager);
+        return componentDependencyRegistry;
     }
 
 }

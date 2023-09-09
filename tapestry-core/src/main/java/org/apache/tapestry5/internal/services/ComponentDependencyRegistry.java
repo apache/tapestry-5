@@ -58,7 +58,7 @@ public interface ComponentDependencyRegistry {
     }
 
     /**
-     * Name of the file where the dependency information is stored between webapp runs.
+     * Default file where the dependency information is stored between webapp runs.
      */
     String FILENAME = "tapestryComponentDependencies.json";
 

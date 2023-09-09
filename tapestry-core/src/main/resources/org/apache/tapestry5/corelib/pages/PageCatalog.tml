@@ -43,24 +43,28 @@
             </t:actionlink>
         </t:if>
         <t:actionlink t:id="runGC" zone="pages" class="btn btn-default">Run the GC</t:actionlink>
-        <t:actionlink t:id="storeDependencyInformation" zone="pages" class="btn btn-warning">Store dependency information</t:actionlink>
-        <t:if test="multipleClassLoaders">
-	        <t:actionlink t:id="preloadPageClassLoaderContexts" class="btn btn-default">Preload dependency information and page classloader contexts</t:actionlink>
+        <t:if test="!productionMode">
+	        <t:actionlink t:id="storeDependencyInformation" zone="pages" class="btn btn-warning">Store dependency information</t:actionlink>
+	        <t:if test="multipleClassLoaders">
+		        <t:actionlink t:id="preloadPageClassLoaderContexts" class="btn btn-default">Preload dependency information and page classloader contexts</t:actionlink>
+			</t:if>
 		</t:if>
     </div>
     
     
     <t:zone t:id="pageStructureZone">
-	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
-	        <div class="panel-heading">Component dependency information for ${selectedPage.name} (just direct dependencies)</div>
-	        <div class="panel-body">
-	        	<ul>
-	        		<li t:type="Loop" t:value="dependency" t:source="dependencies">
-	        			${displayLogicalName} (${dependency})
-	        		</li>
-	        	</ul>
-	        </div>
-	    </div>
+	    <t:if t:test="!productionMode">
+		    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+		        <div class="panel-heading">Component dependency information for ${selectedPage.name} (just direct dependencies)</div>
+		        <div class="panel-body">
+		        	<ul>
+		        		<li t:type="Loop" t:value="dependency" t:source="dependencies">
+		        			${displayLogicalName} (${dependency})
+		        		</li>
+		        	</ul>
+		        </div>
+		    </div>
+	    </t:if>
 	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
 	        <div class="panel-heading">${selectedPage.name}'s component tree</div>
 	        <div class="panel-body">
@@ -69,12 +73,14 @@
 	        	</ul>
 	        </div>
 	    </div>
-	    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
-	        <div class="panel-heading">${selectedPage.name}'s dependency tree</div>
-	        <div class="panel-body">
-	        	<t:graphviz value="graphvizValue"/>
-	        </div>
-	    </div>
+	    <t:if t:test="!productionMode">
+		    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
+		        <div class="panel-heading">${selectedPage.name}'s dependency tree</div>
+		        <div class="panel-body">
+		        	<t:graphviz value="graphvizValue"/>
+		        </div>
+		    </div>
+	    </t:if>
 	</t:zone>	   
 
     <div class="panel panel-default vert-offset">

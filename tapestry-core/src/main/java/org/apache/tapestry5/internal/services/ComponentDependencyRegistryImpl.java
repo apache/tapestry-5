@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Mixin;
@@ -50,6 +51,7 @@ import org.apache.tapestry5.internal.parser.StartComponentToken;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Orderable;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -66,7 +68,9 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class ComponentDependencyRegistryImpl implements ComponentDependencyRegistry 
 {
     
@@ -96,7 +100,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     
     final private Map<String, Boolean> isPageCache = new WeakHashMap<>();
     
-    @SuppressWarnings("deprecation")
     final private ComponentTemplateLocator componentTemplateLocator;
     
     final private boolean storedDependencyInformationPresent;
@@ -106,7 +109,9 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             final PlasticManager plasticManager,
             final ComponentClassResolver componentClassResolver,
             final TemplateParser templateParser,
-            final ComponentTemplateLocator componentTemplateLocator)
+            final ComponentTemplateLocator componentTemplateLocator,
+            final @Symbol(SymbolConstants.COMPONENT_DEPENDENCY_FILE) String componentDependencyFile,
+            final @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         map = new HashMap<>();
@@ -116,35 +121,51 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         this.templateParser = templateParser;
         this.componentTemplateLocator = componentTemplateLocator;
         
-        storedDependencies = new File(FILENAME);
-        if (storedDependencies.exists())
+        if (!productionMode)
         {
-            try (FileReader fileReader = new FileReader(storedDependencies);
-                    BufferedReader reader = new BufferedReader(fileReader))
+        
+            Logger logger = LoggerFactory.getLogger(ComponentDependencyRegistry.class);
+            
+            storedDependencies = new File(componentDependencyFile);
+            final boolean fileExists = storedDependencies.exists();
+            
+            logger.info("Component dependencies file: {} Found? {}", 
+                    storedDependencies.getAbsolutePath(), fileExists);
+            
+            if (fileExists)
             {
-                StringBuilder builder = new StringBuilder();
-                String line = reader.readLine();
-                while (line != null)
+                try (FileReader fileReader = new FileReader(storedDependencies);
+                        BufferedReader reader = new BufferedReader(fileReader))
                 {
-                    builder.append(line);
-                    line = reader.readLine();
-                }
-                JSONArray jsonArray = new JSONArray(builder.toString());
-                for (int i = 0; i < jsonArray.size(); i++)
+                    StringBuilder builder = new StringBuilder();
+                    String line = reader.readLine();
+                    while (line != null)
+                    {
+                        builder.append(line);
+                        line = reader.readLine();
+                    }
+                    JSONArray jsonArray = new JSONArray(builder.toString());
+                    for (int i = 0; i < jsonArray.size(); i++)
+                    {
+                        final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        final String className = jsonObject.getString("class");
+                        final DependencyType dependencyType = DependencyType.valueOf(jsonObject.getString("type"));
+                        final String dependency = jsonObject.getString("dependency");
+                        add(className, dependency, dependencyType);
+                        alreadyProcessed.add(dependency);
+                        alreadyProcessed.add(className);
+                    }
+                } catch (IOException e) 
                 {
-                    final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    final String className = jsonObject.getString("class");
-                    final DependencyType dependencyType = DependencyType.valueOf(jsonObject.getString("type"));
-                    final String dependency = jsonObject.getString("dependency");
-                    add(className, dependency, dependencyType);
-                    alreadyProcessed.add(dependency);
-                    alreadyProcessed.add(className);
+                    throw new TapestryException("Exception trying to read " + storedDependencies.getAbsolutePath(), e);
                 }
-            } catch (IOException e) 
-            {
-                throw new TapestryException("Exception trying to read " + FILENAME, e);
+                
             }
             
+        }
+        else
+        {
+            storedDependencies = null;
         }
         
         storedDependencyInformationPresent = !map.isEmpty();
@@ -207,7 +228,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
 
         // Superclass
-        Class superclass = component.getSuperclass();
+        Class<?> superclass = component.getSuperclass();
         if (isTransformed(superclass))
         {
             processClass.accept(superclass);
@@ -236,7 +257,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
      * @param component
      * @param processClassName 
      */
-    @SuppressWarnings("deprecation")
     private void registerTemplate(Class<?> component, Consumer<String> processClassName) 
     {
         // TODO: implement caching of template dependency information, probably
@@ -273,11 +293,6 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         }
     }
     
-    private boolean isNotPage(final String className) 
-    {
-        return !isPage(className);
-    }
-
     private boolean isPage(final String className) 
     {
         Boolean result = isPageCache.get(className);
@@ -342,7 +357,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             MixinClasses mixinClasses = field.getAnnotation(MixinClasses.class);
             if (mixinClasses != null)
             {
-                for (Class dependency : mixinClasses.value()) 
+                for (Class<?> dependency : mixinClasses.value()) 
                 {
                     add(field.getDeclaringClass(), dependency, DependencyType.USAGE);
                     processClass.accept(dependency);
@@ -657,8 +672,13 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             }
             catch (IOException e) 
             {
-                throw new TapestryException("Exception trying to read " + FILENAME, e);
+                throw new TapestryException("Exception trying to write " + storedDependencies.getAbsolutePath(), e);
             }
+            
+            Logger logger = LoggerFactory.getLogger(ComponentDependencyRegistry.class);
+            
+            logger.info("Component dependencies written to {}", 
+                    storedDependencies.getAbsolutePath());
         } 
     }
 
@@ -683,7 +703,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 .collect(Collectors.toSet());
     }
     
-    private boolean isTransformed(Class clasz)
+    private boolean isTransformed(Class<?> clasz)
     {
         return plasticManager.shouldInterceptClassLoading(clasz.getName());
     }
@@ -843,6 +863,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             return null;
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public Set<Class> getHandledRenderPhases() 
         {

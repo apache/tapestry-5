@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -85,6 +86,10 @@ public class PageCatalog
     @Inject
     @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS)
     private boolean multipleClassLoaders;
+
+    @Inject
+    @Symbol(SymbolConstants.COMPONENT_DEPENDENCY_FILE)
+    private String componentDependencyFile;
 
     @Inject
     private PageSource pageSource;
@@ -357,7 +362,7 @@ public class PageCatalog
         
         alertManager.warn(String.format(
                 "Component dependency information written to %s.", 
-                ComponentDependencyRegistry.FILENAME));
+                new File(componentDependencyFile).getAbsolutePath()));
         
         return pagesZone.getBody();
         

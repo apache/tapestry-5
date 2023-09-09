@@ -2785,32 +2785,6 @@ public final class TapestryModule
         configuration.add(appRootPackage + ".rest.entities");
     }
     
-    public static ComponentDependencyRegistry buildComponentDependencyRegistry(
-            InternalComponentInvalidationEventHub internalComponentInvalidationEventHub,
-            ResourceChangeTracker resourceChangeTracker,
-            ComponentTemplateSource componentTemplateSource,
-            PageClassLoaderContextManager pageClassLoaderContextManager,
-            ComponentInstantiatorSource componentInstantiatorSource,
-            ComponentClassResolver componentClassResolver,
-            TemplateParser templateParser,
-            ComponentTemplateLocator componentTemplateLocator,
-            PerthreadManager perthreadManager)
-    {
-        ComponentDependencyRegistryImpl componentDependencyRegistry = 
-                new ComponentDependencyRegistryImpl(
-                        pageClassLoaderContextManager,
-                        componentInstantiatorSource.getProxyFactory().getPlasticManager(),
-                        componentClassResolver,
-                        templateParser,
-                        componentTemplateLocator);
-        componentDependencyRegistry.listen(internalComponentInvalidationEventHub);
-        componentDependencyRegistry.listen(resourceChangeTracker);
-        componentDependencyRegistry.listen(componentTemplateSource.getInvalidationEventHub());
-        // TODO: remove
-        componentDependencyRegistry.setupThreadCleanup(perthreadManager);
-        return componentDependencyRegistry;
-    }
-    
     private static final class TapestryCoreComponentLibraryInfoSource implements
             ComponentLibraryInfoSource
     {

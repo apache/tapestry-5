@@ -173,7 +173,7 @@ public class ComponentDependencyRegistryImplTest
         
         componentDependencyRegistry = new ComponentDependencyRegistryImpl(
                 pageClassLoaderContextManager, plasticManager, resolver, templateParser, 
-                componentTemplateLocator);
+                componentTemplateLocator, ComponentDependencyRegistry.FILENAME, false);
         EasyMock.replay(pageClassLoaderContextManager, plasticManager, resolver);
     }
 

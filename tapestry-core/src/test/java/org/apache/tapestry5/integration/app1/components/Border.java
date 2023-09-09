@@ -56,4 +56,15 @@ public class Border
 
         return true;
     }
+    
+    public String getJvm() 
+    {
+        String version = System.getProperty("java.vendor.version");
+        if (version == null)
+        {
+            version = System.getProperty("java.vm.version");
+        }
+        return version + " from " + System.getProperty("java.vendor");
+    }
+    
 }

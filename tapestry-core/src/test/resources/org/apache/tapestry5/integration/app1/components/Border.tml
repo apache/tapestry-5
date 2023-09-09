@@ -50,6 +50,11 @@
         <t:body/>
 
         <hr/>
+        
+        <h2>JVM</h2>
+        <p>
+			${jvm}
+		</p>
 
         <h2>Request</h2>
 
