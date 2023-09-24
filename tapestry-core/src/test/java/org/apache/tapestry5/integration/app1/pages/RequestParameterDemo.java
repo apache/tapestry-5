@@ -12,15 +12,17 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.ioc.annotations.Inject;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class RequestParameterDemo
 {
@@ -72,6 +74,16 @@ public class RequestParameterDemo
         return resources.createEventLink("emptyStringAllowed").addParameter(PARAMETER_NAME, "");
     }
 
+    public Link getBlankAllowedLinkNonWrapperThrowsException()
+    {
+        return resources.createEventLink("emptyStringAllowedNonWrapperThrowsException").addParameter(PARAMETER_NAME, "");
+    }
+
+    public Link getBlankAllowedLinkNonWrapper()
+    {
+        return resources.createEventLink("emptyStringAllowedNonWrapper").addParameter(PARAMETER_NAME, "");
+    }
+
     public Link getNullLink()
     {
         return resources.createEventLink(EVENT_NAME);
@@ -110,5 +122,21 @@ public class RequestParameterDemo
             this.value = value.intValue();
         }
 
+    }
+
+    void onEmptyStringAllowedNonWrapperThrowsException(@RequestParameter(value = PARAMETER_NAME, allowBlank = true) LocalDateTime value)
+    {
+        this.value = -1;
+    }
+
+    void onEmptyStringAllowedNonWrapper(@RequestParameter(value = PARAMETER_NAME, allowBlank = true, treatBlankAsNull = true) LocalDateTime value)
+    {
+        if (value == null)
+        {
+            this.value = -1;
+        } else
+        {
+            this.value = (int) value.toInstant(ZoneOffset.UTC).getEpochSecond();
+        }
     }
 }

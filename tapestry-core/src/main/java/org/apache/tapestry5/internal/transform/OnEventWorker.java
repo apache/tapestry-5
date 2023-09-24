@@ -329,7 +329,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                     String parameterName = parameterAnnotation.value();
 
                     providers.add(createQueryParameterProvider(method, i, parameterName, type,
-                            parameterAnnotation.allowBlank()));
+                            parameterAnnotation.allowBlank(), parameterAnnotation.treatBlankAsNull()));
                     continue;
                 }
 
@@ -615,7 +615,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     }
 
     private EventHandlerMethodParameterProvider createQueryParameterProvider(PlasticMethod method, final int parameterIndex, final String parameterName,
-                                                                             final String parameterTypeName, final boolean allowBlank)
+                                                                             final String parameterTypeName, final boolean allowBlank, final boolean treatBlankAsNull)
     {
         final String methodIdentifier = method.getMethodIdentifier();
 
@@ -639,23 +639,33 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
                     String parameterValue = request.getParameter(parameterName);
 
-                    if (!allowBlank && InternalUtils.isBlank(parameterValue))
-                        throw new RuntimeException(String.format(
-                                "The value for query parameter '%s' was blank, but a non-blank value is needed.",
-                                parameterName));
+                    if (InternalUtils.isBlank(parameterValue))
+                    {
+                        if (!allowBlank)
+                        {
+                            throw new RuntimeException(String.format(
+                                    "The value for query parameter '%s' was blank, but a non-blank value is needed.",
+                                    parameterName));
+                        }
+
+                        if (treatBlankAsNull)
+                        {
+                            parameterValue = null;
+                        }
+                    }
 
                     Object value;
 
                     if (!isArray)
                     {
-                        value = coerce(parameterName, parameterType, parameterValue, valueEncoder, allowBlank);
+                        value = coerce(parameterName, parameterType, parameterValue, valueEncoder, allowBlank, treatBlankAsNull);
                     } else
                     {
                         String[] parameterValues = request.getParameters(parameterName);
                         Object[] array = (Object[]) Array.newInstance(parameterType, parameterValues.length);
                         for (int i = 0; i < parameterValues.length; i++)
                         {
-                            array[i] = coerce(parameterName, parameterType, parameterValues[i], valueEncoder, allowBlank);
+                            array[i] = coerce(parameterName, parameterType, parameterValues[i], valueEncoder, allowBlank, treatBlankAsNull);
                         }
                         value = array;
                     }
@@ -672,14 +682,22 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             }
 
             private Object coerce(final String parameterName, Class parameterType,
-                                  String parameterValue, ValueEncoder valueEncoder, boolean allowBlank)
+                                  String parameterValue, ValueEncoder valueEncoder, boolean allowBlank, boolean treatBlankAsNull)
             {
 
-                if (!allowBlank && InternalUtils.isBlank(parameterValue))
+                if (InternalUtils.isBlank(parameterValue))
                 {
-                    throw new RuntimeException(String.format(
-                            "The value for query parameter '%s' was blank, but a non-blank value is needed.",
-                            parameterName));
+                    if (!allowBlank)
+                    {
+                        throw new RuntimeException(String.format(
+                                "The value for query parameter '%s' was blank, but a non-blank value is needed.",
+                                parameterName));
+                    }
+
+                    if (treatBlankAsNull)
+                    {
+                        parameterValue = null;
+                    }
                 }
 
                 Object value = valueEncoder.toValue(parameterValue);

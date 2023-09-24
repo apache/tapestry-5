@@ -12,17 +12,19 @@
 
 package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.http.services.Request;
-import org.apache.tapestry5.internal.transform.OnEventWorker;
-import org.apache.tapestry5.ioc.annotations.UseWith;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.transform.OnEventWorker;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Annotation that may be placed on parameters of event handler methods.
@@ -54,4 +56,12 @@ public @interface RequestParameter
      * implementation.
      */
     boolean allowBlank() default false;
+
+    /**
+     * Treats a blank value as null before passing it along to the appropriate {@link org.apache.tapestry5.ValueEncoder}
+     * implementation. This only affects request parameters with {@link #allowBlank()} set to true.
+     * 
+     * @since 5.8.4
+     */
+    boolean treatBlankAsNull() default false;
 }

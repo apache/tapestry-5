@@ -34,5 +34,11 @@
      <li>
          <a href="${blankAllowedLink}">Blank Allowed Link</a>
      </li>
+     <li>
+         <a href="${blankAllowedLinkNonWrapperThrowsException}">Blank Allowed Non-Wrapper Throws Exception Link</a>
+     </li>
+     <li>
+         <a href="${blankAllowedLinkNonWrapper}">Blank Allowed Non-Wrapper Treat As Null Link</a>
+     </li>
   </ul>
 </html>

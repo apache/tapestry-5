@@ -14,6 +14,8 @@ package org.apache.tapestry5.integration.app1;
 
 import org.testng.annotations.Test;
 
+import spock.lang.Issue;
+
 public class RequestParameterTests extends App1TestCase
 {
     @Test
@@ -74,4 +76,21 @@ public class RequestParameterTests extends App1TestCase
         assertText("id=current", "-1");
 
     }
+
+    @Issue("TAP5-2763")
+    @Test
+    public void blank_allowed_for_non_wrapper_types_if_enabled_throws_exception() {
+        openLinks("RequestParameter Annotation Demo", "Blank Allowed Non-Wrapper Throws Exception Link");
+
+        assertTextPresent("Coercion of to type java.time.LocalDateTime (via String --> java.time.LocalDateTime) failed: Text '' could not be parsed at index 0");
+    }
+
+    @Issue("TAP5-2763")
+    @Test
+    public void blank_allowed_for_non_wrapper_types_if_enabled_and_treat_as_null() {
+        openLinks("RequestParameter Annotation Demo", "Blank Allowed Non-Wrapper Treat As Null Link");
+
+        assertText("id=current", "-1");
+    }
+
 }
