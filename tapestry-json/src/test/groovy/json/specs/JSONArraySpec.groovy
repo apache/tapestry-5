@@ -617,4 +617,24 @@ class JSONArraySpec extends Specification {
             Double.NaN
         ]
     }
+
+    def "empty() returns an empty JSONArray"() {
+
+        when:
+        def array = JSONArray.empty()
+
+        then:
+
+        array.isEmpty()
+    }
+
+    def "empty() retuns an immutable JSONArray"() {
+        def array = JSONArray.empty()
+
+        when:
+        array.add("")
+
+        then:
+        UnsupportedOperationException e = thrown()
+    }
 }

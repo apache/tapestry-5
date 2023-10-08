@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.tapestry5.json.exceptions.JSONArrayIndexOutOfBoundsException;
 import org.apache.tapestry5.json.exceptions.JSONSyntaxException;
@@ -53,11 +54,31 @@ public final class JSONArray extends JSONCollection implements Collection<Object
 
     private final List<Object> values;
 
+    private static final JSONArray EMPTY = new JSONArray(Collections.emptyList());
+
+    /**
+     * Returns an immutable {@code JSONArray}.
+     */
+    public static final JSONArray empty() {
+        return EMPTY;
+    }
+
     /**
      * Creates a {@code JSONArray} with no values.
      */
     public JSONArray() {
-        values = new ArrayList<Object>();
+        this(new ArrayList<>());
+    }
+
+    /**
+     * Creates a {@code JSONArray} with a specific underlying data structure.
+     *
+     * @param list the desired underlying {@code List} to be used.
+     * @throws NullPointerException if the list is null.
+     */
+    private JSONArray(List<Object> list) {
+        Objects.requireNonNull(list);
+        values = list;
     }
 
     /**
