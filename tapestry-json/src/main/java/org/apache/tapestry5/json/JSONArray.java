@@ -58,6 +58,8 @@ public final class JSONArray extends JSONCollection implements Collection<Object
 
     /**
      * Returns an immutable {@code JSONArray}.
+     * 
+     * @since 5.8.4
      */
     public static final JSONArray empty() {
         return EMPTY;

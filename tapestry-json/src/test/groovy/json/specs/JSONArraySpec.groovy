@@ -8,6 +8,7 @@ import org.apache.tapestry5.json.exceptions.JSONInvalidTypeException
 import org.apache.tapestry5.json.exceptions.JSONSyntaxException
 import org.apache.tapestry5.json.exceptions.JSONTypeMismatchException
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 class JSONArraySpec extends Specification {
@@ -618,6 +619,7 @@ class JSONArraySpec extends Specification {
         ]
     }
 
+    @Issue("TAP5-2764")
     def "empty() returns an empty JSONArray"() {
 
         when:
@@ -628,7 +630,9 @@ class JSONArraySpec extends Specification {
         array.isEmpty()
     }
 
+    @Issue("TAP5-2764")
     def "empty() retuns an immutable JSONArray"() {
+        given:
         def array = JSONArray.empty()
 
         when:
