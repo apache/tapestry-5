@@ -266,13 +266,21 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
         response.setStatus(statusCode);
 
-        String rawMessage = ExceptionUtils.toMessage(exception);
+        // TAP5-2768: Don't leak Exception details to client in production mode
+        String headerValue = null;
+        if (productionMode)
+        {
+            headerValue = "An error occurred.";
+        } else
+        {
+            String rawMessage = ExceptionUtils.toMessage(exception);
 
-        // Encode it compatibly with the JavaScript escape() function.
+            // Encode it compatibly with the JavaScript escape() function.
 
-        String encoded = URLEncoder.encode(rawMessage, "UTF-8").replace("+", "%20");
+            headerValue = URLEncoder.encode(rawMessage, "UTF-8").replace("+", "%20");
+        }
 
-        response.setHeader("X-Tapestry-ErrorMessage", encoded);
+        response.setHeader("X-Tapestry-ErrorMessage", headerValue);
 
         Page page = pageCache.get(pageName);
 
