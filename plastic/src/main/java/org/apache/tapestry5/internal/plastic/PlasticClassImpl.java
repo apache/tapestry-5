@@ -339,18 +339,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return annotationAccess.getAnnotation(annotationType);
     }
 
-    private static void invokeProtectedAnnotationNodeAccept(AnnotationVisitor av, Object annotationDefault) {
-        // hacky helper, instead of modifying ASM sources or figuring out how to do it properly :/
-        try {
-            Method method =
-                    AnnotationNode.class.getDeclaredMethod("accept", AnnotationVisitor.class, String.class, Object.class);
-            method.setAccessible(true);
-            method.invoke(null, av, null, annotationDefault );
-        } catch (Exception e) {
-            throw new RuntimeException("Error invoking protected accept in ASM", e);
-        }
-    }
-
     private static void addMethodAndParameterAnnotationsFromExistingClass(MethodNode methodNode, MethodNode implementationMethodNode)
     {
         // visits the method attributes
@@ -358,7 +346,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         if (implementationMethodNode.annotationDefault != null)
         {
             AnnotationVisitor av = methodNode.visitAnnotationDefault();
-            invokeProtectedAnnotationNodeAccept(av, implementationMethodNode.annotationDefault);
+            TapestryAnnotationNode.accept(av, null, implementationMethodNode.annotationDefault);
             if (av != null)
             {
                 av.visitEnd();
