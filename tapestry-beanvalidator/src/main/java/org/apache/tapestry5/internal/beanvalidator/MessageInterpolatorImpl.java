@@ -15,7 +15,7 @@ package org.apache.tapestry5.internal.beanvalidator;
 
 import java.util.Locale;
 
-import javax.validation.MessageInterpolator;
+import jakarta.validation.MessageInterpolator;
 
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 /**
@@ -34,7 +34,7 @@ public class MessageInterpolatorImpl implements MessageInterpolator
 	}
 
 	/**
-	 * @see javax.validation.MessageInterpolator#interpolate(java.lang.String, javax.validation.MessageInterpolator.Context)
+	 * @see jakarta.validation.MessageInterpolator#interpolate(java.lang.String, jakarta.validation.MessageInterpolator.Context)
 	 */
 	@Override
 	public String interpolate(String messageTemplate, Context context) 
@@ -43,7 +43,7 @@ public class MessageInterpolatorImpl implements MessageInterpolator
 	}
 
 	/**
-	 * @see javax.validation.MessageInterpolator#interpolate(java.lang.String, javax.validation.MessageInterpolator.Context, java.util.Locale)
+	 * @see jakarta.validation.MessageInterpolator#interpolate(java.lang.String, jakarta.validation.MessageInterpolator.Context, java.util.Locale)
 	 */
 	@Override
 	public String interpolate(String messageTemplate, Context context, Locale locale) 

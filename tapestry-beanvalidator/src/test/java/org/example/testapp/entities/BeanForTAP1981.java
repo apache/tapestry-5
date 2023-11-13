@@ -1,6 +1,6 @@
 package org.example.testapp.entities;
 
-import javax.validation.constraints.Max;
+import jakarta.validation.constraints.Max;
 
 public class BeanForTAP1981 {
 

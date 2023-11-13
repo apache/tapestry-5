@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.http.internal.services;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.commons.util.CommonsUtils;
 import org.apache.tapestry5.http.ContentType;

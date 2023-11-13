@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;

@@ -429,6 +429,18 @@ public class PlasticInternalUtils
         ClassVisitor adapter = new ClassVisitor(Opcodes.ASM9, result)
         {
             @Override
+            public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value)
+            {
+                // we need to remove final from non-static fields because otherwise we get:
+                // IllegalAccessError: update to non-static final field
+                if ((access & Opcodes.ACC_STATIC) == 0)
+                {
+                    access &= ~Opcodes.ACC_FINAL;
+                }
+                return super.visitField(access, name, descriptor, signature, value);
+            }
+
+            @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
             {
                 MethodVisitor delegate = super.visitMethod(access, name, desc, signature, exceptions);

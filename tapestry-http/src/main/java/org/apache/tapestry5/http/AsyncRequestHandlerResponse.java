@@ -14,33 +14,33 @@ package org.apache.tapestry5.http;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
-import javax.servlet.AsyncListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.AsyncListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Class used by {@linkplain AsyncRequestHandler} to return information on how to handle
  * a request.
  * @see AsyncRequestHandler
  */
-public class AsyncRequestHandlerResponse 
+public class AsyncRequestHandlerResponse
 {
-    
-    private static final AsyncRequestHandlerResponse NOT_HANDLED = 
+
+    private static final AsyncRequestHandlerResponse NOT_HANDLED =
             new AsyncRequestHandlerResponse(false);
-    
+
     final private boolean async;
-    
+
     final private Executor executor;
-    
+
     private HttpServletRequest request;
-    
+
     private HttpServletResponse response;
-    
+
     private AsyncListener listener;
-    
+
     private long timeout;
-    
+
     /**
      * Creates an instance with a given {@link Executor}. It cannot be null.
      * If you want an instance with a non-async response, use {@link #notHandled()} instead.
@@ -50,14 +50,14 @@ public class AsyncRequestHandlerResponse
     {
         this(true, executor);
     }
-    
+
     private AsyncRequestHandlerResponse(boolean async, Executor executor)
     {
         Objects.requireNonNull(executor, "Parameter executor cannot be null");
         this.async = async;
         this.executor = executor;
     }
-    
+
     private AsyncRequestHandlerResponse(boolean async)
     {
         this.async = async;
@@ -65,7 +65,7 @@ public class AsyncRequestHandlerResponse
     }
 
     /**
-     * Defines a different request and response to be passed to {@link HttpServletRequest#startAsync(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}.
+     * Defines a different request and response to be passed to {@link HttpServletRequest#startAsync(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
      * Both cannot be null.
      */
     public AsyncRequestHandlerResponse with(HttpServletRequest request, HttpServletResponse response)
@@ -86,7 +86,7 @@ public class AsyncRequestHandlerResponse
         this.listener = listener;
         return this;
     }
-    
+
     /**
      * Sets the timeout for this asynchronous request in milliseconds.
      */
@@ -95,7 +95,7 @@ public class AsyncRequestHandlerResponse
         this.timeout = timeout;
         return this;
     }
-    
+
     /**
      * Returns a response saying this {@linkplain AsyncRequestHandler} doesn't handle this request.
      * @return an {@link AsyncRequestHandlerResponse}.
@@ -108,15 +108,15 @@ public class AsyncRequestHandlerResponse
     /**
      * Returns whether the request should be processed asynchronously or not.
      */
-    public boolean isAsync() 
+    public boolean isAsync()
     {
         return async;
     }
 
-    /**    
+    /**
      * Returns the {@link Executor} to be used to process the request.
      */
-    public Executor getExecutor() 
+    public Executor getExecutor()
     {
         return executor;
     }
@@ -124,7 +124,7 @@ public class AsyncRequestHandlerResponse
     /**
      * Returns the request to be used with {@link HttpServletRequest#startAsync()} or null.
      */
-    public HttpServletRequest getRequest() 
+    public HttpServletRequest getRequest()
     {
         return request;
     }
@@ -132,7 +132,7 @@ public class AsyncRequestHandlerResponse
     /**
      * Returns the response to be used with {@link HttpServletRequest#startAsync()} or null.
      */
-    public HttpServletResponse getResponse() 
+    public HttpServletResponse getResponse()
     {
         return response;
     }
@@ -140,11 +140,11 @@ public class AsyncRequestHandlerResponse
     /**
      * Returns the listener to be added to the asynchronous request or null.
      */
-    public AsyncListener getListener() 
+    public AsyncListener getListener()
     {
         return listener;
     }
-    
+
     /**
      * Returns whether a request and a response were set in this object.
      */
@@ -162,10 +162,10 @@ public class AsyncRequestHandlerResponse
     }
 
     @Override
-    public String toString() 
+    public String toString()
     {
         return "AsyncRequestHandlerResponse [async=" + async + ", executor=" + executor + ", request=" + request + ", response=" + response + ", listener="
                 + listener + "]";
     }
-    
+
 }

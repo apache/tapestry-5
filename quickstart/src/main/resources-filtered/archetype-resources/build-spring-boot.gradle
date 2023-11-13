@@ -74,7 +74,7 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.core:jackson-databind:${versions.jackson}")
     runtimeOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${versions.jackson}")
 
-    runtimeOnly("javax.servlet:javax.servlet-api:${versions.servlet}")
+    runtimeOnly("jakarta.servlet:jakarta.servlet-api:${versions.servlet}")
 }
 
 sourceSets {

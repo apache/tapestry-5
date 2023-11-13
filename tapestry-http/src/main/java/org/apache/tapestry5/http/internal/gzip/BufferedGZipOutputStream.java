@@ -20,8 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.services.CompressionAnalyzer;
@@ -84,7 +85,7 @@ public class BufferedGZipOutputStream extends ServletOutputStream
         if (useCompression)
         {
             response.setHeader(
-                    TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER, 
+                    TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER,
                     TapestryHttpInternalConstants.GZIP_CONTENT_ENCODING);
         }
 
@@ -142,5 +143,16 @@ public class BufferedGZipOutputStream extends ServletOutputStream
             openResponseOutputStream(false);
 
         return currentOutputStream;
+    }
+
+    @Override
+    public boolean isReady()
+    {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener)
+    {
     }
 }

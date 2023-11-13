@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.test;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;

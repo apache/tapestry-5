@@ -18,7 +18,7 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.Map;
 
 public class TestableCookieSinkSource implements CookieSource, CookieSink

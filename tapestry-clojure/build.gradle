@@ -6,7 +6,7 @@ dependencies {
 
   // Added just to prove that it works (TAP5-1945)
   testImplementation project(':tapestry-core')
-  testRuntimeOnly "javax.servlet:javax.servlet-api:${versions.servletapi}"
+  testRuntimeOnly "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
   testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }
 

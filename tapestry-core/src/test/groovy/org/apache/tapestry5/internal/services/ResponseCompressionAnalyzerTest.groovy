@@ -1,6 +1,6 @@
 package org.apache.tapestry5.internal.services
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 import org.apache.tapestry5.http.internal.services.ResponseCompressionAnalyzerImpl
 import org.apache.tapestry5.http.services.ResponseCompressionAnalyzer

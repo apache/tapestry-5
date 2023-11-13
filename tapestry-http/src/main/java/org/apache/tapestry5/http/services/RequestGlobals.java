@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.http.services;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Service used to store the current request objects, both the Servlet API versions, and the

@@ -18,7 +18,7 @@ import org.apache.tapestry5.http.TapestryFilter;
 import org.apache.tapestry5.internal.spring.SpringModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * Add logic to setup for Spring integration at startup.  In 5.1, this means creating a Spring ApplicationContext, and

@@ -14,9 +14,8 @@
 
 package org.apache.tapestry5.upload.services;
 
-import org.apache.commons.fileupload.FileUploadException;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.fileupload2.core.FileUploadException;
 
 /**
  * Responsible for detecting and processing file upload requests, using Jakarta Commons FileUpload. Implementations of

@@ -38,7 +38,7 @@ public class AppModule
         {
 
             @Override
-            public void configure(javax.validation.Configuration<?> configuration)
+            public void configure(jakarta.validation.Configuration<?> configuration)
             {
                 configuration.ignoreXmlConfiguration();
             }

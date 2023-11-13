@@ -17,7 +17,7 @@ package org.apache.tapestry5.http.internal.services;
 import org.apache.tapestry5.http.services.ApplicationGlobals;
 import org.apache.tapestry5.http.services.Context;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class ApplicationGlobalsImpl implements ApplicationGlobals
 {

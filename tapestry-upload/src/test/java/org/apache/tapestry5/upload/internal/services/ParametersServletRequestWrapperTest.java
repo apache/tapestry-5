@@ -18,7 +18,7 @@ import static org.easymock.EasyMock.*;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;

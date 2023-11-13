@@ -18,7 +18,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.http.services.Request;
@@ -108,6 +108,7 @@ public class RequestImpl implements Request
         return pathInfo.length() == 0 ? "/" : pathInfo;
     }
 
+    @Override
     public String getContextPath()
     {
         return request.getContextPath();
@@ -234,7 +235,7 @@ public class RequestImpl implements Request
     {
         return request.getRemoteHost();
     }
-    
+
     /**
      * Converts an enumeration (of Strings) into a sorted list of Strings.
      */

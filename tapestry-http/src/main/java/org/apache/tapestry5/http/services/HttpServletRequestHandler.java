@@ -16,8 +16,8 @@ package org.apache.tapestry5.http.services;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 

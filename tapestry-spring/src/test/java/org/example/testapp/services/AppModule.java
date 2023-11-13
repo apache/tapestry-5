@@ -21,7 +21,7 @@ import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.modules.SpringModule;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 @ImportModule(SpringModule.class)
 public class AppModule

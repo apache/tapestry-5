@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;

@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.beanvalidator;
 import java.util.Arrays;
 import java.util.Locale;
 
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;

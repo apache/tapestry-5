@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class CustomizingContextLoader extends ContextLoader
 {

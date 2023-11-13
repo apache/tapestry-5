@@ -20,8 +20,9 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.http.internal.services.RestSupportImpl;
 import org.apache.tapestry5.http.services.HttpRequestBodyConverter;
@@ -36,7 +37,7 @@ import org.testng.annotations.Test;
 public class RestSupportImplTest extends InternalBaseTestCase
 {
     final private static byte[] EMPTY_ARRAY = new byte[0];
-    
+
     @Test
     public void is_get() throws IOException
     {
@@ -48,7 +49,7 @@ public class RestSupportImplTest extends InternalBaseTestCase
     public void is_post() throws IOException
     {
         test("POST", EMPTY_ARRAY, (rs) -> assertTrue(rs.isHttpPost()));
-        test("notPOST", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpPost()));        
+        test("notPOST", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpPost()));
     }
 
     @Test
@@ -57,12 +58,12 @@ public class RestSupportImplTest extends InternalBaseTestCase
         test("HEAD", EMPTY_ARRAY, (rs) -> assertTrue(rs.isHttpHead()));
         test("notHEAD", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpHead()));
     }
-    
+
     @Test
     public void is_put() throws IOException
     {
         test("PUT", EMPTY_ARRAY, (rs) -> assertTrue(rs.isHttpPut()));
-        test("notPUT", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpPut()));        
+        test("notPUT", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpPut()));
     }
 
     @Test
@@ -78,7 +79,7 @@ public class RestSupportImplTest extends InternalBaseTestCase
         test("PATCH", EMPTY_ARRAY, (rs) -> assertTrue(rs.isHttpPatch()));
         test("notPATCH", EMPTY_ARRAY, (rs) -> assertFalse(rs.isHttpPatch()));
     }
-    
+
     @Test
     public void get_request_body_as_result_provided()
     {
@@ -98,12 +99,12 @@ public class RestSupportImplTest extends InternalBaseTestCase
         Optional<String> result = restSupport.getRequestBodyAs(String.class);
         assertFalse(result.isPresent());
     }
-    
+
     final private static class TestHttpRequestBodyConverter implements HttpRequestBodyConverter
     {
         final private String value;
 
-        public TestHttpRequestBodyConverter(String value) 
+        public TestHttpRequestBodyConverter(String value)
         {
             super();
             this.value = value;
@@ -114,7 +115,7 @@ public class RestSupportImplTest extends InternalBaseTestCase
         public <T> T convert(HttpServletRequest request, Class<T> type) {
             return (T) value;
         }
-        
+
     }
 
     private void test(String method, byte[] body, Consumer<RestSupport> testCode) throws IOException
@@ -133,23 +134,39 @@ public class RestSupportImplTest extends InternalBaseTestCase
         EasyMock.replay(request);
         return request;
     }
-    
+
     final private static class TestServletInputStream extends ServletInputStream
     {
-        
         final private InputStream inputStream;
-        
-        public TestServletInputStream(byte[] bytes) 
+
+        public TestServletInputStream(byte[] bytes)
         {
             inputStream = new ByteArrayInputStream(bytes);
         }
 
         @Override
-        public int read() throws IOException 
+        public int read() throws IOException
         {
             return inputStream.read();
         }
-        
+
+
+        @Override
+        public boolean isFinished()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isReady()
+        {
+            return true;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener)
+        {
+        }
     }
-    
+
 }

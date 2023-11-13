@@ -16,7 +16,7 @@ package org.apache.tapestry5.spring;
 
 import org.apache.tapestry5.test.TapestryTestCase;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * Base class for Spring Integration test cases.

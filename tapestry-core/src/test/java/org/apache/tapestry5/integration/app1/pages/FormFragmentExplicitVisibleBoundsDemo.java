@@ -18,14 +18,13 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 
 import javax.inject.Inject;
-import javax.persistence.PersistenceProperty;
 
 /**
  * Demos the use of explicit bounds for checking visibility of a form fragment for form submission processing.
  * By default, a FormFragment searches to make sure the containing form is visible via "isDeepVisible".  If
  * no intermediate parent elements are invisible, the fragment is considered visible.  However, there are times when
  * that behavior is not desired; some element other than form should be used as the stopping point for determining
- * visibility.  This page demonstrates that use case.
+ * visibility.  This page demonstrates that use  case.
  */
 public class FormFragmentExplicitVisibleBoundsDemo {
 

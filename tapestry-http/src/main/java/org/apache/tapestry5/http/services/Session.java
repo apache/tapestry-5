@@ -16,7 +16,7 @@ package org.apache.tapestry5.http.services;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.tapestry5.http.OptimizedSessionPersistedObject;
 import org.apache.tapestry5.http.annotations.ImmutableSessionPersistedObject;

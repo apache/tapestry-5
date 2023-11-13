@@ -16,7 +16,7 @@ package org.apache.tapestry5.http.services;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.commons.services.TypeCoercer;
 

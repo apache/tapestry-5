@@ -22,7 +22,7 @@ import org.apache.tapestry5.http.services.Session;
 
 /**
  * Class that wraps an {@linkplain Request}, delegating all its methods.
- * 
+ *
  * @since 5.1.0.1
  */
 public class DelegatingRequest implements Request
@@ -39,7 +39,7 @@ public class DelegatingRequest implements Request
 
     /**
      * Constructor that receives a {@linkplain Request}.
-     * 
+     *
      * @param request
      *            a {@link Request}. It cannot be null.
      */
@@ -50,7 +50,7 @@ public class DelegatingRequest implements Request
 
     /**
      * Sets the delegate request.
-     * 
+     *
      * @param request
      *            a {@link Request}. It cannot be null.
      */
@@ -70,6 +70,7 @@ public class DelegatingRequest implements Request
         return request.getAttributeNames();
     }
 
+    @Override
     public String getContextPath()
     {
         return request.getContextPath();

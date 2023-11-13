@@ -20,7 +20,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class CustomizingContextLoaderTest extends SpringTestCase
 {

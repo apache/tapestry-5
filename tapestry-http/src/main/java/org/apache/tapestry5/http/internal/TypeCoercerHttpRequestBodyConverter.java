@@ -11,7 +11,7 @@
 // limitations under the License.
 package org.apache.tapestry5.http.internal;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.TypeCoercer;

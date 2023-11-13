@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
@@ -82,7 +82,7 @@ public class UploadedFileItem implements UploadedFile
     {
         try
         {
-            item.write(file);
+            item.write(file.toPath());
         }
         catch (Exception e)
         {
@@ -92,6 +92,13 @@ public class UploadedFileItem implements UploadedFile
 
     public void cleanup()
     {
-        item.delete();
+        try
+        {
+            item.delete();
+        }
+        catch (IOException e)
+        {
+            // ignore
+        }
     }
 }

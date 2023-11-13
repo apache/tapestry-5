@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.http.services;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 

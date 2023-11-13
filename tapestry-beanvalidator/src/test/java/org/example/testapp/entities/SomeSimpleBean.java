@@ -1,6 +1,6 @@
 package org.example.testapp.entities;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 public class SomeSimpleBean
 {

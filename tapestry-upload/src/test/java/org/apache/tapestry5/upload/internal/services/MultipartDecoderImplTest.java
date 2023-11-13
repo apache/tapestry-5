@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemFactory;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,8 @@ import java.util.List;
 
 public class MultipartDecoderImplTest extends TapestryTestCase
 {
-    private final FileItemFactory fileItemFactory = new DiskFileItemFactory(888, new File("/tmp"));
+    private final FileItemFactory fileItemFactory = DiskFileItemFactory.builder()
+            .setBufferSize(888).setFile(new File("/tmp")).get();
 
     private static final String CHARSET = "UTF-8";
 
@@ -41,7 +42,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
 
         replay();
 
-        ServletFileUpload servletFileUpload = decoder.createFileUpload();
+        JakartaServletFileUpload servletFileUpload = decoder.createFileUpload();
         assertNotNull(servletFileUpload);
 
         verify();

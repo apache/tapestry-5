@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.apache.tapestry5.CookieBuilder;
 import org.apache.tapestry5.SymbolConstants;

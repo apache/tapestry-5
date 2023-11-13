@@ -5,17 +5,16 @@ description = "Support for JSR-303 Bean Validation via the Hibernate validator i
 dependencies {
   implementation project(':tapestry-core')
 
-  implementation "javax.validation:validation-api:1.0.0.GA"
-  implementation "org.hibernate:hibernate-validator:4.3.2.Final"
+  implementation "jakarta.validation:jakarta.validation-api:3.0.2"
+  implementation "org.hibernate:hibernate-validator:8.0.1.Final"
 
   testImplementation project(':tapestry-test')
   implementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
       exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
       exclude group: "org.testng", module: "testng"
-      exclude group: "javax.servlet", module: "javax.servlet-api"
   }
   testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-  
+
 }
 
 task compileCoffeeScript(type: CompileCoffeeScript) {

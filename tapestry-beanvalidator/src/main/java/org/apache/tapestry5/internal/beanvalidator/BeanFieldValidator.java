@@ -25,14 +25,14 @@ import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.MessageInterpolator;
-import javax.validation.MessageInterpolator.Context;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.metadata.BeanDescriptor;
-import javax.validation.metadata.ConstraintDescriptor;
-import javax.validation.metadata.PropertyDescriptor;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.MessageInterpolator.Context;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.metadata.BeanDescriptor;
+import jakarta.validation.metadata.ConstraintDescriptor;
+import jakarta.validation.metadata.PropertyDescriptor;
 
 import java.lang.annotation.Annotation;
 import java.util.Iterator;
@@ -87,7 +87,7 @@ public class BeanFieldValidator implements FieldValidator
         final String currentProperty = beanValidationContext.getCurrentProperty();
 
         if (currentProperty == null) return;
-        
+
         final ValidationInfo validationInfo = getValidationInfo(beanValidationContext, currentProperty, validator);
         final PropertyDescriptor propertyDescriptor = validationInfo.getPropertyDescriptor();
 
@@ -142,7 +142,7 @@ public class BeanFieldValidator implements FieldValidator
         String currentProperty = beanValidationContext.getCurrentProperty();
 
         if (currentProperty == null) return;
-        
+
         final ValidationInfo validationInfo = getValidationInfo(beanValidationContext, currentProperty, validator);
         final PropertyDescriptor propertyDescriptor = validationInfo.getPropertyDescriptor();
 
@@ -181,9 +181,9 @@ public class BeanFieldValidator implements FieldValidator
     final private static Class<?> getConstrainedPropertyClass(BeanDescriptor beanDescriptor, String propertyName)
     {
         Class<?> clasz = null;
-        for (PropertyDescriptor descriptor : beanDescriptor.getConstrainedProperties()) 
+        for (PropertyDescriptor descriptor : beanDescriptor.getConstrainedProperties())
         {
-            if (descriptor.getPropertyName().equals(propertyName)) 
+            if (descriptor.getPropertyName().equals(propertyName))
             {
                 clasz = descriptor.getElementClass();
                 break;
@@ -212,15 +212,21 @@ public class BeanFieldValidator implements FieldValidator
             {
                 return null;
             }
+
+            @Override
+            public <T> T unwrap(Class<T> type) {
+                if (type.isAssignableFrom(getClass())) return type.cast(this);
+                throw new jakarta.validation.ValidationException("Type " + type + " not supported for unwrapping.");
+            }
         });
     }
-    
+
     final private static ValidationInfo getValidationInfo(BeanValidationContext beanValidationContext, String currentProperty, Validator validator) {
         Class<?> beanType = beanValidationContext.getBeanType();
         String[] path = currentProperty.split("\\.");
         BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanType);
-        
-        for (int i = 1; i < path.length - 1; i++) 
+
+        for (int i = 1; i < path.length - 1; i++)
         {
             Class<?> constrainedPropertyClass = getConstrainedPropertyClass(beanDescriptor, path[i]);
             if (constrainedPropertyClass != null) {
@@ -233,35 +239,35 @@ public class BeanFieldValidator implements FieldValidator
         PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(propertyName);
         return new ValidationInfo(beanType, propertyName, propertyDescriptor);
     }
-    
+
     final private static class ValidationInfo {
         final private Class<?> beanType;
         final private String propertyName;
         final private PropertyDescriptor propertyDescriptor;
         public ValidationInfo(Class<?> beanType, String propertyName,
-                PropertyDescriptor propertyDescriptor) 
+                PropertyDescriptor propertyDescriptor)
         {
             super();
             this.beanType = beanType;
             this.propertyName = propertyName;
             this.propertyDescriptor = propertyDescriptor;
         }
-        
-        public Class<?> getBeanType() 
+
+        public Class<?> getBeanType()
         {
             return beanType;
         }
-        
-        public String getPropertyName() 
+
+        public String getPropertyName()
         {
             return propertyName;
         }
 
-        public PropertyDescriptor getPropertyDescriptor() 
+        public PropertyDescriptor getPropertyDescriptor()
         {
             return propertyDescriptor;
         }
 
     }
-    
+
 }

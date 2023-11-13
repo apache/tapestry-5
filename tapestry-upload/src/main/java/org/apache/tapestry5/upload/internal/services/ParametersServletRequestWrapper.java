@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import static org.apache.tapestry5.commons.util.CollectionFactory.newMap;
 

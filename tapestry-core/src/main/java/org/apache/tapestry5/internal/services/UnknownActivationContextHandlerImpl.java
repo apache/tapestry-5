@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.HttpError;
 import org.apache.tapestry5.services.Traditional;
 import org.slf4j.Logger;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

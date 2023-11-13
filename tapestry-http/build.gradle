@@ -12,10 +12,10 @@ dependencies {
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
 
-    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
+    provided "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
 
     implementation "commons-codec:commons-codec:1.10"
-    implementation "commons-io:commons-io:2.11.0"
+    implementation "commons-io:commons-io:2.13.0"
 
     testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
 

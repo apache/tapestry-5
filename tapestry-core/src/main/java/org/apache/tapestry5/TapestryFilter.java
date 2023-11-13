@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.tapestry5.modules.TapestryModule;
 
