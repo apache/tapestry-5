@@ -66,3 +66,7 @@ task processFiltered(type: Copy) {
 }
 
 processResources.dependsOn([addWrappers, processFiltered])
+
+jar {
+    dependsOn(copyGradleWrapper)
+}

@@ -262,7 +262,7 @@ subprojects {
 
     task sourcesJar(type: Jar) {
         dependsOn classes
-        classifier "sources"
+        archiveClassifier = "sources"
         from sourceSets.main.allSource
         from(projectDir) {
             include "*.txt"
@@ -489,14 +489,14 @@ task combinedJacocoReport(type:JacocoReport){
   jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
   reports {
       html {
-        enabled = true
+        required = true
         destination = file("$buildDir/reports/jacoco")
       }
       xml {
-        enabled = false
+        required = false
       }
       csv {
-        enabled = false
+        required = false
       }
   }
   onlyIf = {
@@ -517,11 +517,15 @@ task continuousIntegration {
 task zippedSources(type: Zip) {
     description "Creates a combined Zip file of all sub-project's sources"
     group "Release artifact"
+    
+    dependsOn("tapestry-beanvalidator:compileCoffeeScript")
+    dependsOn("tapestry-core:compileCoffeeScript")
+    dependsOn("tapestry-core:compileProcessedCoffeescript")
 
-    destinationDir buildDir
-    baseName "apache-tapestry"
+    destinationDirectory = buildDir
+    archiveBaseName = "apache-tapestry"
     version project.version
-    classifier "sources"
+    archiveClassifier = "sources"
 
     from project.projectDir
     exclude "out/**"
@@ -540,10 +544,10 @@ task zippedApidoc(type: Zip) {
     description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
     group "Release artifact"
 
-    destinationDir buildDir
-    baseName "apache-tapestry"
+    destinationDirectory = buildDir
+    archiveBaseName = "apache-tapestry"
     version project.version
-    classifier "apidocs"
+    archiveClassifier = "apidocs"
 
     from file("src/docroot-template"), {
         filter ReplaceTokens, tokens: [version: project.version]
@@ -569,10 +573,10 @@ task zippedBinaries(type: Zip) {
     // seem to ensure that the subprojects are created
     inputs.files subprojects*.configurations*.archives.artifacts.files
 
-    destinationDir buildDir
-    baseName "apache-tapestry"
+    destinationDirectory = buildDir
+    archiveBaseName = "apache-tapestry"
     version project.version
-    classifier "bin"
+    archiveClassifier = "bin"
 
     // This is via some experimentation
     from subprojects*.configurations*.archives.artifacts*.file*.findAll {
