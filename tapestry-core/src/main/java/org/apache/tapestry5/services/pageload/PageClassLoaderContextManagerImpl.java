@@ -325,7 +325,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
 
     private Set<String> getDependenciesWithoutPages(String className) 
     {
-        return componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
+        Set<String> dependencies = new HashSet<>();
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+        return Collections.unmodifiableSet(dependencies);
     }
 
     private Class<?> loadClass(String className, PageClassLoaderContext context) 
