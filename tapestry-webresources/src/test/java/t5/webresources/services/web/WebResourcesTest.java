@@ -1,62 +1,49 @@
-package t5.webresources.tests
+//  Copyright 2023 The Apache Software Foundation
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+package t5.webresources.services.web;
 
-import geb.spock.GebSpec
-import org.apache.tapestry5.test.JettyRunner
-import spock.lang.Shared
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
+import org.testng.annotations.Test;
 
-class WebResourcesSpec extends GebSpec {
+/**
+ * Adapted from WebResourcesSpec.groovy.s
+ */
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+public class WebResourcesTest extends SeleniumTestCase {
 
-    @Shared
-    def runner;
-
-    def setupSpec() {
-        runner = new JettyRunner("src/test/webapp", "/", 8080, 8081);
-
-        runner.start()
+    @Test
+    public void test_CoffeeScript_compilation()
+    {
+        open("/");
+        waitForInitializedPage();
+        assertEquals(getText("banner"), "Index module loaded, bare!");
     }
 
-    def cleanupSpec() {
-        if (runner != null)
-            runner.stop()
+    @Test
+    public void test_Less_compilation()
+    {
+        open("/");
+        click("css=.navbar .dropdown-toggle");
+        click("link=MultiLess");
+        waitForInitializedPage();
+        waitForCondition("document.getElementById('demo') != null", PAGE_LOAD_TIMEOUT);
+        assertEquals(getEval("window.getComputedStyle(document.getElementById('demo'), null).getPropertyValue('background-color')"), "rgb(179, 179, 255)");
     }
 
-    def "CoffeeScript compilation"() {
-
-        when:
-
-        // Open index page
-        go()
-
-        waitFor { $('body').@'data-page-initialized' == 'true' }
-
-        then:
-
-        // This text is buried inside a CoffeeScript file; for it to be present in the DOM
-        // means that the CoffeeScript was compiled to JS and executed.
-        $("#banner").text().trim() == "Index module loaded, bare!"
+    private void waitForInitializedPage() {
+        waitForCondition("$('body').attr('data-page-initialized') == 'true' ", PAGE_LOAD_TIMEOUT);
     }
 
-    def "Less compilation"() {
-
-        when:
-
-        go()
-
-        waitFor { $('body').@'data-page-initialized' == 'true' }
-
-        // Because the CoffeeScript may already be pre-compiled, it can outrace the Less compilation.
-        // For some reason, the navbar is invisible (at least to Selenium) until the CSS loads.
-
-        // waitFor { $(".navbar .dropdown-toggle").visible() }
-
-        $(".navbar .dropdown-toggle").click()
-
-        $(".navbar .dropdown-menu a", text: "MultiLess").click()
-
-        waitFor { !$(".demo").empty }
-
-        then:
-
-        $(".demo").css("background-color") == "rgb(179, 179, 255)"
-    }
 }

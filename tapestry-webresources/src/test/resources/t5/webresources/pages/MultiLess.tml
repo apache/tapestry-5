@@ -4,7 +4,7 @@
 
 
 
-<div class="demo">
+<div class="demo" id="demo">
 
     <h3>Primary: should be dark blue.</h3>
 
