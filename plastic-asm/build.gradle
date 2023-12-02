@@ -1,0 +1,19 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+description = "Shadow asm for plastic"
+
+jar {
+    enabled = false
+}
+
+shadowJar {
+    relocate("org.objectweb.asm", "org.apache.tapestry5.internal.plastic.asm")
+    archiveClassifier = ""
+}
+
+dependencies {
+    implementation("org.ow2.asm:asm-commons:${versions.asm}")
+    implementation("org.ow2.asm:asm-util:${versions.asm}")
+}
