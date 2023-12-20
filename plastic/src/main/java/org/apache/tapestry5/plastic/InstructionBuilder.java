@@ -248,6 +248,22 @@ public interface InstructionBuilder
     InstructionBuilder checkcast(Class clazz);
 
     /**
+     * Adds a check that the object on top of the stack is assignable to the indicated class.
+     *
+     * @param className class to cast to
+     * @since 5.8.4
+     */
+    @Opcodes("CHECKCAST")
+    InstructionBuilder instanceOf(String className);
+
+    /**
+     * Adds a check that the object on top of the stack is assignable to the indicated class.
+     * @since 5.8.4
+     */
+    @Opcodes("CHECKCAST")
+    InstructionBuilder instanceOf(Class clazz);
+
+    /**
      * Defines the start of a block that can have exception handlers and finally blocks applied.
      * Continue using this InstructionBuilder to define code inside the block, then call
      * methods on the InstructionBlock to define the end of the block and set up handlers.
