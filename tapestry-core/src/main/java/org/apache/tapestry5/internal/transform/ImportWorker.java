@@ -24,6 +24,7 @@ import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.PlasticUtils.FieldInfo;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.javascript.Initialization;
@@ -32,7 +33,9 @@ import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -41,6 +44,9 @@ import java.util.List;
  */
 public class ImportWorker implements ComponentClassTransformWorker2
 {
+    
+    private static final String FIELD_PREFIX = "importedAssets_";
+    
     private final JavaScriptSupport javascriptSupport;
 
     private final SymbolSource symbolSource;
@@ -90,17 +96,26 @@ public class ImportWorker implements ComponentClassTransformWorker2
     public void transform(PlasticClass componentClass, TransformationSupport support, MutableComponentModel model)
     {
         resourceChangeTracker.setCurrentClassName(model.getComponentClassName());
-        processClassAnnotationAtSetupRenderPhase(componentClass, model);
+        
+        Set<PlasticUtils.FieldInfo> fieldInfos = multipleClassLoaders ? new HashSet<>() : null;
+        processClassAnnotationAtSetupRenderPhase(componentClass, model, fieldInfos);
 
-        for (PlasticMethod m : componentClass.getMethodsWithAnnotation(Import.class))
+        final List<PlasticMethod> methods = componentClass.getMethodsWithAnnotation(Import.class);
+        for (PlasticMethod m : methods)
         {
-            decorateMethod(componentClass, model, m);
+            decorateMethod(componentClass, model, m, fieldInfos);
+        }
+        
+        if (multipleClassLoaders && !fieldInfos.isEmpty())
+        {
+            PlasticUtils.implementPropertyValueProvider(componentClass, fieldInfos);
         }
         
         resourceChangeTracker.clearCurrentClassName();
     }
 
-    private void processClassAnnotationAtSetupRenderPhase(PlasticClass componentClass, MutableComponentModel model)
+    private void processClassAnnotationAtSetupRenderPhase(PlasticClass componentClass, MutableComponentModel model,
+            Set<FieldInfo> fieldInfos)
     {
         Import annotation = componentClass.getAnnotation(Import.class);
 
@@ -108,27 +123,27 @@ public class ImportWorker implements ComponentClassTransformWorker2
         {
             PlasticMethod setupRender = componentClass.introduceMethod(TransformConstants.SETUP_RENDER_DESCRIPTION);
 
-            decorateMethod(componentClass, model, setupRender, annotation);
+            decorateMethod(componentClass, model, setupRender, annotation, fieldInfos);
 
             model.addRenderPhase(SetupRender.class);
         }
     }
 
-    private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method)
+    private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method, Set<FieldInfo> fieldInfos)
     {
         Import annotation = method.getAnnotation(Import.class);
 
-        decorateMethod(componentClass, model, method, annotation);
+        decorateMethod(componentClass, model, method, annotation, fieldInfos);
     }
 
     private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method,
-                                Import annotation)
+                                Import annotation, Set<FieldInfo> fieldInfos)
     {
         importStacks(method, annotation.stack());
 
-        importLibraries(componentClass, model, method, annotation.library());
+        importLibraries(componentClass, model, method, annotation.library(), fieldInfos);
 
-        importStylesheets(componentClass, model, method, annotation.stylesheet());
+        importStylesheets(componentClass, model, method, annotation.stylesheet(), fieldInfos);
 
         importModules(method, annotation.module());
     }
@@ -215,19 +230,20 @@ public class ImportWorker implements ComponentClassTransformWorker2
     }
 
     private void importLibraries(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
-                                 String[] paths)
+                                 String[] paths, Set<FieldInfo> fieldInfos)
     {
-        decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary, fieldInfos);
     }
 
     private void importStylesheets(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
-                                   String[] paths)
+                                   String[] paths, Set<FieldInfo> fieldInfos)
     {
-        decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet, fieldInfos);
     }
 
     private void decorateMethodWithOperation(PlasticClass componentClass, MutableComponentModel model,
-                                             PlasticMethod method, String[] paths, Worker<Asset> operation)
+                                             PlasticMethod method, String[] paths, Worker<Asset> operation,
+                                             Set<FieldInfo> fieldInfos)
     {
         if (paths.length == 0)
         {
@@ -236,12 +252,30 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         String[] expandedPaths = expandPaths(paths);
 
-        PlasticField assetListField = componentClass.introduceField(Asset[].class,
-                "importedAssets_" + method.getDescription().methodName);
+        final String fieldName = getFieldName(method);
+        PlasticField assetListField = componentClass.introduceField(Asset[].class, fieldName);
+        
+        if (multipleClassLoaders)
+        {
+            fieldInfos.add(PlasticUtils.toFieldInfo(assetListField));
+            assetListField.createAccessors(PropertyAccessType.READ_ONLY);
+        }
 
         initializeAssetsFromPaths(expandedPaths, assetListField, model.getLibraryName());
 
         addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
+    }
+
+    private String getFieldName(PlasticMethod method) 
+    {
+        final StringBuilder builder = new StringBuilder(FIELD_PREFIX);
+        builder.append(method.getDescription().methodName);
+        if (multipleClassLoaders)
+        {
+            builder.append("_");
+            builder.append(method.getPlasticClass().getClassName().replace('.', '_'));
+        }
+        return builder.toString();
     }
 
     private String[] expandPaths(String[] paths)
@@ -277,13 +311,17 @@ public class ImportWorker implements ComponentClassTransformWorker2
                                                final Worker<Asset> operation)
     {
         final String className = method.getPlasticClass().getClassName();
+        final String fieldName = getFieldName(method);
         method.addAdvice(new MethodAdvice()
         {
             public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
 
-                Asset[] assets = (Asset[]) access.get(invocation.getInstance());
+                final Object instance = invocation.getInstance();
+                Asset[] assets = (Asset[]) (multipleClassLoaders ?
+                        PropertyValueProvider.get(instance, fieldName) :
+                        access.get(instance));
 
                 if (multipleClassLoaders)
                 {
@@ -299,4 +337,10 @@ public class ImportWorker implements ComponentClassTransformWorker2
             }
         });
     }
+    
+    public static interface ImportWorkerDataProvider 
+    {
+        Asset[] get(int fieldNameHashcode);
+    }
+    
 }

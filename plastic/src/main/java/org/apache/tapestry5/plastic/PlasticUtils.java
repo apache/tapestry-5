@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.plastic;
 
-import org.apache.tapestry5.internal.plastic.PrimitiveType;
-
 import java.lang.reflect.Method;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.internal.plastic.PrimitiveType;
 
 /**
  * Utilities for user code making use of Plastic.
@@ -33,6 +36,18 @@ public class PlasticUtils
     public static final MethodDescription TO_STRING_DESCRIPTION = new MethodDescription(TO_STRING);
 
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.nanoTime());
+    
+    private static final MethodDescription PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION;
+    
+    static
+    {
+        try {
+            PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION = new MethodDescription(PropertyValueProvider.class.getMethod("__propertyValueProvider__get", String.class));
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
 
     /**
      * Returns a string that can be used as part of a Java identifier and is unique
@@ -151,4 +166,176 @@ public class PlasticUtils
         int index = className.indexOf('$');
         return index <= 0 ? className : className.substring(0, index);
     }
+
+    /**
+     * Utility method for creating {@linkplain FieldInfo} instances.
+     * @param field a {@linkplain PlasticField}.
+     * @return a corresponding {@linkplain FieldInfo}.
+     * @since 5.8.4
+     */
+    public static FieldInfo toFieldInfo(PlasticField field)
+    {
+        return new FieldInfo(field.getName(), field.getTypeName());
+    }
+    
+    /**
+     * Transforms this {@linkplain PlasticClass} so it implements
+     * {@linkplain FieldValueProvider} for the given set of field names.
+     * Notice attempts to read a superclass' private field will result in 
+     * an {@linkplain IllegalAccessError}.
+     * 
+     * @param plasticClass a {@linkplain PlasticClass} instance.
+     * @param fieldNames a {@linkplain Set} of {@linkplain String}s containing the field names.
+     * @since 5.8.4
+     */
+    public static void implementFieldValueProvider(PlasticClass plasticClass, Set<FieldInfo> fields)
+    {
+        
+        final Set<PlasticMethod> methods = plasticClass.introduceInterface(FieldValueProvider.class);
+        
+        if (!methods.isEmpty())
+        {
+            final PlasticMethod method = methods.iterator().next();
+            
+            method.changeImplementation((builder) -> {
+                
+                for (FieldInfo field : fields) 
+                {
+                    builder.loadArgument(0);
+                    builder.loadConstant(field.name);
+                    builder.invokeVirtual(String.class.getName(), "boolean", "equals", Object.class.getName());
+                    builder.when(Condition.NON_ZERO, ifBuilder -> {
+                        ifBuilder.loadThis();
+                        ifBuilder.getField(plasticClass.getClassName(), field.name, field.type);
+                        ifBuilder.boxPrimitive(field.type);
+                        ifBuilder.returnResult();
+                    });
+                }
+                
+                builder.throwException(RuntimeException.class, "Field not found or not supported");
+                
+            });
+            
+        }
+        
+    }
+    
+    /**
+     * Transforms this {@linkplain PlasticClass} so it implements
+     * {@linkplain PropertyValueProvider} for the given set of field names.
+     * The implementation will use the fields' corresponding getters instead
+     * of direct fields access.
+     * 
+     * @param plasticClass a {@linkplain PlasticClass} instance.
+     * @param fieldNames a {@linkplain Set} of {@linkplain String}s containing the filed (i.e. property) names.
+     * @since 5.8.4
+     */
+    public static void implementPropertyValueProvider(PlasticClass plasticClass, Set<FieldInfo> fields)
+    {
+        
+        final Set<PlasticMethod> methods = plasticClass.introduceInterface(PropertyValueProvider.class);
+        
+        final InstructionBuilderCallback callback = (builder) -> {
+            
+            for (FieldInfo field : fields) 
+            {
+                builder.loadArgument(0);
+                builder.loadConstant(field.name);
+                builder.invokeVirtual(String.class.getName(), "boolean", "equals", Object.class.getName());
+                builder.when(Condition.NON_ZERO, ifBuilder -> 
+                {
+                    final String prefix = field.type.equals("boolean") ? "is" : "get";
+                    final String methodName = prefix + PlasticInternalUtils.capitalize(field.name);
+                    
+                    ifBuilder.loadThis();
+                    builder.invokeVirtual(
+                            plasticClass.getClassName(), 
+                            field.type, 
+                            methodName);
+                    ifBuilder.boxPrimitive(field.type);
+                    ifBuilder.returnResult();
+                });
+                
+            }
+            
+            builder.loadThis();
+            builder.instanceOf(PropertyValueProvider.class);
+            
+            builder.when(Condition.NON_ZERO, ifBuilder -> {
+                builder.loadThis();
+                builder.loadArgument(0);
+                ifBuilder.invokeSpecial(
+                        plasticClass.getSuperClassName(), 
+                        PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION);
+                ifBuilder.returnResult();
+            });
+            
+            // Field/property not found, so let's try the superclass in case
+            // it also implement
+            
+            builder.throwException(RuntimeException.class, "Property not found or not supported");
+            
+        };
+        
+        final PlasticMethod method;
+        
+        // Superclass has already defined this method, so we need to override it so
+        // it can also find the subclasses' declared fields/properties.
+        if (methods.isEmpty())
+        {
+            method = plasticClass.introduceMethod(PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION , callback);
+        }
+        else
+        {
+            method = methods.iterator().next();
+        }
+        
+        method.changeImplementation(callback);
+        
+    }
+
+    /**
+     * Class used to represent a field name and its type for 
+     * {@linkplain PlasticUtils#implementFieldValueProvider(PlasticClass, Set)}.
+     * It shouldn't be used directly. Use {@linkplain PlasticUtils#toFieldInfo(PlasticField)}
+     * instead.
+     * @see PlasticUtils#implementFieldValueProvider(PlasticClass, Set)
+     * @since 5.8.4
+     */
+    public static class FieldInfo {
+        final private String name;
+        final private String type;
+        public FieldInfo(String name, String type) 
+        {
+            super();
+            this.name = name;
+            this.type = type;
+        }
+        @Override
+        public int hashCode() 
+        {
+            return Objects.hash(name);
+        }
+        @Override
+        public boolean equals(Object obj) 
+        {
+            if (this == obj) 
+            {
+                return true;
+            }
+            if (!(obj instanceof FieldInfo)) 
+            {
+                return false;
+            }
+            FieldInfo other = (FieldInfo) obj;
+            return Objects.equals(name, other.name);
+        }
+        @Override
+        public String toString() 
+        {
+            return "FieldInfo [name=" + name + ", type=" + type + "]";
+        }
+        
+    }
+    
 }

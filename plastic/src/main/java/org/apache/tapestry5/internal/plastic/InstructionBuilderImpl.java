@@ -14,16 +14,28 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tapestry5.internal.plastic.InstructionBuilderState.LVInfo;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.plastic.*;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.LocalVariable;
+import org.apache.tapestry5.plastic.LocalVariableCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.plastic.SwitchCallback;
+import org.apache.tapestry5.plastic.TryCatchCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
+import org.apache.tapestry5.plastic.WhileCallback;
 
 @SuppressWarnings("rawtypes")
 public class InstructionBuilderImpl extends Lockable implements Opcodes, InstructionBuilder
@@ -468,6 +480,29 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         check();
 
         return checkcast(cache.toTypeName(clazz));
+    }
+    
+    @Override
+    public InstructionBuilder instanceOf(String className)
+    {
+        check();
+
+        // Found out the hard way that array names are handled differently; you cast to the descriptor, not the internal
+        // name.
+
+        String internalName = className.contains("[") ? cache.toDesc(className) : cache.toInternalName(className);
+
+        v.visitTypeInsn(INSTANCEOF, internalName);
+
+        return this;
+    }
+
+    @Override
+    public InstructionBuilder instanceOf(Class clazz)
+    {
+        check();
+
+        return instanceOf(cache.toTypeName(clazz));
     }
 
     @Override
