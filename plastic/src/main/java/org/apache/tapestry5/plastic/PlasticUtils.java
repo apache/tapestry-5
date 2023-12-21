@@ -281,7 +281,7 @@ public class PlasticUtils
                 builder.loadArgument(0);
                 ifBuilder.invokeSpecial(
                         plasticClass.getSuperClassName(), 
-                        FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION);
+                        PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION);
                 ifBuilder.returnResult();
             });
             
