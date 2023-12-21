@@ -54,16 +54,7 @@ public interface PropertyValueProvider
     {
         if (object instanceof PropertyValueProvider)
         {
-            try {
             return ((PropertyValueProvider) object).__propertyValueProvider__get(fieldName);
-            }
-            catch (Exception e) {
-                final Method[] methods = object.getClass().getMethods();
-                for (Method method : methods) {
-                    System.out.println(method);
-                }
-                throw new RuntimeException(e.getMessage() + ": " + fieldName, e);
-            }
         }
         else
         {

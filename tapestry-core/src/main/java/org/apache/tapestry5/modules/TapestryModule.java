@@ -216,6 +216,7 @@ import org.apache.tapestry5.internal.transform.PageLifecycleAnnotationWorker;
 import org.apache.tapestry5.internal.transform.PageResetAnnotationWorker;
 import org.apache.tapestry5.internal.transform.ParameterWorker;
 import org.apache.tapestry5.internal.transform.PersistWorker;
+import org.apache.tapestry5.internal.transform.PropertyValueProviderWorker;
 import org.apache.tapestry5.internal.transform.PropertyWorker;
 import org.apache.tapestry5.internal.transform.RenderCommandWorker;
 import org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker;
@@ -524,6 +525,7 @@ public final class TapestryModule
         binder.bind(Dispatcher.class, AssetDispatcher.class).withSimpleId();
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
+        binder.bind(PropertyValueProviderWorker.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
         binder.bind(SelectModelFactory.class, SelectModelFactoryImpl.class);
         binder.bind(DynamicTemplateParser.class, DynamicTemplateParserImpl.class);
@@ -680,7 +682,10 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker2> configuration,
             MetaWorker metaWorker,
             ComponentClassResolver resolver,
-            ComponentDependencyRegistry componentDependencyRegistry)
+            ComponentDependencyRegistry componentDependencyRegistry,
+            PropertyValueProviderWorker propertyValueProviderWorker,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassloaders)
     {
         configuration.add("Property", new PropertyWorker());
 
@@ -731,6 +736,12 @@ public final class TapestryModule
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class);
 
         configuration.addInstance("Cached", CachedWorker.class);
+        
+        if (!productionMode && multipleClassloaders)
+        {
+            configuration.add("PropertyValueProvider", propertyValueProviderWorker, 
+                    "after:Cached", "after:Import");
+        }
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 

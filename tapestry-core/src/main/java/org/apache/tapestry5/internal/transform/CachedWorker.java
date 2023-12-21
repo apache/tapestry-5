@@ -17,19 +17,25 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.PlasticUtils.FieldInfo;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
@@ -37,9 +43,15 @@ import java.util.List;
 @SuppressWarnings("all")
 public class CachedWorker implements ComponentClassTransformWorker2
 {
+    private static final String FIELD_PREFIX = "cache$";
+
     private final BindingSource bindingSource;
 
     private final PerthreadManager perThreadManager;
+    
+    private final PropertyValueProviderWorker propertyValueProviderWorker;
+    
+    private final boolean multipleClassLoaders;
 
     interface MethodResultCacheFactory
     {
@@ -117,32 +129,43 @@ public class CachedWorker implements ComponentClassTransformWorker2
         }
     }
 
-    public CachedWorker(BindingSource bindingSource, PerthreadManager perthreadManager)
+    public CachedWorker(BindingSource bindingSource, PerthreadManager perthreadManager,
+            PropertyValueProviderWorker propertyValueProviderWorker,
+            @Inject @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Inject @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassloaders)
     {
         this.bindingSource = bindingSource;
         this.perThreadManager = perthreadManager;
+        this.propertyValueProviderWorker = propertyValueProviderWorker;
+        this.multipleClassLoaders = !productionMode && multipleClassloaders;
     }
 
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         List<PlasticMethod> methods = plasticClass.getMethodsWithAnnotation(Cached.class);
+        Set<PlasticUtils.FieldInfo> fieldInfos = multipleClassLoaders ? new HashSet<>() : null;
 
         for (PlasticMethod method : methods)
         {
             validateMethod(method);
 
-            adviseMethod(plasticClass, method);
+            adviseMethod(plasticClass, method, fieldInfos);
         }
+        
+        if (multipleClassLoaders && !fieldInfos.isEmpty())
+        {
+            this.propertyValueProviderWorker.add(plasticClass, fieldInfos);
+        }        
     }
 
-    private void adviseMethod(PlasticClass plasticClass, PlasticMethod method)
+    private void adviseMethod(PlasticClass plasticClass, PlasticMethod method, Set<FieldInfo> fieldInfos)
     {
-        // Every instance of the clas srequires its own per-thread value. This handles the case of multiple
+        // Every instance of the class requires its own per-thread value. This handles the case of multiple
         // pages containing the component, or the same page containing the component multiple times.
 
         PlasticField cacheField =
-                plasticClass.introduceField(PerThreadValue.class, "cache$" + method.getDescription().methodName);
+                plasticClass.introduceField(PerThreadValue.class, getFieldName(method));
 
         cacheField.injectComputed(new ComputedValue<PerThreadValue>()
         {
@@ -152,6 +175,12 @@ public class CachedWorker implements ComponentClassTransformWorker2
                 return perThreadManager.createValue();
             }
         });
+        
+        if (multipleClassLoaders)
+        {
+            fieldInfos.add(PlasticUtils.toFieldInfo(cacheField));
+            cacheField.createAccessors(PropertyAccessType.READ_ONLY);
+        }
 
         Cached annotation = method.getAnnotation(Cached.class);
 
@@ -162,11 +191,23 @@ public class CachedWorker implements ComponentClassTransformWorker2
         method.addAdvice(advice);
     }
 
+    private String getFieldName(PlasticMethod method) {
+        final StringBuilder builder = new StringBuilder(FIELD_PREFIX);
+        builder.append(method.getDescription().methodName);
+        if (multipleClassLoaders)
+        {
+            builder.append("_");
+            builder.append(method.getPlasticClass().getClassName().replace('.', '_'));
+        }
+        return builder.toString();
+    }
+
 
     private MethodAdvice createAdvice(PlasticField cacheField,
                                       final MethodResultCacheFactory factory)
     {
         final FieldHandle fieldHandle = cacheField.getHandle();
+        final String fieldName = multipleClassLoaders ? cacheField.getName() : null;
 
         return new MethodAdvice()
         {
@@ -194,8 +235,10 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
                 // The PerThreadValue is created in the instance constructor.
 
-                PerThreadValue<MethodResultCache> value = (PerThreadValue<MethodResultCache>) fieldHandle
-                        .get(instance);
+                PerThreadValue<MethodResultCache> value = (PerThreadValue<MethodResultCache>) (
+                        multipleClassLoaders ?
+                        PropertyValueProvider.get(instance, fieldName) :
+                        fieldHandle.get(instance));
 
                 // But it will be empty when first created, or at the start of a new request.
                 if (value.exists())
