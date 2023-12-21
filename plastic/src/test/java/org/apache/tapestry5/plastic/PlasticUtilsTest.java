@@ -31,28 +31,38 @@ import org.junit.jupiter.api.Test;
 public class PlasticUtilsTest 
 {
     
-    public static void main(String[] args) throws ClassNotFoundException {
-        final PlasticUtilsTest plasticUtilsTest = new PlasticUtilsTest();
-        plasticUtilsTest.implement_field_value_pProvider();
-        plasticUtilsTest.implement_property_value_provider();
-    }
+//    public static void main(String[] args) throws ClassNotFoundException {
+//        final PlasticUtilsTest plasticUtilsTest = new PlasticUtilsTest();
+//        plasticUtilsTest.implement_field_value_provider();
+//        plasticUtilsTest.implement_property_value_provider();
+//    }
     
     @Test
-    public void implement_field_value_pProvider() throws ClassNotFoundException
+    public void implement_field_value_provider() throws ClassNotFoundException
     {
         
         Set<String> packages = new HashSet<>();
         packages.add(PlasticUtilsTestObject.class.getPackage().getName());
+
         PlasticManager plasticManager = PlasticManager.withContextClassLoader()
                 .packages(packages).create();
-        final PlasticClassTransformation<Object> transformation = plasticManager.getPlasticClass(PlasticUtilsTestObject.class.getName());
-        PlasticClass pc = transformation.getPlasticClass();
+        
         Set<PlasticUtils.FieldInfo> fieldInfos = new HashSet<PlasticUtils.FieldInfo>();
+
+        PlasticClassTransformation<Object> transformation2 = plasticManager.getPlasticClass(PlasticUtilsTestObjectSuperclass.class.getName());
+        PlasticClass pc2 = transformation2.getPlasticClass();
+        fieldInfos.clear();
+        fieldInfos.add(new PlasticUtils.FieldInfo("superString", "java.lang.String"));
+        PlasticUtils.implementFieldValueProvider(pc2, fieldInfos);
+
+        PlasticClassTransformation<Object> transformation = plasticManager.getPlasticClass(PlasticUtilsTestObject.class.getName());
+        PlasticClass pc = transformation.getPlasticClass();
         for (PlasticField field : pc.getAllFields()) {
             fieldInfos.add(PlasticUtils.toFieldInfo(field));
         }
-        fieldInfos.add(new PlasticUtils.FieldInfo("superString", "java.lang.String"));
         PlasticUtils.implementFieldValueProvider(pc, fieldInfos);
+
+        
         Object object = transformation.createInstantiator().newInstance();
         
         Class<?> original = PlasticUtilsTestObject.class;
@@ -66,7 +76,7 @@ public class PlasticUtilsTest
         assertEquals(PlasticUtilsTestObject.ENUMERATION.toString(), FieldValueProvider.get(object, "enumeration").toString());
         assertTrue(Arrays.equals(PlasticUtilsTestObject.INT_ARRAY, (int[]) FieldValueProvider.get(object, "intArray")));
         assertEquals(PlasticUtilsTestObject.TRUE_OF_FALSE, (Boolean) FieldValueProvider.get(object, "trueOrFalse"));
-        
+//        assertEquals(PlasticUtilsTestObjectSuperclass.SUPER, FieldValueProvider.get(object, "superString"));
     }
     
     @Test
