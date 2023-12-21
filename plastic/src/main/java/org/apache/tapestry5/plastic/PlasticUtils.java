@@ -39,10 +39,13 @@ public class PlasticUtils
     
     private static final MethodDescription PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION;
     
+    private static final MethodDescription FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION;
+    
     static
     {
         try {
             PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION = new MethodDescription(PropertyValueProvider.class.getMethod("__propertyValueProvider__get", String.class));
+            FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION = new MethodDescription(FieldValueProvider.class.getMethod("__fieldValueProvider__get", String.class));
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -185,10 +188,10 @@ public class PlasticUtils
      * an {@linkplain IllegalAccessError}.
      * 
      * @param plasticClass a {@linkplain PlasticClass} instance.
-     * @param fieldNames a {@linkplain Set} of {@linkplain String}s containing the field names.
+     * @param fieldInfos a {@linkplain Set} of {@linkplain String}s containing the field names.
      * @since 5.8.4
      */
-    public static void implementFieldValueProvider(PlasticClass plasticClass, Set<FieldInfo> fields)
+    public static void implementFieldValueProvider(PlasticClass plasticClass, Set<FieldInfo> fieldInfos)
     {
         
         final Set<PlasticMethod> methods = plasticClass.introduceInterface(FieldValueProvider.class);
@@ -199,7 +202,7 @@ public class PlasticUtils
             
             method.changeImplementation((builder) -> {
                 
-                for (FieldInfo field : fields) 
+                for (FieldInfo field : fieldInfos) 
                 {
                     builder.loadArgument(0);
                     builder.loadConstant(field.name);
@@ -211,6 +214,18 @@ public class PlasticUtils
                         ifBuilder.returnResult();
                     });
                 }
+                
+                builder.loadThis();
+                builder.instanceOf(FieldValueProvider.class);
+                
+                builder.when(Condition.NON_ZERO, ifBuilder -> {
+                    builder.loadThis();
+                    builder.loadArgument(0);
+                    ifBuilder.invokeSpecial(
+                            plasticClass.getSuperClassName(), 
+                            FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION);
+                    ifBuilder.returnResult();
+                });
                 
                 builder.throwException(RuntimeException.class, "Field not found or not supported");
                 
@@ -227,17 +242,17 @@ public class PlasticUtils
      * of direct fields access.
      * 
      * @param plasticClass a {@linkplain PlasticClass} instance.
-     * @param fieldNames a {@linkplain Set} of {@linkplain String}s containing the filed (i.e. property) names.
+     * @param fieldInfos a {@linkplain Set} of {@linkplain String}s containing the filed (i.e. property) names.
      * @since 5.8.4
      */
-    public static void implementPropertyValueProvider(PlasticClass plasticClass, Set<FieldInfo> fields)
+    public static void implementPropertyValueProvider(PlasticClass plasticClass, Set<FieldInfo> fieldInfos)
     {
         
         final Set<PlasticMethod> methods = plasticClass.introduceInterface(PropertyValueProvider.class);
         
         final InstructionBuilderCallback callback = (builder) -> {
             
-            for (FieldInfo field : fields) 
+            for (FieldInfo field : fieldInfos) 
             {
                 builder.loadArgument(0);
                 builder.loadConstant(field.name);
@@ -266,7 +281,7 @@ public class PlasticUtils
                 builder.loadArgument(0);
                 ifBuilder.invokeSpecial(
                         plasticClass.getSuperClassName(), 
-                        PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION);
+                        FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION);
                 ifBuilder.returnResult();
             });
             

@@ -14,18 +14,16 @@
 
 package org.apache.tapestry5.plastic;
 
-import java.lang.reflect.Method;
-
 /**
  * <p>
  * Interface that can be implemented to provide access to field values based on their name.
- * Usually implemented with {@linkplain} FieldValueProviderTransformation}.
- * <p/>
+ * Usually implemented with {@linkplain PlasticUtils#implementPropertyValueProvider(PlasticClass, java.util.Set)}.
+ * </p>
  * <p>
  * The name of its abstract method is intended to avoid clashes with other existing methods
  * in the class.
  * </p>
- * @see FieldValueProviderTransformation
+ * @see PlasticUtils#implementPropertyValueProvider(PlasticClass, java.util.Set)
  * @since 5.8.4
  */
 public interface PropertyValueProvider
