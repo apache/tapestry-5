@@ -19,7 +19,7 @@ package org.apache.tapestry5.plastic;
  * Interface that can be implemented to provide access to field values based on their name.
  * Usually implemented with {@linkplain PlasticUtils#implementFieldValueProvider(PlasticClass, java.util.Set)},
  * which doesn't use reflection.
- * <p/>
+ * </p>
  * <p>
  * The name of its abstract method is intended to avoid clashes with other existing methods
  * in the class.
