@@ -56,6 +56,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private final ResourceChangeTracker resourceChangeTracker;
     
     private final boolean multipleClassLoaders;
+    
+    private final PropertyValueProviderWorker propertyValueProviderWorker;
 
     private final Worker<Asset> importLibrary = new Worker<Asset>()
     {
@@ -82,12 +84,13 @@ public class ImportWorker implements ComponentClassTransformWorker2
     };
 
     public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource,
-            ResourceChangeTracker resourceChangeTracker)
+            ResourceChangeTracker resourceChangeTracker, PropertyValueProviderWorker propertyValueProviderWorker)
     {
         this.javascriptSupport = javascriptSupport;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.resourceChangeTracker = resourceChangeTracker;
+        this.propertyValueProviderWorker = propertyValueProviderWorker;
         this.multipleClassLoaders = 
                 !Boolean.valueOf(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE)) &&
                 Boolean.valueOf(symbolSource.valueForSymbol(SymbolConstants.MULTIPLE_CLASSLOADERS));
@@ -108,7 +111,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         
         if (multipleClassLoaders && !fieldInfos.isEmpty())
         {
-            PlasticUtils.implementPropertyValueProvider(componentClass, fieldInfos);
+            propertyValueProviderWorker.add(componentClass, fieldInfos);
         }
         
         resourceChangeTracker.clearCurrentClassName();
