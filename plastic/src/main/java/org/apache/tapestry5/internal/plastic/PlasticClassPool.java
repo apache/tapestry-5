@@ -30,16 +30,16 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.FieldInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.InsnList;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.plastic.internal.asm.ClassReader;
+import org.apache.tapestry5.plastic.internal.asm.ClassWriter;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.tree.AbstractInsnNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.AnnotationNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.ClassNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.FieldInsnNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.InsnList;
+import org.apache.tapestry5.plastic.internal.asm.tree.MethodInsnNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.MethodNode;
 import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.ClassType;
@@ -556,7 +556,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     /**
      * Constructs a class node by reading the raw bytecode for a class and instantiating a ClassNode
-     * (via {@link ClassReader#accept(org.apache.tapestry5.internal.plastic.asm.ClassVisitor, int)}).
+     * (via {@link ClassReader#accept(org.apache.tapestry5.plastic.internal.asm.ClassVisitor, int)}).
      *
      * @param className
      *         fully qualified class name

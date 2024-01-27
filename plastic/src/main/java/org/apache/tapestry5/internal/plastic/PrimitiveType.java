@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.plastic;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
 
 /**
  * Collects together information needed to write code that involves primitive types, including

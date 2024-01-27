@@ -2,18 +2,14 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
-description = "Shadow asm for plastic"
+description = "Shadow ASM for Plastic"
 
 jar {
     enabled = false
 }
 
-tasks.withType(PublishToMavenRepository) {
-    enabled = false
-}
-
 shadowJar {
-    relocate("org.objectweb.asm", "org.apache.tapestry5.internal.plastic.asm")
+    relocate("org.objectweb.asm", "org.apache.tapestry5.plastic.internal.asm")
     archiveClassifier = ""
 }
 
@@ -21,3 +17,13 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:${versions.asm}")
     implementation("org.ow2.asm:asm-util:${versions.asm}")
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact shadowJar
+        }
+    }
+}
+
+project.tasks.publish.dependsOn shadowJar

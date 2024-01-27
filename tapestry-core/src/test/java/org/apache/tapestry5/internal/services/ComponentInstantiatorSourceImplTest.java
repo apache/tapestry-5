@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.plastic.internal.asm.ClassWriter;
+import org.apache.tapestry5.plastic.internal.asm.MethodVisitor;
 import org.apache.tapestry5.internal.t5internal.pages.BasicComponent;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Registry;
@@ -32,8 +32,8 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ACC_PUBLIC;
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ARETURN;
+import static org.apache.tapestry5.plastic.internal.asm.Opcodes.ACC_PUBLIC;
+import static org.apache.tapestry5.plastic.internal.asm.Opcodes.ARETURN;
 
 /**
  * Tests for {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are

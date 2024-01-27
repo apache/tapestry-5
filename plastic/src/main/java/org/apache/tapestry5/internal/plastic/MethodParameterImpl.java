@@ -1,6 +1,6 @@
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.AnnotationNode;
 import org.apache.tapestry5.plastic.MethodParameter;
 
 import java.util.List;

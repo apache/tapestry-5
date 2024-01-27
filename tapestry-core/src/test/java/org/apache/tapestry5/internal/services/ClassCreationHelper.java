@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
-import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
-import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.plastic.internal.asm.ClassWriter;
+import org.apache.tapestry5.plastic.internal.asm.MethodVisitor;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
+import static org.apache.tapestry5.plastic.internal.asm.Opcodes.*;
 
 public class ClassCreationHelper
 {

@@ -12,11 +12,11 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
-import org.apache.tapestry5.internal.plastic.asm.commons.JSRInlinerAdapter;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
-import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
+import org.apache.tapestry5.plastic.internal.asm.*;
+import org.apache.tapestry5.plastic.internal.asm.commons.JSRInlinerAdapter;
+import org.apache.tapestry5.plastic.internal.asm.tree.ClassNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.MethodNode;
+import org.apache.tapestry5.plastic.internal.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
 

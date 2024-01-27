@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.tree.ClassNode;
+import org.apache.tapestry5.plastic.internal.asm.tree.MethodNode;
 import org.apache.tapestry5.plastic.*;
 
 import java.util.List;

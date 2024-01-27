@@ -12,8 +12,8 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.tree.MethodNode;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.reflect.Modifier;
@@ -134,7 +134,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         // If the method is currently abstract, clear that flag.
         if (Modifier.isAbstract(node.access))
         {
-            node.access = node.access & ~org.apache.tapestry5.internal.plastic.asm.Opcodes.ACC_ABSTRACT;
+            node.access = node.access & ~org.apache.tapestry5.plastic.internal.asm.Opcodes.ACC_ABSTRACT;
             description = description.withModifiers(node.access);
         }
 

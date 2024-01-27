@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.Label;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.Label;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.SwitchBlock;

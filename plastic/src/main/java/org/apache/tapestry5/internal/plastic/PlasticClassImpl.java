@@ -12,10 +12,10 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.tree.*;
+import org.apache.tapestry5.plastic.internal.asm.AnnotationVisitor;
+import org.apache.tapestry5.plastic.internal.asm.Opcodes;
+import org.apache.tapestry5.plastic.internal.asm.Type;
+import org.apache.tapestry5.plastic.internal.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 
 import java.io.IOException;
