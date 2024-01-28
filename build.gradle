@@ -72,6 +72,8 @@ project.ext {
     deployPassword = { getProperty(deployPasswordProperty) }
 
     archiveDeployFolder = { getProperty("apacheArchivesFolder") }
+    
+    plasticAsmJarLocation = "${System.getProperty('user.home')}/.m2/repository/org/apache/tapestry/plastic-asm/${tapestryVersion()}/plastic-asm-${tapestryVersion()}.jar"
 }
 
 println "JDK: " + System.getProperty("java.version")
@@ -421,7 +423,7 @@ task aggregateJavadoc(type: Javadoc) {
         taglets "org.apache.tapestry5.javadoc.TapestryDocTaglet"
     }
 
-    exclude "org/apache/tapestry5/internal/plastic/asm/**"
+    exclude "org/apache/tapestry5/plastic/internal/asm/**"
     exclude "org/apache/tapestry5/internal/webresources/**"
     exclude "org/apache/tapestry5/webresources/modules/**"
     

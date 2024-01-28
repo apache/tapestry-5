@@ -7,6 +7,13 @@ dependencies {
 }
 
 test { 
-  useJUnit()
+    useJUnit()
 }
 
+eclipse.classpath.file {
+    whenMerged { classpath ->
+        def lib = new org.gradle.plugins.ide.eclipse.model.Library(fileReference(file(plasticAsmJarLocation)))
+        lib.exported = true
+        classpath.entries += lib
+    }
+}

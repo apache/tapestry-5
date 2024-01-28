@@ -1,7 +1,7 @@
 package ioc.specs
 
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils
-import org.apache.tapestry5.internal.plastic.asm.ClassWriter
+import org.apache.tapestry5.plastic.internal.asm.ClassWriter
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
 import org.apache.tapestry5.ioc.services.UpdateListenerHub
@@ -10,7 +10,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import com.example.*
 
-import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
+import static org.apache.tapestry5.plastic.internal.asm.Opcodes.*
 
 class ReloadSpec extends Specification {
 
