@@ -292,9 +292,8 @@ public abstract class Printer {
   private static final String UNSUPPORTED_OPERATION = "Must be overridden";
 
   /**
-   * The ASM API version implemented by this class. The value of this field must be one of {@link
-   * Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6}, {@link Opcodes#ASM7}, {@link
-   * Opcodes#ASM8} or {@link Opcodes#ASM9}.
+   * The ASM API version implemented by this class. The value of this field must be one of the
+   * {@code ASM}<i>x</i> values in {@link Opcodes}.
    */
   protected final int api;
 
@@ -320,8 +319,8 @@ public abstract class Printer {
   /**
    * Constructs a new {@link Printer}.
    *
-   * @param api the ASM API version implemented by this printer. Must be one of {@link
-   *     Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6} or {@link Opcodes#ASM7}.
+   * @param api the ASM API version implemented by this printer. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
    */
   protected Printer(final int api) {
     this.api = api;
@@ -340,15 +339,14 @@ public abstract class Printer {
    *     and the major version in the 16 least significant bits.
    * @param access the class's access flags (see {@link Opcodes}). This parameter also indicates if
    *     the class is deprecated.
-   * @param name the internal name of the class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   * @param name the internal name of the class (see {@link Type#getInternalName()}).
    * @param signature the signature of this class. May be {@literal null} if the class is not a
    *     generic one, and does not extend or implement generic classes or interfaces.
-   * @param superName the internal of name of the super class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). For interfaces, the super class is {@link
-   *     Object}. May be {@literal null}, but only for the {@link Object} class.
+   * @param superName the internal of name of the super class (see {@link Type#getInternalName()}).
+   *     For interfaces, the super class is {@link Object}. May be {@literal null}, but only for the
+   *     {@link Object} class.
    * @param interfaces the internal names of the class's interfaces (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
+   *     Type#getInternalName()}). May be {@literal null}.
    */
   public abstract void visit(
       int version,
@@ -389,7 +387,8 @@ public abstract class Printer {
    * implicitly its own nest, so it's invalid to call this method with the visited class name as
    * argument.
    *
-   * @param nestHost the internal name of the host class of the nest.
+   * @param nestHost the internal name of the host class of the nest (see {@link
+   *     Type#getInternalName()}).
    */
   public void visitNestHost(final String nestHost) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -398,7 +397,8 @@ public abstract class Printer {
   /**
    * Class outer class. See {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitOuterClass}.
    *
-   * @param owner internal name of the enclosing class of the class.
+   * @param owner internal name of the enclosing class of the class (see {@link
+   *     Type#getInternalName()}).
    * @param name the name of the method that contains the class, or {@literal null} if the class is
    *     not enclosed in a method of its enclosing class.
    * @param descriptor the descriptor of the method that contains the class, or {@literal null} if
@@ -419,10 +419,9 @@ public abstract class Printer {
    * Class type annotation. See {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitTypeAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#CLASS_TYPE_PARAMETER}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CLASS_TYPE_PARAMETER_BOUND} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CLASS_EXTENDS}. See {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#CLASS_TYPE_PARAMETER}, {@link
+   *     TypeReference#CLASS_TYPE_PARAMETER_BOUND} or {@link TypeReference#CLASS_EXTENDS}. See
+   *     {@link TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -449,7 +448,7 @@ public abstract class Printer {
    * the visited class is the host of a nest. A nest host is implicitly a member of its own nest, so
    * it's invalid to call this method with the visited class name as argument.
    *
-   * @param nestMember the internal name of a nest member.
+   * @param nestMember the internal name of a nest member (see {@link Type#getInternalName()}).
    */
   public void visitNestMember(final String nestMember) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -459,7 +458,8 @@ public abstract class Printer {
    * Visits a permitted subclasses. A permitted subclass is one of the allowed subclasses of the
    * current class. See {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitPermittedSubclass(String)}.
    *
-   * @param permittedSubclass the internal name of a permitted subclass.
+   * @param permittedSubclass the internal name of a permitted subclass (see {@link
+   *     Type#getInternalName()}).
    */
   public void visitPermittedSubclass(final String permittedSubclass) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -468,10 +468,9 @@ public abstract class Printer {
   /**
    * Class inner name. See {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitInnerClass}.
    *
-   * @param name the internal name of an inner class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   * @param name the internal name of an inner class (see {@link Type#getInternalName()}).
    * @param outerName the internal name of the class to which the inner class belongs (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null} for not member classes.
+   *     Type#getInternalName()}). May be {@literal null} for not member classes.
    * @param innerName the (simple) name of the inner class inside its enclosing class. May be
    *     {@literal null} for anonymous inner classes.
    * @param access the access flags of the inner class as originally declared in the enclosing
@@ -501,7 +500,7 @@ public abstract class Printer {
    * @param access the field's access flags (see {@link Opcodes}). This parameter also indicates if
    *     the field is synthetic and/or deprecated.
    * @param name the field's name.
-   * @param descriptor the field's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the field's descriptor (see {@link Type}).
    * @param signature the field's signature. May be {@literal null} if the field's type does not use
    *     generic types.
    * @param value the field's initial value. This parameter, which may be {@literal null} if the
@@ -521,11 +520,11 @@ public abstract class Printer {
    * @param access the method's access flags (see {@link Opcodes}). This parameter also indicates if
    *     the method is synthetic and/or deprecated.
    * @param name the method's name.
-   * @param descriptor the method's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the method's descriptor (see {@link Type}).
    * @param signature the method's signature. May be {@literal null} if the method parameters,
    *     return type and exceptions do not use generic types.
    * @param exceptions the internal names of the method's exception classes (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
+   *     Type#getInternalName()}). May be {@literal null}.
    * @return the printer.
    */
   public abstract Printer visitMethod(
@@ -541,7 +540,8 @@ public abstract class Printer {
   /**
    * Module main class. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitMainClass}.
    *
-   * @param mainClass the internal name of the main class of the current module.
+   * @param mainClass the internal name of the main class of the current module (see {@link
+   *     Type#getInternalName()}).
    */
   public void visitMainClass(final String mainClass) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -550,7 +550,7 @@ public abstract class Printer {
   /**
    * Module package. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitPackage}.
    *
-   * @param packaze the internal name of a package.
+   * @param packaze the internal name of a package (see {@link Type#getInternalName()}).
    */
   public void visitPackage(final String packaze) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -571,7 +571,7 @@ public abstract class Printer {
   /**
    * Module export. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitExport}.
    *
-   * @param packaze the internal name of the exported package.
+   * @param packaze the internal name of the exported package (see {@link Type#getInternalName()}).
    * @param access the access flag of the exported package, valid values are among {@code
    *     ACC_SYNTHETIC} and {@code ACC_MANDATED}.
    * @param modules the fully qualified names (using dots) of the modules that can access the public
@@ -584,7 +584,7 @@ public abstract class Printer {
   /**
    * Module open. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitOpen}.
    *
-   * @param packaze the internal name of the opened package.
+   * @param packaze the internal name of the opened package (see {@link Type#getInternalName()}).
    * @param access the access flag of the opened package, valid values are among {@code
    *     ACC_SYNTHETIC} and {@code ACC_MANDATED}.
    * @param modules the fully qualified names (using dots) of the modules that can use deep
@@ -597,7 +597,7 @@ public abstract class Printer {
   /**
    * Module use. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitUse}.
    *
-   * @param service the internal name of the service.
+   * @param service the internal name of the service (see {@link Type#getInternalName()}).
    */
   public void visitUse(final String service) {
     throw new UnsupportedOperationException(UNSUPPORTED_OPERATION);
@@ -606,7 +606,7 @@ public abstract class Printer {
   /**
    * Module provide. See {@link org.apache.tapestry5.internal.plastic.asm.ModuleVisitor#visitProvide}.
    *
-   * @param service the internal name of the service.
+   * @param service the internal name of the service (see {@link Type#getInternalName()}).
    * @param providers the internal names of the implementations of the service (there is at least
    *     one provider).
    */
@@ -629,10 +629,10 @@ public abstract class Printer {
    * @param name the value name.
    * @param value the actual value, whose type must be {@link Byte}, {@link Boolean}, {@link
    *     Character}, {@link Short}, {@link Integer} , {@link Long}, {@link Float}, {@link Double},
-   *     {@link String} or {@link org.apache.tapestry5.internal.plastic.asm.Type} of {@link org.apache.tapestry5.internal.plastic.asm.Type#OBJECT}
-   *     or {@link org.apache.tapestry5.internal.plastic.asm.Type#ARRAY} sort. This value can also be an array of byte,
-   *     boolean, short, char, int, long, float or double values (this is equivalent to using {@link
-   *     #visitArray} and visiting each array element in turn, but is more convenient).
+   *     {@link String} or {@link Type} of {@link Type#OBJECT} or {@link Type#ARRAY} sort. This
+   *     value can also be an array of byte, boolean, short, char, int, long, float or double values
+   *     (this is equivalent to using {@link #visitArray} and visiting each array element in turn,
+   *     but is more convenient).
    */
   // DontCheck(OverloadMethodsDeclarationOrder): overloads are semantically different.
   public abstract void visit(String name, Object value);
@@ -740,7 +740,7 @@ public abstract class Printer {
    * Field type annotation. See {@link org.apache.tapestry5.internal.plastic.asm.FieldVisitor#visitTypeAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#FIELD}. See {@link org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#FIELD}. See {@link TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -798,12 +798,10 @@ public abstract class Printer {
    * Method type annotation. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitTypeAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_TYPE_PARAMETER}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_TYPE_PARAMETER_BOUND}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_RETURN}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_RECEIVER}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_FORMAL_PARAMETER} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#THROWS}. See {@link org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#METHOD_TYPE_PARAMETER}, {@link
+   *     TypeReference#METHOD_TYPE_PARAMETER_BOUND}, {@link TypeReference#METHOD_RETURN}, {@link
+   *     TypeReference#METHOD_RECEIVER}, {@link TypeReference#METHOD_FORMAL_PARAMETER} or {@link
+   *     TypeReference#THROWS}. See {@link TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -872,9 +870,9 @@ public abstract class Printer {
    *     types are represented by {@link Opcodes#TOP}, {@link Opcodes#INTEGER}, {@link
    *     Opcodes#FLOAT}, {@link Opcodes#LONG}, {@link Opcodes#DOUBLE}, {@link Opcodes#NULL} or
    *     {@link Opcodes#UNINITIALIZED_THIS} (long and double are represented by a single element).
-   *     Reference types are represented by String objects (representing internal names), and
-   *     uninitialized types by Label objects (this label designates the NEW instruction that
-   *     created this uninitialized value).
+   *     Reference types are represented by String objects (representing internal names, see {@link
+   *     Type#getInternalName()}), and uninitialized types by Label objects (this label designates
+   *     the NEW instruction that created this uninitialized value).
    * @param numStack the number of operand stack elements in the visited frame.
    * @param stack the operand stack types in this frame. This array must not be modified. Its
    *     content has the same format as the "local" array.
@@ -919,10 +917,10 @@ public abstract class Printer {
    *
    * @param opcode the opcode of the local variable instruction to be visited. This opcode is either
    *     ILOAD, LLOAD, FLOAD, DLOAD, ALOAD, ISTORE, LSTORE, FSTORE, DSTORE, ASTORE or RET.
-   * @param var the operand of the instruction to be visited. This operand is the index of a local
-   *     variable.
+   * @param varIndex the operand of the instruction to be visited. This operand is the index of a
+   *     local variable.
    */
-  public abstract void visitVarInsn(int opcode, int var);
+  public abstract void visitVarInsn(int opcode, int varIndex);
 
   /**
    * Method instruction. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitTypeInsn}.
@@ -930,7 +928,7 @@ public abstract class Printer {
    * @param opcode the opcode of the type instruction to be visited. This opcode is either NEW,
    *     ANEWARRAY, CHECKCAST or INSTANCEOF.
    * @param type the operand of the instruction to be visited. This operand must be the internal
-   *     name of an object or array class (see {@link org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   *     name of an object or array class (see {@link Type#getInternalName()}).
    */
   public abstract void visitTypeInsn(int opcode, String type);
 
@@ -939,10 +937,9 @@ public abstract class Printer {
    *
    * @param opcode the opcode of the type instruction to be visited. This opcode is either
    *     GETSTATIC, PUTSTATIC, GETFIELD or PUTFIELD.
-   * @param owner the internal name of the field's owner class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   * @param owner the internal name of the field's owner class (see {@link Type#getInternalName()}).
    * @param name the field's name.
-   * @param descriptor the field's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the field's descriptor (see {@link Type}).
    */
   public abstract void visitFieldInsn(int opcode, String owner, String name, String descriptor);
 
@@ -952,9 +949,9 @@ public abstract class Printer {
    * @param opcode the opcode of the type instruction to be visited. This opcode is either
    *     INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or INVOKEINTERFACE.
    * @param owner the internal name of the method's owner class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   *     Type#getInternalName()}).
    * @param name the method's name.
-   * @param descriptor the method's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the method's descriptor (see {@link Type}).
    * @deprecated use {@link #visitMethodInsn(int, String, String, String, boolean)} instead.
    */
   @Deprecated
@@ -972,9 +969,9 @@ public abstract class Printer {
    * @param opcode the opcode of the type instruction to be visited. This opcode is either
    *     INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or INVOKEINTERFACE.
    * @param owner the internal name of the method's owner class (see {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
+   *     Type#getInternalName()}).
    * @param name the method's name.
-   * @param descriptor the method's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the method's descriptor (see {@link Type}).
    * @param isInterface if the method's owner class is an interface.
    */
   public void visitMethodInsn(
@@ -990,12 +987,12 @@ public abstract class Printer {
    * Method instruction. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitInvokeDynamicInsn}.
    *
    * @param name the method's name.
-   * @param descriptor the method's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor the method's descriptor (see {@link Type}).
    * @param bootstrapMethodHandle the bootstrap method.
    * @param bootstrapMethodArguments the bootstrap method constant arguments. Each argument must be
    *     an {@link Integer}, {@link Float}, {@link Long}, {@link Double}, {@link String}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Type} or {@link Handle} value. This method is allowed to modify the
-   *     content of the array so a caller should expect that this array may change.
+   *     Type} or {@link Handle} value. This method is allowed to modify the content of the array so
+   *     a caller should expect that this array may change.
    */
   public abstract void visitInvokeDynamicInsn(
       String name,
@@ -1036,10 +1033,10 @@ public abstract class Printer {
   /**
    * Method instruction. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitIincInsn}.
    *
-   * @param var index of the local variable to be incremented.
+   * @param varIndex index of the local variable to be incremented.
    * @param increment amount to increment the local variable by.
    */
-  public abstract void visitIincInsn(int var, int increment);
+  public abstract void visitIincInsn(int varIndex, int increment);
 
   /**
    * Method instruction. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitTableSwitchInsn}.
@@ -1065,7 +1062,7 @@ public abstract class Printer {
   /**
    * Method instruction. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitMultiANewArrayInsn}.
    *
-   * @param descriptor an array type descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+   * @param descriptor an array type descriptor (see {@link Type}).
    * @param numDimensions the number of dimensions of the array to allocate.
    */
   public abstract void visitMultiANewArrayInsn(String descriptor, int numDimensions);
@@ -1074,16 +1071,12 @@ public abstract class Printer {
    * Instruction type annotation. See {@link org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitInsnAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#INSTANCEOF}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#NEW}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CONSTRUCTOR_REFERENCE}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_REFERENCE}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CAST}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_INVOCATION_TYPE_ARGUMENT}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT}, or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#METHOD_REFERENCE_TYPE_ARGUMENT}. See {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#INSTANCEOF}, {@link TypeReference#NEW}, {@link
+   *     TypeReference#CONSTRUCTOR_REFERENCE}, {@link TypeReference#METHOD_REFERENCE}, {@link
+   *     TypeReference#CAST}, {@link TypeReference#CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT}, {@link
+   *     TypeReference#METHOD_INVOCATION_TYPE_ARGUMENT}, {@link
+   *     TypeReference#CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT}, or {@link
+   *     TypeReference#METHOD_REFERENCE_TYPE_ARGUMENT}. See {@link TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -1102,8 +1095,9 @@ public abstract class Printer {
    * @param start the beginning of the exception handler's scope (inclusive).
    * @param end the end of the exception handler's scope (exclusive).
    * @param handler the beginning of the exception handler's code.
-   * @param type the internal name of the type of exceptions handled by the handler, or {@literal
-   *     null} to catch any exceptions (for "finally" blocks).
+   * @param type the internal name of the type of exceptions handled by the handler (see {@link
+   *     Type#getInternalName()}), or {@literal null} to catch any exceptions (for "finally"
+   *     blocks).
    */
   public abstract void visitTryCatchBlock(Label start, Label end, Label handler, String type);
 
@@ -1112,8 +1106,7 @@ public abstract class Printer {
    * org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitTryCatchAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#EXCEPTION_PARAMETER}. See {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#EXCEPTION_PARAMETER}. See {@link TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -1146,9 +1139,8 @@ public abstract class Printer {
    * org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitTryCatchAnnotation}.
    *
    * @param typeRef a reference to the annotated type. The sort of this type reference must be
-   *     {@link org.apache.tapestry5.internal.plastic.asm.TypeReference#LOCAL_VARIABLE} or {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference#RESOURCE_VARIABLE}. See {@link
-   *     org.apache.tapestry5.internal.plastic.asm.TypeReference}.
+   *     {@link TypeReference#LOCAL_VARIABLE} or {@link TypeReference#RESOURCE_VARIABLE}. See {@link
+   *     TypeReference}.
    * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
    *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
    *     'typeRef' as a whole.
@@ -1268,7 +1260,7 @@ public abstract class Printer {
   }
 
   /**
-   * Prints a the given class to the given output.
+   * Prints the given class to the given output.
    *
    * <p>Command line arguments: [-nodebug] &lt;binary class name or class file name &gt;
    *

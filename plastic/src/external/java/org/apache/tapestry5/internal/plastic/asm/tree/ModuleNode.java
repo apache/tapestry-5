@@ -53,10 +53,16 @@ public class ModuleNode extends ModuleVisitor {
   /** The version of this module. May be {@literal null}. */
   public String version;
 
-  /** The internal name of the main class of this module. May be {@literal null}. */
+  /**
+   * The internal name of the main class of this module (see {@link
+   * org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
+   */
   public String mainClass;
 
-  /** The internal name of the packages declared by this module. May be {@literal null}. */
+  /**
+   * The internal name of the packages declared by this module (see {@link
+   * org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
+   */
   public List<String> packages;
 
   /** The dependencies of this module. May be {@literal null}. */
@@ -68,7 +74,10 @@ public class ModuleNode extends ModuleVisitor {
   /** The packages opened by this module. May be {@literal null}. */
   public List<ModuleOpenNode> opens;
 
-  /** The internal names of the services used by this module. May be {@literal null}. */
+  /**
+   * The internal names of the services used by this module (see {@link
+   * org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
+   */
   public List<String> uses;
 
   /** The services provided by this module. May be {@literal null}. */
@@ -107,7 +116,8 @@ public class ModuleNode extends ModuleVisitor {
    * @param requires The dependencies of this module. May be {@literal null}.
    * @param exports The packages exported by this module. May be {@literal null}.
    * @param opens The packages opened by this module. May be {@literal null}.
-   * @param uses The internal names of the services used by this module. May be {@literal null}.
+   * @param uses The internal names of the services used by this module (see {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). May be {@literal null}.
    * @param provides The services provided by this module. May be {@literal null}.
    */
   public ModuleNode(

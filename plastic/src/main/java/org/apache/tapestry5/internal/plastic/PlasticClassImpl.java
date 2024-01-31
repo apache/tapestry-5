@@ -346,7 +346,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         if (implementationMethodNode.annotationDefault != null)
         {
             AnnotationVisitor av = methodNode.visitAnnotationDefault();
-            AnnotationNode.accept(av, null, implementationMethodNode.annotationDefault);
+            TapestryAnnotationNode.accept(av, null, implementationMethodNode.annotationDefault);
             if (av != null)
             {
                 av.visitEnd();

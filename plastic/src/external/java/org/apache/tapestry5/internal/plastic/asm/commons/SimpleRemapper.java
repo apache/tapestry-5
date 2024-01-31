@@ -54,7 +54,7 @@ public class SimpleRemapper extends Remapper {
    *           attribute (in the form &lt;owner&gt;.&lt;name&gt;), and the value is the new field
    *           name.
    *       <li>for internal names, the key is the old internal name, and the value is the new
-   *           internal name.
+   *           internal name (see {@link org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
    *     </ul>
    */
   public SimpleRemapper(final Map<String, String> mapping) {
@@ -66,7 +66,8 @@ public class SimpleRemapper extends Remapper {
    *
    * @param oldName the key corresponding to a method, field or internal name (see {@link
    *     #SimpleRemapper(Map)} for the format of these keys).
-   * @param newName the new method, field or internal name.
+   * @param newName the new method, field or internal name (see {@link
+   *     org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}).
    */
   public SimpleRemapper(final String oldName, final String newName) {
     this.mapping = Collections.singletonMap(oldName, newName);

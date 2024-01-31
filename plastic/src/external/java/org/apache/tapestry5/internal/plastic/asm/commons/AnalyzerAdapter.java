@@ -61,9 +61,10 @@ public class AnalyzerAdapter extends MethodVisitor {
    * {@link Opcodes#TOP}, {@link Opcodes#INTEGER}, {@link Opcodes#FLOAT}, {@link Opcodes#LONG},
    * {@link Opcodes#DOUBLE},{@link Opcodes#NULL} or {@link Opcodes#UNINITIALIZED_THIS} (long and
    * double are represented by two elements, the second one being TOP). Reference types are
-   * represented by String objects (representing internal names), and uninitialized types by Label
-   * objects (this label designates the NEW instruction that created this uninitialized value). This
-   * field is {@literal null} for unreachable instructions.
+   * represented by String objects (representing internal names, see {@link
+   * Type#getInternalName()}), and uninitialized types by Label objects (this label designates the
+   * NEW instruction that created this uninitialized value). This field is {@literal null} for
+   * unreachable instructions.
    */
   public List<Object> locals;
 
@@ -72,9 +73,10 @@ public class AnalyzerAdapter extends MethodVisitor {
    * {@link Opcodes#TOP}, {@link Opcodes#INTEGER}, {@link Opcodes#FLOAT}, {@link Opcodes#LONG},
    * {@link Opcodes#DOUBLE},{@link Opcodes#NULL} or {@link Opcodes#UNINITIALIZED_THIS} (long and
    * double are represented by two elements, the second one being TOP). Reference types are
-   * represented by String objects (representing internal names), and uninitialized types by Label
-   * objects (this label designates the NEW instruction that created this uninitialized value). This
-   * field is {@literal null} for unreachable instructions.
+   * represented by String objects (representing internal names, see {@link
+   * Type#getInternalName()}), and uninitialized types by Label objects (this label designates the
+   * NEW instruction that created this uninitialized value). This field is {@literal null} for
+   * unreachable instructions.
    */
   public List<Object> stack;
 
@@ -83,9 +85,9 @@ public class AnalyzerAdapter extends MethodVisitor {
 
   /**
    * The uninitialized types in the current execution frame. This map associates internal names to
-   * Label objects. Each label designates a NEW instruction that created the currently uninitialized
-   * types, and the associated internal name represents the NEW operand, i.e. the final, initialized
-   * type value.
+   * Label objects (see {@link Type#getInternalName()}). Each label designates a NEW instruction
+   * that created the currently uninitialized types, and the associated internal name represents the
+   * NEW operand, i.e. the final, initialized type value.
    */
   public Map<Object, Object> uninitializedTypes;
 
@@ -126,9 +128,8 @@ public class AnalyzerAdapter extends MethodVisitor {
   /**
    * Constructs a new {@link AnalyzerAdapter}.
    *
-   * @param api the ASM API version implemented by this visitor. Must be one of {@link
-   *     Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6}, {@link Opcodes#ASM7}, {@link
-   *     Opcodes#ASM8} or {@link Opcodes#ASM9}.
+   * @param api the ASM API version implemented by this visitor. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
    * @param owner the owner's class name.
    * @param access the method's access flags (see {@link Opcodes}).
    * @param name the method's name.
@@ -244,15 +245,15 @@ public class AnalyzerAdapter extends MethodVisitor {
   }
 
   @Override
-  public void visitVarInsn(final int opcode, final int var) {
-    super.visitVarInsn(opcode, var);
+  public void visitVarInsn(final int opcode, final int varIndex) {
+    super.visitVarInsn(opcode, varIndex);
     boolean isLongOrDouble =
         opcode == Opcodes.LLOAD
             || opcode == Opcodes.DLOAD
             || opcode == Opcodes.LSTORE
             || opcode == Opcodes.DSTORE;
-    maxLocals = Math.max(maxLocals, var + (isLongOrDouble ? 2 : 1));
-    execute(opcode, var, null);
+    maxLocals = Math.max(maxLocals, varIndex + (isLongOrDouble ? 2 : 1));
+    execute(opcode, varIndex, null);
   }
 
   @Override
@@ -308,7 +309,7 @@ public class AnalyzerAdapter extends MethodVisitor {
         if (value == Opcodes.UNINITIALIZED_THIS) {
           initializedValue = this.owner;
         } else {
-          initializedValue = uninitializedTypes.get(value);
+          initializedValue = owner;
         }
         for (int i = 0; i < locals.size(); ++i) {
           if (locals.get(i) == value) {
@@ -400,10 +401,10 @@ public class AnalyzerAdapter extends MethodVisitor {
   }
 
   @Override
-  public void visitIincInsn(final int var, final int increment) {
-    super.visitIincInsn(var, increment);
-    maxLocals = Math.max(maxLocals, var + 1);
-    execute(Opcodes.IINC, var, null);
+  public void visitIincInsn(final int varIndex, final int increment) {
+    super.visitIincInsn(varIndex, increment);
+    maxLocals = Math.max(maxLocals, varIndex + 1);
+    execute(Opcodes.IINC, varIndex, null);
   }
 
   @Override

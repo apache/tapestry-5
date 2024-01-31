@@ -56,7 +56,9 @@ public class Textifier extends Printer {
       "Prints a disassembled view of the given class.\n"
           + "Usage: Textifier [-nodebug] <fully qualified class name or class file name>";
 
-  /** The type of internal names. See {@link #appendDescriptor}. */
+  /**
+   * The type of internal names (see {@link Type#getInternalName()}). See {@link #appendDescriptor}.
+   */
   public static final int INTERNAL_NAME = 0;
 
   /** The type of field descriptors. See {@link #appendDescriptor}. */
@@ -122,9 +124,8 @@ public class Textifier extends Printer {
   /**
    * Constructs a new {@link Textifier}.
    *
-   * @param api the ASM API version implemented by this visitor. Must be one of {@link
-   *     Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6}, {@link Opcodes#ASM7}, {@link
-   *     Opcodes#ASM8} or {@link Opcodes#ASM9}.
+   * @param api the ASM API version implemented by this visitor. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
    */
   protected Textifier(final int api) {
     super(api);
@@ -889,9 +890,9 @@ public class Textifier extends Printer {
   }
 
   @Override
-  public void visitVarInsn(final int opcode, final int var) {
+  public void visitVarInsn(final int opcode, final int varIndex) {
     stringBuilder.setLength(0);
-    stringBuilder.append(tab2).append(OPCODES[opcode]).append(' ').append(var).append('\n');
+    stringBuilder.append(tab2).append(OPCODES[opcode]).append(' ').append(varIndex).append('\n');
     text.add(stringBuilder.toString());
   }
 
@@ -1014,12 +1015,12 @@ public class Textifier extends Printer {
   }
 
   @Override
-  public void visitIincInsn(final int var, final int increment) {
+  public void visitIincInsn(final int varIndex, final int increment) {
     stringBuilder.setLength(0);
     stringBuilder
         .append(tab2)
         .append("IINC ")
-        .append(var)
+        .append(varIndex)
         .append(' ')
         .append(increment)
         .append('\n');
@@ -1325,7 +1326,8 @@ public class Textifier extends Printer {
    * @param type the type of 'value'. Must be one of {@link #INTERNAL_NAME}, {@link
    *     #FIELD_DESCRIPTOR}, {@link #FIELD_SIGNATURE}, {@link #METHOD_DESCRIPTOR}, {@link
    *     #METHOD_SIGNATURE}, {@link #CLASS_SIGNATURE} or {@link #HANDLE_DESCRIPTOR}.
-   * @param value an internal name, type descriptor or a type signature. May be {@literal null}.
+   * @param value an internal name (see {@link Type#getInternalName()}), type descriptor or a type
+   *     signature. May be {@literal null}.
    */
   protected void appendDescriptor(final int type, final String value) {
     if (type == CLASS_SIGNATURE || type == FIELD_SIGNATURE || type == METHOD_SIGNATURE) {

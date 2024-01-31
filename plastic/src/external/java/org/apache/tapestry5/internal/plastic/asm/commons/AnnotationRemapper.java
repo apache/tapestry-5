@@ -77,10 +77,8 @@ public class AnnotationRemapper extends AnnotationVisitor {
   /**
    * Constructs a new {@link AnnotationRemapper}.
    *
-   * @param api the ASM API version supported by this remapper. Must be one of {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
+   * @param api the ASM API version supported by this remapper. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
    * @param annotationVisitor the annotation visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited annotation.
    * @deprecated use {@link #AnnotationRemapper(int, String, AnnotationVisitor, Remapper)} instead.
@@ -94,10 +92,8 @@ public class AnnotationRemapper extends AnnotationVisitor {
   /**
    * Constructs a new {@link AnnotationRemapper}.
    *
-   * @param api the ASM API version supported by this remapper. Must be one of {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM4}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM5}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM6}, {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM7}, {@link
-   *     org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM8} or {@link org.apache.tapestry5.internal.plastic.asm.Opcodes#ASM9}.
+   * @param api the ASM API version supported by this remapper. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
    * @param descriptor the descriptor of the visited annotation. May be {@literal null}.
    * @param annotationVisitor the annotation visitor this remapper must delegate to.
    * @param remapper the remapper to use to remap the types in the visited annotation.
@@ -200,7 +196,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
 
   /**
    * Maps an annotation attribute name with the remapper. Returns the original name unchanged if the
-   * internal name of the annotation is {@literal null}.
+   * descriptor of the annotation is {@literal null}.
    *
    * @param name the name of the annotation attribute.
    * @return the new name of the annotation attribute.
