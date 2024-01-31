@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.plastic;
 
 import java.util.Map;
 
-import org.apache.tapestry5.plastic.internal.asm.Label;
-import org.apache.tapestry5.plastic.internal.asm.MethodVisitor;
-import org.apache.tapestry5.plastic.internal.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Label;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.plastic.LocalVariable;
 import org.apache.tapestry5.plastic.MethodDescription;
 

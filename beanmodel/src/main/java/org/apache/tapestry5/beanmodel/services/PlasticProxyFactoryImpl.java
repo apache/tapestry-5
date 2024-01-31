@@ -22,8 +22,8 @@ import org.apache.tapestry5.commons.internal.util.InternalCommonsUtils;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
-import org.apache.tapestry5.plastic.internal.asm.Type;
-import org.apache.tapestry5.plastic.internal.asm.tree.*;
+import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
 

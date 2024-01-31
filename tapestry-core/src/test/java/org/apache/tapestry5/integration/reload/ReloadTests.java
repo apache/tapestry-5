@@ -16,8 +16,8 @@ package org.apache.tapestry5.integration.reload;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.plastic.internal.asm.ClassWriter;
-import org.apache.tapestry5.plastic.internal.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.services.ClassCreationHelper;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.annotations.BeforeTest;
@@ -26,7 +26,7 @@ import org.testng.xml.XmlTest;
 
 import java.io.*;
 
-import static org.apache.tapestry5.plastic.internal.asm.Opcodes.*;
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
 
 /**
  * Integration tests designed to test Tapestry's ability to dynamically reload component classes,

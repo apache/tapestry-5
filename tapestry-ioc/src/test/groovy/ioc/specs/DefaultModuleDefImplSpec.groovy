@@ -1,12 +1,12 @@
 package ioc.specs
 
-import static org.apache.tapestry5.plastic.internal.asm.Opcodes.*
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*
 
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
 import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils
-import org.apache.tapestry5.plastic.internal.asm.ClassWriter
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter
 import org.apache.tapestry5.ioc.*
 import org.apache.tapestry5.ioc.def.ServiceDef3
 import org.apache.tapestry5.ioc.internal.*

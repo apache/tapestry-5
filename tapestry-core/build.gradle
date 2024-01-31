@@ -127,11 +127,3 @@ task runTestAppfolder(type:JavaExec) {
 task testWithPrototype(type:Test) {
   systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
 }
-
-eclipse.classpath.file {
-    whenMerged { classpath ->
-        def lib = new org.gradle.plugins.ide.eclipse.model.Library(fileReference(file(plasticAsmJarLocation)))
-        lib.exported = true
-        classpath.entries += lib
-    }
-}
