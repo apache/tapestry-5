@@ -42,7 +42,7 @@ class StrategyRegistrySpec extends Specification {
 
     then:
 
-    sr.types.size == 2
+    sr.types.size() == 2
     sr.types.containsAll(List, Map)
   }
 
