@@ -1698,19 +1698,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         
         // Trying to solve some cases where the link is present on the page but somehow
         // openBaseURL() couldn't find it.
-        if (linkText.length > 0)
-        {
-            try 
-            {
-                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(linkText[0])), 3);
-            }
-            catch (org.openqa.selenium.TimeoutException e)
-            {
-                LOGGER.warn("Page content: {}", getHtmlSource());
-                throw e;
-            }
-        }
-        
         for (String text : linkText)
         {
             try 
