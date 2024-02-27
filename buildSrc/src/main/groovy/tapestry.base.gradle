@@ -1,0 +1,19 @@
+/**
+ * This is a Gradle Convention Plugin serving to share basic build logic between all Tapestry subprojects.
+ * See https://docs.gradle.org/7.4.1/userguide/sharing_build_logic_between_subprojects.html#sec:convention_plugins
+ *
+ * It's written as a script plugin (as opposed to a binary plugin).
+ * See https://docs.gradle.org/7.4.1/userguide/plugins.html#sec:types_of_plugins
+ */
+plugins {
+	id 'base'
+	id 'eclipse'
+	id 'idea'
+}
+
+group = 'org.apache.tapestry'
+
+configurations {
+	// Non-code artifacts, such as sources JARs and zipped JavaDocs
+	meta
+}

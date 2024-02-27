@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "A code-centric, high-performance, simple Inversion of Control container"
 
 dependencies {

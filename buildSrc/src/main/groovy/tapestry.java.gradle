@@ -1,0 +1,105 @@
+/**
+ * This is a Gradle Convention Plugin serving to share Java-related build logic between the various Tapestry subprojects.
+ * See https://docs.gradle.org/7.4.1/userguide/sharing_build_logic_between_subprojects.html#sec:convention_plugins
+ * 
+ * It's written as a script plugin (as opposed to a binary plugin).
+ * See https://docs.gradle.org/7.4.1/userguide/plugins.html#sec:types_of_plugins
+ */
+plugins {
+	id 'tapestry.base'
+	id 'java-library' // makes features of 'java' plugin implicitly available 
+	id 'groovy' // mostly for testing
+	id 'jvm-test-suite'
+	id 'jacoco'
+	id 'project-report'		
+	// id 'maven-publish'
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(8)
+	}
+}
+
+// See http://jira.codehaus.org/browse/GRADLE-784
+sourceSets {
+	main {
+		compileClasspath += configurations.provided
+	}
+	test {
+		compileClasspath += configurations.provided
+		runtimeClasspath += configurations.provided
+	}
+}
+
+idea.module {
+	scopes.PROVIDED.plus += [configurations.provided]
+}
+
+eclipse.classpath.plusConfigurations += [configurations.provided]
+
+dependencies {
+
+	api platform(project(':platform'))
+
+}
+
+String jdkVersion = System.properties['java.version']
+def jdkMajorVersion = jdkVersion.substring(0, jdkVersion.indexOf(".")) // 1, 9, 10...
+def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
+		
+compileTestGroovy {
+	configure(groovyOptions.forkOptions) {
+		memoryMaximumSize = '1g'
+		jvmArgs = ['-Xms512m', '-Xmx1g']
+		
+		if (specifyMaxPermSize){
+			jvmArgs << '-XX:MaxPermSize=512m'
+		}
+	}
+}
+
+testing {
+	suites { // a test suite is a collection of JVM-based tests
+		test { // this is the built-in 'test' test suite
+			useTestNG()
+			dependencies {
+				implementation 'org.spockframework:spock-core'
+				runtimeOnly 'org.slf4j:slf4j-log4j12'
+			}
+			targets {
+				all {
+					testTask.configure {
+						
+						// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+						if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
+							// TODO actually worked without when compiling with Java 17
+							// jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+						}
+						
+						if (specifyMaxPermSize) {
+							maxHeapSize "400M"
+							jvmArgs("-XX:MaxPermSize=200m")
+						} else {
+							maxHeapSize "600M"
+						}
+						
+						jvmArgs("-Dfile.encoding=UTF-8")
+						environment.LANG = 'en_US.UTF-8'
+						
+						// Turn off live service reloading
+						systemProperty 'tapestry.service-reloading-enabled', 'false'
+						systemProperty 'java.io.tmpdir', temporaryDir.absolutePath
+						
+						options.suites("src/test/conf/testng.xml")
+						
+					}
+				}
+			}
+		}
+	}
+}
+
+jacoco {
+	toolVersion = '0.8.7'
+}

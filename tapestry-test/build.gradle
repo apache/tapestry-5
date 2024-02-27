@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "[Deprecated] Utilities for integration testing of Tapestry applications using Selenium"
 
 dependencies {

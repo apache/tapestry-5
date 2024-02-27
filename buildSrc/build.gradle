@@ -1,9 +1,11 @@
-apply plugin: "groovy"
-
-repositories {
-    mavenCentral()
+plugins {
+	id 'groovy'
+	id 'groovy-gradle-plugin'
 }
 
+repositories {
+	mavenCentral()
+}
 
 dependencies {
     implementation ("ro.isdc.wro4j:wro4j-extensions:1.8.0"){

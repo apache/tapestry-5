@@ -519,7 +519,7 @@ public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
 
      bean.getSimple().setAge(24);
 
-     assertEquals(age.getConduit().get(bean), new Integer(24));
+     assertEquals(age.getConduit().get(bean), Integer.valueOf(24));
 
      verify();
  }

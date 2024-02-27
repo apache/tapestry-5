@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Allows Clojure functions to be injected into Tapestry services and components"
 
 dependencies {

@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 import org.gradle.plugins.ide.idea.model.*
 import t5build.*
 

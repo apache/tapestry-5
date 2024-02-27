@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Utilities for generating random data used when populating entities"
 
 dependencies {

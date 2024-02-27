@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Utilities for junit testing a tapestry-ioc application"
 
 dependencies {

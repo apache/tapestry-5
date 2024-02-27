@@ -21,7 +21,7 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.example.app0.entities.User;
 import org.testng.annotations.Test;
 
-@Test(sequential = true, groups = "integration")
+@Test(singleThreaded = true, groups = "integration")
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryHibernateIntegrationTests extends SeleniumTestCase
 {

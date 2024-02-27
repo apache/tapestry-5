@@ -1,3 +1,7 @@
+plugins {
+	id 'tapestry.java'
+}
+
 description = "Tool to help migrate source code using Tapestry from one version to another. Initially built for 5.7.0"
 
 dependencies {
