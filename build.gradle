@@ -419,6 +419,10 @@ task aggregateJavadoc(type: Javadoc) {
         addStringOption 'source', '8'
         taglets "org.apache.tapestry5.javadoc.TapestryDocTaglet"
     }
+    
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+        exclude "org/apache/tapestry5/spring/**"
+    }
 
     exclude "org/apache/tapestry5/internal/plastic/asm/**"
     exclude "org/apache/tapestry5/internal/webresources/**"
