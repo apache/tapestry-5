@@ -2,7 +2,7 @@
 
 # A script to do anything that needs to be done before Gradle runs on Jenkins
 
-NETTY_VERSION=4.1.96.Final
+NETTY_VERSION=4.1.79.Final
 
 # Ugly workaround to https://github.com/gradle/gradle/issues/18519
 # Gradle dependency resolution for capability conflict does not work for 
