@@ -26,7 +26,7 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class SpringModuleDefTest extends SpringTestCase
 {

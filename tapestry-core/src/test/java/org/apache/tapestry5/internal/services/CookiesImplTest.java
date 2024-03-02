@@ -19,7 +19,7 @@ import org.apache.tapestry5.internal.test.TestableRequestImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;
 import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -39,7 +39,7 @@ public class MultipartServletRequestFilter implements HttpServletRequestFilter
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
             throws IOException
     {
-        HttpServletRequest newRequest = ServletFileUpload.isMultipartContent(request) ? decoder.decode(
+        HttpServletRequest newRequest = JakartaServletFileUpload.isMultipartContent(request) ? decoder.decode(
                 request) : request;
 
         return handler.service(newRequest, response);

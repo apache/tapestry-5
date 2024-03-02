@@ -1,6 +1,6 @@
 package org.apache.tapestry5.integration.app5.pages
 
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponse
 
 import org.apache.tapestry5.http.services.Request
 import org.apache.tapestry5.http.services.Response

@@ -11,7 +11,7 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.base;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.ActivationContextParameter;

@@ -13,13 +13,13 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
- * Creates {@link javax.validation.ValidatorFactory}.
+ * Creates {@link jakarta.validation.ValidatorFactory}.
  * 
  * @since 5.2.0.0
  */

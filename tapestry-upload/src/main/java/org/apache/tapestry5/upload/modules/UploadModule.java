@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.upload.modules;
 
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItemFactory;
 import org.apache.commons.io.FileCleaner;
 import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -101,7 +101,7 @@ public class UploadModule
 
     /**
      * The default FileItemFactory used by the MultipartDecoder is
-     * {@link org.apache.commons.fileupload.disk.DiskFileItemFactory}.
+     * {@link org.apache.commons.fileupload2.core.DiskFileItemFactory}.
      */
     public static FileItemFactory buildDefaultFileItemFactory(@Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
                                                               int repositoryThreshold,
@@ -109,13 +109,12 @@ public class UploadModule
                                                               @Symbol(UploadSymbols.REPOSITORY_LOCATION)
                                                               String repositoryLocation)
     {
-        return new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
+        return DiskFileItemFactory.builder().setFile(repositoryLocation).setBufferSize(repositoryThreshold).get();
     }
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(UploadSymbols.REPOSITORY_THRESHOLD, Integer
-                .toString(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD));
+        configuration.add(UploadSymbols.REPOSITORY_THRESHOLD, Integer.toString(DiskFileItemFactory.DEFAULT_THRESHOLD));
         configuration.add(UploadSymbols.REPOSITORY_LOCATION, System.getProperty("java.io.tmpdir"));
         configuration.add(UploadSymbols.REQUESTSIZE_MAX, NO_LIMIT);
         configuration.add(UploadSymbols.FILESIZE_MAX, NO_LIMIT);

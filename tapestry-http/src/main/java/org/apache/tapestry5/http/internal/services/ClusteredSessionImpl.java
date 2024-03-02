@@ -18,8 +18,8 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.http.services.SessionPersistedObjectAnalyzer;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 /**

@@ -21,7 +21,7 @@ public class UploadEvents
 {
     /**
      * Name of event fired on a page when an upload form associated with that page encounters a {@link
-     * org.apache.commons.fileupload.FileUploadException} while processing the multipart form submission.
+     * org.apache.commons.fileupload2.core.FileUploadException} while processing the multipart form submission.
      */
     public static final String UPLOAD_EXCEPTION = "uploadException";
-}                       
+}

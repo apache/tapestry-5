@@ -80,7 +80,7 @@ import org.apache.tapestry5.services.LinkCreationListener2;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.Map;
 
 /**

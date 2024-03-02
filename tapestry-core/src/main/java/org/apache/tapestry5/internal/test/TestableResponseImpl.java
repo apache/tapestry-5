@@ -23,8 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Document;
@@ -47,7 +48,7 @@ public class TestableResponseImpl implements TestableResponse
     private String errorMessage;
 
     private int contentLength = 0;
-    
+
     private String contentType;
 
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -64,14 +65,14 @@ public class TestableResponseImpl implements TestableResponse
     public OutputStream getOutputStream(String contentType) throws IOException
     {
         this.contentType = contentType;
-        
+
         return this.outputStream;
     }
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
         committed = true;
-        
+
         this.contentType = contentType;
 
         if (printWriter == null)
@@ -111,7 +112,7 @@ public class TestableResponseImpl implements TestableResponse
     {
         headers.put(name, value);
     }
-    
+
     @SuppressWarnings("unchecked")
     public void addHeader(String name, String value)
     {
@@ -122,7 +123,7 @@ public class TestableResponseImpl implements TestableResponse
         }
         values.add(value);
     }
-    
+
     public List<?> getHeaders(String name)
     {
         return (List<?>) headers.get(name);
@@ -223,7 +224,7 @@ public class TestableResponseImpl implements TestableResponse
     {
         this.committed = true;
     }
-    
+
     public String getContentType()
     {
         return this.contentType;
@@ -268,5 +269,15 @@ public class TestableResponseImpl implements TestableResponse
             this.delegate.close();
         }
 
+        @Override
+        public boolean isReady()
+        {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener)
+        {
+        }
     }
 }

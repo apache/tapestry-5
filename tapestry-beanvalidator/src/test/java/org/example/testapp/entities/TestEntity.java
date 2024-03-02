@@ -16,7 +16,7 @@ package org.example.testapp.entities;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 public class TestEntity
 {

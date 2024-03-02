@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemFactory;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -26,8 +26,11 @@ import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -112,9 +115,9 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         }
     }
 
-    protected ServletFileUpload createFileUpload()
+    protected JakartaServletFileUpload createFileUpload()
     {
-        ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
+        JakartaServletFileUpload upload = new JakartaServletFileUpload(fileItemFactory);
 
         // set maximum file upload size
         upload.setSizeMax(maxRequestSize);
@@ -147,9 +150,8 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
                 try
                 {
-
-                    fieldValue = item.getString(requestEncoding);
-                } catch (UnsupportedEncodingException ex)
+                    fieldValue = item.getString(Charset.forName(requestEncoding));
+                } catch (IOException ex)
                 {
                     throw new RuntimeException(ex);
                 }

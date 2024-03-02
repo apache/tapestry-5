@@ -13,11 +13,11 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import javax.validation.Configuration;
+import jakarta.validation.Configuration;
 
 /**
  * Defines the interface for a chain-of-command that updates JSR-303 configuration in some way before the {@link
- * javax.validation.ValidatorFactory} is created.
+ * jakarta.validation.ValidatorFactory} is created.
  * 
  * @since 5.2.0.0
  */

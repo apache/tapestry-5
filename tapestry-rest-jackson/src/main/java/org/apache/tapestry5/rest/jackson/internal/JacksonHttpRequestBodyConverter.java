@@ -14,7 +14,7 @@ package org.apache.tapestry5.rest.jackson.internal;
 import java.io.IOException;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.http.services.HttpRequestBodyConverter;

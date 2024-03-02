@@ -19,8 +19,8 @@ import org.apache.tapestry5.test.TapestryTestCase;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MultipartServletRequestFilterTest extends TapestryTestCase
 {

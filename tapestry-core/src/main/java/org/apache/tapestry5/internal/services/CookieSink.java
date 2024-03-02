@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 /**
  * You can write cookies to it.

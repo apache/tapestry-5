@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;

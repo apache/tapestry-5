@@ -30,7 +30,7 @@ public interface ClientConstraintDescriptor
     Class getAnnotationClass();
 
     /**
-     * Names of attributes from the {@link javax.validation.metadata.ConstraintDescriptor} that are relevant.
+     * Names of attributes from the {@link jakarta.validation.metadata.ConstraintDescriptor} that are relevant.
      */
     Set<String> getAttributes();
 
@@ -42,7 +42,7 @@ public interface ClientConstraintDescriptor
      * @param message
      *         error message to present to user when the constraint is violated
      * @param attributes
-     *         {@linkplain #getAttributes()} selected attributes} from the {@link javax.validation.metadata.ConstraintDescriptor}
+     *         {@linkplain #getAttributes()} selected attributes} from the {@link jakarta.validation.metadata.ConstraintDescriptor}
      */
     void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes);
 }

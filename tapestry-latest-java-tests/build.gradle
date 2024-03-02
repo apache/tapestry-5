@@ -3,7 +3,7 @@ description = "Test suite for making sure Tapestry runs on latest Java"
 sourceCompatibility = "17"
 targetCompatibility = "17"
 
-tasks.withType(JavaCompile).each { 
+tasks.withType(JavaCompile).each {
     it.options.compilerArgs.add("--enable-preview")
 }
 

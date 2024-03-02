@@ -151,6 +151,7 @@ public class TestableRequestImpl implements TestableRequest
         return path;
     }
 
+    @Override
     public String getContextPath()
     {
         return contextPath;
@@ -245,7 +246,7 @@ public class TestableRequestImpl implements TestableRequest
 
     /**
      * Always returns 80.
-     * 
+     *
      * @since 5.2.5
      */
     public int getServerPort()

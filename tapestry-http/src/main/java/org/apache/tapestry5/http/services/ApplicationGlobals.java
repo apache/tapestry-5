@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.http.services;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * Stores global information about the application and its environment.

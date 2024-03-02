@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.test.ioc.TestBase;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;

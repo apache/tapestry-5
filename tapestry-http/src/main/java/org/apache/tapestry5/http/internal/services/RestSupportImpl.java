@@ -15,7 +15,7 @@ package org.apache.tapestry5.http.internal.services;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.http.services.HttpRequestBodyConverter;
 import org.apache.tapestry5.http.services.RestSupport;

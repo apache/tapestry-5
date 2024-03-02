@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.http.services.Context;

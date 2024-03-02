@@ -27,11 +27,11 @@ import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
-import javax.validation.MessageInterpolator;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.*;
-import javax.validation.groups.Default;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.*;
+import jakarta.validation.groups.Default;
 import java.util.Map;
 
 /**
@@ -82,7 +82,7 @@ public class BeanValidatorModule
         configuration.add("LocaleAwareMessageInterpolator", new BeanValidatorConfigurer()
         {
             @Override
-            public void configure(javax.validation.Configuration<?> configuration)
+            public void configure(jakarta.validation.Configuration<?> configuration)
             {
                 MessageInterpolator defaultInterpolator = configuration.getDefaultMessageInterpolator();
 

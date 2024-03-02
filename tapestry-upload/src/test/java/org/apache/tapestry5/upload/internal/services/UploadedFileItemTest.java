@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
@@ -122,7 +122,7 @@ public class UploadedFileItemTest extends TapestryTestCase
         File out = new File("");
         UploadedFileItem uploadedFile = new UploadedFileItem(item);
 
-        item.write(out);
+        expect(item.write(out.toPath())).andReturn(item);
 
         replay();
 
@@ -137,7 +137,7 @@ public class UploadedFileItemTest extends TapestryTestCase
     {
         FileItem item = newMock(FileItem.class);
         UploadedFileItem uploadedFile = new UploadedFileItem(item);
-        item.delete();
+        expect(item.delete()).andReturn(item);
 
         replay();
         uploadedFile.cleanup();

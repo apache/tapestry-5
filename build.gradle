@@ -10,11 +10,11 @@ apply from: "md5.gradle"
 apply from: "sha256.gradle"
 
 project.ext.versions = [
-    jetty: "8.1.19.v20160209",
-    tomcat: "7.0.70",
+    jetty: "11.0.16",
+    tomcat: "10.1.13",
     testng: "6.14.3",
     easymock: "3.3.1",
-    servletapi: "3.0.1",
+    servletapi: "5.0.0",
     spock: "2.1-M2-groovy-3.0",
     hibernate: "5.4.32.Final",
     slf4j: "1.7.25",
@@ -106,7 +106,7 @@ allprojects {
 
 idea {
     project {
-        languageLevel = "1.8"
+        languageLevel = "8"
     }
 }
 
@@ -137,7 +137,7 @@ String jdkVersion = System.properties['java.version']
 def jdkMajorVersion = jdkVersion.substring(0, jdkVersion.indexOf(".")) // 1, 9, 10...
 
 subprojects {
-    
+
     def specifyMaxPermSize = jdkVersion ==~ /1\.[67].+/
 
     apply plugin: "maven-publish"  // for deployment
@@ -153,13 +153,13 @@ subprojects {
     apply plugin: "project-report"
     apply plugin: "jacoco"
     apply plugin: "base"
-    
+
     jacoco {
         toolVersion = "0.8.7"
     }
-    
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+
+    sourceCompatibility = "8"
+    targetCompatibility = "8"
 
     // See http://jira.codehaus.org/browse/GRADLE-784
 
@@ -180,11 +180,11 @@ subprojects {
     eclipse.classpath.plusConfigurations += [configurations.provided]
 
     dependencies {
-        
-        // https://docs.gradle.org/7.3.3/userguide/upgrading_version_6.html#potential_breaking_changes, 
+
+        // https://docs.gradle.org/7.3.3/userguide/upgrading_version_6.html#potential_breaking_changes,
         // Table 1. Common configuration upgrades
         testImplementation "org.spockframework:spock-core:${versions.spock}"
-         
+
         testRuntimeOnly "org.slf4j:slf4j-log4j12:${versions.slf4j}"
     }
 
@@ -208,12 +208,12 @@ subprojects {
         }else{
           maxHeapSize "600M"
         }
-    
+
         // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
         if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
             jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
         }
-    
+
         // Turn off live service reloading
 
         systemProperties["tapestry.service-reloading-enabled"] = "false"
@@ -222,10 +222,10 @@ subprojects {
         jvmArgs("-Dfile.encoding=UTF-8")
 
         environment.LANG = 'en_US.UTF-8'
-        
+
         if (continuousIntegrationBuild) {
           // Travis runs our builds with TERM=dumb and kills it if we don't produce any
-          // output for 10 minutes, so we log some task execution progress 
+          // output for 10 minutes, so we log some task execution progress
 
           testLogging {
             exceptionFormat "full"
@@ -251,13 +251,13 @@ subprojects {
         	attributes("Automatic-Module-Name": "org.apache.tapestry." + projectDir.getName()
         		.replaceAll("tapestry5", "tapestry")
         		.replaceAll("tapestry-", "")
-        		.replaceAll("-", ""))        		
+        		.replaceAll("-", ""))
         	if (projectDir.getName().equals("tapestry-version-migrator")) {
         		attributes("Main-Class": "org.apache.tapestry5.versionmigrator.Main")
         	}
         }
     }
-    
+
     assemble.dependsOn(processResources, compileJava, jar)
 
     task sourcesJar(type: Jar) {
@@ -283,7 +283,7 @@ subprojects {
             published.extendsFrom signatures
         }
     }
-    
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -291,11 +291,11 @@ subprojects {
                 groupId = "org.apache.tapestry"
                 from components.java
                 artifact sourcesJar
-                
+
                 pom {
                     name = project.name
                     // TODO: find some way to get the subproject description here.
-                    // description = 
+                    // description =
                     url = "https://tapestry.apache.org/"
                     licenses {
                         license {
@@ -337,7 +337,7 @@ subprojects {
                         }
                     }
                 }
-                
+
             }
         }
     }
@@ -369,7 +369,7 @@ subprojects {
         resolutionStrategy.force "antlr:antlr:2.7.7",
             "cglib:cglib-nodep:2.2",
             "commons-codec:commons-codec:1.10",
-            "commons-io:commons-io:2.4",
+            "commons-io:commons-io:2.13.0",
             "commons-logging:commons-logging:1.1.3",
             "hsqldb:hsqldb:2.2.8",
             "org.antlr:antlr-runtime:3.5.2",
@@ -423,7 +423,7 @@ task aggregateJavadoc(type: Javadoc) {
     exclude "org/apache/tapestry5/internal/plastic/asm/**"
     exclude "org/apache/tapestry5/internal/webresources/**"
     exclude "org/apache/tapestry5/webresources/modules/**"
-    
+
     source allMainJavaFiles
 
     classpath += files(allMainSourceSets*.compileClasspath)
@@ -674,7 +674,7 @@ task updateBootstrap {
 	  def bootstrapVersion = '3.3.7'
 	  def target = new File(temporaryDir, 'bootstrap.zip')
 	  ant.get(src: "https://github.com/twbs/bootstrap/archive/v${bootstrapVersion}.zip", dest: target)
-	
+
 	  def adjustDirectory = {
 	      def relativePath = it.relativePath
 	      if (relativePath.pathString.contains('/dist/')){
@@ -684,9 +684,9 @@ task updateBootstrap {
 	      }
 	      println "copying $it.relativePath to $relativePath"
 	      it.relativePath = relativePath
-	
+
 	  }
-	
+
 	  copy {
 	    from(zipTree(target)){
 	        include('*/js/*.js')
@@ -702,13 +702,13 @@ task updateBootstrap {
 	    }
 	    into('tapestry-core/src/main/resources/META-INF/assets/tapestry5/bootstrap/')
 	  }
-	
+
 	  copy {
 	    from(zipTree(target)){
 	        include('*/js/*.js')
 	        include('*/dist/fonts/*')
 	        include('*/less/**/*.less')
-	
+
 	        eachFile adjustDirectory
 	    }
 	    into('tapestry-webresources/src/test/webapp/bootstrap/')

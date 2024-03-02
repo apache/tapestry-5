@@ -24,7 +24,7 @@ import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
 import org.apache.tapestry5.services.HttpError;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

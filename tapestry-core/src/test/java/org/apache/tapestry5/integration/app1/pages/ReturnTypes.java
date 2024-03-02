@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.StreamPageContent;
 import org.apache.tapestry5.util.TextStreamResponse;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 

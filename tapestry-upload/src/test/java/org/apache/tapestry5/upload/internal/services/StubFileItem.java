@@ -14,10 +14,12 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemHeaders;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemHeaders;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 public class StubFileItem implements FileItem
 {
@@ -43,7 +45,7 @@ public class StubFileItem implements FileItem
     }
 
     @Override
-    public InputStream getInputStream() throws IOException
+    public InputStream getInputStream()
     {
         return null;
     }
@@ -80,7 +82,7 @@ public class StubFileItem implements FileItem
     }
 
     @Override
-    public String getString(String string) throws UnsupportedEncodingException
+    public String getString(Charset charset)
     {
         return getString();
     }
@@ -92,14 +94,16 @@ public class StubFileItem implements FileItem
     }
 
     @Override
-    public void write(File file) throws Exception
+    public FileItem write(Path file)
     {
+        return this;
     }
 
     @Override
-    public void delete()
+    public FileItem delete()
     {
         isDeleted = true;
+        return this;
     }
 
     @Override
@@ -110,9 +114,10 @@ public class StubFileItem implements FileItem
     }
 
     @Override
-    public void setFieldName(String fieldName)
+    public FileItem setFieldName(String fieldName)
     {
         this.fieldName = fieldName;
+        return this;
     }
 
     @Override
@@ -122,9 +127,10 @@ public class StubFileItem implements FileItem
     }
 
     @Override
-    public void setFormField(boolean formField)
+    public FileItem setFormField(boolean formField)
     {
         this.formField = formField;
+        return this;
     }
 
     @Override
@@ -157,7 +163,8 @@ public class StubFileItem implements FileItem
 
     /* unused method but required by FileItem interface */
     @Override
-    public void setHeaders(FileItemHeaders headers)
+    public FileItem setHeaders(FileItemHeaders headers)
     {
+        return this;
     }
 }

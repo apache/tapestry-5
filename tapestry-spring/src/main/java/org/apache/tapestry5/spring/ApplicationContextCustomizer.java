@@ -17,7 +17,7 @@ package org.apache.tapestry5.spring;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * A bridge from Spring's approach to customizing the application context, over to Tapestry's approach. This is a

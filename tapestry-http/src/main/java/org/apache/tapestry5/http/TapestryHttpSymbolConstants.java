@@ -61,7 +61,7 @@ final public class TapestryHttpSymbolConstants {
      */
     public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
     /**
-     * If true (the default), then Tapestry will apply locking semantics around access to the {@link javax.servlet.http.HttpSession}.
+     * If true (the default), then Tapestry will apply locking semantics around access to the {@link jakarta.servlet.http.HttpSession}.
      * Reading attribute names occurs with a shared read lock; getting or setting an attribute upgrades to an exclusive write lock.
      * This can tend to serialize threads when a number of simultaneous (Ajax) requests from the client arrive ... however,
      * many implementations of HttpSession are not thread safe, and often mutable objects are stored in the session and shared
@@ -82,7 +82,7 @@ final public class TapestryHttpSymbolConstants {
      * @since 5.1.0.0
      */
     public static final String APPLICATION_VERSION = "tapestry.application-version";
-    
+
     /**
      * Indicates whether Tapestry is running in production mode or developer mode. This affects a large
      * number of Tapestry behaviors related to performance and security, including how exceptions are
@@ -91,15 +91,15 @@ final public class TapestryHttpSymbolConstants {
      * variables (to assist with debugging), and more.
      */
     public static final String PRODUCTION_MODE = "tapestry.production-mode";
-    
+
     /**
      * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
      * should only occur when developing Tapestry).
      */
     public static final String TAPESTRY_VERSION = "tapestry.version";
-    
+
     /**
-     * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
+     * Identifies the context path of the application, as determined from {@link jakarta.servlet.ServletContext#getContextPath()}.
      * This is either a blank string or a string that starts with a slash but does not end with one.
      *
      * @since 5.4
@@ -137,7 +137,7 @@ final public class TapestryHttpSymbolConstants {
      */
     public static final String GZIP_COMPRESSION_ENABLED = "tapestry.gzip-compression-enabled";
     /**
-     * Defines whether the CORS (Cross-Origing Resource Sharing) support 
+     * Defines whether the CORS (Cross-Origing Resource Sharing) support
      * should be enabled or not. Default value is "false". If you set this to "true",
      * you should also set {@link #CORS_ALLOWED_ORIGINS}.
      * @see CorsHandler
@@ -148,49 +148,49 @@ final public class TapestryHttpSymbolConstants {
 
     /**
      * Comma-delimited of origins allowed for CORS. The special value "*" means allowing all origins.
-     * This is used by the default implementation of {@link CorsHandlerHelper#getAllowedOrigin(javax.servlet.http.HttpServletRequest)}.
+     * This is used by the default implementation of {@link CorsHandlerHelper#getAllowedOrigin(jakarta.servlet.http.HttpServletRequest)}.
      * Default value is the empty string (i.e. no origins allowed and CORS actually disabled).
      * @since 5.8.2
      */
     public static final String CORS_ALLOWED_ORIGINS = "tapestry.cors-allowed-origins";
-    
+
     /**
      * Boolean value defining whether the Access-Control-Allow-Credentials HTTP header
      * should be set automatically in the response for CORS requests. Default value is
-     * <code>false</code>. This is used by the default implementation of {@link CorsHandlerHelper#configureCredentials(javax.servlet.http.HttpServletResponse)}.
+     * <code>false</code>. This is used by the default implementation of {@link CorsHandlerHelper#configureCredentials(jakarta.servlet.http.HttpServletResponse)}.
      * @since 5.8.2
      */
     public static final String CORS_ALLOW_CREDENTIALS = "tapestry.cors-allow-credentials";
 
     /**
      * Value to be used in the Access-Control-Allow-Methods in CORS preflight request responses.
-     * This is used by {@link CorsHandlerHelper#configureMethods(javax.servlet.http.HttpServletResponse)}.
+     * This is used by {@link CorsHandlerHelper#configureMethods(jakarta.servlet.http.HttpServletResponse)}.
      * Default value is <code>GET,HEAD,PUT,PATCH,POST,DELETE</code>.
      * @since 5.8.2
      */
     public static final String CORS_ALLOW_METHODS = "tapestry.cors-allow-methods";
-    
+
     /**
      * Value to be used in the Access-Control-Allow-Headers in CORS preflight request responses.
-     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(javax.servlet.http.HttpServletResponse, javax.servlet.http.HttpServletRequest)},
+     * This is used by {@link CorsHandlerHelper#configureAllowedHeaders(jakarta.servlet.http.HttpServletResponse, jakarta.servlet.http.HttpServletRequest)},
      * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * @since 5.8.2
      */
     public static final String CORS_ALLOWED_HEADERS = "tapestry.cors-allowed-headers";
-    
+
     /**
      * Value to be used in the Access-Control-Expose-Headers in CORS preflight request responses.
-     * This is used by the default implementation of {@link CorsHandlerHelper#configureExposeHeaders(javax.servlet.http.HttpServletResponse)},
+     * This is used by the default implementation of {@link CorsHandlerHelper#configureExposeHeaders(jakarta.servlet.http.HttpServletResponse)},
      * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * @since 5.8.2
      */
     public static final String CORS_EXPOSE_HEADERS = "tapestry.cors-expose-headers";
-    
+
     /**
      * Value to be used in the Access-Control-Max-Age in responses to preflight CORS requests.
-     * This is used by {@link CorsHandlerHelper#configureMaxAge(javax.servlet.http.HttpServletResponse)},
+     * This is used by {@link CorsHandlerHelper#configureMaxAge(jakarta.servlet.http.HttpServletResponse)},
      * which only sets the header if the value isn't empty.
      * Default value is the empty string.
      * This is an alias for {@link TapestryHttpSymbolConstants#CORS_MAX_AGE}.

@@ -17,7 +17,7 @@ package org.apache.tapestry5.spring;
 import org.apache.tapestry5.http.TapestryFilter;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class TapestryApplicationContextTest extends SpringTestCase
 {
