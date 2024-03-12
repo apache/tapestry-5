@@ -1,4 +1,4 @@
-// Copyright 2010-2013 The Apache Software Foundation
+// Copyright 2010-2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,8 +40,6 @@ import org.slf4j.Logger;
  */
 @Scope(ScopeConstants.PERTHREAD)
 public class RequestPageCacheImpl implements RequestPageCache, Runnable
-
-/// This should have a listener too!
 {
     private final Logger logger;
 
@@ -117,6 +115,10 @@ public class RequestPageCacheImpl implements RequestPageCache, Runnable
     
     private List<String> listen(List<String> resources)
     {
+        if (resources.isEmpty())
+        {
+            cache.clear();
+        }
         // TODO: we probably don't need this anymore
         for (String resource : resources) 
         {
