@@ -31,6 +31,7 @@ import org.apache.tapestry5.internal.services.TemplateParser;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
@@ -87,6 +88,7 @@ public class PageLoadModule
     }
     
     @Startup
+    @Order("before:*")
     public void preloadPageClassLoaderContexts(
             PageClassLoaderContextManager pageClassLoaderContextManager,
             ComponentDependencyRegistry componentDependencyRegistry,
@@ -103,6 +105,18 @@ public class PageLoadModule
                     pageClassLoaderContextManager.get(className);
                 }
             }
+        }
+        // Preload the dependency information for all pages 
+        // when in production mode. Without that, exceptions during
+        // page assembly will occurr. This should add just a few
+        // seconds to page initialization. If it takes too long,
+        // we can create a version of preload() that accepts a boolean
+        // parameter defining whether templates should be parsed or not
+        // (the exception occurrs when a superclass isn't loaded
+        // and transformed before a subclass)
+        else if (productionMode)
+        {
+            pageClassLoaderContextManager.preload();
         }
     }
     

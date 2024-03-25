@@ -58,6 +58,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     
     private final boolean multipleClassLoaders;
     
+    private final boolean productionMode;
+    
     private final static ThreadLocal<Integer> NESTED_MERGE_COUNT = ThreadLocal.withInitial(() -> 0);
     
     private final static ThreadLocal<Boolean> INVALIDATING_CONTEXT = ThreadLocal.withInitial(() -> false);
@@ -73,6 +75,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             final ComponentClassResolver componentClassResolver,
             final InternalComponentInvalidationEventHub invalidationHub,
             final @ComponentClasses InvalidationEventHub componentClassesInvalidationEventHub,
+            final @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             final @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders) 
     {
         super();
@@ -81,6 +84,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         this.invalidationHub = invalidationHub;
         this.componentClassesInvalidationEventHub = componentClassesInvalidationEventHub;
         this.multipleClassLoaders = multipleClassLoaders;
+        this.productionMode = productionMode;
         invalidationHub.addInvalidationCallback(this::listen);
         NESTED_MERGE_COUNT.set(0);
     }
@@ -114,14 +118,11 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         Objects.requireNonNull(plasticProxyFactoryProvider);
         this.root = root;
         this.plasticProxyFactoryProvider = plasticProxyFactoryProvider;
-        if (multipleClassLoaders)
-        {
-            LOGGER.debug("Root context: {}", root);
-        }
+        LOGGER.info("Root context: {}", root);
     }
 
     @Override
-    public PageClassLoaderContext get(final String className)
+    public synchronized PageClassLoaderContext get(final String className)
     {
         PageClassLoaderContext context;
         
@@ -226,12 +227,9 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             {
                 context = root;
             } else {
-                if (
+                if (!productionMode && (
                         !componentDependencyRegistry.contains(className) ||
-                        !multipleClassLoaders
-                        // TODO: review this
-//                        && componentDependencyRegistry.getDependents(className).isEmpty()
-                        )
+                        !multipleClassLoaders))
                 {
                     context = unknownContextProvider.get();
                 }
@@ -273,7 +271,11 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                         }
                     }
                     
-                    if (contextDependencies.size() == 0)
+                    if (!multipleClassLoaders)
+                    {
+                        context = root;
+                    }
+                    else if (contextDependencies.size() == 0)
                     {
                         context = new PageClassLoaderContext(
                                 getContextName(className), 
@@ -300,8 +302,11 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                                 plasticProxyFactoryProvider.apply(parentContext.getClassLoader()),
                                 this::get);
                     }
-                    
-                    context.getParent().addChild(context);
+
+                    if (multipleClassLoaders)
+                    {
+                        context.getParent().addChild(context);
+                    }
                     
                     // Ensure non-page class is initialized in the correct context and classloader.
                     // Pages get their own context and classloader, so this initialization
@@ -312,7 +317,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                         loadClass(className, context);
                     }
 
-                    LOGGER.debug("New context: {}", context);
+                    if (multipleClassLoaders)
+                    {
+                        LOGGER.debug("New context: {}", context);
+                    }
                     
                 }
             }
@@ -650,6 +658,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             } catch (ClassNotFoundException e) 
             {
                 throw new RuntimeException(e);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("Exception while preloading page " + page, e);
             }
         }
         
