@@ -587,13 +587,16 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         Objects.requireNonNull(dependency, "Parameter type cannot be null");
         synchronized (map) 
         {
-            Set<Dependency> dependents = map.get(dependency);
-            if (dependents == null) 
+            if (!component.equals(dependency))
             {
-                dependents = new HashSet<>();
-                map.put(dependency, dependents);
+                Set<Dependency> dependents = map.get(dependency);
+                if (dependents == null) 
+                {
+                    dependents = new HashSet<>();
+                    map.put(dependency, dependents);
+                }
+                dependents.add(new Dependency(component, type));
             }
-            dependents.add(new Dependency(component, type));
         }
     }
     
