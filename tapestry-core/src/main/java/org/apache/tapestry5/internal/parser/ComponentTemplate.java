@@ -14,6 +14,7 @@ package org.apache.tapestry5.internal.parser;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tapestry5.commons.Location;
 import org.apache.tapestry5.commons.Resource;
@@ -55,6 +56,14 @@ public interface ComponentTemplate
      * @since 5.1.0.1
      */
     List<TemplateToken> getExtensionPointTokens(String extensionPointId);
+    
+    /**
+     * Returns the extension point ids, including both &lt;t:extension-point&gt;
+     * and &lt;t:replace&gt;.
+     * @return set of extension point ids.
+     * @since 5.8.5
+     */
+    Set<String> getExtensionPointIds();
 
     /**
      * Returns the resource that was parsed to form the template.

@@ -50,6 +50,7 @@ import org.apache.tapestry5.corelib.components.If;
 import org.apache.tapestry5.corelib.components.Label;
 import org.apache.tapestry5.corelib.components.Loop;
 import org.apache.tapestry5.corelib.components.Output;
+import org.apache.tapestry5.corelib.components.OutputRaw;
 import org.apache.tapestry5.corelib.components.PageLink;
 import org.apache.tapestry5.corelib.components.PropertyDisplay;
 import org.apache.tapestry5.corelib.components.PropertyEditor;
@@ -61,9 +62,13 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
+import org.apache.tapestry5.integration.app1.base.BaseLayoutPage;
+import org.apache.tapestry5.integration.app1.base.EmptyExtendTemplate;
 import org.apache.tapestry5.integration.app1.components.Border;
 import org.apache.tapestry5.integration.app1.components.ErrorComponent;
 import org.apache.tapestry5.integration.app1.components.OuterAny;
+import org.apache.tapestry5.integration.app1.components.SubclassWithImport;
+import org.apache.tapestry5.integration.app1.components.SuperclassWithImport;
 import org.apache.tapestry5.integration.app1.components.TextOnlyOnDisabledTextField;
 import org.apache.tapestry5.integration.app1.mixins.AltTitleDefault;
 import org.apache.tapestry5.integration.app1.mixins.EchoValue;
@@ -75,6 +80,7 @@ import org.apache.tapestry5.integration.app1.pages.BlockHolder;
 import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
 import org.apache.tapestry5.integration.app1.pages.InstanceMixinDependencies;
 import org.apache.tapestry5.integration.app1.pages.MixinParameterDefault;
+import org.apache.tapestry5.integration.app1.pages.TemplateOverrideDemo;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
@@ -145,6 +151,8 @@ public class ComponentDependencyRegistryImplTest
         expectResolveComponent(RenderObject.class);
         expectResolveComponent(Form.class);
         expectResolveComponent(Glyphicon.class);
+        expectResolveComponent(SubclassWithImport.class);
+        expectResolveComponent(OutputRaw.class);
         
         EasyMock.expect(resolver.resolveMixinTypeToClassName("textonlyondisabled"))
             .andReturn(TextOnlyOnDisabled.class.getName()).anyTimes();
@@ -228,7 +236,11 @@ public class ComponentDependencyRegistryImplTest
     
     private Set<String> getDependencies(String className)
     {
-        return componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
+        Set<String> dependencies = new HashSet<>();
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE));
+        return Collections.unmodifiableSet(dependencies);
     }
     
     @Test
@@ -340,7 +352,7 @@ public class ComponentDependencyRegistryImplTest
     }
     
     // Tested code isn't being used at the moment
-    @Test(enabled = false)
+    @Test
     public void register()
     {
         
@@ -395,7 +407,16 @@ public class ComponentDependencyRegistryImplTest
         componentDependencyRegistry.register(InstanceMixinDependencies.class);
         assertDependencies(InstanceMixinDependencies.class, 
                 EchoValue.class, EchoValue2.class, TextField.class);
+
+        // Templates with <t:extension-point>
+        componentDependencyRegistry.register(BaseLayoutPage.class);
+        assertDependencies(BaseLayoutPage.class,
+                Delegate.class, SubclassWithImport.class, Border.class);
         
+        // Templates with <t:replace>
+        componentDependencyRegistry.register(SubclassWithImport.class);
+        assertDependencies(SubclassWithImport.class,
+                OutputRaw.class, SuperclassWithImport.class);
 
     }
     

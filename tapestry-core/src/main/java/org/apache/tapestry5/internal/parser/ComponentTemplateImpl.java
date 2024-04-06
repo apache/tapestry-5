@@ -19,8 +19,10 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import static org.apache.tapestry5.commons.util.CollectionFactory.newList;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {
@@ -92,6 +94,11 @@ public class ComponentTemplateImpl implements ComponentTemplate
     public List<TemplateToken> getExtensionPointTokens(String extensionPointId)
     {
         return InternalUtils.get(overrides, extensionPointId);
+    }
+    
+    public Set<String> getExtensionPointIds()
+    {
+        return overrides != null ? overrides.keySet() : Collections.emptySet();
     }
 
     public boolean isExtension()

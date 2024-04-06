@@ -12,7 +12,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -116,6 +115,13 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         {
             return false;
         }
+
+        @Override
+        public Set<String> getExtensionPointIds() 
+        {
+            return Collections.emptySet();
+        }
+        
     };
 
     public ComponentTemplateSourceImpl(@Inject
