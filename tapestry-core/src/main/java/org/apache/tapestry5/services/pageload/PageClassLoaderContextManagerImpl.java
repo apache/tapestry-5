@@ -221,6 +221,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         if (context == null)
         {
             
+            LOGGER.debug("Processing class {}", className);
+            
             // Class isn't in a controlled package, so it doesn't get transformed
             // and should go for the root context, which is never thrown out.
             if (!root.getPlasticManager().shouldInterceptClassLoading(className))
