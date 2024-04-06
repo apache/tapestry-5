@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -270,7 +271,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         if (templateResource != null)
         {
             final ComponentTemplate template = templateParser.parseTemplate(templateResource);
-            for (TemplateToken token:  template.getTokens())
+            final List<TemplateToken> tokens = new LinkedList<>();
+
+            tokens.addAll(template.getTokens());
+            for (String id : template.getExtensionPointIds())
+            {
+                tokens.addAll(template.getExtensionPointTokens(id));
+            }
+            
+            for (TemplateToken token : tokens)
             {
                 if (token instanceof StartComponentToken) 
                 {

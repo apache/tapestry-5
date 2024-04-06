@@ -4,6 +4,8 @@
         <h1 id="title">
             <span t:id="titleDelegate"/>
         </h1>
+        <!-- Just for testing ComponentDependencyRegistry.register() -->
+        <t:subclassWithImport/>
     </t:extension-point>
 
     <t:extension-point id="content">

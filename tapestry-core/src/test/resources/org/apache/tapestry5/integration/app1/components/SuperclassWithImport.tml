@@ -1,0 +1,11 @@
+<!DOCTYPE html> 
+
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
+
+	<p>Something before extension point</p>
+
+	<t:extension-point id="details">Superclass with import!</t:extension-point>
+
+	<p>Something after extension point.</p>
+
+</t:container>

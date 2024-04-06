@@ -1,0 +1,9 @@
+<!DOCTYPE html> 
+
+<t:extend xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
+	<t:replace id="details">
+		Subclass with imports
+        <!-- Just for testing ComponentDependencyRegistry.register() -->
+        <t:outputRaw value="literal:"/>
+	</t:replace>
+</t:extend>
