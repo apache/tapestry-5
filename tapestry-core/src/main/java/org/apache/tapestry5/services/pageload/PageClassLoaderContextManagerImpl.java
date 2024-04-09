@@ -248,8 +248,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                     for (String dependency : dependencies)
                     {
                         // Avoid infinite recursion loops
-                        if (!alreadyProcessed.contains(dependency)/* && 
-                                !circularDependencies.contains(dependency)*/)
+                        if (!alreadyProcessed.contains(dependency))
                         {
                             processUsingDependencies(dependency, root, unknownContextProvider, 
                                     plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed, false);
@@ -261,15 +260,19 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                     for (String dependency : dependencies) 
                     {
                         PageClassLoaderContext dependencyContext = root.findByClassName(dependency);
-                        if (dependencyContext == null)
+                        // Avoid infinite recursion loops
+                        if (!alreadyProcessed.contains(dependency))
                         {
-                            dependencyContext = processUsingDependencies(dependency, root, unknownContextProvider,
-                                    plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
-
-                        }
-                        if (!dependencyContext.isRoot())
-                        {
-                            contextDependencies.add(dependencyContext);
+                            if (dependencyContext == null)
+                            {
+                                dependencyContext = processUsingDependencies(dependency, root, unknownContextProvider,
+                                        plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed);
+    
+                            }
+                            if (!dependencyContext.isRoot())
+                            {
+                                contextDependencies.add(dependencyContext);
+                            }
                         }
                     }
                     
