@@ -126,7 +126,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     {
         PageClassLoaderContext context;
         
-        final String enclosingClassName = PlasticUtils.getEnclosingClassName(className);
+        final String enclosingClassName = getAdjustedClassName(className);
         context = root.findByClassName(enclosingClassName);
         
         if (context == null)
@@ -154,6 +154,12 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         
         return context;
         
+    }
+
+    private String getAdjustedClassName(final String className) 
+    {
+        return PlasticUtils.getEnclosingClassName(className)
+                .replaceAll("\\[\\]", "");
     }
 
     private PageClassLoaderContext getUnknownContext(final PageClassLoaderContext root,
