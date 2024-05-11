@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.apache.tapestry5.services.assets.StreamableResource;
 
-import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 
 /**
