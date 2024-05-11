@@ -94,7 +94,8 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
         compiler.disableThreads();
 
         String source = IOUtils.toString(resource.openStream(), StandardCharsets.UTF_8);
-        SourceFile input = SourceFile.fromCode(resource.toString(), source);
+
+        SourceFile input = SourceFile.fromCode("streamable-resource", source);
 
         List<SourceFile> inputs = Collections.singletonList(input);
 
@@ -105,7 +106,8 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
             return IOUtils.toInputStream(compiler.toSource(), StandardCharsets.UTF_8);
         }
 
-        throw new RuntimeException(String.format("Compilation failed: %s.",
+        throw new RuntimeException(String.format("Compilation failed for %s. Errors: %s.",
+        		resource,
                 InternalUtils.join(CollectionFactory.newList(result.errors), ";")));
     }
 }
