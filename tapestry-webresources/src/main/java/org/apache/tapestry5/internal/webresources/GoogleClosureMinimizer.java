@@ -93,7 +93,8 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
         compiler.disableThreads();
 
-        SourceFile input = SourceFile.fromInputStream(resource.toString(), resource.openStream(), StandardCharsets.UTF_8);
+        String source = IOUtils.toString(resource.openStream(), StandardCharsets.UTF_8);
+        SourceFile input = SourceFile.fromCode(resource.toString(), source);
 
         List<SourceFile> inputs = Collections.singletonList(input);
 
