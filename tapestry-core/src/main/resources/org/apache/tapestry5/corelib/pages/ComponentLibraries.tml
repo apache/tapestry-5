@@ -3,125 +3,180 @@
 
     <h2 t:type="If" t:test="productionMode">This page is disabled in production mode</h2>
     
-    <t:if t:test="!productionMode">
-	    <h1><strong>${libraryMappings.size()}</strong> component libraries used</h1>
-	    
-	    
-	    <ul id="libraryList" class="list-group">
-	    	<li t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" class="list-group-item">
-	    		<a href="#${libraryClientId}">
-	    			<code>${libraryMapping.libraryName}</code> <t:if test="info">: ${info.name}</t:if>
-	    		</a>
-	    		<p t:type="If" t:test="info?.description">
-	    			${info.description}
-	    		</p>
-	    		<p class="tags" t:type="If" t:test="!info?.tags.empty">
-	    			Tags: 
-					<span t:type="Loop" t:source="info.tags" t:value="var:tag" class="badge" 
-						style="margin-right: 0.3em; font-size: 0.75em">
-						${var:tag}
-					</span>
-				</p>
-	    	</li>
-	    </ul>
-	    
-	
-		<div id="libraries">
-		
-			<div class="libraryInfo" t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" id="${libraryClientId}">
-		
-				<h2><code>${libraryMapping.libraryName}</code> <t:if test="info">: ${info.name}</t:if></h2>
-				
-				<t:if test="info">
+    <t:If t:test="!productionMode">
+		<t:zone>
 			
-				    <dl class="dl-horizontal">
-				    
-				        <dt>Homepage</dt>
-				        <dd class="homepage">
-				        	<t:if test="info.homepageUrl" else="message:not-informed">
-				        		<a href="${info.homepageUrl}">${info.homepageUrl}</a>
-				        	</t:if>
-				        </dd>
-				        
-				        <dt>Version</dt>
-				        <dd class="version">
-				        	<t:if test="info.version" else="message:not-informed">
-				        		${info.version}
-				        	</t:if>
-				        </dd>
-
-				        <dt>Tapestry version</dt>
-				        <dd class="tapestryVersion">
-				        	<t:if test="info.tapestryVersion" else="message:not-informed">
-				        		${info.tapestryVersion}
-				        	</t:if>
-				        </dd>
-				
-				        <dt>Documentation URL</dt>
-				        <dd class="documentationUrl">
-				        	<t:if test="info.documentationUrl" else="message:not-informed">
-				        		<a href="${info.documentationUrl}">${info.documentationUrl}</a>
-				        	</t:if>
-				        </dd>
-				        
-				        <dt>JavaDoc URL</dt>
-				        <dd class="javadocUrl">
-				        	<t:if test="info.javadocUrl" else="message:not-informed">
-				        		<a href="${info.javadocUrl}">${info.javadocUrl}</a>
-				        	</t:if>
-				        </dd>
-				        
-				        <t:if test="info.dependencyManagementInfoPresent">
-				        	<dt>Dependency information</dt>
-				        	<dd class="dependencyInformation">
-			        			Group id <code class="groupId">${info.groupId}</code>,
-			        			artifact id <code class="groupId">${info.artifactId}</code>,
-			        			version <code class="groupId">${info.version}</code>
-			        			<br/>
-				        		<a href="${info.dependencyManagementInfoUrl}" 
-				        			target="_blank">
-				        			<em>More information at Maven Central Respository</em>
-				        		</a>
-				        	</dd>
-				        </t:if>
-				        
-				        <dt>Source browse URL</dt>
-				        <dd class="sourceBrowseUrl">
-				        	<t:if test="info.sourceBrowseUrl" else="message:not-informed">
-				        		<a href="${info.sourceBrowseUrl}">${info.sourceBrowseUrl}</a>
-				        	</t:if>
-				        </dd>
-				        
-				        <dt>Issue tracker URL</dt>
-				        <dd class="issueTrackerUrl">
-				        	<t:if test="info.issueTrackerUrl" else="message:not-informed">
-				        		<a href="${info.issueTrackerUrl}">${info.issueTrackerUrl}</a>
-				        	</t:if>
-				        </dd>
-				        
-				        <dt></dt>
-				        <dd class="jsonDescription">
-				        	<a t:type="EventLink" t:event="json" t:context="libraryMapping.libraryName">Generate JSON description</a>
-				        </dd>
-				
-				    </dl>
-			    
+			<p>
+				<t:if test="showEverything">
+					<p:then>
+						<t:eventLink event="showRestricted" zone="^">
+							Don't show webapp library
+						</t:eventLink>
+					</p:then>				
+					<p:else>
+						<t:eventLink event="showEverything" zone="^">
+							Show webapp library
+						</t:eventLink>
+					</p:else>	
 				</t:if>
-	
-				<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryMapping.libraryName}</code>.</p>
-				
-	<!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
-	<!-- 			</div> -->
-	
-				<div t:type="Delegate" to="componentsTable"></div>
-				<div t:type="Delegate" to="pagesTable"></div>
-				<div t:type="Delegate" to="mixinsTable"></div>
-				
-			</div>
+			</p>
 			
-		</div>
+			<t:If test="!selectedComponent">
+			
+			    <h1><strong>${libraryMappings.size()}</strong> component libraries used</h1>
+			    
+			    <ul id="libraryList" class="list-group">
+			    	<li t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" class="list-group-item">
+			    		<a href="#${libraryClientId}">
+			    			<code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if>
+			    		</a>
+			    		<p t:type="If" t:test="info?.description">
+			    			${info.description}
+			    		</p>
+			    		<p class="tags" t:type="If" t:test="!info?.tags.empty">
+			    			Tags: 
+							<span t:type="Loop" t:source="info.tags" t:value="var:tag" class="badge" 
+								style="margin-right: 0.3em; font-size: 0.75em">
+								${var:tag}
+							</span>
+						</p>
+			    	</li>
+			    </ul>
+			    
+			
+				<div id="libraries">
+				
+					<div class="libraryInfo" t:type="Loop" t:source="libraryMappings" t:value="libraryMapping" id="${libraryClientId}">
+				
+						<h2><code>${libraryName}</code> <t:if test="info">: ${info.name}</t:if></h2>
+						
+						<t:if test="info">
+					
+						    <dl class="dl-horizontal">
+						    
+						        <dt>Homepage</dt>
+						        <dd class="homepage">
+						        	<t:if test="info.homepageUrl" else="message:not-informed">
+						        		<a href="${info.homepageUrl}">${info.homepageUrl}</a>
+						        	</t:if>
+						        </dd>
+						        
+						        <dt>Version</dt>
+						        <dd class="version">
+						        	<t:if test="info.version" else="message:not-informed">
+						        		${info.version}
+						        	</t:if>
+						        </dd>
 		
-	</t:if>
+						        <dt>Tapestry version</dt>
+						        <dd class="tapestryVersion">
+						        	<t:if test="info.tapestryVersion" else="message:not-informed">
+						        		${info.tapestryVersion}
+						        	</t:if>
+						        </dd>
+						
+						        <dt>Documentation URL</dt>
+						        <dd class="documentationUrl">
+						        	<t:if test="info.documentationUrl" else="message:not-informed">
+						        		<a href="${info.documentationUrl}">${info.documentationUrl}</a>
+						        	</t:if>
+						        </dd>
+						        
+						        <dt>JavaDoc URL</dt>
+						        <dd class="javadocUrl">
+						        	<t:if test="info.javadocUrl" else="message:not-informed">
+						        		<a href="${info.javadocUrl}">${info.javadocUrl}</a>
+						        	</t:if>
+						        </dd>
+						        
+						        <t:if test="info.dependencyManagementInfoPresent">
+						        	<dt>Dependency information</dt>
+						        	<dd class="dependencyInformation">
+					        			Group id <code class="groupId">${info.groupId}</code>,
+					        			artifact id <code class="groupId">${info.artifactId}</code>,
+					        			version <code class="groupId">${info.version}</code>
+					        			<br/>
+						        		<a href="${info.dependencyManagementInfoUrl}" 
+						        			target="_blank">
+						        			<em>More information at Maven Central Respository</em>
+						        		</a>
+						        	</dd>
+						        </t:if>
+						        
+						        <dt>Source browse URL</dt>
+						        <dd class="sourceBrowseUrl">
+						        	<t:if test="info.sourceBrowseUrl" else="message:not-informed">
+						        		<a href="${info.sourceBrowseUrl}">${info.sourceBrowseUrl}</a>
+						        	</t:if>
+						        </dd>
+						        
+						        <dt>Issue tracker URL</dt>
+						        <dd class="issueTrackerUrl">
+						        	<t:if test="info.issueTrackerUrl" else="message:not-informed">
+						        		<a href="${info.issueTrackerUrl}">${info.issueTrackerUrl}</a>
+						        	</t:if>
+						        </dd>
+						        
+						        <dt></dt>
+						        <dd class="jsonDescription">
+						        	<a t:type="EventLink" t:event="json" t:context="libraryMapping.libraryName">Generate JSON description</a>
+						        </dd>
+						
+						    </dl>
+					    
+						</t:if>
+			
+						<p t:type="If" t:test="!info" class="noInformation">No additional information provided for <code>${libraryMapping.libraryName}</code>.</p>
+						
+			<!-- 			<div t:type="Zone" t:id="pages" id="prop:libraryClientZoneClientId"> -->
+			<!-- 			</div> -->
+			
+						<div t:type="Delegate" to="componentsTable"></div>
+						<div t:type="Delegate" to="pagesTable"></div>
+						<div t:type="Delegate" to="mixinsTable"></div>
+						
+					</div>
+					
+				</div>
+	
+			</t:If>			
+				
+			<t:If test="selectedComponent">
+				<h1><strong>${selectedComponent}</strong> (${componentClassName})</h1>
+				
+				<p>
+					<t:eventLink event="reset" zone="^">Back to component listing</t:eventLink>
+				</p>
+				
+			    <div class="panel panel-default vert-offset">
+			        <div class="panel-heading">Component dependency information for ${selectedComponent} (just direct dependencies)</div>
+			        <div class="panel-body">
+			        	<ul>
+			        		<li t:type="Loop" t:value="dependency" t:source="dependencies">
+			        			${displayLogicalName} (${dependency})
+			        		</li>
+			        	</ul>
+			        </div>
+			    </div>
+			    <div class="panel panel-default vert-offset">
+			        <div class="panel-heading">Components depending on ${selectedComponent} (just direct dependencies)</div>
+			        <div class="panel-body">
+			        	<ul>
+			        		<li t:type="Loop" t:value="dependency" t:source="dependents">
+			        			${displayLogicalName} (${dependency})
+			        		</li>
+			        	</ul>
+			        </div>
+			    </div>
+			    <div class="panel panel-default vert-offset">
+			        <div class="panel-heading">${selectedComponent}'s dependency tree</div>
+			        <div class="panel-body">
+			        	<t:graphviz value="graphvizValue" showSource="true"/>
+			        </div>
+			    </div>
+			</t:If>
+		</t:zone>		
+	</t:If>
 	
 	<t:block id="classesTable">
 		<div t:type="If" t:test="!logicalNames.empty">
@@ -138,7 +193,11 @@
 				</thead>
 				<tbody>
 					<tr t:type="Loop" t:source="logicalNames" t:value="logicalName">
-						<td><code>${simpleLogicalName}</code></td>
+						<td>
+							<t:eventLink event="selectComponent" t:context="context" t:zone="^">
+								<code>${simpleLogicalName}</code>
+							</t:eventLink>
+						</td>
 						<td>${description?.text()}</td>
 						<td>
 							<ul t:type="If" t:test="classHasTags" style="padding: 0; margin: 0;">
@@ -163,5 +222,5 @@
 			</table>
 		</div>
 	</t:block>
-
+	
 </t:block>

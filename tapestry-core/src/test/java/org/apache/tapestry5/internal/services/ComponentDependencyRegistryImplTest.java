@@ -19,17 +19,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.base.AbstractLink;
@@ -52,6 +57,7 @@ import org.apache.tapestry5.corelib.components.Loop;
 import org.apache.tapestry5.corelib.components.Output;
 import org.apache.tapestry5.corelib.components.OutputRaw;
 import org.apache.tapestry5.corelib.components.PageLink;
+import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.PropertyDisplay;
 import org.apache.tapestry5.corelib.components.PropertyEditor;
 import org.apache.tapestry5.corelib.components.RenderObject;
@@ -61,9 +67,7 @@ import org.apache.tapestry5.corelib.components.TextOutput;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.corelib.mixins.FormGroup;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
-import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.integration.app1.base.BaseLayoutPage;
-import org.apache.tapestry5.integration.app1.base.EmptyExtendTemplate;
 import org.apache.tapestry5.integration.app1.components.Border;
 import org.apache.tapestry5.integration.app1.components.ErrorComponent;
 import org.apache.tapestry5.integration.app1.components.OuterAny;
@@ -75,15 +79,17 @@ import org.apache.tapestry5.integration.app1.mixins.EchoValue;
 import org.apache.tapestry5.integration.app1.mixins.EchoValue2;
 import org.apache.tapestry5.integration.app1.mixins.TextOnlyOnDisabled;
 import org.apache.tapestry5.integration.app1.pages.AlertsDemo;
+import org.apache.tapestry5.integration.app1.pages.AtComponentType;
 import org.apache.tapestry5.integration.app1.pages.BlockCaller;
 import org.apache.tapestry5.integration.app1.pages.BlockHolder;
-import org.apache.tapestry5.integration.app1.pages.EmbeddedComponentTypeConflict;
 import org.apache.tapestry5.integration.app1.pages.InstanceMixinDependencies;
 import org.apache.tapestry5.integration.app1.pages.MixinParameterDefault;
-import org.apache.tapestry5.integration.app1.pages.TemplateOverrideDemo;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
+import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
+import org.apache.tapestry5.ioc.internal.util.AbstractResource;
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.modules.TapestryModule;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -96,6 +102,7 @@ import org.testng.annotations.Test;
 /**
  * Tests {@link ComponentDependencyRegistryImpl}.
  */
+@SuppressWarnings("deprecation")
 public class ComponentDependencyRegistryImplTest
 {
     
@@ -123,11 +130,37 @@ public class ComponentDependencyRegistryImplTest
         TapestryModule.contributeTemplateParser(templateConfiguration);
         templateParser = new TemplateParserImpl(templateConfiguration.map, false, new QuietOperationTracker());
         
-        componentTemplateLocator = new DefaultTemplateLocator();
+        final String rootFolder = "src/test/app1/";
+        final File folderFile = new File(rootFolder);
+        final Resource app1ContextFolderResource = new FileResource("/", folderFile);
+        
+        final PageTemplateLocator pageTemplateLocator = new PageTemplateLocator(app1ContextFolderResource, resolver, "");
+        final DefaultTemplateLocator defaultTemplateLocator = new DefaultTemplateLocator();
+        componentTemplateLocator = new ComponentTemplateLocator() 
+        {
+            @Override
+            public Resource locateTemplate(ComponentModel model, Locale locale) 
+            {
+                Resource resource = defaultTemplateLocator.locateTemplate(model, locale);
+                if (resource == null)
+                {
+                    resource = pageTemplateLocator.locateTemplate(model, locale);
+                }
+                return resource != null && resource.exists() ? resource : null;
+            }
+        };
         
         resolver = EasyMock.createMock(ComponentClassResolver.class);
         
+        EasyMock.expect(resolver.resolvePageClassNameToPageName(EasyMock.anyString()))
+                .andAnswer(() -> {
+                    String s = ((String) EasyMock.getCurrentArguments()[0]);
+                    final String pageName = s.substring(s.lastIndexOf('.') + 1);
+                    return pageName;
+                }).anyTimes();
+        
         expectResolveComponent(TextField.class);
+        expectResolveComponent(PasswordField.class);
         expectResolveComponent(Border.class);
         expectResolveComponent(BeanEditForm.class);
         expectResolveComponent(Zone.class);
@@ -163,8 +196,6 @@ public class ComponentDependencyRegistryImplTest
         EasyMock.expect(resolver.resolveMixinTypeToClassName("formgroup"))
             .andReturn(FormGroup.class.getName()).anyTimes();
         
-        // TODO: remove this
-//        EasyMock.expect(resolver.getLogicalName(EasyMock.anyString())).andAnswer(() -> (String) EasyMock.getCurrentArguments()[0]).anyTimes();
         EasyMock.expect(resolver.isPage(EasyMock.anyString())).andAnswer(() -> {
             String string = (String) EasyMock.getCurrentArguments()[0];
             return string.contains(".pages.");
@@ -351,7 +382,40 @@ public class ComponentDependencyRegistryImplTest
         
     }
     
-    // Tested code isn't being used at the moment
+    @Test
+    public void get_all_non_page_dependencies()
+    {
+        
+        final String page = "page";
+        final String className = "root";
+        final String superclass = "superclass";
+        final Set<String> expectedAllNonPageDependencies = new HashSet<>();
+        final BiConsumer<String, String> add = (c, d) -> {
+            expectedAllNonPageDependencies.add(d);
+            add(c, d, DependencyType.USAGE);
+        };
+        
+        add(className, page, DependencyType.INJECT_PAGE);
+        
+        add(className, superclass, DependencyType.SUPERCLASS);
+        expectedAllNonPageDependencies.add(superclass);
+        
+        add.accept(className, "child1");
+        add.accept(className, "child2");
+        add.accept("child1", "child1.1");
+        add.accept("child2", "child2.1");
+        add.accept("child2.1", className);
+        add.accept(superclass, "child2.1");
+        add.accept(superclass, "superclassDependency");
+        
+        expectedAllNonPageDependencies.remove(className);
+
+        final Set<String> allNonPageDependencies = componentDependencyRegistry.getAllNonPageDependencies(className);
+        assertFalse(allNonPageDependencies.contains(className));
+        assertEquals(expectedAllNonPageDependencies, allNonPageDependencies);
+        
+    }
+    
     @Test
     public void register()
     {
@@ -390,8 +454,8 @@ public class ComponentDependencyRegistryImplTest
         assertDependencies(OuterAny.class, Any.class);
         
         // @Component, type() defined
-        componentDependencyRegistry.register(EmbeddedComponentTypeConflict.class);
-        assertDependencies(EmbeddedComponentTypeConflict.class, TextField.class);
+        componentDependencyRegistry.register(AtComponentType.class);
+        assertDependencies(AtComponentType.class, TextField.class, Border.class);
 
         // @Mixin, type() not defined
         componentDependencyRegistry.register(AbstractTextField.class);
@@ -416,8 +480,15 @@ public class ComponentDependencyRegistryImplTest
         // Templates with <t:replace>
         componentDependencyRegistry.register(SubclassWithImport.class);
         assertDependencies(SubclassWithImport.class,
-                OutputRaw.class, SuperclassWithImport.class);
-
+                OutputRaw.class, SuperclassWithImport.class, Loop.class);
+        
+        // Circular dependency: BlockHolder <-> BlockCaller
+        componentDependencyRegistry.register(BlockHolder.class);
+        assertDependencies(BlockHolder.class, 
+                BlockCaller.class, Loop.class, ActionLink.class);
+        assertDependencies(BlockCaller.class, 
+                BlockHolder.class, Border.class, PageLink.class, Delegate.class);
+        
     }
     
     private void assertDependencies(Class clasz, Class... dependencies) {
@@ -433,14 +504,14 @@ public class ComponentDependencyRegistryImplTest
             .collect(Collectors.toSet());
     }
 
-//    private static Set<String> setOf(String ... strings)
-//    {
-//        return new HashSet<>(Arrays.asList(strings));
-//    }
-    
     private void add(String component, String dependency)
     {
-        componentDependencyRegistry.add(component, dependency, DependencyType.USAGE, true);
+        add(component, dependency, DependencyType.USAGE);
+    }
+    
+    private void add(String component, String dependency, DependencyType type)
+    {
+        componentDependencyRegistry.add(component, dependency, type, true);
     }
 
     private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>
@@ -470,6 +541,48 @@ public class ComponentDependencyRegistryImplTest
         public void overrideInstance(String key, Class<? extends URL> clazz) 
         {
             throw new UnsupportedOperationException();            
+        }
+        
+    }
+    
+    final private static class FileResource extends AbstractResource
+    {
+        
+        final private File file;
+        
+        final private String path;
+
+        public FileResource(String path, File file) 
+        {
+            super(path);
+            this.file = file;
+            this.path = path;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public java.net.URL toURL() 
+        {
+            try 
+            {
+                final File actualFile = new File(file, path);
+                return actualFile.exists() ? actualFile.toURL() : null;
+            } catch (MalformedURLException e) 
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        protected Resource newResource(String path) 
+        {
+            return new FileResource(path, file);
+        }
+
+        @Override
+        public String toString() 
+        {
+            return "FileResource [file=" + file + "/" + path + "]";
         }
         
     }

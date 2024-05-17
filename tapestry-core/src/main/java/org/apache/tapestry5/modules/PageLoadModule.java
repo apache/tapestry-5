@@ -47,6 +47,7 @@ import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.pageload.ReferenceType;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 5.3
@@ -97,26 +98,23 @@ public class PageLoadModule
     {
         if (!productionMode && multipleClassLoaders)
         {
-            // Preload the page activation context tree for the already known classes
-            for (int i = 0; i < 5; i++)
+            // If we have component dependency information previously stored in 
+            // a file, then we just preload the page classloader contexts.
+            // Otherwise, we gather component dependency information then
+            // preload the page classloader contexts.
+            if (componentDependencyRegistry.isStoredDependencyInformationPresent())
             {
-                for (String className : componentDependencyRegistry.getClassNames()) 
-                {
-                    pageClassLoaderContextManager.get(className);
-                }
+                pageClassLoaderContextManager.preloadContexts();
             }
-        }
-        // Preload the dependency information for all pages 
-        // when in production mode. Without that, exceptions during
-        // page assembly will occurr. This should add just a few
-        // seconds to page initialization. If it takes too long,
-        // we can create a version of preload() that accepts a boolean
-        // parameter defining whether templates should be parsed or not
-        // (the exception occurrs when a superclass isn't loaded
-        // and transformed before a subclass)
-        else if (productionMode)
-        {
-            pageClassLoaderContextManager.preload();
+            else 
+            {
+                LoggerFactory.getLogger(PageClassLoaderContextManager.class)
+                    .warn("If the component dependency process is taking too long, "
+                            + "consider writing its results to a file using the "
+                            + " 'Store dependency information' button "
+                            + "in the /t5dashboard/pages page.");
+                pageClassLoaderContextManager.preload();
+            }
         }
     }
     

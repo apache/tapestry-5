@@ -68,6 +68,13 @@ public interface ComponentDependencyRegistry {
     void register(Class<?> clasz);
 
     /**
+     * Register all the dependencies of a given class and uses a given
+     * classloader to load other classes if needed.
+     * @since 5.8.7
+     */
+    void register(Class<?> clasz, ClassLoader classLoader);
+
+    /**
      * Register all the dependencies of a given component.
      */
     void register(ComponentPageElement componentPageElement);
@@ -104,6 +111,12 @@ public interface ComponentDependencyRegistry {
      * @see DependencyType
      */
     Set<String> getDependencies(String className, DependencyType type);
+    
+    /**
+     * Returns all dependencies of a given class, direct and indirect.
+     * @param className a class name.
+     */
+    Set<String> getAllNonPageDependencies(String className);
     
     /**
      * Signs up this registry to invalidation events from a given hub.

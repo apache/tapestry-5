@@ -46,7 +46,9 @@ import org.apache.tapestry5.annotations.Mixins;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.ThrowawayClassLoader;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.StartComponentToken;
 import org.apache.tapestry5.internal.parser.TemplateToken;
@@ -82,6 +84,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     private static final String META_ATTRIBUTE = "injectedComponentDependencies";
     
     private static final String META_ATTRIBUTE_SEPARATOR = ",";
+    
+    private static final String NO_DEPENDENCY = "NONE";
     
     // Key is a component, values are the components that depend on it.
     final private Map<String, Set<Dependency>> map;
@@ -150,10 +154,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     {
                         final JSONObject jsonObject = jsonArray.getJSONObject(i);
                         final String className = jsonObject.getString("class");
-                        final DependencyType dependencyType = DependencyType.valueOf(jsonObject.getString("type"));
-                        final String dependency = jsonObject.getString("dependency");
-                        add(className, dependency, dependencyType);
-                        alreadyProcessed.add(dependency);
+                        final String type = jsonObject.getString("type");
+                        if (!type.equals(NO_DEPENDENCY))
+                        {
+                            final DependencyType dependencyType = DependencyType.valueOf(type);
+                            final String dependency = jsonObject.getString("dependency");
+                            add(className, dependency, dependencyType);
+                            alreadyProcessed.add(dependency);
+                        }
                         alreadyProcessed.add(className);
                     }
                 } catch (IOException e) 
@@ -179,9 +187,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             INVALIDATIONS_DISABLED.set(0);
         });
     }
-    
+
     @Override
     public void register(Class<?> component) 
+    {
+        register(component, component.getClassLoader());
+    }
+    
+    @Override
+    public void register(Class<?> component, ClassLoader classLoader) 
     {
         
         final String className = component.getName();
@@ -189,7 +203,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         Consumer<Class<?>> processClass = furtherDependencies::add;
         Consumer<String> processClassName = s -> {
             try {
-                furtherDependencies.add(component.getClassLoader().loadClass(s));
+                furtherDependencies.add(classLoader.loadClass(s));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -216,6 +230,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             {
                 final Class<?> dependency = field.getType();
                 add(component, dependency, DependencyType.INJECT_PAGE);
+                processClass.accept(dependency);
             }
             
             // @Component
@@ -245,7 +260,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             if (!alreadyProcessed.contains(dependencyClassName)
                     && plasticManager.shouldInterceptClassLoading(dependency.getName()))
             {
-                register(dependency);
+                register(dependency, classLoader);
             }
         }
         
@@ -261,14 +276,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     private void registerTemplate(Class<?> component, Consumer<String> processClassName) 
     {
         // TODO: implement caching of template dependency information, probably
-        // by listening separaterly to ComponentTemplateSource to invalidate caches
+        // by listening separately to ComponentTemplateSource to invalidate caches
         // just when template changes.
         
         final String className = component.getName();
         ComponentModel mock = new ComponentModelMock(component, isPage(className));
         final Resource templateResource = componentTemplateLocator.locateTemplate(mock, Locale.getDefault());
         String dependency;
-        if (templateResource != null)
+        if (templateResource != null && templateResource.exists())
         {
             final ComponentTemplate template = templateParser.parseTemplate(templateResource);
             final List<TemplateToken> tokens = new LinkedList<>();
@@ -287,15 +302,34 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     String logicalName = componentToken.getComponentType();
                     if (logicalName != null)
                     {
-                        dependency = resolver.resolveComponentTypeToClassName(logicalName);
-                        add(className, dependency, DependencyType.USAGE);
-                        processClassName.accept(dependency);
+                        try
+                        {
+                            dependency = resolver.resolveComponentTypeToClassName(logicalName);
+                            add(className, dependency, DependencyType.USAGE);
+                            processClassName.accept(dependency);
+                        }
+                        catch (UnknownValueException e)
+                        {
+                            // Logical name doesn't match an existing component. Ignore
+                        }
                     }
                     for (String mixin : TapestryInternalUtils.splitAtCommas(componentToken.getMixins()))
                     {
-                        dependency = resolver.resolveMixinTypeToClassName(mixin);
-                        add(className, dependency, DependencyType.USAGE);
-                        processClassName.accept(dependency);
+                        try
+                        {
+                            if (mixin.contains("::"))
+                            {
+                                mixin = mixin.substring(0, mixin.indexOf("::"));
+                            }
+                            dependency = resolver.resolveMixinTypeToClassName(mixin);
+                            add(className, dependency, DependencyType.USAGE);
+                            processClassName.accept(dependency);
+                        }
+                        catch (UnknownValueException e)
+                        {
+                            // Mixin name doesn't match an existing mixin. Ignore
+                        }
+
                     }
                 }
             }
@@ -527,15 +561,21 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getDependents(String className) 
     {
+        
+        ensureClassIsAlreadyProcessed(className);
+        
         final Set<Dependency> dependents = map.get(className);
         return dependents != null 
                 ? dependents.stream().map(d -> d.className).collect(Collectors.toSet()) 
                 : Collections.emptySet();
     }
-    
+
     @Override
     public Set<String> getDependencies(String className, DependencyType type) 
     {
+        
+        ensureClassIsAlreadyProcessed(className);
+        
         Set<String> dependencies = Collections.emptySet();
         if (alreadyProcessed.contains(className))
         {
@@ -548,7 +588,30 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         return dependencies;
     }
 
+    @Override
+    public Set<String> getAllNonPageDependencies(String className) 
+    {
+        final Set<String> dependencies = new HashSet<>();
+        getAllNonPageDependencies(className, dependencies);
+        // Just in case, since it's possible to have circular dependencies.
+        dependencies.remove(className);
+        return Collections.unmodifiableSet(dependencies);
+    }
 
+    private void getAllNonPageDependencies(String className, Set<String> dependencies) 
+    {
+        Set<String> theseDependencies = new HashSet<>();
+        theseDependencies.addAll(getDependencies(className, DependencyType.USAGE));
+        theseDependencies.addAll(getDependencies(className, DependencyType.SUPERCLASS));
+        theseDependencies.removeAll(dependencies);
+        dependencies.addAll(theseDependencies);
+        for (String dependency : theseDependencies) 
+        {
+            getAllNonPageDependencies(dependency, dependencies);
+        }
+    }
+
+    
     private boolean contains(Set<Dependency> dependencies, String className, DependencyType type) 
     {
         boolean contains = false;
@@ -667,6 +730,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 JSONArray jsonArray = new JSONArray();
                 for (String className : classNames)
                 {
+                    boolean hasDependencies = false;
                     for (DependencyType dependencyType : DependencyType.values())
                     {
                         final Set<String> dependencies = getDependencies(className, dependencyType);
@@ -676,6 +740,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                             object.put("class", className);
                             object.put("type", dependencyType.name());
                             object.put("dependency", dependency);
+                            jsonArray.add(object);
+                            hasDependencies = true;
+                        }
+                    }
+                    // Add a fake dependency so classes without dependencies
+                    // nor classes depending on it are properly stored and 
+                    // retrieved, thus avoiding these classes getting into the 
+                    // unknown page classloader context.
+                    if (!hasDependencies)
+                    {
+                        if (getDependents(className).isEmpty()) {
+                            JSONObject object = new JSONObject();
+                            object.put("class", className);
+                            object.put("type", NO_DEPENDENCY);
                             jsonArray.add(object);
                         }
                     }
@@ -739,6 +817,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         if (INVALIDATIONS_DISABLED.get() < 0)
         {
             INVALIDATIONS_DISABLED.set(0);
+        }
+    }
+
+    private void ensureClassIsAlreadyProcessed(String className) {
+        if (!contains(className))
+        {
+            ThrowawayClassLoader classLoader = new ThrowawayClassLoader(getClass().getClassLoader());
+            try 
+            {
+                register(classLoader.loadClass(className));
+            } catch (ClassNotFoundException e) 
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 

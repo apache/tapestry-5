@@ -59,12 +59,7 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         for (String className : classNames) 
         {
             createNode(className, nodeMap);
-            for (DependencyType dependencyType : DependencyType.values()) 
-            {
-                addDependencies(className, allClasses, dependencyType, nodeMap);
-            }
-            
-
+            addDependencies(className, allClasses, nodeMap);
         }
         
         final List<Node> nodes = new ArrayList<>(nodeMap.values());
@@ -141,16 +136,19 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         return label.replace('.', '_').replace('/', '_');
     }
 
-    private void addDependencies(String className, Set<String> allClasses, DependencyType type, Map<String, Node> nodeMap) 
+    private void addDependencies(String className, Set<String> allClasses, Map<String, Node> nodeMap) 
     {
         if (!allClasses.contains(className))
         {
             createNode(className, nodeMap);
-            for (String dependency : componentDependencyRegistry.getDependencies(className, type))
-            {
-                addDependencies(dependency, allClasses, type, nodeMap);
-            }
             allClasses.add(className);
+            for (DependencyType type : DependencyType.values()) 
+            {
+                for (String dependency : componentDependencyRegistry.getDependencies(className, type))
+                {
+                    addDependencies(dependency, allClasses, nodeMap);
+                }
+            }
         }
     }
 
@@ -188,7 +186,8 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
         }
     }
 
-    private static final class Node {
+    private static final class Node 
+    {
 
         final private String id;
         final private String className;
@@ -204,5 +203,12 @@ public class ComponentDependencyGraphvizGeneratorImpl implements ComponentDepend
             this.dependencies.addAll(dependencies);
         }
 
+        @Override
+        public String toString() 
+        {
+            return "Node [id=" + id + ", className=" + className + ", dependencies=" + dependencies + ", label=" + label + "]";
+        }
+
     }
+    
 }

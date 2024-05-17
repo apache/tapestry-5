@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2023, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,14 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -35,6 +43,10 @@ public class PlasticClassLoader extends ClassLoader
     
     private String tag;
     
+    private Map<String, Class<?>> cache;
+    
+    private static List<String> log = new ArrayList<>();
+    
     public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate) 
     {
         super(parent);
@@ -50,24 +62,36 @@ public class PlasticClassLoader extends ClassLoader
 
             if (loadedClass != null)
                 return loadedClass;
-
+            
             if (shouldInterceptClassLoading(name))
             {
-                Class<?> c = null;
-                if ((filter != null && filter.test(name)) || (filter == null && delegate.shouldInterceptClassLoading(name)))
+                
+                Class<?> c = getFromCache(name);
+                
+                if (c == null)
                 {
-                    c = delegate.loadAndTransformClass(name);
-                }
-                else if (alternativeClassloading != null)
-                {
-                    c = alternativeClassloading.apply(name);
+                
+                    if ((filter != null && filter.test(name)) || (filter == null && delegate.shouldInterceptClassLoading(name)))
+                    {
+                        c = delegate.loadAndTransformClass(name);
+                    }
+                    else if (alternativeClassloading != null)
+                    {
+                        c = alternativeClassloading.apply(name);
+                    }
+                    
+                    if (cache != null && c != null)
+                    {
+                        cache.put(name, c);
+                    }
+                    
                 }
                 
                 if (c == null)
                 {
                     return super.loadClass(name, resolve);                    
                 }
-                    
+                
                 if (resolve)
                     resolveClass(c);
 
@@ -110,6 +134,10 @@ public class PlasticClassLoader extends ClassLoader
     public void setTag(String tag) 
     {
         this.tag = tag;
+        if (cache == null)
+        {
+            cache = Collections.synchronizedMap(new HashMap<>());
+        }
     }
     
     /**
@@ -126,9 +154,27 @@ public class PlasticClassLoader extends ClassLoader
     @Override
     public String toString()
     {
-        final String superToString = super.toString();
-        final String id = superToString.substring(superToString.indexOf('@')).trim();
+        final String id = getClassLoaderId();
         return String.format("PlasticClassLoader[%s, tag=%s, parent=%s]", id, tag, getParent());
     }
 
+    public String getClassLoaderId() {
+        final String superToString = super.toString();
+        return superToString.substring(superToString.indexOf('@')).trim();
+    }
+    
+    private Class<?> getFromCache(String name)
+    {
+        Class<?> c = null;
+        if (cache != null && cache.containsKey(name))
+        {
+            c = cache.get(name);
+        }
+        if (c == null && getParent() instanceof PlasticClassLoader)
+        {
+            c = ((PlasticClassLoader) getParent()).getFromCache(name);
+        }
+        return c;
+    }
+    
 }

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Grid;
@@ -48,4 +49,9 @@ public class GridDemo
     {
         grid.getSortModel().updateSort("rating");
     }
+    
+//    public void afterRender(MarkupWriter writer)
+//    {
+//        writer.getDocument().find("html/body").elementAt(1, "p").text("bbbbb");
+//    }
 }
