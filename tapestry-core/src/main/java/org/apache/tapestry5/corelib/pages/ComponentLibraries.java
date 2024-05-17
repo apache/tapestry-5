@@ -21,11 +21,20 @@ import java.util.List;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
 import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.internal.ThrowawayClassLoader;
+import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
+import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
+import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.ioc.annotations.Description;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -59,6 +68,9 @@ public class ComponentLibraries
     };
 
     private static enum Type { PAGE, COMPONENT, MIXIN }
+    
+    @InjectComponent
+    private Zone zone;
 
     @Inject
     private ComponentClassResolver componentClassResolver;
@@ -97,6 +109,39 @@ public class ComponentLibraries
     @Inject
     private ComponentLibraryInfoSource componentLibraryInfoSource;
     
+    @Inject
+    private ComponentDependencyRegistry componentDependencyRegistry;
+    
+    @Inject
+    private ComponentDependencyGraphvizGenerator componentDependencyGraphvizGenerator;
+    
+    @Property
+    private String selectedComponent;
+    
+    @Property
+    private String dependency;
+    
+    @Persist
+    @Property
+    private boolean showEverything;
+    
+//    void onActivate(List<String> context)
+//    {
+//        if (context.size() > 0)
+//        {
+//            selectedComponent = String.join("/", context);
+//        }
+//        else
+//        {
+//            selectedComponent = null;
+//        }
+//    }
+//    
+//    Object[] onPassivate()
+//    {
+//        return selectedComponent.split("/");
+//    }
+    
     @Cached
     public List<LibraryMapping> getLibraryMappings()
     {
@@ -105,7 +150,7 @@ public class ComponentLibraries
         // add all the library mappings, except the "" (empty string) one.
         for (LibraryMapping libraryMapping : componentClassResolver.getLibraryMappings())
         {
-            if (!"".equals(libraryMapping.libraryName)) {
+            if (showEverything || !"".equals(libraryMapping.libraryName)) {
                 mappings.add(libraryMapping);
             }
         }
@@ -132,6 +177,7 @@ public class ComponentLibraries
     private List<String> filter(final List<String> allNames)
     {
         List<String> logicalNames = new ArrayList<String>();
+        final List<LibraryMapping> libraryMappings = getLibraryMappings();
         for (String name : allNames)
         {
             
@@ -139,6 +185,25 @@ public class ComponentLibraries
                     !(libraryMapping.libraryName.equals("core") && name.endsWith("Test")))
             {
                 logicalNames.add(name);
+            }
+            else
+            {
+                if (libraryMapping.libraryName.equals(""))
+                {
+                    boolean isWebappLibrary = true;
+                    for (LibraryMapping otherLibraryMapping : libraryMappings) {
+                        if (!libraryMapping.equals(otherLibraryMapping) &&
+                                name.startsWith(otherLibraryMapping.libraryName + "/"))
+                        {
+                            isWebappLibrary = false;
+                            break;
+                        }
+                    }
+                    if (isWebappLibrary)
+                    {
+                        logicalNames.add(name);
+                    }
+                }
             }
         }
         
@@ -211,7 +276,12 @@ public class ComponentLibraries
     @Cached(watch = "logicalName")
     public Description getDescription() throws ClassNotFoundException
     {
-        return Class.forName(getClassName()).getAnnotation(Description.class);
+        try {
+            return Class.forName(getClassName()).getAnnotation(Description.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean isClassHasTags() throws ClassNotFoundException
@@ -324,6 +394,95 @@ public class ComponentLibraries
         {
             object.put(propertyName, value);
         }
+    }
+    
+    public String getGraphvizValue()
+    {
+        return componentDependencyGraphvizGenerator.generate(
+                getClassName(selectedComponent));
+    }
+    
+    public String getClassName(String logicalName)
+    {
+        return componentClassResolver.getClassName(logicalName);
+    }
+    
+    public String getComponentClassName()
+    {
+        return getClassName(selectedComponent);
+    }
+    
+    public List<String> getDependencies()
+    {
+        final String className = componentClassResolver.getClassName(selectedComponent);
+        final List<String> dependencies = new ArrayList<>();
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE));
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+        Collections.sort(dependencies);
+        return dependencies;
+    }
+    
+    public List<String> getDependents()
+    {
+        final String className = componentClassResolver.getClassName(selectedComponent);
+        List<String> dependents = new ArrayList<>(
+                componentDependencyRegistry.getDependents(className));
+        Collections.sort(dependents);
+        return dependents;
+    }
+    
+    public String getDisplayLogicalName()
+    {
+        return componentClassResolver.getLogicalName(dependency);
+    }
+    
+    public Object onSelectComponent(String selectedComponent)
+    {
+        this.selectedComponent = selectedComponent;
+        final String className = componentClassResolver.getClassName(selectedComponent);
+        if (!componentDependencyRegistry.contains(className)) 
+        {
+            
+            final ClassLoader classLoader = new ThrowawayClassLoader(getClass().getClassLoader());
+            
+            try 
+            {
+                componentDependencyRegistry.register(classLoader.loadClass(className));
+            } catch (ClassNotFoundException e) 
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        return zone.getBody();
+    }
+    
+    public Object getContext()
+    {
+        return logicalName;
+    }
+    
+    public Object onReset()
+    {
+        selectedComponent = null;
+        return zone.getBody();
+    }
+    
+    public Object onShowEverything()
+    {
+        showEverything = true;
+        return zone.getBody();
+    }
+    
+    public Object onShowRestricted()
+    {
+        showEverything = false;
+        return zone.getBody();
+    }
+    
+    public String getLibraryName()
+    {
+        return !libraryMapping.libraryName.isEmpty() ? libraryMapping.libraryName : "Webapp's own component library";
     }
 
 }

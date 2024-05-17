@@ -14,12 +14,14 @@
 
 package org.apache.tapestry5.modules;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGenerator;
 import org.apache.tapestry5.internal.services.ComponentDependencyGraphvizGeneratorImpl;
 import org.apache.tapestry5.internal.services.dashboard.DashboardManagerImpl;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.dashboard.DashboardManager;
 import org.apache.tapestry5.services.dashboard.DashboardTab;
 
@@ -32,11 +34,17 @@ public class DashboardModule
     }
 
     @Contribute(DashboardManager.class)
-    public static void defaultTabs(OrderedConfiguration<DashboardTab> configuration)
+    public static void defaultTabs(OrderedConfiguration<DashboardTab> configuration,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode, 
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders)
     {
         configuration.add("Pages", new DashboardTab("Pages", "core/PageCatalog"));
         configuration.add("Services", new DashboardTab("Services", "core/ServiceStatus"));
         configuration.add("Libraries", new DashboardTab("ComponentLibraries", "core/ComponentLibraries"));
         configuration.add("PageDependencyGraph", new DashboardTab("PageDependencyGraph", "core/PageDependencyGraph"));
+        if (!productionMode && multipleClassLoaders)
+        {
+            configuration.add("PageClassLoaderContexts", new DashboardTab("PageClassLoaderContexts", "core/PageClassLoaderContexts"));
+        }
     }
 }

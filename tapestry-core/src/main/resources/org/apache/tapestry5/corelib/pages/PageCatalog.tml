@@ -77,7 +77,7 @@
 		    <div class="panel panel-default vert-offset" t:type="If" t:test="selectedPage">
 		        <div class="panel-heading">${selectedPage.name}'s dependency tree</div>
 		        <div class="panel-body">
-		        	<t:graphviz value="graphvizValue"/>
+		        	<t:graphviz value="graphvizValue" showSource="true"/>
 		        </div>
 		    </div>
 	    </t:if>

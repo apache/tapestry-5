@@ -95,5 +95,11 @@ public interface PageClassLoaderContextManager
      * page classloader contexts.
      */
     void preload();
+    
+    /**
+     * Preloads the page classloader contexts.
+     * @since 5.8.7
+     */
+    void preloadContexts();
 
 }

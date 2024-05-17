@@ -227,6 +227,7 @@ public class PageCatalog
     void onActionFromPreloadPageClassLoaderContexts()
     {
         pageClassLoaderContextManager.preload();
+        alertManager.warn("Component dependency information and page classloader contexts preloaded.");
     }
     
     Object onClearPage(String className)
