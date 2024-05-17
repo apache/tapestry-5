@@ -22,8 +22,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.tapestry5.internal.plastic.asm.util.ASMifier;
 import org.apache.tapestry5.plastic.test.PlasticUtilsTestObject;
 import org.apache.tapestry5.plastic.test.PlasticUtilsTestObjectSuperclass;
+import org.apache.tapestry5.plastic.test_.Enumeration;
 import org.junit.jupiter.api.Test;
 
 // [Thiago] This is only here because I couldn't get Groovy tests to run on Eclipse
@@ -31,11 +33,12 @@ import org.junit.jupiter.api.Test;
 public class PlasticUtilsTest 
 {
     
-//    public static void main(String[] args) throws ClassNotFoundException {
-//        final PlasticUtilsTest plasticUtilsTest = new PlasticUtilsTest();
-//        plasticUtilsTest.implement_field_value_provider();
-//        plasticUtilsTest.implement_property_value_provider();
-//    }
+    public static void main(String[] args) throws Exception {
+//        ASMifier.main(new String[] {PlasticUtilsTestObject.class.getName(), "-nodebug"});
+        final PlasticUtilsTest plasticUtilsTest = new PlasticUtilsTest();
+        plasticUtilsTest.implement_field_value_provider();
+        plasticUtilsTest.implement_property_value_provider();
+    }
     
     @Test
     public void implement_field_value_provider() throws ClassNotFoundException
@@ -109,6 +112,30 @@ public class PlasticUtilsTest
         assertTrue(Arrays.equals(PlasticUtilsTestObject.INT_ARRAY, (int[]) PropertyValueProvider.get(object, "intArray")));
         assertEquals(PlasticUtilsTestObject.TRUE_OF_FALSE, (Boolean) PropertyValueProvider.get(object, "trueOrFalse"));
         assertEquals(PlasticUtilsTestObjectSuperclass.SUPER, PropertyValueProvider.get(object, "superString"));
+        
+        final String newStringValue = "something else";
+        final String newOtherStringValue = "what?";
+        final String newNullStringValue = "not null anymore";
+        final Enumeration newEnumerationValue = Enumeration.TRUE;
+        final int[] newIntArrayValue = new int[] { 3, 1, 4 };
+        final boolean newTrueOfFalseValue = !PlasticUtilsTestObject.TRUE_OF_FALSE;
+        final String newSuperStringValue = "Batman";
+        
+        PropertyValueProvider.set(object, "string", newStringValue);
+        PropertyValueProvider.set(object, "otherString", newOtherStringValue);
+        PropertyValueProvider.set(object, "nullString", newNullStringValue);
+        PropertyValueProvider.set(object, "enumeration", newEnumerationValue);
+        PropertyValueProvider.set(object, "intArray", newIntArrayValue);
+        PropertyValueProvider.set(object, "trueOrFalse", newTrueOfFalseValue);
+        PropertyValueProvider.set(object, "superString", newSuperStringValue);
+        
+        assertEquals(newStringValue, PropertyValueProvider.get(object, "string"));
+        assertEquals(newOtherStringValue, PropertyValueProvider.get(object, "otherString"));
+        assertEquals(newNullStringValue, PropertyValueProvider.get(object, "nullString"));
+        assertEquals(newEnumerationValue.toString(), PropertyValueProvider.get(object, "enumeration").toString());
+        assertTrue(Arrays.equals(newIntArrayValue, (int[]) PropertyValueProvider.get(object, "intArray")));
+        assertEquals(newTrueOfFalseValue, (Boolean) PropertyValueProvider.get(object, "trueOrFalse"));
+        assertEquals(newSuperStringValue, PropertyValueProvider.get(object, "superString"));
         
     }
     

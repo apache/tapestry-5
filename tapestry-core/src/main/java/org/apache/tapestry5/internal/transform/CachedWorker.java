@@ -24,6 +24,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.plastic.PlasticUtils.FieldInfo;
@@ -33,9 +36,15 @@ import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
@@ -43,7 +52,25 @@ import java.util.Set;
 @SuppressWarnings("all")
 public class CachedWorker implements ComponentClassTransformWorker2
 {
+    private static final String WATCH_BINDING_PREFIX = "cache$watchBinding$";
+
     private static final String FIELD_PREFIX = "cache$";
+    
+    private static final String META_PROPERTY = "cachedWorker";
+
+    private static final String MODIFIERS = "modifiers";
+    
+    private static final String RETURN_TYPE = "returnType";
+    
+    private static final String NAME = "name";
+    
+    private static final String GENERIC_SIGNATURE = "genericSignature";
+    
+    private static final String ARGUMENT_TYPES = "argumentTypes";
+    
+    private static final String CHECKED_EXCEPTION_TYPES = "checkedExceptionTypes";
+    
+    private static final String WATCH = "watch";
 
     private final BindingSource bindingSource;
 
@@ -143,14 +170,39 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        List<PlasticMethod> methods = plasticClass.getMethodsWithAnnotation(Cached.class);
-        Set<PlasticUtils.FieldInfo> fieldInfos = multipleClassLoaders ? new HashSet<>() : null;
+        final List<PlasticMethod> methods = plasticClass.getMethodsWithAnnotation(Cached.class);
+        final Set<PlasticUtils.FieldInfo> fieldInfos = multipleClassLoaders ? new HashSet<>() : null;
+        final Map<String, String> extraMethodCachedWatchMap = multipleClassLoaders ? new HashMap<>() : null;
+        
+        if (multipleClassLoaders)
+        {
+            
+            // Store @Cache-annotated methods information so subclasses can 
+            // know about them.
+            
+            model.setMeta(META_PROPERTY, toJSONArray(methods).toCompactString());
+            
+            // Use the information from superclasses
+            
+            ComponentModel parentModel = model.getParentModel();
+            Set<PlasticMethod> extraMethods = new HashSet<>();
+            while (parentModel != null)
+            {
+                extraMethods.addAll(
+                        toPlasticMethodList(
+                                parentModel.getMeta(META_PROPERTY), plasticClass, extraMethodCachedWatchMap));
+                parentModel = parentModel.getParentModel();
+            }
+            
+            methods.addAll(extraMethods);
+            
+        }
 
         for (PlasticMethod method : methods)
         {
             validateMethod(method);
 
-            adviseMethod(plasticClass, method, fieldInfos);
+            adviseMethod(plasticClass, method, fieldInfos, model, extraMethodCachedWatchMap);
         }
         
         if (multipleClassLoaders && !fieldInfos.isEmpty())
@@ -158,8 +210,70 @@ public class CachedWorker implements ComponentClassTransformWorker2
             this.propertyValueProviderWorker.add(plasticClass, fieldInfos);
         }        
     }
+    
+    private Collection<PlasticMethod> toPlasticMethodList(String meta, PlasticClass plasticClass,
+            Map<String, String> extraMethodCachedWatchMap) 
+    {
+        final JSONArray array = new JSONArray(meta);
+        List<PlasticMethod> methods = new ArrayList<>(array.size());
+        for (int i = 0; i < array.size(); i++)
+        {
+            final JSONObject jsonObject = array.getJSONObject(i);
+            methods.add(toPlasticMethod(jsonObject, plasticClass, extraMethodCachedWatchMap));
+        }
+        return methods;
+    }
 
-    private void adviseMethod(PlasticClass plasticClass, PlasticMethod method, Set<FieldInfo> fieldInfos)
+
+    private static PlasticMethod toPlasticMethod(JSONObject jsonObject, PlasticClass plasticClass,
+            Map<String, String> extraMethodCachedWatchMap) 
+    {
+        final int modifiers = jsonObject.getInt(MODIFIERS);
+        final String returnType = jsonObject.getString(RETURN_TYPE);
+        final String methodName = jsonObject.getString(NAME);
+        final String genericSignature = jsonObject.getStringOrDefault(GENERIC_SIGNATURE, null);
+        final JSONArray argumentTypesArray = jsonObject.getJSONArray(ARGUMENT_TYPES);
+        final String[] argumentTypes = argumentTypesArray.stream()
+                .collect(Collectors.toList()).toArray(new String[argumentTypesArray.size()]);
+        final JSONArray checkedExceptionTypesArray = jsonObject.getJSONArray(CHECKED_EXCEPTION_TYPES);
+        final String[] checkedExceptionTypes = checkedExceptionTypesArray.stream()
+                .collect(Collectors.toList()).toArray(new String[checkedExceptionTypesArray.size()]);
+        
+        if (!extraMethodCachedWatchMap.containsKey(methodName))
+        {
+            extraMethodCachedWatchMap.put(methodName, jsonObject.getString(WATCH));
+        }
+        
+        return plasticClass.introduceMethod(new MethodDescription(
+                modifiers, returnType, methodName, argumentTypes, 
+                genericSignature, checkedExceptionTypes));
+    }
+
+    private static JSONArray toJSONArray(List<PlasticMethod> methods)
+    {
+        final JSONArray array = new JSONArray();
+        for (PlasticMethod method : methods) 
+        {
+            array.add(toJSONObject(method));
+        }
+        return array;
+    }
+
+    private static JSONObject toJSONObject(PlasticMethod method) 
+    {
+        final MethodDescription description = method.getDescription();
+        return new JSONObject(
+                MODIFIERS, description.modifiers,
+                RETURN_TYPE, description.returnType,
+                NAME, description.methodName,
+                GENERIC_SIGNATURE, description.genericSignature,
+                ARGUMENT_TYPES, new JSONArray(description.argumentTypes),
+                CHECKED_EXCEPTION_TYPES, new JSONArray(description.checkedExceptionTypes),
+                WATCH, method.getAnnotation(Cached.class).watch());
+    }
+
+    private void adviseMethod(PlasticClass plasticClass, PlasticMethod method, Set<FieldInfo> fieldInfos,
+            MutableComponentModel model, Map<String, String> extraMethodCachedWatchMap)
     {
         // Every instance of the class requires its own per-thread value. This handles the case of multiple
         // pages containing the component, or the same page containing the component multiple times.
@@ -184,7 +298,10 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
         Cached annotation = method.getAnnotation(Cached.class);
 
-        MethodResultCacheFactory factory = createFactory(plasticClass, annotation.watch(), method);
+        final String expression = annotation != null ? 
+                annotation.watch() : 
+                    extraMethodCachedWatchMap.get(method.getDescription().methodName);
+        MethodResultCacheFactory factory = createFactory(plasticClass, expression, method, fieldInfos, model);
 
         MethodAdvice advice = createAdvice(cacheField, factory);
 
@@ -192,16 +309,27 @@ public class CachedWorker implements ComponentClassTransformWorker2
     }
 
     private String getFieldName(PlasticMethod method) {
-        final StringBuilder builder = new StringBuilder(FIELD_PREFIX);
-        builder.append(method.getDescription().methodName);
+        return getFieldName(method, FIELD_PREFIX);
+    }
+    
+    private String getFieldName(PlasticMethod method, String prefix) 
+    {
+        final String methodName = method.getDescription().methodName;
+        final String className = method.getPlasticClass().getClassName();
+        return getFieldName(prefix, methodName, className);
+    }
+
+    private String getFieldName(String prefix, final String methodName, final String className) 
+    {
+        final StringBuilder builder = new StringBuilder(prefix);
+        builder.append(methodName);
         if (multipleClassLoaders)
         {
             builder.append("_");
-            builder.append(method.getPlasticClass().getClassName().replace('.', '_'));
+            builder.append(className.replace('.', '_'));
         }
         return builder.toString();
     }
-
 
     private MethodAdvice createAdvice(PlasticField cacheField,
                                       final MethodResultCacheFactory factory)
@@ -255,7 +383,8 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
 
     private MethodResultCacheFactory createFactory(PlasticClass plasticClass, final String watch,
-                                                   PlasticMethod method)
+                                                   PlasticMethod method, Set<FieldInfo> fieldInfos,
+                                                   MutableComponentModel model)
     {
         // When there's no watch, a shared factory that just returns a new SimpleMethodResultCache
         // will suffice.
@@ -266,8 +395,23 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
         // Because of the watch, its necessary to create a factory for instances of this component and method.
 
-        final FieldHandle bindingFieldHandle = plasticClass.introduceField(Binding.class, "cache$watchBinding$" + method.getDescription().methodName).getHandle();
-
+        final String bindingFieldName = WATCH_BINDING_PREFIX + method.getDescription().methodName;
+        final PlasticField bindingField = plasticClass.introduceField(Binding.class, bindingFieldName);
+        final FieldHandle bindingFieldHandle = bindingField.getHandle();
+        
+        if (multipleClassLoaders)
+        {
+            fieldInfos.add(PlasticUtils.toFieldInfo(bindingField));
+            try
+            {
+                bindingField.createAccessors(PropertyAccessType.READ_WRITE);
+            }
+            catch (IllegalArgumentException e)
+            {
+                // Method already implemented in superclass, so, given we only
+                // care the method exists, we ignore this exception
+            }
+        }
 
         // Each component instance will get its own Binding instance. That handles both different locales,
         // and reuse of a component (with a cached method) within a page or across pages. However, the binding can't be initialized
@@ -283,7 +427,15 @@ public class CachedWorker implements ComponentClassTransformWorker2
                 Binding binding = bindingSource.newBinding("@Cached watch", resources,
                         BindingConstants.PROP, watch);
 
-                bindingFieldHandle.set(invocation.getInstance(), binding);
+                final Object instance = invocation.getInstance();
+                if (multipleClassLoaders)
+                {
+                    PropertyValueProvider.set(instance, bindingFieldName, binding);
+                }
+                else 
+                {
+                    bindingFieldHandle.set(instance, binding);
+                }
 
                 invocation.proceed();
             }
@@ -293,9 +445,25 @@ public class CachedWorker implements ComponentClassTransformWorker2
         {
             public MethodResultCache create(Object instance)
             {
-                Binding binding = (Binding) bindingFieldHandle.get(instance);
-
+                Binding binding = (Binding) (
+                        multipleClassLoaders ? 
+                        PropertyValueProvider.get(instance, bindingFieldName) :
+                        bindingFieldHandle.get(instance));
+                
                 return new WatchedBindingMethodResultCache(binding);
+            }
+
+            private Object getCacheBinding(final String methodName, String bindingFieldName, Object instance, ComponentModel model) 
+            {
+                Object value = PropertyValueProvider.get(instance, bindingFieldName);
+                while (value == null && model.getParentModel() != null)
+                {
+                    model = model.getParentModel();
+                    bindingFieldName = getFieldName(WATCH_BINDING_PREFIX, 
+                            methodName, model.getComponentClassName());
+                    value = PropertyValueProvider.get(instance, bindingFieldName);
+                }
+                return value;
             }
         };
     }

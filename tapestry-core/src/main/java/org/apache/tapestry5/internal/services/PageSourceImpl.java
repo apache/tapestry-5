@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +122,7 @@ public class PageSourceImpl implements PageSource
         this.componentClassResolver = componentClassResolver;
         this.productionMode = productionMode;
         this.pageCachingReferenceTypeService = pageCachingReferenceTypeService;
-        this.multipleClassLoaders = multipleClassLoaders;
+        this.multipleClassLoaders = multipleClassLoaders && !productionMode;
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.logger = logger;
     }
@@ -134,7 +135,9 @@ public class PageSourceImpl implements PageSource
         }
         try
         {
-            return getPage(canonicalPageName, true);
+            @SuppressWarnings("unchecked")
+            Set<String> alreadyProcessed = multipleClassLoaders ? new HashSet<>() : Collections.EMPTY_SET;
+            return getPage(canonicalPageName, true, alreadyProcessed);
         }
         finally
         {
@@ -145,7 +148,7 @@ public class PageSourceImpl implements PageSource
         }
     }
 
-    public Page getPage(String canonicalPageName, boolean invalidateUnknownContext)
+    public Page getPage(String canonicalPageName, boolean invalidateUnknownContext, Set<String> alreadyProcessed)
     {
         ComponentResourceSelector selector = selectorAnalyzer.buildSelectorForRequest();
 
@@ -178,7 +181,13 @@ public class PageSourceImpl implements PageSource
                 
                 for (String pageClassName : pageDependencies)
                 {
-                    page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), false);
+                    // Avoiding infinite recursion caused by circular dependencies
+                    if (!alreadyProcessed.contains(pageClassName))
+                    {
+                        alreadyProcessed.add(pageClassName);
+                        page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), 
+                                invalidateUnknownContext, alreadyProcessed);
+                    }
                 }
                 
             }
@@ -203,7 +212,7 @@ public class PageSourceImpl implements PageSource
             {
                 final ComponentPageElement rootElement = page.getRootElement();
                 componentDependencyRegistry.clear(rootElement);
-                componentDependencyRegistry.register(rootElement);
+                componentDependencyRegistry.register(rootElement.getComponent().getClass());
                 PageClassLoaderContext context = pageClassLoaderContextManager.get(className);
                 
                 if (context.isUnknown() && multipleClassLoaders)
@@ -216,7 +225,7 @@ public class PageSourceImpl implements PageSource
                     }
                     context.getClassNames().clear();
                     // Avoiding bad invalidations
-                    return getPage(canonicalPageName, false);
+                    return getPage(canonicalPageName, false, alreadyProcessed);
                 }
             }
             

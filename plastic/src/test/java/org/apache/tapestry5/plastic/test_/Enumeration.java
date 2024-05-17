@@ -1,4 +1,4 @@
-// Copyright 2023 The Apache Software Foundation
+// Copyright 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,26 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package org.apache.tapestry5.plastic.test_;
 
-package org.apache.tapestry5.plastic.test;
-
-public class PlasticUtilsTestObjectSuperclass 
+public enum Enumeration
 {
-    
-    public static final String SUPER = "Super!!!";
-    
-    private String superString = SUPER;
-    
-    private String overridden = "from superclass";
-
-    public String getSuperString() 
-    {
-        return superString;
-    }
-
-    public void setSuperString(String superString) 
-    {
-        this.superString = superString;
-    }
-    
+    TRUE,
+    FALSE,
+    FILE_NOT_FOUND
 }

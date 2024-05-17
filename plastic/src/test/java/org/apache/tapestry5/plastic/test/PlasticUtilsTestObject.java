@@ -14,21 +14,28 @@
 
 package org.apache.tapestry5.plastic.test;
 
+import org.apache.tapestry5.plastic.test_.Enumeration;
+
 public class PlasticUtilsTestObject extends PlasticUtilsTestObjectSuperclass
 {
     
     public static final String STRING = "A nice string";
     public static final int[] INT_ARRAY = new int[] {1, 42};
     public static final String OTHER_STRING = "Another nice string";
-    public static final Enumeration ENUMERATION = PlasticUtilsTestObject.Enumeration.FILE_NOT_FOUND;
+    public static final Enumeration ENUMERATION = Enumeration.FILE_NOT_FOUND;
     public static final boolean TRUE_OF_FALSE = true;
     
-    public static enum Enumeration
+    public PlasticUtilsTestObject()
     {
-        TRUE,
-        FALSE,
-        FILE_NOT_FOUND
     }
+    
+    public PlasticUtilsTestObject(String ignored, boolean b)
+    {
+        setString("?");
+        setString(ignored);
+        setTrueOrFalse(b);
+    }
+    
     
     private String string = STRING;
     
