@@ -185,7 +185,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
-        this.multipleClassLoaders = multipleClassLoaders;
+        this.multipleClassLoaders = multipleClassLoaders && !productionMode;
         this.resolver = resolver;
         this.pageClassLoaderContextManager = pageClassLoaderContextManager;
         this.componentDependencyRegistry = componentDependencyRegistry;

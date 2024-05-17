@@ -1,4 +1,4 @@
-// Copyright 2023 The Apache Software Foundation
+// Copyright 2023, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,15 @@ public interface PropertyValueProvider
      * @return the field value.
      */
     Object __propertyValueProvider__get(String fieldName);
-    
+
+    /**
+     * Sets the value of a given field.
+     * @param fieldName the field name.
+     * @param value the field value.
+     * @since 5.8.7
+     */
+    void __propertyValueProvider__set(String fieldName, Object value);
+
     /**
      * <p>
      * Returns the value of a given field in a given object if it belongs to a class
@@ -53,6 +61,32 @@ public interface PropertyValueProvider
         if (object instanceof PropertyValueProvider)
         {
             return ((PropertyValueProvider) object).__propertyValueProvider__get(fieldName);
+        }
+        else
+        {
+            throw new RuntimeException("Class " + object.getClass().getName() + " doesn't implement " + PropertyValueProvider.class.getSimpleName());
+        }
+    }
+    
+    /**
+     * <p>
+     * Sets the value of a given field in a given object if it belongs to a class
+     * that implements {@linkplain PropertyValueProvider}. Otherwise, it throws an exception.
+     * </p>
+     * <p>
+     * This is an utility method to avoid having to make casts very time you need to call
+     * {@linkplain #__propertyValueProvider__set(String)}.
+     * </p>
+     * @param object an object.
+     * @param fieldName the field name.
+     * @param value the field value.
+     * @since 5.8.7
+     */
+    static void set(Object object, String fieldName, Object value)
+    {
+        if (object instanceof PropertyValueProvider)
+        {
+            ((PropertyValueProvider) object).__propertyValueProvider__set(fieldName, value);
         }
         else
         {

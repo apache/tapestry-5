@@ -25,6 +25,10 @@ import org.apache.tapestry5.internal.plastic.PrimitiveType;
  */
 public class PlasticUtils
 {
+    private static final String SETTER_METHOD_NAME = "__propertyValueProvider__set";
+
+    private static final String GETTER_METHOD_NAME = "__propertyValueProvider__get";
+
     /**
      * The {@code toString()} method inherited from Object.
      */
@@ -37,14 +41,17 @@ public class PlasticUtils
 
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.nanoTime());
     
-    private static final MethodDescription PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION;
+    private static final MethodDescription PROPERTY_VALUE_PROVIDER_GETTER_METHOD_DESCRIPTION;
+    
+    private static final MethodDescription PROPERTY_VALUE_PROVIDER_SETTER_METHOD_DESCRIPTION;
     
     private static final MethodDescription FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION;
     
     static
     {
         try {
-            PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION = new MethodDescription(PropertyValueProvider.class.getMethod("__propertyValueProvider__get", String.class));
+            PROPERTY_VALUE_PROVIDER_GETTER_METHOD_DESCRIPTION = new MethodDescription(PropertyValueProvider.class.getMethod(GETTER_METHOD_NAME, String.class));
+            PROPERTY_VALUE_PROVIDER_SETTER_METHOD_DESCRIPTION = new MethodDescription(PropertyValueProvider.class.getMethod(SETTER_METHOD_NAME, String.class, Object.class));            
             FIELD_VALUE_PROVIDER_METHOD_DESCRIPTION = new MethodDescription(FieldValueProvider.class.getMethod("__fieldValueProvider__get", String.class));
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -250,7 +257,7 @@ public class PlasticUtils
         
         final Set<PlasticMethod> methods = plasticClass.introduceInterface(PropertyValueProvider.class);
         
-        final InstructionBuilderCallback callback = (builder) -> {
+        final InstructionBuilderCallback getterCallback = (builder) -> {
             
             for (FieldInfo field : fieldInfos) 
             {
@@ -273,6 +280,9 @@ public class PlasticUtils
                 
             }
             
+            // Field/property not found, so let's try the superclass in case
+            // it also implement
+            
             builder.loadThis();
             builder.instanceOf(PropertyValueProvider.class);
             
@@ -281,31 +291,86 @@ public class PlasticUtils
                 builder.loadArgument(0);
                 ifBuilder.invokeSpecial(
                         plasticClass.getSuperClassName(), 
-                        PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION);
+                        PROPERTY_VALUE_PROVIDER_GETTER_METHOD_DESCRIPTION);
                 ifBuilder.returnResult();
             });
             
-            // Field/property not found, so let's try the superclass in case
-            // it also implement
+            // Giving up
             
             builder.throwException(RuntimeException.class, "Property not found or not supported");
             
         };
         
-        final PlasticMethod method;
+        final InstructionBuilderCallback setterCallback = (builder) -> {
+            
+            for (FieldInfo field : fieldInfos) 
+            {
+                builder.loadArgument(0);
+                builder.loadConstant(field.name);
+                builder.invokeVirtual(String.class.getName(), "boolean", "equals", Object.class.getName());
+                builder.when(Condition.NON_ZERO, ifBuilder -> 
+                {
+                    final String methodName = "set" + PlasticInternalUtils.capitalize(field.name);
+                    
+                    ifBuilder.loadThis();
+                    ifBuilder.loadArgument(1);
+                    ifBuilder.castOrUnbox(field.type);
+                    ifBuilder.invokeVirtual(
+                            plasticClass.getClassName(), 
+                            void.class.getName(), 
+                            methodName,
+                            field.type);
+                    ifBuilder.returnResult();
+                });
+                
+            }
+            
+            // Field/property not found, so let's try the superclass in case
+            // it also implement
+            
+            builder.loadThis();
+            builder.instanceOf(PropertyValueProvider.class);
+            
+            builder.when(Condition.NON_ZERO, ifBuilder -> {
+                builder.loadThis();
+                builder.loadArgument(0);
+                builder.loadArgument(1);
+                ifBuilder.invokeSpecial(
+                        plasticClass.getSuperClassName(), 
+                        PROPERTY_VALUE_PROVIDER_SETTER_METHOD_DESCRIPTION);
+                ifBuilder.returnResult();
+            });
+            
+            // Giving up
+            
+            builder.throwException(RuntimeException.class, "Property not found or not supported");
+            
+        };
+        
+        final PlasticMethod getterMethod;
+        final PlasticMethod setterMethod;
         
         // Superclass has already defined this method, so we need to override it so
         // it can also find the subclasses' declared fields/properties.
         if (methods.isEmpty())
         {
-            method = plasticClass.introduceMethod(PROPERTY_VALUE_PROVIDER_METHOD_DESCRIPTION , callback);
+            getterMethod = plasticClass.introduceMethod(PROPERTY_VALUE_PROVIDER_GETTER_METHOD_DESCRIPTION, getterCallback);
+            setterMethod = plasticClass.introduceMethod(PROPERTY_VALUE_PROVIDER_SETTER_METHOD_DESCRIPTION, setterCallback);
         }
         else
         {
-            method = methods.iterator().next();
+            getterMethod = methods.stream()
+                    .filter(m -> m.getDescription().methodName.equals(GETTER_METHOD_NAME))
+                    .findFirst()
+                    .get();
+            setterMethod = methods.stream()
+                    .filter(m -> m.getDescription().methodName.equals(SETTER_METHOD_NAME))
+                    .findFirst()
+                    .get();
         }
         
-        method.changeImplementation(callback);
+        getterMethod.changeImplementation(getterCallback);
+        setterMethod.changeImplementation(setterCallback);
         
     }
 
