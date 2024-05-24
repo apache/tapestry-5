@@ -75,7 +75,7 @@ public interface PropertyValueProvider
      * </p>
      * <p>
      * This is an utility method to avoid having to make casts very time you need to call
-     * {@linkplain #__propertyValueProvider__set(String)}.
+     * {@linkplain #__propertyValueProvider__set(String, Object)}.
      * </p>
      * @param object an object.
      * @param fieldName the field name.
