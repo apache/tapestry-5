@@ -612,6 +612,27 @@ class JSONObjectSpec extends Specification {
         obj1 != obj2
     }
 
+    def "hashCode() implementation"() {
+        def json = /{ "key" : 99 }/
+
+        when:
+
+        def obj1 = new JSONObject(json)
+        def obj2 = new JSONObject(json)
+
+        then:
+
+        obj1.hashCode() == obj2.hashCode()
+
+        when:
+
+        obj2.put("screw", "the pooch")
+
+        then:
+
+        obj1.hashCode() != obj2.hashCode()
+    }
+
     def "escaped characters in the JSON are parsed correctly"() {
         when:
 

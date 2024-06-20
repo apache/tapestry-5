@@ -893,6 +893,11 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         return nameValuePairs.equals(other.nameValuePairs);
     }
 
+    @Override
+    public int hashCode() {
+        return nameValuePairs.hashCode();
+    }
+
     /**
      * Returns a Map of the keys and values of the JSONObject. The returned map is unmodifiable.
      * Note that changes to the JSONObject will be reflected in the map. In addition, null values in the JSONObject
