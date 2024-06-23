@@ -265,6 +265,25 @@ class JSONArraySpec extends Specification {
         array1 != array2
     }
 
+    def "array hashCode"() {
+        when:
+
+        def array1 = new JSONArray(1, 2, 3)
+        def array2 = new JSONArray(1, 2, 3)
+
+        then:
+
+        array1.hashCode() == array2.hashCode()
+
+        when:
+
+        array2.put 9, "stuff"
+
+        then:
+
+        array1.hashCode() != array2.hashCode()
+    }
+
     def "pretty print"() {
         def array = new JSONArray("fred", "barney")
 
