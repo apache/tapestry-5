@@ -356,7 +356,23 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public Instantiator getInstantiator(final String className)
     {
-        return classToInstantiator.computeIfAbsent(className, this::createInstantiatorForClass);
+        Instantiator instantiator;
+        if (multipleClassLoaders)
+        {
+            instantiator = classToInstantiator.get(className);
+
+            if (instantiator == null)
+            {
+                instantiator = createInstantiatorForClass(className);
+                classToInstantiator.put(className, instantiator);
+            }
+
+        }
+        else 
+        {
+            instantiator = classToInstantiator.computeIfAbsent(className, this::createInstantiatorForClass);
+        }
+        return instantiator;
     }
     
     private static final ThreadLocal<Set<String>> OPEN_INSTANTIATORS = 
@@ -376,6 +392,30 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         OPEN_INSTANTIATORS.get().add(className);
                         
                         componentDependencyRegistry.disableInvalidations();
+                        
+                        // Make sure the dependencies have been processed in case
+                        // there was some invalidation going on and they're not there.
+
+                        final Set<String> dependencies = new HashSet<>();
+                        dependencies.addAll(
+                                componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+//                        dependencies.addAll(
+//                                componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+                        for (String dependency : dependencies)
+                        {
+                            if (!OPEN_INSTANTIATORS.get().contains(dependency))
+                            {
+                                if (multipleClassLoaders)
+                                {
+                                    getInstantiator(dependency);
+                                }
+                                else
+                                {
+                                    createInstantiatorForClass(dependency);
+                                }
+                            }
+                        }
+                        
                         PageClassLoaderContext context;
                         try
                         {
@@ -386,20 +426,21 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                             componentDependencyRegistry.enableInvalidations();
                         }
                         
-                        // Make sure the dependencies have been processed in case
-                        // there was some invalidation going on and they're not there.
-
-                        // TODO: maybe we need superclasses here too?
-                        final Set<String> dependencies = componentDependencyRegistry.getDependencies(className, DependencyType.USAGE);
-                        for (String dependency : dependencies)
+                        ClassInstantiator<Component> plasticInstantiator;
+                        try 
                         {
-                            if (!OPEN_INSTANTIATORS.get().contains(dependency))
-                            {
-                                createInstantiatorForClass(dependency);
+                            if (className.equals("org.apache.tapestry5.integration.app1.pages.GridInLoopDemo")) {
+                                System.out.println();
                             }
+                            plasticInstantiator = context.getPlasticManager().getClassInstantiator(className);
+                            if (multipleClassLoaders)
+                            {
+                                context.getPlasticManager().getClassLoader().loadClass(className);
+                            }
+                        } catch (Exception e) {
+                            System.out.println(pageClassLoaderContextManager.getRoot().toRecursiveString());
+                            throw new RuntimeException(e);
                         }
-                        
-                        ClassInstantiator<Component> plasticInstantiator = context.getPlasticManager().getClassInstantiator(className);
                         final ComponentModel model = classToModel.get(className);
                         
                         OPEN_INSTANTIATORS.get().remove(className);

@@ -28,6 +28,10 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.ThrowawayClassLoader;
+import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
+import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
@@ -66,6 +70,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     
     private static final AtomicInteger MERGED_COUNTER = new AtomicInteger(1);
     
+    private final static ThreadLocal<Boolean> CONTEXTS_CHANGED = ThreadLocal.withInitial(() -> false);
+    
     private Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider;
     
     private PageClassLoaderContext root;
@@ -83,7 +89,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         this.componentClassResolver = componentClassResolver;
         this.invalidationHub = invalidationHub;
         this.componentClassesInvalidationEventHub = componentClassesInvalidationEventHub;
-        this.multipleClassLoaders = multipleClassLoaders;
+        this.multipleClassLoaders = multipleClassLoaders && !productionMode;
         this.productionMode = productionMode;
         invalidationHub.addInvalidationCallback(this::listen);
         NESTED_MERGE_COUNT.set(0);
@@ -147,7 +153,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
 
             if (!className.equals(enclosingClassName))
             {
-                loadClass(className, context);
+                loadClass(enclosingClassName, context);
             }
             
         }
@@ -227,7 +233,6 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         if (context == null)
         {
             
-            LOGGER.debug("Processing class {}", className);
             
             // Class isn't in a controlled package, so it doesn't get transformed
             // and should go for the root context, which is never thrown out.
@@ -235,6 +240,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             {
                 context = root;
             } else {
+                LOGGER.debug("Processing class {}", className);
                 if (!productionMode && (
                         !componentDependencyRegistry.contains(className) ||
                         !multipleClassLoaders))
@@ -267,7 +273,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                     {
                         PageClassLoaderContext dependencyContext = root.findByClassName(dependency);
                         // Avoid infinite recursion loops
-                        if (!alreadyProcessed.contains(dependency))
+                        if (multipleClassLoaders || !alreadyProcessed.contains(dependency))
                         {
                             if (dependencyContext == null)
                             {
@@ -319,14 +325,31 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                         context.getParent().addChild(context);
                     }
                     
-                    // Ensure non-page class is initialized in the correct context and classloader.
-                    // Pages get their own context and classloader, so this initialization
-                    // is both non-needed and a cause for an NPE if it happens.
-                    if (!componentClassResolver.isPage(className)
-                            || componentDependencyRegistry.getDependencies(className, DependencyType.USAGE).isEmpty())
-                    {
-                        loadClass(className, context);
-                    }
+//                    // Ensure non-page class is initialized in the correct context and classloader.
+//                    // Pages get their own context and classloader, so this initialization
+//                    // is both non-needed and a cause for an NPE if it happens.
+//                    if (!componentClassResolver.isPage(className)
+//                            || componentDependencyRegistry.getDependencies(className, DependencyType.USAGE).isEmpty())
+//                    {
+//                        // Avoiding "attempted duplicate class definition" due to 
+//                        // loading a class into a classloader which already loaded
+//                        // that class before.
+//                        if (!context.getClassNames().contains(className))
+//                        {
+//                            list.get().add(className);
+//                            try {
+//                                loadClass(className, context);
+//                            }
+//                            catch (LinkageError e) {
+//                                System.out.println("-------------------------");
+//                                for (String c : list.get()) {
+//                                    System.out.println(c);
+//                                }
+//                                System.out.println("-------------------------");
+//                                throw e;
+//                            }
+//                        }
+//                    }
 
                     if (multipleClassLoaders)
                     {
@@ -334,6 +357,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                     }
                     
                 }
+                CONTEXTS_CHANGED.set(true);
             }
             
         }
@@ -347,6 +371,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         Set<String> dependencies = new HashSet<>();
         dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
         dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+        dependencies.remove(className); // Just in case
         return Collections.unmodifiableSet(dependencies);
     }
 
@@ -387,12 +412,19 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             }
             LOGGER.debug(builder.toString().trim());
         }
-        
+
+        final Set<String> classesToReprocess = multipleClassLoaders ? new HashSet<>() : Collections.emptySet();
         Set<PageClassLoaderContext> allContextsIncludingDescendents = new HashSet<>();
+        
         for (PageClassLoaderContext context : contextDependencies) 
         {
+            final Set<PageClassLoaderContext> descendents = context.getDescendents();
             allContextsIncludingDescendents.add(context);
-            allContextsIncludingDescendents.addAll(context.getDescendents());
+            allContextsIncludingDescendents.addAll(descendents);
+            for (PageClassLoaderContext descendent : descendents) 
+            {
+                addClassNames(descendent, classesToReprocess);
+            }
         }
 
         PageClassLoaderContext merged;
@@ -459,6 +491,18 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             this::get);
         
         parent.addChild(merged);
+        
+        // Recreating contexts for classes that got invalidated but
+        // aren't part of the new merged context (i.e. the classes
+        // in contexts are are descendent of the merged contexts).
+//        if (!classesToReprocess.isEmpty())
+//        {
+//            final List<String> sorted = new ArrayList<>(classesToReprocess);
+//            for (String className : sorted) 
+//            {
+//                get(className);
+//            }
+//        }
         
 //        for (String className : classNames) 
 //        {
@@ -647,10 +691,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     public void preload() 
     {
         
-        final PageClassLoaderContext context = new PageClassLoaderContext(PageClassLoaderContext.UNKOWN_CONTEXT_NAME, root, 
-                Collections.emptySet(), 
-                plasticProxyFactoryProvider.apply(root.getClassLoader()),
-                this::get);
+        final ClassLoader classLoader = new ThrowawayClassLoader(PageClassLoaderContext.class.getClassLoader());
         
         final List<String> pageNames = componentClassResolver.getPageNames();
         final List<String> classNames = new ArrayList<>(pageNames.size());
@@ -664,7 +705,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             try 
             {
                 final String className = componentClassResolver.resolvePageNameToClassName(page);
-                componentDependencyRegistry.register(context.getClassLoader().loadClass(className));
+                componentDependencyRegistry.register(classLoader.loadClass(className));
                 classNames.add(className);
             } catch (ClassNotFoundException e) 
             {
@@ -683,27 +724,57 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             LOGGER.info(String.format("Dependency information gathered in %.3f ms", (finish - start) / 1000.0));
         }
         
-        context.invalidate();
+        preloadContexts();
         
+    }
+
+    @Override
+    public void preloadContexts() 
+    {
+        long start;
+        long finish;
         LOGGER.info("Starting preloading page classloader contexts");
         
         start = System.currentTimeMillis();
         
-        for (int i = 0; i < 10; i++)
+        final List<String> classNames = new ArrayList<>();
+        classNames.addAll(componentClassResolver.getMixinNames().stream()
+                .map(s -> componentClassResolver.resolveMixinTypeToClassName(s))
+                .sorted()
+                .collect(Collectors.toList()));
+        
+        classNames.addAll(componentClassResolver.getComponentNames().stream()
+                .map(s -> componentClassResolver.resolveComponentTypeToClassName(s))
+                .sorted()
+                .collect(Collectors.toList()));        
+        
+        classNames.addAll(componentClassResolver.getPageNames().stream()
+                .map(s -> componentClassResolver.resolvePageNameToClassName(s))
+                .sorted()
+                .collect(Collectors.toList()));
+        
+        int runs = 0;
+        
+        // The run counter check is to just avoid possible infinite loops,
+        // although that's very unlikely.
+        CONTEXTS_CHANGED.set(true);
+        while (runs < 5000 && CONTEXTS_CHANGED.get() == true)
         {
+            runs++;
+            CONTEXTS_CHANGED.set(false);
             for (String className : classNames) 
             {
                 get(className);
             }
+            System.out.println(CONTEXTS_CHANGED.get());
         }
         
         finish = System.currentTimeMillis();
 
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info(String.format("Preloading of page classloadercontexts finished in %.3f ms", (finish - start) / 1000.0));
+            LOGGER.info(String.format("Preloading of page classloader contexts finished in %.3f ms (%d passes)", (finish - start) / 1000.0, runs));
         }
-
     }
     
 }

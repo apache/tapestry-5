@@ -41,6 +41,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.URLEncoder;
+import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -123,6 +124,10 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
     @Inject
     @ComponentClasses 
     private InvalidationEventHub classesInvalidationHub;
+    
+    @Inject
+    @Property
+    private PageClassLoaderContextManager pageClassLoaderContextManager;
 
     private String failurePage;
 
@@ -187,6 +192,7 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     public void reportException(Throwable exception)
     {
+        System.out.print(pageClassLoaderContextManager.getRoot().toRecursiveString());
         rootException = exception;
 
         rootURL = baseURLSource.getBaseURL(request.isSecure());

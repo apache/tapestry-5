@@ -1,0 +1,17 @@
+<t:block id="content" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+         xmlns:p="tapestry:parameter">
+	<h1>Page classloader contexts <t:glyphicon name="list" /></h1>
+	<style>
+		#tree li {
+			display: block;
+			margin-top: 0.25em;
+			line-height: 2m;
+		}
+		#tree .glyphicon {
+			margin-right: 0.25em;
+		}
+	</style>
+	<ul id="tree">		
+		<t:trigger event="render"/>
+	</ul>
+</t:block>

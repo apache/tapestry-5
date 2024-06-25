@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Set;
+
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 
@@ -22,20 +27,68 @@ public class ComponentModelSourceImpl implements ComponentModelSource
     private final ComponentClassResolver resolver;
 
     private final ComponentInstantiatorSource source;
+    
+    private final ComponentDependencyRegistry componentDependencyRegistry;
+    
+    private final PageSource pageSource;
+    
+    private final boolean multipleClassLoaders;
 
-    public ComponentModelSourceImpl(ComponentClassResolver resolver, ComponentInstantiatorSource source)
+    public ComponentModelSourceImpl(ComponentClassResolver resolver, ComponentInstantiatorSource source,
+            ComponentDependencyRegistry componentDependencyRegistry,
+            PageSource pageSource,
+            @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+            @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassLoaders)
     {
         this.resolver = resolver;
         this.source = source;
+        this.componentDependencyRegistry = componentDependencyRegistry;
+        this.pageSource = pageSource;
+        this.multipleClassLoaders = !productionMode && multipleClassLoaders;
     }
 
     public ComponentModel getModel(String componentClassName)
     {
+        if (multipleClassLoaders && isPage(componentClassName))
+        {
+            
+            if (componentClassName.contains("GridDemo") || 
+                    componentClassName.contains("GridInLoopDemo"))
+            {
+                System.out.println();
+            }
+            
+            final Set<String> superclasses = componentDependencyRegistry.getDependencies(
+                    componentClassName, DependencyType.SUPERCLASS);
+            
+            if (!superclasses.isEmpty())
+            {
+                final String superclass = superclasses.iterator().next();
+                if (isPage(superclass))
+                {
+                    getModel(superclass);
+                    try
+                    {
+                        pageSource.getPage(resolver.getLogicalName(componentClassName));
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        //ignore
+                    }
+                }
+            }
+        }
         return source.getInstantiator(componentClassName).getModel();
     }
 
     public ComponentModel getPageModel(String pageName)
     {
         return getModel(resolver.resolvePageNameToClassName(pageName));
+    }
+    
+    private boolean isPage(String componentClassName)
+    {
+        return componentClassName.contains(".pages.");
     }
 }

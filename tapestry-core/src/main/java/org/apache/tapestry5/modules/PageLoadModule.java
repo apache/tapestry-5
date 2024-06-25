@@ -97,14 +97,7 @@ public class PageLoadModule
     {
         if (!productionMode && multipleClassLoaders)
         {
-            // Preload the page activation context tree for the already known classes
-            for (int i = 0; i < 5; i++)
-            {
-                for (String className : componentDependencyRegistry.getClassNames()) 
-                {
-                    pageClassLoaderContextManager.get(className);
-                }
-            }
+            pageClassLoaderContextManager.preloadContexts();
         }
         // Preload the dependency information for all pages 
         // when in production mode. Without that, exceptions during

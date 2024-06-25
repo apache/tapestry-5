@@ -68,6 +68,13 @@ public interface ComponentDependencyRegistry {
     void register(Class<?> clasz);
 
     /**
+     * Register all the dependencies of a given class and uses a given
+     * classloader to load other classes if needed.
+     * @since 5.8.7
+     */
+    void register(Class<?> clasz, ClassLoader classLoader);
+
+    /**
      * Register all the dependencies of a given component.
      */
     void register(ComponentPageElement componentPageElement);

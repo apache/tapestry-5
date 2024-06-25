@@ -753,7 +753,18 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private FieldInstrumentations getFieldInstrumentations(String classInternalName)
     {
-        FieldInstrumentations result = instrumentations.get(classInternalName);
+        
+        // Check whether parent pool already has instrumentations for
+        // that class to avoid a duplicated class definition attempt
+        // when running tapestry-core in multiple classloader mode.
+        PlasticClassPool current = this;
+        FieldInstrumentations result;
+        do 
+        {
+            result = current.instrumentations.get(classInternalName);
+            current = current.parent;
+        }
+        while (current != null && result == null);
 
         if (result != null)
         {
@@ -845,6 +856,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String toString() 
+    {
+        return "PlasticClassPool [loader=" + loader + "]";
+    }
+    
 }
 
 

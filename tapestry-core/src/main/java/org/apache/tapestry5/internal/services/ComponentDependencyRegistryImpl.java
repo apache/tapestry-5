@@ -179,9 +179,15 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             INVALIDATIONS_DISABLED.set(0);
         });
     }
-    
+
     @Override
     public void register(Class<?> component) 
+    {
+        register(component, component.getClassLoader());
+    }
+    
+    @Override
+    public void register(Class<?> component, ClassLoader classLoader) 
     {
         
         final String className = component.getName();
@@ -189,7 +195,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         Consumer<Class<?>> processClass = furtherDependencies::add;
         Consumer<String> processClassName = s -> {
             try {
-                furtherDependencies.add(component.getClassLoader().loadClass(s));
+                furtherDependencies.add(classLoader.loadClass(s));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -216,6 +222,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             {
                 final Class<?> dependency = field.getType();
                 add(component, dependency, DependencyType.INJECT_PAGE);
+                processClass.accept(dependency);
             }
             
             // @Component
@@ -245,7 +252,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             if (!alreadyProcessed.contains(dependencyClassName)
                     && plasticManager.shouldInterceptClassLoading(dependency.getName()))
             {
-                register(dependency);
+                register(dependency, classLoader);
             }
         }
         
@@ -261,14 +268,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     private void registerTemplate(Class<?> component, Consumer<String> processClassName) 
     {
         // TODO: implement caching of template dependency information, probably
-        // by listening separaterly to ComponentTemplateSource to invalidate caches
+        // by listening separately to ComponentTemplateSource to invalidate caches
         // just when template changes.
         
         final String className = component.getName();
         ComponentModel mock = new ComponentModelMock(component, isPage(className));
         final Resource templateResource = componentTemplateLocator.locateTemplate(mock, Locale.getDefault());
         String dependency;
-        if (templateResource != null)
+        if (templateResource != null && templateResource.exists())
         {
             final ComponentTemplate template = templateParser.parseTemplate(templateResource);
             final List<TemplateToken> tokens = new LinkedList<>();
