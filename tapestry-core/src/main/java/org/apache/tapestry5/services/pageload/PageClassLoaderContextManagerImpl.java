@@ -73,6 +73,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     private Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider;
     
     private PageClassLoaderContext root;
+    
+    private boolean preloadingContexts;
 
     public PageClassLoaderContextManagerImpl(
             final ComponentDependencyRegistry componentDependencyRegistry, 
@@ -637,7 +639,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     }
     
     private void invalidate(Set<String> classesToInvalidate) {
-        if (!classesToInvalidate.isEmpty())
+        if (!classesToInvalidate.isEmpty() && !preloadingContexts)
         {
             LOGGER.debug("Invalidating classes {}", classesToInvalidate);
             markAsInvalidatingContext();
@@ -757,19 +759,26 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         classNames.sort(ClassNameComparator.INSTANCE);
         
         int runs = 0;
+        preloadingContexts = true;
         
-        // The run counter check is to just avoid possible infinite loops,
-        // although that's very unlikely.
-        int contexts = -1;
-        while (runs < 5000 && contexts < CONTEXTS_CREATED.get().get())
+        try 
         {
-            runs++;
-            contexts = CONTEXTS_CREATED.get().get();
-            for (String className : classNames) 
+            // The run counter check is to just avoid possible infinite loops,
+            // although that's very unlikely.
+            int contexts = -1;
+            while (runs < 5000 && contexts < CONTEXTS_CREATED.get().get())
             {
-                get(className);
+                runs++;
+                contexts = CONTEXTS_CREATED.get().get();
+                for (String className : classNames) 
+                {
+                    get(className);
+                }
             }
-//            Collections.reverse(classNames);
+        }
+        finally
+        {
+            preloadingContexts = false;
         }
         
         finish = System.currentTimeMillis();
