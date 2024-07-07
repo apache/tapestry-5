@@ -399,8 +399,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         final Set<String> dependencies = new HashSet<>();
                         dependencies.addAll(
                                 componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
-//                        dependencies.addAll(
-//                                componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+                        dependencies.addAll(
+                                componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
                         for (String dependency : dependencies)
                         {
                             if (!OPEN_INSTANTIATORS.get().contains(dependency))
@@ -429,9 +429,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         ClassInstantiator<Component> plasticInstantiator;
                         try 
                         {
-                            if (className.equals("org.apache.tapestry5.integration.app1.pages.GridInLoopDemo")) {
-                                System.out.println();
-                            }
                             plasticInstantiator = context.getPlasticManager().getClassInstantiator(className);
                             if (multipleClassLoaders)
                             {

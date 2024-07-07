@@ -273,17 +273,6 @@ public class PageSourceImpl implements PageSource
             }
         }
         
-        // TODO: remove
-//        for (String pageClassName : pageDependencies)
-//        {
-//            try 
-//            {
-//                pageClassLoaderContextManager.get(pageClassName).getClassLoader().loadClass(pageClassName);
-//            } catch (ClassNotFoundException e) 
-//            {
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
 
     @PostInjection

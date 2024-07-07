@@ -52,12 +52,6 @@ public class ComponentModelSourceImpl implements ComponentModelSource
         if (multipleClassLoaders && isPage(componentClassName))
         {
             
-            if (componentClassName.contains("GridDemo") || 
-                    componentClassName.contains("GridInLoopDemo"))
-            {
-                System.out.println();
-            }
-            
             final Set<String> superclasses = componentDependencyRegistry.getDependencies(
                     componentClassName, DependencyType.SUPERCLASS);
             

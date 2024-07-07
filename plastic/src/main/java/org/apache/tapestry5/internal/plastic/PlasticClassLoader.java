@@ -41,10 +41,6 @@ public class PlasticClassLoader extends ClassLoader
     
     private Function<String, Class<?>> alternativeClassloading;
     
-    private Consumer<String> beforeLoadClass;
-    
-    private Set<String> loadedClasses;
-    
     private String tag;
     
     private Map<String, Class<?>> cache;
@@ -55,7 +51,6 @@ public class PlasticClassLoader extends ClassLoader
     {
         super(parent);
         this.delegate = delegate;
-        loadedClasses = new HashSet<>();
     }
 
     @Override
@@ -71,10 +66,6 @@ public class PlasticClassLoader extends ClassLoader
             if (shouldInterceptClassLoading(name))
             {
                 
-                if (name.equals("org.apache.tapestry5.integration.app1.pages.GridDemo")) {
-                    System.out.println();
-                }
-                
                 Class<?> c = getFromCache(name);
                 
                 if (c == null)
@@ -82,19 +73,7 @@ public class PlasticClassLoader extends ClassLoader
                 
                     if ((filter != null && filter.test(name)) || (filter == null && delegate.shouldInterceptClassLoading(name)))
                     {
-    
-                        try {
-                            log.add(String.format("Loading %s in %s", name, this));
-                            c = delegate.loadAndTransformClass(name);
-                        }
-                        catch (LinkageError e) {
-                            e.printStackTrace();
-                            for (String entry : log) {
-                                System.out.println(entry);
-                            }
-                            System.out.println();
-                            throw e;
-                        }
+                        c = delegate.loadAndTransformClass(name);
                     }
                     else if (alternativeClassloading != null)
                     {
@@ -113,9 +92,6 @@ public class PlasticClassLoader extends ClassLoader
                     return super.loadClass(name, resolve);                    
                 }
                 
-                
-//                loadedClasses.add(name + " : " + System.currentTimeMillis());
-
                 if (resolve)
                     resolveClass(c);
 
@@ -136,10 +112,6 @@ public class PlasticClassLoader extends ClassLoader
     {
         synchronized(getClassLoadingLock(className))
         {
-            if (className.equals("org.apache.tapestry5.integration.app1.pages.GridDemo"))
-            {
-                System.out.println();
-            }
             return defineClass(className, bytecode, 0, bytecode.length);
         }
     }
@@ -205,15 +177,4 @@ public class PlasticClassLoader extends ClassLoader
         return c;
     }
     
-//    /**
-//     * Sets a {@linkplain Consumer} that will be called before a transformed
-//     * class is loaded.
-//     * @param beforeLoadClass the <code>Consumer&lt;String&gt;</code>.
-//     * @since 5.8.7
-//     */
-//    public void setBeforeLoadClass(Consumer<String> beforeLoadClass) 
-//    {
-//        this.beforeLoadClass = beforeLoadClass;
-//    }
-
 }

@@ -22,7 +22,6 @@ import java.util.function.Function;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
-import org.apache.tapestry5.internal.plastic.PlasticClassPool;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
@@ -316,35 +315,70 @@ public class PageClassLoaderContext
         PageClassLoaderContext other = (PageClassLoaderContext) obj;
         return Objects.equals(name, other.name);
     }
-
+    
     @Override
     public String toString() 
     {
+        return toString(true);
+    }
+
+    public String toString(boolean includeClassNames) 
+    {
+        final PlasticClassLoader classLoader = (PlasticClassLoader) proxyFactory.getClassLoader();
         return "PageClassloaderContext [name=" + name + 
                 ", parent=" + (parent != null ? parent.getName() : "null" ) + 
-                ", classLoader=" + afterAt(proxyFactory.getClassLoader().toString()) +
-                (isRoot() ? ""  : ", classNames=" + classNames) + 
+                ", classLoader=" + afterAt(classLoader.getClassLoaderId()) +
+                (isRoot() || !includeClassNames ? ""  : ", classNames=" + classNames) + 
                 "]";
     }
     
     public String toRecursiveString()
     {
+        return toRecursiveString(true);
+    }
+    
+    public String toRecursiveString(boolean outputClasses)
+    {
         StringBuilder builder = new StringBuilder();
-        toRecursiveString(builder, "");
+        toRecursiveString(builder, "", outputClasses);
         return builder.toString();
     }
     
-    private void toRecursiveString(StringBuilder builder, String tabs)
+    public final boolean isEqualOrAncestor(PageClassLoaderContext dependencyContext) 
+    {
+        boolean equalOrAncestor = this.equals(dependencyContext);
+        if (!equalOrAncestor) 
+        {
+            PageClassLoaderContext parent = this.getParent();
+            while (parent != null && !equalOrAncestor) 
+            {
+                equalOrAncestor = parent.equals(dependencyContext);
+                if (equalOrAncestor) 
+                {
+                    break;
+                }
+                else 
+                {
+                    parent = parent.getParent();
+                }
+            }
+        }
+        return equalOrAncestor;
+    }
+    
+    private void toRecursiveString(StringBuilder builder, String tabs, boolean outputClasses)
     {
         builder.append(tabs);
         builder.append(name);
         builder.append(" : ");
         builder.append(afterAt(proxyFactory.getClassLoader().toString()));
-        builder.append(" : ");
-        builder.append(classNames);
+        if (outputClasses) {
+            builder.append(" : ");
+            builder.append(classNames);
+        }
         builder.append("\n");
         for (PageClassLoaderContext child : children) {
-            child.toRecursiveString(builder, tabs + "\t");
+            child.toRecursiveString(builder, tabs + "\t", outputClasses);
         }
     }
 

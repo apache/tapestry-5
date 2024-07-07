@@ -15,6 +15,7 @@ package org.apache.tapestry5.services.pageload;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -28,10 +29,7 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.ThrowawayClassLoader;
-import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
-import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.InternalComponentInvalidationEventHub;
@@ -70,12 +68,12 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
     
     private static final AtomicInteger MERGED_COUNTER = new AtomicInteger(1);
     
-    private final static ThreadLocal<Boolean> CONTEXTS_CHANGED = ThreadLocal.withInitial(() -> false);
+    private final static ThreadLocal<AtomicInteger> CONTEXTS_CREATED = ThreadLocal.withInitial(AtomicInteger::new);
     
     private Function<ClassLoader, PlasticProxyFactory> plasticProxyFactoryProvider;
     
     private PageClassLoaderContext root;
-    
+
     public PageClassLoaderContextManagerImpl(
             final ComponentDependencyRegistry componentDependencyRegistry, 
             final ComponentClassResolver componentClassResolver,
@@ -252,20 +250,45 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
 
                     alreadyProcessed.add(className);
                     
-                    // Sorting dependencies alphabetically so we have consistent results.
+                    // Sorting dependencies by type/alphabetically so we have consistent 
+                    // context trees between runs of the same webapp
+                    List<String> allNonPageDependencies = new ArrayList<>(
+                            componentDependencyRegistry.getAllNonPageDependencies(className));
+                    Collections.sort(allNonPageDependencies, ClassNameComparator.INSTANCE);
+                    
                     List<String> dependencies = new ArrayList<>(getDependenciesWithoutPages(className));
-                    Collections.sort(dependencies);
+                    Collections.sort(dependencies, ClassNameComparator.INSTANCE);
                     
                     // Process dependencies depth-first
-                    for (String dependency : dependencies)
+                    do
                     {
-                        // Avoid infinite recursion loops
-                        if (!alreadyProcessed.contains(dependency))
+                        
+                        // Very unlikely to have infinite loops, but lets
+                        // avoid them anyway.
+                        int passes = 0;
+                        
+                        int contextsCreatedInThisPass = -1;
+                        
+                        while (contextsCreatedInThisPass < CONTEXTS_CREATED.get().get() && passes < 1000)
                         {
-                            processUsingDependencies(dependency, root, unknownContextProvider, 
-                                    plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed, false);
+                            
+                            contextsCreatedInThisPass = CONTEXTS_CREATED.get().get();
+                    
+                            for (String dependency : allNonPageDependencies)
+                            {
+                                // Avoid infinite recursion loops
+                                if (!alreadyProcessed.contains(dependency)  
+                                        || root.findByClassName(dependency) == null)
+                                {
+                                    processUsingDependencies(dependency, root, unknownContextProvider, 
+                                            plasticProxyFactoryProvider, classesToInvalidate, alreadyProcessed, false);
+                                }
+                            }
+                            
                         }
+                        
                     }
+                    while (!allNeededContextsAvailable(allNonPageDependencies));
                     
                     // Collect context dependencies
                     Set<PageClassLoaderContext> contextDependencies = new HashSet<>();
@@ -300,6 +323,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                                 Collections.singleton(className), 
                                 plasticProxyFactoryProvider.apply(root.getClassLoader()),
                                 this::get);
+                        CONTEXTS_CREATED.get().incrementAndGet();
                     }
                     else 
                     {
@@ -318,6 +342,7 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                                 Collections.singleton(className), 
                                 plasticProxyFactoryProvider.apply(parentContext.getClassLoader()),
                                 this::get);
+                        CONTEXTS_CREATED.get().incrementAndGet();
                     }
 
                     if (multipleClassLoaders)
@@ -325,45 +350,33 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
                         context.getParent().addChild(context);
                     }
                     
-//                    // Ensure non-page class is initialized in the correct context and classloader.
-//                    // Pages get their own context and classloader, so this initialization
-//                    // is both non-needed and a cause for an NPE if it happens.
-//                    if (!componentClassResolver.isPage(className)
-//                            || componentDependencyRegistry.getDependencies(className, DependencyType.USAGE).isEmpty())
-//                    {
-//                        // Avoiding "attempted duplicate class definition" due to 
-//                        // loading a class into a classloader which already loaded
-//                        // that class before.
-//                        if (!context.getClassNames().contains(className))
-//                        {
-//                            list.get().add(className);
-//                            try {
-//                                loadClass(className, context);
-//                            }
-//                            catch (LinkageError e) {
-//                                System.out.println("-------------------------");
-//                                for (String c : list.get()) {
-//                                    System.out.println(c);
-//                                }
-//                                System.out.println("-------------------------");
-//                                throw e;
-//                            }
-//                        }
-//                    }
-
                     if (multipleClassLoaders)
                     {
                         LOGGER.debug("New context: {}", context);
                     }
                     
                 }
-                CONTEXTS_CHANGED.set(true);
+                
             }
             
         }
         context.addClass(className);
         
         return context;
+    }
+
+    private boolean allNeededContextsAvailable(List<String> dependencies) 
+    {
+        boolean available = true;
+        for (String dependency : dependencies)
+        {
+            if (root.findByClassName(dependency) == null)
+            {
+                available = false;
+                break;
+            }
+        }
+        return available;
     }
 
     private Set<String> getDependenciesWithoutPages(String className) 
@@ -489,6 +502,8 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             classNames, 
             plasticProxyFactoryProvider.apply(parent.getClassLoader()),
             this::get);
+        
+        CONTEXTS_CREATED.get().incrementAndGet();
         
         parent.addChild(merged);
         
@@ -721,13 +736,14 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info(String.format("Dependency information gathered in %.3f ms", (finish - start) / 1000.0));
+            LOGGER.info(String.format("Dependency information for %d pages gathered in %.3f s", 
+                    pageNames.size(),  (finish - start) / 1000.0));
         }
         
         preloadContexts();
         
     }
-
+    
     @Override
     public void preloadContexts() 
     {
@@ -737,44 +753,77 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
         
         start = System.currentTimeMillis();
         
-        final List<String> classNames = new ArrayList<>();
-        classNames.addAll(componentClassResolver.getMixinNames().stream()
-                .map(s -> componentClassResolver.resolveMixinTypeToClassName(s))
-                .sorted()
-                .collect(Collectors.toList()));
-        
-        classNames.addAll(componentClassResolver.getComponentNames().stream()
-                .map(s -> componentClassResolver.resolveComponentTypeToClassName(s))
-                .sorted()
-                .collect(Collectors.toList()));        
-        
-        classNames.addAll(componentClassResolver.getPageNames().stream()
-                .map(s -> componentClassResolver.resolvePageNameToClassName(s))
-                .sorted()
-                .collect(Collectors.toList()));
+        final List<String> classNames = new ArrayList<>(componentDependencyRegistry.getClassNames());
+        classNames.sort(ClassNameComparator.INSTANCE);
         
         int runs = 0;
         
         // The run counter check is to just avoid possible infinite loops,
         // although that's very unlikely.
-        CONTEXTS_CHANGED.set(true);
-        while (runs < 5000 && CONTEXTS_CHANGED.get() == true)
+        int contexts = -1;
+        while (runs < 5000 && contexts < CONTEXTS_CREATED.get().get())
         {
             runs++;
-            CONTEXTS_CHANGED.set(false);
+            contexts = CONTEXTS_CREATED.get().get();
             for (String className : classNames) 
             {
                 get(className);
             }
-            System.out.println(CONTEXTS_CHANGED.get());
+//            Collections.reverse(classNames);
         }
         
         finish = System.currentTimeMillis();
 
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info(String.format("Preloading of page classloader contexts finished in %.3f ms (%d passes)", (finish - start) / 1000.0, runs));
+            LOGGER.info(String.format("Preloading of page classloader contexts finished in %.3f s (%d passes)", (finish - start) / 1000.0, runs));
         }
+    }
+    
+    /**
+     * Sorts base classes before mixins, mixins before components and components
+     * before pages. If both classes belong to the same type, order alphabetically.
+     */
+    private static final class ClassNameComparator implements Comparator<String> 
+    {
+        
+        private static final Comparator<String> INSTANCE = new ClassNameComparator();
+
+        @Override
+        public int compare(String o1, String o2) 
+        {
+            int value1 = getValue(o1);
+            int value2 = getValue(o2);
+            int comparison = value1 - value2;
+            if (comparison == 0)
+            {
+                comparison = o1.compareTo(o2);
+            }
+            return comparison;
+        }
+        
+        private int getValue(String className)
+        {
+            int value;
+            if (className.contains(".base."))
+            {
+                value = 0;
+            }
+            else if (className.contains(".mixins."))
+            {
+                value = 1;
+            }
+            else if (className.contains(".components."))
+            {
+                value = 2;
+            }
+            else
+            {
+                value = 3;
+            }
+            return value;
+        }
+        
     }
     
 }
