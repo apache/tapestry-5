@@ -83,6 +83,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     
     private static final String META_ATTRIBUTE_SEPARATOR = ",";
     
+    private static final String NO_DEPENDENCY = "NONE";
+    
     // Key is a component, values are the components that depend on it.
     final private Map<String, Set<Dependency>> map;
     
@@ -150,10 +152,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     {
                         final JSONObject jsonObject = jsonArray.getJSONObject(i);
                         final String className = jsonObject.getString("class");
-                        final DependencyType dependencyType = DependencyType.valueOf(jsonObject.getString("type"));
-                        final String dependency = jsonObject.getString("dependency");
-                        add(className, dependency, dependencyType);
-                        alreadyProcessed.add(dependency);
+                        final String type = jsonObject.getString("type");
+                        if (!type.equals(NO_DEPENDENCY))
+                        {
+                            final DependencyType dependencyType = DependencyType.valueOf(type);
+                            final String dependency = jsonObject.getString("dependency");
+                            add(className, dependency, dependencyType);
+                            alreadyProcessed.add(dependency);
+                        }
                         alreadyProcessed.add(className);
                     }
                 } catch (IOException e) 
@@ -555,7 +561,30 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         return dependencies;
     }
 
+    @Override
+    public Set<String> getAllNonPageDependencies(String className) 
+    {
+        final Set<String> dependencies = new HashSet<>();
+        getAllNonPageDependencies(className, dependencies);
+        // Just in case, since it's possible to have circular dependencies.
+        dependencies.remove(className);
+        return Collections.unmodifiableSet(dependencies);
+    }
 
+    private void getAllNonPageDependencies(String className, Set<String> dependencies) 
+    {
+        Set<String> theseDependencies = new HashSet<>();
+        theseDependencies.addAll(getDependencies(className, DependencyType.USAGE));
+        theseDependencies.addAll(getDependencies(className, DependencyType.SUPERCLASS));
+        theseDependencies.removeAll(dependencies);
+        dependencies.addAll(theseDependencies);
+        for (String dependency : theseDependencies) 
+        {
+            getAllNonPageDependencies(dependency, dependencies);
+        }
+    }
+
+    
     private boolean contains(Set<Dependency> dependencies, String className, DependencyType type) 
     {
         boolean contains = false;
@@ -674,6 +703,7 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                 JSONArray jsonArray = new JSONArray();
                 for (String className : classNames)
                 {
+                    boolean hasDependencies = false;
                     for (DependencyType dependencyType : DependencyType.values())
                     {
                         final Set<String> dependencies = getDependencies(className, dependencyType);
@@ -683,6 +713,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                             object.put("class", className);
                             object.put("type", dependencyType.name());
                             object.put("dependency", dependency);
+                            jsonArray.add(object);
+                            hasDependencies = true;
+                        }
+                    }
+                    // Add a fake dependency so classes without dependencies
+                    // nor classes depending on it are properly stored and 
+                    // retrieved, thus avoiding these classes getting into the 
+                    // unknown page classloader context.
+                    if (!hasDependencies)
+                    {
+                        if (getDependents(className).isEmpty()) {
+                            JSONObject object = new JSONObject();
+                            object.put("class", className);
+                            object.put("type", NO_DEPENDENCY);
                             jsonArray.add(object);
                         }
                     }

@@ -113,6 +113,12 @@ public interface ComponentDependencyRegistry {
     Set<String> getDependencies(String className, DependencyType type);
     
     /**
+     * Returns all dependencies of a given class, direct and indirect.
+     * @param className a class name.
+     */
+    Set<String> getAllNonPageDependencies(String className);
+    
+    /**
      * Signs up this registry to invalidation events from a given hub.
      */
     void listen(InvalidationEventHub invalidationEventHub);

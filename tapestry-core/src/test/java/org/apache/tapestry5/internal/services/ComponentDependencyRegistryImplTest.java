@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -381,6 +383,40 @@ public class ComponentDependencyRegistryImplTest
     }
     
     @Test
+    public void get_all_non_page_dependencies()
+    {
+        
+        final String page = "page";
+        final String className = "root";
+        final String superclass = "superclass";
+        final Set<String> expectedAllNonPageDependencies = new HashSet<>();
+        final BiConsumer<String, String> add = (c, d) -> {
+            expectedAllNonPageDependencies.add(d);
+            add(c, d, DependencyType.USAGE);
+        };
+        
+        add(className, page, DependencyType.INJECT_PAGE);
+        
+        add(className, superclass, DependencyType.SUPERCLASS);
+        expectedAllNonPageDependencies.add(superclass);
+        
+        add.accept(className, "child1");
+        add.accept(className, "child2");
+        add.accept("child1", "child1.1");
+        add.accept("child2", "child2.1");
+        add.accept("child2.1", className);
+        add.accept(superclass, "child2.1");
+        add.accept(superclass, "superclassDependency");
+        
+        expectedAllNonPageDependencies.remove(className);
+
+        final Set<String> allNonPageDependencies = componentDependencyRegistry.getAllNonPageDependencies(className);
+        assertFalse(allNonPageDependencies.contains(className));
+        assertEquals(expectedAllNonPageDependencies, allNonPageDependencies);
+        
+    }
+    
+    @Test
     public void register()
     {
         
@@ -468,14 +504,14 @@ public class ComponentDependencyRegistryImplTest
             .collect(Collectors.toSet());
     }
 
-//    private static Set<String> setOf(String ... strings)
-//    {
-//        return new HashSet<>(Arrays.asList(strings));
-//    }
-    
     private void add(String component, String dependency)
     {
-        componentDependencyRegistry.add(component, dependency, DependencyType.USAGE, true);
+        add(component, dependency, DependencyType.USAGE);
+    }
+    
+    private void add(String component, String dependency, DependencyType type)
+    {
+        componentDependencyRegistry.add(component, dependency, type, true);
     }
 
     private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>
