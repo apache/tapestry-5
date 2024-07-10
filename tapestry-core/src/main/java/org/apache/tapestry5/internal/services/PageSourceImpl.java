@@ -110,6 +110,9 @@ public class PageSourceImpl implements PageSource
     private final Map<CachedPageKey, Object> pageCache = CollectionFactory.newConcurrentMap();
     
     private final Map<String, Boolean> abstractClassInfoCache = CollectionFactory.newConcurrentMap();
+    
+    private final static ThreadLocal<String> CURRENT_PAGE = 
+            ThreadLocal.withInitial(() -> null);
 
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
@@ -178,6 +181,15 @@ public class PageSourceImpl implements PageSource
             final String className = componentClassResolver.resolvePageNameToClassName(canonicalPageName);
             if (multipleClassLoaders)
             {
+                
+                if (canonicalPageName.equals(CURRENT_PAGE.get()))
+                {
+                    throw new IllegalStateException("Infinite method loop detected. Bailing out.");
+                }
+                else
+                {
+                    CURRENT_PAGE.set(canonicalPageName);
+                }
             
                 // Avoiding problems in PlasticClassPool.createTransformation()
                 // when the class being loaded has a page superclass
@@ -197,7 +209,7 @@ public class PageSourceImpl implements PageSource
                         final String resolvedDependencyPageClass = componentClassResolver.resolvePageNameToClassName(dependencyPageName);
                         if (!canonicalPageName.equals(dependencyPageName)
                                 && !className.equals(resolvedDependencyPageClass)
-                                && !isAbstract(className))
+                                && !isAbstract(dependencyClassName))
                         {
                             page = getPage(dependencyPageName, 
                                     invalidateUnknownContext, alreadyProcessed);
@@ -358,8 +370,9 @@ public class PageSourceImpl implements PageSource
     
     private boolean isAbstract(final String className)
     {
-        return abstractClassInfoCache.computeIfAbsent(className, 
+        final Boolean computeIfAbsent = abstractClassInfoCache.computeIfAbsent(className, 
                 (s) -> Modifier.isAbstract(ThrowawayClassLoader.load(className).getModifiers()));
+        return computeIfAbsent;
     }
     
 }

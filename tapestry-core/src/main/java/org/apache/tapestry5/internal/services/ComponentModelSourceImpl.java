@@ -65,10 +65,13 @@ public class ComponentModelSourceImpl implements ComponentModelSource
                     {
                         pageSource.getPage(resolver.getLogicalName(componentClassName));
                     }
-                    catch (Exception e)
+                    catch (IllegalStateException e)
                     {
-                        e.printStackTrace();
-                        //ignore
+                        // This can be thrown in PageSourceImpl in case an
+                        // infinite method call recursion is detected. In
+                        // that case, the page instance is already created,
+                        // so the objective of the line above is already
+                        // fulfilled and we can safely ignore the exception
                     }
                 }
             }
