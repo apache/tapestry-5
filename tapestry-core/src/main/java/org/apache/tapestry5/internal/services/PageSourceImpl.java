@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2010, 2011, 2012, 2023, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.ThrowawayClassLoader;
 import org.apache.tapestry5.internal.services.ComponentDependencyRegistry.DependencyType;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
@@ -106,6 +108,8 @@ public class PageSourceImpl implements PageSource
     }
 
     private final Map<CachedPageKey, Object> pageCache = CollectionFactory.newConcurrentMap();
+    
+    private final Map<String, Boolean> abstractClassInfoCache = CollectionFactory.newConcurrentMap();
 
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
@@ -177,16 +181,27 @@ public class PageSourceImpl implements PageSource
             
                 // Avoiding problems in PlasticClassPool.createTransformation()
                 // when the class being loaded has a page superclass
-                final List<String> pageDependencies = preprocessPageDependencies(className);
+                final List<String> pageDependencies = getPageDependencies(className);
                 
-                for (String pageClassName : pageDependencies)
+                for (String dependencyClassName : pageDependencies)
                 {
                     // Avoiding infinite recursion caused by circular dependencies
-                    if (!alreadyProcessed.contains(pageClassName))
+                    if (!alreadyProcessed.contains(dependencyClassName))
                     {
-                        alreadyProcessed.add(pageClassName);
-                        page = getPage(componentClassResolver.resolvePageClassNameToPageName(pageClassName), 
-                                invalidateUnknownContext, alreadyProcessed);
+                        alreadyProcessed.add(dependencyClassName);
+                        
+                        // Avoiding infinite recursion when, through component overriding,
+                        // a dependency resolves to the same canonical page name as the
+                        // one already requested in this call.
+                        final String dependencyPageName = componentClassResolver.resolvePageClassNameToPageName(dependencyClassName);
+                        final String resolvedDependencyPageClass = componentClassResolver.resolvePageNameToClassName(dependencyPageName);
+                        if (!canonicalPageName.equals(dependencyPageName)
+                                && !className.equals(resolvedDependencyPageClass)
+                                && !isAbstract(className))
+                        {
+                            page = getPage(dependencyPageName, 
+                                    invalidateUnknownContext, alreadyProcessed);
+                        }
                     }
                 }
                 
@@ -221,7 +236,7 @@ public class PageSourceImpl implements PageSource
                     if (invalidateUnknownContext)
                     {
                         pageClassLoaderContextManager.invalidateAndFireInvalidationEvents(context);
-                        preprocessPageDependencies(className);
+                        getPageDependencies(className);
                     }
                     context.getClassNames().clear();
                     // Avoiding bad invalidations
@@ -234,7 +249,7 @@ public class PageSourceImpl implements PageSource
         
     }
 
-    private List<String> preprocessPageDependencies(final String className) {
+    private List<String> getPageDependencies(final String className) {
         final List<String> pageDependencies = new ArrayList<>();
         pageDependencies.addAll(
                 new ArrayList<String>(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE)));
@@ -244,35 +259,14 @@ public class PageSourceImpl implements PageSource
         final Iterator<String> iterator = pageDependencies.iterator();
         while (iterator.hasNext())
         {
-            if (!iterator.next().contains(".pages."))
+            final String dependency = iterator.next();
+            if (!dependency.contains(".pages.") && !dependency.equals(className))
             {
                 iterator.remove();
             }
         }
         
-        preprocessPageClassLoaderContexts(className, pageDependencies);
         return pageDependencies;
-    }
-
-    private void preprocessPageClassLoaderContexts(String className, final List<String> pageDependencies) {
-        for (int i = 0; i < 5; i++)
-        {
-            pageClassLoaderContextManager.get(className);
-            for (String pageClassName : pageDependencies)
-            {
-                final PageClassLoaderContext context = pageClassLoaderContextManager.get(pageClassName);
-                if (i == 1)
-                {
-                    try 
-                    {
-                        context.getClassLoader().loadClass(pageClassName);
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-        
     }
 
     @PostInjection
@@ -321,6 +315,7 @@ public class PageSourceImpl implements PageSource
                             iterator.remove();
                         }
                     }
+                    abstractClassInfoCache.remove(className);
                 }
             }
         }
@@ -359,6 +354,12 @@ public class PageSourceImpl implements PageSource
             page = (Page) object;
         }
         return page;
+    }
+    
+    private boolean isAbstract(final String className)
+    {
+        return abstractClassInfoCache.computeIfAbsent(className, 
+                (s) -> Modifier.isAbstract(ThrowawayClassLoader.load(className).getModifiers()));
     }
     
 }

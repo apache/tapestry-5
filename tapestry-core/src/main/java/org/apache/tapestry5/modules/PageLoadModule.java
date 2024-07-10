@@ -116,18 +116,6 @@ public class PageLoadModule
                 pageClassLoaderContextManager.preload();
             }
         }
-        // Preload the dependency information for all pages 
-        // when in production mode. Without that, exceptions during
-        // page assembly will occurr. This should add just a few
-        // seconds to page initialization. If it takes too long,
-        // we can create a version of preload() that accepts a boolean
-        // parameter defining whether templates should be parsed or not
-        // (the exception occurrs when a superclass isn't loaded
-        // and transformed before a subclass)
-        else if (productionMode)
-        {
-            pageClassLoaderContextManager.preload();
-        }
     }
     
     public static PageCachingReferenceTypeService buildPageCachingReferenceTypeService(

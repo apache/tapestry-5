@@ -50,8 +50,8 @@ public class GridDemo
         grid.getSortModel().updateSort("rating");
     }
     
-    public void afterRender(MarkupWriter writer)
-    {
-        writer.getDocument().find("html/body").elementAt(1, "p").text("@@@@@");
-    }
+//    public void afterRender(MarkupWriter writer)
+//    {
+//        writer.getDocument().find("html/body").elementAt(1, "p").text("bbbbb");
+//    }
 }

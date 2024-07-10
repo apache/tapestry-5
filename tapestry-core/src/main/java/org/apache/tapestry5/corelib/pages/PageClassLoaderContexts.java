@@ -47,6 +47,7 @@ public class PageClassLoaderContexts
     private void render(PageClassLoaderContext context, MarkupWriter writer) 
     {
         
+        final int classes = context.getClassNames().size();
         writer.element("li");
         writer.element("details");
         writer.element("summary");
@@ -55,7 +56,16 @@ public class PageClassLoaderContexts
         writer.write(context.getName());
         writer.write(" (");
         writer.write(((PlasticClassLoader) context.getClassLoader()).getClassLoaderId());
-        writer.write(")");
+        writer.write(", ");
+        writer.write(String.valueOf(classes));
+        if (classes > 1)
+        {
+            writer.write(" classes)");
+        }
+        else
+        {
+            writer.write(" class)");
+        }
         writer.end(); // summary
 
         if (!context.isRoot() && !context.getClassNames().isEmpty())

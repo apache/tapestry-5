@@ -395,27 +395,31 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         
                         // Make sure the dependencies have been processed in case
                         // there was some invalidation going on and they're not there.
-
-                        final Set<String> dependencies = new HashSet<>();
-                        dependencies.addAll(
-                                componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
-                        dependencies.addAll(
-                                componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
-                        for (String dependency : dependencies)
+                        
+                        if (multipleClassLoaders)
                         {
-                            if (!OPEN_INSTANTIATORS.get().contains(dependency))
+
+                            final Set<String> dependencies = new HashSet<>();
+                            dependencies.addAll(
+                                    componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+                            dependencies.addAll(
+                                    componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+                            for (String dependency : dependencies)
                             {
-                                if (multipleClassLoaders)
+                                if (!OPEN_INSTANTIATORS.get().contains(dependency))
                                 {
-                                    getInstantiator(dependency);
-                                }
-                                else
-                                {
-                                    createInstantiatorForClass(dependency);
+                                    if (multipleClassLoaders)
+                                    {
+                                        getInstantiator(dependency);
+                                    }
+                                    else
+                                    {
+                                        createInstantiatorForClass(dependency);
+                                    }
                                 }
                             }
                         }
-                        
+                            
                         PageClassLoaderContext context;
                         try
                         {
@@ -435,7 +439,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                                 context.getPlasticManager().getClassLoader().loadClass(className);
                             }
                         } catch (Exception e) {
-                            System.out.println(pageClassLoaderContextManager.getRoot().toRecursiveString());
+//                            System.out.println(pageClassLoaderContextManager.getRoot().toRecursiveString());
                             throw new RuntimeException(e);
                         }
                         final ComponentModel model = classToModel.get(className);

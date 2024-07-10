@@ -83,6 +83,19 @@ public class ThrowawayClassLoader extends ClassLoader
         assertNotEquals(class2, class3);
         
     }
+    
+    public static Class<?> load(final String className)
+    {
+        ThrowawayClassLoader loader = new ThrowawayClassLoader(
+                ThrowawayClassLoader.class.getClassLoader());
+        try 
+        {
+            return loader.loadClass(className);
+        } catch (ClassNotFoundException e) 
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static ClassLoader create(final ClassLoader parentClassLoader) {
 //        return TapestryInternalUtils.createThrowawayClassloader(parentClassLoader);
