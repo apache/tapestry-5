@@ -46,7 +46,9 @@ import org.apache.tapestry5.annotations.Mixins;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
+import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.ThrowawayClassLoader;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.StartComponentToken;
 import org.apache.tapestry5.internal.parser.TemplateToken;
@@ -300,15 +302,34 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
                     String logicalName = componentToken.getComponentType();
                     if (logicalName != null)
                     {
-                        dependency = resolver.resolveComponentTypeToClassName(logicalName);
-                        add(className, dependency, DependencyType.USAGE);
-                        processClassName.accept(dependency);
+                        try
+                        {
+                            dependency = resolver.resolveComponentTypeToClassName(logicalName);
+                            add(className, dependency, DependencyType.USAGE);
+                            processClassName.accept(dependency);
+                        }
+                        catch (UnknownValueException e)
+                        {
+                            // Logical name doesn't match an existing component. Ignore
+                        }
                     }
                     for (String mixin : TapestryInternalUtils.splitAtCommas(componentToken.getMixins()))
                     {
-                        dependency = resolver.resolveMixinTypeToClassName(mixin);
-                        add(className, dependency, DependencyType.USAGE);
-                        processClassName.accept(dependency);
+                        try
+                        {
+                            if (mixin.contains("::"))
+                            {
+                                mixin = mixin.substring(0, mixin.indexOf("::"));
+                            }
+                            dependency = resolver.resolveMixinTypeToClassName(mixin);
+                            add(className, dependency, DependencyType.USAGE);
+                            processClassName.accept(dependency);
+                        }
+                        catch (UnknownValueException e)
+                        {
+                            // Mixin name doesn't match an existing mixin. Ignore
+                        }
+
                     }
                 }
             }
@@ -540,15 +561,21 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     @Override
     public Set<String> getDependents(String className) 
     {
+        
+        ensureClassIsAlreadyProcessed(className);
+        
         final Set<Dependency> dependents = map.get(className);
         return dependents != null 
                 ? dependents.stream().map(d -> d.className).collect(Collectors.toSet()) 
                 : Collections.emptySet();
     }
-    
+
     @Override
     public Set<String> getDependencies(String className, DependencyType type) 
     {
+        
+        ensureClassIsAlreadyProcessed(className);
+        
         Set<String> dependencies = Collections.emptySet();
         if (alreadyProcessed.contains(className))
         {
@@ -790,6 +817,20 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
         if (INVALIDATIONS_DISABLED.get() < 0)
         {
             INVALIDATIONS_DISABLED.set(0);
+        }
+    }
+
+    private void ensureClassIsAlreadyProcessed(String className) {
+        if (!contains(className))
+        {
+            ThrowawayClassLoader classLoader = new ThrowawayClassLoader(getClass().getClassLoader());
+            try 
+            {
+                register(classLoader.loadClass(className));
+            } catch (ClassNotFoundException e) 
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
