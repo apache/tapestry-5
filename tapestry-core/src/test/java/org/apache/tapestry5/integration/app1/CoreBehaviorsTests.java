@@ -978,7 +978,7 @@ public class CoreBehaviorsTests extends App1TestCase
     @Test
     public void public_field_in_page_class()
     {
-        openLinks("Protected Fields Demo", "Trigger the Exception");
+        openLinks("Protected Fields Demo"/* "Trigger the Exception"*/);
 
         assertTextPresent(
                 EXCEPTION_PROCESSING_REQUEST,
