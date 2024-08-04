@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -116,7 +115,6 @@ public class ComponentDependencyRegistryImplTest
     
     private TemplateParser templateParser;
     
-    @SuppressWarnings("deprecation")
     private ComponentTemplateLocator componentTemplateLocator;
     
     @BeforeMethod
@@ -238,6 +236,9 @@ public class ComponentDependencyRegistryImplTest
     @Test(timeOut = 5000)
     public void listen()
     {
+        
+        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
+        
         add("foo", "bar");
         add("d", "a");
         add("dd", "aa");
@@ -285,6 +286,8 @@ public class ComponentDependencyRegistryImplTest
         final String fulano = "fulano";
         final String beltrano = "beltrano";
         final String sicrano = "sicrano";
+        
+        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
         
         assertEquals(
                 "getDependents() should never return null", 
@@ -395,6 +398,8 @@ public class ComponentDependencyRegistryImplTest
             add(c, d, DependencyType.USAGE);
         };
         
+        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
+        
         add(className, page, DependencyType.INJECT_PAGE);
         
         add(className, superclass, DependencyType.SUPERCLASS);
@@ -419,6 +424,8 @@ public class ComponentDependencyRegistryImplTest
     @Test
     public void register()
     {
+        
+        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(true);
         
         componentDependencyRegistry.clear();
         
@@ -491,13 +498,13 @@ public class ComponentDependencyRegistryImplTest
         
     }
     
-    private void assertDependencies(Class clasz, Class... dependencies) {
+    private void assertDependencies(Class<?> clasz, Class<?>... dependencies) {
         assertEquals(
                 setOf(dependencies),
                 getDependencies(clasz.getName()));
     }
 
-    private static Set<String> setOf(Class ... classes)
+    private static Set<String> setOf(Class<?> ... classes)
     {
         return Arrays.asList(classes).stream()
             .map(Class::getName)
@@ -514,6 +521,7 @@ public class ComponentDependencyRegistryImplTest
         componentDependencyRegistry.add(component, dependency, type, true);
     }
 
+    @SuppressWarnings("hiding")
     private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>
     {
         
@@ -559,7 +567,6 @@ public class ComponentDependencyRegistryImplTest
             this.path = path;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public java.net.URL toURL() 
         {

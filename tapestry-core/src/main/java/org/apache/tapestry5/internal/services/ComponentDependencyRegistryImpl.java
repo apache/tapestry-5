@@ -1,4 +1,4 @@
-// Copyright 2022, 2023 The Apache Software Foundation
+// Copyright 2022, 2023, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,6 +108,8 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     final private ComponentTemplateLocator componentTemplateLocator;
     
     final private boolean storedDependencyInformationPresent;
+    
+    private boolean enableEnsureClassIsAlreadyProcessed = true;
     
     public ComponentDependencyRegistryImpl(
             final PageClassLoaderContextManager pageClassLoaderContextManager,
@@ -819,9 +821,14 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             INVALIDATIONS_DISABLED.set(0);
         }
     }
+    
+    // Only for unit tests
+    void setEnableEnsureClassIsAlreadyProcessed(boolean enableEnsureClassIsAlreadyProcessed) {
+        this.enableEnsureClassIsAlreadyProcessed = enableEnsureClassIsAlreadyProcessed;
+    }
 
     private void ensureClassIsAlreadyProcessed(String className) {
-        if (!contains(className))
+        if (enableEnsureClassIsAlreadyProcessed && !contains(className))
         {
             ThrowawayClassLoader classLoader = new ThrowawayClassLoader(getClass().getClassLoader());
             try 
