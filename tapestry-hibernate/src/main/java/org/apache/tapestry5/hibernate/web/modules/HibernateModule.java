@@ -102,7 +102,7 @@ public class HibernateModule
         for (EntityType<?> entityType : entities)
         {
             Class<?> entityClass = entityType.getJavaType();
-            if (entityClass != null)
+            if (entityClass != null && entityType.hasSingleIdAttribute())
             {
                 SingularAttribute<?, ?> id = entityType.getId(entityType.getIdType().getJavaType());
                 final String idenfierPropertyName = id.getName();
