@@ -28,6 +28,9 @@ project.ext.versions = [
     webdriverManager: "5.3.1"
 ]
 
+def artifactsToBePublished = ["tapestry-core", "tapestry-http", "tapestry-test",
+    "tapestry-beanvalidator", "tapestry-runner", "tapestry-spring"]
+
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
 // Provided so that the CI server can override the normal version number for nightly builds.
@@ -40,7 +43,7 @@ project.version = tapestryVersion()
 
 def tapestryVersion() {
 
-    def major = "5.50.0"
+    def major = "5.8.8"
     def minor = ""
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
@@ -293,7 +296,7 @@ subprojects {
                 artifact sourcesJar
 
                 pom {
-                    name = project.name
+                    name = project.name + "-javax"
                     // TODO: find some way to get the subproject description here.
                     // description =
                     url = "https://tapestry.apache.org/"
@@ -307,6 +310,10 @@ subprojects {
                         connection = 'scm:git:https://gitbox.apache.org/repos/asf/tapestry-5.git'
                                 developerConnection = 'scm:git://gitbox.apache.org/repos/asf/tapestry-5.git'
                                 url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary'
+                    }
+                    withXml {
+                        def node = asNode();
+                        println " NNNNNNNode: " + node.get("dependencies")
                     }
                 }
                 matching {
@@ -347,6 +354,12 @@ subprojects {
         signing {
             sign publishing.publications.mavenJava
         }
+    }
+    
+    def actuallyPublish = artifactsToBePublished.contains(project.name)
+    if (!actuallyPublish) {
+        tasks.withType(PublishToMavenRepository).configureEach { it.enabled = false }
+        tasks.withType(PublishToMavenLocal).configureEach { it.enabled = false }
     }
 
     task uploadPublished {
