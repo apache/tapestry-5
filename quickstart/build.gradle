@@ -15,7 +15,7 @@ task copyGradleWrapper(type: Copy) {
 
 task addGradleWrapper(type: Exec) {
     workingDir "$buildDir/wrapper"
-    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '7.2'
+    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '7.3'
 
     standardOutput = new ByteArrayOutputStream()
 
