@@ -28,8 +28,10 @@ project.ext.versions = [
     webdriverManager: "5.3.1"
 ]
 
-def artifactsToBePublished = ["tapestry-core", "tapestry-http", "tapestry-test",
-    "tapestry-beanvalidator", "tapestry-runner", "tapestry-spring"]
+def artifactSuffix = "-jakarta"
+
+def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
+        "tapestry-runner", "tapestry-spring"]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
@@ -297,7 +299,7 @@ subprojects {
                 
                 
                 pom {
-                    name = project.name + "-javax"
+                    name = project.name + artifactSuffix
                     // TODO: find some way to get the subproject description here.
                     // description = 
                     url = "https://tapestry.apache.org/"
@@ -312,9 +314,21 @@ subprojects {
                                 developerConnection = 'scm:git://gitbox.apache.org/repos/asf/tapestry-5.git'
                                 url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary'
                     }
+                    // Changes the generated pom.xml so its dependencies on suffixed artifacts
+                    // get properly updated with suffixed artifact ids
                     withXml {
+                        def artifactIdQName = new groovy.namespace.QName(
+                                "http://maven.apache.org/POM/4.0.0", "artifactId")
                         def node = asNode();
-                        println " NNNNNNNode: " + node.get("dependencies")
+                        def dependencies = node.get("dependencies")[0]
+                        if (dependencies != null) {
+                            dependencies.'*'.forEach {
+                                def artifactIdNode = it.getAt(artifactIdQName)[0]
+                                if (suffixedArtifactNames.contains(artifactIdNode.text())) {
+                                    artifactIdNode.value = artifactIdNode.text() + artifactSuffix
+                                }
+                            }
+                        }
                     }
                 }
                 matching {
@@ -357,7 +371,7 @@ subprojects {
         }
     }
     
-    def actuallyPublish = artifactsToBePublished.contains(project.name)
+    def actuallyPublish = suffixedArtifactNames.contains(project.name)
     if (!actuallyPublish) {
         tasks.withType(PublishToMavenRepository).configureEach { it.enabled = false }
         tasks.withType(PublishToMavenLocal).configureEach { it.enabled = false }
