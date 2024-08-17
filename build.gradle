@@ -28,8 +28,10 @@ project.ext.versions = [
     webdriverManager: "5.3.1"
 ]
 
-def artifactSuffix = "-jakarta"
+def artifactSuffix = ""
 
+// Artifacts that have both an unsuffixed artifact from the javax branch
+// and a suffixed one from the master branch
 def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
         "tapestry-runner", "tapestry-spring"]
 
@@ -370,7 +372,8 @@ subprojects {
         }
     }
     
-    def actuallyPublish = suffixedArtifactNames.contains(project.name)
+    def actuallyPublish = !artifactSuffix.isEmpty() || suffixedArtifactNames.contains(project.name)
+    // println "XXXXXX Actually publish? " + actuallyPublish + " project " + project.name + " " + "!artifactSuffix.isEmpty() " + !artifactSuffix.isEmpty()
     if (!actuallyPublish) {
         tasks.withType(PublishToMavenRepository).configureEach { it.enabled = false }
         tasks.withType(PublishToMavenLocal).configureEach { it.enabled = false }
