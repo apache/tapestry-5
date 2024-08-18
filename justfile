@@ -16,17 +16,27 @@ local-snapshot-full:
 tapestry-core-maven-local-snapshot:
 	./gradlew tapestry-core:publishToMavenLocal {{gradle-options}} -Dci=true
 
+_deploy_branch branch extra-options:
+	echo "Releasing branch: {{branch}} with Gradle extra options '{{extra-options}}'"
+	# Fail if there are untracked files or uncommitted changes
+	#git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
+	#git checkout master
+	#./gradlew clean generateRelease {{gradle-options}} {{extra-options}}
+
+_deploy_javax extra-options: (_deploy_branch "javax" extra-options)
+_deploy_master extra-options: (_deploy_branch "master" extra-options)
+
 # Deploys a snapshot to the ASF snapshots repository
-snapshot:
-	git stash
-	./gradlew clean generateRelease {{gradle-options}} -Dci=true
-	git stash pop
+snapshot: (_deploy_branch "master" "-Dci=true") (_deploy_branch "javax" "-Dci=true")
 
 # Deploys a release to the ASF staging repository
-release:
-	git stash
-	./gradlew clean generateRelease {{gradle-options}}
-	git stash pop
+release version: (_deploy_branch "master" "") (_deploy_branch "javax" "")
+	#git checkout master
+	#git tag {{version}}
+	#git push --tags
+	#git checkout javax
+	#git tag {{version}}-javax
+	#git push --tags
 
 # Builds Tapestry without running tests
 build:
