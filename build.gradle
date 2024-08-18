@@ -296,11 +296,14 @@ subprojects {
             mavenJava(MavenPublication) {
                 version = parent.version
                 groupId = "org.apache.tapestry"
+                if (suffixedArtifactNames.contains(project.name)) {
+                    artifactId = project.name + artifactSuffix
+                }
                 from components.java
                 artifact sourcesJar
 
                 pom {
-                    name = project.name + artifactSuffix
+                    name = project.name
                     // TODO: find some way to get the subproject description here.
                     // description =
                     url = "https://tapestry.apache.org/"
