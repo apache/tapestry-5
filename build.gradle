@@ -28,7 +28,7 @@ project.ext.versions = [
     webdriverManager: "5.3.1"
 ]
 
-def artifactSuffix = ""
+def artifactSuffix = "-jakarta"
 
 // Artifacts that have both an unsuffixed artifact from the javax branch
 // and a suffixed one from the master branch
