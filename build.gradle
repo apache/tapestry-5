@@ -28,6 +28,13 @@ project.ext.versions = [
     webdriverManager: "5.3.1"
 ]
 
+def artifactSuffix = "-jakarta"
+
+// Artifacts that have both an unsuffixed artifact from the javax branch
+// and a suffixed one from the master branch
+def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
+        "tapestry-runner", "tapestry-spring"]
+
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
 // Provided so that the CI server can override the normal version number for nightly builds.
@@ -40,7 +47,7 @@ project.version = tapestryVersion()
 
 def tapestryVersion() {
 
-    def major = "5.50.0"
+    def major = "5.8.8"
     def minor = ""
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
@@ -289,6 +296,9 @@ subprojects {
             mavenJava(MavenPublication) {
                 version = parent.version
                 groupId = "org.apache.tapestry"
+                if (suffixedArtifactNames.contains(project.name)) {
+                    artifactId = project.name + artifactSuffix
+                }
                 from components.java
                 artifact sourcesJar
 
@@ -307,6 +317,22 @@ subprojects {
                         connection = 'scm:git:https://gitbox.apache.org/repos/asf/tapestry-5.git'
                                 developerConnection = 'scm:git://gitbox.apache.org/repos/asf/tapestry-5.git'
                                 url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary'
+                    }
+                    // Changes the generated pom.xml so its dependencies on suffixed artifacts
+                    // get properly updated with suffixed artifact ids
+                    withXml {
+                        def artifactIdQName = new groovy.namespace.QName(
+                                "http://maven.apache.org/POM/4.0.0", "artifactId")
+                        def node = asNode();
+                        def dependencies = node.get("dependencies")[0]
+                        if (dependencies != null) {
+                            dependencies.'*'.forEach {
+                                def artifactIdNode = it.getAt(artifactIdQName)[0]
+                                if (suffixedArtifactNames.contains(artifactIdNode.text())) {
+                                    artifactIdNode.value = artifactIdNode.text() + artifactSuffix
+                                }
+                            }
+                        }
                     }
                 }
                 matching {
@@ -347,6 +373,13 @@ subprojects {
         signing {
             sign publishing.publications.mavenJava
         }
+    }
+    
+    def actuallyPublish = !artifactSuffix.isEmpty() || suffixedArtifactNames.contains(project.name)
+    // println "XXXXXX Actually publish? " + actuallyPublish + " project " + project.name + " " + "!artifactSuffix.isEmpty() " + !artifactSuffix.isEmpty()
+    if (!actuallyPublish) {
+        tasks.withType(PublishToMavenRepository).configureEach { it.enabled = false }
+        tasks.withType(PublishToMavenLocal).configureEach { it.enabled = false }
     }
 
     task uploadPublished {
