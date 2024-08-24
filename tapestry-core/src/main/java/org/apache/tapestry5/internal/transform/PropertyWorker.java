@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.MethodAlreadyExistsException;
 import org.apache.tapestry5.plastic.PlasticClass;
@@ -32,6 +34,14 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
  */
 public class PropertyWorker implements ComponentClassTransformWorker2
 {
+    
+    final private boolean multipleClassloaders;
+
+    public PropertyWorker(@Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) final boolean multipleClassloaders)
+    {
+        super();
+        this.multipleClassloaders = multipleClassloaders;
+    }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
@@ -44,7 +54,11 @@ public class PropertyWorker implements ComponentClassTransformWorker2
             catch (MethodAlreadyExistsException e)
             {
                 // Method was already created somewhere else, so
-                // nothing to do here
+                // nothing to do here 
+                if (!multipleClassloaders)
+                {
+                    throw e;
+                }
             }
         }
     }
