@@ -360,7 +360,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         if (plasticClass.inheritanceData.isImplemented(name, desc))
         {
-            throw new IllegalArgumentException(String.format(
+            throw new MethodAlreadyExistsException(String.format(
                     "Unable to create new accessor method %s on class %s as the method is already implemented.",
                     description.toString(), plasticClass.className));
         }

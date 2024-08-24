@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.MethodAlreadyExistsException;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PropertyAccessType;
@@ -36,7 +37,15 @@ public class PropertyWorker implements ComponentClassTransformWorker2
     {
         for (PlasticField field : plasticClass.getFieldsWithAnnotation(Property.class))
         {
-            createAccessorsForField(field);
+            try
+            {
+                createAccessorsForField(field);
+            }
+            catch (MethodAlreadyExistsException e)
+            {
+                // Method was already created somewhere else, so
+                // nothing to do here
+            }
         }
     }
 

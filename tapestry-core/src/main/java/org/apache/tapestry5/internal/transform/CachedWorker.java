@@ -36,6 +36,7 @@ import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -219,7 +220,11 @@ public class CachedWorker implements ComponentClassTransformWorker2
         for (int i = 0; i < array.size(); i++)
         {
             final JSONObject jsonObject = array.getJSONObject(i);
-            methods.add(toPlasticMethod(jsonObject, plasticClass, extraMethodCachedWatchMap));
+            final PlasticMethod plasticMethod = toPlasticMethod(jsonObject, plasticClass, extraMethodCachedWatchMap);
+            if (plasticMethod != null)
+            {
+                methods.add(plasticMethod);
+            }
         }
         return methods;
     }
@@ -229,6 +234,13 @@ public class CachedWorker implements ComponentClassTransformWorker2
             Map<String, String> extraMethodCachedWatchMap) 
     {
         final int modifiers = jsonObject.getInt(MODIFIERS);
+        
+        // We cannot override final methods
+        if (Modifier.isFinal(modifiers)) 
+        {
+            return null;
+        }
+        
         final String returnType = jsonObject.getString(RETURN_TYPE);
         final String methodName = jsonObject.getString(NAME);
         final String genericSignature = jsonObject.getStringOrDefault(GENERIC_SIGNATURE, null);

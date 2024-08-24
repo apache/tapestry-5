@@ -1,0 +1,10 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <h1>Trigger Demo</h1>
+
+	<h3>Superclass:</h3>    
+    <t:superclassWithFinalCachedMethod/>
+
+	<h3>Subclass:</h3>    
+    <t:subclassWithFinalCachedMethod/>
+    
+</html>
