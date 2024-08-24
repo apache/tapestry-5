@@ -687,7 +687,7 @@ public final class TapestryModule
             @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
             @Symbol(SymbolConstants.MULTIPLE_CLASSLOADERS) boolean multipleClassloaders)
     {
-        configuration.add("Property", new PropertyWorker());
+        configuration.add("Property", new PropertyWorker(multipleClassloaders));
 
         // Order this one pretty early:
 
