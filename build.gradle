@@ -33,7 +33,10 @@ def artifactSuffix = ""
 // Artifacts that have both an unsuffixed artifact from the javax branch
 // and a suffixed one from the master branch
 def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
-        "tapestry-runner", "tapestry-spring"]
+        "tapestry-runner", "tapestry-spring", "tapestry-spring", "tapestry-kaptcha",
+        "tapestry-openapi-viewer", "tapestry-upload", "tapestry-jmx", 
+        "tapestry-jpa", "tapestry-kaptcha", "tapestry-openapi-viewer",
+        "tapestry-rest-jackson", "tapestry-webresources"]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
