@@ -113,6 +113,9 @@ public class PageSourceImpl implements PageSource
     
     private final static ThreadLocal<String> CURRENT_PAGE = 
             ThreadLocal.withInitial(() -> null);
+    
+    private final static ThreadLocal<Set<String>> CALL_STACK = 
+            ThreadLocal.withInitial(HashSet::new);
 
     public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
             ComponentDependencyRegistry componentDependencyRegistry,
@@ -194,11 +197,13 @@ public class PageSourceImpl implements PageSource
                 // Avoiding problems in PlasticClassPool.createTransformation()
                 // when the class being loaded has a page superclass
                 final List<String> pageDependencies = getPageDependencies(className);
+                CALL_STACK.get().add(className);
                 
                 for (String dependencyClassName : pageDependencies)
                 {
                     // Avoiding infinite recursion caused by circular dependencies
-                    if (!alreadyProcessed.contains(dependencyClassName))
+                    if (!alreadyProcessed.contains(dependencyClassName) &&
+                            !CALL_STACK.get().contains(className))
                     {
                         alreadyProcessed.add(dependencyClassName);
                         
