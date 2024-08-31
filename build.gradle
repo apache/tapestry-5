@@ -50,7 +50,7 @@ project.version = tapestryVersion()
 
 def tapestryVersion() {
 
-    def major = "5.9.0-preview"
+    def major = "5.9.0-preview-2"
     def minor = ""
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
