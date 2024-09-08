@@ -14,7 +14,7 @@
 package org.apache.tapestry5.cdi.test.pages;
 
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class InvalidateSessionPage {
 

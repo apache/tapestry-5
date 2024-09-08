@@ -13,15 +13,17 @@
 <!-- See the License for the specific language governing permissions and -->
 <!-- limitations under the License. -->
 
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             version="2.0">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="3.0"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 
     <persistence-unit name="App4PersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>
-            <property name="javax.persistence.jdbc.username" value="sa"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:test"/>
+            <property name="jakarta.persistence.jdbc.username" value="sa"/>
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.logging.level" value="fine"/>
         </properties>

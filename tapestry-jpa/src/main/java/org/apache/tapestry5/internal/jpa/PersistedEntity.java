@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.jpa;
 
 import java.io.Serializable;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.tapestry5.http.annotations.ImmutableSessionPersistedObject;
 import org.apache.tapestry5.jpa.EntityManagerManager;

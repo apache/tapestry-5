@@ -21,7 +21,7 @@ import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app2.entities.Item;
 import org.example.app2.services.UserDAO;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class PersistItem3
 {

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public interface MultipartDecoder
     UploadedFile getFileUpload(String parameterName);
 
     /**
-     * Decodes the request, returning a new {@link javax.servlet.http.HttpServletRequest} implementation that will allow
+     * Decodes the request, returning a new {@link jakarta.servlet.http.HttpServletRequest} implementation that will allow
      * access to the form fields submitted in the request (but omits uploaded files).
      *
      * @param request The incoming servlet request

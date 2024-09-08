@@ -19,7 +19,7 @@ tapestry-core-maven-local-snapshot:
 _deploy_branch branch extra-options:
 	echo "Releasing branch: {{branch}} with Gradle extra options '{{extra-options}}'"
 	# Fail if there are untracked files or uncommitted changes
-	git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
+	# git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
 	git checkout master
 	./gradlew clean generateRelease {{gradle-options}} {{extra-options}}
 

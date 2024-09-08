@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.test.internal;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named("BazService")
 public class NamedViaAnnotationServiceImpl implements Runnable

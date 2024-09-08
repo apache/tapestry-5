@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceProviderResolver;
-import javax.persistence.spi.PersistenceProviderResolverHolder;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceProviderResolver;
+import jakarta.persistence.spi.PersistenceProviderResolverHolder;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.util.CollectionFactory;

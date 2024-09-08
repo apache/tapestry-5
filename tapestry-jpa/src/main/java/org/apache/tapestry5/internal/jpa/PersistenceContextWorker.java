@@ -23,7 +23,7 @@ import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContext;
 
 public class PersistenceContextWorker implements ComponentClassTransformWorker2
 {

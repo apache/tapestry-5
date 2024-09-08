@@ -37,10 +37,10 @@ class ServiceInjectionWithImportModule extends Specification {
 
 @ImportModule(Module1)
 class ServiceInjectionWithJavaxInjectWithImportModule extends Specification {
-  @javax.inject.Inject
+  @jakarta.inject.Inject
   org.apache.tapestry5.spock.Service1 service1
 
-  @javax.inject.Inject
+  @jakarta.inject.Inject
   org.apache.tapestry5.spock.Service2 service2
 
   def "injected services"() {

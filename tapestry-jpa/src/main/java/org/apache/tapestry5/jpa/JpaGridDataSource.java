@@ -15,17 +15,17 @@ package org.apache.tapestry5.jpa;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
 
 /**
  * A simple implementation of {@link org.apache.tapestry5.grid.GridDataSource} based on a
- * {@linkplain javax.persistence.EntityManager} and a known
+ * {@linkplain jakarta.persistence.EntityManager} and a known
  * entity class. This implementation does support multiple
  * {@link org.apache.tapestry5.grid.SortConstraint sort
  * constraints}.

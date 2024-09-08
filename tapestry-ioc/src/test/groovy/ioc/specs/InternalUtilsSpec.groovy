@@ -376,7 +376,7 @@ class InternalUtilsSpec extends Specification {
 
     IllegalArgumentException e = thrown()
 
-    e.message == "Too many autobuild constructors found: use either @org.apache.tapestry5.ioc.annotations.Inject or @javax.inject.Inject annotation to mark a single constructor for autobuilding."
+    e.message == "Too many autobuild constructors found: use either @org.apache.tapestry5.ioc.annotations.Inject or @jakarta.inject.Inject annotation to mark a single constructor for autobuilding."
   }
 
   def "validateConstructorForAutobuild(): ensure check that the class itself is public"() {
@@ -424,7 +424,7 @@ class InternalUtilsSpec extends Specification {
     1 * ol.getService("FredService", Runnable) >> fred
   }
 
-  def "@javax.annotations.Inject / @Named annotation on field"() {
+  def "@jakarta.annotations.Inject / @Named annotation on field"() {
     ObjectLocator ol = Mock()
     def target = new FieldInjectionViaJavaxNamed()
     Runnable fred = Mock()
@@ -462,7 +462,7 @@ class InternalUtilsSpec extends Specification {
     }
   }
 
-  def "@javax.annotation.Inject annotation on field"() {
+  def "@jakarta.annotation.Inject annotation on field"() {
     ObjectLocator ol = Mock()
     def target = new FieldInjectionViaJavaxInject()
     SymbolSource source = Mock()

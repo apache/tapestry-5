@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.beans;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.tapestry5.cdi.test.annotation.Iced;
 

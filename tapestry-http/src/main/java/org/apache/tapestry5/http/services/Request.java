@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Generic version of {@link javax.servlet.http.HttpServletRequest}, used to encapsulate the Servlet API version, and to
+ * Generic version of {@link jakarta.servlet.http.HttpServletRequest}, used to encapsulate the Servlet API version, and to
  * help bridge the differences between Servlet API and Porlet API.
  *
  * The Request service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
@@ -139,7 +139,7 @@ public interface Request
     /**
      * Returns the value of the named attribute as an <code>Object</code>, or <code>null</code> if no attribute of the
      * given name exists. Because this method is a wrapper around
-     * {@link javax.servlet.ServletRequest#getAttribute(String)},
+     * {@link jakarta.servlet.ServletRequest#getAttribute(String)},
      * it is case <em>sensitive</em> (unlike most of Tapestry).
      *
      * @param name

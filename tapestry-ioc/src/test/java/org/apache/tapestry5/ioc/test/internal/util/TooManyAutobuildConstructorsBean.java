@@ -19,7 +19,7 @@ public class TooManyAutobuildConstructorsBean
         this(foo, null);
     }
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     public TooManyAutobuildConstructorsBean(String foo, Runnable bar)
     {
 

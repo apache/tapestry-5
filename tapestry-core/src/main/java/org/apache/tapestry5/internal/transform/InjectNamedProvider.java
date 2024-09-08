@@ -20,10 +20,10 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.transform.InjectionProvider2;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 /**
- * Processes the combination of {@link javax.inject.Inject} and {@link javax.inject.Named} annotations.
+ * Processes the combination of {@link jakarta.inject.Inject} and {@link jakarta.inject.Named} annotations.
  *
  * @since 5.3
  */

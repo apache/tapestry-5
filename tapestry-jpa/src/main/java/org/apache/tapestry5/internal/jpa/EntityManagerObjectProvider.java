@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.tapestry5.commons.AnnotationProvider;
 import org.apache.tapestry5.commons.ObjectCreator;

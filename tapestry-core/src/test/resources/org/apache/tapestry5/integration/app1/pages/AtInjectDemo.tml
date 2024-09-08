@@ -1,5 +1,5 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <p>Demonstrates the use of the @javax.inject.Inject annotation.</p>
+    <p>Demonstrates the use of the @jakarta.inject.Inject annotation.</p>
     <p>WebRequest: ${request}</p>
     <p>ComponentResources: ${resources}</p>
     <p>BindingSource: ${bindingSource}</p>

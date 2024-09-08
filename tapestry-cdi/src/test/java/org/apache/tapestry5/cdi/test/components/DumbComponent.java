@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.components;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.cdi.test.beans.NamedPojo;

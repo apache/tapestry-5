@@ -14,8 +14,8 @@
 
 package org.example.app5.pages;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class Index
 {

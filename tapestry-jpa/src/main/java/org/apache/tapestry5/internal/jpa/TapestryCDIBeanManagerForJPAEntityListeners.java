@@ -15,11 +15,11 @@ package org.apache.tapestry5.internal.jpa;
 
 import java.lang.reflect.Method;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.InjectionTarget;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.InjectionTarget;
 
 import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;

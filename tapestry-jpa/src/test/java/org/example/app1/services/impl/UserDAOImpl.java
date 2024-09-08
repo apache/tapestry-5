@@ -16,8 +16,8 @@ package org.example.app1.services.impl;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app1.AppConstants;

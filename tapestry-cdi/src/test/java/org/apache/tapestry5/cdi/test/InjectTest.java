@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 
 import org.antlr.runtime.Lexer;
 import org.apache.commons.codec.StringEncoder;

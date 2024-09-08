@@ -21,7 +21,7 @@ import java.lang.annotation.*;
  * ignored. The order of invocation for classes with multiple marked methods (including methods inherited from
  * super-classes) is not, at this time, defined.
  *
- * Tapestry also honors the {@link javax.annotation.PostConstruct} annotation, and treats it identically to
+ * Tapestry also honors the {@link jakarta.annotation.PostConstruct} annotation, and treats it identically to
  * PostInjection. This is both more flexible than PostConstruct (in that methods may have parameters, and multiple methods
  * may be annotated) but also falls short (Tapestry will only seek out public methods).
  */

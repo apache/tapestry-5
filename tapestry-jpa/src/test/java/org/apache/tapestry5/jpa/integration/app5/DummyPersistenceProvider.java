@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.jpa.integration.app5;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.ProviderUtil;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.ProviderUtil;
 import java.util.Map;
 
 @SuppressWarnings("rawtypes")
@@ -39,6 +39,17 @@ public class DummyPersistenceProvider implements PersistenceProvider
     public ProviderUtil getProviderUtil()
     {
         return null;
+    }
+
+    @Override
+    public void generateSchema(PersistenceUnitInfo info, Map map) 
+    {
+    }
+
+    @Override
+    public boolean generateSchema(String persistenceUnitName, Map map) 
+    {
+        return false;
     }
 
 }

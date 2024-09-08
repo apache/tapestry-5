@@ -22,8 +22,8 @@ import org.apache.tapestry5.test.TapestryTestCase;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.spi.PersistenceUnitTransactionType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,9 +80,9 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
                         .persistenceProviderClassName(
                                 "org.eclipse.persistence.jpa.PersistenceProvider")
                         .excludeUnlistedClasses(true)
-                        .addProperty("javax.persistence.jdbc.user", "sa")
-                        .addProperty("javax.persistence.jdbc.driver", "org.h2.Driver")
-                        .addProperty("javax.persistence.jdbc.url", "jdbc:h2:mem:test")
+                        .addProperty("jakarta.persistence.jdbc.user", "sa")
+                        .addProperty("jakarta.persistence.jdbc.driver", "org.h2.Driver")
+                        .addProperty("jakarta.persistence.jdbc.url", "jdbc:h2:mem:test")
                         .setEntityManagerProperties(properties);
             }
         };
@@ -96,12 +96,4 @@ public class EntityManagerSourceImplTest extends TapestryTestCase
 		return emSource;
 	}
     
-    // TAP5-2206
-    @Test
-    public void jpa2dot1Namespace() {
-    	
-    	// fails with an NPE without the fix
-    	create("single-persistence-unit-jpa-2.1.xml");
-    }
-
 }

@@ -12,9 +12,9 @@
 
 package org.apache.tapestry5.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import java.util.List;
 
 /**

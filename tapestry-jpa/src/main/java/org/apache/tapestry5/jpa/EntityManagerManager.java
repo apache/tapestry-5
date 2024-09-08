@@ -12,7 +12,7 @@
 
 package org.apache.tapestry5.jpa;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Map;
 
 /**

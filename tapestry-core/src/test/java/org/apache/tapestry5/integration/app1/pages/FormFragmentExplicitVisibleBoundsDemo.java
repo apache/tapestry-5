@@ -17,7 +17,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Demos the use of explicit bounds for checking visibility of a form fragment for form submission processing.

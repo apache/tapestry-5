@@ -19,8 +19,8 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.jpa.EntityTransactionManager.VoidInvokable;

@@ -14,18 +14,23 @@
 
 package org.apache.tapestry5.jpa.integration.app5;
 
+import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Query;
+import jakarta.persistence.StoredProcedureQuery;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.metamodel.Metamodel;
 
 public class DummyEntityManager implements EntityManager
 {
@@ -273,6 +278,72 @@ public class DummyEntityManager implements EntityManager
 
     @Override
     public Metamodel getMetamodel()
+    {
+        return null;
+    }
+
+    @Override
+    public Query createQuery(CriteriaUpdate updateQuery) 
+    {
+        return null;
+    }
+
+    @Override
+    public Query createQuery(CriteriaDelete deleteQuery) 
+    {
+        return null;
+    }
+
+    @Override
+    public StoredProcedureQuery createNamedStoredProcedureQuery(String name) 
+    {
+        return null;
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName) 
+    {
+        return null;
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) 
+    {
+        return null;
+    }
+
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) 
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isJoinedToTransaction() 
+    {
+        return false;
+    }
+
+    @Override
+    public <T> EntityGraph<T> createEntityGraph(Class<T> rootType) 
+    {
+        return null;
+    }
+
+    @Override
+    public EntityGraph<?> createEntityGraph(String graphName) 
+    {
+        return null;
+    }
+
+    @Override
+    public EntityGraph<?> getEntityGraph(String graphName) 
+    {
+        return null;
+    }
+
+    @Override
+    public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) 
     {
         return null;
     }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ package org.apache.tapestry5.cdi.test.beans;
 import org.apache.tapestry5.cdi.test.annotation.CustomDessert;
 import org.apache.tapestry5.cdi.test.annotation.DessertTime;
 
-import javax.enterprise.inject.New;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.New;
+import jakarta.enterprise.inject.Produces;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

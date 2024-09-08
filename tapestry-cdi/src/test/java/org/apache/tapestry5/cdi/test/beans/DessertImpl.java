@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.beans;
 
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Default;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Default;
 
 
 @SessionScoped

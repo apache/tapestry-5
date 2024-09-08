@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.beans;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.inject.Inject;
 import java.io.Serializable;
 
 @ConversationScoped
@@ -25,7 +25,7 @@ public class Vegetable implements Serializable{
 
     @Inject
     private
-    javax.enterprise.context.Conversation conversation;
+    jakarta.enterprise.context.Conversation conversation;
 
     @PostConstruct
     public void init(){

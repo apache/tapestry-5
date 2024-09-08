@@ -2,7 +2,7 @@ package ioc.specs
 
 import java.lang.reflect.Method
 
-import javax.inject.Named
+import jakarta.inject.Named
 
 import org.apache.tapestry5.commons.*
 import org.apache.tapestry5.ioc.*

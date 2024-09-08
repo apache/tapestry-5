@@ -67,8 +67,8 @@ public class AppModule
             @Override
             public void configure(final TapestryPersistenceUnitInfo unitInfo)
             {
-                unitInfo.addProperty("javax.persistence.jdbc.driver", "org.h2.Driver")
-                        .addProperty("javax.persistence.jdbc.url", "jdbc:h2:mem:test")
+                unitInfo.addProperty("jakarta.persistence.jdbc.driver", "org.h2.Driver")
+                        .addProperty("jakarta.persistence.jdbc.url", "jdbc:h2:mem:test")
                         .addProperty("eclipselink.ddl-generation", "create-tables")
                         .addProperty("eclipselink.logging.level", "fine")
                         .addManagedClass(Thang.class);

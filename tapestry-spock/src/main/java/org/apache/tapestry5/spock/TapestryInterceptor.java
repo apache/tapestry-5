@@ -144,7 +144,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor
             Field rawField = field.getReflection();
             
             if ((rawField.isAnnotationPresent(Inject.class)
-            || ReflectionUtil.isAnnotationPresent(rawField, "javax.inject.Inject")
+            || ReflectionUtil.isAnnotationPresent(rawField, "jakarta.inject.Inject")
             || rawField.isAnnotationPresent(Autobuild.class))
             && rawField.isAnnotationPresent(Shared.class) == sharedFields)
             {

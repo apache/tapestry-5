@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Stereotype;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.inject.Named;
 
 @Stereotype
 @SessionScoped

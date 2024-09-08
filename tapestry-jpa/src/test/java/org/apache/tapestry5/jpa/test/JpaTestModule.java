@@ -11,7 +11,7 @@
  */
 package org.apache.tapestry5.jpa.test;
 
-import javax.persistence.spi.PersistenceUnitTransactionType;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -70,15 +70,15 @@ public class JpaTestModule
                         .persistenceProviderClassName(
                                 "org.eclipse.persistence.jpa.PersistenceProvider")
                         .excludeUnlistedClasses(true)
-                        .addProperty("javax.persistence.jdbc.user", "sa")
-                        .addProperty("javax.persistence.jdbc.password", "sa")
-                        .addProperty("javax.persistence.jdbc.driver", "org.h2.Driver")
-                        .addProperty("javax.persistence.jdbc.url", "jdbc:h2:mem:jpatest")
+                        .addProperty("jakarta.persistence.jdbc.user", "sa")
+                        .addProperty("jakarta.persistence.jdbc.password", "sa")
+                        .addProperty("jakarta.persistence.jdbc.driver", "org.h2.Driver")
+                        .addProperty("jakarta.persistence.jdbc.url", "jdbc:h2:mem:jpatest")
                         .addProperty("eclipselink.ddl-generation", "create-or-extend-tables")
                         .addProperty("eclipselink.logging.level", "FINE")
                         .addManagedClass(ThingOne.class).addManagedClass(ThingTwo.class)
                         .addManagedClass(VersionedThing.class);
-                unitInfo.getProperties().put("javax.persistence.bean.manager",
+                unitInfo.getProperties().put("jakarta.persistence.bean.manager",
                         objectLocator.autobuild(TapestryCDIBeanManagerForJPAEntityListeners.class));
             }
         };

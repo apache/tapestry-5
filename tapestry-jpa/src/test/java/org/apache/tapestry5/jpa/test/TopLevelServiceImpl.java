@@ -13,7 +13,7 @@
  */
 package org.apache.tapestry5.jpa.test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.jpa.EntityTransactionManager;

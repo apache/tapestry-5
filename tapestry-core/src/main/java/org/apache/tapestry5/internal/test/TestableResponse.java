@@ -85,7 +85,7 @@ public interface TestableResponse extends Response
     String getContentType();
     
     /**
-     * Returns the content of the {@link javax.servlet.ServletOutputStream} as string.
+     * Returns the content of the {@link jakarta.servlet.ServletOutputStream} as string.
      * 
      * @since 5.2.3
      */

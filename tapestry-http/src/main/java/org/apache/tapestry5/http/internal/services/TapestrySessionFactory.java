@@ -17,7 +17,7 @@ package org.apache.tapestry5.http.internal.services;
 import org.apache.tapestry5.http.services.Session;
 
 /**
- * Encapsulates logic for accessing the Tapestry {@link Session} (a wrapper around the {@link javax.servlet.http.HttpSession}).
+ * Encapsulates logic for accessing the Tapestry {@link Session} (a wrapper around the {@link jakarta.servlet.http.HttpSession}).
  *
  * @see SessionImpl
  * @see ClusteredSessionImpl

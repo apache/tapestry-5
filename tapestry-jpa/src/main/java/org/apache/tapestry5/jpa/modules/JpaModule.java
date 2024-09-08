@@ -16,10 +16,10 @@ package org.apache.tapestry5.jpa.modules;
 
 import java.util.Collection;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.commons.Configuration;

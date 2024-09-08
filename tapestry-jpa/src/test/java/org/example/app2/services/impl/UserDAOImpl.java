@@ -3,7 +3,7 @@ package org.example.app2.services.impl;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app2.services.UserDAO;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class UserDAOImpl implements UserDAO
 {

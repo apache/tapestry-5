@@ -21,9 +21,9 @@ import org.apache.tapestry5.jpa.JpaSymbols;
 import org.apache.tapestry5.jpa.integration.app5.DummyPersistenceProvider;
 import org.apache.tapestry5.jpa.modules.JpaModule;
 
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceProviderResolver;
-import javax.persistence.spi.PersistenceProviderResolverHolder;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceProviderResolver;
+import jakarta.persistence.spi.PersistenceProviderResolverHolder;
 import java.util.Arrays;
 import java.util.List;
 

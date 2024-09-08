@@ -15,8 +15,8 @@
 package org.apache.tapestry5.jpa;
 
 /**
- * Used to configure a {@linkplain javax.persistence.spi.PersistenceUnitInfo}, which is used to
- * create an {@linkplain javax.persistence.EntityManagerFactory}.
+ * Used to configure a {@linkplain jakarta.persistence.spi.PersistenceUnitInfo}, which is used to
+ * create an {@linkplain jakarta.persistence.EntityManagerFactory}.
  * 
  * @since 5.3
  */

@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.beans;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named("named")
 public class NamedPojo {

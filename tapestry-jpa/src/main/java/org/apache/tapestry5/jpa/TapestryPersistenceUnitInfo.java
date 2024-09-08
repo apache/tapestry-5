@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.jpa;
 
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.PersistenceUnitTransactionType;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 import java.net.URL;
 import java.util.Map;
 
@@ -155,7 +155,7 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
     TapestryPersistenceUnitInfo excludeUnlistedClasses(boolean exclude);
 
     /**
-     * {@link javax.persistence.spi.PersistenceProvider} allows creating an {@link javax.persistence.EntityManagerFactory}
+     * {@link jakarta.persistence.spi.PersistenceProvider} allows creating an {@link jakarta.persistence.EntityManagerFactory}
      * with a default EntityManager properties map. This operation allows contributing default properties for
      * EntityManager.
      *

@@ -73,7 +73,7 @@ public interface Session
 
     /**
      * Checks to see if the session has been invalidated. Note: since 5.3 this will also catch calls to
-     * {@link javax.servlet.http.HttpSession#invalidate()}.
+     * {@link jakarta.servlet.http.HttpSession#invalidate()}.
      * 
      * @since 5.1.0.0
      */

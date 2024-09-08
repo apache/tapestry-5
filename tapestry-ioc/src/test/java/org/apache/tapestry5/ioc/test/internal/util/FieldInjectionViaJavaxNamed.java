@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.test.internal.util;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class FieldInjectionViaJavaxNamed
 {

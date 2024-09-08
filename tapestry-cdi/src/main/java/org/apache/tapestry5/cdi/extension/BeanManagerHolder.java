@@ -13,13 +13,13 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.extension;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.Extension;
 
 /**
- * A Holder that provides the {@link javax.enterprise.inject.spi.BeanManager BeanManager} instance by observing the CDI {@link javax.enterprise.inject.spi.AfterBeanDiscovery AfterBeanDiscovery} event
+ * A Holder that provides the {@link jakarta.enterprise.inject.spi.BeanManager BeanManager} instance by observing the CDI {@link jakarta.enterprise.inject.spi.AfterBeanDiscovery AfterBeanDiscovery} event
  *
  */
 public class BeanManagerHolder implements Extension {
@@ -31,7 +31,7 @@ public class BeanManagerHolder implements Extension {
     }
 
     /**
-     * Store the {@link javax.enterprise.inject.spi.BeanManager BeanManager} during the container startup
+     * Store the {@link jakarta.enterprise.inject.spi.BeanManager BeanManager} during the container startup
      * @param afterBeanDiscovery the CDI event
      * @param bm a BeanManager object
      */

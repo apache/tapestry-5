@@ -40,8 +40,8 @@ dependencies {
          transitive = false
      } 
       
-    // replace javax.enterprise:cdi-api with group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec to compile against full Java EE API
-    compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
+    // replace jakarta.enterprise:cdi-api with group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec to compile against full Java EE API
+    compileOnly group: 'jakarta.enterprise', name: 'cdi-api', version: libraryVersions.cdi
     
     
     testCompile group: 'org.apache.openejb', name: 'ziplock', version: libraryVersions.ziplock

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Property;

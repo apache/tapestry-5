@@ -35,8 +35,8 @@ class ClassNameLocatorImplSpec extends Specification {
 
         expect:
 
-        assertInList locator.locateClassNames("javax.inject"),
-            "javax.inject",
+        assertInList locator.locateClassNames("jakarta.inject"),
+            "jakarta.inject",
             "Inject", "Named", "Singleton"
     }
 

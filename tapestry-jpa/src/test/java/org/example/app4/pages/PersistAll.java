@@ -22,8 +22,8 @@ import org.example.app1.entities.Thang;
 import org.example.app1.entities.User;
 import org.example.app2.entities.Item;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class PersistAll
 {

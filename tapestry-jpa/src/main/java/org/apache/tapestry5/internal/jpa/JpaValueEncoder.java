@@ -23,10 +23,10 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.slf4j.Logger;
 
-import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.Type;
 
 public class JpaValueEncoder<E> implements ValueEncoder<E>
 {

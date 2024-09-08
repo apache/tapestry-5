@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ScopeConstants;

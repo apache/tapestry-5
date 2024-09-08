@@ -1,4 +1,4 @@
-//  Copyright 2011, 2013, 2020 The Apache Software Foundation
+//  Copyright 2011, 2013, 2020, 2024 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
- * A thin wrapper around {@link javax.servlet.http.HttpSession} that supports re-storing of mutable
+ * A thin wrapper around {@link jakarta.servlet.http.HttpSession} that supports re-storing of mutable
  * session attributes at the end of the request (see {@link #restoreDirtyObjects()}). This is only
  * used when {@linkplain org.apache.tapestry5.SymbolConstants#CLUSTERED_SESSIONS clustering}.
  *

@@ -19,7 +19,7 @@ import org.apache.tapestry5.cdi.test.annotation.DessertTime;
 import org.apache.tapestry5.cdi.test.annotation.Iced;
 import org.apache.tapestry5.cdi.test.beans.*;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 

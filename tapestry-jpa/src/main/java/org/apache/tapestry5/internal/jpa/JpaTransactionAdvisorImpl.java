@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.jpa.EntityManagerManager;

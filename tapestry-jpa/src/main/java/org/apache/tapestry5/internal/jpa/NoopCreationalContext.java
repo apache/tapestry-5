@@ -13,7 +13,7 @@
  */
 package org.apache.tapestry5.internal.jpa;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 
 public class NoopCreationalContext<T> implements CreationalContext<T>
 {

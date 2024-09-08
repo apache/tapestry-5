@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.jpa;
 import java.sql.SQLException;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.IOCUtilities;

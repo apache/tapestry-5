@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.test.internal;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 import org.apache.tapestry5.ioc.ServiceBinder;
 

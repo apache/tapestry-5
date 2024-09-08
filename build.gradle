@@ -16,7 +16,7 @@ project.ext.versions = [
     easymock: "3.3.1",
     servletapi: "5.0.0",
     spock: "2.3-groovy-3.0",
-    hibernate: "5.4.32.Final",
+    hibernate: "5.4.32.Final", // Upgrade postponed due too many API changes from 5 to 6
     slf4j: "1.7.25",
     geb: "2.0",
     selenium: "4.5.0",
@@ -25,7 +25,9 @@ project.ext.versions = [
     jsonschemaGenerator: "4.20.0",
     junitJupiter: "5.10.2",
     commonsLang: "3.4",
-    webdriverManager: "5.3.1"
+    webdriverManager: "5.3.1",
+    injectApi: "2.0.1",
+    annotationApi: "2.0.0"
 ]
 
 def artifactSuffix = "-jakarta"
@@ -36,7 +38,11 @@ def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
         "tapestry-runner", "tapestry-spring", "tapestry-spring", "tapestry-kaptcha",
         "tapestry-openapi-viewer", "tapestry-upload", "tapestry-jmx", 
         "tapestry-jpa", "tapestry-kaptcha", "tapestry-openapi-viewer",
-        "tapestry-rest-jackson", "tapestry-webresources"]
+        "tapestry-rest-jackson", "tapestry-webresources", "tapestry-cdi", 
+        "tapestry-ioc", "tapestry-ioc-jcache", "tapestry-jmx", "tapestry-spock",
+        "tapestry-clojure", "tapestry-hibernate", "tapestry-hibernate-core",
+        "tapestry-ioc-junit", "tapestry-latest-java-tests", "tapestry-mongodb",
+        "tapestry-spock"]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
@@ -137,7 +143,7 @@ dependencies {
     }
 
     // From tapestry-ioc:
-    binaries "javax.inject:javax.inject:1"
+    binaries "jakarta.inject:jakarta.inject-api:${versions.injectApi}"
     binaries "org.slf4j:slf4j-api:${versions.slf4j}"
     binaries "commons-codec:commons-codec:1.5"
     binaries "org.antlr:antlr-runtime:3.3", { transitive = false }

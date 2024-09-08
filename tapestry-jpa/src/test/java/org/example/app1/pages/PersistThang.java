@@ -22,8 +22,8 @@ import org.example.app1.AppConstants;
 import org.example.app1.entities.Thang;
 import org.example.app1.entities.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.example.app1.AppConstants.TEST_PERSISTENCE_UNIT_2;

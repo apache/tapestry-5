@@ -1,4 +1,4 @@
-// Copyright 2014 The Apache Software Foundation
+// Copyright 2014, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import javax.cache.annotation.CacheKeyGenerator;
 import javax.cache.annotation.CacheResolverFactory;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.commons.ObjectLocator;

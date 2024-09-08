@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.xml.sax.Attributes;
@@ -21,19 +24,14 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 public class PersistenceContentHandler implements ContentHandler
 {
     private static final List<String> NAMESPACE_URIS = Arrays.asList(
-    		new String[]{"http://java.sun.com/xml/ns/persistence", "http://xmlns.jcp.org/xml/ns/persistence"});
+    		new String[]{"https://jakarta.ee/xml/ns/persistence", "http://java.sun.com/xml/ns/persistence", "http://xmlns.jcp.org/xml/ns/persistence"});
     private static final String ELEMENT_PERSISTENCE_UNIT = "persistence-unit";
     private static final String ELEMENT_PROVIDER = "provider";
     private static final String ELEMENT_JTA_DATA_SOURCE = "jta-data-source";

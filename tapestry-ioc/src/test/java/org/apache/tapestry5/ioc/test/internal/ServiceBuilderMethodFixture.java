@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

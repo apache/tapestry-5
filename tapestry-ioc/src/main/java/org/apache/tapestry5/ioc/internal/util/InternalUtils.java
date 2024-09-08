@@ -43,8 +43,8 @@ import org.apache.tapestry5.ioc.internal.ServiceDefImpl;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -352,7 +352,7 @@ public class InternalUtils
                             return;
                         }
 
-                        if (ap.getAnnotation(javax.inject.Inject.class) != null)
+                        if (ap.getAnnotation(jakarta.inject.Inject.class) != null)
                         {
                             Named named = ap.getAnnotation(Named.class);
 
@@ -591,13 +591,13 @@ public class InternalUtils
         }
 
         Constructor standardConstructor = findConstructorByAnnotation(constructors, Inject.class);
-        Constructor javaxConstructor = findConstructorByAnnotation(constructors, javax.inject.Inject.class);
+        Constructor javaxConstructor = findConstructorByAnnotation(constructors, jakarta.inject.Inject.class);
 
         if (standardConstructor != null && javaxConstructor != null)
             throw new IllegalArgumentException(
                     String.format(
                             "Too many autobuild constructors found: use either @%s or @%s annotation to mark a single constructor for autobuilding.",
-                            Inject.class.getName(), javax.inject.Inject.class.getName()));
+                            Inject.class.getName(), jakarta.inject.Inject.class.getName()));
 
         if (standardConstructor != null)
         {
@@ -1459,7 +1459,7 @@ public class InternalUtils
                             return;
                         }
 
-                        if (ap.getAnnotation(javax.inject.Inject.class) != null)
+                        if (ap.getAnnotation(jakarta.inject.Inject.class) != null)
                         {
                             Named named = ap.getAnnotation(Named.class);
 

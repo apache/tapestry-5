@@ -20,8 +20,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app2.entities.Item;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class PersistItem2
 {

@@ -14,13 +14,17 @@
 
 package org.apache.tapestry5.jpa.integration.app5;
 
-import javax.persistence.Cache;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnitUtil;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.metamodel.Metamodel;
 import java.util.Map;
+
+import jakarta.persistence.Cache;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnitUtil;
+import jakarta.persistence.Query;
+import jakarta.persistence.SynchronizationType;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.metamodel.Metamodel;
 
 final class DummyEntityManagerFactory implements EntityManagerFactory
 {
@@ -77,5 +81,35 @@ final class DummyEntityManagerFactory implements EntityManagerFactory
     public void close()
     {
 
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addNamedQuery(String name, Query query) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> cls) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) 
+    {
+        // TODO Auto-generated method stub
     }
 }

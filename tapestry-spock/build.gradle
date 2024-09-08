@@ -5,7 +5,7 @@ dependencies {
 	implementation project(':tapestry-ioc')
 	implementation "org.spockframework:spock-core:${versions.spock}"
 	
-	testImplementation "javax.inject:javax.inject:1"
+	testImplementation "jakarta.inject:jakarta.inject-api:${versions.injectApi}"
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }
 

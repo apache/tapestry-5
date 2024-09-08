@@ -18,28 +18,31 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedMember;
-import javax.enterprise.inject.spi.AnnotatedMethod;
-import javax.enterprise.inject.spi.AnnotatedParameter;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanAttributes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Decorator;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.InjectionTargetFactory;
-import javax.enterprise.inject.spi.InterceptionType;
-import javax.enterprise.inject.spi.Interceptor;
-import javax.enterprise.inject.spi.ObserverMethod;
-import javax.enterprise.inject.spi.ProducerFactory;
+import jakarta.el.ELResolver;
+import jakarta.el.ExpressionFactory;
+import jakarta.enterprise.context.spi.Context;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.AnnotatedField;
+import jakarta.enterprise.inject.spi.AnnotatedMember;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedParameter;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanAttributes;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.Decorator;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.inject.spi.InjectionTargetFactory;
+import jakarta.enterprise.inject.spi.InterceptionFactory;
+import jakarta.enterprise.inject.spi.InterceptionType;
+import jakarta.enterprise.inject.spi.Interceptor;
+import jakarta.enterprise.inject.spi.ObserverMethod;
+import jakarta.enterprise.inject.spi.ProducerFactory;
 
 public class NoopBeanManager implements BeanManager
 {
@@ -312,6 +315,27 @@ public class NoopBeanManager implements BeanManager
 
     @Override
     public <T extends Extension> T getExtension(Class<T> extensionClass)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> InterceptionFactory<T> createInterceptionFactory(CreationalContext<T> ctx, Class<T> clazz) 
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Event<Object> getEvent() 
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Instance<Object> createInstance() 
     {
         // TODO Auto-generated method stub
         return null;

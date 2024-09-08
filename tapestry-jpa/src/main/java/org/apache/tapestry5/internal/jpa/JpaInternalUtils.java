@@ -17,11 +17,11 @@ package org.apache.tapestry5.internal.jpa;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.jpa.EntityManagerManager;

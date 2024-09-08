@@ -879,7 +879,7 @@ public final class TapestryModule
      * <dl>
      * <dt>Default</dt>
      * <dd>based on {@link MasterObjectProvider}</dd>
-     * <dt>Named</dt> <dd>Handles fields with the {@link javax.inject.Named} annotation</dd>
+     * <dt>Named</dt> <dd>Handles fields with the {@link jakarta.inject.Named} annotation</dd>
      * <dt>Block</dt>
      * <dd>injects fields of type {@link Block}</dd>
      * <dt>CommonResources</dt>

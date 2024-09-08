@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.EntityManager;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;

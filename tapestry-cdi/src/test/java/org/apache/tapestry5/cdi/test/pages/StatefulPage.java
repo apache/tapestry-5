@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.pages;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.BeginRender;

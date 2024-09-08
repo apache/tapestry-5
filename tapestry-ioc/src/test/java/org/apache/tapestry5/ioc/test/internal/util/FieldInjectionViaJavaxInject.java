@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.test.internal.util;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.SymbolSource;

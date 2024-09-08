@@ -16,10 +16,10 @@ package org.apache.tapestry5.jpa.test;
 
 import java.util.Date;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
 
 import org.apache.tapestry5.jpa.EntityTransactionManager;
 import org.apache.tapestry5.jpa.test.entities.VersionedThing;

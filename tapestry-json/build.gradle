@@ -1,7 +1,8 @@
 description = "Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json"
 
 dependencies {
-    provided project(':tapestry-ioc')
+    implementation project(':tapestry5-annotations')
+    implementation project(':commons')
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }
 

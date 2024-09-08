@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.pages;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SymbolConstants;
@@ -30,46 +30,46 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 
 
 public class Index {
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Pojo pojo;
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     @Named("named")
     private NamedPojo namedPojo;
     
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     @Property
     private CounterService counterService;
     
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Messages messageCDI;
     
     @org.apache.tapestry5.ioc.annotations.Inject
     private Messages messageTapestry;
     
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private ComponentResources resources;
     
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     @Symbol(value=SymbolConstants.PRODUCTION_MODE)
     private boolean production_mode;
     
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private StatelessEJBBean statelessBean;
 
     
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Soup soup1;
     
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Soup soup2;
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Dessert dessert;
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     private Stereotyped stereotyped;
 
         

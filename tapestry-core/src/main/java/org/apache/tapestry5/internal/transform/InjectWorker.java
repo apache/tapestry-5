@@ -27,7 +27,7 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Performs injection triggered by any field annotated with the {@link org.apache.tapestry5.ioc.annotations.Inject}
- * annotation or the {@link javax.inject.Inject} annotation.
+ * annotation or the {@link jakarta.inject.Inject} annotation.
  *
  * The implementation of this worker mostly delegates to a chain of command of {@link InjectionProvider2}.
  */
@@ -46,7 +46,7 @@ public class InjectWorker implements ComponentClassTransformWorker2
         public boolean accept(PlasticField field)
         {
             return field.hasAnnotation(Inject.class) ||
-                    field.hasAnnotation(javax.inject.Inject.class);
+                    field.hasAnnotation(jakarta.inject.Inject.class);
         }
     };
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 
 /**
- * A CDI bean wrapper that embeds a {@link javax.enterprise.context.spi.CreationalContext CreationalContext}
+ * A CDI bean wrapper that embeds a {@link jakarta.enterprise.context.spi.CreationalContext CreationalContext}
  *
  */
 public class BeanInstance {

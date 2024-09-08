@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.cdi.test.annotation;
 
-import javax.inject.Qualifier;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

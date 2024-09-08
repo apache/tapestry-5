@@ -30,7 +30,7 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 /**
  * Marker annotation for a property that is a <em>session state object</em> (SSO) as controlled by
  * the {@link org.apache.tapestry5.services.ApplicationStateManager}. An SSO property is stored as
- * global session object (i.e., in the {@link javax.servlet.ServletContext}), accessible to every
+ * global session object (i.e., in the {@link jakarta.servlet.ServletContext}), accessible to every
  * page or component, but in fact the built-in strategies for SSO management are
  * session-specific, ultimately storing data in the {@link org.apache.tapestry5.http.services.Session}.
  * <p>
