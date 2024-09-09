@@ -20,7 +20,7 @@ _deploy_branch branch extra-options:
 	echo "Releasing branch: {{branch}} with Gradle extra options '{{extra-options}}'"
 	# Fail if there are untracked files or uncommitted changes
 	git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
-	git checkout master
+	git checkout {{branch}}
 	./gradlew clean generateRelease {{gradle-options}} {{extra-options}}
 
 _deploy_javax extra-options: (_deploy_branch "javax" extra-options)
