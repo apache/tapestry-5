@@ -33,7 +33,7 @@ def artifactSuffix = ""
 // Artifacts that have both an unsuffixed artifact from the javax branch
 // and a suffixed one from the master branch
 def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
-        "tapestry-runner", "tapestry-spring", "tapestry-spring", "tapestry-kaptcha",
+        "tapestry-runner", "tapestry-spring", "tapestry-kaptcha",
         "tapestry-openapi-viewer", "tapestry-upload", "tapestry-jmx", 
         "tapestry-jpa", "tapestry-kaptcha", "tapestry-openapi-viewer",
         "tapestry-rest-jackson", "tapestry-webresources", "tapestry-cdi", 
@@ -54,7 +54,7 @@ project.version = tapestryVersion()
 
 def tapestryVersion() {
 
-    def major = "5.9.0-preview-2"
+    def major = "5.9.0"
     def minor = ""
 
     // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
