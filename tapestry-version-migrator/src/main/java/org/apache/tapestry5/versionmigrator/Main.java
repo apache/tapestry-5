@@ -15,6 +15,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,15 +27,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Formatter;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.tapestry5.versionmigrator.internal.ArtifactChangeRefactorCommitParser;
 import org.apache.tapestry5.versionmigrator.internal.PackageAndArtifactChangeRefactorCommitParser;
 import org.apache.tapestry5.versionmigrator.internal.PackageChangeRefactorCommitParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class Main 
 {
@@ -47,23 +69,151 @@ public class Main
         }
         else 
         {
-            TapestryVersion version = getTapestryVersion(args[1]);
             switch (args[0])
             {
+                case "artifactSuffix": 
+                    artifactSuffix(args);
+                    break;
+                    
                 case "generate": 
-                    createVersionFile(version);
+                    createVersionFile(getTapestryVersion(args[1]));
                     break;
 
                 case "upgrade": 
-                    upgrade(version);
+                    upgrade(getTapestryVersion(args[1]));
                     break;
-                    
+
+
                 default:
                     printHelp();
             }
         }
     }
     
+    private static void artifactSuffix(final String[] args) 
+    {
+        final String artifactSuffix = args.length == 2 ? args[1] : "";
+        artifactSuffix(new File("."), artifactSuffix);
+    }
+
+    private static void artifactSuffix(final File file, final String artifactSuffix) 
+    {
+        if (file.getName().equals("pom.xml"))
+        {
+            try 
+            {
+                introduceArtifactSuffix(file, artifactSuffix);
+            } catch (Exception e) 
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+        {
+            if (file.isDirectory())
+            {
+                for (File f : file.listFiles())
+                {
+                    artifactSuffix(f, artifactSuffix);
+                }
+            }
+        }
+    }
+    
+    private static final String MAVEN_NAMESPACE = "http://maven.apache.org/POM/4.0.0";
+    
+    private static final String SUFFIX_PROPERTY = "tapestry-artifact-suffix";
+    
+    private static final Set<String> SUFFIXED_ARTIFACTS = new HashSet<>(Arrays.asList(
+            "tapestry-core", "tapestry-http", "tapestry-test",
+            "tapestry-runner", "tapestry-spring", "tapestry-kaptcha",
+            "tapestry-openapi-viewer", "tapestry-upload", "tapestry-jmx", 
+            "tapestry-jpa", "tapestry-kaptcha", "tapestry-openapi-viewer",
+            "tapestry-rest-jackson", "tapestry-webresources", "tapestry-cdi", 
+            "tapestry-ioc", "tapestry-ioc-jcache", "tapestry-jmx", "tapestry-spock",
+            "tapestry-clojure", "tapestry-hibernate", "tapestry-hibernate-core",
+            "tapestry-ioc-junit", "tapestry-latest-java-tests", "tapestry-mongodb",
+            "tapestry-spock"));
+    
+    private static final XPath XPATH;
+    
+    static 
+    {
+        XPATH = XPathFactory.newInstance().newXPath();
+        XPATH.setNamespaceContext(new MavenNamespaceContext());
+    }
+    
+    private static void introduceArtifactSuffix(File file, String artifactSuffix) throws Exception 
+    {
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        f.setNamespaceAware(true);
+        DocumentBuilder b = f.newDocumentBuilder();
+        Document doc = b.parse(file);
+        
+        boolean fileChanged = false;
+        
+        final XPathExpression propertiesXpath = 
+                XPATH.compile("/maven:project/maven:properties");
+        Element properties = (Element) propertiesXpath.evaluate(doc, XPathConstants.NODE);
+        
+        if (properties == null)
+        {
+            properties = doc.createElementNS(MAVEN_NAMESPACE, "properties");
+            properties.appendChild(doc.createTextNode("\t\n"));
+            doc.getDocumentElement().appendChild(properties);
+            fileChanged = true;
+        }
+        
+        final XPathExpression propertyXpath = 
+                XPATH.compile(String.format("/maven:project/maven:properties/*[local-name()='%s']",
+                        SUFFIX_PROPERTY));
+        Element property = (Element) propertyXpath.evaluate(doc, XPathConstants.NODE);
+        if (property == null)
+        {
+            property = doc.createElementNS(MAVEN_NAMESPACE, SUFFIX_PROPERTY);
+            property.setTextContent(artifactSuffix);
+            properties.appendChild(doc.createTextNode("\t"));
+            properties.appendChild(doc.createComment(" Tapestry artifact id suffix (empty value or '-jakarta'). "));
+            properties.appendChild(doc.createTextNode("\n\t\t"));
+            properties.appendChild(property);
+            properties.appendChild(doc.createTextNode("\n\t"));
+            fileChanged = true;
+        }
+        
+        final XPathExpression artifactIdXpath = 
+                XPATH.compile("/maven:project//maven:dependencies/maven:dependency/maven:artifactId");
+        
+        NodeList artifactIds = (NodeList) artifactIdXpath.evaluate(doc, XPathConstants.NODESET);
+        for (int i = 0; i < artifactIds.getLength(); i++) 
+        {
+            Element artifactId = (Element) artifactIds.item(i);
+            final String value = artifactId.getTextContent();
+            if (SUFFIXED_ARTIFACTS.contains(value))
+            {
+                artifactId.setTextContent(value + "${" + SUFFIX_PROPERTY + "}");
+                fileChanged = true;
+            }
+        }
+        
+        if (fileChanged)
+        {
+            System.out.println("Updated " + file.getCanonicalPath());
+            write(doc, file);
+        }
+        
+    }
+
+    private static void write(Document doc, File file)
+            throws TransformerFactoryConfigurationError, TransformerConfigurationException, IOException, TransformerException 
+    {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        FileWriter writer = new FileWriter(file);
+        StreamResult streamResult = new StreamResult(writer);
+        transformer.transform(source, streamResult);
+    }
+
     private static void upgrade(TapestryVersion version) 
     {
         
@@ -155,6 +305,7 @@ public class Main
         System.out.println("Apache Tapestry version migrator options:");
         System.out.println("\t upgrade [version number]: updates references to classes which have been moved or renamed in Java source files in the current folder and its subfolders.");
         System.out.println("\t generate [version number]: analyzes version control and outputs information about moved classes.");
+        System.out.println("\t artifactSuffix [suffix]: updates pom.xml files recursively to allow very easy changing from or to suffixed artifact ids (no suffix vs \"-jakarta\").");
         System.out.println("Apache Tapestry versions available in this tool: " + 
                 Arrays.stream(TapestryVersion.values())
                     .map(TapestryVersion::getNumber)
@@ -347,6 +498,27 @@ public class Main
         
         return refactors;
         
+    }
+    
+    private static final class MavenNamespaceContext implements NamespaceContext {
+
+        @Override
+        public Iterator<?> getPrefixes(String namespaceURI) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getPrefix(String namespaceURI) 
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getNamespaceURI(String prefix) 
+        {
+            return prefix.equals("maven") ? MAVEN_NAMESPACE : null;
+        }
     }
 
 }
