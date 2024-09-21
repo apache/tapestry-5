@@ -40,7 +40,7 @@ def suffixedArtifactNames = ["tapestry-core", "tapestry-http", "tapestry-test",
         "tapestry-ioc", "tapestry-ioc-jcache", "tapestry-jmx", "tapestry-spock",
         "tapestry-clojure", "tapestry-hibernate", "tapestry-hibernate-core",
         "tapestry-ioc-junit", "tapestry-latest-java-tests", "tapestry-mongodb",
-        "tapestry-spock"]
+        "tapestry-spock", "tapestry-beanvalidator"]
 
 ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
 
