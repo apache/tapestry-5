@@ -503,7 +503,7 @@ public class Main
     private static final class MavenNamespaceContext implements NamespaceContext {
 
         @Override
-        public Iterator<?> getPrefixes(String namespaceURI) 
+        public Iterator<String> getPrefixes(String namespaceURI) 
         {
             throw new UnsupportedOperationException();
         }
