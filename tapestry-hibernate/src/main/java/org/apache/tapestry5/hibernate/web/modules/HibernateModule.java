@@ -50,6 +50,7 @@ import org.apache.tapestry5.services.dashboard.DashboardManager;
 import org.apache.tapestry5.services.dashboard.DashboardTab;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
+import org.slf4j.Logger;
 
 /**
  * Supplements the services defined by {@link org.apache.tapestry5.hibernate.modules.HibernateCoreModule} with additional
@@ -93,7 +94,7 @@ public class HibernateModule
             @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS) boolean provideEncoders,
             final HibernateSessionSource sessionSource, final Session session,
             final TypeCoercer typeCoercer, final PropertyAccess propertyAccess,
-            final LoggerSource loggerSource)
+            final LoggerSource loggerSource, final Logger logger)
     {
         if (!provideEncoders)
             return;
@@ -102,23 +103,27 @@ public class HibernateModule
         for (EntityType<?> entityType : entities)
         {
             Class<?> entityClass = entityType.getJavaType();
-            if (entityClass != null && entityType.hasSingleIdAttribute())
-            {
-                SingularAttribute<?, ?> id = entityType.getId(entityType.getIdType().getJavaType());
-                final String idenfierPropertyName = id.getName();
-                ValueEncoderFactory factory = new ValueEncoderFactory()
+            if (entityClass != null)
+            {   
+                if (entityType.hasSingleIdAttribute())
                 {
-                    @Override
-                    public ValueEncoder create(Class type)
-                    {
-                        return new HibernateEntityValueEncoder(entityClass, idenfierPropertyName,
-                                session, propertyAccess, typeCoercer,
-                                loggerSource.getLogger(entityClass));
-                    }
-                };
+                    SingularAttribute<?, ?> id = entityType.getId(entityType.getIdType().getJavaType());
+                    final String idenfierPropertyName = id.getName();
+                    ValueEncoderFactory factory = new ValueEncoderFactory()
+                    {    
+                        @Override
+                        public ValueEncoder create(Class type)
+                        {
+                            return new HibernateEntityValueEncoder(entityClass, idenfierPropertyName,
+                                    session, propertyAccess, typeCoercer,
+                                    loggerSource.getLogger(entityClass));
+                        }
+                    };
 
-                configuration.add(entityClass, factory);
-
+                    configuration.add(entityClass, factory);
+                } else {
+                    logger.warn("Not creating a value encoder for {} as it does not have a single id attribute.", entityClass);
+                }
             }
         }
     }
