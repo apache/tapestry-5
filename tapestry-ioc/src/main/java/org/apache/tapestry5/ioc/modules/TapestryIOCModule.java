@@ -399,4 +399,13 @@ public final class TapestryIOCModule
                 () ->  periodicExecutor.init());
     }
     
+    /**
+     * Builds the {@link RecursiveValueProvider} service.
+     * @since 5.9.0
+     */
+    public static RecursiveValueProvider buildRecursiveValueProvider(List<RecursiveValueProvider> providers, ChainBuilder chainBuilder) 
+    {
+        return chainBuilder.build(RecursiveValueProvider.class, providers);
+    }
+    
 }
