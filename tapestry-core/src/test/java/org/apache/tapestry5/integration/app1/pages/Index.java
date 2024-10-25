@@ -625,7 +625,9 @@ public class Index
 
                     new Item("ObjectEditorDemo","Object Editor Demo","Edit Bean with address objects"),
                     
-                    new Item("IfDemo","If Demo","If component with all its options")
+                    new Item("IfDemo","If Demo","If component with all its options"),
+                    
+                    new Item("SelfRecursiveDemo", "Self-Recursive Demo", "check for handling of self-recursive components")
                 );
 
     static
