@@ -502,7 +502,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         {
             EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
 
-            boolean loopback = request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
+            boolean loopback = request.getMethod().equals("GET") && 
+                    request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
 
             return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
         } catch (IllegalArgumentException e)
