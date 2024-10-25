@@ -542,12 +542,12 @@ public class CoreBehaviorsTests extends App1TestCase
     @Test
     public void recursive_components_are_identified_as_errors()
     {
-        openLinks("Recursive Demo");
+        openLinks("Self-Recursive Demo");
 
         assertTextPresent(
                 EXCEPTION_PROCESSING_REQUEST,
-                "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
-                "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
+                "The template for component org.apache.tapestry5.integration.app1.components.SelfRecursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.SelfRecursive). This is not supported (components may not contain themselves).",
+                "component is <t:SelfRecursive>recursive</t:SelfRecursive>, so we\'ll see a failure.");
     }
 
     @Test

@@ -1,7 +1,7 @@
 <div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
   <p>
-    This component is <t:recursive>recursive</t:recursive>, so we'll see a failure.
+    This component is <t:SelfRecursive>recursive</t:SelfRecursive>, so we'll see a failure.
   </p>
   
   <t:body/>

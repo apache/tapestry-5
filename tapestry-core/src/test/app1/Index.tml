@@ -87,7 +87,7 @@
     </li>
 
     <li>
-        <a href="recursivedemo">Recursive Demo</a>
+        <a href="recursivedemo">Self-Recursive Demo</a>
         -- check for handling of recursive components
     </li>
 
