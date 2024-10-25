@@ -22,12 +22,15 @@ import java.lang.annotation.Target;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.OrderedConfiguration;
+import org.apache.tapestry5.commons.RecursiveValue;
+import org.apache.tapestry5.commons.RecursiveValueProvider;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
@@ -37,18 +40,16 @@ import org.apache.tapestry5.http.services.RequestFilter;
 import org.apache.tapestry5.http.services.RequestHandler;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.integration.app1.data.Address;
+import org.apache.tapestry5.integration.app1.data.Category;
 import org.apache.tapestry5.integration.app1.data.Entity;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.modules.Bootstrap4Module;
-import org.apache.tapestry5.modules.NoBootstrapModule;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -57,8 +58,6 @@ import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueLabelProvider;
-import org.apache.tapestry5.services.compatibility.Compatibility;
-import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
@@ -427,6 +426,55 @@ public class AppModule
         // Just some pages to make sure the feature doesn't cause regressions.
         configuration.add("Index", p -> p.equals("Index") || p.contains("Bean")
                 ? ReferenceType.STRONG : null);
+    }
+
+    /**
+     * Builds the {@link RecursiveValueProvider} service.
+     * @since 5.9.0
+     */
+    public static void contributeRecursiveValueProvider(OrderedConfiguration<RecursiveValueProvider> configuration) 
+    {
+        configuration.add("Category", new CategoryRecursiveValueProvider());
+    }
+    
+    private static final class CategoryRecursiveValueProvider implements RecursiveValueProvider
+    {
+
+        @Override
+        public RecursiveValue<?> get(Object object) 
+        {
+            return (object instanceof Category) ? new CategoryRecursiveValue((Category) object) : null;
+        }
+        
+    }
+    
+    private static final class CategoryRecursiveValue implements RecursiveValue<Category>
+    {
+        
+        public CategoryRecursiveValue(Category category) {
+            super();
+            this.category = category;
+        }
+
+        final private Category category;
+
+        @Override
+        public List<RecursiveValue<?>> getChildren() {
+            return category.getChildren().stream()
+                    .map(CategoryRecursiveValue::new)
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public Category getValue() {
+            return category;
+        }
+
+        @Override
+        public String toString() {
+            return category.getName();
+        }
+        
     }
 
 }

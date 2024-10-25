@@ -1825,9 +1825,42 @@ public class CoreBehaviorsTests extends App1TestCase
     }
 
     @Test
-    public void event_handler_that_overrides_abstract_method_invoked_once() {
+    public void event_handler_that_overrides_abstract_method_invoked_once() 
+    {
         openLinks("Event Handler Override Demo", "Trigger");
 
         assertTextSeries("//ul[@id='method-names']/li[%d]", 1, "sub-class", "DONE");
     }
+    
+    @Test
+    public void recursive_component() 
+    {
+        openLinks("Recursive Demo");
+
+        final String locatorEnd = "/span";
+        final String level1format = "//ul[@id='%s']/li[%d]" + locatorEnd;
+        final String level2format = level1format.replace(locatorEnd, "") + "/ul/li[%d]" + locatorEnd;
+        final String level3format = level2format.replace(locatorEnd, "") + "/ul/li[%d]" + locatorEnd;
+        final String noMaxDepth = "noMaxDepth";
+        final String maxDepth2 = "maxDepth2";
+        
+        assertText(String.format(level1format, noMaxDepth, 1), "Category 1");
+        assertText(String.format(level2format, noMaxDepth, 1, 1), "Category 1.1");
+        assertText(String.format(level3format, noMaxDepth, 1, 1, 1), "Category 1.1.1");
+        assertText(String.format(level2format, noMaxDepth, 1, 2), "Category 1.2");
+        assertText(String.format(level1format, noMaxDepth, 3), "Category 3");
+        assertText(String.format(level2format, noMaxDepth, 3, 2), "Category 3.2");
+        assertText(String.format(level3format, noMaxDepth, 3, 1, 1), "Category 3.1.1");
+
+        assertText(String.format(level1format, maxDepth2, 1), "Category 1");
+        assertText(String.format(level2format, maxDepth2, 1, 1), "Category 1.1");
+        assertText(String.format(level2format, maxDepth2, 1, 2), "Category 1.2");
+        assertText(String.format(level1format, maxDepth2, 3), "Category 3");
+        assertText(String.format(level2format, maxDepth2, 3, 2), "Category 3.2");
+        
+        assertFalse(isElementPresent("//ul[@id='maxDepth2']//li//li//li"),
+                "Depth set to 2, so we shouldn't have 3rd level list items.");
+
+    }
+    
 }

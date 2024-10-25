@@ -1,0 +1,39 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<h1>Recursive Demo</h1>
+
+<p> Simple example of Recursive component usage</p>
+
+<p>
+	No maximum depth.
+</p>
+
+<ul id="noMaxDepth">
+	<t:recursive t:source="categories" value="category">
+		<li>
+			<span>${category.name}</span>
+			<ul t:type="If" t:test="!category.children.empty">
+				<t:RecursiveBody/>
+			</ul>
+		</li>
+	
+	</t:recursive>
+</ul>
+
+<p>
+	Maximum depth set to 2.
+</p>
+
+
+<ul id="maxDepth2">
+	<t:recursive t:source="categories" value="category" depth="2">
+		<li>
+			<span>${category.name}</span>
+			<ul t:type="If" t:test="!category.children.empty">
+				<t:RecursiveBody/>
+			</ul>
+		</li>
+	</t:recursive>
+</ul>
+
+
+</html>

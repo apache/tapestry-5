@@ -627,6 +627,8 @@ public class Index
                     
                     new Item("IfDemo","If Demo","If component with all its options"),
                     
+                    new Item("RecursiveDemo","Recursive Demo","Recursive component example"),
+                    
                     new Item("SelfRecursiveDemo", "Self-Recursive Demo", "check for handling of self-recursive components")
                 );
 
