@@ -230,6 +230,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         train_getPath(request, "/foo/bar");
+        
+        train_getMethod(request, "GET");
 
         train_setLocaleFromLocaleName(ls, "foo", false);
 
@@ -276,6 +278,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         String path = "/foo/Bar" + (finalSlash ? "/" : "");
         train_getPath(request, path);
+        
+        train_getMethod(request, "GET");
 
         train_setLocaleFromLocaleName(ls, "foo", false);
 
@@ -309,6 +313,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         String path = "/foo/Bar";
 
         train_getPath(request, path);
+        
+        train_getMethod(request, "GET");
 
         train_setLocaleFromLocaleName(ls, "foo", false);
 
@@ -389,6 +395,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         String path = "/foo/Bar/zip/zoom" + (finalSlash ? "/" : "");
         train_getPath(request, path);
+        
+        train_getMethod(request, "GET");
 
         train_setLocaleFromLocaleName(ls, "foo", false);
 
