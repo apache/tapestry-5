@@ -36,10 +36,14 @@ class BlockTests extends App1TestCase
 
         openLinks "Empty If Demo", "Hide"
 
-        assertEquals 0, getCssCount(".header-seperator")
+        assertEqualsLocal 0, getCssCount(".header-seperator")
 
         clickAndWait "link=Show"
 
-        assertEquals 1, getCssCount(".header-seperator")
+        assertEqualsLocal 1, getCssCount(".header-seperator")
+    }
+    
+    def assertEqualsLocal(int actual, int expected) {
+        org.testng.Assert.assertEquals((int) actual, (int) expected)
     }
 }
