@@ -3,7 +3,7 @@ description = "File Upload component, with supporting services"
 dependencies {
   implementation project(':tapestry-core')
   api "org.apache.commons:commons-fileupload2-jakarta:2.0.0-M1"
-  implementation "commons-io:commons-io:2.13.0"
+  implementation "commons-io:commons-io:${versions.commonsIo}"
   provided "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
 
   testImplementation project(':tapestry-test')
