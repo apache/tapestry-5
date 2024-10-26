@@ -37,7 +37,7 @@ dependencies {
     testImplementation "org.apache.httpcomponents:httpclient:4.5.14"
     testRuntimeOnly project(':tapestry-spock')
 
-    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
+    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
     testRuntimeOnly 'com.google.inject:guice:3.0'
 }
 
