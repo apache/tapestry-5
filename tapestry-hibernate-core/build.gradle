@@ -11,7 +11,7 @@ dependencies {
     testImplementation project(':tapestry-test')
     testImplementation "org.easymock:easymock:${versions.easymock}"
     testImplementation "org.testng:testng:${versions.testng}", { transitive = false }
-    testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"
+    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
 }
 
 jar {

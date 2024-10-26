@@ -1,4 +1,4 @@
-// Copyright 2009-2013 The Apache Software Foundation
+// Copyright 2009-2024 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
 
-@Test(sequential = true, groups = "integration")
+@Test(singleThreaded = true, groups = "integration")
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {

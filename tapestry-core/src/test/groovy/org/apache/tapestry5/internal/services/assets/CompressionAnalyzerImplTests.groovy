@@ -12,10 +12,9 @@
 
 package org.apache.tapestry5.internal.services.assets
 
-import org.testng.Assert
 import org.testng.annotations.Test
 
-class CompressionAnalyzerImplTests extends Assert  {
+class CompressionAnalyzerImplTests {
 
     @Test
     void non_match_yields_true() {
@@ -44,5 +43,9 @@ class CompressionAnalyzerImplTests extends Assert  {
         def ca = new CompressionAnalyzerImpl(["image/*": false, "image/svg" : true])
 
         assertEquals true, ca.isCompressable("image/svg")
+    }
+    
+    def assertEquals(boolean actual, boolean expected) {
+        return org.testng.Assert.assertEquals((boolean) actual, (boolean) expected);
     }
 }

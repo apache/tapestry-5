@@ -12,8 +12,8 @@ apply from: "sha256.gradle"
 project.ext.versions = [
     jetty: "8.1.19.v20160209",
     tomcat: "7.0.70",
-    testng: "6.14.3",
-    easymock: "3.3.1",
+    testng: "7.5.1",
+    easymock: "5.4.0",
     servletapi: "3.0.1",
     spock: "2.3-groovy-3.0",
     hibernate: "5.4.32.Final",
@@ -26,7 +26,10 @@ project.ext.versions = [
     junitJupiter: "5.10.2",
     commonsLang: "3.17.0",
     commonsIo: "2.17.0",
-    webdriverManager: "5.3.1"
+    webdriverManager: "5.3.1",
+    antlrRuntime: "3.5.3",
+    hsqldb: "2.7.3",
+    snakeyaml: "2.3"
 ]
 
 def artifactSuffix = ""
@@ -144,8 +147,8 @@ dependencies {
     // From tapestry-ioc:
     binaries "javax.inject:javax.inject:1"
     binaries "org.slf4j:slf4j-api:${versions.slf4j}"
-    binaries "commons-codec:commons-codec:1.5"
-    binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
+    binaries "commons-codec:commons-codec:1.17.1"
+    binaries "org.antlr:antlr-runtime:${versions.antlrRuntime}", { transitive = false }
 }
 
 String jdkVersion = System.properties['java.version']
@@ -413,12 +416,12 @@ subprojects {
             "commons-codec:commons-codec:1.10",
             "commons-io:commons-io:${versions.commonsIo}",
             "commons-logging:commons-logging:1.1.3",
-            "hsqldb:hsqldb:2.2.8",
-            "org.antlr:antlr-runtime:3.5.2",
+            "org.hsqldb:hsqldb:2.7.3",
+            "org.antlr:antlr-runtime:${versions.antlrRuntime}",
             "org.apache.tomcat:dbcp:6.0.32",
             "org.hamcrest:hamcrest-core:1.3",
             "org.json:json:20140107",
-            "org.yaml:snakeyaml:1.8",
+            "org.yaml:snakeyaml:${versions.snakeyaml}",
             "xml-apis:xml-apis:1.4.01"
 
     }

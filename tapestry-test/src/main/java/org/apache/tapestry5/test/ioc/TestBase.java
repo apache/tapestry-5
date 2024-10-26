@@ -134,6 +134,6 @@ public class TestBase extends TestUtils
     @SuppressWarnings({"UnusedDeclaration"})
     protected static <T> Capture<T> newCapture()
     {
-        return new Capture<T>();
+        return Capture.newInstance();
     }
 }
