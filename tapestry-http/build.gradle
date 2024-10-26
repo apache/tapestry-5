@@ -15,7 +15,7 @@ dependencies {
     provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
 
     implementation "commons-codec:commons-codec:1.10"
-    implementation "commons-io:commons-io:2.11.0"
+    implementation "commons-io:commons-io:${versions.commonsIo}"
 
     testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
 
