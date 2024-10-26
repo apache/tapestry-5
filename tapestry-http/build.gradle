@@ -17,7 +17,7 @@ dependencies {
     implementation "commons-codec:commons-codec:1.10"
     implementation "commons-io:commons-io:${versions.commonsIo}"
 
-    testRuntimeOnly "org.hsqldb:hsqldb:1.8.0.10"
+    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
 
     testRuntimeOnly 'com.google.inject:guice:3.0'
 }

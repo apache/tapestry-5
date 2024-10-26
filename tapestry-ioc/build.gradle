@@ -19,7 +19,7 @@ dependencies {
     testImplementation "commons-lang:commons-lang:2.6"
     testImplementation "org.apache.commons:commons-lang3:${versions.commonsLang}"
     testImplementation "org.hibernate:hibernate-core:5.2.10.Final"
-    testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"
+    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
     
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
     

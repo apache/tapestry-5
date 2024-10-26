@@ -7,7 +7,7 @@ dependencies {
 
   testImplementation project(':tapestry-test')
   
-  testRuntimeOnly "org.hsqldb:hsqldb:2.2.8"
+  testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
 }
 
 jar {
