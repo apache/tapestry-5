@@ -24,7 +24,7 @@ project.ext.versions = [
     jackson: "2.13.1",
     jsonschemaGenerator: "4.20.0",
     junitJupiter: "5.10.2",
-    commonsLang: "3.4",
+    commonsLang: "3.17.0",
     commonsIo: "2.17.0",
     webdriverManager: "5.3.1",
     injectApi: "2.0.1",
