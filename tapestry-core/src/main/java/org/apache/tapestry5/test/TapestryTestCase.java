@@ -552,6 +552,11 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(request.getPath()).andReturn(path).atLeastOnce();
     }
 
+    protected final void train_getMethod(Request request, String method)
+    {
+        expect(request.getMethod()).andReturn(method).atLeastOnce();
+    }
+
     protected final void train_getPersistentFieldNames(ComponentModel model, String... names)
     {
         expect(model.getPersistentFieldNames()).andReturn(Arrays.asList(names)).atLeastOnce();
