@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 import org.apache.tapestry5.EventContext;
@@ -22,8 +23,10 @@ import org.apache.tapestry5.commons.util.CommonsUtils;
 /**
  * Placeholder used when no context is available.
  */
-public class EmptyEventContext implements EventContext
+public class EmptyEventContext implements EventContext, Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Always returns zero.
      */
