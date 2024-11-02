@@ -23,8 +23,9 @@ import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 import org.apache.tapestry5.test.JettyRunner;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.session.JDBCSessionIdManager;
-import org.eclipse.jetty.server.session.JDBCSessionManager;
+import org.eclipse.jetty.server.session.DatabaseAdaptor;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.JDBCSessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -196,23 +197,18 @@ public class ClusterTests
 
         runner.configure("src/test/cluster", "", port, port + 100);
 
-        JDBCSessionIdManager idMgr = new JDBCSessionIdManager(runner.getServer());
-        idMgr.setWorkerName(name);
-        idMgr.setDriverInfo("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:clustertest");
+        JDBCSessionDataStore jdbcSessionDataStore = new JDBCSessionDataStore();
+        DatabaseAdaptor databaseAdaptor = new DatabaseAdaptor();
+        databaseAdaptor.setDriverInfo("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:clustertest");
+        jdbcSessionDataStore.setDatabaseAdaptor(databaseAdaptor);
 
         Server server = runner.getServer();
-        server.setSessionIdManager(idMgr);
+        server.setSessionIdManager(new DefaultSessionIdManager(server));
 
         WebAppContext wac = (WebAppContext) server.getHandler();
 
-        JDBCSessionManager jdbcMgr = new JDBCSessionManager();
-        jdbcMgr.setIdManager(server.getSessionIdManager());
+        server.addBean(jdbcSessionDataStore);
 
-        // force the session to be read from the database with no delay
-        // This is an incorrectly documented feature.
-        jdbcMgr.setSaveInterval(0);
-
-        wac.setSessionHandler(new SessionHandler(jdbcMgr));
         wac.getServletContext().setInitParameter("cluster.name", name);
         runner.start();
         return runner;
