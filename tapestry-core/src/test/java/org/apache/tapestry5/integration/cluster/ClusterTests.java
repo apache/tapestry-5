@@ -198,7 +198,7 @@ public class ClusterTests
 
         JDBCSessionIdManager idMgr = new JDBCSessionIdManager(runner.getServer());
         idMgr.setWorkerName(name);
-        idMgr.setDriverInfo("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:clustertest");
+        idMgr.setDriverInfo("org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:clustertest");
 
         Server server = runner.getServer();
         server.setSessionIdManager(idMgr);
@@ -220,7 +220,7 @@ public class ClusterTests
 
     private void createJettySessionsTable() throws ClassNotFoundException, SQLException
     {
-        Class.forName("org.hsqldb.jdbcDriver");
+        Class.forName("org.hsqldb.jdbc.JDBCDriver");
 
         Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:clustertest", "sa", "");
         String sql = "create table JettySessions (" +

@@ -28,7 +28,7 @@ project.ext.versions = [
     commonsIo: "2.17.0",
     webdriverManager: "5.3.1",
     antlrRuntime: "3.5.3",
-    hsqldb: "2.7.3",
+    hsqldb: "2.7.3:jdk8",
     snakeyaml: "2.3"
 ]
 
@@ -416,7 +416,7 @@ subprojects {
             "commons-codec:commons-codec:1.10",
             "commons-io:commons-io:${versions.commonsIo}",
             "commons-logging:commons-logging:1.1.3",
-            "org.hsqldb:hsqldb:2.7.3",
+            "org.hsqldb:hsqldb:${versions.hsqldb}",
             "org.antlr:antlr-runtime:${versions.antlrRuntime}",
             "org.apache.tomcat:dbcp:6.0.32",
             "org.hamcrest:hamcrest-core:1.3",
