@@ -201,6 +201,11 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
     {
         
         final String className = component.getName();
+        
+        if (alreadyProcessed.contains(className)) {
+            return;
+        }
+        
         final Set<Class<?>> furtherDependencies = new HashSet<>();
         Consumer<Class<?>> processClass = furtherDependencies::add;
         Consumer<String> processClassName = s -> {
