@@ -134,8 +134,14 @@ public class CssCompressor {
 
             if (foundTerminator) {
                 String token = css.substring(startIndex, endIndex);
-                if (removeWhiteSpace)
-                    token = WHITESPACE.matcher(token).replaceAll("");
+                if (removeWhiteSpace) {
+                    if (token.indexOf("data:image/svg+xml") != -1) {
+                        token = token.trim();
+                    }
+                    else {
+                        token = WHITESPACE.matcher(token).replaceAll("");
+                    }
+                }
                 preservedTokens.add(token);
 
                 String preserver = preservedToken + "(___YUICSSMIN_PRESERVED_" + preserverIdentifier + "_"

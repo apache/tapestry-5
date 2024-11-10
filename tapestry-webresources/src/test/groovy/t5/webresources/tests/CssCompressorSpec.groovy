@@ -32,6 +32,7 @@ class CssCompressorSpec extends Specification {
         'TAP5-2524' | 'minify CSS with keyframes'
         'TAP5-2600' | 'preserve 0s in transition'
         'TAP5-2753' | 'preserve space for calc operators'
+        'TAP5-2791' | 'data url svg whitespace'
     }
 
     /**
