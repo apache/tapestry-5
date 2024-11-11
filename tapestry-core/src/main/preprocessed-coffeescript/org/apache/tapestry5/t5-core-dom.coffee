@@ -701,6 +701,7 @@ define ["underscore", "./utils", "./events", "jquery"],
   # * options.method - "post", "get", etc., default: "post".
   # * options.contentType - request content, defaults to "application/x-www-form-urlencoded"
   # * options.data - optional, additional key/value pairs (for the default content type)
+  # * options.headers - optional, additional key/value pairs to be added to the request headers.
   # * options.success - handler to invoke on success. Passed the ResponseWrapper object.
   #   Default does nothing.
   # * options.failure - handler to invoke on failure (server responds with a non-2xx code).
@@ -717,6 +718,7 @@ define ["underscore", "./utils", "./events", "jquery"],
       contentType: options.contentType
       traditional: true
       data: options.data
+      headers: options.headers or {}
       # jQuery doesn't have the equivalent of Protoype's onException
       error: (jqXHR, textStatus, errorThrown) ->
         adjustAjaxCount -1
@@ -750,6 +752,7 @@ define ["underscore", "./utils", "./events", "jquery"],
       method: options.method or "post"
       contentType: options.contentType or "application/x-www-form-urlencoded"
       parameters: options.data
+      requestHeaders: options.headers
       onException: (ajaxRequest, exception) ->
 
         adjustAjaxCount -1
