@@ -1,4 +1,4 @@
-# Copyright 2012-2013 The Apache Software Foundation
+# Copyright 2012-2024 The Apache Software Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -235,7 +235,8 @@ define ["t5/core/dom", "underscore", "t5/core/events"],
         for o in movers
           @insertOption toOptions, o, atEnd
 
-        selectedOptions = if to is @selected then toOptions else fromOptions
+        isSelectedSelect = to is @selected
+        selectedOptions = if isSelectedSelect then toOptions else fromOptions
 
         @performUpdate false, selectedOptions, =>
           for i in [(from.element.length - 1)..0] by -1
@@ -249,7 +250,13 @@ define ["t5/core/dom", "underscore", "t5/core/events"],
             to.element.remove i
 
           for o in toOptions
-            to.element.add o, null
+            groupIdx = o.getAttribute('data-optgroup-idx')
+            if isSelectedSelect or !groupIdx  or groupIdx == ''
+              to.element.add o, null
+            else
+              group = to.element.children[parseInt(groupIdx)]
+              group.appendChild o
+
 
       insertOption: (options, option, atEnd) ->
 
