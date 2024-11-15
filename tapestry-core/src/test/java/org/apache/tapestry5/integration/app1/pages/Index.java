@@ -396,6 +396,7 @@ public class Index
                             "use expansions inside attributes of ordinary elements"),
 
                     new Item("PaletteDemo", "Palette Demo", "multiple selection component"),
+                    new Item("PaletteGroupedDemo", "Palette Grouped Demo", "multiple selection component (grouped)"),
 
                     new Item("ReturnTypes", "Return Types", "tests various event handler return types"),
 

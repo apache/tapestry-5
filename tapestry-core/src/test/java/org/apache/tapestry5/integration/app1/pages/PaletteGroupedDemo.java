@@ -1,4 +1,4 @@
-// Copyright 2007-2013 The Apache Software Foundation
+// Copyright 2007-2014 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,11 +32,10 @@ import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.util.AbstractSelectModel;
-import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
 @Import(module="palette-demo")
-public class PaletteDemo
+public class PaletteGroupedDemo
 {
     @Inject
     private ComponentResources resources;
@@ -52,27 +51,20 @@ public class PaletteDemo
     @Inject
     private TypeCoercer typeCoercer;
 
+    private static final Iterable<ProgrammingLanguage> FUNC = Arrays.asList(
+            ProgrammingLanguage.ERLANG, ProgrammingLanguage.HASKELL, ProgrammingLanguage.LISP);
+    private static final Iterable<ProgrammingLanguage> OO = Arrays.asList(ProgrammingLanguage.JAVA,
+            ProgrammingLanguage.RUBY);
 
     void onPrepareFromDemo()
     {
-        if (languages == null)
+        if (this.languages == null)
         {
-            languages = new ArrayList<ProgrammingLanguage>();
+            this.languages = new ArrayList<>();
         }
     }
 
     public SelectModel getLanguageModel()
-    {
-        return new EnumSelectModel(ProgrammingLanguage.class, resources.getMessages());
-    }
-
-    @SuppressWarnings("unchecked")
-    public ValueEncoder getLanguageEncoder()
-    {
-        return new EnumValueEncoder(typeCoercer, ProgrammingLanguage.class);
-    }
-
-    public SelectModel getGroupedModel()
     {
         return new AbstractSelectModel()
         {
@@ -81,11 +73,10 @@ public class PaletteDemo
             public List<OptionGroupModel> getOptionGroups()
             {
                 List<OptionGroupModel> groups = new ArrayList<>();
-                groups.add(new OptionGroupModelImpl("group1", false,
-                        Arrays.asList(new OptionModelImpl("1"))));
-                groups.add(new OptionGroupModelImpl("group2", false,
-                        Arrays.asList(new OptionModelImpl("1"))));
-                return null;
+                groups.add(new OptionGroupModelImpl("func", false,
+                        toOptionModels(FUNC)));
+                groups.add(new OptionGroupModelImpl("oo", false, toOptionModels(OO)));
+                return groups;
             }
 
             @Override
@@ -96,5 +87,21 @@ public class PaletteDemo
             }
 
         };
+    }
+
+    private List<OptionModel> toOptionModels(Iterable<ProgrammingLanguage> languages)
+    {
+        List<OptionModel> options = new ArrayList<>();
+        for (ProgrammingLanguage enumValue : languages)
+        {
+            options.add(new OptionModelImpl(enumValue.name(), enumValue));
+        }
+        return options;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ValueEncoder getLanguageEncoder()
+    {
+        return new EnumValueEncoder(this.typeCoercer, ProgrammingLanguage.class);
     }
 }

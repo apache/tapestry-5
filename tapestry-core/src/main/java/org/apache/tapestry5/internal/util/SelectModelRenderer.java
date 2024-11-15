@@ -1,3 +1,5 @@
+// Copyright 2008-2024 The Apache Software Foundation
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -24,6 +26,9 @@ public class SelectModelRenderer implements SelectModelVisitor
 
     private final boolean raw;
 
+    private int optgroupIdx = -1;
+    private boolean inOptgroup = false;
+
     public SelectModelRenderer(final MarkupWriter writer, ValueEncoder encoder, boolean raw)
     {
         this.writer = writer;
@@ -31,56 +36,78 @@ public class SelectModelRenderer implements SelectModelVisitor
         this.raw = raw;
     }
 
+    @Override
     public void beginOptionGroup(OptionGroupModel groupModel)
     {
-        writer.element("optgroup", "label", groupModel.getLabel());
+        this.optgroupIdx++;
+        this.inOptgroup = true;
+        this.writer.element("optgroup", "label", groupModel.getLabel());
 
         writeDisabled(groupModel.isDisabled());
         writeAttributes(groupModel.getAttributes());
     }
 
+    @Override
     public void endOptionGroup(OptionGroupModel groupModel)
     {
-        writer.end(); // select
+        this.inOptgroup = false;
+        this.writer.end(); // select
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void option(OptionModel optionModel)
     {
         Object optionValue = optionModel.getValue();
 
-        String clientValue = encoder.toClient(optionValue);
+        String clientValue = this.encoder.toClient(optionValue);
 
-        writer.element("option", "value", clientValue);
+        this.writer.element("option", "value", clientValue);
 
-        if (isOptionSelected(optionModel, clientValue)) writer.attributes("selected", "selected");
+        if (this.inOptgroup && this.optgroupIdx > -1)
+        {
+            this.writer.attributes("data-optgroup-idx", this.optgroupIdx);
+        }
+
+        if (isOptionSelected(optionModel, clientValue))
+        {
+            this.writer.attributes("selected", "selected");
+        }
 
         writeDisabled(optionModel.isDisabled());
         writeAttributes(optionModel.getAttributes());
 
 
-        if (raw)
+        if (this.raw)
         {
-            writer.writeRaw(optionModel.getLabel());
+            this.writer.writeRaw(optionModel.getLabel());
         } else
         {
-            writer.write(optionModel.getLabel());
+            this.writer.write(optionModel.getLabel());
         }
 
-        writer.end();
+        this.writer.end();
     }
 
     private void writeDisabled(boolean disabled)
     {
-        if (disabled) writer.attributes("disabled", "disabled");
+        if (disabled)
+        {
+            this.writer.attributes("disabled", "disabled");
+        }
     }
 
     private void writeAttributes(Map<String, String> attributes)
     {
-        if (attributes == null) return;
+        if (attributes == null)
+        {
+            return;
+        }
 
         for (Map.Entry<String, String> e : attributes.entrySet())
-            writer.attributes(e.getKey(), e.getValue());
+        {
+            this.writer.attributes(e.getKey(), e.getValue());
+        }
     }
 
     /**

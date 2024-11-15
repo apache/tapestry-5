@@ -14,9 +14,12 @@
 
 package org.apache.tapestry5.integration.app1;
 
+import java.util.List;
+
 import org.apache.tapestry5.corelib.components.Palette;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -130,5 +133,39 @@ public class PaletteTests extends App1TestCase
         click(SUBMIT);
 
         assertTextPresent("You must provide a value for Languages.");
+    }
+
+    @Test
+    public void palette_component_grouped()
+    {
+        openLinks("Palette Grouped Demo", "Reset Page State");
+
+        assertText("css=.palette-available .palette-title", "Languages Offered");
+        assertText("css=.palette-selected .palette-title", "Selected Languages");
+
+        addSelection(AVAILABLE_OPTIONS, "label=HASKELL");
+        addSelection(AVAILABLE_OPTIONS, "label=JAVA");
+        click(SELECT_BUTTON);
+
+        // What a listener on the events.palette.willChange event would see in memo.selectdValues:
+        assertText("id=event-selection", "[\"HASKELL\",\"JAVA\"]");
+
+        clickAndWait(SUBMIT);
+
+        assertText("id=selected-languages", "[HASKELL, JAVA]");
+
+        addSelection(SELECTED_OPTIONS, "label=JAVA");
+
+        click(DESELECT_BUTTON);
+
+        List<WebElement> funcOptions = this.webDriver
+                .findElements(convertLocator(AVAILABLE_OPTIONS + " optgroup[label=func] option"));
+
+        List<WebElement> ooOptions = this.webDriver
+                .findElements(convertLocator(AVAILABLE_OPTIONS + " optgroup[label=oo] option"));
+
+        Assert.assertEquals(funcOptions.size(), 2);
+        Assert.assertEquals(ooOptions.size(), 2);
+
     }
 }

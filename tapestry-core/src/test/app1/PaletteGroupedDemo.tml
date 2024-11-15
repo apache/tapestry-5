@@ -1,0 +1,42 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+<h1>Palette Grouped Demo</h1>
+
+
+<t:form t:id="demo" class="form-horizontal">
+    <div class="checkbox">
+        <label>
+            <t:checkbox t:id="reorder"/>
+            Enable Reorder
+        </label>
+    </div>
+
+
+    <div class="form-group">
+
+        <t:label for="languages"/>
+
+        <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"
+                   availableLabel="Languages Offered" validate="required">
+            <t:parameter name="selectedLabel" xml:space="default">
+                <t:if test="reorder" else="Selected">Ranked
+                </t:if>
+                Languages
+            </t:parameter>
+        </t:palette>
+    </div>
+
+    <input type="submit" class="btn btn-primary"/>
+
+</t:form>
+
+<dl class="dl-horizontal">
+    <dt>Languages:</dt>
+    <dd id="selected-languages">${languages}</dd>
+    <dt>Selected Values</dt>
+    <dd id="event-selection"/>
+    <dt>Reorder</dt>
+    <dd id="event-reorder"></dd>
+</dl>
+
+</html>
