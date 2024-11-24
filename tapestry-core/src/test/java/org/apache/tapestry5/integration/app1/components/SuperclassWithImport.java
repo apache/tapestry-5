@@ -6,7 +6,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 
 @Import(stylesheet = "context:css/via-import.css")
-public class SuperclassWithImport {
+public class SuperclassWithImport extends SuperclassWithoutImport {
     
     // Just to test CachedWorker with a watch expression 
     @Persist

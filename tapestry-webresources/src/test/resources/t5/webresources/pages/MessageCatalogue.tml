@@ -1,0 +1,23 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <p>This page is used to demonstrate Less that uses @Import.</p>
+
+	<div class="page-wrapper">
+		<p>
+			This should be red (page wrapper)
+		</p>
+	</div>
+
+	<div class="training-doc-page">
+		<p>
+			This should be red (training doc page)
+		</p>
+	</div>
+	
+	<div class="training-wrapper">
+		<p>
+			This should be red (training wrapper).
+		</p>
+	</div>
+
+</t:layout>

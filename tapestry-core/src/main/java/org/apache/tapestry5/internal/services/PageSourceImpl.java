@@ -185,15 +185,17 @@ public class PageSourceImpl implements PageSource
             if (multipleClassLoaders)
             {
                 
-                if (canonicalPageName.equals(CURRENT_PAGE.get()))
-                {
-                    throw new IllegalStateException("Infinite method loop detected. Bailing out.");
-                }
-                else
-                {
-                    CURRENT_PAGE.set(canonicalPageName);
-                }
-            
+//                final String currentPage = CURRENT_PAGE.get();
+//                if (canonicalPageName.equals(currentPage))
+//                {
+//                    logger.warn("Infinite method loop detected. Bailing out.");
+//                    return null;
+//                }
+//                else
+//                {
+//                    CURRENT_PAGE.set(canonicalPageName);
+//                }
+//            
                 // Avoiding problems in PlasticClassPool.createTransformation()
                 // when the class being loaded has a page superclass
                 final List<String> pageDependencies = getPageDependencies(className);

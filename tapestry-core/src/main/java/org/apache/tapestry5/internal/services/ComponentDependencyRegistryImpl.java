@@ -707,16 +707,23 @@ public class ComponentDependencyRegistryImpl implements ComponentDependencyRegis
             for (String resource : resources) 
             {
                 
-                final Set<String> dependents = getDependents(resource);
-                for (String furtherDependent : dependents) 
+                // Avoid resource invalidations
+                if (!resource.contains(":"))
                 {
-                    if (!resources.contains(furtherDependent) && !furtherDependents.contains(furtherDependent))
+                
+                    final Set<String> dependents = getDependents(resource);
+                    for (String furtherDependent : dependents) 
                     {
-                        furtherDependents.add(furtherDependent);
+                        if (!resources.contains(furtherDependent) && !furtherDependents.contains(furtherDependent))
+                        {
+                            furtherDependents.add(furtherDependent);
+                        }
                     }
+                    
+                    clear(resource);
+                    
                 }
                 
-                clear(resource);
                 
             }
         }

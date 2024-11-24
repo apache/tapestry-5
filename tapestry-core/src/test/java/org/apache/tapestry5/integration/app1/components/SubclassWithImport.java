@@ -8,7 +8,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 
-@Import(stylesheet = "context:css/ie-only.css")
+@Import(stylesheet = {"context:css/ie-only.css", "context:css/via-import2.css"})
 public class SubclassWithImport extends SuperclassWithImport {
     
     @Property int getIntCallCount;
