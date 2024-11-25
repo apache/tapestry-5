@@ -70,6 +70,7 @@ subprojects {
     test {
         useTestNG()
         options.suites("src/test/conf/testng.xml")
+        jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED"]
     }
 
     task sourcesJar(type: Jar) {
