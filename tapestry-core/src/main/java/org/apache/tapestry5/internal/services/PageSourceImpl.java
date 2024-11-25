@@ -111,9 +111,6 @@ public class PageSourceImpl implements PageSource
     
     private final Map<String, Boolean> abstractClassInfoCache = CollectionFactory.newConcurrentMap();
     
-    private final static ThreadLocal<String> CURRENT_PAGE = 
-            ThreadLocal.withInitial(() -> null);
-    
     private final static ThreadLocal<Set<String>> CALL_STACK = 
             ThreadLocal.withInitial(HashSet::new);
 
@@ -185,15 +182,6 @@ public class PageSourceImpl implements PageSource
             if (multipleClassLoaders)
             {
                 
-                if (canonicalPageName.equals(CURRENT_PAGE.get()))
-                {
-                    throw new IllegalStateException("Infinite method loop detected. Bailing out.");
-                }
-                else
-                {
-                    CURRENT_PAGE.set(canonicalPageName);
-                }
-            
                 // Avoiding problems in PlasticClassPool.createTransformation()
                 // when the class being loaded has a page superclass
                 final List<String> pageDependencies = getPageDependencies(className);
