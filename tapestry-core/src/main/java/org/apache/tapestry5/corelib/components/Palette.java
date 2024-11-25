@@ -174,8 +174,8 @@ public class Palette extends AbstractField
         deprecationWarning.ignoredComponentParameters(resources, "select", "moveUp", "moveDown", "deselect");
     }
 
-
-    public final Renderable mainRenderer = new Renderable()
+    @Property(write = false)
+    private final Renderable mainRenderer = new Renderable()
     {
         public void render(MarkupWriter writer)
         {
