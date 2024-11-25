@@ -33,7 +33,13 @@ public class MethodSignatureTest extends IOCTestCase
         {
             Method m = methods[i];
 
-            if (m.getName().equals(methodName)) return new MethodSignature(m);
+            if (m.getName().equals(methodName))
+            {
+                if ("hashCode".equals(methodName) && m.getParameterCount() > 0)
+                    continue;
+
+                return new MethodSignature(m);
+            }
         }
 
         unreachable();

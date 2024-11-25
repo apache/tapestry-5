@@ -463,7 +463,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
         train_getLocale(request, Locale.ENGLISH);
 
-        ls.setNonPersistentLocaleFromLocaleName("en");
+        ls.setNonPeristentLocaleFromLocaleName("en");
 
         train_getPath(request, "/foo/bar/page.component:event");
 
@@ -474,7 +474,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                response, null, null, null, true, null, "foo/bar", metaDataLocator, null);
+                request, response, null, null, null, true, "foo/bar", metaDataLocator, null);
 
         ComponentEventRequestParameters parameters = linkEncoder.decodeComponentEventRequest(request);
         assertNotNull(parameters);

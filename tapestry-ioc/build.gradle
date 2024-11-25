@@ -4,9 +4,9 @@ dependencies {
   compile project(':tapestry-func')
   compile project(':tapestry5-annotations')
   compile project(":plastic")
-  compile "org.javassist:javassist:3.18.2-GA"
+  compile "org.javassist:javassist:${versions.javassist}"
 
-  provided project(':tapestry-test')
+  testRuntime project(':tapestry-test')
 
   // For now, keep these compile dependencies synchronized with the binaries dependencies
   // of the top-level build:
@@ -16,10 +16,12 @@ dependencies {
   compile "org.slf4j:slf4j-api:1.6.1"
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
+  compileOnly "org.easymock:easymock:${versions.easymock}"
+  compileOnly project(':tapestry-test')
 
   testCompile "org.spockframework:spock-core:${versions.spock}"
-
-  provided "org.testng:testng:${versions.testng}", { transitive = false }
+  testCompile "org.testng:testng:${versions.testng}", { transitive = false }
+  testCompile project(':tapestry-test')
 }
 
 test {

@@ -1,0 +1,24 @@
+language: java
+
+jdk:
+  - openjdk8
+  - openjdk11
+
+before_install:
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - "export DISPLAY=:99.0"
+
+install: /bin/true
+script: ./gradlew -Dci=true build --info
+after_failure:
+  - cat */build/test-results/TEST-*.xml
+
+cache:
+  directories:
+  - $HOME/.gradle
+  - $HOME/.m2/repository/webdriver
+
+sudo: false
+
+addons:
+  firefox: "24.8.1esr"

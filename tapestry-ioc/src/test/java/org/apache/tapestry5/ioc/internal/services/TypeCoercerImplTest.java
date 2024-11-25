@@ -156,7 +156,8 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
 
         assertEquals(actual, expected);
 
-        Coercion c = coercer.getCoercion(input == null ? void.class : input.getClass(), targetType);
+        Class inputClass = input == null ? void.class : input.getClass();
+        Coercion c = coercer.getCoercion(inputClass, targetType);
 
         assertEquals(c.coerce(input), expected);
     }

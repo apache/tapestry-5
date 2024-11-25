@@ -30,7 +30,7 @@ public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
 
     public AbstractAnnotationBuilder(PlasticClassPool pool)
     {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM7);
 
         this.pool = pool;
     }
