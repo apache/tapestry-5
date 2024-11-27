@@ -1,4 +1,4 @@
-// Copyright 2006-2024 The Apache Software Foundation
+// Copyright 2006-2013 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class SessionImpl implements Session
 
     public Object getAttribute(String name)
     {
-        lock.acquireReadLock();
+        lock.acquireWriteLock();
 
         return session.getAttribute(name);
     }
