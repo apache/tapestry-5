@@ -58,6 +58,11 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private final boolean multipleClassLoaders;
     
     private final PropertyValueProviderWorker propertyValueProviderWorker;
+    
+    private static enum ImportType 
+    {
+        LIBRARY, STYLESHEET
+    }
 
     private final Worker<Asset> importLibrary = new Worker<Asset>()
     {
@@ -235,18 +240,18 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private void importLibraries(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
                                  String[] paths, Set<FieldInfo> fieldInfos)
     {
-        decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary, fieldInfos);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary, fieldInfos, ImportType.LIBRARY);
     }
 
     private void importStylesheets(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
                                    String[] paths, Set<FieldInfo> fieldInfos)
     {
-        decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet, fieldInfos);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet, fieldInfos, ImportType.STYLESHEET);
     }
 
     private void decorateMethodWithOperation(PlasticClass componentClass, MutableComponentModel model,
                                              PlasticMethod method, String[] paths, Worker<Asset> operation,
-                                             Set<FieldInfo> fieldInfos)
+                                             Set<FieldInfo> fieldInfos, ImportType importType)
     {
         if (paths.length == 0)
         {
@@ -255,7 +260,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         String[] expandedPaths = expandPaths(paths);
 
-        final String fieldName = getFieldName(method);
+        final String fieldName = getFieldName(method, importType);
         PlasticField assetListField = componentClass.introduceField(Asset[].class, fieldName);
         
         if (multipleClassLoaders)
@@ -266,10 +271,10 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         initializeAssetsFromPaths(expandedPaths, assetListField, model.getLibraryName());
 
-        addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
+        addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation, importType);
     }
 
-    private String getFieldName(PlasticMethod method) 
+    private String getFieldName(PlasticMethod method, ImportType importType) 
     {
         final StringBuilder builder = new StringBuilder(FIELD_PREFIX);
         builder.append(method.getDescription().methodName);
@@ -277,6 +282,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
         {
             builder.append("_");
             builder.append(method.getPlasticClass().getClassName().replace('.', '_'));
+            builder.append("_");
+            builder.append(importType.name().toLowerCase());
         }
         return builder.toString();
     }
@@ -311,10 +318,10 @@ public class ImportWorker implements ComponentClassTransformWorker2
     }
 
     private void addMethodAssetOperationAdvice(PlasticMethod method, final FieldHandle access,
-                                               final Worker<Asset> operation)
+                                               final Worker<Asset> operation, ImportType importType)
     {
         final String className = method.getPlasticClass().getClassName();
-        final String fieldName = getFieldName(method);
+        final String fieldName = getFieldName(method, importType);
         method.addAdvice(new MethodAdvice()
         {
             public void advise(MethodInvocation invocation)
@@ -339,11 +346,6 @@ public class ImportWorker implements ComponentClassTransformWorker2
                 }
             }
         });
-    }
-    
-    public static interface ImportWorkerDataProvider 
-    {
-        Asset[] get(int fieldNameHashcode);
     }
     
 }
