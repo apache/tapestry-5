@@ -14,16 +14,17 @@
 
 package org.apache.tapestry5.http.internal.services;
 
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.http.services.Session;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
+
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.http.services.Session;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * A thin wrapper around {@link HttpSession}.
@@ -45,37 +46,95 @@ public class SessionImpl implements Session
         this.lock = lock;
     }
 
+    @Override
     public Object getAttribute(String name)
     {
-        lock.acquireWriteLock();
+        return getAttribute(name, Session.LockMode.WRITE);
+    }
+
+    @Override
+    public Object getAttribute(String name, Session.LockMode lockMode)
+    {
+        Objects.requireNonNull(name, "name must be non-null");
+
+        // If a WRITE lock is requested, check first if the key exists
+        // to prevent a lock upgrade if not necessary.
+        if (lockMode == null || lockMode == Session.LockMode.WRITE)
+        {
+            if (!containsAttribute(name)) return null;
+        }
+
+        acquireLock(lockMode, Session.LockMode.WRITE);
 
         return session.getAttribute(name);
     }
 
+    @Override
     public List<String> getAttributeNames()
     {
-        lock.acquireReadLock();
+        return getAttributeNames(Session.LockMode.READ);
+    }
+
+    @Override
+    public List<String> getAttributeNames(Session.LockMode lockMode)
+    {
+        acquireLock(lockMode, Session.LockMode.READ);
 
         return InternalUtils.toList(session.getAttributeNames());
     }
 
+    @Override
     public void setAttribute(String name, Object value)
     {
+        Objects.requireNonNull(name, "name must be non-null");
+
         lock.acquireWriteLock();
 
         session.setAttribute(name, value);
     }
 
+    @Override
+    public boolean containsAttribute(String name)
+    {
+        return containsAttribute(name, Session.LockMode.READ);
+    }
+
+    @Override
+    public boolean containsAttribute(String name, Session.LockMode lockMode)
+    {
+        Objects.requireNonNull(name, "name must be non-null");
+
+        acquireLock(lockMode, Session.LockMode.READ);
+
+        Enumeration<String> e = session.getAttributeNames();
+        while (e.hasMoreElements())
+        {
+            String attrName = e.nextElement();
+            if (attrName.equals(name)) return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public List<String> getAttributeNames(String prefix)
     {
-        lock.acquireReadLock();
+        return getAttributeNames(prefix, Session.LockMode.READ);
+    }
+
+    @Override
+    public List<String> getAttributeNames(String prefix, Session.LockMode lockMode)
+    {
+        Objects.requireNonNull(prefix, "prefix must be non-null");
+
+        acquireLock(lockMode, Session.LockMode.READ);
 
         List<String> result = CollectionFactory.newList();
 
-        Enumeration e = session.getAttributeNames();
+        Enumeration<String> e = session.getAttributeNames();
         while (e.hasMoreElements())
         {
-            String name = (String) e.nextElement();
+            String name = e.nextElement();
 
             if (name.startsWith(prefix)) result.add(name);
         }
@@ -85,11 +144,13 @@ public class SessionImpl implements Session
         return result;
     }
 
+    @Override
     public int getMaxInactiveInterval()
     {
         return session.getMaxInactiveInterval();
     }
 
+    @Override
     public void invalidate()
     {
         invalidated = true;
@@ -97,6 +158,7 @@ public class SessionImpl implements Session
         session.invalidate();
     }
 
+    @Override
     public boolean isInvalidated()
     {
         if (invalidated) return true;
@@ -110,13 +172,34 @@ public class SessionImpl implements Session
         return invalidated;
     }
 
+    @Override
     public void setMaxInactiveInterval(int seconds)
     {
         session.setMaxInactiveInterval(seconds);
     }
 
+    @Override
     public void restoreDirtyObjects()
     {
 
+    }
+
+    private void acquireLock(Session.LockMode requestedMode, Session.LockMode defaultMode) {
+        if (requestedMode == null)
+        {
+            requestedMode = defaultMode;
+        }
+
+        switch (requestedMode)
+        {
+            case NONE:
+                break;
+            case READ:
+                this.lock.acquireReadLock();
+                break;
+            case WRITE:
+                this.lock.acquireWriteLock();
+                break;
+        }
     }
 }
