@@ -8,7 +8,7 @@ def isJenkins = System.getenv('JENKINS_URL') != null
 def isCI = isTravisCI || isJenkins
 
 develocity {
-    server = "https://ge.apache.org"
+    server = "https://develocity.apache.org"
     projectId = "tapestry"
     buildScan {
         uploadInBackground = !isCI
