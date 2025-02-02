@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
 import org.apache.tapestry5.http.internal.services.ClusteredSessionImpl;
 import org.apache.tapestry5.http.internal.services.SessionImpl;
 import org.apache.tapestry5.http.internal.services.SessionLock;
@@ -24,10 +29,6 @@ import org.testng.annotations.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionImplTest extends InternalBaseTestCase
 {
@@ -56,6 +57,25 @@ public class SessionImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void get_attribute_names_lock_mode()
+    {
+        Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney"));
+        HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
+
+        lock.acquireWriteLock();
+        expect(hs.getAttributeNames()).andReturn(e);
+
+        replay();
+
+        Session session = new SessionImpl(null, hs, lock);
+
+        assertEquals(session.getAttributeNames(Session.LockMode.WRITE), Arrays.asList("barney", "fred"));
+
+        verify();
+    }
+
+    @Test
     public void get_attribute_names_by_prefix()
     {
         Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney", "fanny"));
@@ -71,6 +91,71 @@ public class SessionImplTest extends InternalBaseTestCase
         Session session = new SessionImpl(null, hs, lock);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
+
+        verify();
+    }
+
+    @Test
+    public void contains_attribute()
+    {
+        List<String> keys = Arrays.asList("fred", "barney");
+        HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
+
+        // We need one per assert, and Enumerations are exhausted on use
+        lock.acquireReadLock();
+        expect(hs.getAttributeNames()).andReturn(Collections.enumeration(keys));
+        lock.acquireReadLock();
+        expect(hs.getAttributeNames()).andReturn(Collections.enumeration(keys));
+        lock.acquireReadLock();
+        expect(hs.getAttributeNames()).andReturn(Collections.enumeration(keys));
+        replay();
+
+        Session session = new SessionImpl(null, hs, lock);
+
+        assertTrue(session.containsAttribute("barney"));
+        assertTrue(session.containsAttribute("fred"));
+        assertFalse(session.containsAttribute("wilma"));
+
+        verify();
+    }
+
+    @Test
+    public void get_attribute_write_lock()
+    {
+        Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney"));
+        HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
+
+        lock.acquireReadLock();
+        lock.acquireWriteLock();
+        expect(hs.getAttributeNames()).andReturn(e);
+        expect(hs.getAttribute("fred")).andReturn("1");
+
+        replay();
+
+        Session session = new SessionImpl(null, hs, lock);
+
+        assertEquals(session.getAttribute("fred"), "1");
+
+        verify();
+    }
+
+    @Test
+    public void get_attribute_no_lock_update()
+    {
+        Enumeration e = Collections.enumeration(Arrays.asList("fred", "barney"));
+        HttpSession hs = mockHttpSession();
+        SessionLock lock = mockLock();
+
+        lock.acquireReadLock();
+        expect(hs.getAttributeNames()).andReturn(e);
+
+        replay();
+
+        Session session = new SessionImpl(null, hs, lock);
+
+        assertEquals(session.getAttribute("wilma"), null);
 
         verify();
     }
@@ -168,6 +253,13 @@ public class SessionImplTest extends InternalBaseTestCase
         SessionPersistedObjectAnalyzer analyzer = newMock(SessionPersistedObjectAnalyzer.class);
         Object dirty = new Object();
         SessionLock lock = mockLock();
+
+        // TAP5-2799: To reduce write locks, first, a read-lock attempt is done
+        // to check if the attribute exists, and only then, a write-lock is acquired.
+
+        lock.acquireReadLock();
+
+        expect(hs.getAttributeNames()).andReturn(Collections.enumeration(Arrays.asList("dirty")));
 
         lock.acquireWriteLock();
 
