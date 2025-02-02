@@ -254,6 +254,13 @@ public class SessionImplTest extends InternalBaseTestCase
         Object dirty = new Object();
         SessionLock lock = mockLock();
 
+        // TAP5-2799: To reduce write locks, first, a read-lock attempt is done
+        // to check if the attribute exists, and only then, a write-lock is acquired.
+
+        lock.acquireReadLock();
+
+        expect(hs.getAttributeNames()).andReturn(Collections.enumeration(Arrays.asList("dirty")));
+
         lock.acquireWriteLock();
 
         train_getAttribute(hs, "dirty", dirty);
