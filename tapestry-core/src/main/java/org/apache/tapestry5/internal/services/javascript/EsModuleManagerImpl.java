@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
@@ -62,6 +63,8 @@ public class EsModuleManagerImpl implements EsModuleManager
     
     private JSONObject importMap;
     
+    private final ResourceChangeTracker resourceChangeTracker;
+    
     private final List<EsModuleConfigurationCallback> globalCallbacks;
 
     public EsModuleManagerImpl(
@@ -72,13 +75,15 @@ public class EsModuleManagerImpl implements EsModuleManager
                              boolean compactJSON,
                              @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                              boolean productionMode,
-                             ClasspathScanner classpathScanner)
+                             ClasspathScanner classpathScanner,
+                             ResourceChangeTracker resourceChangeTracker)
     {
         this.compactJSON = compactJSON;
         this.assetSource = assetSource;
         this.classpathScanner = classpathScanner;
         this.globalCallbacks = globalCallbacks;
         this.productionMode = productionMode;
+        this.resourceChangeTracker = resourceChangeTracker;
         importMap = new JSONObject();
 
         extensions = CollectionFactory.newSet("js");
@@ -94,6 +99,7 @@ public class EsModuleManagerImpl implements EsModuleManager
         JSONObject importMap = new JSONObject();
         JSONObject imports = importMap.in(IMPORTS_ATTRIBUTE);
         
+        resourceChangeTracker.addInvalidationCallback(this::createImportMap);
         cache.clear();
 
         loadBaseModuleList(imports);
@@ -124,7 +130,9 @@ public class EsModuleManagerImpl implements EsModuleManager
                 String id = file.replace(CLASSPATH_ROOT, "");
                 id = id.substring(0, id.lastIndexOf('.'));
                             
-                imports.put(id, assetSource.getClasspathAsset(file).toClientURL());
+                final Asset asset = assetSource.getClasspathAsset(file);
+                resourceChangeTracker.trackResource(asset.getResource());
+                imports.put(id, asset.toClientURL());
             }
         } catch (IOException e) 
         {
@@ -136,10 +144,6 @@ public class EsModuleManagerImpl implements EsModuleManager
     public void setupInvalidation(ResourceChangeTracker tracker)
     {
         
-//        Live class reloading of ES modules (failing at the moment)
-        
-        // TODO make invalidations smarter (and work)
-        tracker.addInvalidationCallback(this::createImportMap);
     }
 
     @Override
