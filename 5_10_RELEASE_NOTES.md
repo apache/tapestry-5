@@ -9,6 +9,7 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 * `JavaScriptSupport.importEsModule(String moduleName)`
 * `JavaScriptSupport.addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback)`
+* `org.apache.tapestry5.annotations.Import.esModule()`
 
 # Added types
 

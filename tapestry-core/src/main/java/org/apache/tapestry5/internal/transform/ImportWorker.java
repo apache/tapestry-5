@@ -12,6 +12,11 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SymbolConstants;
@@ -23,19 +28,24 @@ import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.ComputedValue;
+import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.PlasticUtils.FieldInfo;
+import org.apache.tapestry5.plastic.PropertyAccessType;
+import org.apache.tapestry5.plastic.PropertyValueProvider;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.javascript.Initialization;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -154,6 +164,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
         importStylesheets(componentClass, model, method, annotation.stylesheet(), fieldInfos);
 
         importModules(method, annotation.module());
+        
+        importEsModules(method, annotation.esModule());
     }
 
     private void importStacks(PlasticMethod method, String[] stacks)
@@ -178,6 +190,14 @@ public class ImportWorker implements ComponentClassTransformWorker2
                 invocation.proceed();
             }
         };
+    }
+    
+    private void importEsModules(PlasticMethod method, String[] moduleIds)
+    {
+        if (moduleIds.length != 0)
+        {
+            method.addAdvice(createImportEsModulesAdvice(moduleIds));
+        }
     }
 
     private void importModules(PlasticMethod method, String[] moduleNames)
@@ -207,6 +227,22 @@ public class ImportWorker implements ComponentClassTransformWorker2
                 initialization.invoke(functionName);
             }
         }
+    }
+    
+    private MethodAdvice createImportEsModulesAdvice(final String[] moduleIds)
+    {
+        return new MethodAdvice()
+        {
+            public void advise(MethodInvocation invocation)
+            {
+                for (String moduleId : moduleIds)
+                {
+                    javascriptSupport.importEsModule(moduleId);
+                }
+
+                invocation.proceed();
+            }
+        };        
     }
 
     private MethodAdvice createImportModulesAdvice(final String[] moduleNames)

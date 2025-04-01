@@ -17,7 +17,9 @@ import static org.apache.tapestry5.integration.app1.services.AppModule.NON_OVERR
 import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_ES_MODULE_ID;
 import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_ES_MODULE_NEW_URL;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.integration.app1.pages.EsModuleDemo;
+import org.apache.tapestry5.internal.transform.ImportWorker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
@@ -117,9 +119,20 @@ public class EsModuleTests extends App1TestCase
         assertEquals(getText("head-message"), "ES module imported correctly (<head>)!");
         assertEquals(getText("body-top-message"), "ES module imported correctly (<body> top)!");
         assertEquals(getText("body-bottom-message"), "ES module imported correctly (<body> bottom)!");
-        assertEquals(getText("root-folder-message"), "ES module imported correctly from the root folder!");
         assertEquals(getText("outside-metainf-message"), "ES module correctly imported from outside /META-INF/assets/es-modules!");
 
+    }
+    
+    /**
+     * Tests importing ES modules through <code>@Import(esModule = ...)</code>.
+     * @see ImportWorker
+     * @see Import#esModule()
+     */
+    @Test
+    public void at_import_esModule() throws InterruptedException
+    {
+        openLinks(PAGE_NAME);
+        assertEquals(getText("root-folder-message"), "ES module imported correctly from the root folder!");
     }
 
     private void assertModulesDefinedByGlobalCallbacks(JSONObject importMap) {

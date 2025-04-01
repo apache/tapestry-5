@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.integration.app1.services.AppModule;
@@ -20,6 +21,7 @@ import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
+@Import(esModule = {"root-folder"})
 public class EsModuleDemo
 {
     public static final String REQUEST_OVERRIDEN_MODULE_URL = "/overridenAgainURL";
@@ -47,7 +49,6 @@ public class EsModuleDemo
             .placement(ImportPlacement.BODY_TOP);
         javaScriptSupport.importEsModule("placement/head")
             .placement(ImportPlacement.HEAD);
-        javaScriptSupport.importEsModule("root-folder");
         javaScriptSupport.importEsModule("outside-metainf");        
         javaScriptSupport.importEsModule("show-import-map");
 
