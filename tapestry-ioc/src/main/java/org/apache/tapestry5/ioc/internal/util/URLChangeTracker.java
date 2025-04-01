@@ -18,7 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -312,6 +315,24 @@ public class URLChangeTracker<T>
     int trackedFileCount()
     {
         return fileToTimestamp.size();
+    }
+    
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        final List<File> files = new ArrayList<>(fileToTimestamp.keySet());
+        Collections.sort(files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
+        
+        for (File file : files)
+        {
+            builder.append(file.getName());
+            builder.append(": ");
+            builder.append(fileToTimestamp.get(file));
+            builder.append("\n");
+        }
+        
+        return builder.toString();
     }
     
     private final class TrackingInfo

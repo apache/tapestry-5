@@ -376,7 +376,7 @@ public class SymbolConstants
 
 
     /**
-     * Prefix used for all module resources. This may contain slashes, but should not being or end with one.
+     * Prefix used for all Require.js module resources. This may contain slashes, but should not being or end with one.
      * Tapestry will create two {@link org.apache.tapestry5.http.services.Dispatcher}s from this: one for normal
      * modules, the other for GZip compressed modules (by appending ".gz" to this value).
      *
@@ -385,6 +385,18 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String MODULE_PATH_PREFIX = "tapestry.module-path-prefix";
+    
+    /**
+     * Prefix used for automatically configured ES module resources. 
+     * This may contain slashes, but should not being or end with one.
+     *
+     * The default is "es-modules".
+     * 
+     * TODO remove
+     *
+     * @since 5.4
+     */
+    public static final String ES_MODULE_PATH_PREFIX = "tapestry.es-module-path-prefix";
 
     /**
      * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.

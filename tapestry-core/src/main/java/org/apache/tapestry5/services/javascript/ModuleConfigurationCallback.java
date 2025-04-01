@@ -33,7 +33,7 @@ import org.apache.tapestry5.json.JSONObject;
 public interface ModuleConfigurationCallback
 {
     /**
-     * Receives the current configuration, which can be copied or returned, or (more typically) modified and returned.
+     * Receives the current configuration, which can be copied or returned, or, more typically, modified and returned.
      *
      * @param configuration
      *         a {@link JSONObject} containing the current configuration.

@@ -273,4 +273,23 @@ public interface JavaScriptSupport
      */
     void addModuleConfigurationCallback(ModuleConfigurationCallback callback);
 
+    /**
+     * Imports an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules">ES module</a>.
+     * @param moduleId the id of the module to import.
+     * @return an <code>EsModuleInitialization</code> instance to optionally configure
+     * the import and add a call an exported function, with or without parameters.
+     * @since 5.10.0
+     */
+    EsModuleInitialization importEsModule(String moduleId);
+
+    /**
+     * Adds an ES module configuration callback for this request.
+     *
+     * @param callback
+     *         a {@link ModuleConfigurationCallback}. It cannot be null.
+     * @see DocumentLinker#addModuleConfigurationCallback(ModuleConfigurationCallback)
+     * @since 5.10.0
+     */
+    void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback);
+
 }

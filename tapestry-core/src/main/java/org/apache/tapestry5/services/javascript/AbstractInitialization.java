@@ -13,12 +13,11 @@
 package org.apache.tapestry5.services.javascript;
 
 /**
- * Provided by {@link JavaScriptSupport#require(String)} to allow additional, optional, details of the module-based page initialization
- * to be configured.
+ * Superinterface with the parts shared by {@linkplain Initialization} and {@linkplain EsModuleInitialization}.
  *
- * @since 5.4
+ * @since 5.10.0
  */
-public interface Initialization extends AbstractInitialization<Initialization>
+public interface AbstractInitialization<T extends AbstractInitialization<?>>
 {
 
     /**
@@ -29,18 +28,7 @@ public interface Initialization extends AbstractInitialization<Initialization>
      *         name of a function exported by the module.
      * @return this Initialization, for further configuration
      */
-    Initialization invoke(String functionName);
-
-    /**
-     * Changes the initialization priority of the initialization from its default, {@link InitializationPriority#NORMAL}.
-     *
-     * Note: it is possible that this method may be removed before release 5.4 is final.
-     *
-     * @param priority
-     *         new priority
-     * @return this Initialization, for further configuration
-     */
-    Initialization priority(InitializationPriority priority);
+    T invoke(String functionName);
 
     /**
      * Specifies the arguments to be passed to the function. Often, just a single {@link org.apache.tapestry5.json.JSONObject}
