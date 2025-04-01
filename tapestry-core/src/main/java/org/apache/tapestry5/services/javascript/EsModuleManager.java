@@ -32,7 +32,7 @@ public interface EsModuleManager
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to 
      * write the import map into the page.
      *
-     * @param body
+     * @param head
      *         {@code <body>} element of the page, to which new {@code <script>} element(s) may be added.
      * @param moduleConfigurationCallbacks
      *         a list of {@link org.apache.tapestry5.services.javascript.ModuleConfigurationCallback}s, which

@@ -27,7 +27,7 @@ import org.apache.tapestry5.json.JSONObject;
  *          During page rendering, allowing components, pages and base components
  *          to further customize the base import map by for that specific request in 
  *          a per-request basis by using the 
- *          {@linkplain JavaScriptSupport#addModuleConfigurationCallback(EsModuleConfigurationCallback)} method.
+ *          {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} method.
  *     </li>
  * </ol>
  *
