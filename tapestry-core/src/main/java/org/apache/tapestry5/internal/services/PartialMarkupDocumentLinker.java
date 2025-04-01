@@ -17,6 +17,9 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
+import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -30,7 +33,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     private final JSONArray stylesheets = new JSONArray();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
-
+    
     public void addCoreLibrary(String libraryURL)
     {
         notImplemented("addCoreLibrary");
@@ -70,6 +73,18 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
         initsManager.addInitialization(priority, moduleName, functionName, arguments);
+    }
+
+    @Override
+    public void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback) 
+    {
+        notImplemented("moduleConfigurationCallback");
+    }
+
+    @Override
+    public void addEsModuleInitialization(EsModuleInitialization initialization) 
+    {
+        notImplemented("addEsModuleInitialization");
     }
 
     /**

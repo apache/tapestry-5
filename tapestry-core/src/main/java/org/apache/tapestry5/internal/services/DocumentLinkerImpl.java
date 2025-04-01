@@ -16,6 +16,9 @@ import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
+import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
@@ -34,12 +37,18 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
+    
+    private final EsModuleInitsManager esModulesinitsManager = new EsModuleInitsManager();
 
     private final List<ModuleConfigurationCallback> moduleConfigurationCallbacks = CollectionFactory.newList();
-
+    
+    private final List<EsModuleConfigurationCallback> esModuleConfigurationCallbacks = CollectionFactory.newList();
+    
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
     private final ModuleManager moduleManager;
+    
+    private final EsModuleManager esModuleManager;
 
     private final boolean omitGeneratorMetaTag, enablePageloadingMask;
 
@@ -56,9 +65,11 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param enablePageloadingMask
      * @param tapestryVersion
      */
-    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion)
+    public DocumentLinkerImpl(ModuleManager moduleManager, EsModuleManager esModuleManager,
+            boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion)
     {
         this.moduleManager = moduleManager;
+        this.esModuleManager = esModuleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
         this.enablePageloadingMask = enablePageloadingMask;
 
@@ -85,6 +96,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         hasScriptsOrInitializations = true;
     }
 
+    @SuppressWarnings("deprecation")
     public void addScript(InitializationPriority priority, String script)
     {
         addInitialization(priority, "t5/core/pageinit", "evalJavaScript", new JSONArray().put(script));
@@ -114,6 +126,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             return;
         }
 
+
         // TAP5-2200: Generating XML from pages and templates is not possible anymore
         // only add JavaScript and CSS if we're actually generating 
         final String mimeType = document.getMimeType();
@@ -121,7 +134,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         {
             return;
         }
-
+        
         addStylesheetsToHead(root, includedStylesheets);
 
         // only add the generator meta only to html documents
@@ -138,6 +151,14 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
 
         addScriptElements(root);
+        
+        final List<EsModuleInitialization> esModuleInits = esModulesinitsManager.getInits();
+        if (isHtmlRoot && !esModuleInits.isEmpty())
+        {
+            esModuleManager.writeImportMap(root.find("head"), esModuleConfigurationCallbacks);
+            esModuleManager.writeImports(root, esModuleInits);
+        }
+        
     }
 
     private static Element addElementBefore(Element container, Element insertionPoint, String name, String... namesAndValues)
@@ -305,5 +326,19 @@ public class DocumentLinkerImpl implements DocumentLinker
         assert callback != null;
         moduleConfigurationCallbacks.add(callback);
     }
+    
+    public void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback)
+    {
+        assert callback != null;
+        esModuleConfigurationCallbacks.add(callback);
+    }
 
+    @Override
+    public void addEsModuleInitialization(EsModuleInitialization initialization) 
+    {
+        assert initialization != null;
+        esModulesinitsManager.add(initialization);
+        hasScriptsOrInitializations = true;
+    }
+    
 }

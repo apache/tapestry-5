@@ -20,19 +20,15 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
@@ -108,12 +104,7 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.StrategyRegistry;
-import org.apache.tapestry5.corelib.components.BeanEditor;
-import org.apache.tapestry5.corelib.components.PropertyDisplay;
-import org.apache.tapestry5.corelib.components.PropertyEditor;
 import org.apache.tapestry5.corelib.data.SecureOption;
-import org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks;
-import org.apache.tapestry5.corelib.pages.PropertyEditBlocks;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.http.Link;
@@ -174,7 +165,6 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
-import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReportWriterImpl;
 import org.apache.tapestry5.internal.services.exceptions.ExceptionReporterImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
@@ -365,6 +355,7 @@ import org.apache.tapestry5.services.ValueLabelProvider;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
+import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
@@ -376,7 +367,6 @@ import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
-import org.apache.tapestry5.services.pageload.PageClassLoaderContextManagerImpl;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
 import org.apache.tapestry5.services.rest.MappedEntityManager;
 import org.apache.tapestry5.services.rest.OpenApiDescriptionGenerator;
@@ -1803,6 +1793,8 @@ public final class TapestryModule
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
                                          final ModuleManager moduleManager,
+                                         
+                                         final EsModuleManager esModuleManager,
 
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
@@ -1825,7 +1817,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, enablePageloadingMask, tapestryVersion);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, esModuleManager, omitGeneratorMeta, enablePageloadingMask, tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
 

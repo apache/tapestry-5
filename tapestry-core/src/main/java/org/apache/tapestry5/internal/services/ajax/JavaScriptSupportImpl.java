@@ -12,6 +12,13 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.ComponentResources;
@@ -26,9 +33,17 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.*;
-
-import java.util.*;
+import org.apache.tapestry5.services.javascript.AbstractInitialization;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
+import org.apache.tapestry5.services.javascript.ImportPlacement;
+import org.apache.tapestry5.services.javascript.Initialization;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
@@ -47,6 +62,10 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private final List<StylesheetLink> stylesheetLinks = CollectionFactory.newList();
 
     private final List<InitializationImpl> inits = CollectionFactory.newList();
+    
+    private final List<EsModuleInitialization> esModuleInits = CollectionFactory.newList();
+    
+    private final Set<String> esModulesImported = CollectionFactory.newSet();
 
     private final JavaScriptStackSource javascriptStackSource;
 
@@ -62,37 +81,26 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private Map<String, String> libraryURLToStackName, moduleNameToStackName;
 
-    class InitializationImpl implements Initialization
+    abstract class BaseInitialization<T extends AbstractInitialization<?>> implements AbstractInitialization<T>
     {
-        InitializationPriority priority = InitializationPriority.NORMAL;
-
         final String moduleName;
 
         String functionName;
 
         JSONArray arguments;
 
-        InitializationImpl(String moduleName)
+        BaseInitialization(String moduleName)
         {
             this.moduleName = moduleName;
         }
 
-        public Initialization invoke(String functionName)
+        public T invoke(String functionName)
         {
             assert InternalUtils.isNonBlank(functionName);
 
             this.functionName = functionName;
 
-            return this;
-        }
-
-        public Initialization priority(InitializationPriority priority)
-        {
-            assert priority != null;
-
-            this.priority = priority;
-
-            return this;
+            return (T) this;
         }
 
         public void with(Object... arguments)
@@ -102,6 +110,72 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             this.arguments = new JSONArray(arguments);
         }
     }
+    
+    class InitializationImpl extends BaseInitialization<Initialization> implements Initialization
+    {
+        
+        InitializationPriority priority = InitializationPriority.NORMAL;
+
+        public InitializationImpl(String moduleName) 
+        {
+            super(moduleName);
+        }
+        
+        public Initialization priority(InitializationPriority priority)
+        {
+            assert priority != null;
+
+            this.priority = priority;
+
+            return this;
+        }
+        
+    }
+    
+    class EsModuleInitializationImpl extends BaseInitialization<EsModuleInitialization> implements EsModuleInitialization
+    {
+        
+        Map<String, String> attributes;
+        ImportPlacement placement = ImportPlacement.BODY_BOTTOM;
+        
+        EsModuleInitializationImpl(String moduleName) 
+        {
+            super(moduleName);
+        }
+
+        public EsModuleInitialization withAttribute(String id, String value) 
+        {
+            if (attributes == null)
+            {
+                attributes = CollectionFactory.newMap();
+            }
+            attributes.put(id, value);
+            return this;
+        }
+
+        public EsModuleInitialization placement(ImportPlacement placement) 
+        {
+            this.placement = placement;
+            return null;
+        }
+
+        public String getModuleId() {
+            return moduleName;
+        }
+
+        public Map<String, String> getAttributes() {
+            return attributes != null ? 
+                    Collections.unmodifiableMap(attributes) : 
+                        Collections.emptyMap();
+        }
+
+        @Override
+        public ImportPlacement getPlacement() {
+            return placement;
+        }
+
+    }
+
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
                                  JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook)
@@ -150,6 +224,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public void commit()
     {
+        
+        // TODO make no Require.js version of this
         if (focusFieldId != null)
         {
             require("t5/core/pageinit").invoke("focus").with(focusFieldId);
@@ -176,6 +252,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
                 linker.addInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
             }
         });
+        
+        esModuleInits.stream().forEach(linker::addEsModuleInitialization);
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
@@ -460,6 +538,29 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         inits.add(init);
 
         return init;
+    }
+
+    @Override
+    public EsModuleInitialization importEsModule(String moduleName) 
+    {
+        
+        assert InternalUtils.isNonBlank(moduleName);
+        
+        // TODO import core libraries (jQuery, Prototype/Scriptaculous/Underscore)
+
+        EsModuleInitialization init = new EsModuleInitializationImpl(moduleName);
+        if (!esModulesImported.contains(moduleName))
+        {
+            esModuleInits.add(init);
+        }
+        
+        return init;
+    }
+
+    @Override
+    public void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback) 
+    {
+        linker.addEsModuleConfigurationCallback(callback);
     }
 
 }

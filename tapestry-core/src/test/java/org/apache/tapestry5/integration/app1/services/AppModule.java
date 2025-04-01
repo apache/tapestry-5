@@ -50,6 +50,7 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -58,6 +59,7 @@ import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueLabelProvider;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
@@ -475,6 +477,44 @@ public class AppModule
             return category.getName();
         }
         
+    }
+    
+    public static final String NON_OVERRIDDEN_ES_MODULE_ID = "nonOverriden";
+    
+    public static final String NON_OVERRIDDEN_ES_MODULE_URL = "/nonOverridenURL";
+    
+    public static final String OVERRIDDEN_ES_MODULE_ID = "overriden";
+
+    public static final String OVERRIDDEN_ES_MODULE_ORIGINAL_URL = "/originalURL";
+    
+    public static final String OVERRIDDEN_ES_MODULE_NEW_URL = "/overridenURL";
+    
+    public static void contributeEsModuleManager(
+            OrderedConfiguration<EsModuleConfigurationCallback> configuration,
+            AssetSource assetSource)
+    {
+        final String original = "OriginalCallback";
+        final String override = "OverrideCallback";
+        
+        configuration.add(override, 
+                o -> EsModuleConfigurationCallback.setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_NEW_URL),
+                "after:" + original);
+        
+        configuration.add(original, 
+                o -> { 
+                    EsModuleConfigurationCallback.setImport(o, NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL);
+                    EsModuleConfigurationCallback.setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_ORIGINAL_URL);
+                });
+        
+        configuration.add("Outside META-INF", o -> 
+            EsModuleConfigurationCallback.setImport(o, "outside-metainf", 
+                    assetSource.getClasspathAsset("/org/apache/tapestry5/integration/app1/es-module-outside-metainf.js").toClientURL())
+        );
+
+        configuration.add("External URL", o -> 
+            EsModuleConfigurationCallback.setImport(o, "external/url", "https://example.com/module.js")
+        );
+
     }
 
 }

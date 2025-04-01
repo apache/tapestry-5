@@ -1,0 +1,238 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry5.internal.services.javascript;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.commons.util.AvailableValues;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.commons.util.UnknownValueException;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.ClasspathMatcher;
+import org.apache.tapestry5.ioc.services.ClasspathScanner;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
+import org.apache.tapestry5.services.javascript.EsModuleManager;
+import org.apache.tapestry5.services.javascript.ImportPlacement;
+
+public class EsModuleManagerImpl implements EsModuleManager
+{
+
+    /**
+     * Name of the JSON object property containing the imports in an import map.
+     */
+    public static final String IMPORTS_ATTRIBUTE = EsModuleConfigurationCallback.IMPORTS_ATTRIBUTE;
+
+    private static final String CLASSPATH_ROOT = "META-INF/assets/es-modules/";
+
+    private final boolean compactJSON;
+
+    private final boolean productionMode;
+
+    private final Set<String> extensions;
+    
+    private final AssetSource assetSource;
+
+    // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
+    private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
+    
+    private final ClasspathScanner classpathScanner;
+    
+    private JSONObject importMap;
+    
+    private final List<EsModuleConfigurationCallback> globalCallbacks;
+
+    public EsModuleManagerImpl(
+                             List<EsModuleConfigurationCallback> globalCallbacks,
+                             AssetSource assetSource,
+                             StreamableResourceSource streamableResourceSource,
+                             @Symbol(SymbolConstants.COMPACT_JSON)
+                             boolean compactJSON,
+                             @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
+                             boolean productionMode,
+                             ClasspathScanner classpathScanner)
+    {
+        this.compactJSON = compactJSON;
+        this.assetSource = assetSource;
+        this.classpathScanner = classpathScanner;
+        this.globalCallbacks = globalCallbacks;
+        this.productionMode = productionMode;
+        importMap = new JSONObject();
+
+        extensions = CollectionFactory.newSet("js");
+        extensions.addAll(streamableResourceSource.fileExtensionsForContentType(InternalConstants.JAVASCRIPT_CONTENT_TYPE));
+        
+        createImportMap();
+
+    }
+    
+    private void createImportMap()
+    {
+        
+        JSONObject importMap = new JSONObject();
+        JSONObject imports = importMap.in(IMPORTS_ATTRIBUTE);
+        
+        cache.clear();
+
+        loadBaseModuleList(imports);
+        
+        for (String name : cache.keySet())
+        {
+            imports.put(name, cache.get(name));
+        }
+        
+        this.importMap = executeCallbacks(importMap, globalCallbacks);
+        
+        for (String id : imports.keySet()) 
+        {
+            cache.put(id, imports.getString(id));
+        }
+            
+    }
+
+    private void loadBaseModuleList(JSONObject imports) 
+    {
+        ClasspathMatcher matcher = (packagePath, fileName) -> 
+            extensions.stream().anyMatch(e -> fileName.endsWith(e));
+        try 
+        {
+            final Set<String> scan = classpathScanner.scan(CLASSPATH_ROOT, matcher);
+            for (String file : scan) 
+            {
+                String id = file.replace(CLASSPATH_ROOT, "");
+                id = id.substring(0, id.lastIndexOf('.'));
+                            
+                imports.put(id, assetSource.getClasspathAsset(file).toClientURL());
+            }
+        } catch (IOException e) 
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostInjection
+    public void setupInvalidation(ResourceChangeTracker tracker)
+    {
+        
+//        Live class reloading of ES modules (failing at the moment)
+        
+        // TODO make invalidations smarter (and work)
+        tracker.addInvalidationCallback(this::createImportMap);
+    }
+
+    @Override
+    public void writeImportMap(Element head, List<EsModuleConfigurationCallback> moduleConfigurationCallbacks) {
+        
+        // Cloning the original import map JSON object
+        final JSONObject imports = ((JSONObject) importMap.get(EsModuleConfigurationCallback.IMPORTS_ATTRIBUTE))
+                .copy();
+        JSONObject newImportMap = new JSONObject(
+                EsModuleConfigurationCallback.IMPORTS_ATTRIBUTE, imports);
+        
+        newImportMap = executeCallbacks(newImportMap, moduleConfigurationCallbacks);
+        
+        head.element("script")
+                .attribute("type", "importmap")
+                .text(newImportMap.toString(compactJSON));
+    }
+        
+    @Override
+    public void writeImports(Element root, List<EsModuleInitialization> inits) 
+    {
+        Element script;
+        Element body = null;
+        Element head = null;
+        ImportPlacement placement;
+        for (EsModuleInitialization init : inits) 
+        {
+            
+            final String moduleId = init.getModuleId();
+            // Making sure the user doesn't shoot heir own foot
+            final String url = cache.get(moduleId);
+            if (url == null)
+            {
+                throw new UnknownValueException("ES module not found: " + moduleId, 
+                        new AvailableValues("String", cache));
+            }
+            
+            placement = init.getPlacement();
+            if (placement.equals(ImportPlacement.HEAD))
+            {
+                if (head == null) 
+                {
+                    head = root.find("head");
+                }
+                script = head.element("script");
+            }
+            else {
+                if (body == null)
+                {
+                    body = root.find("body");
+                }
+                if (placement.equals(ImportPlacement.BODY_BOTTOM)) {
+                    script = body.element("script");
+                }
+                else if (placement.equals(ImportPlacement.BODY_TOP))
+                {
+                    script = body.elementAt(0, "script");
+                }
+                else
+                {
+                    throw new IllegalArgumentException("Unknown import placement: " + placement);
+                }
+            }
+            
+            final Map<String, String> attributes = init.getAttributes();
+            for (String name : attributes.keySet())
+            {
+                script.attribute(name, attributes.get(name));
+            }
+            
+            script.attribute("src", url);
+            script.attribute("type", "module");
+            
+            if (!productionMode)
+            {
+                script.attribute("data-module-id", moduleId);
+                final Element log = script.element("script", "type", "text/javascript");
+                log.text(String.format("console.debug('Imported ES module %s');", moduleId));
+                log.moveBefore(script);
+            }
+            
+        }
+        
+    }
+
+    private JSONObject executeCallbacks(JSONObject importMap, List<EsModuleConfigurationCallback> callbacks) 
+    {
+        for (EsModuleConfigurationCallback callback : callbacks) 
+        {
+            callback.configure(importMap);
+        }
+        
+        return importMap;
+    }
+
+}
