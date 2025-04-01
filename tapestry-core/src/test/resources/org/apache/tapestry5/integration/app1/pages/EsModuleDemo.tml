@@ -1,0 +1,34 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+	<h1>ES Module Import Demo</h1>
+	
+	<p>
+		<t:if test="overrideEsModuleImportAgain">
+			<p:then>
+				<a t:type="EventLink" event="disableOverride" class="switch">Don't override ES module import again.</a>
+			</p:then>
+			<p:else>
+				<a t:type="EventLink" event="enableOverride" class="switch">Override ES module import again.</a>
+			</p:else>
+		</t:if>
+	</p>
+	
+	<p id="message"/>
+	<p id="head-message"/>
+	<p id="body-top-message"/>
+	<p id="body-bottom-message"/>
+	<p id="root-folder-message"/>
+	<p id="outside-metainf-message"/>
+	<p id="${DEFAULT_EXPORT_MESSAGE}"/>
+	<p id="non-default-export-message"/>
+	<p id="parameterless-default-export-message"/>
+	<p id="parameter-type-default-export-message"/>
+	
+	<p>
+		Import map:
+	</p>
+	<pre id="import-map-listing"/>
+	
+	<p id="last-body-element"></p>
+	
+</html>

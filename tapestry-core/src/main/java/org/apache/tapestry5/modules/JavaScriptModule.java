@@ -32,6 +32,7 @@ import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.AddBrowserCompatibilityStyles;
 import org.apache.tapestry5.internal.services.javascript.ConfigureHTMLElementFilter;
+import org.apache.tapestry5.internal.services.javascript.EsModuleManagerImpl;
 import org.apache.tapestry5.internal.services.javascript.Internal;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
@@ -60,6 +61,7 @@ import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
+import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -92,6 +94,7 @@ public class JavaScriptModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(ModuleManager.class, ModuleManagerImpl.class);
+        binder.bind(EsModuleManager.class, EsModuleManagerImpl.class);
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Internal.class).withId("InternalJavaScriptStack");
@@ -490,6 +493,7 @@ public class JavaScriptModule
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "prototype");
         configuration.add(SymbolConstants.MODULE_PATH_PREFIX, "modules");
+        configuration.add(SymbolConstants.ES_MODULE_PATH_PREFIX, "es-modules");
     }
 
     @Contribute(ModuleManager.class)

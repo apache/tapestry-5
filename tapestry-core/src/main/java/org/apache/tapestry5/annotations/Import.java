@@ -82,4 +82,14 @@ public @interface Import
      * @since 5.4
      */
     String[] module() default {};
+    
+    /**
+     * Ids of ES modules to import. 
+     *
+     * @see org.apache.tapestry5.services.javascript.EsModuleManager
+     * @see JavaScriptSupport#importEsModule(String)
+     * @since 5.10.0
+     */
+    String[] esModule() default {};
+    
 }

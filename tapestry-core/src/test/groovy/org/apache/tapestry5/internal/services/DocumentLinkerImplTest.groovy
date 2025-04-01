@@ -32,7 +32,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         // Only checked if there's something to link.
 
@@ -55,7 +55,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         // Only checked if there's something to link.
 
@@ -76,7 +76,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     void missing_root_element_is_a_noop() {
         Document document = new Document()
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         linker.addLibrary("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
@@ -94,7 +94,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageINIT();")])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
 
         replay()
 
@@ -122,7 +122,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3")
 
         linker.updateDocument(document)
 
@@ -141,7 +141,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3")
 
         linker.updateDocument(document)
 
@@ -158,7 +158,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
         linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")))
@@ -178,7 +178,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("head").comment(" existing head ").container.element("body").text(
             "body content")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
 
@@ -198,7 +198,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         def manager = mockModuleManager([], [new JSONArray("t5/core/pageinit:evalJavaScript", "doSomething();")])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, true, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, true, "1.2.3")
 
         replay()
 
@@ -224,7 +224,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         def manager = mockModuleManager(["foo.js"], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
 
         replay()
 
@@ -251,7 +251,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
 
         replay()
 
@@ -273,7 +273,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"))
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")))
@@ -295,7 +295,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("whatever.css"))
         linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()))
@@ -319,7 +319,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
             new JSONArray("my/other/module:normal", 111, 222),
             new JSONArray("my/other/module:late", 333, 444)])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
 
         replay()
 
@@ -347,7 +347,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222)])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null,  true, false, "1.2.3")
 
         replay()
 

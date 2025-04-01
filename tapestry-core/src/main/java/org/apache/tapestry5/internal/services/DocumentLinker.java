@@ -13,6 +13,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -55,6 +57,14 @@ public interface DocumentLinker
      * @since 5.4
      */
     void addModuleConfigurationCallback(ModuleConfigurationCallback callback);
+    
+    /**
+     * Adds an ES module configuration callback for this request.
+     * 
+     * @param callback a {@link EsModuleConfigurationCallback}. It cannot be null.
+     * @since 5.10.0
+     */
+    void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback);
 
     /**
      * Adds JavaScript code. The code is collected into a single block that is injected just before the close body tag
@@ -88,4 +98,10 @@ public interface DocumentLinker
                            String moduleName,
                            String functionName,
                            JSONArray arguments);
+    
+    /**
+     * Adds ES module initialization.
+     * @since 5.10.0
+     */
+    void addEsModuleInitialization(EsModuleInitialization initialization);
 }

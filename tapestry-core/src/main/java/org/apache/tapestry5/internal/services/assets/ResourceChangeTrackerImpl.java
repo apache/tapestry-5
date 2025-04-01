@@ -92,12 +92,11 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 
     public void forceInvalidationEvent()
     {
-        fireInvalidationEvent();
-
         if (tracker != null)
         {
             tracker.clear();
         }
+        fireInvalidationEvent();
     }
 
     public void checkForUpdates()

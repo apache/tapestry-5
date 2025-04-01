@@ -630,7 +630,9 @@ public class Index
                     
                     new Item("RecursiveDemo","Recursive Demo","Recursive component example"),
                     
-                    new Item("SelfRecursiveDemo", "Self-Recursive Demo", "check for handling of self-recursive components")
+                    new Item("SelfRecursiveDemo", "Self-Recursive Demo", "check for handling of self-recursive components"),
+                    
+                    new Item("EsModuleDemo", "ES Module Demo", "tests and demonstrations for the ES module support")
                 );
 
     static
