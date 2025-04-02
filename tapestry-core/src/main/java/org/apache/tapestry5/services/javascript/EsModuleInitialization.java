@@ -84,9 +84,7 @@ public interface EsModuleInitialization extends AbstractInitialization<EsModuleI
     
     /**
      * Specifies the arguments to be passed to the function. Often, just a single {@link org.apache.tapestry5.json.JSONObject}
-     * is passed. When multiple Initializations exist with the same function name (or no function name), and no arguments,
-     * they are coalesced into a single EsModuleInitialization: it is assumed that an initialization with no parameters needs to
-     * only be invoked once.
+     * is passed. 
      *
      * @param arguments
      *         any number of values. Each value may be one of: null, String, Boolean, Number,

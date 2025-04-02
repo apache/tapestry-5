@@ -178,6 +178,18 @@ public class EsModuleTests extends App1TestCase
                 "Parameterless default export!");
     }
     
+    /**
+     * Tests using whether parameter types are correctly passed to JS.
+     */
+    @Test
+    public void parameter_types() throws InterruptedException
+    {
+        openLinks(PAGE_NAME);
+        assertEquals(
+                getText("parameter-type-default-export-message"), 
+                "Parameter types passed correctly!");
+    }
+    
     private void assertModulesDefinedByGlobalCallbacks(JSONObject importMap) {
         assertModuleUrl(NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL, importMap);
         assertModuleUrl(OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_NEW_URL, importMap);

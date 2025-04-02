@@ -22,6 +22,7 @@
 	<p id="${DEFAULT_EXPORT_MESSAGE}"/>
 	<p id="non-default-export-message"/>
 	<p id="parameterless-default-export-message"/>
+	<p id="parameter-type-default-export-message"/>
 	
 	<p>
 		Import map:

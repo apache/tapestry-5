@@ -27,7 +27,7 @@ public class EsModuleManagerImplTest
     private static final JSONArray JSON_ARRAY = new JSONArray("1", "true");
     private static JSONObject JSON_OBJECT = new JSONObject("something", "else", "array",
             JSON_ARRAY, "literal", JSON_LITERAL);
-    
+    private static Number NUMBER = Math.PI * Math.E;
 
     @Test
     public void test_null_arguments()
@@ -49,6 +49,10 @@ public class EsModuleManagerImplTest
         assertEquals(convert(new Object[] {null}, false), null);
         
         assertEquals(convert(new Object[] {STRING}, false), quote(STRING));
+        
+        assertEquals(convert(new Object[] {NUMBER}, false), NUMBER.toString());
+        assertEquals(convert(new Object[] {Boolean.TRUE}, false), Boolean.TRUE.toString());
+        assertEquals(convert(new Object[] {Boolean.FALSE}, false), Boolean.FALSE.toString());
 
         assertEquals(convert(new Object[] {JSON_LITERAL}, false), quote(JSON_LITERAL.toString()));
 
@@ -57,7 +61,7 @@ public class EsModuleManagerImplTest
 
         assertEquals(convert(new Object[] {JSON_OBJECT}, false), JSON_OBJECT.toString(false));
         assertEquals(convert(new Object[] {JSON_OBJECT}, true), JSON_OBJECT.toString(true));
-
+        
     }
     
     @Test

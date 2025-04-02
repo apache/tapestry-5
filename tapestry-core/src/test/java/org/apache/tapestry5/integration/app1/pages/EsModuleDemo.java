@@ -15,9 +15,10 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.integration.app1.EsModuleTests;
 import org.apache.tapestry5.integration.app1.services.AppModule;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -66,6 +67,10 @@ public class EsModuleDemo
         // Both .with() and .invoke() cause the function to be invoked
         javaScriptSupport.importEsModule("parameterless-default-export")
             .with();
+
+        javaScriptSupport.importEsModule("parameter-type-default-export")
+            .with(null, true, false, Math.PI * Math.E, "string", "jsonLiteral",
+                    new JSONObject("key", "value"), new JSONArray(1, "2"));
 
         if (overrideEsModuleImportAgain != null && overrideEsModuleImportAgain)
         {

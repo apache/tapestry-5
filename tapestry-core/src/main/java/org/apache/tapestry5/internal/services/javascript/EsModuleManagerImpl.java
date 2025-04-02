@@ -31,7 +31,6 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONCollection;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
@@ -44,6 +43,8 @@ import org.apache.tapestry5.services.javascript.ImportPlacement;
 
 public class EsModuleManagerImpl implements EsModuleManager
 {
+
+    private static final String GENERIC_IMPORTED_VARIABLE = "m";
 
     /**
      * Name of the JSON object property containing the imports in an import map.
@@ -242,15 +243,14 @@ public class EsModuleManagerImpl implements EsModuleManager
                         "import %s from '%s';\n"
                         + "%s(%s);";
                 
-                final String importName = functionName != null ? functionName : "m";
+                final String importName = functionName != null ? functionName : GENERIC_IMPORTED_VARIABLE;
                 final String importDeclaration = functionName != null ? 
                         "{ " + functionName + " }": 
-                            "m";
+                            GENERIC_IMPORTED_VARIABLE;
                 
-                final String code = String.format(moduleFunctionCallFormat, 
+                moduleFunctionCall.text(String.format(moduleFunctionCallFormat, 
                         importDeclaration, moduleId, importName,
-                        convertToJsFunctionParameters(arguments, compactJSON));
-                moduleFunctionCall.text(code);
+                        convertToJsFunctionParameters(arguments, compactJSON)));
                 
                 writeAttributes(moduleFunctionCall, init);
                 
@@ -304,6 +304,10 @@ public class EsModuleManagerImpl implements EsModuleManager
         else if (object instanceof String || object instanceof JSONLiteral)
         {
             result = "'" + object.toString() + "'";
+        }
+        else if (object instanceof Number || object instanceof Boolean)
+        {
+            result = object.toString();
         }
         else if (object instanceof JSONCollection)
         {
