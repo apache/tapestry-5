@@ -25,11 +25,15 @@ import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONCollection;
+import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
@@ -169,9 +173,14 @@ public class EsModuleManagerImpl implements EsModuleManager
         Element body = null;
         Element head = null;
         ImportPlacement placement;
-        for (EsModuleInitialization init : inits) 
+        EsModuleInitializationImpl init;
+        String functionName;
+        Object[] arguments;
+        
+        for (EsModuleInitialization i : inits) 
         {
             
+            init = (EsModuleInitializationImpl) i;
             final String moduleId = init.getModuleId();
             // Making sure the user doesn't shoot heir own foot
             final String url = cache.get(moduleId);
@@ -208,14 +217,11 @@ public class EsModuleManagerImpl implements EsModuleManager
                 }
             }
             
-            final Map<String, String> attributes = init.getAttributes();
-            for (String name : attributes.keySet())
-            {
-                script.attribute(name, attributes.get(name));
-            }
-            
+            writeAttributes(script, init);
             script.attribute("src", url);
-            script.attribute("type", "module");
+            
+            functionName = init.getFunctionName();
+            arguments = init.getArguments();
             
             if (!productionMode)
             {
@@ -225,8 +231,101 @@ public class EsModuleManagerImpl implements EsModuleManager
                 log.moveBefore(script);
             }
             
+            // If we have not only the import, but also an automatic function call
+            if (arguments != null || functionName != null)
+            {
+                final Element moduleFunctionCall = script.element("script");
+                
+                moduleFunctionCall.moveAfter(script);
+                
+                final String moduleFunctionCallFormat = 
+                        "import %s from '%s';\n"
+                        + "%s(%s);";
+                
+                final String importName = functionName != null ? functionName : "m";
+                final String importDeclaration = functionName != null ? 
+                        "{ " + functionName + " }": 
+                            "m";
+                
+                final String code = String.format(moduleFunctionCallFormat, 
+                        importDeclaration, moduleId, importName,
+                        convertToJsFunctionParameters(arguments, compactJSON));
+                moduleFunctionCall.text(code);
+                
+                writeAttributes(moduleFunctionCall, init);
+                
+                // Avoiding duplicated ids
+                final String id = moduleFunctionCall.getAttribute("id");
+                if (id != null)
+                {
+                    moduleFunctionCall.forceAttributes("id", id + "-function-call");
+                }
+                
+            }
+            
         }
         
+    }
+    
+    static String convertToJsFunctionParameters(Object[] arguments, boolean compactJSON)
+    {
+        String result;
+        if (arguments == null || arguments.length == 0)
+        {
+            result = "";
+        }
+        else if (arguments.length == 1)
+        {
+            result = convertToJsFunctionParameter(arguments[0], compactJSON);
+        }
+        else {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < arguments.length; i++) 
+            {
+                if (i > 0)
+                {
+                    builder.append(", ");
+                }
+                builder.append(convertToJsFunctionParameter(arguments[i], compactJSON));
+            }
+            result = builder.toString();
+        }
+        return result;
+    }
+
+    static String convertToJsFunctionParameter(Object object, boolean compactJSON) 
+    {
+        String result;
+        
+        if (object == null)
+        {
+            result = null;
+        }
+        else if (object instanceof String || object instanceof JSONLiteral)
+        {
+            result = "'" + object.toString() + "'";
+        }
+        else if (object instanceof JSONCollection)
+        {
+            result = ((JSONCollection) object).toString(compactJSON);
+        }
+        else
+        {
+            throw new IllegalArgumentException(String.format(
+                    "Unsupported value: %s (type %s)", object.toString(), object.getClass().getName()));
+        }
+        
+        return result;
+    }
+
+    private void writeAttributes(Element script, EsModuleInitializationImpl init) {
+        final Map<String, String> attributes = init.getAttributes();
+        for (String name : attributes.keySet())
+        {
+            script.attribute(name, attributes.get(name));
+        }
+        
+        script.attribute("type", "module");
     }
 
     private JSONObject executeCallbacks(JSONObject importMap, List<EsModuleConfigurationCallback> callbacks) 

@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.testng.annotations.Test;
@@ -134,7 +135,49 @@ public class EsModuleTests extends App1TestCase
         openLinks(PAGE_NAME);
         assertEquals(getText("root-folder-message"), "ES module imported correctly from the root folder!");
     }
-
+    
+    /**
+     * Tests using {@link EsModuleInitialization#with(Object...)} without using
+     * {@link EsModuleInitialization#invoke(String)} (i.e. invoking the default
+     * exported function with at least one parameter).
+     */
+    @Test
+    public void invoking_default_exported_function() throws InterruptedException
+    {
+        openLinks(PAGE_NAME);
+        assertEquals(
+                getText(EsModuleDemo.DEFAULT_EXPORT_MESSAGE), 
+                EsModuleDemo.DEFAULT_EXPORT_PARAMETER);
+    }
+    
+    /**
+     * Tests using {@link EsModuleInitialization#with(Object...)} without using
+     * {@link EsModuleInitialization#invoke(String)} (i.e. invoking the default
+     * exported function). In order words,
+     * {@code javaScriptSupport.importEsModule("foo").with(...)}
+     */
+    @Test
+    public void invoking_non_default_exported_function() throws InterruptedException
+    {
+        openLinks(PAGE_NAME);
+        assertEquals(
+                getText(EsModuleDemo.DEFAULT_EXPORT_MESSAGE), 
+                EsModuleDemo.DEFAULT_EXPORT_PARAMETER);
+    }
+    
+    /**
+     * Tests using {@code javaScriptSupport.importEsModule("foo").with()}
+     * (i.e. invoking the default withot parameters)
+     */
+    @Test
+    public void invoking_non_default_exported_function_without_parameters() throws InterruptedException
+    {
+        openLinks(PAGE_NAME);
+        assertEquals(
+                getText("parameterless-default-export-message"), 
+                "Parameterless default export!");
+    }
+    
     private void assertModulesDefinedByGlobalCallbacks(JSONObject importMap) {
         assertModuleUrl(NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL, importMap);
         assertModuleUrl(OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_NEW_URL, importMap);

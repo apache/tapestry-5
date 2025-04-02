@@ -19,6 +19,9 @@
 	<p id="body-bottom-message"/>
 	<p id="root-folder-message"/>
 	<p id="outside-metainf-message"/>
+	<p id="${DEFAULT_EXPORT_MESSAGE}"/>
+	<p id="non-default-export-message"/>
+	<p id="parameterless-default-export-message"/>
 	
 	<p>
 		Import map:
@@ -26,5 +29,5 @@
 	<pre id="import-map-listing"/>
 	
 	<p id="last-body-element"></p>
-
+	
 </html>

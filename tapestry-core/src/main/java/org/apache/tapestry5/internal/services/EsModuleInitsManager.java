@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 
 public class EsModuleInitsManager
@@ -42,7 +43,7 @@ public class EsModuleInitsManager
         assert initialization != null;
 
         // We ignore a module being added again.
-        final String moduleName = initialization.getModuleId();
+        final String moduleName = ((EsModuleInitializationImpl) initialization).getModuleId();
         if (!modules.contains(moduleName))
         {
             initializations.add(initialization);

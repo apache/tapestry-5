@@ -95,19 +95,4 @@ public interface EsModuleInitialization extends AbstractInitialization<EsModuleI
      */
     void with(Object... arguments);
     
-    /**
-     * Returns the module id.
-     */
-    String getModuleId();
-    
-    /**
-     * Returns an unmodifiable view of the attributes.
-     */
-    Map<String, String> getAttributes();
-    
-    /**
-     * Returns the import placement.
-     */
-    ImportPlacement getPlacement();
-    
 }

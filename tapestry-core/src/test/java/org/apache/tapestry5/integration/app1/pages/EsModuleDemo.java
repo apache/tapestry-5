@@ -15,6 +15,7 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.integration.app1.EsModuleTests;
 import org.apache.tapestry5.integration.app1.services.AppModule;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
@@ -24,6 +25,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 @Import(esModule = {"root-folder"})
 public class EsModuleDemo
 {
+    public static final String DEFAULT_EXPORT_MESSAGE = "default-export-message";
+
+    public static final String DEFAULT_EXPORT_PARAMETER = "Importing module exporting single function!";
+
     public static final String REQUEST_OVERRIDEN_MODULE_URL = "/overridenAgainURL";
 
     @Inject
@@ -51,6 +56,16 @@ public class EsModuleDemo
             .placement(ImportPlacement.HEAD);
         javaScriptSupport.importEsModule("outside-metainf");        
         javaScriptSupport.importEsModule("show-import-map");
+        
+        javaScriptSupport.importEsModule("default-export")
+            .with(EsModuleDemo.DEFAULT_EXPORT_MESSAGE, EsModuleDemo.DEFAULT_EXPORT_PARAMETER);
+        
+        javaScriptSupport.importEsModule("non-default-export")
+            .invoke("setMessage");
+        
+        // Both .with() and .invoke() cause the function to be invoked
+        javaScriptSupport.importEsModule("parameterless-default-export")
+            .with();
 
         if (overrideEsModuleImportAgain != null && overrideEsModuleImportAgain)
         {
