@@ -253,7 +253,10 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             }
         });
         
-        esModuleInits.stream().forEach(linker::addEsModuleInitialization);
+        if (!esModuleInits.isEmpty())
+        {
+            esModuleInits.stream().forEach(linker::addEsModuleInitialization);
+        }
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
