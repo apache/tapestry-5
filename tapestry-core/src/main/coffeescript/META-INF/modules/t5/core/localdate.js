@@ -1,37 +1,43 @@
-# Copyright 2013 The Apache Software Foundation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http:#www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
+ */
+// Copyright 2013 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http:#www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-# ## t5/core/localdate
-#
-# Used with the LocalDate component to present a Date in a particular format, in the
-# browser's time zone.
+// ## t5/core/localdate
+//
+// Used with the LocalDate component to present a Date in a particular format, in the
+// browser's time zone.
 
-define ["t5/core/dom", "t5/core/moment"],
-(dom, moment) ->
+define(["t5/core/dom", "t5/core/moment"],
+function(dom, moment) {
 
-  ATTR = "data-localdate-format"
+  const ATTR = "data-localdate-format";
 
-  dom.scanner "[#{ATTR}]", (el) ->
-    format = el.attr ATTR
+  return dom.scanner(`[${ATTR}]`, function(el) {
+    const format = el.attr(ATTR);
 
-    isoString = el.text()
+    const isoString = el.text();
 
-    m = moment isoString
+    const m = moment(isoString);
 
-    el.update m.format format
+    el.update(m.format(format));
 
-    # A good scanner callback always removes itself from future scans.
-    el.attr ATTR, null
+    // A good scanner callback always removes itself from future scans.
+    el.attr(ATTR, null);
 
-    return
+  });
+});

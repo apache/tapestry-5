@@ -1,300 +1,380 @@
-# Copyright 2012-2024 The Apache Software Foundation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http:#www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# ## t5/core/palette
-#
-# Support for the `core/Palette` component.
-define ["t5/core/dom", "underscore", "t5/core/events"],
-  (dom, _, events) ->
-
-    isSelected = (option) -> option.selected
-
-    class PaletteController
-
-      constructor: (id) ->
-        @selected = (dom id)
-        @container = @selected.findParent ".palette"
-        @available = @container.findFirst ".palette-available select"
-        @hidden = @container.findFirst "input[type=hidden]"
-
-        @select = @container.findFirst "[data-action=select]"
-        @deselect = @container.findFirst "[data-action=deselect]"
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
+ */
+// Copyright 2012-2024 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http:#www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// ## t5/core/palette
+//
+// Support for the `core/Palette` component.
+define(["t5/core/dom", "underscore", "t5/core/events"],
+  function(dom, _, events) {
+
+    const isSelected = option => option.selected;
+
+    class PaletteController {
+
+      constructor(id) {
+        this.selected = (dom(id));
+        this.container = this.selected.findParent(".palette");
+        this.available = this.container.findFirst(".palette-available select");
+        this.hidden = this.container.findFirst("input[type=hidden]");
+
+        this.select = this.container.findFirst("[data-action=select]");
+        this.deselect = this.container.findFirst("[data-action=deselect]");
+
+        this.moveUp = this.container.findFirst("[data-action=move-up]");
+        this.moveDown = this.container.findFirst("[data-action=move-down]");
+
+        // Track where reorder is allowed based on whether the buttons actually exist
+        this.reorder = this.moveUp !== null;
+
+        this.valueToOrderIndex = {};
+
+        for (let i = 0; i < this.available.element.options.length; i++) {
+          var option = this.available.element.options[i];
+          this.valueToOrderIndex[option.value] = i;
+        }
+
+        // This occurs even when the palette is disabled, to present the
+        // values correctly. Otherwise it looks like nothing is selected.
+        this.initialTransfer();
+
+        if (!this.selected.element.disabled) {
+          this.updateButtons();
+          this.bindEvents();
+        }
+      }
+
+      initialTransfer() {
+        // Get the values for options that should move over
+        let i, option;
+        const values = JSON.parse(this.hidden.value());
+        const valueToPosition = {};
+
+        for (i = 0; i < values.length; i++) {
+          var v = values[i];
+          valueToPosition[v] = i;
+        }
+
+        const e = this.available.element;
+
+        const movers = [];
+
+        for (i = e.options.length - 1; i >= 0; i--) {
+          option = e.options[i];
+          var {
+            value
+          } = option;
+          var pos = valueToPosition[value];
+          if (pos !== undefined) {
+            movers[pos] = option;
+            e.remove(i);
+          }
+        }
+
+        return (() => {
+          const result = [];
+          for (option of Array.from(movers)) {
+            result.push(this.selected.element.add(option));
+          }
+          return result;
+        })();
+      }
+
+      // Invoked after any change to the selections list to update the hidden field as well as the
+      // buttons' state.
+      updateAfterChange() {
+        this.updateHidden();
+        return this.updateButtons();
+      }
 
-        @moveUp = @container.findFirst "[data-action=move-up]"
-        @moveDown = @container.findFirst "[data-action=move-down]"
+      updateHidden() {
+        const values = (Array.from(this.selected.element.options).map((option) => option.value));
+        return this.hidden.value(JSON.stringify(values));
+      }
 
-        # Track where reorder is allowed based on whether the buttons actually exist
-        @reorder = @moveUp isnt null
+      bindEvents() {
+        this.container.on("change", "select", () => {
+          this.updateButtons();
+          return false;
+        });
 
-        @valueToOrderIndex = {}
+        this.select.on("click", () => {
+          this.doSelect();
+          return false;
+        });
 
-        for option,i in @available.element.options
-          @valueToOrderIndex[option.value] = i
+        this.available.on("dblclick", () => {
+          this.doSelect();
+          return false;
+        });
 
-        # This occurs even when the palette is disabled, to present the
-        # values correctly. Otherwise it looks like nothing is selected.
-        @initialTransfer()
+        this.deselect.on("click", () => {
+          this.doDeselect();
+          return false;
+        });
 
-        unless @selected.element.disabled
-          @updateButtons()
-          @bindEvents()
+        this.selected.on("dblclick", () => {
+          this.doDeselect();
+          return false;
+        });
 
-      initialTransfer: ->
-        # Get the values for options that should move over
-        values = JSON.parse @hidden.value()
-        valueToPosition = {}
+        if (this.reorder) {
+          this.moveUp.on("click", () => {
+            this.doMoveUp();
+            return false;
+          });
 
-        for v, i in values
-          valueToPosition[v] = i
+          return this.moveDown.on("click", () => {
+            this.doMoveDown();
+            return false;
+          });
+        }
+      }
 
-        e = @available.element
+      // Invoked whenever the selections in either list changes or after an updates; figures out which buttons
+      // should be enabled and which disabled.
+      updateButtons() {
+        this.select.element.disabled = this.available.element.selectedIndex < 0;
 
-        movers = []
+        const nothingSelected = this.selected.element.selectedIndex < 0;
 
-        for i in [(e.options.length - 1)..0] by -1
-          option = e.options[i]
-          value = option.value
-          pos = valueToPosition[value]
-          unless pos is undefined
-            movers[pos] = option
-            e.remove i
+        this.deselect.element.disabled = nothingSelected;
 
-        for option in movers
-          @selected.element.add option
+        if (this.reorder) {
+          this.moveUp.element.disabled = nothingSelected || this.allSelectionsAtTop();
+          return this.moveDown.element.disabled = nothingSelected || this.allSelectionsAtBottom();
+        }
+      }
 
-      # Invoked after any change to the selections list to update the hidden field as well as the
-      # buttons' state.
-      updateAfterChange: ->
-        @updateHidden()
-        @updateButtons()
+      doSelect() { return this.transferOptions(this.available, this.selected, this.reorder); }
 
-      updateHidden: ->
-        values = (option.value for option in @selected.element.options)
-        @hidden.value JSON.stringify values
+      doDeselect() { return this.transferOptions(this.selected, this.available, false); }
 
-      bindEvents: ->
-        @container.on "change", "select", =>
-          @updateButtons()
-          return false
+      doMoveUp() {
+        let options = _.toArray(this.selected.element.options);
 
-        @select.on "click", =>
-          @doSelect()
-          return false
+        const groups = _.partition(options, isSelected);
 
-        @available.on "dblclick", =>
-          @doSelect()
-          return false
+        const movers = groups[0];
 
-        @deselect.on "click", =>
-          @doDeselect()
-          return false
+        // The element before the first selected element is the pivot; all the selected elements will
+        // move before the pivot. If there is no pivot, the elements are shifted to the front of the list.
+        const firstMoverIndex = _.first(movers).index;
+        const pivot = options[firstMoverIndex - 1];
 
-        @selected.on "dblclick", =>
-          @doDeselect()
-          return false
+        options = groups[1];
 
-        if @reorder
-          @moveUp.on "click", =>
-            @doMoveUp()
-            return false
+        const splicePos = pivot ? _.indexOf(options, pivot) : 0;
 
-          @moveDown.on "click", =>
-            @doMoveDown()
-            return false
+        movers.reverse();
 
-      # Invoked whenever the selections in either list changes or after an updates; figures out which buttons
-      # should be enabled and which disabled.
-      updateButtons: ->
-        @select.element.disabled = @available.element.selectedIndex < 0
+        for (var o of Array.from(movers)) {
+          options.splice(splicePos, 0, o);
+        }
 
-        nothingSelected = @selected.element.selectedIndex < 0
+        return this.reorderSelected(options);
+      }
 
-        @deselect.element.disabled = nothingSelected
 
-        if @reorder
-          @moveUp.element.disabled = nothingSelected or @allSelectionsAtTop()
-          @moveDown.element.disabled = nothingSelected or @allSelectionsAtBottom()
+      doMoveDown() {
+        let options = _.toArray(this.selected.element.options);
 
-      doSelect: -> @transferOptions @available, @selected, @reorder
+        const groups = _.partition(options, isSelected);
 
-      doDeselect: -> @transferOptions @selected, @available, false
+        const movers = groups[0];
 
-      doMoveUp: ->
-        options = _.toArray @selected.element.options
+        // The element after the last selected element is the pivot; all the selected elements will
+        // move after the pivot. If there is no pivot, the elements are shifted to the end of the list.
+        const lastMoverIndex = movers.slice(-1)[0].index;
+        const pivot = options[lastMoverIndex + 1];
 
-        groups = _.partition options, isSelected
+        options = groups[1];
 
-        movers = groups[0]
+        const splicePos = pivot ? _.indexOf(options, pivot) + 1 : options.length;
 
-        # The element before the first selected element is the pivot; all the selected elements will
-        # move before the pivot. If there is no pivot, the elements are shifted to the front of the list.
-        firstMoverIndex = _.first(movers).index
-        pivot = options[firstMoverIndex - 1]
+        movers.reverse();
 
-        options = groups[1]
+        for (var o of Array.from(movers)) {
+          options.splice(splicePos, 0, o);
+        }
 
-        splicePos = if pivot then _.indexOf options, pivot else 0
+        return this.reorderSelected(options);
+      }
 
-        movers.reverse()
+      // Reorders the selected options to the provided list of options; handles triggering the willUpdate and
+      // didUpdate events.
+      reorderSelected(options) {
 
-        for o in movers
-          options.splice splicePos, 0, o
+        return this.performUpdate(true, options, () => {
 
-        @reorderSelected options
+          this.deleteOptions(this.selected);
 
+          return Array.from(options).map((o) =>
+            this.selected.element.add(o, null));
+        });
+      }
 
-      doMoveDown: ->
-        options = _.toArray @selected.element.options
+      // Performs the update, which includes the willChange and didChange events.
+      performUpdate(reorder, selectedOptions, updateCallback) {
 
-        groups = _.partition options, isSelected
+        let canceled = false;
 
-        movers = groups[0]
+        const doUpdate = () => {
+          updateCallback();
 
-        # The element after the last selected element is the pivot; all the selected elements will
-        # move after the pivot. If there is no pivot, the elements are shifted to the end of the list.
-        lastMoverIndex = movers[-1..-1][0].index
-        pivot = options[lastMoverIndex + 1]
+          this.selected.trigger(events.palette.didChange, { selectedOptions, reorder });
 
-        options = groups[1]
+          return this.updateAfterChange();
+        };
 
-        splicePos = if pivot then _.indexOf(options, pivot) + 1 else options.length
+        const memo = {
+          selectedOptions,
+          reorder,
+          cancel() { return canceled = true; },
+          defer() {
+            canceled = true;
+            return doUpdate;
+          }
+        };
 
-        movers.reverse()
+        this.selected.trigger(events.palette.willChange, memo);
 
-        for o in movers
-          options.splice splicePos, 0, o
+        if (!canceled) { return doUpdate(); }
+      }
 
-        @reorderSelected options
+      // Deletes all options from a select (an ElementWrapper), prior to new options being populated in.
+      deleteOptions(select) {
 
-      # Reorders the selected options to the provided list of options; handles triggering the willUpdate and
-      # didUpdate events.
-      reorderSelected: (options) ->
+        const e = select.element;
 
-        @performUpdate true, options, =>
+        return (() => {
+          const result = [];
+          for (let i = e.length - 1; i >= 0; i--) {
+            result.push(e.remove(i));
+          }
+          return result;
+        })();
+      }
 
-          @deleteOptions @selected
+      // Moves options between the available and selected lists, including event notifiations before and after.
+      transferOptions(from, to, atEnd) {
 
-          for o in options
-            @selected.element.add o, null
+        let o;
+        if (from.element.selectedIndex === -1) {
+          return;
+        }
 
-      # Performs the update, which includes the willChange and didChange events.
-      performUpdate: (reorder, selectedOptions, updateCallback) ->
+        // This could be done in a single pass, but:
+        const movers = _.filter(from.element.options, isSelected);
+        const fromOptions = _.reject(from.element.options, isSelected);
 
-        canceled = false
+        const toOptions = _.toArray(to.element.options);
 
-        doUpdate = =>
-          updateCallback()
+        for (o of Array.from(movers)) {
+          this.insertOption(toOptions, o, atEnd);
+        }
 
-          @selected.trigger events.palette.didChange, { selectedOptions, reorder }
+        const isSelectedSelect = to === this.selected;
+        const selectedOptions = isSelectedSelect ? toOptions : fromOptions;
 
-          @updateAfterChange()
+        return this.performUpdate(false, selectedOptions, () => {
+          let i;
+          for (i = from.element.length - 1; i >= 0; i--) {
+            if (from.element.options[i].selected) {
+              from.element.remove(i);
+            }
+          }
 
-        memo =
-          selectedOptions: selectedOptions
-          reorder: reorder
-          cancel: -> canceled = true
-          defer: ->
-            canceled = true
-            return doUpdate
+          // A bit ugly: update the to select by removing all, then adding back in.
 
-        @selected.trigger events.palette.willChange, memo
+          for (i = to.element.length - 1; i >= 0; i--) {
+            to.element.options[i].selected = false;
+            to.element.remove(i);
+          }
 
-        doUpdate() unless canceled
+          return (() => {
+            const result = [];
+            for (o of Array.from(toOptions)) {
+              var groupIdx = o.getAttribute('data-optgroup-idx');
+              if (isSelectedSelect || !groupIdx  || (groupIdx === '')) {
+                result.push(to.element.add(o, null));
+              } else {
+                var group = to.element.children[parseInt(groupIdx)];
+                result.push(group.appendChild(o));
+              }
+            }
+            return result;
+          })();
+        });
+      }
 
-      # Deletes all options from a select (an ElementWrapper), prior to new options being populated in.
-      deleteOptions: (select) ->
 
-        e = select.element
+      insertOption(options, option, atEnd) {
 
-        for i in [(e.length - 1)..0] by -1
-          e.remove i
+        let before;
+        if (!atEnd) {
+          const optionOrder = this.valueToOrderIndex[option.value];
+          before = _.find(options, o => this.valueToOrderIndex[o.value] > optionOrder);
+        }
 
-      # Moves options between the available and selected lists, including event notifiations before and after.
-      transferOptions: (from, to, atEnd) ->
+        if (before) {
+          const i = _.indexOf(options, before);
+          return options.splice(i, 0, option);
+        } else {
+          return options.push(option);
+        }
+      }
 
-        if from.element.selectedIndex is -1
-          return
 
-        # This could be done in a single pass, but:
-        movers = _.filter from.element.options, isSelected
-        fromOptions = _.reject from.element.options, isSelected
+      indexOfLastSelection(select) {
+        const e = select.element;
+        if (e.selectedIndex < 0) {
+          return -1;
+        }
 
-        toOptions = _.toArray to.element.options
+        for (let i = e.options.length - 1, end = e.selectedIndex; i >= end; i--) {
+          if (e.options[i].selected) {
+            return i;
+          }
+        }
 
-        for o in movers
-          @insertOption toOptions, o, atEnd
+        return -1;
+      }
 
-        isSelectedSelect = to is @selected
-        selectedOptions = if isSelectedSelect then toOptions else fromOptions
+      allSelectionsAtTop() {
+        const last = this.indexOfLastSelection(this.selected);
+        const options = _.toArray(this.selected.element.options);
 
-        @performUpdate false, selectedOptions, =>
-          for i in [(from.element.length - 1)..0] by -1
-            if from.element.options[i].selected
-              from.element.remove i
+        return _(options.slice(0, +last + 1 || undefined)).all(o => o.selected);
+      }
 
-          # A bit ugly: update the to select by removing all, then adding back in.
+      allSelectionsAtBottom() {
+        const e = this.selected.element;
+        const last = e.selectedIndex;
+        const options = _.toArray(e.options);
 
-          for i in [(to.element.length - 1)..0] by -1
-            to.element.options[i].selected = false
-            to.element.remove i
+        return _(options.slice(last)).all(o => o.selected);
+      }
+    }
 
-          for o in toOptions
-            groupIdx = o.getAttribute('data-optgroup-idx')
-            if isSelectedSelect or !groupIdx  or groupIdx == ''
-              to.element.add o, null
-            else
-              group = to.element.children[parseInt(groupIdx)]
-              group.appendChild o
 
-
-      insertOption: (options, option, atEnd) ->
-
-        unless atEnd
-          optionOrder = @valueToOrderIndex[option.value]
-          before = _.find options, (o) => @valueToOrderIndex[o.value] > optionOrder
-
-        if before
-          i = _.indexOf options, before
-          options.splice i, 0, option
-        else
-          options.push option
-
-
-      indexOfLastSelection: (select) ->
-        e = select.element
-        if e.selectedIndex < 0
-          return -1
-
-        for i in [(e.options.length - 1)..(e.selectedIndex)] by -1
-          if e.options[i].selected
-            return i
-
-        return -1
-
-      allSelectionsAtTop: ->
-        last = @indexOfLastSelection @selected
-        options = _.toArray @selected.element.options
-
-        _(options[0..last]).all (o) -> o.selected
-
-      allSelectionsAtBottom: ->
-        e = @selected.element
-        last = e.selectedIndex
-        options = _.toArray e.options
-
-        _(options[last..]).all (o) -> o.selected
-
-
-    # Export just the initializer function
-    (id) -> new PaletteController(id)
+    // Export just the initializer function
+    return id => new PaletteController(id);
+});
