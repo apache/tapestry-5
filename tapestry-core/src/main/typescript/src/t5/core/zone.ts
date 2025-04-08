@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -26,164 +20,169 @@
 //
 // Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
 // to a core/Zone server-side component.
-define(["t5/core/dom", "t5/core/events", "t5/core/ajax", "t5/core/console", "t5/core/forms",  "underscore"],
 
-  function(dom, events, ajax, console, forms, _) {
-  
-    if ((typeof ajax) !== "function") {
-      console.error("ajax variable is not a function, but instead it is " + JSON.stringify(ajax));
-      console.error(ajax);
-      throw new Error("ajax variable is not a function");
+import dom from "t5/core/dom"
+import events from "t5/core/events";
+import ajax from "t5/core/ajax";
+import console from "t5/core/console";
+import forms from "t5/core/forms";
+import _ from "underscore";
+
+if ((typeof ajax) !== "function") {
+  console.error("ajax variable is not a function, but instead it is " + JSON.stringify(ajax));
+  console.error(ajax);
+  throw new Error("ajax variable is not a function");
+}
+
+// For a given element that may have the `data-update-zone` attribute, locates the
+// zone element. May return null if the zone can not be found (after logging an error
+// to the console).
+//
+// * element - starting point for determining zone
+const findZone = function(element) {
+  let zone;
+  const zoneId = element.attr("data-update-zone"); // TODO: replace with vanilla version
+
+  if (zoneId === "^") {
+    zone = element.findParent("[data-container-type=zone]");
+
+    if (zone === null) {
+      throw new Error(`Unable to locate containing zone for ${element}.`);
     }
 
-    // For a given element that may have the `data-update-zone` attribute, locates the
-    // zone element. May return null if the zone can not be found (after logging an error
-    // to the console).
-    //
-    // * element - starting point for determining zone
-    const findZone = function(element) {
-      let zone;
-      const zoneId = element.attr("data-update-zone");
+    return zone;
+  }
 
-      if (zoneId === "^") {
-        zone = element.findParent("[data-container-type=zone]");
+  zone = dom(zoneId);
 
-        if (zone === null) {
-          throw new Error(`Unable to locate containing zone for ${element}.`);
-        }
+  if (zone === null) {
+    throw new Error(`Unable to locate zone '${zoneId}'.`);
+  }
 
-        return zone;
-      }
+  return zone;
+};
 
-      zone = dom(zoneId);
+dom.onDocument("click", "a[data-update-zone]", function(event) {
 
-      if (zone === null) {
-        throw new Error(`Unable to locate zone '${zoneId}'.`);
-      }
+  const element = this.closest("[data-update-zone]");
 
-      return zone;
-    };
+  if (!element) {
+    throw new Error("Could not locate containing element with data-update-zone attribute.");
+  }
 
-    dom.onDocument("click", "a[data-update-zone]", function(event) {
+  const zone = findZone(element);
 
-      const element = this.closest("[data-update-zone]");
+  if (zone) {
+    zone.trigger(events.zone.refresh,  {url: element.attr("href")});
+  }
 
-      if (!element) {
-        throw new Error("Could not locate containing element with data-update-zone attribute.");
-      }
+  event.nativeEvent.preventDefault();
+});
 
-      const zone = findZone(element);
+dom.onDocument("submit", "form[data-update-zone]", function() {
 
-      if (zone) {
-        zone.trigger(events.zone.refresh,  {url: element.attr("href")});
-      }
+  const zone = findZone(this);
 
-      event.nativeEvent.preventDefault();
-    });
+  if (zone) {
+    const formParameters = forms.gatherParameters(this);
 
-    dom.onDocument("submit", "form[data-update-zone]", function() {
+    zone.trigger(events.zone.refresh, {
+      url: (this.attr("action")),
+      parameters: formParameters
+    }
+    );
+  }
 
-      const zone = findZone(this);
+  return false;
+});
 
-      if (zone) {
-        const formParameters = forms.gatherParameters(this);
+dom.onDocument("submit", "form[data-async-trigger]", function() {
 
-        zone.trigger(events.zone.refresh, {
-          url: (this.attr("action")),
-          parameters: formParameters
-        }
-        );
-      }
+  const formParameters = forms.gatherParameters(this);
 
-      return false;
-    });
+  this.addClass("ajax-update");
 
-    dom.onDocument("submit", "form[data-async-trigger]", function() {
+  ajax((this.attr("action")), {
+    data: formParameters,
+    complete: () => this.removeClass("ajax-update")
+  }
+  );
 
-      const formParameters = forms.gatherParameters(this);
+  return false;
+});
 
-      this.addClass("ajax-update");
+dom.onDocument(events.zone.update, function(event) {
 
-      ajax((this.attr("action")), {
-        data: formParameters,
-        complete: () => this.removeClass("ajax-update")
-      }
-      );
+  this.trigger(events.zone.willUpdate);
 
-      return false;
-    });
+  const {
+    content
+  } = event.memo;
 
-    dom.onDocument(events.zone.update, function(event) {
+  // The server may have passed down the empty string for the content; that removes the existing content.
+  // On the other hand, the server may have not provided a content key; in that case, content is undefined
+  // which means to leave the existing content alone.
+  //
+  // Note that currently, the willUpdate and didUpdate events are triggered even when the zone is not actually
+  // updated. That may be a bug.
+  if (content !== undefined) {
+    this.update(content);
+  }
 
-      this.trigger(events.zone.willUpdate);
+  this.trigger(events.initializeComponents);
+  return this.trigger(events.zone.didUpdate);
+});
 
-      const {
-        content
-      } = event.memo;
+dom.onDocument(events.zone.refresh, function(event) {
 
-      // The server may have passed down the empty string for the content; that removes the existing content.
-      // On the other hand, the server may have not provided a content key; in that case, content is undefined
-      // which means to leave the existing content alone.
-      //
-      // Note that currently, the willUpdate and didUpdate events are triggered even when the zone is not actually
-      // updated. That may be a bug.
-      if (content !== undefined) {
-        this.update(content);
-      }
+  // This event may be triggered on an element inside the zone, rather than on the zone itself. Scan upwards
+  // to find the actual zone.
+  const zone = this.closest("[data-container-type=zone]");
 
-      this.trigger(events.initializeComponents);
-      return this.trigger(events.zone.didUpdate);
-    });
+  // A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
+  const attr = zone.attr("data-zone-parameters");
 
-    dom.onDocument(events.zone.refresh, function(event) {
+  const parameters = attr && JSON.parse(attr);
 
-      // This event may be triggered on an element inside the zone, rather than on the zone itself. Scan upwards
-      // to find the actual zone.
-      const zone = this.closest("[data-container-type=zone]");
+  const simpleIdParams = zone.attr("data-simple-ids") ? {"t:suppress-namespaced-ids": true} : undefined;
 
-      // A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      const attr = zone.attr("data-zone-parameters");
+  return ajax(event.memo.url, {
+    data: _.extend({ "t:zoneid": zone.element.id }, simpleIdParams, parameters, event.memo.parameters),
+    success(response) {
+      return zone.trigger(events.zone.update, {content: (response.json != null ? response.json.content : undefined)});
+    }
+  }
+  );
+});
 
-      const parameters = attr && JSON.parse(attr);
+dom.onDocument("click", "a[data-async-trigger]", function(event){
+  const link = this.closest('a[data-async-trigger]');
 
-      const simpleIdParams = zone.attr("data-simple-ids") ? {"t:suppress-namespaced-ids": true} : undefined;
+  link.addClass("ajax-update");
 
-      return ajax(event.memo.url, {
-        data: _.extend({ "t:zoneid": zone.element.id }, simpleIdParams, parameters, event.memo.parameters),
-        success(response) {
-          return zone.trigger(events.zone.update, {content: (response.json != null ? response.json.content : undefined)});
-        }
-      }
-      );
-    });
+  ajax((link.attr("href")),
+    {complete() { return link.removeClass("ajax-update"); }});
 
-    dom.onDocument("click", "a[data-async-trigger]", function(event){
-      const link = this.closest('a[data-async-trigger]');
+  event.nativeEvent.preventDefault();
 
-      link.addClass("ajax-update");
+});
 
-      ajax((link.attr("href")),
-        {complete() { return link.removeClass("ajax-update"); }});
+// Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
+// performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.
+//
+// * id - client id of the element
+// * url - URL to use to refresh the element.
+const deferredZoneUpdate = (id, url) => _.defer(function() {
+  const zone = dom(id);
 
-      event.nativeEvent.preventDefault();
+  if (zone === null) {
+    console.error(`Could not locate element '${id}' to update.`);
+    return;
+  }
 
-    });
-
-    // Locates a zone element by its unique id attribute, and (deferred, to a later event loop cycle),
-    // performs a standard refresh of the zone. This is primarily used by the core/ProgressiveDisplay component.
-    //
-    // * id - client id of the element
-    // * url - URL to use to refresh the element.
-    const deferredZoneUpdate = (id, url) => _.defer(function() {
-      const zone = dom(id);
-
-      if (zone === null) {
-        console.error(`Could not locate element '${id}' to update.`);
-        return;
-      }
-
-      return zone.trigger(events.zone.refresh, { url });});
+  return zone.trigger(events.zone.refresh, { url });
+});
 
     // Most of this module is document-level event handlers, but there's also some exports:
-    return { deferredZoneUpdate, findZone };
-});
+export default { deferredZoneUpdate, findZone };
+

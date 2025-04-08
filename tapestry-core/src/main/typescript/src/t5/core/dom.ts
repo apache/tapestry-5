@@ -1,5 +1,3 @@
-// Copyright 2012-2025 The Apache Software Foundation
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,19 +10,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/exception-display
-//
-// Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
-// filtering the stack trace.
-import dom from "t5/core/dom";
+/**
+ * Never import this module!!!
+ * Stub implemantation of t5/core/dom.js just to allow this project to compile.
+ * This should never be used 
+ * The actual implementation, t5/core/dom-jquery.js or t5/core/dom-prototype.js
+ * will be chosen by Tapestry at runtime according to configuration.
+ */
+import type { ElementWrapper, EventWrapper, RequestWrapper, ResponseWrapper, DOM } from "t5/core/types.js";
 
-dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function() {
-  const {
-    checked
-  } = this.element;
+const exports: DOM = {
 
-  for (var traceList of Array.from(dom.body.find(".stack-trace"))) {
-    traceList[checked ? "addClass" : "removeClass"]("filtered");
-  }
+};
 
-});
+export default exports;
+

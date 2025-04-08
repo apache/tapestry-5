@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012-2014 The Apache Software Foundation
+// Copyright 2012-2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,91 +12,93 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/ajax
-//
-// Exports a single function, that invokes `t5/core/dom:ajaxRequest()` with the provided `url` and a modified version of the
-// `options`.
-//
-// * options.method - "post", "get", etc., default: "post".
-// * options.element - if provided, the URL will be treated as a server-side event name
-//    and the actual URL to be used will be obtained from dom.getEventUrl(url, element)
-// * options.contentType - request content, defaults to "application/x-www-form-urlencoded"
-// * options.data - optional, additional key/value pairs (for the default content type)
-// * options.success - handler to invoke on success. Passed the ResponseWrapper object.
-//   Default does nothing.
-// * options.failure - handler to invoke on failure (server responds with a non-2xx code).
-//   Passed the response. Default will throw the exception
-// * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
-//   Passed the exception. Default will generate an exception message and throw an `Error`.
-//   Note: not really supported under jQuery, a hold-over from Prototype.
-// * options.complete - handler to invoke after success, falure, or exception. The handler is passed no
-//   parameters.
-//
-// It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
-// response (for success), or properly log a server-side failure or client-side exception, including using the
-// `t5/core/exception-frame` module to display a server-side processing exception.
-define(["t5/core/pageinit", "t5/core/dom", "t5/core/exception-frame", "t5/core/console", "underscore"],
-  (pageinit, dom, exceptionframe, console, _) => (function(url, options) {
+/** t5/core/ajax: exports a single function, that invokes `t5/core/dom:ajaxRequest()` with the provided `url` and a modified version of the
+ * `options`.
+ *
+ * * options.method - "post", "get", etc., default: "post".
+ * * options.element - if provided, the URL will be treated as a server-side event name
+ *    and the actual URL to be used will be obtained from dom.getEventUrl(url, element)
+ * * options.contentType - request content, defaults to "application/x-www-form-urlencoded"
+ * * options.data - optional, additional key/value pairs (for the default content type)
+ * * options.success - handler to invoke on success. Passed the ResponseWrapper object.
+ *   Default does nothing.
+ * * options.failure - handler to invoke on failure (server responds with a non-2xx code).
+ *   Passed the response. Default will throw the exception
+ * * options.exception - handler to invoke when an exception occurs (often means the server is unavailable).
+ *   Passed the exception. Default will generate an exception message and throw an `Error`.
+ *   Note: not really supported under jQuery, a hold-over from Prototype.
+ * * options.complete - handler to invoke after success, falure, or exception. The handler is passed no
+ *   parameters.
+ * It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
+ * response (for success), or properly log a server-side failure or client-side exception, including using the
+ * `t5/core/exception-frame` module to display a server-side processing exception.
+ */
+import pageinit from "t5/core/pageinit.js";
+import dom from "t5/core/dom.js";
+import exceptionframe from "t5/core/exception-frame.js";
+import console from "t5/core/console.js";
+import _ from "underscore";
 
-    const complete = function() {
-      if (options.complete) {
-        options.complete();
-      }
-
-    };
-      
-    if (options.hasOwnProperty('element')) {
-      url = dom.getEventUrl(url, options.element);
+export default function(url: String, options: any) {
+  const complete = function() {
+    if (options.complete) {
+      options.complete();
     }
 
-    const newOptions = _.extend({}, options, {
+  };
+    
+  if (options.hasOwnProperty('element')) {
+    url = dom.getEventUrl(url, options.element);
+  }
 
-      // Logs the exception to the console before passing it to the
-      // provided exception handler or throwing the exception.
-      exception(exception) {
-        console.error(`Request to ${url} failed with ${exception}`);
+  const newOptions = _.extend({}, options, {
 
-        if (options.exception) {
-          options.exception(exception);
-        } else {
-          throw exception;
-        }
+    // Logs the exception to the console before passing it to the
+    // provided exception handler or throwing the exception.
+    exception(exception: any) {
+      console.error(`Request to ${url} failed with ${exception}`);
 
-        complete();
-
-      },
-
-      failure(response, failureMessage) {
-        const raw = response.header("X-Tapestry-ErrorMessage");
-        if (!_.isEmpty(raw)) {
-          const message = window.unescape(raw);
-          console.error(`Request to ${url} failed with '${message}'.`);
-
-          const contentType = response.header("content-type");
-
-          const isHTML = contentType && (contentType.split(';')[0] === "text/html");
-
-          if (isHTML) {
-            exceptionframe(response.text);
-          }
-        } else {
-          console.error(failureMessage);
-        }
-
-        options.failure && options.failure(response);
-
-        complete();
-
-      },
-
-      success(response) {
-        pageinit.handlePartialPageRenderResponse(response, options.success);
-
-        complete();
-
+      if (options.exception) {
+        options.exception(exception);
+      } else {
+        throw exception;
       }
-    }
-    );
 
-    return dom.ajaxRequest(url, newOptions);
-  }));
+      complete();
+
+    },
+
+    failure(response: any, failureMessage: string) {
+      const raw = response.header("X-Tapestry-ErrorMessage");
+      if (!_.isEmpty(raw)) {
+        const message = window.unescape(raw);
+        console.error(`Request to ${url} failed with '${message}'.`);
+
+        const contentType = response.header("content-type");
+
+        const isHTML = contentType && (contentType.split(';')[0] === "text/html");
+
+        if (isHTML) {
+          exceptionframe(response.text);
+        }
+      } else {
+        console.error(failureMessage);
+      }
+
+      options.failure && options.failure(response);
+
+      complete();
+
+    },
+
+    success(response: any) {
+      pageinit.handlePartialPageRenderResponse(response, options.success);
+
+      complete();
+
+    }
+  }
+  );
+
+  return dom.ajaxRequest(url, newOptions);
+};

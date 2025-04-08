@@ -1,4 +1,4 @@
-// Copyright 2012-2013 The Apache Software Foundation
+// Copyright 2012-2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,29 +30,30 @@
 // assumed to contain sensitive data (such as database URLs or passwords) and will not be
 // exposed to the client.
 
+import _ from "underscore";
+import console from "t5/core/console";
+
 // In the unexpected case that the data-locale attribute is missing, assume English
 const locale = (document.documentElement.getAttribute("data-locale")) || "en";
 
-define([`t5/core/messages/${locale}`, "underscore", "t5/core/console"],
-  function(messages, _, console) {
+const messages = import(`t5/core/messages/${locale}`);
 
-    // Returns the application message catalog message for the given key. Returns
-    // a placeholder if the key is not found.
-    const get = function(key) {
-      const value = messages[key];
+// Returns the application message catalog message for the given key. Returns
+// a placeholder if the key is not found.
+const get = function(key) {
+  const value = messages[key];
 
-      if (value) {
-        return value;
-      } else {
-        console.error(`No value for message catalog key '${key}' exists.`);
-        return `[[Missing Key: '${key}']]`;
-      }
-    };
+  if (value) {
+    return value;
+  } else {
+    console.error(`No value for message catalog key '${key}' exists.`);
+    return `[[Missing Key: '${key}']]`;
+  }
+};
 
-    // Returns all keys that are defined by the underlying catalog, in no specific order.
-    get.keys = () => _.keys(messages);
+// Returns all keys that are defined by the underlying catalog, in no specific order.
+get.keys = () => _.keys(messages);
 
 
-    // Export get as the main function.
-    return get;
-});
+// Export get as the main function.
+export default get;

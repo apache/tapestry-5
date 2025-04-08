@@ -1,4 +1,4 @@
-// Copyright 2012-2014 The Apache Software Foundation
+// Copyright 2012-2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/events
-//
-// This module defines logical names for all events that Tapestry-controlled elements
-// trigger or listener for. Prototype requires that all custom events have a namespace prefix; jQuery appears to
-// allow it without issue.
-define({
+/** ## t5/core/events
+ *
+ * This module defines logical names for all events that Tapestry-controlled elements
+ * trigger or listener for. Prototype requires that all custom events have a namespace prefix; jQuery appears to
+ * allow it without issue.
+ */
+export default {
 
   // Defines events related to the validation and submission of forms. See module `t5/core/forms` for further details.
   // All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
@@ -191,4 +192,4 @@ define({
   },
   // Event to scan inserted DOM content for components to initialize (see t5/core/dom:scanner)
   initializeComponents : "t5:initializeComponents"
-});
+}

@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012, 2013 The Apache Software Foundation
+// Copyright 2012, 2013, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,114 +15,112 @@
 // ## t5/core/tree
 //
 // Handlers to support to the core/Tree Tapestry component.
-define(["t5/core/dom", "t5/core/ajax", "t5/core/zone"],
-  function(dom, ajax) {
-    const TREE = "[data-component-type='core/Tree']";
-    const NODE_ID = "data-node-id";
-    const SELECTOR = `${TREE} [${NODE_ID}]`;
 
-    const LOADING = "tree-children-loading";
-    const LOADED = "tree-children-loaded";
-    const EXPANDED = "tree-expanded";
-    const SELECTED = "selected-leaf-node";
+import dom from "t5/core/dom";
+import ajax from "t5/core/ajax";
+import "t5/core/zone";
 
-    const send = function(node, action, success) {
-      const container = node.findParent(TREE);
-      const url = container.attr("data-tree-action-url");
+const TREE = "[data-component-type='core/Tree']";
+const NODE_ID = "data-node-id";
+const SELECTOR = `${TREE} [${NODE_ID}]`;
 
-      return ajax(url, {
-        data: {
-          "t:action": action,
-          "t:nodeid": node.attr(NODE_ID)
-        },
-        success
-      }
-      );
-    };
+const LOADING = "tree-children-loading";
+const LOADED = "tree-children-loaded";
+const EXPANDED = "tree-expanded";
+const SELECTED = "selected-leaf-node";
 
-    const loadChildren = function(node) {
+const send = function(node, action, success) {
+  const container = node.findParent(TREE);
+  const url = container.attr("data-tree-action-url");
 
-      // Ignore duplicate requests to load the children.
-      if (node.meta(LOADING)) { return; }
+  return ajax(url, {
+    data: {
+      "t:action": action,
+      "t:nodeid": node.attr(NODE_ID)
+    },
+    success
+  }
+  );
+};
 
-      node.meta(LOADING, true);
+const loadChildren = function(node) {
 
-      node.addClass("empty-node");
-      node.update("<span class='tree-ajax-wait'/>");
+  // Ignore duplicate requests to load the children.
+  if (node.meta(LOADING)) { return; }
 
-      return send(node, "expand", function(response) {
-        // Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
-        // icon instead of a "+" icon)
-        node.update("").addClass(EXPANDED).removeClass("empty-node");
+  node.meta(LOADING, true);
 
-        const label = node.findParent("li").findFirst(".tree-label");
+  node.addClass("empty-node");
+  node.update("<span class='tree-ajax-wait'/>");
 
-        label.insertAfter(response.json.content);
+  return send(node, "expand", function(response) {
+    // Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
+    // icon instead of a "+" icon)
+    node.update("").addClass(EXPANDED).removeClass("empty-node");
 
-        node.meta(LOADING, false);
-        return node.meta(LOADED, true);
-      });
-    };
+    const label = node.findParent("li").findFirst(".tree-label");
 
-    // toggles a folder in the tree between expanded and collapsed (once data for the folder
-    // has been loaded).
-    const toggle = function(node) {
-      const sublist = node.findParent("li").findFirst("ul");
+    label.insertAfter(response.json.content);
 
-      if (node.hasClass(EXPANDED)) {
-        node.removeClass(EXPANDED);
-        sublist.hide();
-        send(node, "markCollapsed");
-        return;
-      }
+    node.meta(LOADING, false);
+    return node.meta(LOADED, true);
+  });
+};
 
-      node.addClass(EXPANDED);
-      sublist.show();
-      return send(node, "markExpanded");
-    };
+// toggles a folder in the tree between expanded and collapsed (once data for the folder
+// has been loaded).
+const toggle = function(node) {
+  const sublist = node.findParent("li").findFirst("ul");
 
-    // The handler is triggered on the `<span data-node-id=''>` directly inside the `<li>`.
-    const clickHandler = function() {
+  if (node.hasClass(EXPANDED)) {
+    node.removeClass(EXPANDED);
+    sublist.hide();
+    send(node, "markCollapsed");
+    return;
+  }
 
-      // Ignore clicks on leaf nodes, and on folders that are known to be empty.
-      if ((this.parent().hasClass("leaf-node")) || (this.hasClass("empty-node"))) {
-        return false;
-      }
+  node.addClass(EXPANDED);
+  sublist.show();
+  return send(node, "markExpanded");
+};
 
-      // If not already loaded then fire off the Ajax request to load the content.
-      if ((this.meta(LOADED)) || (this.hasClass(EXPANDED))) {
-        toggle(this);
-      } else {
-        loadChildren(this);
-      }
+// The handler is triggered on the `<span data-node-id=''>` directly inside the `<li>`.
+const clickHandler = function() {
 
-      return false;
-    };
+  // Ignore clicks on leaf nodes, and on folders that are known to be empty.
+  if ((this.parent().hasClass("leaf-node")) || (this.hasClass("empty-node"))) {
+    return false;
+  }
 
-    const toggleSelection = function() {
+  // If not already loaded then fire off the Ajax request to load the content.
+  if ((this.meta(LOADED)) || (this.hasClass(EXPANDED))) {
+    toggle(this);
+  } else {
+    loadChildren(this);
+  }
 
-      const selected = this.hasClass(SELECTED);
+  return false;
+};
 
-      const node = this.findParent("li").findFirst(`[${NODE_ID}]`);
+const toggleSelection = function() {
 
-      if (selected) {
-        this.removeClass(SELECTED);
-        send(node, "deselect");
-      } else {
-        this.addClass(SELECTED);
-        send(node, "select");
-      }
+  const selected = this.hasClass(SELECTED);
 
-      return false;
-    };
+  const node = this.findParent("li").findFirst(`[${NODE_ID}]`);
 
-    dom.onDocument("click", SELECTOR, clickHandler);
+  if (selected) {
+    this.removeClass(SELECTED);
+    send(node, "deselect");
+  } else {
+    this.addClass(SELECTED);
+    send(node, "select");
+  }
 
-    dom.onDocument("click",
-      `${TREE}[data-tree-node-selection-enabled] LI.leaf-node > .tree-label`,
-      toggleSelection);
+  return false;
+};
 
+dom.onDocument("click", SELECTOR, clickHandler);
 
-    return null;
-});
-  
+dom.onDocument("click",
+  `${TREE}[data-tree-node-selection-enabled] LI.leaf-node > .tree-label`,
+  toggleSelection);

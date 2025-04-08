@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,22 +22,21 @@
 // Used with the LocalDate component to present a Date in a particular format, in the
 // browser's time zone.
 
-define(["t5/core/dom", "t5/core/moment"],
-function(dom, moment) {
+import dom from "t5/core/dom"
+import moment from "t5/core/moment";
 
-  const ATTR = "data-localdate-format";
+const ATTR = "data-localdate-format";
 
-  return dom.scanner(`[${ATTR}]`, function(el) {
-    const format = el.attr(ATTR);
+dom.scanner(`[${ATTR}]`, function(el) {
+  const format = el.attr(ATTR);
 
-    const isoString = el.text();
+  const isoString = el.text();
 
-    const m = moment(isoString);
+  const m = moment(isoString);
 
-    el.update(m.format(format));
+  el.update(m.format(format));
 
-    // A good scanner callback always removes itself from future scans.
-    el.attr(ATTR, null);
+  // A good scanner callback always removes itself from future scans.
+  el.attr(ATTR, null);
 
-  });
 });

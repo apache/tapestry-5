@@ -20,201 +20,205 @@
 //
 // Support for Tapestry's built-in set of translators and validators.
 //
-define(["underscore", "t5/core/dom", "t5/core/events", "t5/core/utils", "t5/core/messages", "t5/core/fields"],
-  function(_, dom, events, utils, messages) {
 
-    const REGEXP_META = "t5:regular-expression";
+import _ from "underscore";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
+import utils from "t5/core/utils";
+import messages from "t5/core/messages"
+import fields from  "t5/core/fields";
 
-    const minus = messages("decimal-symbols.minus");
-    const grouping = messages("decimal-symbols.group");
-    const decimal = messages("decimal-symbols.decimal");
+const REGEXP_META = "t5:regular-expression";
 
-    // Formats a string for a localized number into a simple number. This uses localization
-    // information provided by `t5/core/messages` to remove grouping seperators and convert the
-    // minus sign and decimal seperator into english norms ("-" and ".") that are compatible
-    // with the `Number` constructor. May throw `Error` if the input can not be parsed.
-    //
-    // A little state machine does the parsing; the input may have a leading minus sign.
-    // It then consists primarily of numeric digits. At least one digit must occur
-    // between each grouping character. Grouping characters are not allowed
-    // after the decimal point.
-    //
-    // * input - input string to be converted
-    // * isInteger - restrict to integer values (decimal point not allowed)
-    const parseNumber = function(input, isInteger) {
+const minus = messages("decimal-symbols.minus");
+const grouping = messages("decimal-symbols.group");
+const decimal = messages("decimal-symbols.decimal");
 
-      let canonical = "";
+// Formats a string for a localized number into a simple number. This uses localization
+// information provided by `t5/core/messages` to remove grouping seperators and convert the
+// minus sign and decimal seperator into english norms ("-" and ".") that are compatible
+// with the `Number` constructor. May throw `Error` if the input can not be parsed.
+//
+// A little state machine does the parsing; the input may have a leading minus sign.
+// It then consists primarily of numeric digits. At least one digit must occur
+// between each grouping character. Grouping characters are not allowed
+// after the decimal point.
+//
+// * input - input string to be converted
+// * isInteger - restrict to integer values (decimal point not allowed)
+const parseNumber = function(input, isInteger) {
 
-      const accept = ch => canonical += ch;
+  let canonical = "";
 
-      const acceptDigitOnly = function(ch) {
-        if ((ch < "0") || (ch > "9")) {
-          throw new Error(messages("core-input-not-numeric"));
+  const accept = ch => canonical += ch;
+
+  const acceptDigitOnly = function(ch) {
+    if ((ch < "0") || (ch > "9")) {
+      throw new Error(messages("core-input-not-numeric"));
+    }
+
+    accept(ch);
+  };
+
+  const mustBeDigit = function(ch) {
+    acceptDigitOnly(ch);
+    return any;
+  };
+
+  var decimalPortion = function(ch) {
+    acceptDigitOnly(ch);
+    return decimalPortion;
+  };
+
+  var any = function(ch) {
+    switch (ch) {
+      case grouping: return mustBeDigit;
+      case decimal:
+        if (isInteger) {
+          throw new Error(messages("core-input-not-integer"));
         }
 
-        accept(ch);
-      };
-
-      const mustBeDigit = function(ch) {
-        acceptDigitOnly(ch);
-        return any;
-      };
-
-      var decimalPortion = function(ch) {
-        acceptDigitOnly(ch);
+        accept(".");
         return decimalPortion;
-      };
+      default:
+        return mustBeDigit(ch);
+    }
+  };
 
-      var any = function(ch) {
-        switch (ch) {
-          case grouping: return mustBeDigit;
-          case decimal:
-            if (isInteger) {
-              throw new Error(messages("core-input-not-integer"));
-            }
+  const leadingMinus = function(ch) {
+    if (ch === minus) {
+      accept("-");
+      return mustBeDigit;
+    } else {
+      return any(ch);
+    }
+  };
 
-            accept(".");
-            return decimalPortion;
-          default:
-            return mustBeDigit(ch);
-        }
-      };
+  let state = leadingMinus;
 
-      const leadingMinus = function(ch) {
-        if (ch === minus) {
-          accept("-");
-          return mustBeDigit;
-        } else {
-          return any(ch);
-        }
-      };
+  for (var ch of Array.from(utils.trim(input))) {
+    state = (state(ch));
+  }
 
-      let state = leadingMinus;
+  return Number(canonical);
+};
 
-      for (var ch of Array.from(utils.trim(input))) {
-        state = (state(ch));
-      }
+const matches = function(input, re) {
+  const groups = input.match(re);
 
-      return Number(canonical);
-    };
+  // Unlike Java, there isn't an easy way to match the entire string. This
+  // gets the job done.
 
-    const matches = function(input, re) {
-      const groups = input.match(re);
+  if (groups === null) { return false; }
 
-      // Unlike Java, there isn't an easy way to match the entire string. This
-      // gets the job done.
+  return groups[0] === input;
+};
 
-      if (groups === null) { return false; }
+const emailRE = new RegExp("[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?");
 
-      return groups[0] === input;
-    };
+const translate = function(field, memo, isInteger) {
+  try {
+    const result = parseNumber(memo.value, isInteger);
 
-    const emailRE = new RegExp("[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?");
+    if (_.isNaN(result)) {
+      throw messages("core-input-not-numeric");
+    }
 
-    const translate = function(field, memo, isInteger) {
-      try {
-        const result = parseNumber(memo.value, isInteger);
+    return memo.translated = result;
+  } catch (e) {
+    memo.error = (field.attr("data-translation-message")) || e.message || "ERROR";
+    return false;
+  }
+};
 
-        if (_.isNaN(result)) {
-          throw messages("core-input-not-numeric");
-        }
+dom.onDocument(events.field.optional, "[data-optionality=required]", function(event, memo) {
 
-        return memo.translated = result;
-      } catch (e) {
-        memo.error = (field.attr("data-translation-message")) || e.message || "ERROR";
-        return false;
-      }
-    };
+  if (utils.isBlank(memo.value)) {
+    return memo.error =  (this.attr("data-required-message")) || "REQUIRED";
+  }
+});
 
-    dom.onDocument(events.field.optional, "[data-optionality=required]", function(event, memo) {
+dom.onDocument(events.field.translate, "[data-translation=numeric]", function(event, memo) {
+  return translate(this, memo, false);
+});
 
-      if (utils.isBlank(memo.value)) {
-        return memo.error =  (this.attr("data-required-message")) || "REQUIRED";
-      }
-    });
+dom.onDocument(events.field.translate, "[data-translation=integer]", function(event, memo) {
+  return translate(this, memo, true);
+});
 
-    dom.onDocument(events.field.translate, "[data-translation=numeric]", function(event, memo) {
-      return translate(this, memo, false);
-    });
+dom.onDocument(events.field.validate, "[data-validate-min-length]", function(event, memo) {
+  const min = parseInt(this.attr("data-validate-min-length"));
 
-    dom.onDocument(events.field.translate, "[data-translation=integer]", function(event, memo) {
-      return translate(this, memo, true);
-    });
+  if (memo.translated.length < min) {
+    memo.error = (this.attr("data-min-length-message")) || "TOO SHORT";
+    return false;
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-validate-min-length]", function(event, memo) {
-      const min = parseInt(this.attr("data-validate-min-length"));
+dom.onDocument(events.field.validate, "[data-validate-max-length]", function(event, memo) {
+  const max = parseInt(this.attr("data-validate-max-length"));
 
-      if (memo.translated.length < min) {
-        memo.error = (this.attr("data-min-length-message")) || "TOO SHORT";
-        return false;
-      }
-    });
+  if (memo.translated.length > max) {
+    memo.error = (this.attr("data-max-length-message")) || "TOO LONG";
+    return false;
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-validate-max-length]", function(event, memo) {
-      const max = parseInt(this.attr("data-validate-max-length"));
+dom.onDocument(events.field.validate, "[data-validate-max]", function(event, memo) {
+  const max = parseInt(this.attr("data-validate-max"));
 
-      if (memo.translated.length > max) {
-        memo.error = (this.attr("data-max-length-message")) || "TOO LONG";
-        return false;
-      }
-    });
+  if (memo.translated > max) {
+    memo.error = (this.attr("data-max-message")) || "TOO LARGE";
+    return false;
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-validate-max]", function(event, memo) {
-      const max = parseInt(this.attr("data-validate-max"));
+dom.onDocument(events.field.validate, "[data-validate-min]", function(event, memo) {
+  const min = parseInt(this.attr("data-validate-min"));
 
-      if (memo.translated > max) {
-        memo.error = (this.attr("data-max-message")) || "TOO LARGE";
-        return false;
-      }
-    });
+  if (memo.translated < min) {
+    memo.error = (this.attr("data-min-message")) || "TOO SMALL";
+    return false;
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-validate-min]", function(event, memo) {
-      const min = parseInt(this.attr("data-validate-min"));
+dom.onDocument(events.field.validate, "[data-validate-email]", function(event, memo) {
 
-      if (memo.translated < min) {
-        memo.error = (this.attr("data-min-message")) || "TOO SMALL";
-        return false;
-      }
-    });
+  if (!matches(memo.translated, emailRE)) {
+    memo.error = (this.attr("data-email-message")) || "INVALID EMAIL";
+    return false;
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-validate-email]", function(event, memo) {
+dom.onDocument(events.field.validate, "[data-validate-regexp]", function(event, memo) {
 
-      if (!matches(memo.translated, emailRE)) {
-        memo.error = (this.attr("data-email-message")) || "INVALID EMAIL";
-        return false;
-      }
-    });
+  // Cache the compiled regular expression.
+  let re = this.meta(REGEXP_META);
 
-    dom.onDocument(events.field.validate, "[data-validate-regexp]", function(event, memo) {
+  if (!re) {
+    re = new RegExp(this.attr("data-validate-regexp"));
+    this.meta(REGEXP_META, re);
+  }
 
-      // Cache the compiled regular expression.
-      let re = this.meta(REGEXP_META);
+  if (!matches(memo.translated, re)) {
+    memo.error = (this.attr("data-regexp-message")) || "INVALID";
+    return false;
+  }
+});
 
-      if (!re) {
-        re = new RegExp(this.attr("data-validate-regexp"));
-        this.meta(REGEXP_META, re);
-      }
+dom.onDocument(events.field.validate, "[data-expected-status=checked]", function(event, memo) {
 
-      if (!matches(memo.translated, re)) {
-        memo.error = (this.attr("data-regexp-message")) || "INVALID";
-        return false;
-      }
-    });
+  if (!memo.value) {
+    return memo.error =  (this.attr("data-checked-message")) || "MUST BE CHECKED";
+  }
+});
 
-    dom.onDocument(events.field.validate, "[data-expected-status=checked]", function(event, memo) {
+dom.onDocument(events.field.validate, "[data-expected-status=unchecked]", function(event, memo) {
 
-      if (!memo.value) {
-        return memo.error =  (this.attr("data-checked-message")) || "MUST BE CHECKED";
-      }
-    });
-
-    dom.onDocument(events.field.validate, "[data-expected-status=unchecked]", function(event, memo) {
-
-      if (memo.value) {
-        return memo.error =  (this.attr("data-checked-message")) || "MUST NOT BE CHECKED";
-      }
-    });
+  if (memo.value) {
+    return memo.error =  (this.attr("data-checked-message")) || "MUST NOT BE CHECKED";
+  }
+});
 
     // Export the number parser, just to be nice (and to support some testing).
-    return { parseNumber };
-});
+export default { parseNumber };

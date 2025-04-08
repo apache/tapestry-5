@@ -1,10 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012, 2013 The Apache Software Foundation
+// Copyright 2012, 2013, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,81 +16,82 @@
 //
 // Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
 // core/RemoveRowLink).
-define(["t5/core/dom", "t5/core/events", "t5/core/console", "t5/core/ajax"],
-  function(dom, events, console, ajax) {
+import dom from "t5/core/dom";
+import events from "t5/core/events";
+import console from "t5/core/console"
+import ajax from  "t5/core/ajax";
 
-    // "afl" is short for "AjaxFormLoop".
-    const AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']";
-    const FRAGMENT_TYPE = "core/ajaxformloop-fragment";
+// "afl" is short for "AjaxFormLoop".
+const AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']";
+const FRAGMENT_TYPE = "core/ajaxformloop-fragment";
 
-    dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function() {
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function() {
 
-      const afl = this.findParent(AFL_SELECTOR);
+  const afl = this.findParent(AFL_SELECTOR);
 
-      if (!afl) {
-        console.error("Enclosing element for AjaxFormLoop remove row link not found.");
-        return false;
-      }
+  if (!afl) {
+    console.error("Enclosing element for AjaxFormLoop remove row link not found.");
+    return false;
+  }
 
-      const url = afl.attr("data-remove-row-url");
+  const url = afl.attr("data-remove-row-url");
 
-      ajax(url, {
-        data: {
-          "t:rowvalue": (this.closest("[data-afl-row-value]")).attr("data-afl-row-value")
-        },
-        success: () => {
-          // The server has removed the row from persistent storage, lets
-          // do the same on the UI.
+  ajax(url, {
+    data: {
+      "t:rowvalue": (this.closest("[data-afl-row-value]")).attr("data-afl-row-value")
+    },
+    success: () => {
+      // The server has removed the row from persistent storage, lets
+      // do the same on the UI.
 
-          const fragment = this.findParent(`[data-container-type='${FRAGMENT_TYPE}']`);
+      const fragment = this.findParent(`[data-container-type='${FRAGMENT_TYPE}']`);
 
-          // TODO: Fire some before & after events, to allow for animation.
+      // TODO: Fire some before & after events, to allow for animation.
 
-          // The fragment takes with it the hidden fields that control form submission
-          // for its portion of the form.
-          return fragment.remove();
-        }
-      }
-      );
+      // The fragment takes with it the hidden fields that control form submission
+      // for its portion of the form.
+      return fragment.remove();
+    }
+  }
+  );
 
-      return false;
-    });
-
-    dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function() {
-
-      const afl = this.findParent(AFL_SELECTOR);
-
-      const insertionPoint = this.findParent("[data-afl-behavior=insert-before]");
-
-      const url = afl.attr("data-inject-row-url");
-
-      ajax(url, {
-        success(response) {
-          const content = (response.json != null ? response.json.content : undefined) || "";
-
-          // Create a new element with the same type (usually "div") and class as this element.
-          // It will contain the new content.
-
-          const newElement = dom.create(insertionPoint.element.tagName,
-                                  {'class': insertionPoint.element.className, 'data-container-type': FRAGMENT_TYPE},
-                                  content);
-
-
-          insertionPoint.insertBefore(newElement);
-
-          // Initialize components inside the new row
-          newElement.trigger(events.initializeComponents);
-
-          // Trigger this event, to inform the world that the zone-like new element has been updated
-          // with content.
-          insertionPoint.trigger(events.zone.didUpdate);
-
-        }
-      }
-      );
-
-      return false;
-    });
-
-    // This module is all event handlers, and no exported functions.
+  return false;
 });
+
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function() {
+
+  const afl = this.findParent(AFL_SELECTOR);
+
+  const insertionPoint = this.findParent("[data-afl-behavior=insert-before]");
+
+  const url = afl.attr("data-inject-row-url");
+
+  ajax(url, {
+    success(response) {
+      const content = (response.json != null ? response.json.content : undefined) || "";
+
+      // Create a new element with the same type (usually "div") and class as this element.
+      // It will contain the new content.
+
+      const newElement = dom.create(insertionPoint.element.tagName,
+                              {'class': insertionPoint.element.className, 'data-container-type': FRAGMENT_TYPE},
+                              content);
+
+
+      insertionPoint.insertBefore(newElement);
+
+      // Initialize components inside the new row
+      newElement.trigger(events.initializeComponents);
+
+      // Trigger this event, to inform the world that the zone-like new element has been updated
+      // with content.
+      insertionPoint.trigger(events.zone.didUpdate);
+
+    }
+  }
+  );
+
+  return false;
+});
+
+// This module is all event handlers, and no exported functions.

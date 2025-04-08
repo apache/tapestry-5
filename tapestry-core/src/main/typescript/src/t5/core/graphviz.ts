@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2023 The Apache Software Foundation
+// Copyright 2023, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,17 +15,19 @@
 // ## t5/core/graphviz
 //
 // Support to the core/Graphviz Tapestry component.
-define(["https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.umd.js"],
-  function(hpccWasm) {
-    const render = (value, id, showDownloadLink) => hpccWasm.Graphviz.load().then(function(graphviz) {
-      const svg = graphviz.dot(value);
-      const div = document.getElementById(id);
-      const layout = graphviz.layout(value, "svg", "dot");
-      div.innerHTML = layout;
-      if (showDownloadLink) {
-        const link = document.getElementById((id + "-download"));
-        return link.setAttribute("href", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(layout));
-      }
-    });
-    return render;
+import { Graphviz } from "https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js";
+
+export default (value: string, id: string , showDownloadLink: boolean) => Graphviz.load().then(function(graphviz: any) {
+  const svg = graphviz.dot(value);
+  const div: Element | null = document.getElementById(id);
+  const layout = graphviz.layout(value, "svg", "dot");
+  if (div != null) {
+    div.innerHTML = layout;
+}
+  if (showDownloadLink) {
+    const link = document.getElementById((id + "-download"));
+    if (link != null) {
+      return link.setAttribute("href", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(layout));
+    }
+  }
 });

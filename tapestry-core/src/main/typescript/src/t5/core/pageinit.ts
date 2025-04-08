@@ -26,262 +26,264 @@
 // The module name may also indicate the function exported by the module, as a suffix following a colon:
 // e.g., "my/module:myfunc".
 // Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define(["underscore", "t5/core/console", "t5/core/dom", "t5/core/events"],
-  function(_, console, dom, events) {
-    let exports;
-    let pathPrefix = null;
 
-    // Borrowed from Prototype:
-    const isOpera = Object.prototype.toString.call(window.opera) === '[object Opera]';
-    const isIE = !!window.attachEvent && !isOpera;
+import _ from "underscore";
+import console from "t5/core/console";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
 
-    const rebuildURL = function(path) {
-      if (path.match(/^https?:/)) { return path; }
+let exports;
+let pathPrefix = null;
 
-      // See Tapestry.rebuildURL() for an error about the path not starting with a leading '/'
-      // We'll assume that doesn't happen.
+// Borrowed from Prototype:
+const isOpera = Object.prototype.toString.call(window.opera) === '[object Opera]';
+const isIE = !!window.attachEvent && !isOpera;
 
-      if (!pathPrefix) {
-        const l = window.location;
-        pathPrefix = `${l.protocol}//${l.host}`;
-      }
+const rebuildURL = function(path) {
+  if (path.match(/^https?:/)) { return path; }
 
-      return pathPrefix + path;
-    };
+  // See Tapestry.rebuildURL() for an error about the path not starting with a leading '/'
+  // We'll assume that doesn't happen.
 
-    const rebuildURLOnIE =
-      isIE ? rebuildURL : _.identity;
+  if (!pathPrefix) {
+    const l = window.location;
+    pathPrefix = `${l.protocol}//${l.host}`;
+  }
 
-    const addStylesheets = function(newStylesheets) {
-      if (!newStylesheets) { return; }
+  return pathPrefix + path;
+};
 
-      // Figure out which stylesheets are loaded; adjust for IE, and especially, IE 9
-      // which can report a stylesheet's URL as null (not empty string).
-      const loaded = _.chain(document.styleSheets)
-      .pluck("href")
-      .without("")
-      .without(null)
-      .map(rebuildURLOnIE);
+const rebuildURLOnIE =
+  isIE ? rebuildURL : _.identity;
 
-      const insertionPoint = _.find(document.styleSheets, function(ss) {
-        const parent = ss.ownerNode || ss.owningElement;
-        return parent.rel === "stylesheet ajax-insertion-point";
-    });
+const addStylesheets = function(newStylesheets) {
+  if (!newStylesheets) { return; }
 
-      // Most browsers support document.head, but older IE doesn't:
-      const head = document.head || document.getElementsByTagName("head")[0];
+  // Figure out which stylesheets are loaded; adjust for IE, and especially, IE 9
+  // which can report a stylesheet's URL as null (not empty string).
+  const loaded = _.chain(document.styleSheets)
+  .pluck("href")
+  .without("")
+  .without(null)
+  .map(rebuildURLOnIE);
 
-      _.chain(newStylesheets)
-      .map(ss => ({
-        href: rebuildURL(ss.href),
-        media: ss.media
-      }))
-      .reject(ss => loaded.contains(ss.href).value())
-      .each(function(ss) {
-        const element = document.createElement("link");
-        element.setAttribute("type", "text/css");
-        element.setAttribute("rel", "stylesheet");
-        element.setAttribute("href", ss.href);
-        if (ss.media) {
-          element.setAttribute("media", ss.media);
-        }
+  const insertionPoint = _.find(document.styleSheets, function(ss) {
+    const parent = ss.ownerNode || ss.owningElement;
+    return parent.rel === "stylesheet ajax-insertion-point";
+});
 
-        if (insertionPoint) {
-          head.insertBefore(element, insertionPoint.ownerNode);
-        } else {
-          head.appendChild(element);
-        }
+  // Most browsers support document.head, but older IE doesn't:
+  const head = document.head || document.getElementsByTagName("head")[0];
 
-        return console.debug(`Added stylesheet ${ss.href}`);
-      });
+  _.chain(newStylesheets)
+  .map(ss => ({
+    href: rebuildURL(ss.href),
+    media: ss.media
+  }))
+  .reject(ss => loaded.contains(ss.href).value())
+  .each(function(ss) {
+    const element = document.createElement("link");
+    element.setAttribute("type", "text/css");
+    element.setAttribute("rel", "stylesheet");
+    element.setAttribute("href", ss.href);
+    if (ss.media) {
+      element.setAttribute("media", ss.media);
+    }
 
-    };
+    if (insertionPoint) {
+      head.insertBefore(element, insertionPoint.ownerNode);
+    } else {
+      head.appendChild(element);
+    }
 
-    const invokeInitializer = function(tracker, qualifiedName, initArguments) {
-      const [moduleName, functionName] = Array.from(qualifiedName.split(':'));
+    return console.debug(`Added stylesheet ${ss.href}`);
+  });
 
-      return require([moduleName], function(moduleLib) {
-      
-        try {
-          // Some modules export nothing but do some full-page initialization, such as adding
-          // event handlers to the body.
-          if (!functionName &&
-            (initArguments.length === 0) &&
-            !_.isFunction(moduleLib)) {
-              console.debug(`Loaded module ${moduleName}`);
-              return;
-            }
+};
 
-          if (!moduleLib) {
-            throw new Error(`require('${moduleName}') returned ${moduleLib} when not expected`);
-          }
+const invokeInitializer = function(tracker, qualifiedName, initArguments) {
+  const [moduleName, functionName] = Array.from(qualifiedName.split(':'));
 
-          const fn = (functionName != null) ? moduleLib[functionName] : moduleLib;
-
-          if (fn == null) {
-            if (functionName) {
-              console.error(`Could not locate function \`${qualifiedName}' in ${JSON.stringify(moduleLib)}`);
-              console.error(moduleLib);
-            }
-            throw new Error(`Could not locate function \`${qualifiedName}'.`);
-          }
-
-          if (console.debugEnabled) {
-            const argsString = (Array.from(initArguments).map((arg) => JSON.stringify(arg))).join(", ");
-            console.debug(`Invoking ${qualifiedName}(${argsString})`);
-          }
-
-          return fn.apply(null, initArguments);
-        } finally {
-          tracker();
-        }
-      });
-    };
-
-    // Loads all specified libraries in order (this includes the core stack, other stacks, and
-    // any free-standing libraries). It then executes the initializations. Once all initializations have
-    // completed (which is usually an asynchronous operation, as initializations may require the loading
-    // of further modules), then the `data-page-initialized` attribute of the `<body>` element is set to
-    // 'true'.
-    //
-    // This is the main export of the module; other functions are attached as properties.
-    const loadLibrariesAndInitialize = function(libraries, inits) {
-      console.debug(`Loading ${(libraries != null ? libraries.length : undefined) || 0} libraries`);
-      return exports.loadLibraries(libraries,
-        () => exports.initialize(inits,
-          function() {
-            // At this point, all libraries have been loaded, and all inits should have executed. Unless some of
-            // the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
-            // be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
-            // Later Ajax requests will cause the data-ajax-active attribute to be incremented (from 0)
-            // and decremented (when the requests complete).
-
-            dom.body.attr("data-page-initialized", "true");
-
-            return Array.from(dom.body.find(".pageloading-mask")).map((mask) =>
-              mask.remove());
-        }));
-    };
-
-    return exports = _.extend(loadLibrariesAndInitialize, {
-      // Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
-      // of modules, the exact order in which initializer functions are invoked is not predictable.
-      initialize(inits, callback) {
-        if (inits == null) { inits = []; }
-        console.debug(`Executing ${inits.length} inits`);
-        let callbackCountdown = inits.length + 1;
-
-        // tracker gets invoked once after each require/callback, plus once extra
-        // (to handle the case where there are no inits). When the count hits zero,
-        // it invokes the callback (if there is one).
-        const tracker = function() {
-          callbackCountdown--;
-
-          if (callbackCountdown === 0) {
-            console.debug("All inits executed");
-            if (callback) { return callback(); }
-          }
-        };
-
-        // First value in each init is the qualified module name; anything after
-        // that are arguments to be passed to the identified function. A string
-        // is the name of a module to load, or function to invoke, that
-        // takes no parameters.
-        for (var init of Array.from(inits)) {
-          if (_.isString(init)) {
-            invokeInitializer(tracker, init, []);
-          } else {
-            var [qualifiedName, ...initArguments] = Array.from(init);
-            invokeInitializer(tracker, qualifiedName, initArguments);
-          }
-        }
-
-        return tracker();
-      },
-
-      // Pre-loads a number of libraries in order. When the last library is loaded,
-      // invokes the callback (with no parameters).
-      loadLibraries(libraries, callback) {
-        const reducer = (callback, library) => (function() {
-          console.debug(`Loading library ${library}`);
-          return require([library], callback);
-        });
-
-        const finalCallback = _.reduceRight(libraries, reducer, callback);
-
-        return finalCallback.call(null);
-      },
-
-      evalJavaScript(js) {
-        console.debug(`Evaluating: ${js}`);
-        return eval(js);
-      },
-
-      // Triggers the focus event on the field, if the field exist. Focus occurs delayed 1/8th of a
-      // second, which helps ensure that other initializions on the page are in place.
-      //
-      // * fieldId - element id of field to focus on
-      focus(fieldId) {
-        const field = dom(fieldId);
-
-        if (field) {
-          return _.delay((() => field.focus()), 125);
-        }
-      },
-
-      // Passed the response from an Ajax request, when the request is successful.
-      // This is used for any request that attaches partial-page-render data to the main JSON object
-      // response.  If no such data is attached, the callback is simply invoked immediately.
-      // Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
-      // of JavaScript libraries and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
-      // the callback is invoked, passed the response (with any Tapestry-specific data removed).
-      // After the callback is invoked, page initializations occur.  This method returns null.
-
-      // * response - the Ajax response object
-      // * callback - invoked after scripts are loaded, but before page initializations occur (may be null)
-      handlePartialPageRenderResponse(response, callback) {
-
-        // Capture the partial page response portion of the overall response, and
-        // then remove it so it doesn't interfere elsewhere.
-        const responseJSON = response.json || {};
-        const partial = responseJSON._tapestry;
-        delete responseJSON._tapestry;
-
-        // Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
-        // No other initialization or callback invocation occurs.
-        if (partial != null ? partial.redirectURL : undefined) {
-          if (window.location.href === partial.redirectURL) {
-            window.location.reload(true);
-          } else {
-            window.location.href = partial.redirectURL;
-          }
+  return require([moduleName], function(moduleLib) {
+  
+    try {
+      // Some modules export nothing but do some full-page initialization, such as adding
+      // event handlers to the body.
+      if (!functionName &&
+        (initArguments.length === 0) &&
+        !_.isFunction(moduleLib)) {
+          console.debug(`Loaded module ${moduleName}`);
           return;
         }
 
-        addStylesheets(partial != null ? partial.stylesheets : undefined);
+      if (!moduleLib) {
+        throw new Error(`require('${moduleName}') returned ${moduleLib} when not expected`);
+      }
 
-        // Make sure all libraries are loaded
-        exports.loadLibraries(partial != null ? partial.libraries : undefined, function() {
+      const fn = (functionName != null) ? moduleLib[functionName] : moduleLib;
 
-          // After libraries are loaded, update each zone:
-          _(partial != null ? partial.content : undefined).each(function(...args) {
-            const [id, content] = Array.from(args[0]);
-            console.debug(`Updating content for zone ${id}`);
+      if (fn == null) {
+        if (functionName) {
+          console.error(`Could not locate function \`${qualifiedName}' in ${JSON.stringify(moduleLib)}`);
+          console.error(moduleLib);
+        }
+        throw new Error(`Could not locate function \`${qualifiedName}'.`);
+      }
 
-            const zone = dom.wrap(id);
+      if (console.debugEnabled) {
+        const argsString = (Array.from(initArguments).map((arg) => JSON.stringify(arg))).join(", ");
+        console.debug(`Invoking ${qualifiedName}(${argsString})`);
+      }
 
-            if (zone) {
-              return zone.trigger(events.zone.update, { content });
-            }});
+      return fn.apply(null, initArguments);
+    } finally {
+      tracker();
+    }
+  });
+};
 
-          // Invoke the callback, if present.  The callback may do its own content updates.
-          callback && callback(response);
+// Loads all specified libraries in order (this includes the core stack, other stacks, and
+// any free-standing libraries). It then executes the initializations. Once all initializations have
+// completed (which is usually an asynchronous operation, as initializations may require the loading
+// of further modules), then the `data-page-initialized` attribute of the `<body>` element is set to
+// 'true'.
+//
+// This is the main export of the module; other functions are attached as properties.
+const loadLibrariesAndInitialize = function(libraries, inits) {
+  console.debug(`Loading ${(libraries != null ? libraries.length : undefined) || 0} libraries`);
+  return exports.loadLibraries(libraries,
+    () => exports.initialize(inits,
+      function() {
+        // At this point, all libraries have been loaded, and all inits should have executed. Unless some of
+        // the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
+        // be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
+        // Later Ajax requests will cause the data-ajax-active attribute to be incremented (from 0)
+        // and decremented (when the requests complete).
 
-          // Lastly, perform initializations from the partial page render response.
-          return exports.initialize(partial != null ? partial.inits : undefined);
-        });
+        dom.body.attr("data-page-initialized", "true");
 
+        return Array.from(dom.body.find(".pageloading-mask")).map((mask) =>
+          mask.remove());
+    }));
+};
+
+export default exports = _.extend(loadLibrariesAndInitialize, {
+  // Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
+  // of modules, the exact order in which initializer functions are invoked is not predictable.
+  initialize(inits, callback) {
+    if (inits == null) { inits = []; }
+    console.debug(`Executing ${inits.length} inits`);
+    let callbackCountdown = inits.length + 1;
+
+    // tracker gets invoked once after each require/callback, plus once extra
+    // (to handle the case where there are no inits). When the count hits zero,
+    // it invokes the callback (if there is one).
+    const tracker = function() {
+      callbackCountdown--;
+
+      if (callbackCountdown === 0) {
+        console.debug("All inits executed");
+        if (callback) { return callback(); }
+      }
+    };
+
+    // First value in each init is the qualified module name; anything after
+    // that are arguments to be passed to the identified function. A string
+    // is the name of a module to load, or function to invoke, that
+    // takes no parameters.
+    for (var init of Array.from(inits)) {
+      if (_.isString(init)) {
+        invokeInitializer(tracker, init, []);
+      } else {
+        var [qualifiedName, ...initArguments] = Array.from(init);
+        invokeInitializer(tracker, qualifiedName, initArguments);
       }
     }
-    );
-});
+
+    return tracker();
+  },
+
+  // Pre-loads a number of libraries in order. When the last library is loaded,
+  // invokes the callback (with no parameters).
+  loadLibraries(libraries, callback) {
+    const reducer = (callback, library) => (function() {
+      console.debug(`Loading library ${library}`);
+      return require([library], callback);
+    });
+
+    const finalCallback = _.reduceRight(libraries, reducer, callback);
+
+    return finalCallback.call(null);
+  },
+
+  evalJavaScript(js) {
+    console.debug(`Evaluating: ${js}`);
+    return eval(js);
+  },
+
+  // Triggers the focus event on the field, if the field exist. Focus occurs delayed 1/8th of a
+  // second, which helps ensure that other initializions on the page are in place.
+  //
+  // * fieldId - element id of field to focus on
+  focus(fieldId) {
+    const field = dom(fieldId);
+
+    if (field) {
+      return _.delay((() => field.focus()), 125);
+    }
+  },
+
+  // Passed the response from an Ajax request, when the request is successful.
+  // This is used for any request that attaches partial-page-render data to the main JSON object
+  // response.  If no such data is attached, the callback is simply invoked immediately.
+  // Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
+  // of JavaScript libraries and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
+  // the callback is invoked, passed the response (with any Tapestry-specific data removed).
+  // After the callback is invoked, page initializations occur.  This method returns null.
+
+  // * response - the Ajax response object
+  // * callback - invoked after scripts are loaded, but before page initializations occur (may be null)
+  handlePartialPageRenderResponse(response, callback) {
+
+    // Capture the partial page response portion of the overall response, and
+    // then remove it so it doesn't interfere elsewhere.
+    const responseJSON = response.json || {};
+    const partial = responseJSON._tapestry;
+    delete responseJSON._tapestry;
+
+    // Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
+    // No other initialization or callback invocation occurs.
+    if (partial != null ? partial.redirectURL : undefined) {
+      if (window.location.href === partial.redirectURL) {
+        window.location.reload(true);
+      } else {
+        window.location.href = partial.redirectURL;
+      }
+      return;
+    }
+
+    addStylesheets(partial != null ? partial.stylesheets : undefined);
+
+    // Make sure all libraries are loaded
+    exports.loadLibraries(partial != null ? partial.libraries : undefined, function() {
+
+      // After libraries are loaded, update each zone:
+      _(partial != null ? partial.content : undefined).each(function(...args) {
+        const [id, content] = Array.from(args[0]);
+        console.debug(`Updating content for zone ${id}`);
+
+        const zone = dom.wrap(id);
+
+        if (zone) {
+          return zone.trigger(events.zone.update, { content });
+        }});
+
+      // Invoke the callback, if present.  The callback may do its own content updates.
+      callback && callback(response);
+
+      // Lastly, perform initializations from the partial page render response.
+      return exports.initialize(partial != null ? partial.inits : undefined);
+    });
+
+  }
+})

@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,61 +13,62 @@
 // limitations under the License.
 
 // ## t5/core/zone-refresh
-define(["t5/core/events", "t5/core/dom", "t5/core/console"],
-  function(events, dom, console) {
 
-    // Initialize a timer for the zone at the specified period (in seconds). The zone will be
-    // refreshed with the provided URL.
-    const initialize = function(zoneId, period, url) {
-      let zone = dom(zoneId);
+import events from "t5/core/events";
+import dom from "t5/core/dom";
+import console from "t5/core/console";
 
-      if (!zone) {
-        console.err(`Zone ${zoneId} not found for periodic refresh.`);
-        return;
-      }
+// Initialize a timer for the zone at the specified period (in seconds). The zone will be
+// refreshed with the provided URL.
+const initialize = function(zoneId, period, url) {
+  let zone = dom(zoneId);
 
-      // Only one periodic refresh per zone.
-      if (zone.meta("periodic-refresh")) { return; }
+  if (!zone) {
+    console.err(`Zone ${zoneId} not found for periodic refresh.`);
+    return;
+  }
 
-      zone.meta("periodic-refresh", true);
+  // Only one periodic refresh per zone.
+  if (zone.meta("periodic-refresh")) { return; }
 
-      let executing = false;
+  zone.meta("periodic-refresh", true);
 
-      // Whenever the zone updates, we can clear the executing flag.
+  let executing = false;
 
-      zone.on(events.zone.didUpdate, function() {
-        executing = false;
-      });
+  // Whenever the zone updates, we can clear the executing flag.
 
-      const cleanUp = function() {
-        window.clearInterval(intervalId);
-        zone = null;
-      };
+  zone.on(events.zone.didUpdate, function() {
+    executing = false;
+  });
 
-      const handler = function() {
-        // Don't clog things up if the response rate is too slow
-        if (executing) { return; }
+  const cleanUp = function() {
+    window.clearInterval(intervalId);
+    zone = null;
+  };
 
-        // If the zone element is no longer part of the DOM, stop the
-        // timer
+  const handler = function() {
+    // Don't clog things up if the response rate is too slow
+    if (executing) { return; }
 
-        if (!zone.closest('body')) {
-          cleanUp();
-          return;
-        }
+    // If the zone element is no longer part of the DOM, stop the
+    // timer
 
-        // Set the flag now, it will clear when the zone updates.
-        executing = true;
+    if (!zone.closest('body')) {
+      cleanUp();
+      return;
+    }
 
-        return zone.trigger(events.zone.refresh, { url });
-      };
+    // Set the flag now, it will clear when the zone updates.
+    executing = true;
 
-      var intervalId = window.setInterval(handler, period * 1000);
+    return zone.trigger(events.zone.refresh, { url });
+  };
 
-      // Not sure if this is needed except for IE:
-      return (dom(window)).on("beforeunload", cleanUp);
-    };
+  var intervalId = window.setInterval(handler, period * 1000);
+
+  // Not sure if this is needed except for IE:
+  return (dom(window)).on("beforeunload", cleanUp);
+};
 
     // export the single function:
-    return initialize;
-});
+export default initialize;

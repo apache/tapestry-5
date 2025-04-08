@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012, 2013 The Apache Software Foundation
+// Copyright 2012, 2013, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,45 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//# t5/core/utils
-//
-// A few handy functions.
-define(["underscore"],
+/** ## t5/core/utils
+ *
+ * A few handy functions.
+ */
+import _ from "underscore";
 
-  function(_) {
+let exports;
+const trim = function(input: string) {
+  // @ts-ignore
+  if (String.prototype.trim) {
+    return input.trim();
+  } else {
+    return input.replace(/^\s+/, '').replace(/\s+$/, '');
+  }
+};
 
-    let exports;
-    const trim = function(input) {
-      if (String.prototype.trim) {
-        return input.trim();
-      } else {
-        return input.replace(/^\s+/, '').replace(/\s+$/, '');
-      }
-    };
+// Extends a URL, adding parameters and values from the params object. The values must already
+// be URI encoded.
+const extendURL = function(url: string, params: [key: string]) {
 
-    // Extends a URL, adding parameters and values from the params object. The values must already
-    // be URI encoded.
-    const extendURL = function(url, params) {
+  let sep = url.indexOf("?") >= 0 ? "&" : "?";
 
-      let sep = url.indexOf("?") >= 0 ? "&" : "?";
+  for (var name in params) {
+    var value = params[name];
+    url = url + sep + name + "=" + value;
+    sep = "&";
+  }
 
-      for (var name in params) {
-        var value = params[name];
-        url = url + sep + name + "=" + value;
-        sep = "&";
-      }
+  return url;
+};
 
-      return url;
-    };
-
-    return exports = {
+export default {
       trim,
       extendURL,
 
-      startsWith(string, pattern) { return (string.indexOf(pattern)) === 0; },
+      startsWith(string: string, pattern: string) { return (string.indexOf(pattern)) === 0; },
       // Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
       // Determines if the input is a blank string, or null, or an empty array.
-      isBlank(input) {
+      isBlank(input: any) {
 
           if (input === null) { return true; }
 
@@ -65,10 +60,9 @@ define(["underscore"],
             
           if (typeof input === "boolean") { return false; }
 
-          return (exports.trim(input)).length === 0;
+          return (trim(input)).length === 0;
         },
 
       // Splits the input string into words separated by whitespace
-      split(str) { return _(str.split(" ")).reject(s => s === ""); }
+      split(str: string) { return _(str.split(" ")).reject(s => s === ""); }
     };
-});

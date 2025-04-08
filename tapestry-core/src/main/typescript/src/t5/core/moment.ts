@@ -16,11 +16,10 @@
 //
 // A wrapper around Moment.js; this simply initializes Moment to
 // use the correct locale (as per the data-locale attribute of the document element).
-define(["moment"],
-function(moment) {
-  const locale = (document.documentElement.getAttribute("data-locale")) || "en";
+import moment from "moment";
 
-  moment.locale(locale);
+const locale = (document.documentElement.getAttribute("data-locale")) || "en";
 
-  return moment;
-});
+moment.locale(locale);
+
+export default moment;

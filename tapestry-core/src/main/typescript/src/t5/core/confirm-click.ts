@@ -1,30 +1,33 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // ## t5/core/confirm-click
 //
 // Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
 
-define(["jquery", "t5/core/events", "bootstrap/modal"],
+import $ from "jquery";
+import  "bootstrap/modal";
 
-  function($, events) {
+type DialogOptions = {
+  title: any;
+  message: any;
+  okClass: any;
+  okLabel: any;
+  cancelLabel: any;
+  ok: any;
+};
 
-    // Runs a modal dialog, invoking a callback if the user selects the OK option. On any form of cancel,
-    // there is no callback.
-    //
-    // options.title - default "Confirm"
-    // options.message - required
-    // options.okClass - default "btn-warning"
-    // options.okLabel - default "OK"
-    // options.cancelLabel - default "Cancel"
-    // options.ok - callback function, required
-    const runDialog = function(options) {
+// Runs a modal dialog, invoking a callback if the user selects the OK option. On any form of cancel,
+// there is no callback.
+//
+// options.title - default "Confirm"
+// options.message - required
+// options.okClass - default "btn-warning"
+// options.okLabel - default "OK"
+// options.cancelLabel - default "Cancel"
+// options.ok - callback function, required
+const runDialog = function(options: DialogOptions) {
 
-      let confirmed = false;
+  let confirmed = false;
 
-      const content = `\
+  const content = `\
 <div class="modal fade" role="dialog" tabindex='-1'>
   <div class="modal-dialog">
     <div class="modal-content">
@@ -42,68 +45,65 @@ define(["jquery", "t5/core/events", "bootstrap/modal"],
 </div>\
 `;
 
-      const $dialog = $(content);
+  const $dialog = $(content);
 
-      $dialog.on("click", ".modal-footer button:first", function() {
-        confirmed = true;
-      });
+  $dialog.on("click", ".modal-footer button:first", function() {
+    confirmed = true;
+  });
 
-      // Let the animation run before (perhaps) invoking the callback.
-      $dialog.modal().on("hidden.bs.modal", function() {
-        $dialog.remove();
-        if (confirmed) {
-          return options.ok();
-        }
-      });
+  // Let the animation run before (perhaps) invoking the callback.
+  $dialog.modal().on("hidden.bs.modal", function() {
+    $dialog.remove();
+    if (confirmed) {
+      return options.ok();
+    }
+  });
 
-      $dialog.appendTo($("body"));
+  $dialog.appendTo($("body"));
 
-      // Focus on the first button (the "OK") button.
-      return $dialog.on("shown.bs.modal", () => $dialog.find(".modal-footer .btn").first().focus());
-    };
+  // Focus on the first button (the "OK") button.
+  return $dialog.on("shown.bs.modal", () => $dialog.find(".modal-footer .btn").first().focus());
+};
 
-    // Support for the Confirm mixin
-    $("body").on("click", "[data-confirm-message]:not(.disabled)", function(event){
+// Support for the Confirm mixin
+$("body").on("click", "[data-confirm-message]:not(.disabled)", function(event){
 
-      const $this = $(this);
+  const $this = $(this);
 
-      // We use a data- attribute as a flag, to indicate that the user confirmed the behavior.
+  // We use a data- attribute as a flag, to indicate that the user confirmed the behavior.
 
-      if (($this.attr("data-confirm-state")) === "confirmed") {
-        $this.attr("data-confirm-state", null);
-        return; // allow default behavior to continue
-      }
+  if (($this.attr("data-confirm-state")) === "confirmed") {
+    $this.attr("data-confirm-state", null);
+    return; // allow default behavior to continue
+  }
 
-      runDialog({
-        title: $this.attr("data-confirm-title"),
-        message: $this.attr("data-confirm-message"),
-        okClass: $this.attr("data-confirm-class-ok"),
-        okLabel: $this.attr("data-confirm-label-ok"),
-        cancelLabel: $this.attr("data-confirm-label-cancel"),
-        ok() {
-          $this.attr("data-confirm-state", "confirmed");
-          // In the case of an Ajax update, or a button, this is enough. In the case of a simple link,
-          // the default behavior when triggering click() is to do nothing, and our document event handler
-          // (just below) picks up the slack.
-          return $this.click();
-        }
-      });
+  runDialog({
+    title: $this.attr("data-confirm-title"),
+    message: $this.attr("data-confirm-message"),
+    okClass: $this.attr("data-confirm-class-ok"),
+    okLabel: $this.attr("data-confirm-label-ok"),
+    cancelLabel: $this.attr("data-confirm-label-cancel"),
+    ok() {
+      $this.attr("data-confirm-state", "confirmed");
+      // In the case of an Ajax update, or a button, this is enough. In the case of a simple link,
+      // the default behavior when triggering click() is to do nothing, and our document event handler
+      // (just below) picks up the slack.
+      return $this.click();
+    }
+  });
 
-      // Cancel the original click event
-      return false;
-    });
-
-    ($(document)).on("click", "a[data-confirm-message]:not(.disabled, [data-update-zone], [data-async-trigger])", function(event) {
-
-      const target = $(event.target);
-
-      // See note above; this replicates the default behavior of a link element that is lost because
-      // of the
-      window.location.href = target.attr("href");
-      return false;
-    });
-
-    // Exports:
-
-    return { runDialog };
+  // Cancel the original click event
+  return false;
 });
+
+($(document)).on("click", "a[data-confirm-message]:not(.disabled, [data-update-zone], [data-async-trigger])", function(event) {
+
+  const target = $(event.target);
+
+  // See note above; this replicates the default behavior of a link element that is lost because
+  // of the
+  window.location.href = target.attr("href");
+  return false;
+});
+
+export default runDialog;

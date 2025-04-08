@@ -15,16 +15,13 @@
 // ## t5/core/bootstrap
 //
 // Utilities for leveraging Bootstrap
-define(["t5/core/bootstrap"],
-  function() {
+import "t5/core/bootstrap"
 
-    const exports =
-      // Generates the CSS class name for an icon.
-      //
-      // * name - of icon, e.g., "arrow-left"
-      {glyph(name) { return `<span class="glyphicon glyphicon-${name}"></span>`; }};
+let a = "";
 
-    return exports;
-});
-
+export default 
+  // Generates the CSS class name for an icon.
+  //
+  // * name - of icon, e.g., "arrow-left"
+  {glyph: function(name: string) { return `<span class="glyphicon glyphicon-${name}"></span>`; }};
 

@@ -1,10 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,63 +13,64 @@
 // ## t5/core/console
 //
 // A wrapper around the native console, when it exists.
-define(["t5/core/dom", "underscore", "t5/core/bootstrap"],
-  function(dom, _, { glyph }) {
+import dom from "t5/core/dom.js";
+import _ from "underscore";
+import "t5/core/bootstrap.js";
 
-    let e;
-    let nativeConsole = null;
+let e;
+let nativeConsole = null;
 
-    try {
-      // FireFox will throw an exception if you even access the console object and it does
-      // not exist. Wow!
-      nativeConsole = window.console || {};
-    } catch (error) { e = error; }
+try {
+  // FireFox will throw an exception if you even access the console object and it does
+  // not exist. Wow!
+  nativeConsole = window.console || {};
+} catch (error) { e = error; }
 
-    let floatingConsole = null;
-    let messages = null;
+let floatingConsole: boolean | null = null;
+let messages = null;
 
-    const noFilter = () => true;
+const noFilter = () => true;
 
-    let filter = noFilter;
+let filter = noFilter;
 
-    const updateFilter = function(text) {
-      if (text === "") {
-        filter = noFilter;
-        return;
-      }
+const updateFilter = function(text) {
+  if (text === "") {
+    filter = noFilter;
+    return;
+  }
 
-      const words = text.toLowerCase().split(/\s+/);
+  const words = text.toLowerCase().split(/\s+/);
 
-      filter = function(e) {
-        const content = e.text().toLowerCase();
+  filter = function(e) {
+    const content = e.text().toLowerCase();
 
-        for (var word of Array.from(words)) {
-          if (content.indexOf(word) < 0) { return false; }
-        }
+    for (var word of Array.from(words)) {
+      if (content.indexOf(word) < 0) { return false; }
+    }
 
-        return true;
-      };
+    return true;
+  };
 
-    };
+};
 
-    const consoleAttribute = dom.body.attr("data-floating-console");
+const consoleAttribute = dom.body.attr("data-floating-console");
 
-    const forceFloating = (consoleAttribute === "enabled") || (consoleAttribute === "invisible");
+const forceFloating = (consoleAttribute === "enabled") || (consoleAttribute === "invisible");
 
-    const button = function(action, icon, label, disabled) { if (disabled == null) { disabled = false; } return `\
+const button = function(action, icon, label, disabled) { if (disabled == null) { disabled = false; } return `\
 <button data-action="${action}" class="btn btn-default btn-mini">
   ${glyph(icon)} ${label}
 </button>\
 `; };
 
-    // _internal_: displays the message inside the floating console, creating the floating
-    // console as needed.
-    const display = function(className, message) {
+// _internal_: displays the message inside the floating console, creating the floating
+// console as needed.
+const display = function(className, message) {
 
-      if (!floatingConsole) {
-        floatingConsole = dom.create(
-          {class: "tapestry-console"},
-          `\
+  if (!floatingConsole) {
+    floatingConsole = dom.create(
+      {class: "tapestry-console"},
+      `\
 <div class="message-container"></div>
 <div class="row">
   <div class="btn-group btn-group-sm col-md-4">
@@ -89,162 +83,153 @@ define(["t5/core/dom", "underscore", "t5/core/bootstrap"],
   </div>
 </div>\
 `
-        );
+    );
 
-        dom.body.prepend(floatingConsole);
+    dom.body.prepend(floatingConsole);
 
-        // Basically, any non-blank value will enable the floating console. In addition, the special
-        // value "invisible" will enable it but then hide it ... this is useful in tests, since
-        // the console output is captured in the markup, but the visible console can have unwanted interactions
-        // (such as obscuring elements that make them unclickable).
-        if (consoleAttribute === "invisible") {
-          floatingConsole.hide();
-        }
-      }
+    // Basically, any non-blank value will enable the floating console. In addition, the special
+    // value "invisible" will enable it but then hide it ... this is useful in tests, since
+    // the console output is captured in the markup, but the visible console can have unwanted interactions
+    // (such as obscuring elements that make them unclickable).
+    if (consoleAttribute === "invisible") {
+      floatingConsole.hide();
+    }
+  }
 
-      messages = floatingConsole.findFirst(".message-container");
+  messages = floatingConsole.findFirst(".message-container");
 
-      floatingConsole.findFirst("[data-action=enable]").attr("disabled", true);
+  floatingConsole.findFirst("[data-action=enable]").attr("disabled", true);
 
-      floatingConsole.on("click", "[data-action=clear]", function() {
-        floatingConsole.hide();
-        return messages.update("");
-      });
+  floatingConsole.on("click", "[data-action=clear]", function() {
+    floatingConsole.hide();
+    return messages.update("");
+  });
 
-      floatingConsole.on("click", "[data-action=disable]", function() {
+  floatingConsole.on("click", "[data-action=disable]", function() {
 
-        this.attr("disabled", true);
-        floatingConsole.findFirst("[data-action=enable]").attr("disabled", false);
+    this.attr("disabled", true);
+    floatingConsole.findFirst("[data-action=enable]").attr("disabled", false);
 
-        messages.hide();
+    messages.hide();
 
-        return false;
-      });
+    return false;
+  });
 
-      floatingConsole.on("click", "[data-action=enable]", function() {
+  floatingConsole.on("click", "[data-action=enable]", function() {
 
-        this.attr("disabled", true);
-        floatingConsole.findFirst("[data-action=disable]").attr("disabled", false);
+    this.attr("disabled", true);
+    floatingConsole.findFirst("[data-action=disable]").attr("disabled", false);
 
-        messages.show();
+    messages.show();
 
-        return false;
-      });
+    return false;
+  });
 
-      floatingConsole.on("change keyup", "input", function() {
-        updateFilter(this.value());
+  floatingConsole.on("change keyup", "input", function() {
+    updateFilter(this.value());
 
-        for (e of Array.from(messages.children())) {
-          var visible = filter(e);
+    for (e of Array.from(messages.children())) {
+      var visible = filter(e);
 
-          e[visible ? "show" : "hide"]();
-        }
+      e[visible ? "show" : "hide"]();
+    }
 
-        return false;
-      });
+    return false;
+  });
 
-      const div = dom.create(
-        {class: className},
-        _.escape(message));
+  const div = dom.create(
+    {class: className},
+    _.escape(message));
 
-        // Should really filter on original message, not escaped.
+    // Should really filter on original message, not escaped.
 
-      if (!filter(div)) {
-        div.hide();
-      }
+  if (!filter(div)) {
+    div.hide();
+  }
 
-      messages.append(div);
+  messages.append(div);
 
-      // A slightly clumsy way to ensure that the container is scrolled to the bottom.
-      return _.delay(() => messages.element.scrollTop = messages.element.scrollHeight);
-    };
+  // A slightly clumsy way to ensure that the container is scrolled to the bottom.
+  return _.delay(() => messages.element.scrollTop = messages.element.scrollHeight);
+};
 
-    const level = (className, consolefn) => (function(message) {
-      // consolefn may be null if there's no console; under IE it may be non-null, but not a function.
-      // For some testing, it is nice to force the floating console to always display.
+const level = (className, consolefn) => (function(message) {
+  // consolefn may be null if there's no console; under IE it may be non-null, but not a function.
+  // For some testing, it is nice to force the floating console to always display.
 
-      if (forceFloating || (!consolefn)) {
-        // Display it floating. If there's a real problem, such as a failed Ajax request, then the
-        // client-side code should be alerting the user in some other way, and not rely on them
-        // being able to see the logged console output.
-        display(className, message);
+  if (forceFloating || (!consolefn)) {
+    // Display it floating. If there's a real problem, such as a failed Ajax request, then the
+    // client-side code should be alerting the user in some other way, and not rely on them
+    // being able to see the logged console output.
+    display(className, message);
 
-        if (!forceFloating) { return; }
-      }
+    if (!forceFloating) { return; }
+  }
 
-      if (window.console && (_.isFunction(consolefn))) {
-        // Use the available native console, calling it like an instance method
-        consolefn.call(window.console, message);
-        return;
-      }
+  if (window.console && (_.isFunction(consolefn))) {
+    // Use the available native console, calling it like an instance method
+    consolefn.call(window.console, message);
+    return;
+  }
 
-      // And IE just has to be different. The properties of console are callable, like functions,
-      // but aren't proper functions that work with `call()` either.
-      // On IE8, the console object is undefined unless debugging tools are enabled.
-      // In that case, nativeConsole will be an empty object.
-      if (consolefn) {
-        consolefn(message);
-      }
+  // And IE just has to be different. The properties of console are callable, like functions,
+  // but aren't proper functions that work with `call()` either.
+  // On IE8, the console object is undefined unless debugging tools are enabled.
+  // In that case, nativeConsole will be an empty object.
+  if (consolefn) {
+    consolefn(message);
+  }
 
-    });
-
-    const exports = {
-      info: level("info", nativeConsole.info),
-      warn: level("warn", nativeConsole.warn),
-      error: level("error", nativeConsole.error),
-
-      // Determine whether debug is enabled by checking for the necessary attribute (which is missing
-      // in production mode).
-      debugEnabled: ((document.documentElement.getAttribute("data-debug-enabled")) != null)
-    };
-
-    const noop = function() {};
-
-    // When debugging is not enabled, then the debug function becomes a no-op.
-    exports.debug =
-      exports.debugEnabled ?
-        // If native console available, go for it.  IE doesn't have debug, so we use log instead.
-        // Add a special noop case for IE8, since IE8 is just crazy.
-        level("debug", (nativeConsole.debug || nativeConsole.log || noop))
-      :
-        noop;
-
-    // This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
-    // and/or Selenium, it is very useful to present debugging data right on the page.
-    window.t5console = exports;
-
-    requirejs.onError = function(err) {
-
-      let message = `RequireJS error: ${(err != null ? err.requireType : undefined) || 'unknown'}`;
-
-      if (err.message) {
-        message += `: ${err.message}`;
-      }
-
-      if (err.requireType) {
-        const modules = err != null ? err.requireModules : undefined;
-        if (modules && (modules.length > 0)) {
-          message += `, modules ${modules.join(", ")}`;
-        }
-      }
-
-      if (err.fileName) {
-        message += `, ${err.fileName}`;
-      }
-
-      if (err.lineNumber) {
-        message += `, line ${err.lineNumber}`;
-      }
-
-      if (err.columnNumber) {
-        message += `, line ${err.columnNumber}`;
-      }
-
-      return exports.error(message);
-    };
-
-
-    // Return the exports; we keep a reference to it, so we can see exports.DURATION, even
-    // if some other module imports this one and modifies that property.
-    return exports;
 });
+
+const noop = function() {};
+const debugEnabled = ((document.documentElement.getAttribute("data-debug-enabled")) != null);
+
+let exports = {
+  info: level("info", nativeConsole.info),
+  warn: level("warn", nativeConsole.warn),
+  error: level("error", nativeConsole.error),
+
+  // Determine whether debug is enabled by checking for the necessary attribute (which is missing
+  // in production mode).
+  debugEnabled,
+
+  debug: debugEnabled ?
+    // If native console available, go for it.  IE doesn't have debug, so we use log instead.
+    // Add a special noop case for IE8, since IE8 is just crazy.
+    level("debug", (nativeConsole.debug || nativeConsole.log || noop)) : noop
+};
+
+// This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
+// and/or Selenium, it is very useful to present debugging data right on the page.
+window.t5console = exports;
+
+requirejs.onError = function(err) {
+
+  let message = `RequireJS error: ${(err != null ? err.requireType : undefined) || 'unknown'}`;
+
+  if (err.message) {
+    message += `: ${err.message}`;
+  }
+
+  if (err.requireType) {
+    const modules = err != null ? err.requireModules : undefined;
+    if (modules && (modules.length > 0)) {
+      message += `, modules ${modules.join(", ")}`;
+    }
+  }
+
+  if (err.fileName) {
+    message += `, ${err.fileName}`;
+  }
+
+  if (err.lineNumber) {
+    message += `, line ${err.lineNumber}`;
+  }
+
+  if (err.columnNumber) {
+    message += `, line ${err.columnNumber}`;
+  }
+
+  return exports.error(message);
+};

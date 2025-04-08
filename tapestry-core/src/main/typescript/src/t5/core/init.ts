@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-// Copyright 2012 The Apache Software Foundation
+// Copyright 2012, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@
 // Compatibility module, invokes functions on the T5.initializers namespace.
 //
 // Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-define(["t5/core/console"],
+import console from "t5/core/console";
 
-  console => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
-  (function(initName, ...args) {
-    const fn = T5.initializers[initName];
-    if (!fn) {
-      return console.error(`Initialization function '${initName}' not found in T5.initializers namespace.`);
-    } else {
-      return fn.apply(null, args);
-    }
-  }));
+export default console => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
+function(initName: string | number, ...args: any) {
+  const fn = T5.initializers[initName];
+  if (!fn) {
+    return console.error(`Initialization function '${initName}' not found in T5.initializers namespace.`);
+  } else {
+    return fn.apply(null, args);
+  }
+}

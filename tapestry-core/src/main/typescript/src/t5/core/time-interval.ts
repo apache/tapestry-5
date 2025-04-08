@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2013 The Apache Software Foundation
+// Copyright 2013, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,42 +16,43 @@
 //
 // Used with the Interval component to express the interval between two timestamps,
 // or the dynamic difference between now and an end point in the past or future.
-define(["t5/core/dom", "t5/core/moment"],
-function(dom, moment) {
 
-  const ATTR = "data-timeinterval";
+import dom from "t5/core/dom";
+import moment from "t5/core/moment";
 
-  const DEFAULT_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
+const ATTR = "data-timeinterval";
 
-  const toMoment = function(s) { if (s) { return (moment(s, DEFAULT_FORMAT)); } else { return moment(); } };
+const DEFAULT_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
-  const updateElement = function(el) {
-    const start = toMoment(el.attr("data-timeinterval-start"));
-    const end = toMoment(el.attr("data-timeinterval-end"));
-    const plain = el.attr("data-timeinterval-plain");
+const toMoment = function(s) { if (s) { return (moment(s, DEFAULT_FORMAT)); } else { return moment(); } };
 
-    el.update(end.from(start, plain));
-  };
+const updateElement = function(el) {
+  const start = toMoment(el.attr("data-timeinterval-start"));
+  const end = toMoment(el.attr("data-timeinterval-end"));
+  const plain = el.attr("data-timeinterval-plain");
 
-  const updateDynamics = function() {
-    for (var el of Array.from(dom.body.find(`[${ATTR}=dynamic]`))) {
-      updateElement(el);
-    }
-  };
+  el.update(end.from(start, plain));
+};
 
-  // Update any dynamic intervals (the ones without a specific start date) about once a second
-  setInterval(updateDynamics, 1000);
-
-  dom.scanner(`[${ATTR}=true]`, function(el) {
-
+const updateDynamics = function() {
+  for (var el of Array.from(dom.body.find(`[${ATTR}=dynamic]`))) {
     updateElement(el);
+  }
+};
 
-    if ((el.attr("data-timeinterval-start")) && (el.attr("data-timeinterval-end"))) {
-      el.attr(ATTR, null);
-    } else {
-      el.attr(ATTR, "dynamic");
-    }
+// Update any dynamic intervals (the ones without a specific start date) about once a second
+setInterval(updateDynamics, 1000);
 
-  });
+dom.scanner(`[${ATTR}=true]`, function(el) {
 
-}); // no exports
+  updateElement(el);
+
+  if ((el.attr("data-timeinterval-start")) && (el.attr("data-timeinterval-end"))) {
+    el.attr(ATTR, null);
+  } else {
+    el.attr(ATTR, "dynamic");
+  }
+
+});
+
+// no exports

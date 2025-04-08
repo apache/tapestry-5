@@ -83,6 +83,10 @@ public class Graphviz
         final String id = javaScriptSupport.allocateClientId(resources);
         writer.element(elementName, "id", id);
         writer.end();
+
+        
+        // TODO import https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js 
+        // if Require.js is disabled @hpcc-js/wasm
         
         javaScriptSupport.require("t5/core/graphviz").with(cachedValue, id, showDownloadLink);
         

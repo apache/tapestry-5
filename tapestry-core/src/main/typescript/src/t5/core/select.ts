@@ -14,23 +14,22 @@
 //
 // Provides a document event handler that triggers an update a zone when the value
 // of a select element within the zone changes.
-define(["t5/core/events", "t5/core/dom", "t5/core/zone"],
+import events from "t5/core/events";
+import dom from "t5/core/dom";
+import zone from "t5/core/zone";
 
-  function(events, dom, zone) {
+dom.onDocument("change", "select[data-update-zone]", function() {
 
-    dom.onDocument("change", "select[data-update-zone]", function() {
+  const containingZone = zone.findZone(this);
 
-      const containingZone = zone.findZone(this);
-
-      if (containingZone) {
-        containingZone.trigger(events.zone.refresh, {
-          url: this.attr("data-update-url"),
-          parameters: {
-            "t:selectvalue": this.value()
-          }
-        }
-        );
+  if (containingZone) {
+    containingZone.trigger(events.zone.refresh, {
+      url: this.attr("data-update-url"),
+      parameters: {
+        "t:selectvalue": this.value()
       }
+    }
+    );
+  }
 
-    });
 });
