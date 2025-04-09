@@ -10,19 +10,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-// ## t5/core/form-fragment
-//
+/**
+ * ## t5/core/form-fragment
+ * 
+ * JavaScript code for the `core/FormFragment` component.
+ * 
+ * @packageDocumentation
+ */
 import _ from "underscore";
-import dom from "t5/core/dom";
-import events from "t5/core/events";
-import forms from  "t5/core/forms";
+import dom from "t5/core/dom.js";
+import events from "t5/core/events.js";
+import forms from  "t5/core/forms.js";
+import { ElementWrapper, EventWrapper } from "./types.js";
 
 const SELECTOR = "[data-component-type='core/FormFragment']";
 
 const REENABLE = "data-re-enable-when-fragment-visible";
 
-const disableInputFields = fragment => // This is an example of where the t5/core/dom abstraction label is problematic,
+const disableInputFields = (fragment: ElementWrapper) => // This is an example of where the t5/core/dom abstraction label is problematic,
 // as this is very inefficient vs. the native jQuery approach.
 (() => {
   const result = [];
@@ -33,7 +38,7 @@ const disableInputFields = fragment => // This is an example of where the t5/cor
   return result;
 })();
 
-const renableInputFields = fragment => (() => {
+const renableInputFields = (fragment: ElementWrapper) => (() => {
   const result = [];
   for (var field of Array.from(fragment.find(`input[${REENABLE}]`))) {
     field.attr("disabled", null);
@@ -42,7 +47,7 @@ const renableInputFields = fragment => (() => {
   return result;
 })();
 
-const updateFields = function(fragment, makeVisible) {
+const updateFields = function(fragment: ElementWrapper, makeVisible: boolean) {
 
   // This is a server side option that says the content of the fragment should always be submitted,
   // even if the fragment is not currently visible.
@@ -57,24 +62,24 @@ const updateFields = function(fragment, makeVisible) {
 // because of the didShow/didHide events ... but we're really just seeing the evolution
 // from the old style (the FormFragment class as controller) to the new style (DOM events and
 // top-level event handlers).
-dom.onDocument(events.formfragment.changeVisibility, SELECTOR, function(event) {
+dom.onDocument(events.formfragment.changeVisibility, SELECTOR, function(element: ElementWrapper, event: EventWrapper) {
     const makeVisible = event.memo.visible;
 
-    this[makeVisible ? "show" : "hide"]();
+    element[makeVisible ? "show" : "hide"]();
 
-    updateFields(this, makeVisible);
+    updateFields(element, makeVisible);
 
-    this.trigger(events.element[makeVisible ? "didShow" : "didHide"]);
+    element.trigger(events.element[makeVisible ? "didShow" : "didHide"]);
 
     return false;
 });
 
 // When a FormFragment is initially rendered as hidden, then we need to do some
 // book-keeping on the client side.
-const hide = function(id) {
+const hide = function(id: string) {
   const field = dom(id);
 
-  return updateFields(field, false);
+  return updateFields(field!, false);
 };
 
 // Initializes a trigger for a FormFragment
@@ -82,11 +87,12 @@ const hide = function(id) {
 // * spec.triggerId - id of checkbox or radio button
 // * spec.fragmentId - id of FormFragment element
 // * spec.invert - (optional) if true, then checked trigger hides (not shows) the fragment
-const linkTrigger = function(spec) {
+const linkTrigger = function(spec: { triggerId: string | HTMLElement | null; fragmentId: string | HTMLElement | null; invert: boolean; }) {
   if (spec.triggerId == null) { throw new Error("Incomplete parameters, triggerId is null"); }
   if (spec.fragmentId == null) { throw new Error("Incomplete parameters, fragmentId is null"); }
   const trigger = dom(spec.triggerId);
   const fragment = dom(spec.fragmentId);
+  const element = trigger!.element as HTMLInputElement;
   if (fragment === null) {
     throw new Error(`Invalid configuration, fragment with id ${spec.fragmentId} not found`);
   }
@@ -94,19 +100,17 @@ const linkTrigger = function(spec) {
   const invert = spec.invert || false;
 
   const update = function() {
-    const {
-      checked
-    } = trigger.element;
+    const checked = element.checked;
     const makeVisible = checked !== invert;
 
     fragment.trigger(events.formfragment.changeVisibility,  {visible: makeVisible});
 
   };
 
-  if (trigger.element.type === "radio") {
-    return dom.on(trigger.element.form, "click", update);
+  if (element.type === "radio") {
+    return dom.on(element.form!, "click", null, update);
   } else {
-    return trigger.on("click", update);
+    return trigger!.on("click", null, update);
   }
 };
 

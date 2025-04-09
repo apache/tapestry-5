@@ -109,7 +109,7 @@ class JQueryElementWrapper implements ElementWrapper {
   };
 
   offset(): ElementOffset {
-    return this.$.offset();
+    return this.$.offset()!;
   };
 
   remove(): ElementWrapper {
@@ -117,7 +117,7 @@ class JQueryElementWrapper implements ElementWrapper {
     return this;
   };
 
-  attr(name: string, value?: string): ElementWrapper | string | null {
+  attr(name: string, value?: string | boolean | number): ElementWrapper | string | null {
     var attributeName, current;
     if (_.isObject(name) && name != null) {
       const nameAsObject = name as object;
@@ -132,7 +132,7 @@ class JQueryElementWrapper implements ElementWrapper {
       if (value === null) {
         this.$.removeAttr(name);
       } else {
-        this.$.attr(name, value!);
+        this.$.attr(name, _.isString(value) ? value : String(value));
       }
     }
     if (_.isUndefined(current)) {
@@ -259,7 +259,7 @@ class JQueryElementWrapper implements ElementWrapper {
     return element.offsetWidth > 0 && element.offsetHeight > 0;
   };
 
-  trigger(eventName: string, memo: any) {
+  trigger(eventName: string, memo?: any) {
     var jqEvent;
     if (eventName == null) {
       throw new Error("Attempt to trigger event with null event name");
@@ -274,11 +274,11 @@ class JQueryElementWrapper implements ElementWrapper {
     return !jqEvent.isImmediatePropagationStopped();
   };
 
-  value(newValue: string) {
+  value(newValue?: string) {
     var current;
     current = this.$.val();
     if (arguments.length > 0) {
-      this.$.val(newValue);
+      this.$.val(newValue!);
     }
     return current;
   };
@@ -288,7 +288,7 @@ class JQueryElementWrapper implements ElementWrapper {
     return this.element.checked;
   };
 
-  meta(name: string, value: string) {
+  meta(name: string, value?: string | null | boolean) {
     var current;
     current = this.$.data(name);
     if (arguments.length > 1) {
@@ -325,15 +325,17 @@ class JQueryResponseWrapper implements ResponseWrapper {
   readonly jqxhr: JQueryXHR;
   readonly status: number;
   readonly statusText: string;
-  readonly json: JQueryAjaxSettings;
+  readonly options: JQueryAjaxSettings;
   readonly text: string;
+  readonly json: any | null;
 
   constructor(jqxhr1: JQueryXHR, data: JQueryAjaxSettings) {
     this.jqxhr = jqxhr1;
     this.status = this.jqxhr.status;
     this.statusText = this.jqxhr.statusText;
-    this.json = data;
+    this.options = data;
     this.text = this.jqxhr.responseText;
+    this.json = this.jqxhr.responseJSON;
   }
 
   header(name: string) {
@@ -436,7 +438,7 @@ const newElementWrapper = function(element: JQuery) {
   return new JQueryElementWrapper(element);
 }
 
-const createElement = function(elementName: string | HTMLElement, attributes: [key: string, value: string] | HTMLElement, body: HTMLBodyElement): ElementWrapper {
+const createElement = function(elementName: string, attributes?: object, body?: AddableContent): ElementWrapper {
   var element: ElementWrapper;
   if (_.isObject(elementName)) {
     // @ts-ignore
@@ -507,7 +509,7 @@ const getEventUrl = function(eventName: string, element?: HTMLElement): string {
   return url;
 };
 
-const on = function(selector: string, events: string, match: string | null, handler: OnEventHandler) {
+const on = function(selector: string | HTMLElement | Document | HTMLElement[], events: string, match: string | null, handler: OnEventHandler) {
   var elements;
   if (handler == null) {
     // @ts-ignore
@@ -523,14 +525,18 @@ const onDocument = function(events: string, match: string | null, handler: OnEve
   return on(document, events, match, handler);
 };
 
-const exports: DOM = {
-  getEventUrl: getEventUrl,
-  wrap: wrapElement,
-  create: createElement,
-  ajaxRequest: ajaxRequest,
-  on: on,
-  onDocument: onDocument,
-  body: body!,
-};
+// A bit of a hack to export a function that also provides properties defined in an interface.
+// Inspired by https://stackoverflow.com/a/48675307 (yay for Thiagos! hehehe)
+const dom = wrapElement as DOM;
+dom.getEventUrl = getEventUrl;
+dom.wrap = wrapElement;
+dom.create = createElement;
+dom.ajaxRequest = ajaxRequest;
+dom.on = on;
+dom.onDocument = onDocument;
+dom.body = body!;
+dom.scanner = scanner;
+
+const exports: DOM = dom;
 
 export default exports;

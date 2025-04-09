@@ -17,18 +17,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/localdate
-//
-// Used with the LocalDate component to present a Date in a particular format, in the
-// browser's time zone.
-
-import dom from "t5/core/dom"
-import moment from "t5/core/moment";
+/**
+ * ## t5/core/localdate
+ * 
+ * Used with the LocalDate component to present a Date in a particular format, in the
+ * browser's time zone.
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js"
+import moment from "t5/core/moment.js";
 
 const ATTR = "data-localdate-format";
 
 dom.scanner(`[${ATTR}]`, function(el) {
-  const format = el.attr(ATTR);
+  const format = el.attr(ATTR) as string;
 
   const isoString = el.text();
 

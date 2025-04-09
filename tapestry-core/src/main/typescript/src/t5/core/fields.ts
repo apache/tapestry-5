@@ -1,10 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-// Copyright 2012-2013 The Apache Software Foundation
+// Copyright 2012-2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,18 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/fields
-//
-// Module for logic relating to form input fields (input, select, textarea); specifically
-// presenting validation errors and perfoming input validation when necessary.
+/**
+ * ## t5/core/fields
+ *
+ * Module for logic relating to form input fields (input, select, textarea); specifically
+ * presenting validation errors and perfoming input validation when necessary.
+ * @packageDocumentation
+ */
+
 import _ from "underscore"
-import events from "t5/core/events";
-import dom from "t5/core/dom";
-import utils from  "t5/core/utils";
-import forms from "t5/core/forms";
+import events from "t5/core/events.js";
+import dom from "t5/core/dom.js";
+import utils from  "t5/core/utils.js";
+import forms from "t5/core/forms.js";
+import { ElementWrapper, EventWrapper } from "./types.js";
 
 let exports;
-const ensureFieldId = function(field) {
+const ensureFieldId = function(field: ElementWrapper): string {
   let fieldId = field.attr("id");
 
   if (!fieldId) {
@@ -37,7 +36,7 @@ const ensureFieldId = function(field) {
     field.attr("id", fieldId);
   }
 
-  return fieldId;
+  return fieldId as string;
 };
 
 // Finds any `.help-block` used for presenting errors for the provided field.
@@ -48,7 +47,7 @@ const ensureFieldId = function(field) {
 // such as to support responsive layout, there will be multiple help blocks for a single field.
 //
 // * field - element wrapper for the field
-const findHelpBlocks = function(field) {
+const findHelpBlocks = function(field: ElementWrapper) {
   let fieldId = field.attr("id");
 
   // When the field has an id (the normal case!), search the body for
@@ -76,7 +75,7 @@ const findHelpBlocks = function(field) {
   const block = group.findFirst("[data-presentation=error]");
 
   if (block) {
-    block.attr("data-error-block-for", fieldId);
+    block.attr("data-error-block-for", fieldId as string);
     return [block];
   }
 
@@ -84,7 +83,7 @@ const findHelpBlocks = function(field) {
   return null;
 };
 
-const createHelpBlock = function(field) {
+const createHelpBlock = function(field: ElementWrapper) {
   const fieldId = ensureFieldId(field);
 
   // No containing group ... this is a problem, probably an old 5.3 application upgraded to 5.4
@@ -101,8 +100,8 @@ const createHelpBlock = function(field) {
 
   // The .input-group selectors are used to attach buttons or markers to the field.
   // In which case, the help block can go after the group instead.
-  if (container.hasClass("input-group")) {
-    container.insertAfter(block);
+  if (container!.hasClass("input-group")) {
+    container!.insertAfter(block);
   } else {
     field.insertAfter(block);
   }
@@ -110,59 +109,67 @@ const createHelpBlock = function(field) {
   return block;
 };
 
-const showValidationError = (id, message) => dom.wrap(id).trigger(events.field.showValidationError, { message });
+const showValidationError = (id: string, message: string) => dom.wrap(id)!.trigger(events.field.showValidationError, { message });
 
-const collectOptionValues = wrapper => _.pluck(wrapper.element.options, "value");
+// @ts-ignore
+const collectOptionValues = (wrapper: ElementWrapper) => _.pluck(wrapper.element.options, "value");
 
 // Default registrations:
 
-dom.onDocument(events.field.inputValidation, function(event, formMemo) {
+dom.onDocument(events.field.inputValidation, null, function(element: ElementWrapper, event: EventWrapper, formMemo: any) {
 
   // Fields that are disabled, or not visible to the user are not subject to
   // validation. Typically, a field will only be invisible due to the
-  // core/FormFragment component.
-  if (this.element.disabled || (!this.deepVisible())) { return; }
+  // core/FormFragment component.  
+  // @ts-ignore
+  if (element.element.disabled || (!element.deepVisible())) { return; }
 
   let failure = false;
 
   const fieldValue =
-    (this.attr("data-value-mode")) === "options" ?
-      collectOptionValues(this)
-    : this.element.type === "checkbox" ?
-      this.checked()
+    (element.attr("data-value-mode")) === "options" ?
+      collectOptionValues(element)
+      // @ts-ignore
+    : element.element.type === "checkbox" ?
+      element.checked()
     :
-      this.value();
+      element.value();
 
   const memo = {value: fieldValue};
   
   const postEventTrigger = () => {
+    // @ts-ignore
     if (memo.error) {
       // Assume the event handler displayed the message.
       failure = true;
 
+      // @ts-ignore
       if (_.isString(memo.error)) {
 
-        return this.trigger(events.field.showValidationError, { message: memo.error });
+        // @ts-ignore
+        return element.trigger(events.field.showValidationError, { message: memo.error });
       }
     }
   };
 
-  this.trigger(events.field.optional, memo);
+  element.trigger(events.field.optional, memo);
 
   postEventTrigger();
 
   if (!failure && (!utils.isBlank(memo.value))) {
 
-    this.trigger(events.field.translate, memo);
+    element.trigger(events.field.translate, memo);
 
     postEventTrigger();
 
     if (!failure) {
+        // @ts-ignore
         if (_.isUndefined(memo.translated)) {
+          // @ts-ignore
           memo.translated = memo.value;
         }
 
-        this.trigger(events.field.validate, memo);
+        element.trigger(events.field.validate, memo);
 
         postEventTrigger();
       }
@@ -170,36 +177,36 @@ dom.onDocument(events.field.inputValidation, function(event, formMemo) {
 
   if (failure) {
     formMemo.error = true;
-    this.attr('aria-invalid', 'true');
-    this.attr('aria-describedby', this.attr('id') + "-help-block");
+    element.attr('aria-invalid', 'true');
+    element.attr('aria-describedby', element.attr('id') + "-help-block");
   } else {
-    this.attr('aria-invalid', 'false');
-    this.attr('aria-describedby ', null);
-    this.trigger(events.field.clearValidationError);
+    element.attr('aria-invalid', 'false');
+    element.attr('aria-describedby ', null);
+    element.trigger(events.field.clearValidationError);
   }
 
 });
 
-dom.onDocument(events.field.clearValidationError, function() {
-  const blocks = exports.findHelpBlocks(this);
+dom.onDocument(events.field.clearValidationError, null, function(element: ElementWrapper) {
+  const blocks = findHelpBlocks(element);
 
   for (var block of Array.from(blocks || [])) {
     block.hide().update("");
-    block.parent().removeClass("has-error");
+    block.parent()!.removeClass("has-error");
     block.attr("role", null);
   }
 
-  const group = this.findParent(".form-group");
+  const group = element.findParent(".form-group");
 
   group && group.removeClass("has-error");
 
 });
 
-dom.onDocument(events.field.showValidationError, function(event, memo) {
-  let blocks = exports.findHelpBlocks(this);
+dom.onDocument(events.field.showValidationError, null, function(element: ElementWrapper, event: EventWrapper, memo: any) {
+  let blocks = findHelpBlocks(element);
 
   if (!blocks) {
-    blocks = [exports.createHelpBlock(this)];
+    blocks = [createHelpBlock(element)];
   }
 
   for (var block of Array.from(blocks)) {
@@ -207,15 +214,15 @@ dom.onDocument(events.field.showValidationError, function(event, memo) {
     // Add "has-error" to the help-block's immediate container; this assist with some layout issues
     // where the help block can't be under the same .form-group element as the field (more common
     // with a horizontal form layout).
-    block.parent().addClass("has-error");
+    block.parent()!.addClass("has-error");
     block.attr("role", "alert");
   }
 
-  const group = this.findParent(".form-group");
+  const group = element.findParent(".form-group");
 
-  const container = group || this.parent().closest(":not(.input-group)");
+  const container = group || element.parent()!.closest(":not(.input-group)");
 
-  container.addClass("has-error");
+  container!.addClass("has-error");
 
 });
 

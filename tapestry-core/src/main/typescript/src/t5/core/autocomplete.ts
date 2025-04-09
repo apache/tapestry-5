@@ -10,15 +10,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/autocomplete
-//
-// Support for the core/Autocomplete Tapestry mixin, a wrapper around
-// the Twitter autocomplete.js library.
-import dom from "t5/core/dom";
+// @ts-nocheck
+
+/**
+ * ## t5/core/autocomplete
+ * 
+ * Support for the core/Autocomplete Tapestry mixin, a wrapper around
+ * the Twitter autocomplete.js library.
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js";
 import underscore from "underscore";
 import $ from "jquery"
-import utils from "t5/core/utils";
-import typeahead from "t5/core/typeahead";
+import utils from "t5/core/utils.js";
+import "t5/core/typeahead.js";
 
 export const init = function(spec) {
   const $field = $(document.getElementById(spec.id));

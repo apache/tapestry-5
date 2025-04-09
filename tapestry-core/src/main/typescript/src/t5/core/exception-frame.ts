@@ -15,38 +15,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/exception-frame
-//
-// Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
-// was expected, including a partial page render response).
-import dom from "t5/core/dom";
+/**
+ * ## t5/core/exception-frame
+ * 
+ * Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
+ * was expected, including a partial page render response).
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js";
+import { AddableContent, ElementWrapper } from "t5/core/types.js";
 
-const write = function(container, content) {
-  const iframe = (container.findFirst("iframe")).element;
+const write = function(container: ElementWrapper, content: AddableContent) {
+  const iframe = (container.findFirst("iframe"))!.element as HTMLIFrameElement;
 
   // See http://xkr.us/articles/dom/iframe-document/
 
   let iframeDocument = iframe.contentWindow || iframe.contentDocument;
+
+  // @ts-ignore
   if (iframeDocument.document) {
+    // @ts-ignore
     iframeDocument = iframeDocument.document;
   }
 
   // Clear current content:
-  iframeDocument.open();
+  iframeDocument!.open();
   // Write new content:
-  iframeDocument.write(content);
-  return iframeDocument.close();
+  // @ts-ignore
+  iframeDocument!.write(content);
+  return iframeDocument!.close();
 };
 
-const clear = function() {
-  const container = this.closest('.exception-container');
-  container.remove();
+const clear = function(element: ElementWrapper) {
+  const container = element.closest('.exception-container');
+  container!.remove();
   return false;
 };
 
 const create = function() {
 
-  const container = dom.create(
+  const container = dom.create("div",
     {class: "exception-container"},
     `\
 <iframe> </iframe>
@@ -67,7 +75,7 @@ const create = function() {
 
 // Export single function:
 
-export default function(exceptionContent) {
+export default function(exceptionContent: AddableContent) {
   const container = create();
   write(container, exceptionContent);
   container.show();

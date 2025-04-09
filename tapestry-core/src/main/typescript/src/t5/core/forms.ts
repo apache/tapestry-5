@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/forms
-//
-// Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
-
-import events from "t5/core/events";
-import dom from "t5/core/dom";
+/** 
+ * ## t5/core/forms
+ *
+ * Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
+ * @packageDocumentation
+ */
+import events from "t5/core/events.js";
+import dom from "t5/core/dom.js";
 import _ from "underscore";
+import { ElementWrapper } from "./types.js";
 
 // Meta-data name that indicates the next submission should skip validation (typically, because
 // the form was submitted by a "cancel" button).
@@ -31,7 +34,7 @@ const DATA_ATTRIBUTE = "data-generator";
 const DATA_ATTRIBUTE_VALUE = "tapestry/core/form";
 const TAPESTRY_CORE_FORM_SELECTOR = "form[" + DATA_ATTRIBUTE + "='" + DATA_ATTRIBUTE_VALUE + "']";
 
-const clearSubmittingHidden = function(form) {
+const clearSubmittingHidden = function(form: ElementWrapper) {
   const hidden = form.findFirst("[name='t:submit']");
 
   // Clear if found
@@ -41,7 +44,7 @@ const clearSubmittingHidden = function(form) {
 
 };
 
-const setSubmittingHidden = function(form, submitter) {
+const setSubmittingHidden = function(form: ElementWrapper, submitter: ElementWrapper) {
 
   const mode = submitter.attr("data-submit-mode");
   const isCancel = mode === "cancel";
@@ -52,34 +55,38 @@ const setSubmittingHidden = function(form, submitter) {
   let hidden = form.findFirst("[name='t:submit']");
 
   if (!hidden) {
-    const firstHidden = form.findFirst("input[type=hidden]");
+    const firstHidden = form.findFirst("input[type=hidden]")!;
     hidden = dom.create("input", {type: "hidden", name: "t:submit"});
     firstHidden.insertBefore(hidden);
   }
 
+  const element = submitter.element as HTMLInputElement;
+
   // TODO: Research why we need id and name and get rid of one if possible.
-  const name = isCancel ? "cancel" : submitter.element.name;
+  const name = isCancel ? "cancel" : element.name;
   // Not going to drag in all of json2 just for this one purpose, but even
   // so, I'd like to get rid of this. Prototype includes Object.toJSON(), but jQuery
   // is curiously absent an equivalent.
-  hidden.value(`[\"${submitter.element.id}\",\"${name}\"]`);
+  hidden.value(`[\"${element.id}\",\"${name}\"]`);
 
 };
 
 // Passed the element wrapper for a form element, returns a map of all the values
 // for all non-disabled fields (including hidden fields, select, textarea). This is primarily
 // used when assembling an Ajax request for a form submission.
-const gatherParameters = function(form) {
-  const result = {};
+const gatherParameters = function(form: ElementWrapper) {
+  const result = {} as any;
 
   const fields = form.find("input, select, textarea");
 
   _.each(fields, function(field) {
       if (field.attr("disabled")) { return; }
 
+      const element = field.element as HTMLInputElement;
+
       const {
         type
-      } = field.element;
+      } = element;
 
       // Ignore types file and submit; file doesn't make sense for Ajax, and submit
       // is handled by keeping a hidden field active with the data Tapestry needs
@@ -94,7 +101,7 @@ const gatherParameters = function(form) {
 
       const {
         name
-      } = field.element;
+      } = element;
 
       // Many modern UIs create name-less elements on the fly (e.g., Backbone); these may be mixed
       // in with normal elements managed by Tapestry but should be ignored (not sent to the server in a POST
@@ -120,23 +127,23 @@ const gatherParameters = function(form) {
 };
 
 
-const defaultValidateAndSubmit = function() {
+const defaultValidateAndSubmit = function(element: ElementWrapper) {
 
   let where = () => "processing form submission";
 
   try {
 
-    if (((this.attr("data-validate")) === "submit") &&
-        (!this.meta(SKIP_VALIDATION))) {
+    if (((element.attr("data-validate")) === "submit") &&
+        (!element.meta(SKIP_VALIDATION))) {
 
       let memo;
-      this.meta(SKIP_VALIDATION, null);
+      element.meta(SKIP_VALIDATION, null);
 
       let hasError = false;
       let focusField = null;
 
-      for (var field of Array.from(this.find("[data-validation]"))) {
-        memo = {};
+      for (var field of Array.from(element.find("[data-validation]"))) {
+        memo = {} as any;
         where = () => `triggering ${events.field.inputValidation} event on ${field.toString()}`;
         field.trigger(events.field.inputValidation, memo);
 
@@ -149,15 +156,15 @@ const defaultValidateAndSubmit = function() {
       // Only do form validation if all individual field validation
       // was successful.
       if (!hasError) {
-        memo = {};
+        memo = {} as any;
         where = () => "trigging cross-form validation event";
-        this.trigger(events.form.validate, memo);
+        element.trigger(events.form.validate, memo);
 
         hasError = memo.error;
       }
 
       if (hasError) {
-        clearSubmittingHidden(this);
+        clearSubmittingHidden(element);
 
         // If a specific field has been identified as the source of the validation error, then
         // focus on it.
@@ -165,7 +172,7 @@ const defaultValidateAndSubmit = function() {
 
         // Trigger an event to inform that form validation results in error
         where = () => "triggering validation in error event";
-        this.trigger(events.form.validateInError);
+        element.trigger(events.form.validateInError);
 
         // Cancel the original submit event when there's an error
         return false;
@@ -178,10 +185,10 @@ const defaultValidateAndSubmit = function() {
     // is no memo.
     where = () => `triggering ${events.form.prepareForSubmit} event (after validation)`;
 
-    this.trigger(events.form.prepareForSubmit);
+    element.trigger(events.form.prepareForSubmit);
 
-  } catch (error) {
-    console.error(`Form validiation/submit error \`${error.toString()}', in form ${this.toString()}, ${where()}`);
+  } catch (error: any) {
+    console.error(`Form validiation/submit error \`${error.toString()}', in form ${element.toString()}, ${where()}`);
     console.error(error);
     return false;
   }
@@ -196,21 +203,23 @@ dom.onDocument("submit", TAPESTRY_CORE_FORM_SELECTOR, defaultValidateAndSubmit);
 // On any click on a submit or image, update the containing form to indicate that the element
 // was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
 // information about which control triggered the submit gets lost.
-dom.onDocument("click", TAPESTRY_CORE_FORM_SELECTOR + " input[type=submit], " + TAPESTRY_CORE_FORM_SELECTOR + " input[type=image]", function() {
-  setSubmittingHidden((dom(this.element.form)), this);
+dom.onDocument("click", TAPESTRY_CORE_FORM_SELECTOR + " input[type=submit], " + TAPESTRY_CORE_FORM_SELECTOR + " input[type=image]", 
+    function(element: ElementWrapper) {
+  const form = element.element as HTMLInputElement;
+  setSubmittingHidden((dom(form)!), element);
 });
 
 // Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
 // Update the hidden field, but also cancel the default behavior for the click.
-dom.onDocument("click", "a[data-submit-mode]", function() {
-  const form = this.findParent("form");
+dom.onDocument("click", "a[data-submit-mode]", function(element: ElementWrapper) {
+  const form = element.findParent("form");
 
   if (!form) {
     console.error("Submitting link element not contained inside a form element.");
     return false;
   }
 
-  setSubmittingHidden(form, this.closest("a[data-submit-mode]"));
+  setSubmittingHidden(form, element.closest("a[data-submit-mode]")!);
 
   // Now the ugly part; if we just invoke submit() on the form, it does not trigger
   // the form's "submit" event, which we need.
@@ -228,7 +237,7 @@ export default {
 
   // Sets a flag on the form to indicate that client-side validation should be bypassed.
   // This is typically associated with submit buttons that "cancel" the form.
-  skipValidation(form) {
+  skipValidation(form: ElementWrapper) {
     return form.meta(SKIP_VALIDATION, true);
   }
 };

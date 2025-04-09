@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/datefield
-//
-// Provides support for the `core/DateField` component.
-import dom from "t5/core/dom";
-import events from "t5/core/events";
-import messages from "t5/core/messages";
-import ajax from  "t5/core/ajax";
+/**
+ * ## t5/core/datefield
+ *
+ * Provides support for the `core/DateField` component.
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js";
+import events from "t5/core/events.js";
+import messages from "t5/core/messages.js";
+import ajax from  "t5/core/ajax.js";
 import _ from "underscore";
-import datepicker from "t5/core/datepicker";
+import DatePicker from "t5/core/datepicker.js";
 import "t5/core/fields";
+import { ElementWrapper, EventWrapper, ResponseWrapper } from "t5/core/types.js";
 
 // Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
 // the order needed by the DatePicker component (MONDAY = 0 ... SUNDAY = 6)
@@ -37,7 +41,7 @@ const days = (messages("date-symbols.days")).split(",");
 days.push(days.shift());
 
 const monthsLabels = (messages("date-symbols.months")).split(",");
-let abbreviateWeekDay = name => name.substr(0, 1).toLowerCase();
+let abbreviateWeekDay = (name: string) => name.substr(0, 1).toLowerCase();
 const locale = (document.documentElement.getAttribute("data-locale")) || "en";
 if ((locale.indexOf('zh')) === 0) {
   // TAP5-1886, Chinese weekdays cannot be abbreviated using the first character
@@ -45,7 +49,8 @@ if ((locale.indexOf('zh')) === 0) {
 }
 const daysLabels = ((() => {
   const result = [];
-  for (name of Array.from(days)) {         result.push(abbreviateWeekDay(name));
+  for (name of Array.from(days)) {         
+    result.push(abbreviateWeekDay(name as string));
   }
   return result;
 })());
@@ -56,13 +61,13 @@ const noneLabel = messages("core-datefield-none");
 // Track the active popup; only one allowed at a time. May look to rework this
 // later so that there's just one popup and it is moved around the viewport, or
 // around the DOM.
-let activePopup = null;
+let activePopup: ElementWrapper | null = null;
 
 
-const isPartOfPopup = element => (element.findParent(".labelPopup") != null) || (element.findParent(".datefield-popup") != null);
+const isPartOfPopup = (element: ElementWrapper) => (element.findParent(".labelPopup") != null) || (element.findParent(".datefield-popup") != null);
 
-dom.body.on("click", function() {
-  if (activePopup && !isPartOfPopup(this)) {
+dom.body.on("click", null, function(element: ElementWrapper) {
+  if (activePopup && !isPartOfPopup(element)) {
     activePopup.hide();
     activePopup = null;
   }
@@ -70,12 +75,18 @@ dom.body.on("click", function() {
 
 
 class Controller {
-  constructor(container) {
+  readonly container: ElementWrapper;
+  readonly field: ElementWrapper | null;
+  readonly trigger: ElementWrapper | null;
+  popup: ElementWrapper | null = null;
+  // @ts-ignore
+  datePicker: DatePicker | null = null;
+  constructor(container: ElementWrapper) {
     this.container = container;
     this.field = this.container.findFirst('input:not([name="t:formdata"])');
     this.trigger = this.container.findFirst("button");
 
-    this.trigger.on("click", () => {
+    this.trigger!.on("click", null, () => {
       this.doTogglePopup();
       return false;
     });
@@ -86,17 +97,18 @@ class Controller {
       activePopup.hide();
     }
 
-    this.popup.show();
+    this.popup!.show();
     return activePopup = this.popup;
   }
 
   hidePopup() {
-    this.popup.hide();
+    this.popup!.hide();
     return activePopup = null;
   }
 
   doTogglePopup() {
-    if (this.field.element.disabled) { return; }
+    // @ts-ignore
+    if (this.field!.element.disabled) { return; }
 
     if (!this.popup) {
       this.createPopup();
@@ -108,7 +120,7 @@ class Controller {
       return;
     }
 
-    const value = this.field.value();
+    const value = this.field!.value();
 
     if (value === "") {
       this.datePicker.setDate(null);
@@ -116,27 +128,28 @@ class Controller {
       return;
     }
 
-    this.field.addClass("ajax-wait");
+    this.field!.addClass("ajax-wait");
 
-    return ajax((this.container.attr("data-parse-url")), {
+    return ajax((this.container.attr("data-parse-url") as string), {
       data: {
         input: value
       },
-      onerror: message => {
-        this.field.removeClass("ajax-wait");
+      onerror: (message: string) => {
+        this.field!.removeClass("ajax-wait");
         this.fieldError(message);
 
         this.showPopup();
       },
 
-      success: response => {
-        this.field.removeClass("ajax-wait");
+      success: (response: ResponseWrapper) => {
+        this.field!.removeClass("ajax-wait");
         const reply = response.json;
 
         if (reply.result) {
           this.clearFieldError();
           const [year, month, day] = Array.from(reply.result.split('-'));
 
+          // @ts-ignore
           const date = new Date(year, month-1, day);
           this.datePicker.setDate(date);
         }
@@ -153,15 +166,16 @@ class Controller {
     );
   }
 
-  fieldError(message) {
-    return this.field.focus().trigger(events.field.showValidationError, { message });
+  fieldError(message: string) {
+    return this.field!.focus().trigger(events.field.showValidationError, { message });
   }
 
   clearFieldError() {
-    return this.field.trigger(events.field.clearValidationError);
+    return this.field!.trigger(events.field.clearValidationError);
   }
 
   createPopup() {
+    // @ts-ignore
     this.datePicker = new DatePicker();
     this.datePicker.setFirstWeekDay(datePickerFirstDay);
     
@@ -179,25 +193,25 @@ class Controller {
     if (date === null) {
       this.hidePopup();
       this.clearFieldError();
-      this.field.value("");
+      this.field!.value("");
       return;
     }
 
-    this.field.addClass("ajax-wait");
+    this.field!.addClass("ajax-wait");
 
     const normalizedFormat = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
-    return ajax((this.container.attr("data-format-url")), {
+    return ajax((this.container.attr("data-format-url") as string), {
       data: {
         input: normalizedFormat
       },
-      failure: (response, message) => {
-        this.field.removeClass("ajax-wait");
+      failure: (response: ResponseWrapper, message: string) => {
+        this.field!.removeClass("ajax-wait");
         return this.fieldError(message);
       },
-      success: response => {
-        this.field.removeClass("ajax-wait");
+      success: (response: ResponseWrapper) => {
+        this.field!.removeClass("ajax-wait");
         this.clearFieldError();
-        this.field.value(response.json.result);
+        this.field!.value(response.json.result);
         return this.hidePopup();
       }
     }
@@ -208,7 +222,7 @@ class Controller {
 
 // Initialization:
 
-dom.scanner("[data-component-type='core/DateField']", function(container) {
+dom.scanner("[data-component-type='core/DateField']", function(container: ElementWrapper) {
   // Hide it from later scans
   container.attr("data-component-type", null);
 

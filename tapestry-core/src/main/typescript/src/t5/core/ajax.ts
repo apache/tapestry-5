@@ -32,6 +32,7 @@
  * It wraps (or provides) `success`, `exception`, and `failure` handlers, extended to handle a partial page render
  * response (for success), or properly log a server-side failure or client-side exception, including using the
  * `t5/core/exception-frame` module to display a server-side processing exception.
+ * @packageDocumentation
  */
 import pageinit from "t5/core/pageinit.js";
 import dom from "t5/core/dom.js";
@@ -39,7 +40,7 @@ import exceptionframe from "t5/core/exception-frame.js";
 import console from "t5/core/console.js";
 import _ from "underscore";
 
-export default function(url: String, options: any) {
+export default function(url: string, options?: any) {
   const complete = function() {
     if (options.complete) {
       options.complete();
@@ -48,7 +49,11 @@ export default function(url: String, options: any) {
   };
     
   if (options.hasOwnProperty('element')) {
-    url = dom.getEventUrl(url, options.element);
+    const eventUrl = dom.getEventUrl(url, options.element);
+    if (eventUrl == null) {
+      throw new Error(`URL not found for event ${url}`);
+    }
+    url = eventUrl;
   }
 
   const newOptions = _.extend({}, options, {

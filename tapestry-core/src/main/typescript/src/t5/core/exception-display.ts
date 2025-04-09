@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/exception-display
-//
-// Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
-// filtering the stack trace.
-import dom from "t5/core/dom";
+/**
+ * ## t5/core/exception-display
+ * 
+ * Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
+ * filtering the stack trace.
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js";
+import { ElementWrapper } from "t5/core/types.js";
 
-dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function() {
-  const {
-    checked
-  } = this.element;
+dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function(element: ElementWrapper) {
+  const checked = element.checked();
 
   for (var traceList of Array.from(dom.body.find(".stack-trace"))) {
     traceList[checked ? "addClass" : "removeClass"]("filtered");

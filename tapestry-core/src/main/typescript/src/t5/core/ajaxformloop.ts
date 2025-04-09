@@ -12,45 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/ajaxformloop
-//
-// Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
-// core/RemoveRowLink).
-import dom from "t5/core/dom";
-import events from "t5/core/events";
-import console from "t5/core/console"
-import ajax from  "t5/core/ajax";
+/**
+ * ## t5/core/ajaxformloop
+ * 
+ * Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
+ * core/RemoveRowLink).
+ * @packageDocumentation
+ */
+import dom from "t5/core/dom.js";
+import events from "t5/core/events.js";
+import console from "t5/core/console.js"
+import ajax from  "t5/core/ajax.js";
+import { ElementWrapper, ResponseWrapper } from "t5/core/types.js";
 
 // "afl" is short for "AjaxFormLoop".
 const AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']";
 const FRAGMENT_TYPE = "core/ajaxformloop-fragment";
 
-dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function() {
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function(element: ElementWrapper) {
 
-  const afl = this.findParent(AFL_SELECTOR);
+  const afl = element.findParent(AFL_SELECTOR);
 
   if (!afl) {
     console.error("Enclosing element for AjaxFormLoop remove row link not found.");
     return false;
   }
 
-  const url = afl.attr("data-remove-row-url");
+  const url = afl.attr("data-remove-row-url") as string;
 
-  ajax(url, {
+  ajax(url!, {
     data: {
-      "t:rowvalue": (this.closest("[data-afl-row-value]")).attr("data-afl-row-value")
+      "t:rowvalue": (element.closest("[data-afl-row-value]"))!.attr("data-afl-row-value")
     },
     success: () => {
       // The server has removed the row from persistent storage, lets
       // do the same on the UI.
 
-      const fragment = this.findParent(`[data-container-type='${FRAGMENT_TYPE}']`);
+      const fragment = element.findParent(`[data-container-type='${FRAGMENT_TYPE}']`);
 
       // TODO: Fire some before & after events, to allow for animation.
 
       // The fragment takes with it the hidden fields that control form submission
       // for its portion of the form.
-      return fragment.remove();
+      return fragment!.remove();
     }
   }
   );
@@ -58,16 +62,16 @@ dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function()
   return false;
 });
 
-dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function() {
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function(element: ElementWrapper) {
 
-  const afl = this.findParent(AFL_SELECTOR);
+  const afl = element.findParent(AFL_SELECTOR);
 
-  const insertionPoint = this.findParent("[data-afl-behavior=insert-before]");
+  const insertionPoint = element.findParent("[data-afl-behavior=insert-before]")!;
 
-  const url = afl.attr("data-inject-row-url");
+  const url = afl!.attr("data-inject-row-url") as string;
 
   ajax(url, {
-    success(response) {
+    success(response: ResponseWrapper) {
       const content = (response.json != null ? response.json.content : undefined) || "";
 
       // Create a new element with the same type (usually "div") and class as this element.

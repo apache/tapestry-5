@@ -12,10 +12,12 @@
     "baseUrl": "src/",
 
     "paths": {
-      "t5/core/dom.js": ["src/t5/core/dom.ts"],
       "t5/core.*": ["src/t5/core/*"],
       "https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js": [
-        "./node_modules/@hpcc-js/wasm/types/index.d.ts"
+        "../node_modules/@hpcc-js/wasm/types/index.d.ts"
+      ],
+      "moment": [
+        "../node_modules/moment/moment.d.ts"
       ]
     },
 
@@ -39,7 +41,7 @@
 
   "typedocOptions": {
     "entryPoints": [
-      "src/*.ts"
+      "src/t5/core/*.ts"
     ],
     "out": "docs/" // <--- output directory
   }

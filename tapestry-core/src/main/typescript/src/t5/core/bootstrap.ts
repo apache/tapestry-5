@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/bootstrap
-//
-// Utilities for leveraging Bootstrap
-import "t5/core/bootstrap"
+/**
+ * ## t5/core/bootstrap
+ * 
+ * Utilities for leveraging Bootstrap
+ * @packageDocumentation
+ */
 
-let a = "";
+import "t5/core/bootstrap"
 
 export default 
   // Generates the CSS class name for an icon.

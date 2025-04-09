@@ -11,7 +11,13 @@
 // limitations under the License.
 
 /**
+ * Module defining some types used specially on `t5/core/dom`.
+ * @packageDocumentation
+  */
+
+/**
  * Superinterface of event wrapper types. Exists just to keep the compiler happy.
+ * @internal
  */
 export interface IEventWrapper {
 }
@@ -32,7 +38,7 @@ export interface ElementOffset {
 /**
  * Type defining the types of content
  */
-export type AddableContent = string | ElementWrapper | HTMLElement;
+export type AddableContent = string | ElementWrapper | HTMLElement | null;
 
 /**
  * Type defining the options used in an AJAX request.
@@ -82,29 +88,31 @@ export interface AjaxRequestOptions {
  * Exposes the DOM element as property `element`.
  */
 export interface ElementWrapper {
+
+  readonly element: HTMLElement;
   
   /**
    * Hides the wrapped element, setting its display to 'none'.
    * 
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   hide(): ElementWrapper;
   
   /**
    * Displays teh wrapped element if hidden.
    * 
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   show(): ElementWrapper;
   
   /**
    * Gets or sets a CSS property.
    * 
-   * @param {string} string name the name of the property.
+   * @param {string} name name the name of the property.
    * @param {string} value the value of the property.
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
-  css(name: string, property: string | undefined): ElementWrapper | string;
+  css(name: string, value: string | undefined): ElementWrapper | string;
   
   /**
    * Returns the offset of the object relative to the document. The returned object has
@@ -115,7 +123,7 @@ export interface ElementWrapper {
   /**
    * Removes the wrapped element from the DOM. It can later be re-attached.
    * 
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   remove(): ElementWrapper;
   
@@ -128,9 +136,9 @@ export interface ElementWrapper {
    * and values of the object are applied as attributes, and this `ElementWrapper` is returned.
    *
    * @param {string | [key: string, value: string]} name the attribute to read or update, or an object of keys and values
-   * @param {string} value (optional) the new value for the attribute  
+   * @param {string | boolean | number} value (optional) the new value for the attribute  
    */
-  attr(name: string | [key: string, value: string], value?: string): ElementWrapper | string | null;
+  attr(name: string | [key: string, value: string], value?: string | boolean | number | null): ElementWrapper | string | null;
   
   /**
    * Moves the cursor to the field.
@@ -149,7 +157,7 @@ export interface ElementWrapper {
    * Removes the class name from the element.
    * 
    * @param {string} name the class name
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   removeClass(name: string): ElementWrapper;
 
@@ -157,7 +165,7 @@ export interface ElementWrapper {
    * Adds the class name to the element.
    * 
    * @param {string} name the class name
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   addClass(name: string) : ElementWrapper;
   
@@ -166,7 +174,7 @@ export interface ElementWrapper {
    * element, or an ElementWrapper, or null (to remove the body of the element).
    * 
    * @param {AddableContent} content the content to be added
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   update(content: AddableContent) : ElementWrapper;
   
@@ -174,7 +182,7 @@ export interface ElementWrapper {
    * Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
    * 
    * @param {AddableContent} content the content to be added
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   append(content: AddableContent): ElementWrapper;
 
@@ -182,7 +190,7 @@ export interface ElementWrapper {
    * Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
    * 
    * @param {AddableContent} content the content to be added
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   prepend(content: AddableContent): ElementWrapper;
   
@@ -191,7 +199,7 @@ export interface ElementWrapper {
    * this ElementWrapper's element.
    * 
    * @param {AddableContent} content the content to be added
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   insertBefore(content: AddableContent): ElementWrapper;
   
@@ -200,7 +208,7 @@ export interface ElementWrapper {
    * this ElementWrapper's element.
    * 
    * @param {AddableContent} content the content to be added
-   * @returns {T} <code>this</code>.
+   * @returns <code>this</code>.
    */
   insertAfter(content: AddableContent): ElementWrapper;
 
@@ -275,12 +283,12 @@ export interface ElementWrapper {
    * a prefix that ends with a colon).
    *
    * @param {string} eventName name of event to trigger on the wrapped Element
-   * @param {Object | null} memo optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
+   * @param {any | null} memo optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
    * be null for native events). The memo, when provided, should be an object; it is an error if it is a string or other
    * non-object type..
    * @returns {boolean} true if the event fully executed, or false if the event was canceled.
    */
-  trigger(eventName: string, memo: Object | null): void;
+  trigger(eventName: string, memo?: any): void;
   
   /**
    * With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
@@ -290,7 +298,7 @@ export interface ElementWrapper {
    *
    * @param {string | null} newValue (optional) new value for field
    */
-  value(newValue: string | null): String | null;
+  value(newValue?: string | null): String | null;
   
   /**
    * Returns true if element is a checkbox and is checked.
@@ -298,6 +306,17 @@ export interface ElementWrapper {
    * @returns {boolean} <code>true</code> of <code>false</code>
    */
   checked(): boolean;
+
+  /**
+   * Stores or retrieves meta-data on the element. With one parameter, the current value for the name
+   * is returned (or undefined). With two parameters, the meta-data is updated and the previous value returned.
+   * For Prototype, the meta data is essentially empty (except, perhaps, for some internal keys used to store
+   * event handling information).  For jQuery, the meta data may be initialized from data- attributes.
+   *
+   * @param {string} name name of meta-data value to store or retrieve
+   * @param {string?} value (optional) new value for meta-data
+   */
+  meta(name: string, value?: string | null | boolean): string | null | boolean;
 
   /**
    * Adds an event handler for one or more events.
@@ -409,6 +428,11 @@ export interface ResponseWrapper {
    * @returns {string | null} the value of the header
    */
   header(name: String) : string | null
+
+  /**
+   * The response text, if present, as a JSON object.
+   */
+  readonly json: any | null;
 		
 }
 
@@ -416,6 +440,15 @@ export interface ResponseWrapper {
  * Defines the type of the exported object for t5/core/dom.js implementations.
  */
 export interface DOM {
+
+  /**
+   * Function that wraps a DOM element as an ElementWrapper; additional functions are attached as
+   * properties.
+   *
+   * @param {HTMLElement | string} element a DOM element, or a string id of a DOM element.
+   * @returns the ElementWrapper, or null if no element with the id exists.
+   */
+  (element: HTMLElement | string): ElementWrapper | null;
 
   /**
    * Returns the URL of a component event based on its name and an optional element
@@ -439,11 +472,11 @@ export interface DOM {
   /**
    * Creates a new element, detached from the DOM.
    *
-   * @param elementName (string) name of element to create, if ommitted, then "div"
-   * @param attributes (object) attributes to apply to the created element (may be omitted)
-   * @param body (string) content for the new element, may be omitted for no body
+   * @param elementName {string} name of element to create, if ommitted, then "div"
+   * @param attributes {object} attributes to apply to the created element (may be omitted)
+   * @param body {AddableContent} content for the new element, may be omitted for no body
    */
-  create: (elementName: string | HTMLElement, attributes: [key: string, value: string] | HTMLElement, body: HTMLBodyElement) => ElementWrapper;
+  create: (elementName: string, attributes?: object, body?: AddableContent) => ElementWrapper;
 
   ajaxRequest: (url: string, options?: AjaxRequestOptions) => RequestWrapper;
   
@@ -459,7 +492,7 @@ export interface DOM {
    * @param handler function invoked; the function is passed an `EventWrapper` object, and the context (`this`)
    * is the `ElementWrapper` for the matched element.
    */
-  on: (selector: string, events: string, match: string | null, handler: OnEventHandler) => () => any;
+  on: (selector: string | HTMLElement | Document | HTMLElement[], events: string, match: string | null, handler: OnEventHandler) => () => any;
 
   /**
    * onDocument() is used to add an event handler to the document object; this is used
@@ -472,7 +505,19 @@ export interface DOM {
    * is the `ElementWrapper` for the matched element.
    * @returns a function of no parameters that removes any added handlers.
    */
-  onDocument<Type> (events: string, match: string | null, handler: OnEventHandler): () => any;
+  onDocument: (events: string, match: string | null, handler: OnEventHandler) => () => any;
+
+  /**
+   * Sets up a scanner callback; this is used to perfom one-time setup of elements
+   * that match a particular CSS selector. The callback is passed each element that
+   * matches the selector. The callback is expected to modify the element so that it does not
+   * match future selections caused by zone updates, typically by removing the CSS class or data- attribute
+   * referenced by the selector.
+   *
+   * @param {string} selector a CSS selector.
+   * @param {(e: ElementWrapper) => void)} callback the function to be called.
+   */
+  scanner: (selector: string, callback: (e: ElementWrapper) => void) => void;
   
   /**
    * Returns a wrapped version of the document.body element. Because all Tapestry JavaScript occurs

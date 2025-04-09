@@ -10,12 +10,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/console
-//
-// A wrapper around the native console, when it exists.
+/**
+ * ## t5/core/console
+ * 
+ * A wrapper around the native console, when it exists.
+ * @packageDocumentation
+ */ 
 import dom from "t5/core/dom.js";
 import _ from "underscore";
-import "t5/core/bootstrap.js";
+import bootstrap from "t5/core/bootstrap.js";
+import { ElementWrapper } from "t5/core/types.js";
 
 let e;
 let nativeConsole = null;
@@ -26,14 +30,14 @@ try {
   nativeConsole = window.console || {};
 } catch (error) { e = error; }
 
-let floatingConsole: boolean | null = null;
-let messages = null;
+let floatingConsole: ElementWrapper | null = null;
+let messages: ElementWrapper | null = null;
 
-const noFilter = () => true;
+const noFilter = (e: ElementWrapper) => true;
 
 let filter = noFilter;
 
-const updateFilter = function(text) {
+const updateFilter = function(text: string = "") {
   if (text === "") {
     filter = noFilter;
     return;
@@ -41,7 +45,7 @@ const updateFilter = function(text) {
 
   const words = text.toLowerCase().split(/\s+/);
 
-  filter = function(e) {
+  filter = function(e: ElementWrapper): boolean {
     const content = e.text().toLowerCase();
 
     for (var word of Array.from(words)) {
@@ -57,18 +61,18 @@ const consoleAttribute = dom.body.attr("data-floating-console");
 
 const forceFloating = (consoleAttribute === "enabled") || (consoleAttribute === "invisible");
 
-const button = function(action, icon, label, disabled) { if (disabled == null) { disabled = false; } return `\
+const button = function(action: string, icon:string, label:string, disabled?: boolean) { if (disabled == null) { disabled = false; } return `\
 <button data-action="${action}" class="btn btn-default btn-mini">
-  ${glyph(icon)} ${label}
+  ${bootstrap.glyph(icon)} ${label}
 </button>\
 `; };
 
 // _internal_: displays the message inside the floating console, creating the floating
 // console as needed.
-const display = function(className, message) {
+const display = function(className: string, message: string) {
 
   if (!floatingConsole) {
-    floatingConsole = dom.create(
+    floatingConsole = dom.create("div",
       {class: "tapestry-console"},
       `\
 <div class="message-container"></div>
@@ -98,37 +102,38 @@ const display = function(className, message) {
 
   messages = floatingConsole.findFirst(".message-container");
 
-  floatingConsole.findFirst("[data-action=enable]").attr("disabled", true);
+  floatingConsole.findFirst("[data-action=enable]")!.attr("disabled", true);
 
   floatingConsole.on("click", "[data-action=clear]", function() {
-    floatingConsole.hide();
-    return messages.update("");
+    floatingConsole!.hide();
+    return messages!.update("");
   });
 
   floatingConsole.on("click", "[data-action=disable]", function() {
 
-    this.attr("disabled", true);
-    floatingConsole.findFirst("[data-action=enable]").attr("disabled", false);
+    floatingConsole!.attr("disabled", true);
+    floatingConsole!.findFirst("[data-action=enable]")!.attr("disabled", false);
 
-    messages.hide();
+    messages!.hide();
 
     return false;
   });
 
   floatingConsole.on("click", "[data-action=enable]", function() {
 
-    this.attr("disabled", true);
-    floatingConsole.findFirst("[data-action=disable]").attr("disabled", false);
+    floatingConsole!.attr("disabled", true);
+    floatingConsole!.findFirst("[data-action=disable]")!.attr("disabled", false);
 
-    messages.show();
+    messages!.show();
 
     return false;
   });
 
   floatingConsole.on("change keyup", "input", function() {
-    updateFilter(this.value());
+    var value = floatingConsole!.value();
+    updateFilter();
 
-    for (e of Array.from(messages.children())) {
+    for (e of Array.from(messages!.children())) {
       var visible = filter(e);
 
       e[visible ? "show" : "hide"]();
@@ -137,7 +142,7 @@ const display = function(className, message) {
     return false;
   });
 
-  const div = dom.create(
+  const div = dom.create("div",
     {class: className},
     _.escape(message));
 
@@ -147,13 +152,13 @@ const display = function(className, message) {
     div.hide();
   }
 
-  messages.append(div);
+  messages!.append(div);
 
   // A slightly clumsy way to ensure that the container is scrolled to the bottom.
-  return _.delay(() => messages.element.scrollTop = messages.element.scrollHeight);
+  return _.delay(() => messages!.element.scrollTop = messages!.element.scrollHeight);
 };
 
-const level = (className, consolefn) => (function(message) {
+const level = (className: string, consolefn?: (m: string) => any) => (function(message: string) {
   // consolefn may be null if there's no console; under IE it may be non-null, but not a function.
   // For some testing, it is nice to force the floating console to always display.
 
@@ -186,9 +191,9 @@ const noop = function() {};
 const debugEnabled = ((document.documentElement.getAttribute("data-debug-enabled")) != null);
 
 let exports = {
-  info: level("info", nativeConsole.info),
-  warn: level("warn", nativeConsole.warn),
-  error: level("error", nativeConsole.error),
+  info: level("info", nativeConsole!.info),
+  warn: level("warn", nativeConsole!.warn),
+  error: level("error", nativeConsole!.error),
 
   // Determine whether debug is enabled by checking for the necessary attribute (which is missing
   // in production mode).
@@ -197,39 +202,50 @@ let exports = {
   debug: debugEnabled ?
     // If native console available, go for it.  IE doesn't have debug, so we use log instead.
     // Add a special noop case for IE8, since IE8 is just crazy.
-    level("debug", (nativeConsole.debug || nativeConsole.log || noop)) : noop
+    level("debug", (nativeConsole!.debug || nativeConsole!.log || noop)) : noop
 };
+
+declare global {
+  interface Window {
+    t5console: typeof exports;
+    requirejs: any | null;
+  }
+}
 
 // This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
 // and/or Selenium, it is very useful to present debugging data right on the page.
 window.t5console = exports;
 
-requirejs.onError = function(err) {
+if (window.requirejs) {
+  window.requirejs.onError = function(err: any) {
 
-  let message = `RequireJS error: ${(err != null ? err.requireType : undefined) || 'unknown'}`;
+    let message = `RequireJS error: ${(err != null ? err.requireType : undefined) || 'unknown'}`;
 
-  if (err.message) {
-    message += `: ${err.message}`;
-  }
-
-  if (err.requireType) {
-    const modules = err != null ? err.requireModules : undefined;
-    if (modules && (modules.length > 0)) {
-      message += `, modules ${modules.join(", ")}`;
+    if (err.message) {
+      message += `: ${err.message}`;
     }
-  }
 
-  if (err.fileName) {
-    message += `, ${err.fileName}`;
-  }
+    if (err.requireType) {
+      const modules = err != null ? err.requireModules : undefined;
+      if (modules && (modules.length > 0)) {
+        message += `, modules ${modules.join(", ")}`;
+      }
+    }
 
-  if (err.lineNumber) {
-    message += `, line ${err.lineNumber}`;
-  }
+    if (err.fileName) {
+      message += `, ${err.fileName}`;
+    }
 
-  if (err.columnNumber) {
-    message += `, line ${err.columnNumber}`;
-  }
+    if (err.lineNumber) {
+      message += `, line ${err.lineNumber}`;
+    }
 
-  return exports.error(message);
+    if (err.columnNumber) {
+      message += `, line ${err.columnNumber}`;
+    }
+
+    return exports.error(message);
+  };
 };
+
+export default exports;
