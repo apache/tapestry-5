@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/tree
-//
-// Handlers to support to the core/Tree Tapestry component.
+/**
+ * ## t5/core/tree
+ * 
+ * Handlers to support to the core/Tree Tapestry component.
+ * @packageDocumentation
+ */
 
-import dom from "t5/core/dom";
-import ajax from "t5/core/ajax";
+import dom from "t5/core/dom.js";
+import ajax from "t5/core/ajax.js";
 import "t5/core/zone";
 
 const TREE = "[data-component-type='core/Tree']";
@@ -29,6 +32,7 @@ const LOADED = "tree-children-loaded";
 const EXPANDED = "tree-expanded";
 const SELECTED = "selected-leaf-node";
 
+// @ts-ignore
 const send = function(node, action, success) {
   const container = node.findParent(TREE);
   const url = container.attr("data-tree-action-url");
@@ -43,6 +47,7 @@ const send = function(node, action, success) {
   );
 };
 
+// @ts-ignore
 const loadChildren = function(node) {
 
   // Ignore duplicate requests to load the children.
@@ -53,6 +58,7 @@ const loadChildren = function(node) {
   node.addClass("empty-node");
   node.update("<span class='tree-ajax-wait'/>");
 
+  // @ts-ignore
   return send(node, "expand", function(response) {
     // Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
     // icon instead of a "+" icon)
@@ -69,18 +75,21 @@ const loadChildren = function(node) {
 
 // toggles a folder in the tree between expanded and collapsed (once data for the folder
 // has been loaded).
+// @ts-ignore
 const toggle = function(node) {
   const sublist = node.findParent("li").findFirst("ul");
 
   if (node.hasClass(EXPANDED)) {
     node.removeClass(EXPANDED);
     sublist.hide();
+    // @ts-ignore
     send(node, "markCollapsed");
     return;
   }
 
   node.addClass(EXPANDED);
   sublist.show();
+  // @ts-ignore
   return send(node, "markExpanded");
 };
 
@@ -88,14 +97,18 @@ const toggle = function(node) {
 const clickHandler = function() {
 
   // Ignore clicks on leaf nodes, and on folders that are known to be empty.
+  // @ts-ignore
   if ((this.parent().hasClass("leaf-node")) || (this.hasClass("empty-node"))) {
     return false;
   }
 
   // If not already loaded then fire off the Ajax request to load the content.
+  // @ts-ignore
   if ((this.meta(LOADED)) || (this.hasClass(EXPANDED))) {
+    // @ts-ignore
     toggle(this);
   } else {
+    // @ts-ignore
     loadChildren(this);
   }
 
@@ -104,15 +117,21 @@ const clickHandler = function() {
 
 const toggleSelection = function() {
 
+  // @ts-ignore
   const selected = this.hasClass(SELECTED);
 
+  // @ts-ignore
   const node = this.findParent("li").findFirst(`[${NODE_ID}]`);
 
   if (selected) {
+    // @ts-ignore
     this.removeClass(SELECTED);
+    // @ts-ignore
     send(node, "deselect");
   } else {
+    // @ts-ignore
     this.addClass(SELECTED);
+    // @ts-ignore
     send(node, "select");
   }
 

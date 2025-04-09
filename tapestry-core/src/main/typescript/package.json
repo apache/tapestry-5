@@ -2,14 +2,14 @@
   "type": "module",
   "devDependencies": {
     "@hpcc-js/wasm": "^2.22.4",
-    "@types/jquery": "^1.10.45", 
+    "@types/jquery": "^1.10.45",
     "@types/underscore": "^1.13.0",
-    "jsdoc": "^4.0.4",
     "typedoc": "^0.28.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "moment": "^2.30.1",
+    "underscore": "^1.13.7"
   },
   "dependencies": {
-    "underscore": "^1.13.7"
   },
   "scripts": {
     "build": "npx tsc",
@@ -19,6 +19,7 @@
     "clean-docs": "rm -rf out"
   },
   "license": "Apache-2.0",
+  "name": "tapestry-5",
   "description": "Apache Tapestry's TypeScript/JavaScript code",
   "homepage": "https://tapestry.apache.org",
   "keywords": [

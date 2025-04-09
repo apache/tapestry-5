@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/graphviz
-//
-// Support to the core/Graphviz Tapestry component.
+/** 
+ * ## t5/core/graphviz
+ * 
+ * Support to the core/Graphviz Tapestry component.
+ * @packageDocumentation
+ */
 import { Graphviz } from "https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js";
 
 export default (value: string, id: string , showDownloadLink: boolean) => Graphviz.load().then(function(graphviz: any) {

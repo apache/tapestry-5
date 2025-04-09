@@ -12,20 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/time-interval
-//
-// Used with the Interval component to express the interval between two timestamps,
-// or the dynamic difference between now and an end point in the past or future.
+/**
+ * ## t5/core/time-interval
+ *
+ * Used with the Interval component to express the interval between two timestamps,
+ * or the dynamic difference between now and an end point in the past or future.
+ * @packageDocumentation
+ */
 
-import dom from "t5/core/dom";
-import moment from "t5/core/moment";
+import dom from "t5/core/dom.js";
+import moment from "t5/core/moment.js";
 
 const ATTR = "data-timeinterval";
 
 const DEFAULT_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
+// @ts-ignore
 const toMoment = function(s) { if (s) { return (moment(s, DEFAULT_FORMAT)); } else { return moment(); } };
 
+// @ts-ignore
 const updateElement = function(el) {
   const start = toMoment(el.attr("data-timeinterval-start"));
   const end = toMoment(el.attr("data-timeinterval-end"));

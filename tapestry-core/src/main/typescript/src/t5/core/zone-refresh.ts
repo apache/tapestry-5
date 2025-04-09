@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/zone-refresh
+/**
+ * ## t5/core/zone-refresh
+ * 
+ * @packageDocumentation
+ */
 
-import events from "t5/core/events";
-import dom from "t5/core/dom";
-import console from "t5/core/console";
+import events from "t5/core/events.js";
+import dom from "t5/core/dom.js";
+import console from "t5/core/console.js";
 
 // Initialize a timer for the zone at the specified period (in seconds). The zone will be
 // refreshed with the provided URL.
+// @ts-ignore
 const initialize = function(zoneId, period, url) {
   let zone = dom(zoneId);
 
   if (!zone) {
-    console.err(`Zone ${zoneId} not found for periodic refresh.`);
+    console.error(`Zone ${zoneId} not found for periodic refresh.`);
     return;
   }
 
@@ -37,6 +42,7 @@ const initialize = function(zoneId, period, url) {
 
   // Whenever the zone updates, we can clear the executing flag.
 
+  // @ts-ignore
   zone.on(events.zone.didUpdate, function() {
     executing = false;
   });
@@ -53,6 +59,7 @@ const initialize = function(zoneId, period, url) {
     // If the zone element is no longer part of the DOM, stop the
     // timer
 
+    // @ts-ignore
     if (!zone.closest('body')) {
       cleanUp();
       return;
@@ -61,12 +68,14 @@ const initialize = function(zoneId, period, url) {
     // Set the flag now, it will clear when the zone updates.
     executing = true;
 
+    // @ts-ignore
     return zone.trigger(events.zone.refresh, { url });
   };
 
   var intervalId = window.setInterval(handler, period * 1000);
 
   // Not sure if this is needed except for IE:
+  // @ts-ignore
   return (dom(window)).on("beforeunload", cleanUp);
 };
 

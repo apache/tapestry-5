@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** ## t5/core/events
+/** 
+ * ## t5/core/events
  *
  * This module defines logical names for all events that Tapestry-controlled elements
  * trigger or listener for. Prototype requires that all custom events have a namespace prefix; jQuery appears to
  * allow it without issue.
+ * @packageDocumentation
  */
 export default {
 

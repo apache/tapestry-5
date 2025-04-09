@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/moment
-//
-// A wrapper around Moment.js; this simply initializes Moment to
-// use the correct locale (as per the data-locale attribute of the document element).
+/** 
+ * ## t5/core/moment
+ *
+ * A wrapper around Moment.js; this simply initializes Moment to
+ * use the correct locale (as per the data-locale attribute of the document element).
+ * @packageDocumentation
+ */
 import moment from "moment";
 
 const locale = (document.documentElement.getAttribute("data-locale")) || "en";

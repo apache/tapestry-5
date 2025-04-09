@@ -1,11 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS201: Simplify complex destructure assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,28 +10,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/pageinit
-//
-// Module that defines functions used for page initialization.
-// The initialize function is passed an array of initializers; each initializer is itself
-// an array. The first value in the initializer defines the name of the module to invoke.
-// The module name may also indicate the function exported by the module, as a suffix following a colon:
-// e.g., "my/module:myfunc".
-// Any additional values in the initializer are passed to the function. The context of the function (this) is null.
+/**
+ * ## t5/core/pageinit
+ *
+ * Module that defines functions used for page initialization.
+ * The initialize function is passed an array of initializers; each initializer is itself
+ * an array. The first value in the initializer defines the name of the module to invoke.
+ * The module name may also indicate the function exported by the module, as a suffix following a colon:
+ * e.g., "my/module:myfunc".
+ * Any additional values in the initializer are passed to the function. The context of the function (this) is null.
+ * @packageDocumentation
+ */
 
 import _ from "underscore";
-import console from "t5/core/console";
-import dom from "t5/core/dom";
-import events from "t5/core/events";
+import console from "t5/core/console.js";
+import dom from "t5/core/dom.js";
+import events from "t5/core/events.js";
 
-let exports;
-let pathPrefix = null;
+let exports: any;
+let pathPrefix: String | null = null;
 
 // Borrowed from Prototype:
+// @ts-ignore
 const isOpera = Object.prototype.toString.call(window.opera) === '[object Opera]';
+// @ts-ignore
 const isIE = !!window.attachEvent && !isOpera;
 
-const rebuildURL = function(path) {
+const rebuildURL = function(path: string) {
   if (path.match(/^https?:/)) { return path; }
 
   // See Tapestry.rebuildURL() for an error about the path not starting with a leading '/'
@@ -56,7 +53,12 @@ const rebuildURL = function(path) {
 const rebuildURLOnIE =
   isIE ? rebuildURL : _.identity;
 
-const addStylesheets = function(newStylesheets) {
+type StylesheetLink = {
+  href: string;
+  media?: string;
+}
+
+const addStylesheets = function(newStylesheets: StylesheetLink) {
   if (!newStylesheets) { return; }
 
   // Figure out which stylesheets are loaded; adjust for IE, and especially, IE 9
@@ -65,9 +67,11 @@ const addStylesheets = function(newStylesheets) {
   .pluck("href")
   .without("")
   .without(null)
+  // @ts-ignore
   .map(rebuildURLOnIE);
 
   const insertionPoint = _.find(document.styleSheets, function(ss) {
+    // @ts-ignore
     const parent = ss.ownerNode || ss.owningElement;
     return parent.rel === "stylesheet ajax-insertion-point";
 });
@@ -77,7 +81,9 @@ const addStylesheets = function(newStylesheets) {
 
   _.chain(newStylesheets)
   .map(ss => ({
+    // @ts-ignore
     href: rebuildURL(ss.href),
+    // @ts-ignore
     media: ss.media
   }))
   .reject(ss => loaded.contains(ss.href).value())
@@ -101,10 +107,11 @@ const addStylesheets = function(newStylesheets) {
 
 };
 
-const invokeInitializer = function(tracker, qualifiedName, initArguments) {
+const invokeInitializer = function(tracker: () => any, qualifiedName: string, initArguments: any[]) {
   const [moduleName, functionName] = Array.from(qualifiedName.split(':'));
 
-  return require([moduleName], function(moduleLib) {
+  // @ts-ignore
+  return require([moduleName], function(moduleLib: any) {
   
     try {
       // Some modules export nothing but do some full-page initialization, such as adding
@@ -149,10 +156,13 @@ const invokeInitializer = function(tracker, qualifiedName, initArguments) {
 // 'true'.
 //
 // This is the main export of the module; other functions are attached as properties.
+// @ts-ignore
 const loadLibrariesAndInitialize = function(libraries, inits) {
   console.debug(`Loading ${(libraries != null ? libraries.length : undefined) || 0} libraries`);
-  return exports.loadLibraries(libraries,
-    () => exports.initialize(inits,
+  // @ts-ignore
+  return loadLibraries(libraries,
+    // @ts-ignore
+    () => initialize(inits,
       function() {
         // At this point, all libraries have been loaded, and all inits should have executed. Unless some of
         // the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
@@ -170,6 +180,7 @@ const loadLibrariesAndInitialize = function(libraries, inits) {
 export default exports = _.extend(loadLibrariesAndInitialize, {
   // Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
   // of modules, the exact order in which initializer functions are invoked is not predictable.
+  // @ts-ignore
   initialize(inits, callback) {
     if (inits == null) { inits = []; }
     console.debug(`Executing ${inits.length} inits`);
@@ -195,7 +206,9 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
       if (_.isString(init)) {
         invokeInitializer(tracker, init, []);
       } else {
+        // @ts-ignore
         var [qualifiedName, ...initArguments] = Array.from(init);
+        // @ts-ignore
         invokeInitializer(tracker, qualifiedName, initArguments);
       }
     }
@@ -205,9 +218,11 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
 
   // Pre-loads a number of libraries in order. When the last library is loaded,
   // invokes the callback (with no parameters).
-  loadLibraries(libraries, callback) {
+  loadLibraries(libraries: string[], callback: () => any) {
+    // @ts-ignore
     const reducer = (callback, library) => (function() {
       console.debug(`Loading library ${library}`);
+      // @ts-ignore
       return require([library], callback);
     });
 
@@ -216,7 +231,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
     return finalCallback.call(null);
   },
 
-  evalJavaScript(js) {
+  evalJavaScript(js: string) {
     console.debug(`Evaluating: ${js}`);
     return eval(js);
   },
@@ -225,7 +240,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
   // second, which helps ensure that other initializions on the page are in place.
   //
   // * fieldId - element id of field to focus on
-  focus(fieldId) {
+  focus(fieldId: string) {
     const field = dom(fieldId);
 
     if (field) {
@@ -243,6 +258,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
 
   // * response - the Ajax response object
   // * callback - invoked after scripts are loaded, but before page initializations occur (may be null)
+  // @ts-ignore
   handlePartialPageRenderResponse(response, callback) {
 
     // Capture the partial page response portion of the overall response, and
@@ -255,6 +271,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
     // No other initialization or callback invocation occurs.
     if (partial != null ? partial.redirectURL : undefined) {
       if (window.location.href === partial.redirectURL) {
+        // @ts-ignore
         window.location.reload(true);
       } else {
         window.location.href = partial.redirectURL;
@@ -272,6 +289,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
         const [id, content] = Array.from(args[0]);
         console.debug(`Updating content for zone ${id}`);
 
+        // @ts-ignore
         const zone = dom.wrap(id);
 
         if (zone) {

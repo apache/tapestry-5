@@ -16,17 +16,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/validation
-//
-// Support for Tapestry's built-in set of translators and validators.
-//
+/**
+ * ## t5/core/validation
+ * 
+ * Support for Tapestry's built-in set of translators and validators.
+ * @packageDocumentation
+ */
 
 import _ from "underscore";
-import dom from "t5/core/dom";
-import events from "t5/core/events";
-import utils from "t5/core/utils";
-import messages from "t5/core/messages"
-import fields from  "t5/core/fields";
+import dom from "t5/core/dom.js";
+import events from "t5/core/events.js";
+import utils from "t5/core/utils.js";
+import messages from "t5/core/messages.js"
+import { ElementWrapper } from "./types.js";
 
 const REGEXP_META = "t5:regular-expression";
 
@@ -46,13 +48,13 @@ const decimal = messages("decimal-symbols.decimal");
 //
 // * input - input string to be converted
 // * isInteger - restrict to integer values (decimal point not allowed)
-const parseNumber = function(input, isInteger) {
+const parseNumber = function(input: string, isInteger: boolean) {
 
   let canonical = "";
 
-  const accept = ch => canonical += ch;
+  const accept = (ch: string) => canonical += ch;
 
-  const acceptDigitOnly = function(ch) {
+  const acceptDigitOnly = function(ch: string) {
     if ((ch < "0") || (ch > "9")) {
       throw new Error(messages("core-input-not-numeric"));
     }
@@ -60,17 +62,17 @@ const parseNumber = function(input, isInteger) {
     accept(ch);
   };
 
-  const mustBeDigit = function(ch) {
+  const mustBeDigit = function(ch: string) {
     acceptDigitOnly(ch);
     return any;
   };
 
-  var decimalPortion = function(ch) {
+  var decimalPortion = function(ch: string) {
     acceptDigitOnly(ch);
     return decimalPortion;
   };
 
-  var any = function(ch) {
+  var any = function(ch: string) {
     switch (ch) {
       case grouping: return mustBeDigit;
       case decimal:
@@ -85,7 +87,7 @@ const parseNumber = function(input, isInteger) {
     }
   };
 
-  const leadingMinus = function(ch) {
+  const leadingMinus = function(ch: string) {
     if (ch === minus) {
       accept("-");
       return mustBeDigit;
@@ -103,7 +105,7 @@ const parseNumber = function(input, isInteger) {
   return Number(canonical);
 };
 
-const matches = function(input, re) {
+const matches = function(input: string, re: RegExp) {
   const groups = input.match(re);
 
   // Unlike Java, there isn't an easy way to match the entire string. This
@@ -116,7 +118,7 @@ const matches = function(input, re) {
 
 const emailRE = new RegExp("[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?");
 
-const translate = function(field, memo, isInteger) {
+const translate = function(field: ElementWrapper, memo: any, isInteger: boolean) {
   try {
     const result = parseNumber(memo.value, isInteger);
 
@@ -125,58 +127,73 @@ const translate = function(field, memo, isInteger) {
     }
 
     return memo.translated = result;
-  } catch (e) {
+  } catch (e: any) {
     memo.error = (field.attr("data-translation-message")) || e.message || "ERROR";
     return false;
   }
 };
 
-dom.onDocument(events.field.optional, "[data-optionality=required]", function(event, memo) {
+dom.onDocument(events.field.optional, "[data-optionality=required]", function(event, memo: any) {
 
   if (utils.isBlank(memo.value)) {
+    // @ts-ignore
     return memo.error =  (this.attr("data-required-message")) || "REQUIRED";
   }
 });
 
 dom.onDocument(events.field.translate, "[data-translation=numeric]", function(event, memo) {
+  // @ts-ignore
   return translate(this, memo, false);
 });
 
 dom.onDocument(events.field.translate, "[data-translation=integer]", function(event, memo) {
+  // @ts-ignore
   return translate(this, memo, true);
 });
 
 dom.onDocument(events.field.validate, "[data-validate-min-length]", function(event, memo) {
+  // @ts-ignore
   const min = parseInt(this.attr("data-validate-min-length"));
 
+  // @ts-ignore
   if (memo.translated.length < min) {
+    // @ts-ignore
     memo.error = (this.attr("data-min-length-message")) || "TOO SHORT";
     return false;
   }
 });
 
 dom.onDocument(events.field.validate, "[data-validate-max-length]", function(event, memo) {
+  // @ts-ignore
   const max = parseInt(this.attr("data-validate-max-length"));
 
+  // @ts-ignore
   if (memo.translated.length > max) {
+    // @ts-ignore
     memo.error = (this.attr("data-max-length-message")) || "TOO LONG";
     return false;
   }
 });
 
 dom.onDocument(events.field.validate, "[data-validate-max]", function(event, memo) {
+  // @ts-ignore
   const max = parseInt(this.attr("data-validate-max"));
 
+  // @ts-ignore
   if (memo.translated > max) {
+    // @ts-ignore
     memo.error = (this.attr("data-max-message")) || "TOO LARGE";
     return false;
   }
 });
 
 dom.onDocument(events.field.validate, "[data-validate-min]", function(event, memo) {
+  // @ts-ignore
   const min = parseInt(this.attr("data-validate-min"));
 
+  // @ts-ignore
   if (memo.translated < min) {
+    // @ts-ignore
     memo.error = (this.attr("data-min-message")) || "TOO SMALL";
     return false;
   }
@@ -184,7 +201,9 @@ dom.onDocument(events.field.validate, "[data-validate-min]", function(event, mem
 
 dom.onDocument(events.field.validate, "[data-validate-email]", function(event, memo) {
 
+  // @ts-ignore
   if (!matches(memo.translated, emailRE)) {
+    // @ts-ignore
     memo.error = (this.attr("data-email-message")) || "INVALID EMAIL";
     return false;
   }
@@ -193,14 +212,19 @@ dom.onDocument(events.field.validate, "[data-validate-email]", function(event, m
 dom.onDocument(events.field.validate, "[data-validate-regexp]", function(event, memo) {
 
   // Cache the compiled regular expression.
+  // @ts-ignore
   let re = this.meta(REGEXP_META);
 
   if (!re) {
+    // @ts-ignore
     re = new RegExp(this.attr("data-validate-regexp"));
+    // @ts-ignore
     this.meta(REGEXP_META, re);
   }
 
+  // @ts-ignore
   if (!matches(memo.translated, re)) {
+    // @ts-ignore
     memo.error = (this.attr("data-regexp-message")) || "INVALID";
     return false;
   }
@@ -208,14 +232,18 @@ dom.onDocument(events.field.validate, "[data-validate-regexp]", function(event, 
 
 dom.onDocument(events.field.validate, "[data-expected-status=checked]", function(event, memo) {
 
+  // @ts-ignore
   if (!memo.value) {
+    // @ts-ignore
     return memo.error =  (this.attr("data-checked-message")) || "MUST BE CHECKED";
   }
 });
 
 dom.onDocument(events.field.validate, "[data-expected-status=unchecked]", function(event, memo) {
 
+  // @ts-ignore
   if (memo.value) {
+    // @ts-ignore
     return memo.error =  (this.attr("data-checked-message")) || "MUST NOT BE CHECKED";
   }
 });

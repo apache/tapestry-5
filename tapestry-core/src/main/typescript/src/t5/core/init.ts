@@ -17,15 +17,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/init
-//
-// Compatibility module, invokes functions on the T5.initializers namespace.
-//
-// Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-import console from "t5/core/console";
+/**
+ * ## t5/core/init
+ * 
+ * Compatibility module, invokes functions on the T5.initializers namespace.
+ * Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
+ * @packageDocumentation
+ */
+import console from "t5/core/console.js";
 
-export default console => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
+export default (console: { error: (arg0: string) => any; }) => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
 function(initName: string | number, ...args: any) {
+  // @ts-ignore
   const fn = T5.initializers[initName];
   if (!fn) {
     return console.error(`Initialization function '${initName}' not found in T5.initializers namespace.`);

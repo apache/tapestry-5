@@ -10,22 +10,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ## t5/core/select
-//
-// Provides a document event handler that triggers an update a zone when the value
-// of a select element within the zone changes.
-import events from "t5/core/events";
-import dom from "t5/core/dom";
-import zone from "t5/core/zone";
+/** 
+ * ## t5/core/select
+ * 
+ * Provides a document event handler that triggers an update a zone when the value
+ * of a select element within the zone changes.
+ * @packageDocumentation
+ */
+
+import events from "t5/core/events.js";
+import dom from "t5/core/dom.js";
+import zone from "t5/core/zone.js";
 
 dom.onDocument("change", "select[data-update-zone]", function() {
 
+  // @ts-ignore
   const containingZone = zone.findZone(this);
 
   if (containingZone) {
     containingZone.trigger(events.zone.refresh, {
+      // @ts-ignore
       url: this.attr("data-update-url"),
       parameters: {
+        // @ts-ignore
         "t:selectvalue": this.value()
       }
     }

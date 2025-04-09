@@ -1,6 +1,9 @@
-// ## t5/core/confirm-click
-//
-// Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
+/**
+ * ## t5/core/confirm-click
+ * 
+ * Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
+ * @packageDocumentation
+ */
 
 import $ from "jquery";
 import  "bootstrap/modal";
@@ -52,6 +55,7 @@ const runDialog = function(options: DialogOptions) {
   });
 
   // Let the animation run before (perhaps) invoking the callback.
+  // @ts-ignore
   $dialog.modal().on("hidden.bs.modal", function() {
     $dialog.remove();
     if (confirmed) {
@@ -68,6 +72,7 @@ const runDialog = function(options: DialogOptions) {
 // Support for the Confirm mixin
 $("body").on("click", "[data-confirm-message]:not(.disabled)", function(event){
 
+  // @ts-ignore
   const $this = $(this);
 
   // We use a data- attribute as a flag, to indicate that the user confirmed the behavior.
