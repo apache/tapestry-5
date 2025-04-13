@@ -8,13 +8,16 @@
 import $ from "jquery";
 import  "bootstrap/modal";
 
-type DialogOptions = {
-  title: any;
-  message: any;
-  okClass: any;
-  okLabel: any;
-  cancelLabel: any;
-  ok: any;
+/**
+ * Dialog options.
+ */
+interface DialogOptions {
+  title?: string;
+  message: string;
+  okClass?: string;
+  okLabel?: string;
+  cancelLabel?: string;
+  ok: () => void;
 };
 
 // Runs a modal dialog, invoking a callback if the user selects the OK option. On any form of cancel,

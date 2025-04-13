@@ -13,7 +13,7 @@
 import type { ElementWrapper, EventWrapper, RequestWrapper, ResponseWrapper, ElementOffset, DOM, AddableContent, OnEventHandler, AjaxRequestOptions } from "t5/core/types.js";
 import _ from "underscore";
 import "t5/core/utils.js";
-import events from "./events.js";
+import events from "t5/core/events.js";
 import $ from "jquery";
 
 const convertContent = function(content: AddableContent) {

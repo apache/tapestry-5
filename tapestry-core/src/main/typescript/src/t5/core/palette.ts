@@ -25,6 +25,9 @@ import { ElementWrapper } from "./types.js";
 
 const isSelected = (option: any) => option.selected;
 
+/**
+ * Palette controller class.
+ */
 class PaletteController {
   selected: ElementWrapper;
   container: ElementWrapper;
