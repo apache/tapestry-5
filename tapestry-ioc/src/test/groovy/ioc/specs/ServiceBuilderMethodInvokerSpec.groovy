@@ -3,11 +3,13 @@ package ioc.specs
 import org.apache.tapestry5.commons.AnnotationProvider
 import org.apache.tapestry5.commons.ObjectCreator
 import org.apache.tapestry5.ioc.ServiceBuilderResources
+import org.apache.tapestry5.ioc.internal.IOCMessages
 import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvoker
 import org.apache.tapestry5.ioc.test.internal.FieService
 import org.apache.tapestry5.ioc.test.internal.FoeService
 import org.apache.tapestry5.ioc.test.internal.ServiceBuilderMethodFixture
 import org.slf4j.Logger
+import spock.lang.Issue
 
 class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecification {
 
@@ -148,6 +150,24 @@ class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecificatio
     actual.is implementation
 
     1 * resources.getUnorderedConfiguration(Runnable) >> configuration
+  }
+
+  @Issue("TAP5-2758")
+  def "injection of ordered configuration as List and another List"() {
+
+      List<Runnable> configuration = Mock()
+
+      fixture.expectedConfiguration = configuration
+
+      when:
+
+      def actual = invoke "buildWithOrderedConfigurationAndList"
+
+      then:
+
+      RuntimeException e = thrown()
+
+      e.message == IOCMessages.tooManyConfigurationParameters(DESCRIPTION)
   }
 
   def "builder method returns null"() {

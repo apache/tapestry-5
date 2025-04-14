@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2012, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.test.internal;
 
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
@@ -52,6 +53,20 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService buildWithOrderedConfiguration(List<Runnable> configuration)
+    {
+        assertSame(configuration, expectedConfiguration);
+
+        return fie;
+    }
+
+    public FieService buildWithOrderedConfigurationAndList(List<Runnable> configuration, List<Runnable> noConfiguration)
+    {
+        assertSame(configuration, expectedConfiguration);
+
+        return fie;
+    }
+
+    public FieService buildWithOrderedConfigurationAndSymbolList(List<Runnable> configuration, @Symbol("ignored") List<Runnable> noConfiguration)
     {
         assertSame(configuration, expectedConfiguration);
 
