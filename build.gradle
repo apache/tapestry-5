@@ -500,28 +500,11 @@ task aggregateJavadoc(type: Javadoc) {
     }
 }
 
-task coffeeScriptDocs(type: Exec) {
+task typeScriptDocs(type: Exec) {
     group "Documentation"
-    description "Build docco documentation for all CoffeeScript sources"
-    dependsOn project(":tapestry-core").tasks.preprocessCoffeeScript
-
-    def outputDir = file("$buildDir/documentation/coffeescript")
-
-    def sources = files()
-
-    subprojects.each { sub ->
-        sources += sub.fileTree("src/main/coffeescript", { include "**/*.coffee" })
-    }
-
-    sources += project(":tapestry-core").tasks.preprocessCoffeeScript.outputs.files.asFileTree
-
-    // Needs to be installed via "npm install -g docco@0.6.3"
-    executable isWindows() ? "docco.cmd" : "docco"
-    args "--output", outputDir
-    args sources.files.sort({ a, b -> a.name.compareTo b.name })
+    description "Builds typedoc documentation for all TypeScript sources"
+    dependsOn project(":tapestry-core").tasks.generateTypeScriptDocs
 }
-
-
 
 dependencies {
     if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -569,8 +552,7 @@ task zippedSources(type: Zip) {
     group "Release artifact"
     
     dependsOn("tapestry-beanvalidator:compileCoffeeScript")
-    dependsOn("tapestry-core:compileCoffeeScript")
-    dependsOn("tapestry-core:compileProcessedCoffeescript")
+    dependsOn("tapestry-core:compileTypeScript")
 
     destinationDirectory = buildDir
     archiveBaseName = "apache-tapestry"
@@ -587,11 +569,13 @@ task zippedSources(type: Zip) {
     exclude "**/target/**"
     exclude "**/build/**"
     exclude "**/test-output/**"  // Left around by TestNG sometimes
+    exclude "**/modules/***.js"
+    exclude "**/es-modules/***.js"
 }
 
 task zippedApidoc(type: Zip) {
     dependsOn aggregateJavadoc
-    description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
+    description "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
     group "Release artifact"
 
     destinationDirectory = buildDir
@@ -611,7 +595,7 @@ task zippedApidoc(type: Zip) {
     into "apidocs", { from aggregateJavadoc.outputs.files }
 
 
-    into "coffeescript", { from coffeeScriptDocs.outputs.files }
+    into "typescript", { from typeScriptDocs.outputs.files }
 
 }
 

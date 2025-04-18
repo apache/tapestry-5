@@ -1,6 +1,7 @@
 import org.gradle.plugins.ide.idea.model.*
+
 import org.apache.tools.ant.filters.ReplaceTokens
-import t5build.*
+//import t5build.*
 
 description = "Central module for Tapestry, containing all core services and components"
 
@@ -22,9 +23,6 @@ dependencies {
 
     implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
-//    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-//    implementation 'com.sun.xml.ws:jaxws-rt:2.3.2'
-//    implementation 'javax.xml.ws:jaxws-api:2.3.1'
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
@@ -41,33 +39,54 @@ dependencies {
     testRuntimeOnly 'com.google.inject:guice:3.0'
 }
 
-task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
+def npmWorkingDir = "src/main/typescript/"
+
+task npmInstall(type: Exec) {
+    group "TypeScript"
+    description "Runs npm install"
+    
+    workingDir = npmWorkingDir
+    commandLine isWindows() ? "npm.cmd" : "npm", 'install'
 }
 
-task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "${mainGeneratedDir}/compiled-coffeescript"
+task compileTypeScriptToAmd(type: Exec) {
+    dependsOn npmInstall
+
+    workingDir = npmWorkingDir
+    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'build-amd'
 }
 
-task compileProcessedCoffeescript(type: CompileCoffeeScript) {
-    dependsOn preprocessCoffeeScript
-    srcDir preprocessCoffeeScript.outputDir
-    outputDir "${mainGeneratedDir}/compiled-processed-coffeescript"
+task compileTypeScriptToEsModule(type: Exec) {
+    dependsOn npmInstall
+    
+    workingDir = npmWorkingDir
+    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'build-es-module'
 }
 
-task compileTestCoffeeScript(type: CompileCoffeeScript) {
-    srcDir "src/test/coffeescript"
-    outputDir "${testGeneratedDir}/compiled-coffeescript"
+task compileTypeScript() {
+    dependsOn compileTypeScriptToAmd
+    dependsOn compileTypeScriptToEsModule
 }
 
-sourceSets {
-    main {
-        output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
-        output.dir(compileProcessedCoffeescript.outputDir, builtBy: compileProcessedCoffeescript)
+task generateTypeScriptDocs(type: Exec) {
+    dependsOn npmInstall
+    
+    workingDir = npmWorkingDir
+    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'docs'
+}
+
+task cleanTypeScriptFiles(type: Delete) {
+    delete fileTree("src/main/resources/META-INF/assets/es-modules/t5/core") {
+        include '**.js'
     }
-    test {
-        output.dir(compileTestCoffeeScript.outputDir, builtBy: compileTestCoffeeScript)
+    delete fileTree("src/main/resources/META-INF/modules/t5/core") {
+        include '**.js'
     }
+    delete "src/main/typescript/docs"
 }
+
+build.dependsOn compileTypeScript
+clean.dependsOn cleanTypeScriptFiles
 
 // Not sure why this is necessary:
 compileTestGroovy.dependsOn compileTestJava

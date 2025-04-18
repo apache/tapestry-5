@@ -1,4 +1,5 @@
 {
+  "packageManager": "npm",
   "type": "module",
   "devDependencies": {
     "@hpcc-js/wasm": "^2.22.4",
@@ -13,10 +14,10 @@
   },
   "scripts": {
     "build": "npx tsc",
+    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/core/",
+    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/core/",
     "docs": "typedoc",
-    "docs-old": "node_modules/.bin/jsdoc --destination ./docs -r --verbose --pedantic ./output",
-    "docs-config": "node_modules/.bin/jsdoc -c jsdoc.json",
-    "clean-docs": "rm -rf out"
+    "clean-docs": "rm -rf docs"
   },
   "license": "Apache-2.0",
   "name": "tapestry-5",
