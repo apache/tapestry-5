@@ -27,7 +27,7 @@ import console from "t5/core/console.js";
 import dom from "t5/core/dom.js";
 import events from "t5/core/events.js";
 
-let exports: any;
+let exports_: any;
 let pathPrefix: String | null = null;
 
 // Borrowed from Prototype:
@@ -177,7 +177,7 @@ const loadLibrariesAndInitialize = function(libraries, inits) {
     }));
 };
 
-export default exports = _.extend(loadLibrariesAndInitialize, {
+export default exports_ = _.extend(loadLibrariesAndInitialize, {
   // Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
   // of modules, the exact order in which initializer functions are invoked is not predictable.
   // @ts-ignore
@@ -282,7 +282,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
     addStylesheets(partial != null ? partial.stylesheets : undefined);
 
     // Make sure all libraries are loaded
-    exports.loadLibraries(partial != null ? partial.libraries : undefined, function() {
+    exports_.loadLibraries(partial != null ? partial.libraries : undefined, function() {
 
       // After libraries are loaded, update each zone:
       _(partial != null ? partial.content : undefined).each(function(...args) {
@@ -300,7 +300,7 @@ export default exports = _.extend(loadLibrariesAndInitialize, {
       callback && callback(response);
 
       // Lastly, perform initializations from the partial page render response.
-      return exports.initialize(partial != null ? partial.inits : undefined);
+      return exports_.initialize(partial != null ? partial.inits : undefined);
     });
 
   }

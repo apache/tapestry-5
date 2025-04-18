@@ -537,6 +537,6 @@ dom.onDocument = onDocument;
 dom.body = body!;
 dom.scanner = scanner;
 
-const exports: DOM = dom;
+const exports_: DOM = dom;
 
-export default exports;
+export default exports_;

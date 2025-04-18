@@ -20,7 +20,7 @@
  */
 import _ from "underscore";
 
-let exports;
+let exports_;
 const trim = function(input: string) {
   // @ts-ignore
   if (String.prototype.trim) {

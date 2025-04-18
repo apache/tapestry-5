@@ -27,7 +27,7 @@ import utils from  "t5/core/utils.js";
 import forms from "t5/core/forms.js";
 import { ElementWrapper, EventWrapper } from "./types.js";
 
-let exports;
+let exports_;
 const ensureFieldId = function(field: ElementWrapper): string {
   let fieldId = field.attr("id");
 

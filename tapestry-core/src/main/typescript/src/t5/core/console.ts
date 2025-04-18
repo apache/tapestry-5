@@ -190,7 +190,7 @@ const level = (className: string, consolefn?: (m: string) => any) => (function(m
 const noop = function() {};
 const debugEnabled = ((document.documentElement.getAttribute("data-debug-enabled")) != null);
 
-let exports = {
+let exports_ = {
   info: level("info", nativeConsole!.info),
   warn: level("warn", nativeConsole!.warn),
   error: level("error", nativeConsole!.error),
@@ -207,14 +207,14 @@ let exports = {
 
 declare global {
   interface Window {
-    t5console: typeof exports;
+    t5console: typeof exports_;
     requirejs: any | null;
   }
 }
 
 // This is also an aid to debugging; it allows arbitrary scripts to present on the console; when using Geb
 // and/or Selenium, it is very useful to present debugging data right on the page.
-window.t5console = exports;
+window.t5console = exports_;
 
 if (window.requirejs) {
   window.requirejs.onError = function(err: any) {
@@ -244,8 +244,8 @@ if (window.requirejs) {
       message += `, line ${err.columnNumber}`;
     }
 
-    return exports.error(message);
+    return exports_.error(message);
   };
 };
 
-export default exports;
+export default exports_;

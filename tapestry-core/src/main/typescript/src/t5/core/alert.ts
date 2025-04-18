@@ -27,7 +27,7 @@ import _ from "underscore";
 import bootstrap from "t5/core/bootstrap.js";
 
 const TRANSIENT_DURATION = 5000;
-let exports;
+let exports_;
 const severityToClass: { [key: string]: string } = {
   info: "alert-info",
   success: "alert-success",
@@ -173,4 +173,4 @@ ${content}\
 
 alert.TRANSIENT_DURATION = TRANSIENT_DURATION;
 
-export default exports;
+export default exports_;
