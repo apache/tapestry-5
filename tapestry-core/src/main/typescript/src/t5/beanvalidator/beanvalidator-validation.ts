@@ -13,8 +13,7 @@
 // limitations under the License.
 
 /**
- * 
- * ## t5/beanvalidator/beanvalidator-validation
+ *  * ## t5/beanvalidator/beanvalidator-validation
  *
  * The awkward name is to accomidate the "docco" documentation tool; it doesn't understand
  * having the same named file in multiple folders. See https://github.com/jashkenas/docco/issues/201.
@@ -28,6 +27,7 @@ import events from "t5/core/events.js"
 import utils from "t5/core/utils.js"
 import validation from "t5/core/validation.js";
 
+// @ts-ignore
 const rangeValue = function(element, attribute, defaultValue) {
   const v = element.attr(attribute);
   if (v === null) {
@@ -37,6 +37,7 @@ const rangeValue = function(element, attribute, defaultValue) {
   }
 };
 
+// @ts-ignore
 const countOptions = function(e) {
   // A select that is used as part of a palette is different; the validation attributes
   // are attached to the selected (right side) <select>, and anything there counts as part
@@ -49,6 +50,7 @@ const countOptions = function(e) {
   }
 };
 
+// @ts-ignore
 const doRangeValidate = function(element, value, memo) {
   const min = rangeValue(element, "data-range-min", 0);
   const max = rangeValue(element, "data-range-max", Number.MAX_VALUE);
@@ -67,9 +69,10 @@ const doRangeValidate = function(element, value, memo) {
   return true;
 };
 
-dom.onDocument(events.field.optional, "[data-optionality=prohibited]", function(event, memo) {
+dom.onDocument(events.field.optional, "[data-optionality=prohibited]", function(event, memo: any) {
 
   if (!utils.isBlank(memo.value)) {
+    // @ts-ignore
     memo.error = (this.attr("data-prohibited-message")) || "PROHIBITED";
     return false;
   }
@@ -78,9 +81,11 @@ dom.onDocument(events.field.optional, "[data-optionality=prohibited]", function(
 });
 
 dom.onDocument(events.field.validate, "input[data-range-min], input[data-range-max], textarea[data-range-min], textarea[data-range-max]", function(event, memo) {
+  // @ts-ignore
   return doRangeValidate(this, memo.translated, memo);
 });
 
 dom.onDocument(events.field.validate, "select[data-range-min], select[data-range-max]", function(event, memo) {
+  // @ts-ignore
   return doRangeValidate(this, (countOptions(this)), memo);
 });
