@@ -1,5 +1,4 @@
 {
-  "packageManager": "npm",
   "type": "module",
   "devDependencies": {
     "@hpcc-js/wasm": "^2.22.4",
