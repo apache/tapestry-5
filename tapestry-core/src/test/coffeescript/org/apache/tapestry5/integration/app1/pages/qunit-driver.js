@@ -1,1 +1,1 @@
-QUnit.load()
+QUnit.load();

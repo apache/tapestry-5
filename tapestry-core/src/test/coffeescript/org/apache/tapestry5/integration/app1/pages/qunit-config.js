@@ -1,2 +1,2 @@
-QUnit.config.autostart = false
-QUnit.config.autorun = true
+QUnit.config.autostart = false;
+QUnit.config.autorun = true;

@@ -1,72 +1,87 @@
-require ["t5/core/dom"], (dom) ->
-  module "t5/core/dom"
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
+ */
+require(["t5/core/dom"], function(dom) {
+  module("t5/core/dom");
 
-  test "get wrapped element by id", ->
-    e = dom "dom-eventelement-native"
+  test("get wrapped element by id", function() {
+    const e = dom("dom-eventelement-native");
 
-    ok e isnt null, "element found and wrapped"
+    return ok(e !== null, "element found and wrapped");
+  });
 
-  test "get wrapped element by unknown id is null", ->
-    e = dom "dom-does-not-exist-element"
+  test("get wrapped element by unknown id is null", function() {
+    const e = dom("dom-does-not-exist-element");
 
-    ok e is null, "element not found and null"
+    return ok(e === null, "element not found and null");
+  });
 
-  test "trigger native events", ->
+  test("trigger native events", function() {
 
-    clicks = 0
-    container = dom "dom-eventelement-native"
-    button = container.findFirst "a"
+    let clicks = 0;
+    const container = dom("dom-eventelement-native");
+    const button = container.findFirst("a");
 
-    container.on "click", "a", ->
-      clicks++
-      return false
+    container.on("click", "a", function() {
+      clicks++;
+      return false;
+    });
 
-    button.trigger "click"
+    button.trigger("click");
 
-    equal clicks, 1, "native event was triggered"
+    return equal(clicks, 1, "native event was triggered");
+  });
 
-  test "selector used with events filters", ->
+  test("selector used with events filters", function() {
 
-    clicks = 0
-    container = dom "dom-eventelement-selector"
-    primary = container.findFirst "a.btn-primary"
-    secondary = container.findFirst "a[data-use=secondary]"
+    let clicks = 0;
+    const container = dom("dom-eventelement-selector");
+    const primary = container.findFirst("a.btn-primary");
+    const secondary = container.findFirst("a[data-use=secondary]");
 
-    container.on "x:click", "a.btn-primary", ->
-      clicks++
-      return false
+    container.on("x:click", "a.btn-primary", function() {
+      clicks++;
+      return false;
+    });
 
-    primary.trigger "x:click"
+    primary.trigger("x:click");
 
-    equal clicks, 1, "click on selected element invokes handler"
+    equal(clicks, 1, "click on selected element invokes handler");
 
-    secondary.trigger "x:click"
+    secondary.trigger("x:click");
 
-    equal clicks, 1, "click on non-selected element does not invoke handler"
+    return equal(clicks, 1, "click on non-selected element does not invoke handler");
+  });
 
-  test "this is matched element in handler", ->
+  test("this is matched element in handler", function() {
 
-    container = dom "dom-eventelement-matched"
-    primary = container.findFirst "a.btn-primary"
+    const container = dom("dom-eventelement-matched");
+    const primary = container.findFirst("a.btn-primary");
 
-    container.on "x:click", "a.btn-primary", ->
+    container.on("x:click", "a.btn-primary", function() {
 
-      strictEqual @element, primary.element, "this should be the wrapper for element that was matched"
+      strictEqual(this.element, primary.element, "this should be the wrapper for element that was matched");
 
-      return false
+      return false;
+    });
 
-    primary.trigger "x:click"
+    return primary.trigger("x:click");
+  });
 
-  test "visibility, hide(), and show()", ->
+  return test("visibility, hide(), and show()", function() {
 
-    e = (dom "dom-visibility").findFirst "span"
+    const e = (dom("dom-visibility")).findFirst("span");
 
-    equal e.visible(), true, "element is initially visible"
+    equal(e.visible(), true, "element is initially visible");
 
-    e.hide()
+    e.hide();
 
-    equal e.visible(), false, "element is not visible once hidden"
+    equal(e.visible(), false, "element is not visible once hidden");
 
-    e.show()
+    e.show();
 
-    equal e.visible(), true, "element is visible against once shown"
+    return equal(e.visible(), true, "element is visible against once shown");
+  });
+});

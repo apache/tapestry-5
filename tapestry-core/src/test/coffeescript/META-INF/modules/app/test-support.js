@@ -1,14 +1,16 @@
-# Provide test support functions that can be addressed via Selenium.
+// Provide test support functions that can be addressed via Selenium.
 
-# TODO: Maybe move this to main, for external re-use?
+// TODO: Maybe move this to main, for external re-use?
 
-define ["t5/core/dom"],
-  (dom) ->
+define(["t5/core/dom"],
+  function(dom) {
 
-    exports =
-      findCSSMatchCount: (selector) -> dom.body.find(selector).length
-      doesNotExist: (elementId) -> (dom elementId) is null
+    const exports = {
+      findCSSMatchCount(selector) { return dom.body.find(selector).length; },
+      doesNotExist(elementId) { return (dom(elementId)) === null; }
+    };
 
-    window.testSupport = exports
+    window.testSupport = exports;
 
-    return exports
+    return exports;
+});
