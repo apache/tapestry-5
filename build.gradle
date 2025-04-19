@@ -500,7 +500,7 @@ task aggregateJavadoc(type: Javadoc) {
     }
 }
 
-task typeScriptDocs(type: Exec) {
+task typeScriptDocs() {
     group "Documentation"
     description "Builds typedoc documentation for all TypeScript sources"
     dependsOn project(":tapestry-core").tasks.generateTypeScriptDocs
@@ -574,6 +574,7 @@ task zippedSources(type: Zip) {
 }
 
 task zippedApidoc(type: Zip) {
+    dependsOn typeScriptDocs
     dependsOn aggregateJavadoc
     description "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
     group "Release artifact"
