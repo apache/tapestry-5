@@ -1704,10 +1704,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
             }
-            catch (org.openqa.selenium.TimeoutException | NoSuchElementException e)
+            catch (Exception e)
             {
+                LOGGER.warn("Page URL: {}", getBaseURL());
                 LOGGER.warn("Page content: {}", getHtmlSource());
+                System.out.println("Page URL: " + getBaseURL());
                 System.out.println("Page content: " + getHtmlSource());
+                
                 throw e;
             }
             clickAndWait("link=" + text);
