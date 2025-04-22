@@ -1704,7 +1704,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
             }
-            catch (org.openqa.selenium.TimeoutException e)
+            catch (org.openqa.selenium.TimeoutException | NoSuchElementException e)
             {
                 LOGGER.warn("Page content: {}", getHtmlSource());
                 throw e;
