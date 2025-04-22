@@ -1707,6 +1707,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             catch (org.openqa.selenium.TimeoutException | NoSuchElementException e)
             {
                 LOGGER.warn("Page content: {}", getHtmlSource());
+                System.out.println("Page content: " + getHtmlSource());
                 throw e;
             }
             clickAndWait("link=" + text);
