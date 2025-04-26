@@ -19,8 +19,8 @@
  * @packageDocumentation
  */
 
-import dom from "t5/core/dom.js";
-import ajax from "t5/core/ajax.js";
+import dom from "t5/core/dom";
+import ajax from "t5/core/ajax";
 import "t5/core/zone";
 
 const TREE = "[data-component-type='core/Tree']";

@@ -22,8 +22,8 @@
  * was expected, including a partial page render response).
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
-import { AddableContent, ElementWrapper } from "t5/core/types.js";
+import dom from "t5/core/dom";
+import { AddableContent, ElementWrapper } from "t5/core/types";
 
 const write = function(container: ElementWrapper, content: AddableContent) {
   const iframe = (container.findFirst("iframe"))!.element as HTMLIFrameElement;

@@ -35,7 +35,7 @@
  */
 
 import _ from "underscore";
-import console from "t5/core/console.js";
+import console from "t5/core/console";
 
 // In the unexpected case that the data-locale attribute is missing, assume English
 const locale = (document.documentElement.getAttribute("data-locale")) || "en";

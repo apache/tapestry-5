@@ -19,11 +19,11 @@
  * core/RemoveRowLink).
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
-import events from "t5/core/events.js";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
 import console from "t5/core/console.js"
-import ajax from  "t5/core/ajax.js";
-import { ElementWrapper, ResponseWrapper } from "t5/core/types.js";
+import ajax from  "t5/core/ajax";
+import { ElementWrapper, ResponseWrapper } from "t5/core/types";
 
 // "afl" is short for "AjaxFormLoop".
 const AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']";

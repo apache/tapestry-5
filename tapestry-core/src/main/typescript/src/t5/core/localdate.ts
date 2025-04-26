@@ -25,7 +25,7 @@
  * @packageDocumentation
  */
 import dom from "t5/core/dom.js"
-import moment from "t5/core/moment.js";
+import moment from "t5/core/moment";
 
 const ATTR = "data-localdate-format";
 

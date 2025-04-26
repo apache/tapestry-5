@@ -18,9 +18,9 @@
  * @packageDocumentation
  */
 
-import events from "t5/core/events.js";
-import dom from "t5/core/dom.js";
-import zone from "t5/core/zone.js";
+import events from "t5/core/events";
+import dom from "t5/core/dom";
+import zone from "t5/core/zone";
 
 dom.onDocument("change", "select[data-update-zone]", function() {
 

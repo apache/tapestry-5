@@ -25,7 +25,7 @@ import _ from "underscore";
 import dom from "t5/core/dom.js"
 import events from "t5/core/events.js"
 import utils from "t5/core/utils.js"
-import validation from "t5/core/validation.js";
+import validation from "t5/core/validation";
 
 // @ts-ignore
 const rangeValue = function(element, attribute, defaultValue) {

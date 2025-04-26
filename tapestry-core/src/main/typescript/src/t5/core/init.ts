@@ -24,7 +24,7 @@
  * Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
  * @packageDocumentation
  */
-import console from "t5/core/console.js";
+import console from "t5/core/console";
 
 export default (console: { error: (arg0: string) => any; }) => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
 function(initName: string | number, ...args: any) {

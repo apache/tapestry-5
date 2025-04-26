@@ -23,9 +23,9 @@
  */
 
 import _ from "underscore";
-import console from "t5/core/console.js";
-import dom from "t5/core/dom.js";
-import events from "t5/core/events.js";
+import console from "t5/core/console";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
 
 let exports_: any;
 let pathPrefix: String | null = null;

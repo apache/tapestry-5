@@ -18,10 +18,10 @@
  * @packageDocumentation
  */
 import _ from "underscore";
-import dom from "t5/core/dom.js";
-import events from "t5/core/events.js";
-import forms from  "t5/core/forms.js";
-import { ElementWrapper, EventWrapper } from "./types.js";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
+import forms from  "t5/core/forms";
+import { ElementWrapper, EventWrapper }from "t5/core/types";
 
 const SELECTOR = "[data-component-type='core/FormFragment']";
 

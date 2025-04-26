@@ -19,8 +19,8 @@
  * filtering the stack trace.
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
-import { ElementWrapper } from "t5/core/types.js";
+import dom from "t5/core/dom";
+import { ElementWrapper } from "t5/core/types";
 
 dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function(element: ElementWrapper) {
   const checked = element.checked();

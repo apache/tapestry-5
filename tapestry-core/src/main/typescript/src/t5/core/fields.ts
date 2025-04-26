@@ -21,11 +21,11 @@
  */
 
 import _ from "underscore"
-import events from "t5/core/events.js";
-import dom from "t5/core/dom.js";
-import utils from  "t5/core/utils.js";
-import forms from "t5/core/forms.js";
-import { ElementWrapper, EventWrapper } from "./types.js";
+import events from "t5/core/events";
+import dom from "t5/core/dom";
+import utils from  "t5/core/utils";
+import forms from "t5/core/forms";
+import { ElementWrapper, EventWrapper }from "t5/core/types";
 
 let exports_;
 const ensureFieldId = function(field: ElementWrapper): string {

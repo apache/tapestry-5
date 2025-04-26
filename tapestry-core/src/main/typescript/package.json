@@ -3,18 +3,20 @@
   "devDependencies": {
     "@hpcc-js/wasm": "^2.22.4",
     "@types/jquery": "^1.10.45",
-    "@types/underscore": "^1.13.0",
     "typedoc": "^0.28.1",
     "typescript": "^5.0.0",
     "moment": "^2.30.1",
-    "underscore": "^1.13.7"
+    "@types/underscore": "^1.13.0"
   },
   "dependencies": {
   },
   "scripts": {
     "build": "npm run build-es-module; npm run build-amd",
-    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/core/",
-    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/core/",
+    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/",
+    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/",
+    "clean-amd": "rm -rf ../resources/META-INF/modules/t5/core/*; rm -rf ../resources/META-INF/modules/t5/beanvalidation/*;",
+    "clean-es-module": "rm -rf ../resources/META-INF/assets/es-modules/t5/core/*; ../resources/META-INF/assets/es-modules/t5/beanvalidation/*",
+    "clean": "npm run clean-amd; npm run clean-es-module",
     "docs": "typedoc",
     "clean-docs": "rm -rf docs"
   },

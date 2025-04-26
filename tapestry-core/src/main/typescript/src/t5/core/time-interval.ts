@@ -20,8 +20,8 @@
  * @packageDocumentation
  */
 
-import dom from "t5/core/dom.js";
-import moment from "t5/core/moment.js";
+import dom from "t5/core/dom";
+import moment from "t5/core/moment";
 
 const ATTR = "data-timeinterval";
 

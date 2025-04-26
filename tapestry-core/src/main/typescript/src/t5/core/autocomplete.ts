@@ -19,11 +19,11 @@
  * the Twitter autocomplete.js library.
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
+import dom from "t5/core/dom";
 import underscore from "underscore";
 import $ from "jquery"
-import utils from "t5/core/utils.js";
-import "t5/core/typeahead.js";
+import utils from "t5/core/utils";
+import "t5/core/typeahead";
 
 export const init = function(spec) {
   const $field = $(document.getElementById(spec.id));

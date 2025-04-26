@@ -18,9 +18,9 @@
  * @packageDocumentation
  */
 
-import events from "t5/core/events.js";
-import dom from "t5/core/dom.js";
-import console from "t5/core/console.js";
+import events from "t5/core/events";
+import dom from "t5/core/dom";
+import console from "t5/core/console";
 
 // Initialize a timer for the zone at the specified period (in seconds). The zone will be
 // refreshed with the provided URL.

@@ -25,12 +25,12 @@
  */
 
 import dom from "t5/core/dom.js"
-import events from "t5/core/events.js";
-import ajax from "t5/core/ajax.js";
-import console from "t5/core/console.js";
-import forms from "t5/core/forms.js";
+import events from "t5/core/events";
+import ajax from "t5/core/ajax";
+import console from "t5/core/console";
+import forms from "t5/core/forms";
 import _ from "underscore";
-import { ElementWrapper, ResponseWrapper } from "./types.js";
+import { ElementWrapper, ResponseWrapper }from "t5/core/types";
 
 if ((typeof ajax) !== "function") {
   console.error("ajax variable is not a function, but instead it is " + JSON.stringify(ajax));

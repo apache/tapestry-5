@@ -24,11 +24,11 @@
  */
 
 import _ from "underscore";
-import dom from "t5/core/dom.js";
-import events from "t5/core/events.js";
-import utils from "t5/core/utils.js";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
+import utils from "t5/core/utils";
 import messages from "t5/core/messages.js"
-import { ElementWrapper } from "./types.js";
+import { ElementWrapper }from "t5/core/types";
 
 const REGEXP_META = "t5:regular-expression";
 

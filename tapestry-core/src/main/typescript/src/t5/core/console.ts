@@ -16,10 +16,10 @@
  * A wrapper around the native console, when it exists.
  * @packageDocumentation
  */ 
-import dom from "t5/core/dom.js";
+import dom from "t5/core/dom";
 import _ from "underscore";
-import bootstrap from "t5/core/bootstrap.js";
-import { ElementWrapper } from "t5/core/types.js";
+import bootstrap from "t5/core/bootstrap";
+import { ElementWrapper } from "t5/core/types";
 
 let e;
 let nativeConsole = null;

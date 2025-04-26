@@ -18,10 +18,10 @@
  * Support for the `core/Palette` component.
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
+import dom from "t5/core/dom";
 import _ from "underscore";
-import events from "t5/core/events.js";
-import { ElementWrapper } from "./types.js";
+import events from "t5/core/events";
+import { ElementWrapper }from "t5/core/types";
 
 const isSelected = (option: any) => option.selected;
 

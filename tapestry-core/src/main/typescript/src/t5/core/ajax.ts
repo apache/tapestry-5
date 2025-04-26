@@ -34,10 +34,10 @@
  * `t5/core/exception-frame` module to display a server-side processing exception.
  * @packageDocumentation
  */
-import pageinit from "t5/core/pageinit.js";
-import dom from "t5/core/dom.js";
-import exceptionframe from "t5/core/exception-frame.js";
-import console from "t5/core/console.js";
+import pageinit from "t5/core/pageinit";
+import dom from "t5/core/dom";
+import exceptionframe from "t5/core/exception-frame";
+import console from "t5/core/console";
 import _ from "underscore";
 
 export default function(url: string, options?: any) {

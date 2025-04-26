@@ -18,10 +18,10 @@
  * Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
  * @packageDocumentation
  */
-import events from "t5/core/events.js";
-import dom from "t5/core/dom.js";
+import events from "t5/core/events";
+import dom from "t5/core/dom";
 import _ from "underscore";
-import { ElementWrapper } from "./types.js";
+import { ElementWrapper }from "t5/core/types";
 
 // Meta-data name that indicates the next submission should skip validation (typically, because
 // the form was submitted by a "cancel" button).

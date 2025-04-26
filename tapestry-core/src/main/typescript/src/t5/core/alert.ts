@@ -18,13 +18,13 @@
  * Support for the core/Alerts components.
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
-import console from "t5/core/console.js";
-import messages from "t5/core/messages.js";
-import ajax from "t5/core/ajax.js";
-import { ElementWrapper } from "t5/core/types.js";
+import dom from "t5/core/dom";
+import console from "t5/core/console";
+import messages from "t5/core/messages";
+import ajax from "t5/core/ajax";
+import { ElementWrapper } from "t5/core/types";
 import _ from "underscore";
-import bootstrap from "t5/core/bootstrap.js";
+import bootstrap from "t5/core/bootstrap";
 
 const TRANSIENT_DURATION = 5000;
 let exports_;

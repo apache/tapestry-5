@@ -18,14 +18,14 @@
  * Provides support for the `core/DateField` component.
  * @packageDocumentation
  */
-import dom from "t5/core/dom.js";
-import events from "t5/core/events.js";
-import messages from "t5/core/messages.js";
-import ajax from  "t5/core/ajax.js";
+import dom from "t5/core/dom";
+import events from "t5/core/events";
+import messages from "t5/core/messages";
+import ajax from  "t5/core/ajax";
 import _ from "underscore";
-import DatePicker from "t5/core/datepicker.js";
+import DatePicker from "t5/core/datepicker";
 import "t5/core/fields";
-import { ElementWrapper, EventWrapper, ResponseWrapper } from "t5/core/types.js";
+import { ElementWrapper, EventWrapper, ResponseWrapper } from "t5/core/types";
 
 // Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
 // the order needed by the DatePicker component (MONDAY = 0 ... SUNDAY = 6)

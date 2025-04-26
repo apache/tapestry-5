@@ -16,7 +16,7 @@
  * will be chosen by Tapestry at runtime according to configuration.
  * @packageDocumentation
  */
-import type { ElementWrapper, EventWrapper, RequestWrapper, ResponseWrapper, DOM, AjaxRequestOptions, OnEventHandler, AddableContent, ElementOffset } from "t5/core/types.js";
+import type { ElementWrapper, EventWrapper, RequestWrapper, ResponseWrapper, DOM, AjaxRequestOptions, OnEventHandler, AddableContent, ElementOffset } from "t5/core/types";
 
 const f = function(element: HTMLElement | string): ElementWrapper | null {
   throw new Error("Function not implemented");

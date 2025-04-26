@@ -20,5 +20,12 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 # Non-backward-compatible changes (but that probably won't cause problems)
 
+# Non-backward-compatible changes
+
+Using Require.js and AMD modules, modules that used to return a function
+now return an object with a `default` property with the function.
+This is a consequence we couldn't avoid from the CoffeeScript
+to JavaScript to TypeScript conversion.
+
 
 # Overall notes
