@@ -15,7 +15,6 @@
 /**
  * ## t5/core/zone-refresh
  * 
- * @packageDocumentation
  */
 
 import events from "t5/core/events";

@@ -2,7 +2,7 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 # Added configuration symbols
 
-* `tapestry.es-module-path-prefix` (`SymbolConstants.ES_MODULE_PATH_PREFIX`)
+* `tapestry.es-modules-enabled`(`SymbolConstants.ES_MODULES_ENABLED`)
 
 
 # Added methods
@@ -22,8 +22,9 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 # Non-backward-compatible changes
 
-Using Require.js and AMD modules, modules that used to return a function
-now return an object with a `default` property with the function.
+When using Require.js and AMD modules, from Tapestry 5.10.0 on,
+the previously returned objects, functions or values are now
+the `default` property of the object received from `require()`.
 This is a consequence we couldn't avoid from the CoffeeScript
 to JavaScript to TypeScript conversion.
 

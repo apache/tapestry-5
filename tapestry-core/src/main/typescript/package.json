@@ -12,11 +12,13 @@
   },
   "scripts": {
     "build": "npm run build-es-module; npm run build-amd",
-    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/",
-    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/",
+    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/; npm run rename-es-module;",
+    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/; npm run rename-amd;",
     "clean-amd": "rm -rf ../resources/META-INF/modules/t5/core/*; rm -rf ../resources/META-INF/modules/t5/beanvalidation/*;",
     "clean-es-module": "rm -rf ../resources/META-INF/assets/es-modules/t5/core/*; ../resources/META-INF/assets/es-modules/t5/beanvalidation/*",
     "clean": "npm run clean-amd; npm run clean-es-module",
+    "rename-amd": "mv ../resources/META-INF/modules/t5/core/messages-amd.js ../resources/META-INF/modules/t5/core/messages.js",
+    "rename-es-module": "mv ../resources/META-INF/assets/es-modules/t5/core/messages-es-module.js ../resources/META-INF/assets/es-modules/t5/core/messages.js",
     "docs": "typedoc",
     "clean-docs": "rm -rf docs"
   },

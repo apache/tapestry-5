@@ -17,7 +17,6 @@
  * 
  * Support for the core/Autocomplete Tapestry mixin, a wrapper around
  * the Twitter autocomplete.js library.
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import underscore from "underscore";

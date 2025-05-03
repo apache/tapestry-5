@@ -11,7 +11,7 @@
 // limitations under the License.
 
 /**
- * Module defining some types used specially on `t5/core/dom`.
+ * Module defining some types used specially on `t5/core/dom` and `t5/core/zone`, among others.
  * @packageDocumentation
   */
 

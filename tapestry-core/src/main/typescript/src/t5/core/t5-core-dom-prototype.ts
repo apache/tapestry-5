@@ -10,6 +10,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Prototype implementation of Tapestry's DOM wrappers.
+ */
+
 import type { ElementWrapper, EventWrapper, RequestWrapper, ResponseWrapper, ElementOffset, DOM, AddableContent, OnEventHandler, AjaxRequestOptions } from "t5/core/types";
 import _ from "underscore";
 import utils from "t5/core/utils";

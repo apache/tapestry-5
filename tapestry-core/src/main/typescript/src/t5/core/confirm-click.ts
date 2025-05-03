@@ -2,7 +2,6 @@
  * ## t5/core/confirm-click
  * 
  * Support for the Tapestry Confirm mixin, and for running confirmation dialogs programmatically.
- * @packageDocumentation
  */
 
 import $ from "jquery";

@@ -17,11 +17,10 @@
  * 
  * Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
  * core/RemoveRowLink).
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import events from "t5/core/events";
-import console from "t5/core/console.js"
+import console from "t5/core/console"
 import ajax from  "t5/core/ajax";
 import { ElementWrapper, ResponseWrapper } from "t5/core/types";
 

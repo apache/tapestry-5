@@ -20,7 +20,6 @@
  * 
  * Manages a special element used to present an HTML exception report from an Ajax request (where a non-markup response
  * was expected, including a partial page render response).
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import { AddableContent, ElementWrapper } from "t5/core/types";

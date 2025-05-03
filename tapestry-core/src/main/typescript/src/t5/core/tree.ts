@@ -16,7 +16,6 @@
  * ## t5/core/tree
  * 
  * Handlers to support to the core/Tree Tapestry component.
- * @packageDocumentation
  */
 
 import dom from "t5/core/dom";

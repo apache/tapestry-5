@@ -14,8 +14,6 @@
  * ## t5/core/form-fragment
  * 
  * JavaScript code for the `core/FormFragment` component.
- * 
- * @packageDocumentation
  */
 import _ from "underscore";
 import dom from "t5/core/dom";

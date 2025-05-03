@@ -24,7 +24,7 @@
  * @packageDocumentation
  */
 
-import dom from "t5/core/dom.js"
+import dom from "t5/core/dom"
 import events from "t5/core/events";
 import ajax from "t5/core/ajax";
 import console from "t5/core/console";

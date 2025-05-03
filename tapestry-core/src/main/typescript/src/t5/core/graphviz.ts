@@ -16,7 +16,6 @@
  * ## t5/core/graphviz
  * 
  * Support to the core/Graphviz Tapestry component.
- * @packageDocumentation
  */
 import { Graphviz } from "https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js";
 

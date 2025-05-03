@@ -17,7 +17,6 @@
  *
  * Used with the Interval component to express the interval between two timestamps,
  * or the dynamic difference between now and an end point in the past or future.
- * @packageDocumentation
  */
 
 import dom from "t5/core/dom";

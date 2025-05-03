@@ -22,9 +22,8 @@
  * 
  * Used with the LocalDate component to present a Date in a particular format, in the
  * browser's time zone.
- * @packageDocumentation
  */
-import dom from "t5/core/dom.js"
+import dom from "t5/core/dom"
 import moment from "t5/core/moment";
 
 const ATTR = "data-localdate-format";

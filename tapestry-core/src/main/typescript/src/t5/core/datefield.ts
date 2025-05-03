@@ -16,7 +16,6 @@
  * ## t5/core/datefield
  *
  * Provides support for the `core/DateField` component.
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import events from "t5/core/events";
@@ -38,7 +37,7 @@ const days = (messages("date-symbols.days")).split(",");
 
 // Shuffle sunday to the end, so that monday is first.
 
-days.push(days.shift());
+days.push(days.shift()!);
 
 const monthsLabels = (messages("date-symbols.months")).split(",");
 let abbreviateWeekDay = (name: string) => name.substr(0, 1).toLowerCase();

@@ -16,7 +16,6 @@
  * ## t5/core/alert
  * 
  * Support for the core/Alerts components.
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import console from "t5/core/console";

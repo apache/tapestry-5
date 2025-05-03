@@ -3,10 +3,10 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Language and Environment */
-    "target": "ES2015",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     
     /* Modules */
-    "module": "nodenext",                                  /* Specify what module code is generated. */
+    "module": "ES2022",                                  /* Specify what module code is generated. */
     "esModuleInterop": true,                               /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
 
     "baseUrl": "src/",
@@ -40,7 +40,7 @@
 
   "include": [ "src/**/*.ts" ],
 
-  "exclude": ["node_modules", ".vscode"],
+  "exclude": ["node_modules", ".vscode", "src/t5/core/messages-amd.ts"],
 
   "typedocOptions": {
     "entryPoints": [

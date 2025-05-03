@@ -15,7 +15,6 @@
  * 
  * Provides a document event handler that triggers an update a zone when the value
  * of a select element within the zone changes.
- * @packageDocumentation
  */
 
 import events from "t5/core/events";

@@ -16,7 +16,6 @@
  * ## t5/core/palette
  * 
  * Support for the `core/Palette` component.
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import _ from "underscore";
@@ -35,7 +34,7 @@ class PaletteController {
   hidden: ElementWrapper;
   moveUp: ElementWrapper;
   moveDown: ElementWrapper;
-  doDeselectElement: ElementWrapper;
+  deselect: ElementWrapper;
   reorder: boolean;
   valueToOrderIndex: {};
 
@@ -46,7 +45,7 @@ class PaletteController {
     this.hidden = this.container.findFirst("input[type=hidden]")!;
 
     this.selected = this.container.findFirst("[data-action=select]")!;
-    this.doDeselectElement = this.container.findFirst("[data-action=deselect]")!;
+    this.deselect = this.container.findFirst("[data-action=deselect]")!;
 
     this.moveUp = this.container.findFirst("[data-action=move-up]")!;
     this.moveDown = this.container.findFirst("[data-action=move-down]")!;
@@ -138,7 +137,7 @@ class PaletteController {
     });
 
     // @ts-ignore
-    this.select.on("click", () => {
+    this.selected.on("click", () => {
       this.doSelect();
       return false;
     });
@@ -180,7 +179,7 @@ class PaletteController {
   // should be enabled and which disabled.
   updateButtons() {
     // @ts-ignore
-    this.select.element.disabled = this.available.element.selectedIndex < 0;
+    this.selected.element.disabled = this.available.element.selectedIndex < 0;
 
     // @ts-ignore
     const nothingSelected = this.selected.element.selectedIndex < 0;

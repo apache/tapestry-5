@@ -17,7 +17,6 @@
  * 
  * Provides dynamic behavior for the t5/core/ExceptionDisplay component; specifically,
  * filtering the stack trace.
- * @packageDocumentation
  */
 import dom from "t5/core/dom";
 import { ElementWrapper } from "t5/core/types";
