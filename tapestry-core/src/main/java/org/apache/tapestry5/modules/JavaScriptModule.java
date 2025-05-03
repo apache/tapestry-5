@@ -61,6 +61,7 @@ import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
+import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
@@ -493,30 +494,6 @@ public class JavaScriptModule
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "prototype");
         configuration.add(SymbolConstants.MODULE_PATH_PREFIX, "modules");
-        configuration.add(SymbolConstants.ES_MODULE_PATH_PREFIX, "es-modules");
-    }
-
-    @Contribute(ModuleManager.class)
-    public static void setupFoundationFramework(MappedConfiguration<String, Object> configuration,
-                                                @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
-                                                String provider,
-                                                @Path("classpath:org/apache/tapestry5/t5-core-dom-prototype.js")
-                                                Resource domPrototype,
-                                                @Path("classpath:org/apache/tapestry5/t5-core-dom-jquery.js")
-                                                Resource domJQuery)
-    {
-        if (provider.equals("prototype"))
-        {
-            configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domPrototype));
-        }
-
-        if (provider.equals("jquery"))
-        {
-            configuration.add("t5/core/dom", new JavaScriptModuleConfiguration(domJQuery));
-        }
-
-        // If someone wants to support a different infrastructure, they should set the provider symbol to some other value
-        // and contribute their own version of the t5/core/dom module.
     }
 
     @Contribute(ModuleManager.class)
@@ -528,11 +505,35 @@ public class JavaScriptModule
     {
         for (Locale locale : localizationSetter.getSupportedLocales())
         {
-            MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource, resourceChangeTracker, compactJSON);
+            MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
 
             configuration.add("t5/core/messages/" + locale.toString(), new JavaScriptModuleConfiguration(resource));
         }
     }
+    
+    @Contribute(EsModuleManager.class)
+    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleConfigurationCallback> configuration,
+                                                        LocalizationSetter localizationSetter,
+                                                        ComponentMessagesSource messagesSource,
+                                                        ResourceChangeTracker resourceChangeTracker,
+                                                        @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
+    {
+        
+        EsModuleConfigurationCallback callback = jsonObject -> {
+        
+            for (Locale locale : localizationSetter.getSupportedLocales())
+            {
+                MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
+    
+                jsonObject.put("t5/core/messages/" + locale.toString(), resource.toURL());
+            }
+            
+        };
+        
+        configuration.add("ApplicationCatalog", callback);
+        
+    }
+    
 
     /**
      * Contributes 'ConfigureHTMLElement', which writes the attributes into the HTML tag to describe locale, etc.

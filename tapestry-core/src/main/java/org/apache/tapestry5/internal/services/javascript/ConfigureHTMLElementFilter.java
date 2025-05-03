@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -33,11 +34,18 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
     private final ThreadLocale threadLocale;
 
     private final boolean debugEnabled;
+    
+    private final String esModulesEnabled;
 
-    public ConfigureHTMLElementFilter(ThreadLocale threadLocale, @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
+    public ConfigureHTMLElementFilter(ThreadLocale threadLocale, 
+            @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) 
+            boolean productionMode,
+            @Symbol(SymbolConstants.ES_MODULES_ENABLED) 
+            boolean esModulesEnabled)
     {
         this.threadLocale = threadLocale;
         this.debugEnabled = !productionMode;
+        this.esModulesEnabled = String.valueOf(esModulesEnabled);
     }
 
     public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
@@ -52,7 +60,8 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
         // to describe locale, and if debug is enabled.
         if (html != null)
         {
-            html.attributes("data-locale", threadLocale.getLocale().toString());
+            html.attributes("data-locale", threadLocale.getLocale().toString(),
+                    "data-es-modules-enabled", esModulesEnabled);
 
             if (debugEnabled)
             {

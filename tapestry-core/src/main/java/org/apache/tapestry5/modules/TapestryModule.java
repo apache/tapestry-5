@@ -2212,6 +2212,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.PUBLISH_OPENAPI_DEFINITON, "false");
         configuration.add(SymbolConstants.OPENAPI_DESCRIPTION_PATH, "/openapi.json");
         configuration.add(SymbolConstants.OPENAPI_BASE_PATH, "/");
+        
+        configuration.add(SymbolConstants.ES_MODULES_ENABLED, "false");
     }
 
     /**
