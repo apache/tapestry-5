@@ -13,6 +13,7 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +28,6 @@ import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
@@ -70,10 +70,12 @@ public class EsModuleManagerImpl implements EsModuleManager
     
     private final ResourceChangeTracker resourceChangeTracker;
     
-    private final List<EsModuleConfigurationCallback> globalCallbacks;
+    private final List<EsModuleConfigurationCallback> baseCallbacks;
+    
+    private final List<EsModuleConfigurationCallback> globalPerRequestCallbacks;
 
     public EsModuleManagerImpl(
-                             List<EsModuleConfigurationCallback> globalCallbacks,
+                             List<EsModuleManagerContribution> contributions,
                              AssetSource assetSource,
                              StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
@@ -86,9 +88,24 @@ public class EsModuleManagerImpl implements EsModuleManager
         this.compactJSON = compactJSON;
         this.assetSource = assetSource;
         this.classpathScanner = classpathScanner;
-        this.globalCallbacks = globalCallbacks;
         this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
+        
+        baseCallbacks = new ArrayList<>();
+        globalPerRequestCallbacks = new ArrayList<>();
+        
+        for (EsModuleManagerContribution contribution : contributions) 
+        {
+            if (contribution.isBase())
+            {
+                baseCallbacks.add(contribution.getCallback());
+            }
+            else
+            {
+                globalPerRequestCallbacks.add(contribution.getCallback());
+            }
+        }
+        
         importMap = new JSONObject();
 
         extensions = CollectionFactory.newSet("js");
@@ -114,12 +131,14 @@ public class EsModuleManagerImpl implements EsModuleManager
             imports.put(name, cache.get(name));
         }
         
-        this.importMap = executeCallbacks(importMap, globalCallbacks);
+        executeCallbacks(importMap, baseCallbacks);
         
         for (String id : imports.keySet()) 
         {
             cache.put(id, imports.getString(id));
         }
+        
+        this.importMap = importMap;
             
     }
 
@@ -145,12 +164,6 @@ public class EsModuleManagerImpl implements EsModuleManager
         }
     }
 
-    @PostInjection
-    public void setupInvalidation(ResourceChangeTracker tracker)
-    {
-        
-    }
-
     @Override
     public void writeImportMap(Element head, List<EsModuleConfigurationCallback> moduleConfigurationCallbacks) {
         
@@ -160,7 +173,8 @@ public class EsModuleManagerImpl implements EsModuleManager
         JSONObject newImportMap = new JSONObject(
                 EsModuleConfigurationCallback.IMPORTS_ATTRIBUTE, imports);
         
-        newImportMap = executeCallbacks(newImportMap, moduleConfigurationCallbacks);
+        executeCallbacks(newImportMap, moduleConfigurationCallbacks);
+        executeCallbacks(newImportMap, globalPerRequestCallbacks);
         
         head.element("script")
                 .attribute("type", "importmap")
@@ -332,14 +346,12 @@ public class EsModuleManagerImpl implements EsModuleManager
         script.attribute("type", "module");
     }
 
-    private JSONObject executeCallbacks(JSONObject importMap, List<EsModuleConfigurationCallback> callbacks) 
+    private void executeCallbacks(JSONObject importMap, List<EsModuleConfigurationCallback> callbacks) 
     {
         for (EsModuleConfigurationCallback callback : callbacks) 
         {
             callback.configure(importMap);
         }
-        
-        return importMap;
     }
 
 }

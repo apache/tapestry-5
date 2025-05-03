@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.integration.app1;
 
+
 import static org.apache.tapestry5.integration.app1.services.AppModule.NON_OVERRIDDEN_ES_MODULE_ID;
 import static org.apache.tapestry5.integration.app1.services.AppModule.NON_OVERRIDDEN_ES_MODULE_URL;
 import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_ES_MODULE_ID;
 import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_ES_MODULE_NEW_URL;
+import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ID;
+import static org.apache.tapestry5.integration.app1.services.AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_NEW_URL;
 
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.integration.app1.pages.EsModuleDemo;
@@ -83,6 +86,11 @@ public class EsModuleTests extends App1TestCase
         JSONObject importMap = getImportMap();
         assertModuleUrl(NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL, importMap);
         assertModuleUrl(OVERRIDDEN_ES_MODULE_ID, EsModuleDemo.REQUEST_OVERRIDEN_MODULE_URL, importMap);
+
+        // Module first defined through callback added to JavaScriptSupport,
+        // then overriden by a global per-request callback.
+        assertModuleUrl(OVERRIDDEN_GLOBALLY_ES_MODULE_ID, OVERRIDDEN_GLOBALLY_ES_MODULE_NEW_URL, importMap);
+
         
         // Now without import map changed by request callbacks, so we can test
         // the global import map wasn't affected.

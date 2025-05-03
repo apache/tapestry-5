@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 
 /**
  * Responsible for managing access to the ES modules. This service's distributed
@@ -25,7 +26,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
  * @since 5.10.0
  * @see EsModuleConfigurationCallback
  */
-@UsesOrderedConfiguration(EsModuleConfigurationCallback.class)
+@UsesOrderedConfiguration(EsModuleManagerContribution.class)
 public interface EsModuleManager
 {
     /**
@@ -53,5 +54,59 @@ public interface EsModuleManager
      *         specify initialization on the page, based on loading modules, extacting functions from modules, and invoking those functions
      */
     void writeImports(Element root, List<EsModuleInitialization> inits);
+    
+    /**
+     * Encapsulates a contribution to {@linkplain EsModuleManager}.
+     *
+     * @since 5.10.0
+     * @see EsModuleManager
+     * @see EsModuleConfigurationCallback
+     */
+    public final class EsModuleManagerContribution
+    {
+        private final EsModuleConfigurationCallback callback;
+        
+        private final boolean isBase;
+
+        EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
+        {
+            super();
+            this.callback = callback;
+            this.isBase = isBase;
+        }
+        
+        /**
+         * Creates a base contribution (one that contributes a callback used 
+         * when creating the base import map to be used for all requests).
+         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+         * @return a corresponding {@linkplain EsModuleManagerContribution}.
+         */
+        public static EsModuleManagerContribution base(EsModuleConfigurationCallback callback) 
+        {
+            return new EsModuleManagerContribution(callback, true);
+        }
+
+        /**
+         * Creates a global per-request contribution (one that contributes a callback used 
+         * in all requests after the callbacks added through 
+         * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
+         * were called).
+         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+         * @return a corresponding {@linkplain EsModuleManagerContribution}.
+         */
+        public static EsModuleManagerContribution globalPerRequest(EsModuleConfigurationCallback callback) 
+        {
+            return new EsModuleManagerContribution(callback, false);
+        }
+        
+        public EsModuleConfigurationCallback getCallback() {
+            return callback;
+        }
+        
+        public boolean isBase() {
+            return isBase;
+        }
+
+    }
 
 }
