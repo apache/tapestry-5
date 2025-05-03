@@ -79,6 +79,11 @@ public class EsModuleDemo
                             AppModule.OVERRIDDEN_ES_MODULE_ID, REQUEST_OVERRIDEN_MODULE_URL));
         }
         
+        javaScriptSupport.addEsModuleConfigurationCallback(
+                o -> EsModuleConfigurationCallback.setImport(o, 
+                        AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ID, 
+                            AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ORIGINAL_URL));
+        
     }
 
     void onActivate(boolean overrideEsModuleImportAgain)

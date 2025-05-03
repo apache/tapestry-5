@@ -13,6 +13,7 @@
 package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 
 /**
  * Interface used to  to change the JSON configuration object which will be used in the
@@ -59,4 +60,31 @@ public interface EsModuleConfigurationCallback
     {
         object.in(IMPORTS_ATTRIBUTE).put(id, url);
     }
+    
+    /**
+     * Creates a base contribution (one that contributes a callback used 
+     * when creating the base import map to be used for all requests).
+     * Utility method to call {@linkplain EsModuleManagerContribution#base(EsModuleConfigurationCallback)}
+     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+     * @return a corresponding {@linkplain EsModuleManagerContribution}.
+     */
+    public static EsModuleManagerContribution toBaseContribution(EsModuleConfigurationCallback callback)
+    {
+        return EsModuleManagerContribution.base(callback);
+    }
+    
+    /**
+     * Creates a global per-request contribution (one that contributes a callback used 
+     * in all requests after the callbacks added through 
+     * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
+     * were called).
+     * Utility method to call {@linkplain EsModuleManagerContribution#globalPerRequest(EsModuleConfigurationCallback)}
+     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+     * @return a corresponding {@linkplain EsModuleManagerContribution}.
+     */
+    public static EsModuleManagerContribution toGlobalPerRequestContribution(EsModuleConfigurationCallback callback)
+    {
+        return EsModuleManagerContribution.globalPerRequest(callback);
+    }
+    
 }

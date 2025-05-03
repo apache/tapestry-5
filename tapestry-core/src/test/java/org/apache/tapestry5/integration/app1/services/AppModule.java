@@ -14,6 +14,9 @@ package org.apache.tapestry5.integration.app1.services;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback.setImport;
+import static org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback.toBaseContribution;
+import static org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback.toGlobalPerRequestContribution;
 
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -60,6 +63,7 @@ import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueLabelProvider;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
+import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 import org.apache.tapestry5.services.pageload.PageCachingReferenceTypeService;
 import org.apache.tapestry5.services.pageload.PagePreloader;
 import org.apache.tapestry5.services.pageload.PreloaderMode;
@@ -488,32 +492,48 @@ public class AppModule
     public static final String OVERRIDDEN_ES_MODULE_ORIGINAL_URL = "/originalURL";
     
     public static final String OVERRIDDEN_ES_MODULE_NEW_URL = "/overridenURL";
+
+    public static final String OVERRIDDEN_GLOBALLY_ES_MODULE_ID = "globallyPerRequestOverriden";
+
+    public static final String OVERRIDDEN_GLOBALLY_ES_MODULE_ORIGINAL_URL = "/globallyPerRequestOverridenOriginalURL";
+    
+    public static final String OVERRIDDEN_GLOBALLY_ES_MODULE_NEW_URL = "/globallyPerRequestOverridenURL";
+    
     
     public static void contributeEsModuleManager(
-            OrderedConfiguration<EsModuleConfigurationCallback> configuration,
+            OrderedConfiguration<EsModuleManagerContribution> configuration,
             AssetSource assetSource)
     {
-        final String original = "OriginalCallback";
-        final String override = "OverrideCallback";
+        final String originalId = "OriginalCallback";
+        final String overrideId = "OverrideCallback";
         
-        configuration.add(override, 
-                o -> EsModuleConfigurationCallback.setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_NEW_URL),
-                "after:" + original);
+        configuration.add(overrideId, 
+                toBaseContribution(o -> setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_NEW_URL)),
+                "after:" + originalId);
         
-        configuration.add(original, 
-                o -> { 
-                    EsModuleConfigurationCallback.setImport(o, NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL);
-                    EsModuleConfigurationCallback.setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_ORIGINAL_URL);
-                });
+        configuration.add(originalId, 
+                toBaseContribution(
+                    o -> { 
+                        setImport(o, NON_OVERRIDDEN_ES_MODULE_ID, NON_OVERRIDDEN_ES_MODULE_URL);
+                        setImport(o, OVERRIDDEN_ES_MODULE_ID, OVERRIDDEN_ES_MODULE_ORIGINAL_URL);
+                    }));
         
-        configuration.add("Outside META-INF", o -> 
-            EsModuleConfigurationCallback.setImport(o, "outside-metainf", 
-                    assetSource.getClasspathAsset("/org/apache/tapestry5/integration/app1/es-module-outside-metainf.js").toClientURL())
-        );
+        final String outsideMetaInfAssetUrl = assetSource
+                .getClasspathAsset("/org/apache/tapestry5/integration/app1/es-module-outside-metainf.js")
+                .toClientURL();
+        
+        configuration.add("Outside META-INF", 
+                toBaseContribution(o -> setImport(o, "outside-metainf", outsideMetaInfAssetUrl)));
 
-        configuration.add("External URL", o -> 
-            EsModuleConfigurationCallback.setImport(o, "external/url", "https://example.com/module.js")
-        );
+        configuration.add("External URL", toBaseContribution(
+                o -> setImport(o, "external/url", "https://example.com/module.js")));
+        
+        configuration.add("Globally per-request overriden", 
+                toGlobalPerRequestContribution(
+                    o -> setImport(o, 
+                            OVERRIDDEN_GLOBALLY_ES_MODULE_ID,
+                            OVERRIDDEN_GLOBALLY_ES_MODULE_NEW_URL)));
+        
 
     }
 
