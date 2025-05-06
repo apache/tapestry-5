@@ -108,7 +108,7 @@ public class EsModuleManagerImpl implements EsModuleManager
         
         importMap = new JSONObject();
 
-        extensions = CollectionFactory.newSet("js");
+        extensions = CollectionFactory.newSet("js", "mjs");
         extensions.addAll(streamableResourceSource.fileExtensionsForContentType(InternalConstants.JAVASCRIPT_CONTENT_TYPE));
         
         createImportMap();
@@ -176,9 +176,12 @@ public class EsModuleManagerImpl implements EsModuleManager
         executeCallbacks(newImportMap, moduleConfigurationCallbacks);
         executeCallbacks(newImportMap, globalPerRequestCallbacks);
         
-        head.element("script")
-                .attribute("type", "importmap")
-                .text(newImportMap.toString(compactJSON));
+        if (!newImportMap.in(IMPORTS_ATTRIBUTE).isEmpty())
+        {
+            head.element("script")
+                    .attribute("type", "importmap")
+                    .text(newImportMap.toString(compactJSON));
+        }
     }
         
     @Override

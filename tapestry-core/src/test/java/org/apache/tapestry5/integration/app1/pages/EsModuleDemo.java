@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
-@Import(esModule = {"root-folder"})
+@Import(esModule = {"root-folder", "suffix"})
 public class EsModuleDemo
 {
     public static final String DEFAULT_EXPORT_MESSAGE = "default-export-message";

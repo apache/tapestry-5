@@ -129,6 +129,7 @@ public class EsModuleTests extends App1TestCase
         assertEquals(getText("body-top-message"), "ES module imported correctly (<body> top)!");
         assertEquals(getText("body-bottom-message"), "ES module imported correctly (<body> bottom)!");
         assertEquals(getText("outside-metainf-message"), "ES module correctly imported from outside /META-INF/assets/es-modules!");
+        assertEquals(getText("suffix-message"), "ES module imported correctly from .mjs file!");
 
     }
     
