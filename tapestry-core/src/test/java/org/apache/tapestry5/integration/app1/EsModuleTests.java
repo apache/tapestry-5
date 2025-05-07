@@ -55,6 +55,7 @@ public class EsModuleTests extends App1TestCase
         JSONObject importMap = getImportMap();
         assertModuleUrlSuffix("foo/bar", "/es-modules/foo/bar.js", importMap);
         assertModuleUrlSuffix("root-folder", "/es-modules/root-folder.js", importMap);
+        assertModuleUrlSuffix("suffix", "/es-modules/suffix.mjs", importMap);
     }
     
     /**
@@ -129,7 +130,6 @@ public class EsModuleTests extends App1TestCase
         assertEquals(getText("body-top-message"), "ES module imported correctly (<body> top)!");
         assertEquals(getText("body-bottom-message"), "ES module imported correctly (<body> bottom)!");
         assertEquals(getText("outside-metainf-message"), "ES module correctly imported from outside /META-INF/assets/es-modules!");
-        assertEquals(getText("suffix-message"), "ES module imported correctly from .mjs file!");
 
     }
     
@@ -142,7 +142,10 @@ public class EsModuleTests extends App1TestCase
     public void at_import_esModule() throws InterruptedException
     {
         openLinks(PAGE_NAME);
+        assertScriptElement("root-folder");
+        assertScriptElement("suffix");
         assertEquals(getText("root-folder-message"), "ES module imported correctly from the root folder!");
+        assertEquals(getText("suffix-message"), "ES module imported correctly from .mjs file!");
     }
     
     /**
@@ -220,6 +223,13 @@ public class EsModuleTests extends App1TestCase
         
         assertNotNull(url, String.format("Module %s not found in import map\n%s", id, importMap.toString(false)));
         assertEquals(url, urlSuffix, String.format("Unexpected URL %s for module %s (expected %s suffix)", url, id, urlSuffix));
+    }
+    
+    private void assertScriptElement(String moduleId)
+    {
+        assertTrue(
+                isElementPresent(String.format("//script[@data-module-id='%s']", moduleId)),
+                "<script> element for ES module found: " + moduleId);
     }
     
     private JSONObject getImportMap()
