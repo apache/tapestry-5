@@ -176,12 +176,9 @@ public class EsModuleManagerImpl implements EsModuleManager
         executeCallbacks(newImportMap, moduleConfigurationCallbacks);
         executeCallbacks(newImportMap, globalPerRequestCallbacks);
         
-        if (!newImportMap.in(IMPORTS_ATTRIBUTE).isEmpty())
-        {
-            head.element("script")
-                    .attribute("type", "importmap")
-                    .text(newImportMap.toString(compactJSON));
-        }
+        head.element("script")
+                .attribute("type", "importmap")
+                .text(newImportMap.toString(compactJSON));
     }
         
     @Override
