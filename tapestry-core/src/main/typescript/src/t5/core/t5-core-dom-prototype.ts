@@ -120,7 +120,7 @@ const onevent = function(elements: HTMLElement[], eventNames: string[], match: s
     // @ts-ignore
     eventWrapper = new PrototypeEventWrapper(prototypeEvent);
     // @ts-ignore
-    result = prototypeEvent.stopped ? false : handler.call(elementWrapper, eventWrapper, eventWrapper.memo);
+    result = prototypeEvent.stopped ? false : handler.call(elementWrapper.element, elementWrapper, eventWrapper, eventWrapper.memo);
     if (result === false) {
       prototypeEvent.stop();
     }

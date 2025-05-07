@@ -1,8 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // Copyright 2012, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

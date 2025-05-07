@@ -34,6 +34,7 @@ class PaletteController {
   hidden: ElementWrapper;
   moveUp: ElementWrapper;
   moveDown: ElementWrapper;
+  select: ElementWrapper;
   deselect: ElementWrapper;
   reorder: boolean;
   valueToOrderIndex: {};
@@ -44,7 +45,7 @@ class PaletteController {
     this.available = this.container.findFirst(".palette-available select")!;
     this.hidden = this.container.findFirst("input[type=hidden]")!;
 
-    this.selected = this.container.findFirst("[data-action=select]")!;
+    this.select = this.container.findFirst("[data-action=select]")!;
     this.deselect = this.container.findFirst("[data-action=deselect]")!;
 
     this.moveUp = this.container.findFirst("[data-action=move-up]")!;
@@ -137,7 +138,7 @@ class PaletteController {
     });
 
     // @ts-ignore
-    this.selected.on("click", () => {
+    this.select.on("click", () => {
       this.doSelect();
       return false;
     });
@@ -179,7 +180,7 @@ class PaletteController {
   // should be enabled and which disabled.
   updateButtons() {
     // @ts-ignore
-    this.selected.element.disabled = this.available.element.selectedIndex < 0;
+    this.select.element.disabled = this.available.element.selectedIndex < 0;
 
     // @ts-ignore
     const nothingSelected = this.selected.element.selectedIndex < 0;

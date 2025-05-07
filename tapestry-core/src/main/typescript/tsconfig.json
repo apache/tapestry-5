@@ -40,11 +40,12 @@
 
   "include": [ "src/**/*.ts" ],
 
-  "exclude": ["node_modules", ".vscode", "src/t5/core/messages-amd.ts"],
+  "exclude": ["node_modules", ".vscode"],
 
   "typedocOptions": {
     "entryPoints": [
-      "src/t5/core/*.ts"
+      "src/t5/core/*.ts",
+      "src/t5/beanvalidator/*.ts"
     ],
     "out": "docs/" // <--- output directory
   }

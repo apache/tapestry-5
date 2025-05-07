@@ -22,9 +22,9 @@
  * Supports extra validations related to the beanvalidator module.
  */
 import _ from "underscore";
-import dom from "t5/core/dom.js"
-import events from "t5/core/events.js"
-import utils from "t5/core/utils.js"
+import dom from "t5/core/dom"
+import events from "t5/core/events"
+import utils from "t5/core/utils"
 import validation from "t5/core/validation";
 
 // @ts-ignore

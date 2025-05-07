@@ -551,7 +551,6 @@ task zippedSources(type: Zip) {
     description "Creates a combined Zip file of all sub-project's sources"
     group "Release artifact"
     
-    dependsOn("tapestry-beanvalidator:compileCoffeeScript")
     dependsOn("tapestry-core:compileTypeScript")
 
     destinationDirectory = buildDir

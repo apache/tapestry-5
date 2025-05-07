@@ -25,7 +25,7 @@ import events from "t5/core/events";
 import dom from "t5/core/dom";
 import utils from  "t5/core/utils";
 import forms from "t5/core/forms";
-import { ElementWrapper, EventWrapper }from "t5/core/types";
+import { ElementWrapper, EventWrapper } from "t5/core/types";
 
 let exports_;
 const ensureFieldId = function(field: ElementWrapper): string {

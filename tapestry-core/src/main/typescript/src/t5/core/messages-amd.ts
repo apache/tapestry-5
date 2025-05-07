@@ -16,7 +16,7 @@
 /**
  * ## t5/core/messages
  *
- *For all of these modules, we've turned off CoffeeScript's normal outer function
+ * For all of these modules, we've turned off CoffeeScript's normal outer function
  * wrapper, as each module is just a call to `define()` with a function that fulfills
  * the same purpose. This one is different, as it is necessary to compute one of the dependencies.
  * On the server `t5/core/messages/<locale>` is actually generated dynamically, as is a simple
@@ -41,6 +41,7 @@
   // @ts-ignore
   define(["t5/core/messages/" + locale, "underscore", "t5/core/console"], function(messages, _, console) {
     var get;
+    // @ts-ignore
     get = function(key) {
       var value;
       value = messages[key];
@@ -51,6 +52,7 @@
         return "[[Missing Key: '" + key + "']]";
       }
     };
+    // @ts-ignore
     get.keys = function() {
       return _.keys(messages);
     };
