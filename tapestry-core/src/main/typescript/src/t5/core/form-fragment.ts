@@ -21,6 +21,10 @@ import events from "t5/core/events";
 import forms from  "t5/core/forms";
 import { ElementWrapper, EventWrapper }from "t5/core/types";
 
+// Line below is used to force the TypeScript compiler to actually import t5/core/forms
+// as it's not used directly here. This file uses events set up by the imported files.
+let workaround = forms;
+
 const SELECTOR = "[data-component-type='core/FormFragment']";
 
 const REENABLE = "data-re-enable-when-fragment-visible";
@@ -60,16 +64,20 @@ const updateFields = function(fragment: ElementWrapper, makeVisible: boolean) {
 // because of the didShow/didHide events ... but we're really just seeing the evolution
 // from the old style (the FormFragment class as controller) to the new style (DOM events and
 // top-level event handlers).
-dom.onDocument(events.formfragment.changeVisibility, SELECTOR, function(element: ElementWrapper, event: EventWrapper) {
-    const makeVisible = event.memo.visible;
+dom.onDocument(events.formfragment.changeVisibility, SELECTOR, function(event: EventWrapper) {
 
-    element[makeVisible ? "show" : "hide"]();
+    // @ts-ignore
+  let element: ElementWrapper = this;
 
-    updateFields(element, makeVisible);
+  const makeVisible = event.memo.visible;
 
-    element.trigger(events.element[makeVisible ? "didShow" : "didHide"]);
+  element[makeVisible ? "show" : "hide"]();
 
-    return false;
+  updateFields(element, makeVisible);
+
+  element.trigger(events.element[makeVisible ? "didShow" : "didHide"]);
+
+  return false;
 });
 
 // When a FormFragment is initially rendered as hidden, then we need to do some

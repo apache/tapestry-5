@@ -65,7 +65,9 @@ let activePopup: ElementWrapper | null = null;
 
 const isPartOfPopup = (element: ElementWrapper) => (element.findParent(".labelPopup") != null) || (element.findParent(".datefield-popup") != null);
 
-dom.body.on("click", null, function(element: ElementWrapper) {
+dom.body.on("click", null, function() {
+  // @ts-ignore
+  let element: ElementWrapper = this;
   if (activePopup && !isPartOfPopup(element)) {
     activePopup.hide();
     activePopup = null;

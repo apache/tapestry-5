@@ -24,8 +24,15 @@
 import _ from "underscore";
 import dom from "t5/core/dom"
 import events from "t5/core/events"
+import fields from "t5/core/fields"
 import utils from "t5/core/utils"
-import validation from "t5/core/validation";
+import validation from "t5/core/validation"
+
+// Both lines below are used to force the TypeScript compiler to actually import t5/core/fields
+// and t5/core/validation even though they're not used directly here. This file uses events 
+// set up by the imported files.
+let workaround1 = fields;
+let workaround2 = validation;
 
 // @ts-ignore
 const rangeValue = function(element, attribute, defaultValue) {

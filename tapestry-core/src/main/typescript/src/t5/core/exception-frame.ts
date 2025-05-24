@@ -40,7 +40,9 @@ const write = function(container: ElementWrapper, content: AddableContent) {
   return iframeDocument!.close();
 };
 
-const clear = function(element: ElementWrapper) {
+const clear = function() {
+  // @ts-ignore
+  let element: ElementWrapper = this;
   const container = element.closest('.exception-container');
   container!.remove();
   return false;

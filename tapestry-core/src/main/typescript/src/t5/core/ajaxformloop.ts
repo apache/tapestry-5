@@ -28,8 +28,10 @@ import { ElementWrapper, ResponseWrapper } from "t5/core/types";
 const AFL_SELECTOR = "[data-container-type='core/AjaxFormLoop']";
 const FRAGMENT_TYPE = "core/ajaxformloop-fragment";
 
-dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function(element: ElementWrapper) {
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function() {
 
+  // @ts-ignore
+  let element: ElementWrapper = this;
   const afl = element.findParent(AFL_SELECTOR);
 
   if (!afl) {
@@ -61,7 +63,10 @@ dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=remove]`, function(e
   return false;
 });
 
-dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function(element: ElementWrapper) {
+dom.onDocument("click", `${AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]`, function() {
+
+  // @ts-ignore
+  let element: ElementWrapper = this;
 
   const afl = element.findParent(AFL_SELECTOR);
 

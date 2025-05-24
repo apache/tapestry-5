@@ -21,7 +21,11 @@
 import dom from "t5/core/dom";
 import { ElementWrapper } from "t5/core/types";
 
-dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function(element: ElementWrapper) {
+dom.onDocument("click", "[data-behavior=stack-trace-filter-toggle]", function() {
+
+  // @ts-ignore
+  let element: ElementWrapper = this;
+
   const checked = element.checked();
 
   for (var traceList of Array.from(dom.body.find(".stack-trace"))) {

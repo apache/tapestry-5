@@ -20,6 +20,10 @@
  */
 import console from "t5/core/console";
 
+// Line below is used to force the TypeScript compiler to actually import t5/core/console */
+// as the compiler doesn't seet to notice it's used directly here..
+let workaround = console;
+
 export default (console: { error: (arg0: string) => any; }) => // Exports a single function that finds an initializer in `T5.initializers` and invokes it.
 function(initName: string | number, ...args: any) {
   // @ts-ignore

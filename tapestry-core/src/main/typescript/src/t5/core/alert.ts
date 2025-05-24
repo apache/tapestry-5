@@ -101,7 +101,9 @@ const setupUI = function(outer: ElementWrapper) {
     return false;
   });
 
-  return outer.on("click", "button.close", function(element: ElementWrapper) {
+  return outer.on("click", "button.close", function() {
+    // @ts-ignore
+    let element: ElementWrapper = this;
     dismissOne(outer, element);
     return false;
   });

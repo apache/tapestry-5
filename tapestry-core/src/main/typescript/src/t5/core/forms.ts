@@ -21,7 +21,7 @@
 import events from "t5/core/events";
 import dom from "t5/core/dom";
 import _ from "underscore";
-import { ElementWrapper }from "t5/core/types";
+import { ElementWrapper } from "t5/core/types";
 
 // Meta-data name that indicates the next submission should skip validation (typically, because
 // the form was submitted by a "cancel" button).
@@ -127,7 +127,10 @@ const gatherParameters = function(form: ElementWrapper) {
 };
 
 
-const defaultValidateAndSubmit = function(element: ElementWrapper) {
+const defaultValidateAndSubmit = function() {
+
+  // @ts-ignore
+  let element = this;
 
   let where = () => "processing form submission";
 
@@ -144,7 +147,10 @@ const defaultValidateAndSubmit = function(element: ElementWrapper) {
 
       for (var field of Array.from(element.find("[data-validation]"))) {
         memo = {} as any;
+        // @ts-ignore
         where = () => `triggering ${events.field.inputValidation} event on ${field.toString()}`;
+
+        // @ts-ignore
         field.trigger(events.field.inputValidation, memo);
 
         if (memo.error) {
@@ -168,6 +174,7 @@ const defaultValidateAndSubmit = function(element: ElementWrapper) {
 
         // If a specific field has been identified as the source of the validation error, then
         // focus on it.
+        // @ts-ignore
         if (focusField) { focusField.focus(); }
 
         // Trigger an event to inform that form validation results in error
@@ -204,14 +211,18 @@ dom.onDocument("submit", TAPESTRY_CORE_FORM_SELECTOR, defaultValidateAndSubmit);
 // was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
 // information about which control triggered the submit gets lost.
 dom.onDocument("click", TAPESTRY_CORE_FORM_SELECTOR + " input[type=submit], " + TAPESTRY_CORE_FORM_SELECTOR + " input[type=image]", 
-    function(element: ElementWrapper) {
-  const form = element.element as HTMLInputElement;
-  setSubmittingHidden((dom(form)!), element);
-});
+    function() {
+      // @ts-ignore
+      setSubmittingHidden(dom(this.element.form), this);
+    }
+);
 
 // Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
 // Update the hidden field, but also cancel the default behavior for the click.
-dom.onDocument("click", "a[data-submit-mode]", function(element: ElementWrapper) {
+dom.onDocument("click", "a[data-submit-mode]", function() {
+
+  // @ts-ignore
+  let element: ElementWrapper = this;
   const form = element.findParent("form");
 
   if (!form) {

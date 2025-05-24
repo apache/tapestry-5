@@ -27,6 +27,10 @@ import utils from  "t5/core/utils";
 import forms from "t5/core/forms";
 import { ElementWrapper, EventWrapper } from "t5/core/types";
 
+// Line below is used to force the TypeScript compiler to actually import t5/core/forms */
+// as it's not used directly here. This file uses events set up by the imported files.
+let workaround = forms;
+
 let exports_;
 const ensureFieldId = function(field: ElementWrapper): string {
   let fieldId = field.attr("id");
@@ -116,7 +120,10 @@ const collectOptionValues = (wrapper: ElementWrapper) => _.pluck(wrapper.element
 
 // Default registrations:
 
-dom.onDocument(events.field.inputValidation, null, function(element: ElementWrapper, event: EventWrapper, formMemo: any) {
+dom.onDocument(events.field.inputValidation, null, function(event: EventWrapper, formMemo: any) {
+
+  // @ts-ignore
+  let element: ElementWrapper = this;
 
   // Fields that are disabled, or not visible to the user are not subject to
   // validation. Typically, a field will only be invisible due to the
@@ -187,7 +194,9 @@ dom.onDocument(events.field.inputValidation, null, function(element: ElementWrap
 
 });
 
-dom.onDocument(events.field.clearValidationError, null, function(element: ElementWrapper) {
+dom.onDocument(events.field.clearValidationError, null, function() {
+  // @ts-ignore
+  let element: ElementWrapper = this;
   const blocks = findHelpBlocks(element);
 
   for (var block of Array.from(blocks || [])) {
@@ -202,7 +211,9 @@ dom.onDocument(events.field.clearValidationError, null, function(element: Elemen
 
 });
 
-dom.onDocument(events.field.showValidationError, null, function(element: ElementWrapper, event: EventWrapper, memo: any) {
+dom.onDocument(events.field.showValidationError, null, function(event: EventWrapper, memo: any) {
+  // @ts-ignore
+  let element: ElementWrapper = this;
   let blocks = findHelpBlocks(element);
 
   if (!blocks) {

@@ -25,7 +25,7 @@ export interface IEventWrapper {
 /**
  * Type of event handlers functions.
  */
-export type OnEventHandler = (element: ElementWrapper, event: EventWrapper, memo: any) => any;
+export type OnEventHandler = (event: EventWrapper, memo: any) => any;
 
 /**
  * Class defining the offset of an element.
