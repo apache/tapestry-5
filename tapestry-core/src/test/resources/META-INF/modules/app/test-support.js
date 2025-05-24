@@ -4,6 +4,8 @@
 
 define(["t5/core/dom"],
   function(dom) {
+	
+	dom = dom.default;
 
     const exports = {
       findCSSMatchCount(selector) { return dom.body.find(selector).length; },

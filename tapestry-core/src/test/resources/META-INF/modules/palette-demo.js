@@ -4,7 +4,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 define(["t5/core/dom", "t5/core/events", "underscore", "t5/core/console"],
-  (dom, events, _, console) => dom.body.on(events.palette.willChange, function(event, memo) {
+  (dom, events, _, console) => dom = dom.default; dom.default.on(events.palette.willChange, function(event, memo) {
 
     console.info("palette-demo, palette willChange");
 
