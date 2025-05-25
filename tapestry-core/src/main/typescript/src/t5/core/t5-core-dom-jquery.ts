@@ -302,7 +302,7 @@ class JQueryElementWrapper implements ElementWrapper {
   };
 
   on(events: string, match: string | null, handler: OnEventHandler): ElementWrapper {
-    onevent($(this.element), events, match, handler);
+    on(this.element, events, match, handler);
     return this;
   };
 
@@ -311,6 +311,10 @@ class JQueryElementWrapper implements ElementWrapper {
   };
 
 };
+
+const newElementWrapper = function(element: JQuery) {
+  return new JQueryElementWrapper(element);
+}
 
 class JQueryRequestWrapper implements RequestWrapper {
   readonly jqxhr: JQueryXHR;
@@ -352,15 +356,16 @@ const wrapElement = function(element: HTMLElement | string): ElementWrapper | nu
   let e: Element | null;
   if (_.isString(element)) {
     e = document.getElementById(element);
-    if (element == null) {
+    if (e == null) {
       return null;
     }
   } else {
-    if (!element) {
+    e = element;
+    if (!e) {
       throw new Error("Attempt to wrap a null DOM element");
     }
   }
-  return newElementWrapper($(element));
+  return newElementWrapper($(e));
 };
 
 const body = wrapElement(document.body);
@@ -437,10 +442,6 @@ let scanner = function(selector: string, callback: (e: ElementWrapper) => void) 
   }
   scanners.push(scan);
 };
-
-const newElementWrapper = function(element: JQuery) {
-  return new JQueryElementWrapper(element);
-}
 
 const createElement = function(elementName: string, attributes?: object, body?: AddableContent): ElementWrapper {
   var element: ElementWrapper;

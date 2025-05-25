@@ -4,4 +4,4 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 require(["t5/core/dom", "t5/core/events"],
-  (dom, events) => dom.onDocument(events.zone.didUpdate, () => (dom("zone-update-message")).update("Zone updated.")));
+  (dom, events) => dom.default.onDocument(events.default.zone.didUpdate, () => (dom.default("zone-update-message")).update("Zone updated.")));
