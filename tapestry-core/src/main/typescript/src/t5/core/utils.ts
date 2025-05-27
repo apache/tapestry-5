@@ -66,5 +66,7 @@ export default {
         },
 
       // Splits the input string into words separated by whitespace
-      split(str: string) { return _(str.split(" ")).reject(s => s === ""); }
+      split(str: string) { 
+        return _(str.split(" ")).reject(s => s === ""); 
+      }
     };

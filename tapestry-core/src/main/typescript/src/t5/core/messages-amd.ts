@@ -39,7 +39,7 @@
   locale = (document.documentElement.getAttribute("data-locale")) || "en";
 
   // @ts-ignore
-  define(["t5/core/messages/" + locale, "underscore", "t5/core/console"], function(messages, _, console) {
+  define("t5/core/messages", ["t5/core/messages/" + locale, "underscore", "t5/core/console"], function(messages, _, console) {
     var get;
     // @ts-ignore
     get = function(key) {

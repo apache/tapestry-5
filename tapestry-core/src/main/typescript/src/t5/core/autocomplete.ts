@@ -19,12 +19,16 @@
  * the Twitter autocomplete.js library.
  */
 import dom from "t5/core/dom";
-import underscore from "underscore";
+import _ from "underscore";
 import $ from "jquery"
 import utils from "t5/core/utils";
-import "t5/core/typeahead";
+import typeahead from "t5/core/typeahead";
 
-export const init = function(spec) {
+// Line below is used to force the TypeScript compiler to actually import t5/core/typeahead
+// as it's not used directly here. 
+let workaround = typeahead;
+
+export default function(spec) {
   const $field = $(document.getElementById(spec.id));
 
   const engine = new Bloodhound({
@@ -33,7 +37,7 @@ export const init = function(spec) {
     limit: spec.limit,
     remote: {
       url: spec.url,
-      replace(uri, query) { return extendURL(uri, {"t:input": query}); },
+      replace(uri, query) { return utils.extendURL(uri, {"t:input": query}); },
       filter(response) { return response.matches; }
     }
   });
