@@ -25,10 +25,15 @@ dependencies {
     testImplementation "org.testng:testng:${versions.testng}", { transitive = false }
     testImplementation "org.easymock:easymock:${versions.easymock}"
     testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+    testImplementation "org.spockframework:spock-core:${versions.spock}"
 }
 
 clean.delete generateGrammarSource.outputDirectory
 
 compileJava {
     options.fork(memoryMaximumSize: '512m')
+}
+
+test {
+    useJUnit()
 }
