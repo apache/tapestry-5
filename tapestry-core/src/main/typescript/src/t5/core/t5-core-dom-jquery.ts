@@ -417,7 +417,7 @@ let ajaxRequest = function(url: string, options?: AjaxRequestOptions) {
 
 type Scanner = (element: ElementWrapper) => void;
 
-let scanners: Scanner[] = [];
+let scanners: Scanner[] | null = null;
 
 let scanner = function(selector: string, callback: (e: ElementWrapper) => void) {
   var scan;
@@ -434,8 +434,8 @@ let scanner = function(selector: string, callback: (e: ElementWrapper) => void) 
     scanners = [];
     body!.on(events.initializeComponents, null, function() {
       var f, j, len;
-      for (j = 0, len = scanners.length; j < len; j++) {
-        f = scanners[j];
+      for (j = 0, len = scanners!.length; j < len; j++) {
+        f = scanners![j];
         f(body!);
       }
     });
