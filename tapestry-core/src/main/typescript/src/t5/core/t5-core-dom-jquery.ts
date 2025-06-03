@@ -133,7 +133,7 @@ class JQueryElementWrapper implements ElementWrapper {
     }
     current = this.$.attr(name);
     if (arguments.length > 1) {
-      if (value === null) {
+      if (value === null || value === undefined) {
         this.$.removeAttr(name);
       } else {
         this.$.attr(name, _.isString(value) ? value : String(value));
