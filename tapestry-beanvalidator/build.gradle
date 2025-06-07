@@ -14,12 +14,16 @@ dependencies {
       exclude group: "org.testng", module: "testng"
   }
   testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+  testImplementation "org.slf4j:slf4j-simple:2.0.0"
+  
 
 }
 
+// Test Logging
 test {
-    testLogging.showStandardStreams = true
-    testLogging.exceptionFormat = 'full'
+    testLogging {
+        showStandardStreams = true
+    }
 }
 
 // Start up the test app, useful when debugging failing integration tests
