@@ -114,6 +114,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         openLinks("BeanEditForm Validation Demo");// TODO: remove this
         
         System.out.println("TTTTTTTTTTTTTTTTTTTTTTTt");
+        System.err.println("RRRRRRRRRRRRRRR");
         
         LoggerFactory.getLogger(TapestryBeanValidationIntegrationTests.class)
             .warn("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG");
