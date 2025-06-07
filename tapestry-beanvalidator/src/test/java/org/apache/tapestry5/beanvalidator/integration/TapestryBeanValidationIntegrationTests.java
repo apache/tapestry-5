@@ -110,14 +110,15 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     @Test
     public void beaneditform_validation() throws Exception
     {
-        openLinks("BeanEditForm Validation Demo");
-        openLinks("BeanEditForm Validation Demo");// TODO: remove this
-        
         System.out.println("TTTTTTTTTTTTTTTTTTTTTTTt");
         System.err.println("RRRRRRRRRRRRRRR");
         
-        LoggerFactory.getLogger(TapestryBeanValidationIntegrationTests.class)
+        LoggerFactory.getLogger(SeleniumTestCase.class)
             .warn("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG");
+        
+        openLinks("BeanEditForm Validation Demo");
+        openLinks("BeanEditForm Validation Demo");// TODO: remove this
+        
 
         // Ugly hack to fix the "Unable to locate element: //input[@type='submit']" error.
         // I have no idea why it's failing here but not in other tests and pages.
