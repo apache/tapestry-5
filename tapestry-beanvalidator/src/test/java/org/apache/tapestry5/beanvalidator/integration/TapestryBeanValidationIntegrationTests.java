@@ -110,11 +110,11 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     @Test
     public void beaneditform_validation() throws Exception
     {
-        System.out.println("TTTTTTTTTTTTTTTTTTTTTTTt");
-        System.err.println("RRRRRRRRRRRRRRR");
-        
         LoggerFactory.getLogger(SeleniumTestCase.class)
-            .warn("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG");
+            .warn("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG SeleniumTestCase");
+        
+        LoggerFactory.getLogger(this.getClass())
+            .warn("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG " + this.getClass().getSimpleName());
         
         openLinks("BeanEditForm Validation Demo");
         openLinks("BeanEditForm Validation Demo");// TODO: remove this

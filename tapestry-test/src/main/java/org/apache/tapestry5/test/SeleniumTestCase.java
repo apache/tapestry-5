@@ -1448,6 +1448,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             e.printStackTrace();
             System.out.println("Continuing execution after exception above.");
         }
+        catch (RuntimeException e) {
+            LOGGER.error("selenium.browserbot: " + getEval("selenium.browserbot"));
+            LOGGER.error("selenium.browserbot.getCurrentWindow(): " + getEval("selenium.browserbot.getCurrentWindow()"));
+            LOGGER.error("selenium.browserbot.getCurrentWindow().document.querySelector(\"body\").attributes : " + getEval("selenium.browserbot.getCurrentWindow().document.querySelector(\"body\").attributes"));
+            LOGGER.error("selenium.browserbot.getCurrentWindow().document.querySelector(\"body\").dataset : " + getEval("selenium.browserbot.getCurrentWindow().document.querySelector(\"body\").dataset"));
+            throw e;
+        }
         
     }
 
