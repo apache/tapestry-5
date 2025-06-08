@@ -1442,8 +1442,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             }
             
             // Attempt to fix StaleElementReferenceException: The element reference of <body> is stale; either the element is no longer attached to the DOM, it is not in the current frame context, or the document has been refreshed
-             waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
-//            waitForCssSelectorToAppear("body[data-page-initialized='true']");
+            // waitForCondition(ExpectedConditions.attributeToBe(body, "data-page-initialized", "true"), 30);
+            waitForCssSelectorToAppear("body[data-page-initialized='true']");
         } catch (NoSuchElementException e)
         {
             // no body element found, there's nothing to wait for
@@ -1451,17 +1451,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             e.printStackTrace();
             System.out.println("Continuing execution after exception above.");
         }
-//        catch (RuntimeException e) {
-//            LOGGER.error("Exception happened: " + e.getMessage());
-//            LOGGER.error("User agent: " + getEval("navigator.userAgent"));
-//            LOGGER.error("-------- HTML");
-//            LOGGER.error(getHtmlSource());
-//            LOGGER.error("--------------");
-//            final LogEntries logEntries = webDriver.manage().logs().get(LogType.BROWSER);
-//            LOGGER.error("Browser errors: " + logEntries.toJson().size());
-//            logEntries.forEach(le -> LOGGER.error("Browser error: " + le.getMessage()));
-//            throw e;
-//        }
+        catch (RuntimeException e) {
+            LOGGER.error("Exception happened: " + e.getMessage());
+            LOGGER.error("User agent: " + getEval("navigator.userAgent"));
+            LOGGER.error("-------- HTML");
+            LOGGER.error(getHtmlSource());
+            LOGGER.error("--------------");
+            final LogEntries logEntries = webDriver.manage().logs().get(LogType.BROWSER);
+            logEntries.forEach(le -> LOGGER.error("Browser error: " + le.getMessage()));
+            throw e;
+        }
         
     }
 
