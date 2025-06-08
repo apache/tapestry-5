@@ -234,6 +234,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         }
         else 
         {
+            LOGGER.info("Using code-defined Firefox profile: {}", ffProfileTemplate);
             FirefoxProfile profile = new FirefoxProfile();
             options.setProfile(profile);
             profile.setPreference("intl.accept_languages", "en,fr,de");
@@ -1451,6 +1452,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         catch (RuntimeException e) {
             LOGGER.error("Exception happened: " + e.getMessage());
             LOGGER.error("User agent: " + getEval("navigator.userAgent"));
+            LOGGER.error("-------- HTML");
+            LOGGER.error(getHtmlSource());
+            LOGGER.error("--------------");
             throw e;
         }
         
