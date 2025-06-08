@@ -17,11 +17,6 @@ dependencies {
 
 }
 
-test {
-    testLogging.showStandardStreams = true
-    testLogging.exceptionFormat = 'full'
-}
-
 // Start up the test app, useful when debugging failing integration tests
 task runTestApp303(type:JavaExec) {
   main = 'org.apache.tapestry5.test.JettyRunner'
