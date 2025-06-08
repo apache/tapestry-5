@@ -539,7 +539,11 @@ task combinedJacocoReport(type:JacocoReport){
 
 task continuousIntegration {
     // tapestry-javadoc doesn't work with Java 8 anymore. That's why it's only added if != 8.
-    def dependants = [subprojects.build, 'tapestry-core:testWithPrototype', combinedJacocoReport]
+    def dependants = [subprojects.build, // jQuery and Require.js enabled
+            'tapestry-core:testWithJqueryAndRequireJsDisabled',
+            'tapestry-core:testWithPrototypeAndRequireJsEnabled', 
+            'tapestry-core:testWithPrototypeAndRequireJsDisabled',
+            combinedJacocoReport]
     if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
         dependants << aggregateJavadoc
     }

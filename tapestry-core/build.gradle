@@ -143,6 +143,20 @@ task runTestAppfolder(type:JavaExec) {
   classpath += project.sourceSets.test.runtimeClasspath
 }
 
-task testWithPrototype(type:Test) {
+// Default is jQuery and Require.js enabled, so here are the tests for the
+// other combinations
+
+task testWithJqueryAndRequireJsDisabled(type:Test) {
+  systemProperties."tapestry.javascript-infrastructure-provider" = "jquery"
+  systemProperties."tapestry.require-js-enabled" = "false"
+}
+
+task testWithPrototypeAndRequireJsEnabled(type:Test) {
   systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
+  systemProperties."tapestry.require-js-enabled" = "true"
+}  
+
+task testWithPrototypeAndRequireJsDisabled(type:Test) {
+  systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
+  systemProperties."tapestry.require-js-enabled" = "false"
 }
