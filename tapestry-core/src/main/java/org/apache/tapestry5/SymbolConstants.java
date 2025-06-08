@@ -811,12 +811,14 @@ public class SymbolConstants
     public static final String COMPONENT_DEPENDENCY_FILE = "tapestry.component-dependency-file";
     
     /**
-     * Defines whether ES modules will be used, being managed by the browser. 
-     * If not, Require.js will be used to manage AMD modules. Default value:
-     * {@code false} (i.e. AMD modules and Require.js).
+     * Defines whether Require.js will be used to manage AMD modules.
+     * This also causes Tapestry to use the Require.js/AMD versions of
+     * its own JavaScript files. When disabled, Require.js will not be included
+     * and the ES6 module version of its own JavaScript files will be used instead.
+     * Default value: {@code true}).
      * 
      * @since 5.10.0
      */
-    public static final String ES_MODULES_ENABLED = "tapestry.es-modules-enabled";
+    public static final String REQUIRE_JS_ENABLED = "tapestry.require-js-enabled";
 
 }

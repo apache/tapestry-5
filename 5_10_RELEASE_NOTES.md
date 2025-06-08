@@ -2,7 +2,7 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 # Added configuration symbols
 
-* `tapestry.es-modules-enabled`(`SymbolConstants.ES_MODULES_ENABLED`)
+* `tapestry.require-js-enabled`(`SymbolConstants.REQUIRE_JS_ENABLED`) (default value: `code`false).
 
 
 # Added methods

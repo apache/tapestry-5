@@ -494,6 +494,7 @@ public class JavaScriptModule
     {
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "prototype");
         configuration.add(SymbolConstants.MODULE_PATH_PREFIX, "modules");
+        configuration.add(SymbolConstants.REQUIRE_JS_ENABLED, "true");
     }
 
     @Contribute(ModuleManager.class)

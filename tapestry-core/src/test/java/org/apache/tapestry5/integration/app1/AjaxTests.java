@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.integration.app1;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.testng.annotations.Test;
 
 /**
@@ -331,6 +332,17 @@ public class AjaxTests extends App1TestCase
 //        // An ugly way of giving time for all the AJAX requests to finish
 //        // without adding more JavaScript for that.
 //        Thread.sleep(3000);
+
+    }
+    
+    @Test
+    public void verify_configuration_symbols()
+    {
+        open("/");
+        assertEquals(getText("tapestry-javascript-infrastructure-provider-value"), 
+                System.getProperty(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "(none set)"));
+        assertEquals(getText("require-js-enabled-value"), 
+                System.getProperty(SymbolConstants.REQUIRE_JS_ENABLED, "(none set)"));
     }
     
 }

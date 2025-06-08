@@ -35,17 +35,17 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
 
     private final boolean debugEnabled;
     
-    private final String esModulesEnabled;
+    private final String requireJsEnabled;
 
     public ConfigureHTMLElementFilter(ThreadLocale threadLocale, 
             @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) 
             boolean productionMode,
-            @Symbol(SymbolConstants.ES_MODULES_ENABLED) 
-            boolean esModulesEnabled)
+            @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) 
+            boolean requireJsEnabled)
     {
         this.threadLocale = threadLocale;
         this.debugEnabled = !productionMode;
-        this.esModulesEnabled = String.valueOf(esModulesEnabled);
+        this.requireJsEnabled = String.valueOf(requireJsEnabled);
     }
 
     public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
@@ -61,7 +61,7 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
         if (html != null)
         {
             html.attributes("data-locale", threadLocale.getLocale().toString(),
-                    "data-es-modules-enabled", esModulesEnabled);
+                    "data-require-js-enabled", requireJsEnabled);
 
             if (debugEnabled)
             {
