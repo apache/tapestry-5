@@ -85,7 +85,7 @@ task cleanTypeScriptFiles(type: Delete) {
     delete "src/main/typescript/docs"
 }
 
-build.dependsOn compileTypeScript
+processResources.dependsOn compileTypeScript
 clean.dependsOn cleanTypeScriptFiles
 
 // Not sure why this is necessary:
