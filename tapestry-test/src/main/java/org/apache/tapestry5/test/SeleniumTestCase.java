@@ -30,8 +30,6 @@ import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -1457,8 +1455,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             LOGGER.error("-------- HTML");
             LOGGER.error(getHtmlSource());
             LOGGER.error("--------------");
-            final LogEntries logEntries = webDriver.manage().logs().get(LogType.BROWSER);
-            logEntries.forEach(le -> LOGGER.error("Browser error: " + le.getMessage()));
             throw e;
         }
         
