@@ -15,6 +15,9 @@ tasks.withType(Test).configureEach { testTask ->
     jvmArgs '-Dfile.encoding=UTF-8'
     environment.LANG = 'en_US.UTF-8'
 
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
+
     testLogging {
         exceptionFormat 'full'
         events 'passed', 'skipped', 'failed'
