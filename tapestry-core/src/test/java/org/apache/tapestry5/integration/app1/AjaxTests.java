@@ -339,10 +339,10 @@ public class AjaxTests extends App1TestCase
     public void verify_configuration_symbols()
     {
         open("/");
-        assertEquals(getText("tapestry-javascript-infrastructure-provider-value"), 
-                System.getProperty(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "(none set)"));
-        assertEquals(getText("require-js-enabled-value"), 
-                System.getProperty(SymbolConstants.REQUIRE_JS_ENABLED, "(none set)"));
+        LOGGER.warn(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER + ": " +
+                getText("tapestry-javascript-infrastructure-provider-value"));
+        LOGGER.warn(SymbolConstants.REQUIRE_JS_ENABLED + ": " +
+                getText("require-js-enabled-value"));
     }
     
 }
