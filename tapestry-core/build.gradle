@@ -1,18 +1,18 @@
-import org.gradle.plugins.ide.idea.model.*
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'tapestry.testng-convention'
+}
+
 import org.apache.tools.ant.filters.ReplaceTokens
 import t5build.*
 
-description = "Central module for Tapestry, containing all core services and components"
+description = 'Central module for Tapestry, containing all core services and components'
 
-project.ext {
-    mainGeneratedDir = "src/main/generated"
-    testGeneratedDir = "src/test/generated"
-    moduleVersions = [
-        httpclient: '4.5.14',
-    ]
-}
-
-clean.delete mainGeneratedDir, testGeneratedDir
+def mainGeneratedDir = 'src/main/generated'
+def testGeneratedDir = 'src/test/generated'
+def moduleVersions = [
+    httpclient: '4.5.14'
+]
 
 dependencies {
     api project(':tapestry-ioc')
@@ -26,17 +26,10 @@ dependencies {
     implementation libs.commons.codec
     implementation libs.commons.lang3
 
-    provided project(":tapestry-test")
-    provided project(":tapestry-test-constants")
+    provided project(':tapestry-test')
+    provided project(':tapestry-test-constants')
 
     provided libs.jakarta.servlet.api
-
-    testImplementation platform(libs.junit.bom)
-    testImplementation libs.junit.jupiter
-
-    testImplementation libs.testng
-    testImplementation libs.easymock
-    testRuntimeOnly libs.slf4j.simple
 
     testImplementation "org.apache.httpcomponents:httpclient:${moduleVersions.httpclient}"
     testImplementation project(":tapestry-spock")
@@ -46,106 +39,54 @@ dependencies {
 }
 
 
+tasks.register('preprocessCoffeeScript', PreprocessCoffeeScript)
 
-task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
+tasks.register('compileCoffeeScript', CompileCoffeeScript) {
+    outputDir = file("${mainGeneratedDir}/compiled-coffeescript")
 }
 
-task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "${mainGeneratedDir}/compiled-coffeescript"
+tasks.register('compileProcessedCoffeescript', CompileCoffeeScript) {
+    dependsOn tasks.named('preprocessCoffeeScript')
+    srcDir tasks.named('preprocessCoffeeScript').map { it.outputDir }
+    outputDir = file("${mainGeneratedDir}/compiled-processed-coffeescript")
 }
 
-task compileProcessedCoffeescript(type: CompileCoffeeScript) {
-    dependsOn preprocessCoffeeScript
-    srcDir preprocessCoffeeScript.outputDir
-    outputDir "${mainGeneratedDir}/compiled-processed-coffeescript"
+tasks.register('compileTestCoffeeScript', CompileCoffeeScript) {
+    srcDir = file('src/test/coffeescript')
+    outputDir = file("${testGeneratedDir}/compiled-coffeescript")
 }
 
-task compileTestCoffeeScript(type: CompileCoffeeScript) {
-    srcDir "src/test/coffeescript"
-    outputDir "${testGeneratedDir}/compiled-coffeescript"
+tasks.named('processResources') {
+    from tasks.named('compileCoffeeScript')
+    from tasks.named('compileProcessedCoffeescript')
 }
 
-sourceSets {
-    main {
-        output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
-        output.dir(compileProcessedCoffeescript.outputDir, builtBy: compileProcessedCoffeescript)
+tasks.named('processTestResources') {
+    from tasks.named('compileTestCoffeeScript')
+}
+
+clean {
+    delete mainGeneratedDir, testGeneratedDir
+}
+
+tasks.register('testWithPrototype', Test) {
+    systemProperties['tapestry.javascript-infrastructure-provider'] = 'prototype'
+}
+
+[
+    'app1',
+    'app2',
+    'app3',
+    'app4',
+    'app5',
+    'app7',
+    'appfolder'
+].each { appName ->
+    tasks.register("runTest${appName.capitalize()}", JavaExec) {
+        group = 'Application' // It's good practice to group custom run tasks
+        description = "Starts the ${appName} integration test app, useful when debugging."
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args '-d', "src/test/${appName}", '-p', '8080'
+        classpath = sourceSets.test.runtimeClasspath
     }
-    test {
-        output.dir(compileTestCoffeeScript.outputDir, builtBy: compileTestCoffeeScript)
-    }
-}
-
-// Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
-
-test {
-    useTestNG()
-    // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED")
-    }
-
-    // TAP5-2722
-    systemProperty 'user.language', 'en'
-
-    useJUnitPlatform()
-    useTestNG {
-        def suiteFile = file('src/test/resources/testng.xml')
-        if (suiteFile.exists()) {
-            suites suiteFile
-        }
-    }
-}
-
-task runTestApp1(type:JavaExec) {
-    description 'Start app1 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app1", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp2(type:JavaExec) {
-    description 'Start app2 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app2", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp3(type:JavaExec) {
-    description 'Start app3 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app3", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp4(type:JavaExec) {
-    description 'Start app4 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app4", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp5(type:JavaExec) {
-    description 'Start app5 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app5", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp7(type:JavaExec) {
-    description 'Start app7 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app7", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestAppfolder(type:JavaExec) {
-    description 'Start appFolder integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/appfolder", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task testWithPrototype(type:Test) {
-    systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
 }
