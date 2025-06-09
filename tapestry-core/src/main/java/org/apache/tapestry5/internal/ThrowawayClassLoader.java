@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.internal;
 
-import static org.junit.Assert.assertNotEquals;
+
+import static org.testng.Assert.assertNotEquals;
 
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 

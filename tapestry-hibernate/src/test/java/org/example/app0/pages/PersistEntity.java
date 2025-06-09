@@ -34,9 +34,6 @@ public class PersistEntity
     private UserDAO userDAO;
 
     @Inject
-    private Session session;
-
-    @Inject
     private HibernateSessionManager manager;
 
     void onCreateEntity()

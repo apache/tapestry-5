@@ -1,0 +1,61 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    testRuntimeOnly libs.slf4j.simple
+}
+
+tasks.withType(Test).configureEach { testTask ->
+    maxHeapSize = '600M'
+
+    systemProperties['tapestry.service-reloading-enabled'] = 'false'
+    systemProperties['java.io.tmpdir'] = temporaryDir.absolutePath
+
+    jvmArgs '-Dfile.encoding=UTF-8'
+    environment.LANG = 'en_US.UTF-8'
+
+    testLogging {
+        exceptionFormat 'full'
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+    }
+
+    def total = 0, passed = 0, failed = 0, skipped = 0
+
+    afterTest { descriptor, result ->
+        switch (result.resultType) {
+            case org.gradle.api.tasks.testing.TestResult.ResultType.SUCCESS:
+                passed++
+                break
+            case org.gradle.api.tasks.testing.TestResult.ResultType.FAILURE:
+                failed++
+                break
+            case org.gradle.api.tasks.testing.TestResult.ResultType.SKIPPED:
+                skipped++
+                break
+        }
+        total++
+        if (total % 25 == 0) {
+            logger.lifecycle "Project ${project.name}: Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
+        }
+    }
+
+    afterSuite { descriptor, result ->
+        // The root suite has a null parent. We only want to log the final summary.
+        if (descriptor.parent == null) {
+            total = passed + failed + skipped
+            // Using project.path gives a clear identifier like ":tapestry-core"
+            def projectName = project.path
+
+            // Don't log if no tests were run
+            if (total > 0) {
+                logger.lifecycle "------------------------------------------------------------------------"
+                logger.lifecycle "Test Results for ${projectName}"
+                logger.lifecycle "  Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
+                logger.lifecycle "------------------------------------------------------------------------"
+            }
+        }
+    }
+}
+

@@ -1,17 +1,15 @@
-description = "Tool to help migrate source code using Tapestry from one version to another. Initially built for 5.7.0"
-
-dependencies {
-    testImplementation group: 'org.testng', name: 'testng', version: '7.3.0'
+plugins {
+    id 'tapestry.testng-convention'
 }
 
-test {
-    useTestNG() {
-        useDefaultListeners = true // Tells TestNG to execute its default reporting structure
+description = 'Tool to help migrate source code using Tapestry from one version to another. Initially built for 5.7.0'
+
+tasks.withType(Test).configureEach {
+    if (options instanceof TestNGOptions) {
+        options {
+            useDefaultListeners = true
+        }
     }
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'org.apache.tapestry5.versionmigrator.Main'
-    }
-}
+jar.manifest.attributes 'Main-Class': 'org.apache.tapestry5.versionmigrator.Main'

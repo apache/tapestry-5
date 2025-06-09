@@ -7,6 +7,9 @@ description = "Central module for Tapestry, containing all core services and com
 project.ext {
     mainGeneratedDir = "src/main/generated"
     testGeneratedDir = "src/test/generated"
+    moduleVersions = [
+        httpclient: '4.5.14',
+    ]
 }
 
 clean.delete mainGeneratedDir, testGeneratedDir
@@ -17,29 +20,32 @@ dependencies {
     api project(':beanmodel')
     api project(':tapestry-http')
 
-    api "org.apache.commons:commons-lang3:${versions.commonsLang}"
+    implementation libs.jakarta.annotation.api
+    implementation libs.jakarta.xml.bind.api
 
-
-    implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
-//    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-//    implementation 'com.sun.xml.ws:jaxws-rt:2.3.2'
-//    implementation 'javax.xml.ws:jaxws-api:2.3.1'
+    implementation libs.commons.codec
+    implementation libs.commons.lang3
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
 
-    provided "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
+    provided libs.jakarta.servlet.api
 
-    implementation "commons-codec:commons-codec:1.13"
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
 
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-    testImplementation "org.apache.httpcomponents:httpclient:4.5.14"
-    testRuntimeOnly project(':tapestry-spock')
+    testImplementation libs.testng
+    testImplementation libs.easymock
+    testRuntimeOnly libs.slf4j.simple
 
-    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
-    testRuntimeOnly 'com.google.inject:guice:3.0'
+    testImplementation "org.apache.httpcomponents:httpclient:${moduleVersions.httpclient}"
+    testImplementation project(":tapestry-spock")
+
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.guice
 }
+
+
 
 task preprocessCoffeeScript(type: PreprocessCoffeeScript) {
 }
@@ -73,57 +79,73 @@ sourceSets {
 compileTestGroovy.dependsOn compileTestJava
 
 test {
-	// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+    useTestNG()
+    // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED")
     }
-	// TAP5-2722
-	systemProperty 'user.language', 'en'
+
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
+
+    useJUnitPlatform()
+    useTestNG {
+        def suiteFile = file('src/test/resources/testng.xml')
+        if (suiteFile.exists()) {
+            suites suiteFile
+        }
+    }
 }
 
 task runTestApp1(type:JavaExec) {
-  description 'Start app1 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app1", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app1 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app1", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestApp2(type:JavaExec) {
-  description 'Start app2 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app2", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app2 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app2", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestApp3(type:JavaExec) {
-  description 'Start app3 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app3", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app3 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app3", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestApp4(type:JavaExec) {
-  description 'Start app4 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app4", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app4 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app4", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestApp5(type:JavaExec) {
-  description 'Start app5 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app5", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app5 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app5", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestApp7(type:JavaExec) {
-  description 'Start app7 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app7", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start app7 integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/app7", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
+
 task runTestAppfolder(type:JavaExec) {
-  description 'Start appFolder integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/appfolder", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start appFolder integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/appfolder", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
 
 task testWithPrototype(type:Test) {
-  systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
+    systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
 }

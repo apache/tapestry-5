@@ -17,20 +17,24 @@ import java.util.List;
 
 import org.apache.tapestry5.internal.test.TestableResponse;
 import org.apache.tapestry5.test.PageTester;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
+@Test
 public class KaptchaUnitTest
 {
     
     @SuppressWarnings("unchecked")
+
     @Test
     public void cache_control_header()
     {
         PageTester tester = new PageTester("kaptcha.demo", "app");
         final TestableResponse response = tester.renderPageAndReturnResponse("KaptchaDemo");
         final List<String> headers = (List<String>) response.getHeaders("Cache-Control");
-        assert "no-store, no-cache, must-revalidate".equals(headers.get(0));
-        assert "post-check=0, pre-check=0".equals(headers.get(1));
+
+        Assert.assertEquals(headers.get(0), "no-store, no-cache, must-revalidate");
+        Assert.assertEquals(headers.get(0), "post-check=0, pre-check=0");
     }
 
 }

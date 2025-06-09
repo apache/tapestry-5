@@ -1,39 +1,34 @@
-import org.gradle.plugins.ide.idea.model.*
-import t5build.*
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'antlr'
+}
 
 description = "Fast class property discovery, reading and writing library based on bytecode generation. Extracted from Apache Tapestry, but not dependent on the Web framework (tapestry-core) nor the IoC one (tapestry-ioc)."
 
-//apply plugin: JavaPlugin
-apply plugin: 'antlr'
-
-buildDir = 'target/gradle-build'
 
 dependencies {
-    api project(":plastic")
-    api project(":tapestry5-annotations")
-    api project(":commons")
-    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation project(":plastic")
+    implementation project(":tapestry5-annotations")
+    implementation project(":commons")
 
-    // ANTLR tool path used with the generateGrammarSource task
-    antlr "org.antlr:antlr:3.5.2"
+    implementation libs.slf4j.api
+
+    antlr libs.antlr
 
     // Transitive will bring in the unwanted string template library as well
-    implementation "org.antlr:antlr-runtime:3.5.2", {
+    implementation libs.antlr.runtime, {
         exclude group: "org.antlr", module: "stringtemplate"
     }
 
-    testImplementation "org.testng:testng:${versions.testng}", { transitive = false }
-    testImplementation "org.easymock:easymock:${versions.easymock}"
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-    testImplementation "org.spockframework:spock-core:${versions.spock}"
+    testImplementation platform(libs.spock.bom)
+    testImplementation libs.spock.core
 }
 
 clean.delete generateGrammarSource.outputDirectory
 
 compileJava {
+    dependsOn generateGrammarSource
     options.fork(memoryMaximumSize: '512m')
 }
 
-test {
-    useJUnit()
-}
+sourceSets.main.java.srcDirs += generateGrammarSource.outputDirectory

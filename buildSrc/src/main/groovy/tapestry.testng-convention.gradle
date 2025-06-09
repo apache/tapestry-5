@@ -1,0 +1,43 @@
+plugins {
+    id 'tapestry.testing-base-convention'
+}
+
+dependencies {
+    testImplementation libs.testng
+    testImplementation libs.easymock
+    testImplementation libs.hamcrest.core
+}
+
+tasks.withType(Test).configureEach { testTask ->
+    /*
+     useTestNG {
+     def suiteFile = [
+     'src/test/resources/testng.xml',
+     'src/test/conf/testng.xml'
+     ].find { path ->
+     project.file(path).exists()
+     }
+     if (suiteFile) {
+     logger.lifecycle "!!!!!!!!!!!!!!!!!!TestNG: Using suite file: ${suiteFile}"
+     suites suiteFile  // Pass the relative path string
+     } else {
+     logger.lifecycle '!!!!!!!!!!!!!!!!!TestNG: No suite file found in standard locations, using default configuration'
+     }
+     }
+     */
+
+    def suiteFile = [
+        'src/test/resources/testng.xml',
+        'src/test/conf/testng.xml'
+    ].find { path ->
+        project.file(path).exists()
+    }
+
+    if (suiteFile) {
+        testTask.useTestNG {
+            suites suiteFile
+        }
+    } else {
+        testTask.useTestNG()
+    }
+}

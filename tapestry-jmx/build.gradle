@@ -1,18 +1,13 @@
-description = "Allows easy exposure of Tapestry Services as JMX MBeans"
+plugins {
+    id 'tapestry.testng-convention'
+}
+
+description = 'Allows easy exposure of Tapestry Services as JMX MBeans'
 
 dependencies {
-  implementation project(':tapestry-core')
+    implementation project(':tapestry-core')
 
-  testImplementation project(':tapestry-test')
-  }
-
-test {
-    systemProperties "tapestry.service-reloading-enabled": "false"
+    testImplementation project(':tapestry-test')
 }
 
-
-jar {
-    manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jmx.modules.JmxModule'
-    }
-}
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jmx.modules.JmxModule'

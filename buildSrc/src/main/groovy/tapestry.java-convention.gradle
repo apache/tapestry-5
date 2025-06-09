@@ -1,0 +1,75 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'groovy'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withSourcesJar()
+}
+
+configurations {
+    provided
+    meta
+}
+
+// Ensure the 'provided' dependencies are available on the compile classpaths.
+sourceSets {
+    main.compileClasspath += configurations.provided
+    test.compileClasspath += configurations.provided
+    test.runtimeClasspath += configurations.provided
+}
+
+// Ensure IDEs understand the 'provided' configuration and more IDE setup
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.provided]
+    }
+}
+eclipse.classpath.plusConfigurations += [configurations.provided]
+
+
+// Enforce consistent dependency versions across all modules using constraints.
+// This prevents multiple versions of the same library from appearing in the classpath.
+// The versions themselves are defined in `gradle/libs.versions.toml`.
+dependencies {
+    constraints {
+        implementation libs.cglib.nodep
+        implementation libs.commons.codec
+        implementation libs.commons.io
+        implementation libs.commons.logging
+        implementation("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+        implementation libs.hamcrest.core
+        implementation libs.json
+        implementation libs.snakeyaml
+        implementation libs.xml.apis
+    }
+}
+
+tasks.withType(Jar).configureEach {
+    // Include license/notice files in the final JAR.
+    from(project.projectDir) {
+        include "*.txt"
+        into "META-INF"
+    }
+
+    // JPMS compatibility
+    manifest {
+        attributes("Automatic-Module-Name": "org.apache.tapestry." + project.name
+        .replace("tapestry-", "")
+        .replace("-", "."))
+    }
+}
+
+// Override the manually created sourcesJar from the original build with the
+// standard one created by `withSourcesJar()`. This adds the META-INF files to it as well.
+tasks.named('sourcesJar', Jar) {
+    from(project.projectDir) {
+        include "*.txt"
+        into "META-INF"
+    }
+}

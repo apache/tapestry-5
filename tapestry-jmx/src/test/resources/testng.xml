@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite
+    name="Tapestry JMX"
+    annotations="1.5"
+    verbose="2">
+
+    <test name="Tapestry JMX Integration Tests" enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/webapp" />
+
+        <packages>
+            <package name="org.apache.tapestry5.jmx.integration" />
+        </packages>
+    </test>
+</suite>

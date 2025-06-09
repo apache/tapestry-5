@@ -1,24 +1,28 @@
-description = "Provides support for simple CRUD applications built on top of Tapestry and Hibernate"
+plugins {
+    id 'tapestry.testng-convention'
+}
+
+description = 'Provides support for simple CRUD applications built on top of Tapestry and Hibernate'
+
+ext.moduleLibs = [
+    jbossLogging: 'org.jboss.logging:jboss-logging:3.3.0.Final',
+]
 
 dependencies {
-  api project(':tapestry-core')
-  api project(':tapestry-hibernate-core')
-  implementation "org.jboss.logging:jboss-logging:3.3.0.Final"  
+    api project(':tapestry-core')
+    api project(':tapestry-hibernate-core')
 
-  testImplementation project(':tapestry-test')
-  
-  testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
+    implementation moduleLibs.jbossLogging
+
+    testImplementation project(':tapestry-test')
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
 }
 
-jar {
-    manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.web.modules.HibernateModule'
-    }
-}
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.web.modules.HibernateModule'
 
 task runTestApp0(type:JavaExec) {
-  description 'Start tapestry-hibernate integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/webapp", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    description 'Start tapestry-hibernate integration test app, useful when debugging failing integration tests'
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/webapp", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }

@@ -35,6 +35,7 @@ public class WebResourcesTest extends SeleniumTestCase {
     public void test_Less_compilation()
     {
         open("/");
+        waitForInitializedPage();
         click("css=.navbar .dropdown-toggle");
         click("link=MultiLess");
         waitForInitializedPage();
@@ -43,7 +44,8 @@ public class WebResourcesTest extends SeleniumTestCase {
     }
 
     private void waitForInitializedPage() {
-        waitForCondition("$('body').attr('data-page-initialized') == 'true' ", PAGE_LOAD_TIMEOUT);
+        waitForCondition("document.body.getAttribute('data-page-initialized') == 'true' ",
+                PAGE_LOAD_TIMEOUT);
     }
 
 }

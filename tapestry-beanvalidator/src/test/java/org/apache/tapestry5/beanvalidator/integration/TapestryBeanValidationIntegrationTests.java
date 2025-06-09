@@ -15,8 +15,6 @@ package org.apache.tapestry5.beanvalidator.integration;
 
 import org.apache.tapestry5.test.SeleniumTestCase;
 import org.apache.tapestry5.test.TapestryTestConfiguration;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
 
 @Test(singleThreaded = true, groups = "integration")

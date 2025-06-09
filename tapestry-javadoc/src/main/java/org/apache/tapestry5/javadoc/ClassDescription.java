@@ -14,12 +14,23 @@
 
 package org.apache.tapestry5.javadoc;
 
-import com.sun.source.doctree.DocCommentTree;
-import com.sun.source.doctree.DocTree;
-import com.sun.source.doctree.SinceTree;
-import com.sun.source.util.SimpleDocTreeVisitor;
-import jdk.javadoc.doclet.DocletEnvironment;
-import org.apache.commons.lang.StringUtils;
+import java.util.List;
+import java.util.Map;
+
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementFilter;
+import javax.lang.model.util.SimpleAnnotationValueVisitor9;
+import javax.lang.model.util.SimpleTypeVisitor9;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Events;
@@ -27,14 +38,12 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import javax.lang.model.element.*;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.ElementFilter;
-import javax.lang.model.util.SimpleAnnotationValueVisitor9;
-import javax.lang.model.util.SimpleTypeVisitor9;
-import java.util.List;
-import java.util.Map;
+import com.sun.source.doctree.DocCommentTree;
+import com.sun.source.doctree.DocTree;
+import com.sun.source.doctree.SinceTree;
+import com.sun.source.util.SimpleDocTreeVisitor;
+
+import jdk.javadoc.doclet.DocletEnvironment;
 
 public class ClassDescription
 {

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
 
 package org.apache.tapestry5.func;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TakeDropTests extends BaseFuncTest
 {
     @Test
     public void take_from_empty_list()
     {
-        assertSame(F.flow().take(34), F.EMPTY_FLOW);
+        assertSame(F.emptyFlow(), F.flow().take(34));
     }
 
     @Test
@@ -39,7 +41,7 @@ public class TakeDropTests extends BaseFuncTest
 
         assertFlowValues(flow.take(99), 1, 2, 3, 4, 5);
 
-        assertSame(flow.take(0), F.EMPTY_FLOW);
+        assertSame(F.emptyFlow(), flow.take(0));
     }
 
     @Test
@@ -48,7 +50,7 @@ public class TakeDropTests extends BaseFuncTest
         // This can go much, much larger but starts taking a while. Don't hold a reference to the
         // start
         // of the series or it can run out of memory.
-        int length = 100000;
+        int length = 100_000;
 
         assertFlowValues(F.series(1, 1).filter(evenp).drop(length).take(3), 2 * length + 2, 2 * length + 4,
                 2 * length + 6);
@@ -57,7 +59,7 @@ public class TakeDropTests extends BaseFuncTest
     @Test
     public void drop_from_empty_is_empty()
     {
-        assertSame(F.flow().drop(99), F.EMPTY_FLOW);
+        assertSame(F.emptyFlow(), F.flow().drop(99));
     }
 
     @Test
@@ -75,7 +77,7 @@ public class TakeDropTests extends BaseFuncTest
     @Test
     public void drop_all_from_array_flow_is_empty_flow()
     {
-        assertSame(F.flow(1, 2, 3).drop(3), F.EMPTY_FLOW);
+        assertSame(F.emptyFlow(), F.flow(1, 2, 3).drop(3));
     }
 
     @Test
@@ -83,7 +85,7 @@ public class TakeDropTests extends BaseFuncTest
     {
         Flow<Integer> flow = F.flow(1, 2, 3);
 
-        assertSame(flow.drop(0), flow);
+        assertSame(flow, flow.drop(0));
     }
 
     @Test

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 The Apache Software Foundation
+// Copyright 2011, 2012, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.func;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 public class StringPredicateTests extends BaseFuncTest
 {

@@ -22,8 +22,6 @@ import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.testng.annotations.Test;
 
-import spock.lang.Issue;
-
 public class SessionApplicationStatePersistenceStrategyTest extends InternalBaseTestCase
 {
     @SuppressWarnings("unchecked")
@@ -69,7 +67,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
     @SuppressWarnings("unchecked")
     @Test
-    @Issue("TAP5-2537")
+    // TAP5-2537
     public void check_exists_with_invalid_session()
     {
         Request request = mockRequest();

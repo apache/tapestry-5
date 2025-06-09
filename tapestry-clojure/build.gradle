@@ -1,21 +1,21 @@
-description = "Allows Clojure functions to be injected into Tapestry services and components"
+plugins {
+    id 'tapestry.junit5-spock-convention'
+}
+description = 'Allows Clojure functions to be injected into Tapestry services and components'
+
+ext.moduleLibs = [
+    clojure: 'org.clojure:clojure:1.6.0',
+]
 
 dependencies {
-  implementation project(':tapestry-ioc')
-  implementation "org.clojure:clojure:1.6.0"
+    implementation project(':tapestry-ioc')
 
-  // Added just to prove that it works (TAP5-1945)
-  testImplementation project(':tapestry-core')
-  testRuntimeOnly "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
-  testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+    implementation moduleLibs.clojure
+
+    // Added just to prove that it works (TAP5-1945)
+    testImplementation project(':tapestry-core')
+
+    testRuntimeOnly libs.jakarta.servlet.api
 }
 
-test {
-  useJUnit()
-}
-
-jar {
-  manifest {
-    attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.clojure.modules.ClojureModule'
-  }
-}
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.clojure.modules.ClojureModule'

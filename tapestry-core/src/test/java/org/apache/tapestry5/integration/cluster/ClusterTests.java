@@ -14,19 +14,19 @@
 
 package org.apache.tapestry5.integration.cluster;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
-import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.tapestry5.test.JettyRunner;
-import org.apache.tapestry5.test.TapestryTestConstants;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.DatabaseAdaptor;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.JDBCSessionDataStore;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterClass;
@@ -34,13 +34,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlTest;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 
 /**
  * User: josh_canfield Date: 6/24/11
@@ -182,7 +179,7 @@ public class ClusterTests
 
     private void assertText(String locator, String expected)
     {
-        assertEquals(expected, selenium.getText(locator));
+        assertEquals(selenium.getText(locator), expected);
     }
 
     private void clickAndWait(String s)

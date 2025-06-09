@@ -1,34 +1,43 @@
-import t5build.*
-
-description = "Support for JSR-303 Bean Validation via the Hibernate validator implementation"
-
-dependencies {
-  implementation project(':tapestry-core')
-
-  implementation "jakarta.validation:jakarta.validation-api:3.0.2"
-  implementation "org.hibernate:hibernate-validator:8.0.1.Final"
-
-  testImplementation project(':tapestry-test')
-  implementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
-      exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
-      exclude group: "org.testng", module: "testng"
-  }
-  testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-
+plugins {
+    id 'tapestry.testng-convention'
 }
 
+import t5build.*
+
+description = 'Support for JSR-303 Bean Validation via the Hibernate validator implementation'
+
+ext.moduleLibs = [
+    hibernateValidator: 'org.hibernate:hibernate-validator:8.0.1.Final',
+]
+
+dependencies {
+    implementation project(':tapestry-core')
+
+    implementation libs.jakarta.validation.api
+    implementation moduleLibs.hibernateValidator
+
+    implementation libs.selenium.legrc, {
+        exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
+        exclude group: "org.testng", module: "testng"
+    }
+
+    testImplementation project(':tapestry-test')
+}
+
+def generatedOutputBaseDir = 'src/main/generated'
+
 task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "src/main/generated/compiled-coffeescript"
+    outputDir "${generatedOutputBaseDir}/compiled-coffeescript"
 }
 
 // Start up the test app, useful when debugging failing integration tests
 task runTestApp303(type:JavaExec) {
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/webapp", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+    main = 'org.apache.tapestry5.test.JettyRunner'
+    args "-d", "src/test/webapp", "-p", "8080"
+    classpath += project.sourceSets.test.runtimeClasspath
 }
 
-clean.delete 'src/main/generated'
+clean.delete generatedOutputBaseDir
 
 sourceSets {
     main {

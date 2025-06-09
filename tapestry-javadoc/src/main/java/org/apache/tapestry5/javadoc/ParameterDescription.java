@@ -14,17 +14,19 @@
 
 package org.apache.tapestry5.javadoc;
 
-import com.sun.source.doctree.*;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-
-import javax.lang.model.element.VariableElement;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.lang.model.element.VariableElement;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+
+import com.sun.source.doctree.*;
 
 public class ParameterDescription
 {
@@ -103,18 +105,19 @@ public class ParameterDescription
                 String label = seeTag.getLabel().toString();
                 if (StringUtils.isNotEmpty(label))
                 {
-                    builder.append(StringEscapeUtils.escapeHtml(label));
+                    builder.append(StringEscapeUtils.escapeHtml4(label));
                     continue;
                 }
 
                 if (seeTag.getReference() != null)
-                    builder.append(StringEscapeUtils.escapeHtml(seeTag.getReference().getSignature()));
+                    builder.append(
+                            StringEscapeUtils.escapeHtml4(seeTag.getReference().getSignature()));
             }
             else if (tag.getKind() == DocTree.Kind.CODE)
             {
                 LiteralTree codeTag = (LiteralTree) tag;
                 builder.append("<code>");
-                builder.append(StringEscapeUtils.escapeHtml(codeTag.getBody().getBody()));
+                builder.append(StringEscapeUtils.escapeHtml4(codeTag.getBody().getBody()));
                 builder.append("</code>");
             }
         }
@@ -135,7 +138,7 @@ public class ParameterDescription
             boolean match = m.find(index);
             if (match){
                 if (index != m.start()){
-                    sb.append(StringEscapeUtils.escapeHtml(string.substring(index, m.start())));
+                    sb.append(StringEscapeUtils.escapeHtml4(string.substring(index, m.start())));
                 }
                 String tagName = m.group(1);
                 if (tagName!= null){
@@ -147,7 +150,7 @@ public class ParameterDescription
                 }
                 index = m.end();
             }else{
-                sb.append(StringEscapeUtils.escapeHtml(string.substring(index)));
+                sb.append(StringEscapeUtils.escapeHtml4(string.substring(index)));
                 break;
             }
         }

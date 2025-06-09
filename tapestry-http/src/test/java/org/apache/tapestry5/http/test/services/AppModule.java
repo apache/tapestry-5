@@ -3,6 +3,8 @@ package org.apache.tapestry5.http.test.services;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
+import org.apache.tapestry5.http.services.CompressionAnalyzer;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;
 import org.apache.tapestry5.http.services.RequestFilter;
@@ -30,6 +32,12 @@ public class AppModule {
     public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(TapestryHttpSymbolConstants.GZIP_COMPRESSION_ENABLED, true);
+        configuration.add(TapestryHttpSymbolConstants.PRODUCTION_MODE, true);
+    }
+
+    public static CompressionAnalyzer buildCompressionAnalyzer()
+    {
+        return str -> true;
     }
 
 }

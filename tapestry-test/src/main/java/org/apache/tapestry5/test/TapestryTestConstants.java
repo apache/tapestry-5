@@ -14,12 +14,13 @@
 
 package org.apache.tapestry5.test;
 
-import com.thoughtworks.selenium.CommandProcessor;
-import com.thoughtworks.selenium.Selenium;
+import java.lang.reflect.Method;
+
 import org.testng.ITestContext;
 import org.testng.xml.XmlTest;
 
-import java.lang.reflect.Method;
+import com.thoughtworks.selenium.CommandProcessor;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * Defins {@link ITestContext} attributes meaninful to Tapestry for controlling application startup and shutdown.

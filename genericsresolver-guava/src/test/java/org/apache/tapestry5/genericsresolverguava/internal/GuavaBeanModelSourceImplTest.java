@@ -13,6 +13,7 @@ package org.apache.tapestry5.genericsresolverguava.internal;
 
 import org.apache.tapestry5.beanmodel.BeanModelSourceBuilder;
 import org.apache.tapestry5.beanmodel.services.BeanModelSource;
+import org.testng.annotations.Test;
 
 public class GuavaBeanModelSourceImplTest extends AbstractBeanModelSourceImplTest {
 

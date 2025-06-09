@@ -1,14 +1,17 @@
 description = "Support for using Jackson Databind with the Tapestry REST support"
 
+ext.moduleLibs = [
+    jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.13.1',
+    jsonschemaGenerator: 'com.github.victools:jsonschema-generator:4.20.0',
+]
+
 dependencies {
     implementation project(':tapestry-core')
-    implementation "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
-    implementation "com.github.victools:jsonschema-generator:${versions.jsonschemaGenerator}"
-    provided "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
+
+    implementation moduleLibs.jacksonDatabind
+    implementation moduleLibs.jsonschemaGenerator
+
+    provided libs.jakarta.servlet.api
 }
 
-jar {
-    manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.rest.jackson.modules.RestJacksonModule'
-    }
-}
+jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.rest.jackson.modules.RestJacksonModule'

@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <!-- 
-   Copyright 2009, 2012 The Apache Software Foundation
+   Copyright 2007 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,10 +15,16 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry Bean Validator" parallel="false" thread-count="10" annotations="1.5" verbose="2">
-    <test name="Tapestry Bean Validatior Integration Tests">
+<suite name="Tapestry Hibernate" parallel="false" thread-count="10" annotations="1.5" verbose="2">
+    <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
+    <test name="Tapestry Hibernate Internal APIs">
         <packages>
-            <package name="org.apache.tapestry5.beanvalidator.integration"/>
+            <package name="org.apache.tapestry5.hibernate.web.internal"/>
+        </packages>
+    </test>
+    <test name="Tapestry Hibernate Integration Tests">
+        <packages>
+            <package name="org.apache.tapestry5.hibernate.web.integration"/>
         </packages>
     </test>
 </suite>

@@ -1,24 +1,12 @@
-import org.gradle.plugins.ide.idea.model.*
-import t5build.*
+plugins {
+    id 'tapestry.junit5-spock-convention'
+}
 
 description = "Project including common classes for tapestry-core, tapestry-ioc and beanmodel."
 
-//apply plugin: JavaPlugin
 
-buildDir = 'target/gradle-build'
-       
 dependencies {
-	api project(":plastic")
-	api project(":tapestry5-annotations")
-	implementation project(":tapestry-func")
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-}
-
-jar {	
-	manifest {	
-	}
-}
-
-test {
-    useJUnit()
+    api project(":plastic")
+    api project(":tapestry5-annotations")
+    implementation project(":tapestry-func")
 }

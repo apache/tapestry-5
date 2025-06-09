@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,37 +17,16 @@ package org.apache.tapestry5.func;
 import java.util.Arrays;
 import java.util.List;
 
-import org.testng.Assert;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BaseFuncTest extends Assert
+public class BaseFuncTest
 {
 
-    protected Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
-    {
-        @Override
-        public Integer map(String input)
-        {
-            return input.length();
-        }
-    };
+    protected Mapper<String, Integer> stringToLength = String::length;
 
-    protected Mapper<Integer, Boolean> toEven = new Mapper<Integer, Boolean>()
-    {
-        @Override
-        public Boolean map(Integer input)
-        {
-            return evenp.accept(input);
-        }
-    };
+    protected Mapper<Integer, Boolean> toEven = input -> this.evenp.accept(input);
 
-    protected Predicate<Number> evenp = new Predicate<Number>()
-    {
-        @Override
-        public boolean accept(Number object)
-        {
-            return object.longValue() % 2 == 0;
-        };
-    };
+    protected Predicate<Number> evenp = object -> object.longValue() % 2 == 0;
 
     protected Flow<Integer> filteredEmpty = F.flow(1, 3, 5, 7).filter(evenp);
 
@@ -58,12 +37,11 @@ public class BaseFuncTest extends Assert
 
     protected <T> void assertListsEquals(List<T> actual, T... expected)
     {
-        assertEquals(actual, Arrays.asList(expected));
+        assertEquals(Arrays.asList(expected), actual);
     }
 
     protected void unreachable()
     {
         throw new RuntimeException("Should not be reachable.");
     }
-
 }

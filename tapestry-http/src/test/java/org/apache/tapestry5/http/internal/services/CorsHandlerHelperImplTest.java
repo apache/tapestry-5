@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.tapestry5.http.services.CorsHandlerHelper;
+import org.easymock.EasyMock;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry5.http.services.CorsHandlerHelper;
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test suite for {@link CorsHandlerHelperImpl}.
@@ -32,6 +32,7 @@ public class CorsHandlerHelperImplTest {
         // Scenario 1: explicit origins
 
         CorsHandlerHelper helper = create(String.join("  ,  ", allowedOrigins));
+
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
 
         for (String origin : allowedOrigins)
@@ -41,14 +42,14 @@ public class CorsHandlerHelperImplTest {
             EasyMock.reset(request);
             EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(origin);
             EasyMock.replay(request);
-            Assert.assertEquals("Allowed origin", origin, helper.getAllowedOrigin(request).get());
+            Assert.assertEquals(origin, helper.getAllowedOrigin(request).get(), "Allowed origin");
             EasyMock.verify(request);
 
             // Non-allowed origins
             EasyMock.reset(request);
             EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(origin + "baaaa");
             EasyMock.replay(request);
-            Assert.assertFalse("Non-allowed origins", helper.getAllowedOrigin(request).isPresent());
+            Assert.assertFalse(helper.getAllowedOrigin(request).isPresent(), "Non-allowed origins");
             EasyMock.verify(request);
 
         }
@@ -62,7 +63,8 @@ public class CorsHandlerHelperImplTest {
             EasyMock.reset(request);
             EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(origin);
             EasyMock.replay(request);
-            Assert.assertEquals("All origins should be accepted", CorsHandlerHelper.ORIGIN_WILDCARD, helper.getAllowedOrigin(request).get());
+            Assert.assertEquals(CorsHandlerHelper.ORIGIN_WILDCARD,
+                    helper.getAllowedOrigin(request).get(), "All origins should be accepted");
             EasyMock.verify(request);
         }
 
@@ -78,7 +80,7 @@ public class CorsHandlerHelperImplTest {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getMethod()).andReturn("PUT");
         EasyMock.replay(request);
-        Assert.assertFalse("Not OPTIONS", helper.isPreflight(request));
+        Assert.assertFalse(helper.isPreflight(request), "Not OPTIONS");
         EasyMock.verify(request);
 
         // Scenario 2: no Origin
@@ -86,7 +88,7 @@ public class CorsHandlerHelperImplTest {
         EasyMock.expect(request.getMethod()).andReturn(CorsHandlerHelper.OPTIONS_METHOD);
         EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(null);
         EasyMock.replay(request);
-        Assert.assertFalse("No Origin", helper.isPreflight(request));
+        Assert.assertFalse(helper.isPreflight(request), "No Origin");
         EasyMock.verify(request);
 
         // Scenario 3: accepted origin
@@ -94,7 +96,7 @@ public class CorsHandlerHelperImplTest {
         EasyMock.expect(request.getMethod()).andReturn(CorsHandlerHelper.OPTIONS_METHOD);
         EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(origin);
         EasyMock.replay(request);
-        Assert.assertTrue("Preflight indeed", helper.isPreflight(request));
+        Assert.assertTrue(helper.isPreflight(request), "Preflight indeed");
         EasyMock.verify(request);
 
         // Scenario 4: non-accepted origin
@@ -102,7 +104,7 @@ public class CorsHandlerHelperImplTest {
         EasyMock.expect(request.getMethod()).andReturn(CorsHandlerHelper.OPTIONS_METHOD);
         EasyMock.expect(request.getHeader(CorsHandlerHelper.ORIGIN_HEADER)).andReturn(origin + "baaah");
         EasyMock.replay(request);
-        Assert.assertFalse("Non-accepted origin", helper.isPreflight(request));
+        Assert.assertFalse(helper.isPreflight(request), "Non-accepted origin");
         EasyMock.verify(request);
 
     }
@@ -173,8 +175,8 @@ public class CorsHandlerHelperImplTest {
 
         helper = create(CorsHandlerHelper.ORIGIN_WILDCARD, false);
         helper.configureCredentials(response);
-        Assert.assertNull("Header shouldn't be set",
-                response.getHeader(CorsHandlerHelper.ALLOW_CREDENTIALS_HEADER));
+        Assert.assertNull(response.getHeader(CorsHandlerHelper.ALLOW_CREDENTIALS_HEADER),
+                "Header shouldn't be set");
 
     }
 
@@ -214,8 +216,10 @@ public class CorsHandlerHelperImplTest {
         EasyMock.replay(request);
         helper.configureAllowedHeaders(response, request);
         EasyMock.verify(request);
-        Assert.assertEquals(requestHeaders, response.getHeader(CorsHandlerHelper.ALLOW_HEADERS_HEADER));
-        Assert.assertEquals(CorsHandlerHelper.REQUEST_HEADERS_HEADER, response.getHeader(CorsHandlerHelper.VARY_HEADER));
+        Assert.assertEquals(response.getHeader(CorsHandlerHelper.ALLOW_HEADERS_HEADER),
+                requestHeaders);
+        Assert.assertEquals(response.getHeader(CorsHandlerHelper.VARY_HEADER),
+                CorsHandlerHelper.REQUEST_HEADERS_HEADER);
 
         // Scenario 3: configuration empty, request's Access-Control-Request-Headers also empty
         response = new TestableHttpServletResponse();
@@ -225,7 +229,8 @@ public class CorsHandlerHelperImplTest {
         helper.configureAllowedHeaders(response, request);
         EasyMock.verify(request);
         Assert.assertNull(response.getHeader(CorsHandlerHelper.ALLOW_HEADERS_HEADER));
-        Assert.assertEquals(CorsHandlerHelper.REQUEST_HEADERS_HEADER, response.getHeader(CorsHandlerHelper.VARY_HEADER));
+        Assert.assertEquals(response.getHeader(CorsHandlerHelper.VARY_HEADER),
+                CorsHandlerHelper.REQUEST_HEADERS_HEADER);
 
     }
 
@@ -243,8 +248,8 @@ public class CorsHandlerHelperImplTest {
 
         helper = new CorsHandlerHelperImpl("", false, "", "", "", "");
         helper.configureExposeHeaders(response);
-        Assert.assertNull("Header shouldn't be set",
-                response.getHeader(CorsHandlerHelper.EXPOSE_HEADERS_HEADER));
+        Assert.assertNull(response.getHeader(CorsHandlerHelper.EXPOSE_HEADERS_HEADER),
+                "Header shouldn't be set");
 
     }
 
@@ -262,8 +267,8 @@ public class CorsHandlerHelperImplTest {
 
         helper = new CorsHandlerHelperImpl("", false, "", "", "", "");
         helper.configureExposeHeaders(response);
-        Assert.assertNull("Header shouldn't be set",
-                response.getHeader(CorsHandlerHelper.MAX_AGE_HEADER));
+        Assert.assertNull(response.getHeader(CorsHandlerHelper.MAX_AGE_HEADER),
+                "Header shouldn't be set");
 
     }
 

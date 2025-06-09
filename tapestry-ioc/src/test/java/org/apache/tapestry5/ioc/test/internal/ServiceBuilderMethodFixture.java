@@ -14,17 +14,21 @@
 
 package org.apache.tapestry5.ioc.test.internal;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
-import org.testng.Assert;
+import org.spockframework.util.Assert;
 
 import jakarta.inject.Named;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Used by {@link ioc.specs.ServiceBuilderMethodInvokerSpec}.

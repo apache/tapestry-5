@@ -14,9 +14,9 @@ package org.apache.tapestry5.ioc.services;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 /**
  * Tests for Tapestry-IoC and Java language features introduced in Java SE 14: pattern matching for the
@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 public class Java14NewFeatureTests 
 {
     
-    private Registry registry;
+    private static Registry registry;
     
     public static class Java14Module 
     {
@@ -40,12 +40,12 @@ public class Java14NewFeatureTests
         }
     }
     
-    private Java14Service java14Service;
+    private static Java14Service java14Service;
     
-    private Java14ConcreteService java14ConcreteService;
+    private static Java14ConcreteService java14ConcreteService;
     
-    @BeforeSuite
-    public void setup() 
+    @BeforeAll
+    public static void setup()
     {
         registry = RegistryBuilder.buildAndStartupRegistry(Java14Module.class);
         java14Service = registry.getService(Java14Service.class);

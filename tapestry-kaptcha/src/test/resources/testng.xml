@@ -3,6 +3,7 @@
   <test name="Integration Tests">
     <parameter name="tapestry.web-app-folder" value="src/test/webapp"/>
     <packages>
+      <package name="org.apache.tapestry5.kaptcha"/>
       <package name="org.apache.tapestry5.kaptcha.integration"/>
     </packages>
   </test>

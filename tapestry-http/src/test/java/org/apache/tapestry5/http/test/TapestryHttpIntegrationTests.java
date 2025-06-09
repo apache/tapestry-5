@@ -25,9 +25,9 @@ public class TapestryHttpIntegrationTests extends SeleniumTestCase {
     public void testSimpleDispatcher() throws Exception 
     {
         open("/hello");
-        assertEquals("Return to base URL", getText("//a"));
+        assertEquals(getText("//a"), "Return to base URL");
         clickAndWait("//a");
-        assertEquals("Hello!", getText("//body/a"));
+        assertEquals(getText("//body/a"), "Hello!");
     }
 
 }

@@ -28,7 +28,7 @@ task addGradleWrapper(type: Exec) {
         wrapperDirectory.mkdirs()
 
         def settings = new File(wrapperDirectory, "settings.gradle")
-        new FileOutputStream(settings).close();
+        new FileOutputStream(settings).close()
     }
 
     finalizedBy 'copyGradleWrapper'
