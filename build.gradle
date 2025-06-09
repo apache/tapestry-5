@@ -249,8 +249,8 @@ subprojects {
 task aggregateJavadoc(type: Javadoc) {
     dependsOn configurations.javadoc
     group 'Documentation'
-
     description 'Build the aggregated JavaDocs for all modules'
+
     maxMemory '512m'
     destinationDir file("${buildDir}/documentation/javadocs")
 
@@ -260,26 +260,6 @@ task aggregateJavadoc(type: Javadoc) {
     def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
     def allMainJavaFiles = allMainSourceSets*.java
     def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
-
-    options {
-        splitIndex true
-        linkSource true
-        stylesheetFile tapestryStylesheet
-        windowTitle "Tapestry API - ${project.version}"
-        header "Tapestry API - ${project.version}"
-        docTitle "Tapestry API - ($project.version)"
-        bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
-        use = true // 'use' seems to be a reserved word for the DSL
-        links 'https://docs.oracle.com/javase/8/docs/api/'
-        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-            tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
-        }
-        //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
-        //        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
-        addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
-        addStringOption 'source', '8'
-        taglets 'org.apache.tapestry5.javadoc.TapestryDocTaglet'
-    }
 
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
         exclude 'org/apache/tapestry5/spring/**'
@@ -294,6 +274,33 @@ task aggregateJavadoc(type: Javadoc) {
     classpath += files(allMainSourceSets*.compileClasspath)
 
     inputs.files allMainJavaSrcDirs
+
+    options {
+        splitIndex true
+        linkSource true
+        stylesheetFile tapestryStylesheet
+        windowTitle "Tapestry API - ${project.version}"
+        header "Tapestry API - ${project.version}"
+        docTitle "Tapestry API - ($project.version)"
+        bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
+        setUse(use)
+        links 'https://docs.oracle.com/javase/8/docs/api/'
+
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+            tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
+        }
+        //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
+        //        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+        addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
+        addStringOption 'source', '8'
+        taglets 'org.apache.tapestry5.javadoc.TapestryDocTaglet'
+
+        // Javadoc became stricer, so lets do this to actually build for now
+        if (JavaVersion.current().isJava9Compatible()) {
+            addBooleanOption('html5', true)
+            addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
 
     // As part of generating the documentation, ALSO copy any related files:
     // Any extra images (Tapestry logo)
@@ -390,17 +397,13 @@ task combinedJacocoReport(type:JacocoReport){
 }
 
 task continuousIntegration {
-    // tapestry-javadoc doesn't work with Java 8 anymore. That's why it's only added if != 8.
-    def dependants = [
-        subprojects.build,
-        'tapestry-core:testWithPrototype',
-        combinedJacocoReport
-    ]
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-        dependants << aggregateJavadoc
-    }
-    dependsOn dependants
-    description 'Task executed on Jenkins CI server after Git commits'
+    group = 'Verification'
+    description 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
+
+    dependsOn subprojects.check
+    dependsOn ':tapestry-core:testWithPrototype'
+    dependsOn combinedJacocoReport
+    dependsOn subprojects.assemble
 }
 
 
