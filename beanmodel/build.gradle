@@ -31,4 +31,8 @@ compileJava {
     options.fork(memoryMaximumSize: '512m')
 }
 
+tasks.named('sourcesJar') {
+    dependsOn 'generateGrammarSource'
+}
+
 sourceSets.main.java.srcDirs += generateGrammarSource.outputDirectory

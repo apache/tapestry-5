@@ -64,12 +64,3 @@ tasks.withType(Jar).configureEach {
         .replace("-", "."))
     }
 }
-
-// Override the manually created sourcesJar from the original build with the
-// standard one created by `withSourcesJar()`. This adds the META-INF files to it as well.
-tasks.named('sourcesJar', Jar) {
-    from(project.projectDir) {
-        include "*.txt"
-        into "META-INF"
-    }
-}
