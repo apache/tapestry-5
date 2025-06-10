@@ -27,7 +27,7 @@ import org.apache.tapestry5.http.services.CorsHandlerHelper;
  * regardless of path. It will also perform preflight requests if 
  * {@link CorsHandlerHelper#isPreflight(HttpServletRequest)}
  * returns <code>true</code>. Most logic is delegated is {@link CorsHandlerHelper}.
- * <p>
+ * </p>
  * <p>
  * This implementation is inspired by the cors NPM module.
  * </p>

@@ -120,6 +120,8 @@ public interface JavaScriptSupport
      * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
      * {@link InitializationPriority#NORMAL} priority.
      *
+     * @param priority
+     *         priority to use when adding the script
      * @param functionName
      *         name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
@@ -178,6 +180,7 @@ public interface JavaScriptSupport
      * (whereas modules may be loaded in parallel), and all libraries are added before any modules are loaded.
      * Because of this, it is preferrable to organize your JavaScript into modules, rather than libraries.
      *
+     * @param asset JavaScript library to import
      * @return this JavaScriptSupport, for further configuration
      * @see org.apache.tapestry5.annotations.Import
      */
@@ -224,6 +227,8 @@ public interface JavaScriptSupport
      * Import a Javascript library with an arbitrary URL.
      *
      * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
+     * @param libraryURL JavaScript library to import
+     * @return this JavaScriptSupport, for further configuration
      */
     JavaScriptSupport importJavaScriptLibrary(String libraryURL);
 
@@ -237,6 +242,7 @@ public interface JavaScriptSupport
      *         focus is set only if the provided priority is greater than the current priority
      * @param fieldId
      *         id of client-side element to take focus
+     * @return this JavaScriptSupport, for further configuration
      */
     JavaScriptSupport autofocus(FieldFocusPriority priority, String fieldId);
 

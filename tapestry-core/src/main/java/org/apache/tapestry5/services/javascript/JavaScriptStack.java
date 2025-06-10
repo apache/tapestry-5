@@ -49,11 +49,15 @@ public interface JavaScriptStack
      * Returns a list of JavaScriptStack names that this stack depends on. Each stack will be processed before
      * the current stack (thus a dependency stack's libraries, stylesheets and initialization is emitted before
      * the dependent stack).
+     *
+     * @return list of JavaScriptStack dependency names
      */
     List<String> getStacks();
 
     /**
      * Returns a list of <em>localized</em> assets for JavaScript libraries that form the stack.
+     *
+     * @return list of {@link Asset} this JavaScriptStack if formed of
      */
     List<Asset> getJavaScriptLibraries();
 
@@ -69,6 +73,7 @@ public interface JavaScriptStack
      *
      * @see ModuleManager
      * @see org.apache.tapestry5.SymbolConstants#COMBINE_SCRIPTS
+     * @return list of included modules
      * @since 5.4
      */
     List<String> getModules();
@@ -77,6 +82,7 @@ public interface JavaScriptStack
      * Identifies how to aggregate JavaScript within the stack.
      * The default is {@link org.apache.tapestry5.services.javascript.JavaScriptAggregationStrategy#COMBINE_AND_MINIMIZE}.
      *
+     * @return how the stack is aggregated
      * @since 5.4
      */
     JavaScriptAggregationStrategy getJavaScriptAggregationStrategy();
@@ -89,6 +95,7 @@ public interface JavaScriptStack
      *
      * @deprecated Deprecated in Tapestry 5.4; may be removed in a future release. Implementations
      * may return null.
+     * @return how the stack is aggregated
      */
     String getInitialization();
 }
