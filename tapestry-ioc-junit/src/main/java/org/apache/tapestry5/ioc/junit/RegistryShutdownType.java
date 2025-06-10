@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc.junit;
 
 /**
- * Used in conjunction with the {@link TapestryIOCJUnit4ClassRunner} to determine the registry lifecycle
+ * Used in conjunction with the {@link TapestryIOCJUnitExtension} to determine the registry lifecycle
  */
 public enum RegistryShutdownType {
 	/**
