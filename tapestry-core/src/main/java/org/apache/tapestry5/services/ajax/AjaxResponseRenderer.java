@@ -72,6 +72,8 @@ public interface AjaxResponseRenderer
      * Adds a rendering filter.  Dynamically added filters are only in place during the handling of the current request, and come after any filters
      * contributed to the {@link org.apache.tapestry5.services.PartialMarkupRenderer} service.
      *
+     * @param filter
+     *         a partial markup filter
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addFilter(PartialMarkupRendererFilter filter);
@@ -81,7 +83,7 @@ public interface AjaxResponseRenderer
      * the callback is invoked before the rest of the rendering pipeline is invoked.
      *
      * @param callback
-     *         object o be invoked
+     *         object to be invoked
      * @return this renderer, for a fluid interface
      */
     AjaxResponseRenderer addCallback(JSONCallback callback);

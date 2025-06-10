@@ -19,12 +19,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * <p>
  * Service that provides {@link ObjectMapper} instances for specific mapped entity classes.
+ * </p>
  * <p>
- * <p>
- * It's defined as an ordered configuration of {@link ObjectMapperSource} instances. 
+ * It's defined as an ordered configuration of {@link ObjectMapperSource} instances.
  * Calls to {@link #get(Class)} will call the same method in contributed instances until
  * one returns a non-null {@link ObjectMapper} instance.
  * </p>
+ * 
  * @see ObjectMapper
  * @see MappedEntityManager
  * @since 5.8.0
