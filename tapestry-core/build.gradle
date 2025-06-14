@@ -1,5 +1,4 @@
 import org.gradle.plugins.ide.idea.model.*
-
 import org.apache.tools.ant.filters.ReplaceTokens
 //import t5build.*
 
@@ -23,12 +22,9 @@ dependencies {
     
     implementation 'jakarta.annotation:jakarta.annotation-api:1.3.4'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
-<<<<<<< HEAD
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
     implementation 'com.sun.xml.ws:jaxws-rt:2.3.2'
     implementation 'javax.xml.ws:jaxws-api:2.3.1'
-=======
->>>>>>> 4cee8eebde (TAP5-2804: Convert Tapestry JS sources from CoffeeScript to TypeScript (#53))
 
     provided project(":tapestry-test")
     provided project(":tapestry-test-constants")
