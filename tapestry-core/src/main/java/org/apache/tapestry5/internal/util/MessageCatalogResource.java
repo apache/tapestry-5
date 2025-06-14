@@ -33,12 +33,15 @@ public class MessageCatalogResource extends VirtualResource
     private final boolean compactJSON;
 
     private volatile byte[] bytes;
+    
+    private final boolean esModule;
 
-    public MessageCatalogResource(Locale locale, ComponentMessagesSource messagesSource, final ResourceChangeTracker changeTracker, boolean compactJSON)
+    public MessageCatalogResource(boolean esModule, Locale locale, ComponentMessagesSource messagesSource, final ResourceChangeTracker changeTracker, boolean compactJSON)
     {
         this.locale = locale;
         this.messagesSource = messagesSource;
         this.compactJSON = compactJSON;
+        this.esModule = esModule;
 
         messagesSource.getInvalidationEventHub().addInvalidationCallback(new Runnable()
         {
@@ -127,7 +130,15 @@ public class MessageCatalogResource extends VirtualResource
 
         StringBuilder builder = new StringBuilder(2000);
 
-        builder.append("define(").append(catalog.toString(compactJSON)).append(");");
+        final String json = catalog.toString(compactJSON);
+        if (esModule) 
+        {
+            builder.append("export default ").append(json).append(";");
+        }
+        else
+        {
+            builder.append("define(").append(json).append(");");
+        }
 
         return builder.toString();
     }

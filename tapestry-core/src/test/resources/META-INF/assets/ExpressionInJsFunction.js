@@ -1,4 +1,6 @@
 require(["t5/core/dom"], function (dom) {
+	
+	dom = dom.default;
 
     window.test_func = function () {
         dom('target').value("test1");

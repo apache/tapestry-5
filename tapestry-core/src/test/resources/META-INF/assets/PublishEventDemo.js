@@ -1,4 +1,7 @@
 require(["t5/core/dom", "t5/core/ajax", "jquery"], function (dom, ajax, $) {
+	
+	dom = dom.default;
+	ajax = ajax.default;
 
 	function makeAjaxCall(eventName, eventElement, outputElement) {
 		ajax(eventName, { 

@@ -47,7 +47,9 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -1681,6 +1683,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             reportAndThrowAssertionError("Failure accessing %s: %s", locator, ex);
         }
     }
+    
+    private Map<String, String> linkTextUrlCache;
 
     /**
      * Opens the base URL, then clicks through a series of links to get to a desired application
@@ -1690,26 +1694,73 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected final void openLinks(String... linkText)
     {
-        openBaseURL();
         
-        if (getTitle().toLowerCase().contains("service unavailable")) {
-            throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
+        if (linkTextUrlCache == null)
+        {
+            populateLinkTextUrlCache();
         }
         
-        // Trying to solve some cases where the link is present on the page but somehow
-        // openBaseURL() couldn't find it.
-        for (String text : linkText)
+        // Trying to speed up the test suite by avoiding going to the
+        // index page over and over when this method is called with a 
+        // single link.
+        if (linkText.length == 1 && linkTextUrlCache.containsKey(linkText[0])) 
         {
-            try 
-            {
-                waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
+            open(linkTextUrlCache.get(linkText[0]));
+            waitForPageToLoad();
+        }
+
+        else
+        {
+        
+            openBaseURL();
+            
+            if (getTitle().toLowerCase().contains("service unavailable")) {
+                throw new RuntimeException("Webapp didn't start correctly. HTML contents: " + getHtmlSource());
             }
-            catch (org.openqa.selenium.TimeoutException e)
+            
+            // Trying to solve some cases where the link is present on the page but somehow
+            // openBaseURL() couldn't find it.
+            for (String text : linkText)
             {
-                LOGGER.warn("Page content: {}", getHtmlSource());
-                throw e;
+                try 
+                {
+                    waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
+                }
+                catch (Exception e)
+                {
+                    LOGGER.warn("Page URL: {}", getBaseURL());
+                    LOGGER.warn("Page content: {}", getHtmlSource());
+                    System.out.println("Page URL: " + getBaseURL());
+                    System.out.println("Page content: " + getHtmlSource());
+                    
+                    throw e;
+                }
+                clickAndWait("link=" + text);
             }
-            clickAndWait("link=" + text);
+            
+        }
+        
+    }
+
+    protected void populateLinkTextUrlCache()
+    {
+        openBaseURL();
+        
+        final String baseXpath = "//a[@href]";
+        final String xpathFormat = "xpath=(%s)[%d]";
+        final int count = getXpathCount(baseXpath).intValue();
+        linkTextUrlCache = new HashMap<>(count);
+        
+        String url;
+        String linkText;
+        String xpath;
+        
+        for (int i = 1; i <= count; i++)
+        {
+            xpath = String.format(xpathFormat, baseXpath, i);
+            linkText = getText(xpath).trim();
+            url = getAttribute(xpath + "/@href").trim();
+            linkTextUrlCache.put(linkText, url);
         }
     }
 

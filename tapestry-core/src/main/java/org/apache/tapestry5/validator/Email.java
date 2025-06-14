@@ -32,7 +32,7 @@ public class Email extends AbstractValidator<Void, String>
 {
 
     // The client-side uses a similar RE, but converts the input to lower case before applying the pattern.
-    // See validation.coffee.
+    // See validation.ts.
 
     private static final Pattern PATTERN = Pattern
             .compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
