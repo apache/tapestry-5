@@ -387,18 +387,6 @@ public class SymbolConstants
     public static final String MODULE_PATH_PREFIX = "tapestry.module-path-prefix";
     
     /**
-     * Prefix used for automatically configured ES module resources. 
-     * This may contain slashes, but should not being or end with one.
-     *
-     * The default is "es-modules".
-     * 
-     * TODO remove
-     *
-     * @since 5.4
-     */
-    public static final String ES_MODULE_PATH_PREFIX = "tapestry.es-module-path-prefix";
-
-    /**
      * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
      * This is either a blank string or a string that starts with a slash but does not end with one.
      * This is an alias to {@link TapestryHttpSymbolConstants#CONTEXT_PATH}.
@@ -821,5 +809,16 @@ public class SymbolConstants
      * @since 5.8.4
      */
     public static final String COMPONENT_DEPENDENCY_FILE = "tapestry.component-dependency-file";
+    
+    /**
+     * Defines whether Require.js will be used to manage AMD modules.
+     * This also causes Tapestry to use the Require.js/AMD versions of
+     * its own JavaScript files. When disabled, Require.js will not be included
+     * and the ES6 module version of its own JavaScript files will be used instead.
+     * Default value: {@code true}).
+     * 
+     * @since 5.10.0
+     */
+    public static final String REQUIRE_JS_ENABLED = "tapestry.require-js-enabled";
 
 }

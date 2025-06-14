@@ -18,23 +18,11 @@ dependencies {
   
 }
 
-task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "src/main/generated/compiled-coffeescript"
-}
-
 // Start up the test app, useful when debugging failing integration tests
 task runTestApp303(type:JavaExec) {
   main = 'org.apache.tapestry5.test.JettyRunner'
   args "-d", "src/test/webapp", "-p", "8080"
   classpath += project.sourceSets.test.runtimeClasspath
-}
-
-clean.delete 'src/main/generated'
-
-sourceSets {
-    main {
-        output.dir(compileCoffeeScript.outputDir, builtBy: compileCoffeeScript)
-    }
 }
 
 jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule'

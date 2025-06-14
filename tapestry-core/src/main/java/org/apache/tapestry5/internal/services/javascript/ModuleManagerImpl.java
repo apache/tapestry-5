@@ -58,6 +58,10 @@ public class ModuleManagerImpl implements ModuleManager
     private final JSONObject baseConfig;
 
     private final String basePath, compressedBasePath;
+    
+    private final String actualDomModule;
+    
+    private static final String DOM_MODULE = "t5/core/dom";
 
     public ModuleManagerImpl(ResponseCompressionAnalyzer compressionAnalyzer,
                              AssetSource assetSource,
@@ -70,7 +74,9 @@ public class ModuleManagerImpl implements ModuleManager
                              boolean productionMode,
                              @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
                              String modulePathPrefix,
-                             PathConstructor pathConstructor)
+                             PathConstructor pathConstructor,
+                             @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                             String infraProvider)
     {
         this.compressionAnalyzer = compressionAnalyzer;
         this.globalMessages = globalMessages;
@@ -85,6 +91,9 @@ public class ModuleManagerImpl implements ModuleManager
         extensions.addAll(streamableResourceSource.fileExtensionsForContentType(InternalConstants.JAVASCRIPT_CONTENT_TYPE));
 
         baseConfig = buildBaseConfig(configuration, !productionMode);
+        
+        actualDomModule = "t5/core/t5-core-dom-" + infraProvider;
+        
     }
 
     private String buildRequireJSConfig(List<ModuleConfigurationCallback> callbacks)
@@ -227,6 +236,13 @@ public class ModuleManagerImpl implements ModuleManager
         if (resource != null)
         {
             return resource;
+        }
+        
+        // Trick to get the correct t5/core/dom implementation being
+        // returned when that module is requested.
+        if (moduleName.equals(DOM_MODULE))
+        {
+            moduleName = actualDomModule;
         }
 
         // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled

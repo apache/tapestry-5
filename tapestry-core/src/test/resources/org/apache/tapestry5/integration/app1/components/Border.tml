@@ -51,6 +51,15 @@
 
         <hr/>
         
+        <h2>Settings</h2>
+        
+        <dl>
+        	<dt>JavaScript infrastructure provider</dt>
+        	<dd id="tapestry-javascript-infrastructure-provider-value">${symbol:tapestry.javascript-infrastructure-provider}</dd>
+        	<dt>Require.js enabled</dt>
+        	<dd id="require-js-enabled-value">${symbol:tapestry.require-js-enabled}</dd>
+        </dl>
+        
         <h2>JVM</h2>
         <p>
 			${jvm}

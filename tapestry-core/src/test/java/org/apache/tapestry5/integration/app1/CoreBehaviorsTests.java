@@ -542,7 +542,7 @@ public class CoreBehaviorsTests extends App1TestCase
     @Test
     public void recursive_components_are_identified_as_errors()
     {
-        openLinks("Self-Recursive Demo");
+        open("/selfrecursivedemo");
 
         assertTextPresent(
                 EXCEPTION_PROCESSING_REQUEST,
