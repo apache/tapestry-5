@@ -33,38 +33,34 @@ class MethodProxying extends AbstractPlasticSpecification {
         1 * mockRunnable.run()
     }
 
-    def "Proxying with static methods"() {
-        setup:
-
-        def mockRunnable = Mock(Runnable.class)
-
-        def o = mgr.createClass(Object, { PlasticClass pc ->
-
-            def field = pc.introduceField(Runnable, "delegate").inject(mockRunnable)
-
-            pc.proxyInterface(WithStatic, field)
-        } as PlasticClassTransformer).newInstance()
-
-        expect:
-
-        WithStatic.isInstance o
-        o.version() == 1
-
-        when:
-
-        o.run()
-
-        then:
-
-        1 * mockRunnable.run()
-    }
+    /*
+     * The call o.version() was wroking due to a bug in Groovy and
+     * calliong static methods on instances no longer works since 3.0.18
+     * https://issues.apache.org/jira/browse/GROOVY-8164
+     * https://issues.apache.org/jira/browse/GROOVY-10764
+     def "Proxying with static methods"() {
+     setup:
+     def mockRunnable = Mock(Runnable.class)
+     def o = mgr.createClass(Object, { PlasticClass pc ->
+     def field = pc.introduceField(Runnable, "delegate").inject(mockRunnable)
+     pc.proxyInterface(WithStatic, field)
+     } as PlasticClassTransformer).newInstance()
+     expect:
+     WithStatic.isInstance o
+     o.version() == 1
+     when:
+     o.run()
+     then:
+     1 * mockRunnable.run()
+     }
+     */
 
     @Issue("TAP5-2582")
     def "Proxying with multiple methods of the same signature"() {
         setup:
 
         def mockRunner = Mock(SameMethodsInterface.class) {
-            run() >> new testinterfaces.samemethodinterface.pkg2.Result();
+            run() >> new testinterfaces.samemethodinterface.pkg2.Result()
         }
 
         def o = mgr.createClass(Object, { PlasticClass pc ->
@@ -76,13 +72,13 @@ class MethodProxying extends AbstractPlasticSpecification {
 
         when:
 
-        def result = o.run();
+        def result = o.run()
 
         then:
 
-        result instanceof testinterfaces.samemethodinterface.pkg1.Result;
+        result instanceof testinterfaces.samemethodinterface.pkg1.Result
 
-        result instanceof testinterfaces.samemethodinterface.pkg2.Result;
+        result instanceof testinterfaces.samemethodinterface.pkg2.Result
     }
 
     def "proxy method with arguments and return value"() {
@@ -130,7 +126,6 @@ class MethodProxying extends AbstractPlasticSpecification {
                 mi.returnValue = memory
 
                 // And don't proceed()
-
             } as MethodAdvice)
 
             def m = Memory.getMethod("returnLast", long)
