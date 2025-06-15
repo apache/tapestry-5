@@ -3,7 +3,7 @@ plugins {
 }
 description = 'Allows Clojure functions to be injected into Tapestry services and components'
 
-ext.moduleLibs = [
+def moduleLibs = [
     clojure: 'org.clojure:clojure:1.6.0',
 ]
 

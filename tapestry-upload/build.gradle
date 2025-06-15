@@ -4,7 +4,7 @@ plugins {
 
 description = 'File Upload component, with supporting services'
 
-ext.moduleLibs = [
+def moduleLibs = [
     commonsFileupload2: 'org.apache.commons:commons-fileupload2-jakarta:2.0.0-M1',
 ]
 

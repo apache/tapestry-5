@@ -4,7 +4,7 @@ plugins {
 
 description = 'Kaptcha user verification support'
 
-ext.moduleLibs= [
+def moduleLibs= [
     kaptcha: 'com.github.axet:kaptcha:0.0.8',
 ]
 dependencies {

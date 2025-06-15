@@ -4,7 +4,7 @@ plugins {
 
 description = 'Basic Hibernate services for Tapestry, useable outside of a Tapestry web application'
 
-ext.moduleLibs = [
+def moduleLibs = [
     jaxbRuntime: 'org.glassfish.jaxb:jaxb-runtime:2.3.2',
 ]
 

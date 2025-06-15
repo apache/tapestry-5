@@ -5,7 +5,7 @@ plugins {
 
 description = 'Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more.'
 
-ext.moduleLibs = [
+def moduleLibs = [
     closureCompiler: 'com.google.javascript:closure-compiler-unshaded:v20220502',
     less4j: 'com.github.sommeri:less4j:1.12.0',
     autoValueAnnotations: 'com.google.auto.value:auto-value-annotations:1.9',
@@ -30,7 +30,7 @@ dependencies {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all' // avoid multiple Groovy compilers on classpath
     }
 
-        testImplementation project(":tapestry-spock")
+    testImplementation project(":tapestry-spock")
     testImplementation libs.selenium.java
     testImplementation libs.webdrivermanager
 }

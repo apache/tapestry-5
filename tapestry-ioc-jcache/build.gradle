@@ -4,7 +4,7 @@ plugins {
 
 description = 'JCache (JSR 107) integration for Tapestry-IoC'
 
-ext.moduleLibs = [
+def moduleLibs = [
     javaxCacheApi: 'javax.cache:cache-api:1.0.0',
     javaxCacheTests: 'javax.cache:cache-tests:1.0.0',
     javaxCacheDomain: 'javax.cache:test-domain:1.0.0',

@@ -4,7 +4,7 @@ plugins {
 
 description = 'Provides support for simple CRUD applications built on top of Tapestry and JPA'
 
-ext.moduleLibs = [
+def moduleLibs = [
     jakartaCdiApi: 'jakarta.enterprise:jakarta.enterprise.cdi-api:3.0.1',
     eclipselink: 'org.eclipse.persistence:eclipselink:3.0.4',
     dbcp: 'org.apache.tomcat:dbcp:6.0.32',
@@ -28,44 +28,11 @@ dependencies {
 
 jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.modules.JpaModule'
 
-task runTestApp1(type:JavaExec) {
-    description 'Start app1 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app1", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp2(type:JavaExec) {
-    description 'Start app2 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app2", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp3(type:JavaExec) {
-    description 'Start app3 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app3", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp4(type:JavaExec) {
-    description 'Start app4 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app4", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp5(type:JavaExec) {
-    description 'Start app5 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app5", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp6(type:JavaExec) {
-    description 'Start app6 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app6", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
+(1..6).each { i ->
+    tasks.register("runTestApp$i", JavaExec) {
+        description = "Start app$i integration test app, useful when debugging failing integration tests"
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args "-d", "src/test/app$i", "-p", "8080"
+        classpath = project.sourceSets.test.runtimeClasspath
+    }
 }

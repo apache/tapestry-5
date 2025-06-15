@@ -6,7 +6,7 @@ import t5build.*
 
 description = 'Support for JSR-303 Bean Validation via the Hibernate validator implementation'
 
-ext.moduleLibs = [
+def moduleLibs = [
     hibernateValidator: 'org.hibernate:hibernate-validator:8.0.1.Final',
 ]
 
@@ -27,12 +27,12 @@ dependencies {
 def generatedOutputBaseDir = 'src/main/generated'
 
 task compileCoffeeScript(type: CompileCoffeeScript) {
-    outputDir "${generatedOutputBaseDir}/compiled-coffeescript"
+    outputDir = "${generatedOutputBaseDir}/compiled-coffeescript"
 }
 
 // Start up the test app, useful when debugging failing integration tests
 task runTestApp303(type:JavaExec) {
-    main = 'org.apache.tapestry5.test.JettyRunner'
+    mainClass = 'org.apache.tapestry5.test.JettyRunner'
     args "-d", "src/test/webapp", "-p", "8080"
     classpath += project.sourceSets.test.runtimeClasspath
 }
