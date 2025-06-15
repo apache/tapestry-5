@@ -10,13 +10,13 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
-            name = "JBoss"
-            url = "https://repository.jboss.org/nexus/content/repositories/releases/"
+            name = 'JBoss'
+            url = 'https://repository.jboss.org/nexus/content/repositories/releases/'
         }
         maven {
             // tapestry-jpa
-            name "EclipseLink"
-            url "https://download.eclipse.org/rt/eclipselink/maven.repo/"
+            name = 'EclipseLink'
+            url = 'https://download.eclipse.org/rt/eclipselink/maven.repo/'
         }
     }
 }

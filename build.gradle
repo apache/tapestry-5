@@ -1,93 +1,72 @@
+import t5build.GenerateChecksums
+import t5build.TapestryBuildLogic
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'base'
     id 'maven-publish'
 }
 
-apply from: 'ssh.gradle'
-apply from: 'md5.gradle'
-apply from: 'sha256.gradle'
-
-import org.apache.tools.ant.filters.ReplaceTokens
 
 description = 'Apache Tapestry 5 Project'
 
+
 ext {
+    tapestryMajorVersion = '5.10.0'
+    tapestryMinorVersion = '' // Use for release suffixes like '-alpha-1'
+
     artifactSuffix = '-jakarta'
 
     // Artifacts that have both an unsuffixed artifact from the javax branch
     // and a suffixed one from the master branch
     suffixedArtifactNames = [
-        'tapestry-core',
+        'tapestry-beanvalidator',
+        'tapestry-cdi',
+        'tapestry-clojure',
+        'tapestry-hibernate-core',
+        'tapestry-hibernate',
         'tapestry-http',
-        'tapestry-test',
-        'tapestry-runner',
-        'tapestry-spring',
-        'tapestry-kaptcha',
-        'tapestry-openapi-viewer',
-        'tapestry-upload',
+        'tapestry-ioc-jcache',
+        'tapestry-ioc-junit',
+        'tapestry-ioc',
         'tapestry-jmx',
         'tapestry-jpa',
         'tapestry-kaptcha',
-        'tapestry-openapi-viewer',
-        'tapestry-rest-jackson',
-        'tapestry-webresources',
-        'tapestry-cdi',
-        'tapestry-ioc',
-        'tapestry-ioc-jcache',
-        'tapestry-spock',
-        'tapestry-clojure',
-        'tapestry-hibernate',
-        'tapestry-hibernate-core',
-        'tapestry-ioc-junit',
         'tapestry-latest-java-tests',
         'tapestry-mongodb',
+        'tapestry-openapi-viewer',
+        'tapestry-rest-jackson',
+        'tapestry-runner',
         'tapestry-spock',
-        'tapestry-beanvalidator'
+        'tapestry-spring',
+        'tapestry-test',
+        'tapestry-upload',
+        'tapestry-webresources',
+        'tapestry-core',
     ]
 
     continuousIntegrationBuild = Boolean.getBoolean('ci')
-
     stagingUrl = 'https://repository.apache.org/service/local/staging/deploy/maven2/'
     snapshotUrl = 'https://repository.apache.org/content/repositories/snapshots'
     doSign = !project.hasProperty('noSign') && project.hasProperty('signing.keyId')
 
     // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
 
-    deployUsernameProperty = isSnapshot() ? 'snapshotDeployUserName' : 'apacheDeployUserName'
-    deployPasswordProperty = isSnapshot() ? 'snapshotDeployPassword' : 'apacheDeployPassword'
+    def deployFlavor = TapestryBuildLogic.isSnapshot(project) ? 'snapshot' : 'apache'
+
+    deployUsername = providers.gradleProperty("${deployFlavor}DeployUserName")
+    deployPassword = providers.gradleProperty("${deployFlavor}DeployPassword")
+    archiveDeployFolder = providers.gradleProperty('apacheArchivesFolder')
 
     canDeploy = [
-        deployUsernameProperty,
-        deployPasswordProperty,
-        'apacheArchivesFolder'
-    ].every { project.hasProperty(it) }
-
-    // These are all deferred inside closures, to allow people without the necessary values in their
-    // gradle.properties to build locally, just not deploy. getProperty() throws an exception if the property
-    // is not present.
-    deployUsername = { getProperty(deployUsernameProperty) }
-    deployPassword = { getProperty(deployPasswordProperty) }
-
-    archiveDeployFolder = { getProperty('apacheArchivesFolder') }
+        deployUsername,
+        deployPassword,
+        archiveDeployFolder
+    ].every { it.present }
 }
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-project.version = tapestryVersion()
-
-
-// Remember that when generating a release, this should be incremented. Also don\t forget to
-// tag the release in Git.
-// Version number is always '5.x(.y)?-SNAPSHOT' and only gets fixed, e.g. to 5.4-alpha-1
-// during a release
-def tapestryVersion() {
-
-    def major = '5.10.0'
-    def minor = ''
-
-    // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
-    // When building normally, or for a release, no suffix is desired.
-    continuousIntegrationBuild ? major + '-SNAPSHOT' : major + minor
-}
+version = TapestryBuildLogic.tapestryVersion(project)
 
 
 // Specific to top-level build, not set for subprojects:
@@ -112,15 +91,17 @@ dependencies {
     binaries libs.jakarta.inject.api
     binaries libs.slf4j.api
     binaries libs.commons.codec
-    binaries libs.antlr.runtime, { transitive = false }
+    binaries libs.antlr.runtime, {
+        transitive = false
+    }
 }
 
 subprojects {
-    apply plugin: 'tapestry.java-convention'
-    apply plugin: 'maven-publish'
-    apply plugin: 'project-report'
-    apply plugin: 'jacoco'
-    apply plugin: 'groovy'
+    plugins.apply 'tapestry.java-convention'
+    plugins.apply 'maven-publish'
+    plugins.apply 'project-report'
+    plugins.apply 'jacoco'
+    plugins.apply 'groovy'
 
     jacoco {
         toolVersion = '0.8.7'
@@ -212,8 +193,8 @@ subprojects {
                     name = repoName
                     url = repoUrl
                     credentials {
-                        username = deployUsername()
-                        password = deployPassword()
+                        username = deployUsername.get()
+                        password = deployPassword.get()
                     }
                 }
             }
@@ -230,8 +211,12 @@ subprojects {
     def actuallyPublish = !artifactSuffix.isEmpty() || suffixedArtifactNames.contains(project.name)
     // println 'XXXXXX Actually publish? ' + actuallyPublish + ' project ' + project.name + ' ' + '!artifactSuffix.isEmpty() ' + !artifactSuffix.isEmpty()
     if (!actuallyPublish) {
-        tasks.withType(PublishToMavenRepository).configureEach { it.enabled = false }
-        tasks.withType(PublishToMavenLocal).configureEach { it.enabled = false }
+        tasks.withType(PublishToMavenRepository).configureEach {
+            it.enabled = false
+        }
+        tasks.withType(PublishToMavenLocal).configureEach {
+            it.enabled = false
+        }
     }
 
     task uploadPublished {
@@ -246,13 +231,13 @@ subprojects {
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
-task aggregateJavadoc(type: Javadoc) {
+tasks.register('aggregateJavadoc', Javadoc) {
     dependsOn configurations.javadoc
-    group 'Documentation'
-    description 'Build the aggregated JavaDocs for all modules'
+    group = 'Documentation'
+    description = 'Build the aggregated JavaDocs for all modules'
 
-    maxMemory '512m'
-    destinationDir file("${buildDir}/documentation/javadocs")
+    maxMemory = '512m'
+    destinationDir = file("${buildDir}/documentation/javadocs")
 
     def tapestryStylesheet = file('src/javadoc/stylesheet7.css')
     int thisYear = java.time.Year.now().getValue()
@@ -322,7 +307,7 @@ task aggregateJavadoc(type: Javadoc) {
     }
 }
 
-task coffeeScriptDocs(type: Exec) {
+tasks.register('coffeeScriptDocs', Exec) {
     group 'Documentation'
     description 'Build docco documentation for all CoffeeScript sources'
     dependsOn project(':tapestry-core').tasks.preprocessCoffeeScript
@@ -343,13 +328,12 @@ task coffeeScriptDocs(type: Exec) {
     sources += project(':tapestry-core').tasks.preprocessCoffeeScript.outputs.files.asFileTree
 
     // Needs to be installed via 'npm install -g docco@0.6.3'
-    executable isWindows() ? 'docco.cmd' : 'docco'
+    executable TapestryBuildLogic.isWindows() ? 'docco.cmd' : 'docco'
     args '--output', outputDir
     args sources.files.sort({ a, b ->
         a.name.compareTo b.name
     })
 }
-
 
 
 dependencies {
@@ -358,7 +342,7 @@ dependencies {
     }
 }
 
-task combinedJacocoReport(type:JacocoReport){
+tasks.register('combinedJacocoReport', JacocoReport) {
     def excludedProjects = [
         'quickstart',
         'beanmodel',
@@ -396,7 +380,7 @@ task combinedJacocoReport(type:JacocoReport){
     }
 }
 
-task continuousIntegration {
+tasks.register('continuousIntegration') {
     group = 'Verification'
     description 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
 
@@ -407,7 +391,7 @@ task continuousIntegration {
 }
 
 
-task zippedSources(type: Zip) {
+tasks.register('zippedSources', Zip) {
     description "Creates a combined Zip file of all sub-project's sources"
     group 'Release artifact'
 
@@ -432,7 +416,7 @@ task zippedSources(type: Zip) {
     exclude '**/test-output/**'  // Left around by TestNG sometimes
 }
 
-task zippedApidoc(type: Zip) {
+tasks.register('zippedApidoc', Zip) {
     dependsOn aggregateJavadoc
     description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
     group 'Release artifact'
@@ -461,7 +445,7 @@ task zippedApidoc(type: Zip) {
     }
 }
 
-task zippedBinaries(type: Zip) {
+tasks.register('zippedBinaries', Zip) {
     description 'Zip archive of binaries of each sub-project'
     // TODO: Plus dependencies?
     group 'Release artifact'
@@ -487,8 +471,7 @@ task zippedBinaries(type: Zip) {
         include '*.txt'
     }
 
-    subprojects.each {
-        sub ->
+    subprojects.each { sub ->
         from(sub.projectDir) {
             include '*.txt'
             into sub.name
@@ -512,18 +495,12 @@ if (canDeploy) {
         upload.extendsFrom archives, signatures
     }
 
-    task generateMD5Checksums(type: GenMD5) {
+    task generateChecksums(type: GenerateChecksums) {
         group 'Release artifact'
-        description 'Creates MD5 checksums for archives of source and JavaDoc'
-        source tasks.withType(Zip)
-        outputDir "${buildDir}/md5"
-    }
+        description 'Creates MD5/SHA256 checksums for archives of source and JavaDoc'
 
-    task generateSHA256Checksums(type: GenSHA256) {
-        group 'Release artifact'
-        description 'Creates SHA-256 checksums for archives of source and JavaDoc'
         source tasks.withType(Zip)
-        outputDir "${buildDir}/sha256"
+        outputDir = file("${buildDir}/checksums")
     }
 
     // This requires that you have the apacheArchivesFolder property configured in your
@@ -540,33 +517,24 @@ if (canDeploy) {
     // there will publish them to http://www.apache.org/dist/tapestry ... and from there
     // to all Apache mirrors (after about a 24 hour delay).
 
-    task copyArchives(type: Copy) {
+    tasks.register('copyArchives', Copy) {
         group 'Release artifact'
         description 'Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)'
 
-        destinationDir file(archiveDeployFolder())
+        destinationDir file(archiveDeployFolder.get())
 
-        from generateMD5Checksums
-        from generateSHA256Checksums
+        from tasks.generateChecksums
         from configurations.uploads.allArtifacts.files
     }
 
-    task generateRelease {
+    tasks.register('generateRelease') {
         dependsOn subprojects.assemble, subprojects.uploadPublished, subprojects.publish, copyArchives
         group 'Release artifact'
         description 'Generates and uploads a final release to Apache Nexus and copies archives for deployment'
     }
 }
 
-boolean isSnapshot() {
-    project.version.contains('SNAPSHOT')
-}
-
-boolean isWindows() {
-    System.properties['os.name'].toLowerCase().contains('windows')
-}
-
-task updateBootstrap {
+tasks.register('updateBootstrap') {
     doLast {
         def bootstrapVersion = '3.3.7'
         def target = new File(temporaryDir, 'bootstrap.zip')
