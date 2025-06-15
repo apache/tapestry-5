@@ -38,7 +38,7 @@ hamcrestCore = "1.3"
 json = "20140107"
 xmlApis = "1.4.01"
 guice = "3.0"
-groovy = "3.0.13"
+groovy = "4.0.27"
 ant-jsch = "1.8.2"
 
 # TESTING
@@ -47,7 +47,7 @@ junit5 = "5.10.2"
 junit4 = "4.13.2"
 testng = "7.5.1"
 easymock = "5.4.0"
-spock = "2.3-groovy-3.0"
+spock = "2.3-groovy-4.0"
 geb = "2.0"
 webdrivermanager = "5.3.1"
 selenium = "4.5.0"
@@ -100,9 +100,9 @@ guice = { module = "com.google.inject:guice", version.ref = "guice" }
 ant-jsch = { module = "org.apache.ant:ant-jsch", version.ref = "ant-jsch" }
 
 # GROOVY
-groovy-core = { group = "org.codehaus.groovy", name = "groovy", version.ref = "groovy" }
-groovy-json = { group = "org.codehaus.groovy", name = "groovy-json", version.ref = "groovy" }
-groovy-nio = { group = "org.codehaus.groovy", name = "groovy-nio", version.ref = "groovy" }
+groovy-core = { group = "org.apache.groovy", name = "groovy", version.ref = "groovy" }
+groovy-json = { group = "org.apache.groovy", name = "groovy-json", version.ref = "groovy" }
+groovy-nio = { group = "org.apache.groovy", name = "groovy-nio", version.ref = "groovy" }
 
 # BOM
 
