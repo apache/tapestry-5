@@ -28,7 +28,8 @@ clean.delete generateGrammarSource.outputDirectory
 
 compileJava {
     dependsOn generateGrammarSource
-    options.fork(memoryMaximumSize: '512m')
+    options.fork = true
+    options.forkOptions.memoryMaximumSize = '512M'
 }
 
 tasks.named('sourcesJar') {

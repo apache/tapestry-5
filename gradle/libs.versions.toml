@@ -39,6 +39,7 @@ json = "20140107"
 xmlApis = "1.4.01"
 guice = "3.0"
 groovy = "3.0.13"
+ant-jsch = "1.8.2"
 
 # TESTING
 slf4j-simple = "2.0.17"
@@ -96,6 +97,7 @@ hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest
 json = { module = "org.json:json", version.ref = "json" }
 xml-apis = { module = "xml-apis:xml-apis", version.ref = "xmlApis" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
+ant-jsch = { module = "org.apache.ant:ant-jsch", version.ref = "ant-jsch" }
 
 # GROOVY
 groovy-core = { group = "org.codehaus.groovy", name = "groovy", version.ref = "groovy" }

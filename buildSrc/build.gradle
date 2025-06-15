@@ -14,5 +14,7 @@ dependencies {
         exclude module: 'gmaven-runtime-1.7'
         exclude module: 'less4j'
     }
+    implementation 'org.apache.ant:ant-jsch:1.8.2'
+
     gradleApi()
 }

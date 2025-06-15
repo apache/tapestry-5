@@ -1,0 +1,15 @@
+import t5build.SshTask
+
+// This configuration will hold the ant-jsch.jar at runtime
+configurations {
+    sshAntTask
+}
+
+dependencies {
+    sshAntTask libs.ant.jsch
+}
+
+// Configure all SshTask instances to use the files from the configuration
+tasks.withType(SshTask).configureEach {
+    it.sshAntClasspath = configurations.sshAntTask
+}
