@@ -63,6 +63,7 @@ import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
+import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -513,7 +514,7 @@ public class JavaScriptModule
     }
     
     @Contribute(EsModuleManager.class)
-    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleConfigurationCallback> configuration,
+    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleManagerContribution> configuration,
                                                         LocalizationSetter localizationSetter,
                                                         ComponentMessagesSource messagesSource,
                                                         ResourceChangeTracker resourceChangeTracker,
@@ -531,7 +532,7 @@ public class JavaScriptModule
             
         };
         
-        configuration.add("ApplicationCatalog", callback);
+        configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
         
     }
     
