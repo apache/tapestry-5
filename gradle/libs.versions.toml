@@ -15,10 +15,10 @@ jakartaXmlBindApi = "2.3.2"
 
 # APACHE COMMONS
 
-commonsCodec = "1.13"
-commonsIo = "2.17.0"
+commonsCodec = "1.18.0"
+commonsIo = "2.19.0"
 commonsLang = "3.17.0"
-commonsLogging = "1.1.3"
+commonsLogging = "1.3.5"
 commonsText = "1.13.1"
 
 # HIBERNATE
