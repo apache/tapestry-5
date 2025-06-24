@@ -23,6 +23,7 @@ import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.mixins.TriggerFragment;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.Environment;
@@ -122,9 +123,12 @@ public class FormFragment implements ClientElement
 
     @Inject
     private Environment environment;
-
+    
     @Environmental
     private JavaScriptSupport javascriptSupport;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     private ComponentResources resources;
@@ -177,7 +181,7 @@ public class FormFragment implements ClientElement
 
             if (!alwaysSubmit)
             {
-                javascriptSupport.require("t5/core/form-fragment").invoke("hide").with(clientId);
+                requireJsModeHelper.importModule("t5/core/form-fragment").invoke("hide").with(clientId);
             }
         }
 

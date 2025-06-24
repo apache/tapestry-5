@@ -18,6 +18,7 @@ import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -63,9 +64,12 @@ public class ProgressiveDisplay
 
     @Inject
     private ComponentResources resources;
-
+    
     @Environmental
-    private JavaScriptSupport jsSupport;
+    private JavaScriptSupport javaScriptSupport;
+
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Environmental
     private TrackableComponentEventCallback eventCallback;
@@ -91,7 +95,7 @@ public class ProgressiveDisplay
 
     Block beginRender(MarkupWriter writer)
     {
-        String clientId = jsSupport.allocateClientId(resources);
+        String clientId = javaScriptSupport.allocateClientId(resources);
         String elementName = resources.getElementName("div");
 
         writer.element(elementName, "id", clientId, "data-container-type", "zone");
@@ -99,7 +103,7 @@ public class ProgressiveDisplay
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
 
-        jsSupport.require("t5/core/zone").invoke("deferredZoneUpdate").with(clientId, link.toURI());
+        requireJsModeHelper.importModule("t5/core/zone").invoke("deferredZoneUpdate").with(clientId, link.toURI());
 
         // Return the placeholder for the full content. That will render instead of the main body
         // of the component.

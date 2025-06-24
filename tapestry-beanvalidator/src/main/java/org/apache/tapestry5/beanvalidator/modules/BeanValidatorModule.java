@@ -14,6 +14,7 @@
 package org.apache.tapestry5.beanvalidator.modules;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.beanvalidator.*;
 import org.apache.tapestry5.commons.Configuration;
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -21,6 +22,7 @@ import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.internal.beanvalidator.*;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
@@ -42,6 +44,7 @@ import java.util.Map;
 public class BeanValidatorModule
 {
 
+    private static final String VALIDATION_MODULE_NAME = "t5/core/validation";
     private static final String MODULE_NAME = "t5/beanvalidator/beanvalidator-validation";
 
     public static void bind(final ServiceBinder binder)
@@ -92,14 +95,20 @@ public class BeanValidatorModule
     }
 
     public static void contributeClientConstraintDescriptorSource(final JavaScriptSupport javaScriptSupport,
-                                                                  final Configuration<ClientConstraintDescriptor> configuration)
+                                                                  final Configuration<ClientConstraintDescriptor> configuration,
+                                                                  final @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
+        
+        final Runnable importJs = requireJsEnabled ?
+                () -> javaScriptSupport.require(VALIDATION_MODULE_NAME) :
+                () -> javaScriptSupport.importEsModule(VALIDATION_MODULE_NAME);
+        
         configuration.add(new BaseCCD(Max.class, "value")
         {
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                importJs.run();
                 writer.attributes(
                         "data-validate", true,
                         "data-validate-max", attributes.get("value"),
@@ -113,7 +122,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                importJs.run();
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-validate-min", attributes.get("value"),
@@ -127,7 +136,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                importJs.run();
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-optionality", "required",
@@ -140,7 +149,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require(MODULE_NAME);
+                importJs.run();
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-optionality", "prohibited",
@@ -153,7 +162,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require(MODULE_NAME);
+                importJs.run();
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-validate-regexp", attributes.get("regexp"),
@@ -166,7 +175,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require(MODULE_NAME);
+                importJs.run();
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
                         "data-range-message", message);
@@ -192,7 +201,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                importJs.run();
 
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,
@@ -206,7 +215,7 @@ public class BeanValidatorModule
             @Override
             public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
-                javaScriptSupport.require("t5/core/validation");
+                importJs.run();
 
                 writer.attributes(
                         DataConstants.VALIDATION_ATTRIBUTE, true,

@@ -22,12 +22,14 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
@@ -77,11 +79,14 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private String focusFieldId;
 
     private Map<String, String> libraryURLToStackName, moduleNameToStackName;
+    
+    private final boolean requireJsEnabled;
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-                                 JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook)
+                                 JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook,
+                                 @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
-        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, suppressCoreStylesheetsHook);
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, suppressCoreStylesheetsHook, requireJsEnabled);
     }
 
     /**
@@ -105,7 +110,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
      */
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
                                  JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode,
-                                 BooleanHook suppressCoreStylesheetsHook)
+                                 BooleanHook suppressCoreStylesheetsHook,
+                                 @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
@@ -113,6 +119,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         this.stackPathConstructor = stackPathConstructor;
         this.partialMode = partialMode;
         this.suppressCoreStylesheetsHook = suppressCoreStylesheetsHook;
+        this.requireJsEnabled = requireJsEnabled;
 
         // In partial mode, assume that the infrastructure stack is already present
         // (from the original page render).
@@ -465,6 +472,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback) 
     {
         linker.addEsModuleConfigurationCallback(callback);
+    }
+
+    @Override
+    public boolean isRequireJsEnabled() 
+    {
+        return requireJsEnabled;
     }
 
 }

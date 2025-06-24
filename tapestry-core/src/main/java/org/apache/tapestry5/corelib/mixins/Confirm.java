@@ -17,6 +17,8 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
@@ -47,8 +49,8 @@ public class Confirm
     @Parameter("false")
     private boolean disabled;
 
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
     
     /*
      * The CSS class for the ok button
@@ -72,7 +74,7 @@ public class Confirm
     {
         if (!disabled)
         {
-            javaScriptSupport.require("t5/core/confirm-click");
+            requireJsModeHelper.importModule("t5/core/confirm-click");
 
             writer.attributes("data-confirm-title", title,
                     "data-confirm-message", message,

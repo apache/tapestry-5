@@ -29,6 +29,8 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelperImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.AddBrowserCompatibilityStyles;
 import org.apache.tapestry5.internal.services.javascript.ConfigureHTMLElementFilter;
@@ -100,6 +102,7 @@ public class JavaScriptModule
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Internal.class).withId("InternalJavaScriptStack");
+        binder.bind(RequireJsModeHelper.class, RequireJsModeHelperImpl.class);
     }
 
     /**
@@ -312,7 +315,8 @@ public class JavaScriptModule
     public void exposeJavaScriptSupportForFullPageRenders(OrderedConfiguration<MarkupRendererFilter> configuration,
                                                           final JavaScriptStackSource javascriptStackSource,
                                                           final JavaScriptStackPathConstructor javascriptStackPathConstructor,
-                                                          final Request request)
+                                                          final Request request,
+                                                          @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) final boolean requireJsEnabled)
     {
 
         final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
@@ -324,7 +328,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, suppressCoreStylesheetsHook);
+                        javascriptStackPathConstructor, suppressCoreStylesheetsHook, requireJsEnabled);
 
                 environment.push(JavaScriptSupport.class, support);
 
@@ -353,7 +357,9 @@ public class JavaScriptModule
 
                                                             final JavaScriptStackPathConstructor javascriptStackPathConstructor,
 
-                                                            final Request request)
+                                                            final Request request,
+                                                            
+                                                            @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) final boolean requireJsEnabled)
     {
         final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
 
@@ -379,7 +385,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true, suppressCoreStylesheetsHook);
+                        javascriptStackPathConstructor, idAllocator, true, suppressCoreStylesheetsHook, requireJsEnabled);
 
                 environment.push(JavaScriptSupport.class, support);
 

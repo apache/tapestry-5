@@ -49,7 +49,14 @@ public final class MinLength extends AbstractValidator<Integer, String>
     {
         if (formSupport.isClientValidationEnabled())
         {
-            javaScriptSupport.require("t5/core/validation");
+            if (javaScriptSupport.isRequireJsEnabled())
+            {
+                javaScriptSupport.require("t5/core/validation");
+            }
+            else
+            {
+                javaScriptSupport.importEsModule("t5/core/validation");
+            }
 
             writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-min-length", constraintValue.toString(),

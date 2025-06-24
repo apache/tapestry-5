@@ -12,18 +12,30 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import java.util.Collection;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentParameterConstants;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
-
-import java.util.Collection;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -160,7 +172,6 @@ public class Palette extends AbstractField
      * @since 5.2.0
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
-    @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
     @Inject
@@ -169,6 +180,9 @@ public class Palette extends AbstractField
 
     @Inject
     private DeprecationWarning deprecationWarning;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     void pageLoaded() {
         deprecationWarning.ignoredComponentParameters(resources, "select", "moveUp", "moveDown", "deselect");
@@ -247,7 +261,7 @@ public class Palette extends AbstractField
 
         // The client side just need to know the id of the selected (right column) select;
         // it can take it from there.
-        javaScriptSupport.require("t5/core/palette").with(clientId);
+        requireJsModeHelper.importModule("t5/core/palette").with(clientId);
     }
 
     /**

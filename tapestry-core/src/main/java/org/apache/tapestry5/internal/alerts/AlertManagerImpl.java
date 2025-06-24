@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.internal.alerts;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.*;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.ajax.JavaScriptCallback;
@@ -32,12 +35,17 @@ public class AlertManagerImpl implements AlertManager
     private final AjaxResponseRenderer ajaxResponseRenderer;
 
     private final PerThreadValue<Boolean> needAlertStorageCleanup;
+    
+    private final boolean requireJsEnabled;
 
-    public AlertManagerImpl(ApplicationStateManager asm, Request request, AjaxResponseRenderer ajaxResponseRenderer, PerthreadManager perThreadManager)
+    public AlertManagerImpl(ApplicationStateManager asm, Request request, 
+            AjaxResponseRenderer ajaxResponseRenderer, PerthreadManager perThreadManager,
+            @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
         this.asm = asm;
         this.request = request;
         this.ajaxResponseRenderer = ajaxResponseRenderer;
+        this.requireJsEnabled = requireJsEnabled;
 
         needAlertStorageCleanup = perThreadManager.createValue();
     }
@@ -89,7 +97,15 @@ public class AlertManagerImpl implements AlertManager
         {
             public void run(JavaScriptSupport javascriptSupport)
             {
-                javascriptSupport.require("t5/core/alert").with(alert.toJSON());
+                final JSONObject json = alert.toJSON();
+                if (requireJsEnabled)
+                {
+                    javascriptSupport.require("t5/core/alert").with(json);
+                }
+                else
+                {
+                    javascriptSupport.importEsModule("t5/core/alert").with(json);
+                }
             }
         });
 

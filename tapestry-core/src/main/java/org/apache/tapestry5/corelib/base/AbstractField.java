@@ -22,6 +22,7 @@ import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.FormControlNameManager;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -154,6 +155,9 @@ public abstract class AbstractField implements Field
 
     @Environmental
     protected JavaScriptSupport javaScriptSupport;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Environmental
     protected ValidationTracker validationTracker;
@@ -296,7 +300,7 @@ public abstract class AbstractField implements Field
 
         if (error != null)
         {
-            javaScriptSupport.require("t5/core/fields").invoke("showValidationError").with(assignedClientId, error);
+            requireJsModeHelper.importModule("t5/core/fields").invoke("showValidationError").with(assignedClientId, error);
         }
     }
 

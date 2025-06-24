@@ -24,6 +24,7 @@ import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentOverride;
@@ -79,7 +80,7 @@ public class Errors
     private String closeButtonCssClass;
     
     @Inject
-    private JavaScriptSupport javaScriptSupport;
+    private RequireJsModeHelper requireJsModeHelper;
 
     boolean beginRender(MarkupWriter writer)
     {
@@ -146,7 +147,7 @@ public class Errors
      * @see ComponentOverride
      */
     protected void setUpJavaScript() {
-        javaScriptSupport.require("bootstrap/alert");
+        requireJsModeHelper.importModule("bootstrap/alert");
     }
     
 }
