@@ -14,6 +14,7 @@ package org.apache.tapestry5.modules;
 
 import java.util.Locale;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
@@ -48,8 +49,10 @@ import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentOverride;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.Environment;
@@ -542,6 +545,58 @@ public class JavaScriptModule
         
     }
     
+    @Contribute(EsModuleManager.class)
+    public static void setupBaseEsModules(
+            OrderedConfiguration<EsModuleManagerContribution> configuration,
+            @Symbol(SymbolConstants.BOOTSTRAP_ROOT) String bootstrapRoot,
+            Compatibility compatibility,
+            AssetSource assetSource)
+    {
+        
+        
+        if (compatibility.enabled(Trait.BOOTSTRAP_3))
+        {
+            final String[] modules = new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip", "transition", "popover"};
+            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+        }
+        if (compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            final String[] modules = new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip", "bootstrap-util", "popper"};
+
+            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+        }
+
+        // Just the minimum to have alerts and AJAX validation working when Bootstrap
+        // is completely disabled
+        if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            final String[] modules = new String[]{"transition", "collapse", "alert", "dropdown"};
+            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+        }
+
+    }
+
+    private static void addEsBootstrap3Modules(
+            OrderedConfiguration<EsModuleManagerContribution> configuration, 
+            String[] modules, 
+            String bootstrapRoot,
+            AssetSource assetSource) 
+    {
+        for (String module : modules) 
+        {
+            final String moduleId = "bootstrap/" + module;
+            final Resource resource = assetSource.getClasspathAsset(bootstrapRoot + "/" + module + ".js")
+                    .getResource();
+            if (resource.exists())
+            {
+                final String url = resource.toURL().toString();
+                configuration.add(moduleId, EsModuleManagerContribution.base(
+                        c -> EsModuleConfigurationCallback.setImport(c, moduleId, url)));
+            }
+        }
+    }
 
     /**
      * Contributes 'ConfigureHTMLElement', which writes the attributes into the HTML tag to describe locale, etc.
