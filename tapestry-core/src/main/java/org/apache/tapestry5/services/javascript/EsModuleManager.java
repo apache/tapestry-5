@@ -67,12 +67,16 @@ public interface EsModuleManager
         private final EsModuleConfigurationCallback callback;
         
         private final boolean isBase;
+        
+        // In case this is an ES shim contribution.
+        private final EsShim esWrapper;
 
-        EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
+        private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase, EsShim esWrapper) 
         {
             super();
             this.callback = callback;
             this.isBase = isBase;
+            this.esWrapper = esWrapper;
         }
         
         /**
@@ -83,9 +87,26 @@ public interface EsModuleManager
          */
         public static EsModuleManagerContribution base(EsModuleConfigurationCallback callback) 
         {
-            return new EsModuleManagerContribution(callback, true);
+            return new EsModuleManagerContribution(callback, true, null);
         }
 
+        /**
+         * Creates a base contribution (one that contributes a callback used 
+         * when creating the base import map to be used for all requests)
+         * which is also an ES module shim. 
+         * @param esWrapper an {@linkplain EsShim} instance. It cannot be null.
+         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+         * @return a corresponding {@linkplain EsModuleManagerContribution}.
+         */
+        public static EsModuleManagerContribution base(EsShim esWrapper, EsModuleConfigurationCallback callback) 
+        {
+            if (esWrapper == null)
+            {
+                throw new IllegalArgumentException("Parameter esWrapper cannot be null");
+            }
+            return new EsModuleManagerContribution(callback, true, esWrapper);
+        }        
+        
         /**
          * Creates a global per-request contribution (one that contributes a callback used 
          * in all requests after the callbacks added through 
@@ -96,7 +117,7 @@ public interface EsModuleManager
          */
         public static EsModuleManagerContribution globalPerRequest(EsModuleConfigurationCallback callback) 
         {
-            return new EsModuleManagerContribution(callback, false);
+            return new EsModuleManagerContribution(callback, false, null);
         }
         
         public EsModuleConfigurationCallback getCallback() {
@@ -105,6 +126,10 @@ public interface EsModuleManager
         
         public boolean isBase() {
             return isBase;
+        }
+        
+        public EsShim getEsWrapper() {
+            return esWrapper;
         }
 
     }

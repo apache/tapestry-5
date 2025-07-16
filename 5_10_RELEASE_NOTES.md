@@ -17,6 +17,7 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 * `org.apache.tapestry5.services.javascript.ImportPlacement`
 * `org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback`
 * `org.apache.tapestry5.services.javascript.EsModuleManager`
+* `org.apache.tapestry5.services.javascript.ESWrapper`
 
 # Non-backward-compatible changes (but that probably won't cause problems)
 

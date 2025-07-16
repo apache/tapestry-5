@@ -73,7 +73,7 @@ public class EsModuleManagerImpl implements EsModuleManager
     private final List<EsModuleConfigurationCallback> baseCallbacks;
     
     private final List<EsModuleConfigurationCallback> globalPerRequestCallbacks;
-
+    
     public EsModuleManagerImpl(
                              List<EsModuleManagerContribution> contributions,
                              AssetSource assetSource,
@@ -197,7 +197,7 @@ public class EsModuleManagerImpl implements EsModuleManager
             
             init = (EsModuleInitializationImpl) i;
             final String moduleId = init.getModuleId();
-            // Making sure the user doesn't shoot heir own foot
+            // Making sure the user doesn't shoot their own foot
             final String url = cache.get(moduleId);
             if (url == null)
             {

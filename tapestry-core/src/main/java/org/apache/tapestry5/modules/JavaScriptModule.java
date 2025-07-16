@@ -36,6 +36,7 @@ import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.AddBrowserCompatibilityStyles;
 import org.apache.tapestry5.internal.services.javascript.ConfigureHTMLElementFilter;
 import org.apache.tapestry5.internal.services.javascript.EsModuleManagerImpl;
+import org.apache.tapestry5.internal.services.javascript.EsShimDispatcher;
 import org.apache.tapestry5.internal.services.javascript.Internal;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
@@ -66,6 +67,7 @@ import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
+import org.apache.tapestry5.services.javascript.EsShim;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
@@ -106,6 +108,7 @@ public class JavaScriptModule
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Internal.class).withId("InternalJavaScriptStack");
         binder.bind(RequireJsModeHelper.class, RequireJsModeHelperImpl.class);
+        binder.bind(EsShimDispatcher.class);
     }
 
     /**
@@ -289,7 +292,8 @@ public class JavaScriptModule
                                               @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
                                               String modulePathPrefix,
                                               @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                                              String assetPathPrefix)
+                                              String assetPathPrefix,
+                                              EsShimDispatcher esShimDispatcher)
     {
         configuration.add("Modules",
                 new ModuleDispatcher(moduleManager, resourceStreamer, tracker, pathConstructor,
@@ -302,6 +306,9 @@ public class JavaScriptModule
                     javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, modulePathPrefix,
                     assetPathPrefix, true),
                 "after:Modules", "before:ComponentEvent");
+        
+        configuration.add("EsShims", esShimDispatcher, "after:Asset", "before:ComponentEvent");
+
     }
 
     /**
@@ -544,56 +551,163 @@ public class JavaScriptModule
         configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
         
     }
-    
-    @Contribute(EsModuleManager.class)
-    public static void setupBaseEsModules(
-            OrderedConfiguration<EsModuleManagerContribution> configuration,
-            @Symbol(SymbolConstants.BOOTSTRAP_ROOT) String bootstrapRoot,
+
+    @Contribute(EsShimDispatcher.class)
+    public static void setupBaseEsShims(
+            MappedConfiguration<String, Resource> configuration,
+            @Path("${tapestry.asset.root}/bootstrap/js/transition.js")
+            Resource transition,
+            @Path("${tapestry.asset.root}/bootstrap4/js/bootstrap-util.js")
+            Resource bootstrapUtil,
             Compatibility compatibility,
-            AssetSource assetSource)
+            AssetSource assetSource,
+            EsShimDispatcher esShimDispatcher)
     {
         
+//        configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
         
         if (compatibility.enabled(Trait.BOOTSTRAP_3))
         {
             final String[] modules = new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
-                    "scrollspy", "tab", "tooltip", "transition", "popover"};
-            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+                    "scrollspy", "tab", "tooltip"};
+            addBootstrap3EsShims(configuration, modules, transition);
+
+            Resource popover = transition.forFile("popover.js");
+
+            final String popoverModuleName = "bootstrap/popover";
+            configuration.add(popoverModuleName,
+                    EsModuleManagerContribution.base(
+                            new EsShim(popover).importModule("bootstrap/tooltip"),
+                            createCallback(popoverModuleName, esShimDispatcher)));
         }
+
         if (compatibility.enabled(Trait.BOOTSTRAP_4))
         {
-            final String[] modules = new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
-                    "scrollspy", "tab", "tooltip", "bootstrap-util", "popper"};
-
-            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+            final String bootstrapUtilModuleName = "bootstrap/bootstrap-util";
+            configuration.add(bootstrapUtilModuleName, 
+                    EsModuleManagerContribution.base(
+                            new EsShim(bootstrapUtil), 
+                            createCallback(bootstrapUtilModuleName, esShimDispatcher)));
+            
+            final String popperModuleName = "bootstrap/popper";
+            final Resource popper = bootstrapUtil.forFile("popper.js");
+            configuration.add(popperModuleName, 
+                    EsModuleManagerContribution.base(
+                            new EsShim(popper), 
+                            createCallback(popperModuleName, esShimDispatcher)));
+            
+            for (String name : new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip"})
+            {
+                Resource lib = bootstrapUtil.forFile(name + ".js");
+                if (lib.exists())
+                {
+                    final String moduleName = "bootstrap/" + name;
+                    configuration.add(moduleName, 
+                            EsModuleManagerContribution.base(
+                                    new EsShim(lib)
+                                        .importModule(bootstrapUtilModuleName)
+                                        .importModule(popperModuleName), 
+                                    createCallback(popperModuleName, esShimDispatcher)));
+                }
+            }
         }
 
         // Just the minimum to have alerts and AJAX validation working when Bootstrap
         // is completely disabled
         if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
         {
-            final String[] modules = new String[]{"transition", "collapse", "alert", "dropdown"};
-            addEsBootstrap3Modules(configuration, modules, bootstrapRoot, assetSource);
+            final String[] modules = new String[]{"alert", "dropdown", "collapse"};
+            addBootstrap3EsShims(configuration, modules, transition);
         }
-
     }
 
-    private static void addEsBootstrap3Modules(
-            OrderedConfiguration<EsModuleManagerContribution> configuration, 
+//    @Contribute(EsModuleManager.class)
+//    public static void setupBaseEsModules(
+//            OrderedConfiguration<EsModuleManagerContribution> configuration,
+//            @Path("${tapestry.asset.root}/bootstrap/js/transition.js")
+//            Resource transition,
+//            @Path("${tapestry.asset.root}/bootstrap4/js/bootstrap-util.js")
+//            Resource bootstrapUtil,
+//            Compatibility compatibility,
+//            AssetSource assetSource,
+//            EsShimDispatcher esShimDispatcher)
+//    {
+//        
+////        configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
+//        
+//        if (compatibility.enabled(Trait.BOOTSTRAP_3))
+//        {
+//            final String[] modules = new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
+//                    "scrollspy", "tab", "tooltip"};
+//            addBootstrap3EsShims(configuration, modules, transition);
+//
+//            Resource popover = transition.forFile("popover.js");
+//
+//            final String popoverModuleName = "bootstrap/popover";
+//            configuration.add(popoverModuleName,
+//                    EsModuleManagerContribution.base(
+//                            new EsShim(popover).importModule("bootstrap/tooltip"),
+//                            createCallback(popoverModuleName, esShimDispatcher)));
+//        }
+//
+//        if (compatibility.enabled(Trait.BOOTSTRAP_4))
+//        {
+//            final String bootstrapUtilModuleName = "bootstrap/bootstrap-util";
+//            configuration.add(bootstrapUtilModuleName, 
+//                    EsModuleManagerContribution.base(
+//                            new EsShim(bootstrapUtil), 
+//                            createCallback(bootstrapUtilModuleName, esShimDispatcher)));
+//            
+//            final String popperModuleName = "bootstrap/popper";
+//            final Resource popper = bootstrapUtil.forFile("popper.js");
+//            configuration.add(popperModuleName, 
+//                    EsModuleManagerContribution.base(
+//                            new EsShim(popper), 
+//                            createCallback(popperModuleName, esShimDispatcher)));
+//            
+//            for (String name : new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
+//                    "scrollspy", "tab", "tooltip"})
+//            {
+//                Resource lib = bootstrapUtil.forFile(name + ".js");
+//                if (lib.exists())
+//                {
+//                    final String moduleName = "bootstrap/" + name;
+//                    configuration.add(moduleName, 
+//                            EsModuleManagerContribution.base(
+//                                    new EsShim(lib)
+//                                        .importModule(bootstrapUtilModuleName)
+//                                        .importModule(popperModuleName), 
+//                                    createCallback(popperModuleName, esShimDispatcher)));
+//                }
+//            }
+//        }
+//
+//        // Just the minimum to have alerts and AJAX validation working when Bootstrap
+//        // is completely disabled
+//        if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
+//        {
+//            final String[] modules = new String[]{"alert", "dropdown", "collapse"};
+//            addBootstrap3EsShims(configuration, modules, transition);
+//        }
+//    }
+
+    private static EsModuleConfigurationCallback createCallback(final String moduleName, EsShimDispatcher esShimDispatcher) {
+        return c -> EsModuleConfigurationCallback.setImport(c, moduleName, esShimDispatcher.getUrl(moduleName));
+    }
+
+    private static void addBootstrap3EsShims(
+            MappedConfiguration<String, Resource> configuration, 
             String[] modules, 
-            String bootstrapRoot,
-            AssetSource assetSource) 
+            Resource reference) 
     {
         for (String module : modules) 
         {
             final String moduleId = "bootstrap/" + module;
-            final Resource resource = assetSource.getClasspathAsset(bootstrapRoot + "/" + module + ".js")
-                    .getResource();
+            final Resource resource = reference.forFile(module + ".js");
             if (resource.exists())
             {
-                final String url = resource.toURL().toString();
-                configuration.add(moduleId, EsModuleManagerContribution.base(
-                        c -> EsModuleConfigurationCallback.setImport(c, moduleId, url)));
+                configuration.add(moduleId, resource);
             }
         }
     }
