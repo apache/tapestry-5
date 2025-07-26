@@ -1810,6 +1810,9 @@ public final class TapestryModule
 
                                          @Symbol(SymbolConstants.ENABLE_PAGELOADING_MASK)
                                          final boolean enablePageloadingMask,
+                                         
+                                         @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+                                         final boolean requireJsEnabled,
 
                                          final ValidationDecoratorFactory validationDecoratorFactory)
     {
@@ -1817,7 +1820,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, esModuleManager, omitGeneratorMeta, enablePageloadingMask, tapestryVersion);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, 
+                        esModuleManager, omitGeneratorMeta, enablePageloadingMask, 
+                        tapestryVersion, requireJsEnabled);
 
                 environment.push(DocumentLinker.class, linker);
 

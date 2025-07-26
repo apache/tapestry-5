@@ -63,6 +63,16 @@ public class StackExtension
     }
 
     /**
+     * Convenience for defining an ES_MODULE.
+     *
+     * @since 5.10.0
+     */
+    public static StackExtension esModule(String name)
+    {
+        return new StackExtension(StackExtensionType.ES_MODULE, name);
+    }
+
+    /**
      * Convenience for defining a STYLESHEET.
      *
      * @since 5.4

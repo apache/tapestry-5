@@ -20,6 +20,7 @@ import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
@@ -68,7 +69,6 @@ import org.slf4j.Logger;
  * @see FormFragment
  */
 @SupportsInformalParameters
-@Import(module = "t5/core/zone")
 public class Zone implements ClientBodyElement
 {
     /**
@@ -144,6 +144,9 @@ public class Zone implements ClientBodyElement
 
     @Inject
     private HiddenFieldLocationRules rules;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     private String clientId;
 
@@ -175,6 +178,9 @@ public class Zone implements ClientBodyElement
 
     void beginRender(MarkupWriter writer)
     {
+        
+        requireJsModeHelper.importModule("t5/core/zone");
+        
         clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
 
         Element e = writer.element(elementName,

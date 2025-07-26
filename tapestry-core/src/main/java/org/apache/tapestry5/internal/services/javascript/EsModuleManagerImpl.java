@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
@@ -31,15 +32,18 @@ import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONCollection;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 public class EsModuleManagerImpl implements EsModuleManager
 {
@@ -60,6 +64,8 @@ public class EsModuleManagerImpl implements EsModuleManager
     private final Set<String> extensions;
     
     private final AssetSource assetSource;
+    
+    private final List<EsModuleInitialization> coreStackInits;
 
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
@@ -74,6 +80,8 @@ public class EsModuleManagerImpl implements EsModuleManager
     
     private final List<EsModuleConfigurationCallback> globalPerRequestCallbacks;
     
+    private final String infraProvider;
+    
     public EsModuleManagerImpl(
                              List<EsModuleManagerContribution> contributions,
                              AssetSource assetSource,
@@ -82,14 +90,24 @@ public class EsModuleManagerImpl implements EsModuleManager
                              boolean compactJSON,
                              @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
                              boolean productionMode,
+                             @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                             String infraProvider,                             
                              ClasspathScanner classpathScanner,
-                             ResourceChangeTracker resourceChangeTracker)
+                             ResourceChangeTracker resourceChangeTracker,
+                             @Core JavaScriptStack javaScriptStack)
     {
         this.compactJSON = compactJSON;
         this.assetSource = assetSource;
         this.classpathScanner = classpathScanner;
         this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
+        this.infraProvider = infraProvider;
+        
+        final List<String> coreStackEsModules = javaScriptStack.getEsModules();
+        
+        coreStackInits = coreStackEsModules.stream()
+                .map(i -> new EsModuleInitializationImpl(i))
+                .collect(Collectors.toList());
         
         baseCallbacks = new ArrayList<>();
         globalPerRequestCallbacks = new ArrayList<>();
@@ -151,12 +169,22 @@ public class EsModuleManagerImpl implements EsModuleManager
             final Set<String> scan = classpathScanner.scan(CLASSPATH_ROOT, matcher);
             for (String file : scan) 
             {
-                String id = file.replace(CLASSPATH_ROOT, "");
-                id = id.substring(0, id.lastIndexOf('.'));
+                String moduleName = file.replace(CLASSPATH_ROOT, "");
+                moduleName = moduleName.substring(0, moduleName.lastIndexOf('.'));
+                
+                if (moduleName.startsWith("t5/core/t5-core-dom-"))
+                {
+                    // They're treated specially.
+                    continue;
+                }
+                else if (moduleName.equals("t5/core/dom"))
+                {
+                    file = file.replace("t5/core/dom", "t5/core/t5-core-dom-" + infraProvider);
+                }
                             
                 final Asset asset = assetSource.getClasspathAsset(file);
                 resourceChangeTracker.trackResource(asset.getResource());
-                imports.put(id, asset.toClientURL());
+                imports.put(moduleName, asset.toClientURL());
             }
         } catch (IOException e) 
         {
@@ -192,7 +220,11 @@ public class EsModuleManagerImpl implements EsModuleManager
         String functionName;
         Object[] arguments;
         
-        for (EsModuleInitialization i : inits) 
+        List<EsModuleInitialization> allInits = new ArrayList<>(coreStackInits.size() + inits.size());
+        allInits.addAll(coreStackInits);
+        allInits.addAll(inits);
+        
+        for (EsModuleInitialization i : allInits) 
         {
             
             init = (EsModuleInitializationImpl) i;
@@ -281,6 +313,22 @@ public class EsModuleManagerImpl implements EsModuleManager
         
     }
     
+    @Override
+    public void writeInitialization(Element body, List<String> libraryURLs) 
+    {
+
+        Element element = body.element("script", "type", "module");
+
+        element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, []);",
+                convert(libraryURLs)));
+    }
+    
+    private String convert(List<?> input)
+    {
+        return new JSONArray().putAll(input).toString(compactJSON);
+    }
+
+
     static String convertToJsFunctionParameters(Object[] arguments, boolean compactJSON)
     {
         String result;

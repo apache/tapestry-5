@@ -31,13 +31,10 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
   
 
 # Notes about Require.js disabled mode
-* When using Bootstrap 3, the `t5/bootstrap/*` modules had automatic dependency
-  management (for example, if you `bootstrap/tooltip`, `bootstrap/transition`
-  would automatically be included too through Require.js). This doesn't happen
-  when Require.js is disabled. So, for example, when importing `bootstrap/tooltip`,
-  you should import `bootstrap/trasition` first. Notice Bootstrap 3 JavaScript 
-  files don't have any module management code on it (Require.js nor ES modules)
-  
+* Underscore.js, jQuery and Require.js are not included in the default stack 
+  (i.e. the set of JavaScript files which are included in pages by default).
+  If you need to use Underscore.js or jQuery, they're automatically available for   
+  import as `underscore` and `jquery`, respectively.
 
 
 # Overall notes

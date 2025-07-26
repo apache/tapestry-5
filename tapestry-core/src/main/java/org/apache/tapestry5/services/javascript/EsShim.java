@@ -17,8 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.internal.util.VirtualResource;
@@ -29,7 +30,8 @@ import org.apache.tapestry5.internal.util.VirtualResource;
  *
  * @since 5.10.0
  */
-public class EsShim {
+public class EsShim 
+{
 
     /**
      * The underlying resource, usually a JavaScript library
@@ -41,9 +43,15 @@ public class EsShim {
      * the values being the respective parameter names for the module's factory
      * function.
      */
-    private final Map<String, String> importConfig = new LinkedHashMap<String, String>();
+    private final Map<String, String> importConfig = new HashMap<String, String>();
+    
+    /**
+     * The default export.
+     */
+    private String defaultExport;
 
-    public EsShim(final Resource resource) {
+    public EsShim(final Resource resource) 
+    {
         this.resource = resource;
     }
 
@@ -54,10 +62,11 @@ public class EsShim {
      *            the name of the required module, e.g. <code>jQuery</code>
      * @param variableName
      *            the module's corresponding variable name
-     * @return this ESWrapper for further configuration
+     * @return this EsShim for further configuration
      */
     public EsShim importModule(final String moduleName,
-            final String variableName) {
+            final String variableName) 
+    {
         importConfig.put(moduleName, variableName);
         return this;
     }
@@ -70,72 +79,104 @@ public class EsShim {
      * @param moduleName
      *            the name of the required module, e.g.
      *            <code>bootstrap/transition</code>
-     * @return this ESWrapper for further configuration
+     * @return this EsShim for further configuration
      */
-    public EsShim importModule(final String moduleName) {
+    public EsShim importModule(final String moduleName) 
+    {
         importConfig.put(moduleName, null);
+        return this;
+    }
+    
+    /**
+     * Defines the default export of this module.
+     * @param defaultExport the variable or expression to be the 
+     * default export of the module
+     * @return this EsShim for further configuration
+     */
+    public EsShim defaultExport(final String defaultExport)
+    {
+        this.defaultExport = defaultExport;
         return this;
     }
 
     /**
-     * Returns a virtual resource representing this wrapper.
+     * Returns a virtual resource representing this shim.
      * @return a {@linkplain Resource}.
      */
-    public Resource getResource() {
-        return new ESModuleWrapperResource(resource, importConfig);
+    public Resource getResource() 
+    {
+        return new ESModuleWrapperResource(resource, importConfig, defaultExport);
     }
 
     /**
-     * A virtual resource that wraps a plain JavaScript library as an AMD
+     * A virtual resource that wraps a plain JavaScript library as an ES
      * module.
-     *
      */
     private final static class ESModuleWrapperResource extends VirtualResource 
     {
         private final Resource resource;
         private final Map<String, String> importConfig;
+        private final String defaultExport;
 
         public ESModuleWrapperResource(final Resource resource,
-                final Map<String, String> importConfig) 
+                final Map<String, String> importConfig, 
+                final String defaultExport) 
         {
             this.resource = resource;
             this.importConfig = importConfig;
+            this.defaultExport = defaultExport;
         }
 
         @Override
         public InputStream openStream() throws IOException 
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder imports = new StringBuilder();
             
             for (String module : importConfig.keySet())
             {
                 final String variableName = importConfig.get(module);
-                sb.append("import ");
+                imports.append("import ");
                 if (variableName != null) 
                 {
-                    sb.append(variableName);
-                    sb.append(" from ");
+                    imports.append(variableName);
+                    imports.append(" from ");
                 }
-                sb.append("\"");
-                sb.append(module);
-                sb.append("\";\n");
+                imports.append("\"");
+                imports.append(module);
+                imports.append("\";\n");
             }
             
-            return new SequenceInputStream(toInputStream(sb), resource.openStream());
+            
+            // Vector since SequenceInputStream doesn't have a varargs constructor
+            // nor something better than an Enumeration when you have more than 
+            // 2 InputStreams to join.
+            Vector<InputStream> v = new Vector<>();
+            v.add(toInputStream(imports));
+            v.add(resource.openStream());
+            if (defaultExport != null)
+            {
+                v.add(toInputStream(String.format("\n export default %s;\n",
+                        defaultExport)));
+            }
+            
+            return new SequenceInputStream(v.elements());
         }
 
         @Override
-        public String getFile() {
+        public String getFile() 
+        {
             return "generated-module-for-" + resource.getFile();
         }
 
         @Override
-        public URL toURL() {
+        public URL toURL() 
+        {
             return null;
         }
 
         @Override
-        public String toString() {
+        public String toString() 
+        {
             return "ES module wrapper for " + resource.toString();
         }
 

@@ -45,7 +45,7 @@ public interface EsModuleManager
     /**
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the 
      * ES module imports (as per {@link JavaScriptSupport#importEsModule(String)} into the page. 
-     * this occurs after the ES module infrastructure
+     * This occurs after the ES module infrastructure
      * has been written into the page, along with the core libraries.
      *
      * @param root
@@ -54,6 +54,18 @@ public interface EsModuleManager
      *         specify initialization on the page, based on loading modules, extacting functions from modules, and invoking those functions
      */
     void writeImports(Element root, List<EsModuleInitialization> inits);
+    
+
+    /**
+     * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the 
+     * calls to {@code t5/core/pageinit} module.
+     * this occurs after the ES module infrastructure
+     * has been written into the page, along with the core libraries.
+     *
+     * @param root
+     *         {@code <root>} element of the page.
+     */
+    void writeInitialization(Element body, List<String> libraryURLs);
     
     /**
      * Encapsulates a contribution to {@linkplain EsModuleManager}.

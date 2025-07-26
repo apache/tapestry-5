@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import java.util.List;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
@@ -22,8 +24,6 @@ import org.apache.tapestry5.ioc.ServiceBindingOptions;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetSource;
-
-import java.util.List;
 
 /**
  * An extensible implementation of {@link JavaScriptStack} that can be used as the implementation of a service.
@@ -50,6 +50,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
     private final List<String> stacks;
 
     private final List<String> modules;
+    
+    private final List<String> esModules;
 
     private final String initialization;
 
@@ -116,6 +118,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         stacks = extensions.filter(by(StackExtensionType.STACK)).map(extractValue).toList();
 
         modules = extensions.filter(by(StackExtensionType.MODULE)).map(extractValue).toList();
+        
+        esModules = extensions.filter(by(StackExtensionType.ES_MODULE)).map(extractValue).toList();
 
         stylesheets = extensions.filter(by(StackExtensionType.STYLESHEET)).map(extractValue).map(stringToAsset)
                 .map(assetToStylesheetLink).toList();
@@ -147,29 +151,39 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         }
     }
 
+    @Override
     public List<String> getStacks()
     {
         return stacks;
     }
 
+    @Override
     public List<Asset> getJavaScriptLibraries()
     {
         return libraries;
     }
 
+    @Override
     public List<StylesheetLink> getStylesheets()
     {
         return stylesheets;
     }
 
+    @Override
     public String getInitialization()
     {
         return initialization;
     }
 
+    @Override
     public List<String> getModules()
     {
         return modules;
+    }
+
+    @Override
+    public List<String> getEsModules() {
+        return esModules;
     }
 
     @Override

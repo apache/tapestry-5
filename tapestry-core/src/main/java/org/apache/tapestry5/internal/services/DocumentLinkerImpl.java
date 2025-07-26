@@ -53,6 +53,8 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final boolean omitGeneratorMetaTag, enablePageloadingMask;
 
     private final String tapestryBanner;
+    
+    private final boolean requireJsEnabled;
 
     // Initially false; set to true when a scriptURL or any kind of initialization is added.
     private boolean hasScriptsOrInitializations;
@@ -66,12 +68,14 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param tapestryVersion
      */
     public DocumentLinkerImpl(ModuleManager moduleManager, EsModuleManager esModuleManager,
-            boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion)
+            boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion,
+            boolean requireJsEnabled)
     {
         this.moduleManager = moduleManager;
         this.esModuleManager = esModuleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
         this.enablePageloadingMask = enablePageloadingMask;
+        this.requireJsEnabled = requireJsEnabled;
 
         tapestryBanner = "Apache Tapestry Framework (version " + tapestryVersion + ')';
     }
@@ -149,8 +153,6 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             addElementBefore(head, existingMeta, "meta", "name", "generator", "content", tapestryBanner);
         }
-
-        addScriptElements(root);
         
         final List<EsModuleInitialization> esModuleInits = esModulesinitsManager.getInits();
         if (isHtmlRoot && !esModuleInits.isEmpty())
@@ -158,6 +160,8 @@ public class DocumentLinkerImpl implements DocumentLinker
             esModuleManager.writeImportMap(root.find("head"), esModuleConfigurationCallbacks);
             esModuleManager.writeImports(root, esModuleInits);
         }
+
+        addScriptElements(root);
         
     }
 
@@ -252,8 +256,11 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             script.moveToTop(body);
         }
-
-        moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
+        
+        if (requireJsEnabled)
+        {
+            moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
+        }
 
         // Write the core libraries, which includes RequireJS:
 
@@ -264,9 +271,15 @@ public class DocumentLinkerImpl implements DocumentLinker
                     "src", url);
         }
 
-        // Write the initialization at this point.
-
-        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+        if (requireJsEnabled)
+        {
+            // Write the initialization at this point.
+            moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+        }
+        else
+        {
+            esModuleManager.writeInitialization(body, libraryURLs);
+        }
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)

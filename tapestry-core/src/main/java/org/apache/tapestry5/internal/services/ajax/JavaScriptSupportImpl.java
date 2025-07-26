@@ -34,6 +34,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.AbstractInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.Initialization;
@@ -46,6 +47,8 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
+    private static final String PAGEINIT_MODULE_NAME = "t5/core/pageinit";
+
     private final IdAllocator idAllocator;
 
     private final DocumentLinker linker;
@@ -133,10 +136,21 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void commit()
     {
         
+        final String pageInitModuleName = PAGEINIT_MODULE_NAME;
         // TODO make no Require.js version of this
         if (focusFieldId != null)
         {
-            require("t5/core/pageinit").invoke("focus").with(focusFieldId);
+            final AbstractInitialization<?> initialization;
+            
+            if (requireJsEnabled)
+            {
+                initialization = require(pageInitModuleName);
+            }
+            else
+            {
+                initialization = importEsModule(pageInitModuleName);
+            }
+            initialization.invoke("focus").with(focusFieldId);
         }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
@@ -224,7 +238,16 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (partialMode)
         {
-            require("t5/core/pageinit").invoke("evalJavaScript").with(newScript);
+            final AbstractInitialization<?> initialization;
+            if (requireJsEnabled)
+            {
+                initialization = require(PAGEINIT_MODULE_NAME);
+            }
+            else
+            {
+                initialization = importEsModule(PAGEINIT_MODULE_NAME);
+            }
+            initialization.invoke("evalJavaScript").with(newScript);
         } else
         {
             linker.addScript(priority, newScript);

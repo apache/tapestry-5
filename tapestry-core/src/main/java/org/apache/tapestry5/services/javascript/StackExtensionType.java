@@ -69,6 +69,13 @@ public enum StackExtensionType
      * @since 5.4
      */
     MODULE,
+    
+    /**
+     * An ES module to be automatically imported.
+     * 
+     * @since 5.10.0
+     */
+    ES_MODULE,
 
     /**
      * Overrides the {@linkplain JavaScriptStack#getJavaScriptAggregationStrategy() JavaScript aggregation strategy}

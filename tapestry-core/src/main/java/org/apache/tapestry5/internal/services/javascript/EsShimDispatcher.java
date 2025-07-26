@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.Request;
@@ -26,13 +25,11 @@ import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.IOOperation;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.EsShim;
+import org.apache.tapestry5.services.javascript.EsShimManager;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -43,11 +40,8 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @see EsShim
  */
-@UsesMappedConfiguration(Resource.class)
 public class EsShimDispatcher implements Dispatcher
 {
-    
-    private static final String ES_SUBPATH = "es-shims";
     
     private final ResourceStreamer streamer;
 
@@ -59,27 +53,26 @@ public class EsShimDispatcher implements Dispatcher
     
     private Map<String, StreamableResource> shimMap;
 
-    public EsShimDispatcher(Map<String, Resource> configuration,
+    public EsShimDispatcher(EsShimManager esShimManager,
                             StreamableResourceSource streamableResourceSource,
                             ResourceChangeTracker resourceChangeTracker,
                             ResourceStreamer streamer,
                             OperationTracker tracker,
-                            PathConstructor pathConstructor,
-                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
-                            String assetPrefix,
                             boolean compress)
     {
         this.streamer = streamer;
         this.tracker = tracker;
         this.compress = compress;
-        this.shimMap = new HashMap<>(configuration.size());
+        
+        final Map<String, Resource> shims = esShimManager.getShims();
+        this.shimMap = new HashMap<>(shims.size());
         
         try
         {
-            for (String moduleName : configuration.keySet())
+            for (String moduleName : shims.keySet())
             {
                 shimMap.put(moduleName, streamableResourceSource.getStreamableResource(
-                        configuration.get(moduleName), StreamableResourceProcessing.COMPRESSION_ENABLED, resourceChangeTracker));
+                        shims.get(moduleName), StreamableResourceProcessing.COMPRESSION_ENABLED, resourceChangeTracker));
             }
         }
         catch (IOException e)
@@ -87,7 +80,7 @@ public class EsShimDispatcher implements Dispatcher
             throw new RuntimeException(e);
         }
 
-        requestPrefix = pathConstructor.constructDispatchPath(assetPrefix + "/" + (compress ? ES_SUBPATH + ".gz" : ES_SUBPATH) + "/");
+        requestPrefix = esShimManager.getRequestPrefix(compress);
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -110,11 +103,6 @@ public class EsShimDispatcher implements Dispatcher
 
     }
     
-    public String getUrl(String moduleName)
-    {
-        return requestPrefix + moduleName;
-    }
-
     private boolean handleModuleRequest(String extraPath, Response response) throws IOException
     {
         int dotx = extraPath.lastIndexOf('.');
@@ -141,7 +129,8 @@ public class EsShimDispatcher implements Dispatcher
 
                 if (resource != null)
                 {
-                    return streamer.streamResource(resource, resource.getChecksum(), ResourceStreamer.DEFAULT_OPTIONS);
+                    final String checksum = resource.getChecksum();
+                    return streamer.streamResource(resource, checksum, ResourceStreamer.DEFAULT_OPTIONS);
                 }
 
                 return false;
