@@ -187,7 +187,7 @@ public class AppModule
         // This is the emphasis of testing at this point.
         configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
 
-        configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js");
+        configuration.add(D3_URL_SYMBOL, "cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.js");
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.ALWAYS);
         configuration.add(SymbolConstants.OPENAPI_APPLICATION_VERSION, "1.2.3.4");
         configuration.add(SymbolConstants.OPENAPI_BASE_PATH, "/rest/");

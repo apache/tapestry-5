@@ -24,6 +24,7 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
@@ -33,6 +34,8 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     private final JSONArray stylesheets = new JSONArray();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
+    
+    private final EsModuleInitsManager esModulesinitsManager = new EsModuleInitsManager();
     
     public void addCoreLibrary(String libraryURL)
     {
@@ -84,7 +87,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     @Override
     public void addEsModuleInitialization(EsModuleInitialization initialization) 
     {
-        notImplemented("addEsModuleInitialization");
+        esModulesinitsManager.add(initialization);
     }
 
     /**
@@ -106,10 +109,15 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         }
 
         List<?> inits = initsManager.getSortedInits();
+        final List<?> esModuleInits = esModulesinitsManager.getInitsAsJsonArrays();
 
-        if (inits.size() > 0)
+        if (inits.size() > 0 || esModuleInits.size() > 0)
         {
+            List<Object> allInits = new ArrayList<>(inits.size() + esModuleInits.size());
+            allInits.addAll(inits);
+            allInits.addAll(esModuleInits);
             reply.in(InternalConstants.PARTIAL_KEY).put("inits", JSONArray.from(inits));
         }
+        
     }
 }

@@ -218,7 +218,7 @@ public class EsModuleManagerImpl implements EsModuleManager
         ImportPlacement placement;
         EsModuleInitializationImpl init;
         String functionName;
-        Object[] arguments;
+        JSONArray arguments;
         
         List<EsModuleInitialization> allInits = new ArrayList<>(coreStackInits.size() + inits.size());
         allInits.addAll(coreStackInits);
@@ -228,7 +228,7 @@ public class EsModuleManagerImpl implements EsModuleManager
         {
             
             init = (EsModuleInitializationImpl) i;
-            final String moduleId = init.getModuleId();
+            final String moduleId = init.getModuleName();
             // Making sure the user doesn't shoot their own foot
             final String url = cache.get(moduleId);
             if (url == null)
@@ -329,26 +329,26 @@ public class EsModuleManagerImpl implements EsModuleManager
     }
 
 
-    static String convertToJsFunctionParameters(Object[] arguments, boolean compactJSON)
+    static String convertToJsFunctionParameters(JSONArray arguments, boolean compactJSON)
     {
         String result;
-        if (arguments == null || arguments.length == 0)
+        if (arguments == null || arguments.size() == 0)
         {
             result = "";
         }
-        else if (arguments.length == 1)
+        else if (arguments.size() == 1)
         {
-            result = convertToJsFunctionParameter(arguments[0], compactJSON);
+            result = convertToJsFunctionParameter(arguments.get(0), compactJSON);
         }
         else {
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < arguments.length; i++) 
+            for (int i = 0; i < arguments.size(); i++) 
             {
                 if (i > 0)
                 {
                     builder.append(", ");
                 }
-                builder.append(convertToJsFunctionParameter(arguments[i], compactJSON));
+                builder.append(convertToJsFunctionParameter(arguments.get(i), compactJSON));
             }
             result = builder.toString();
         }
@@ -359,9 +359,9 @@ public class EsModuleManagerImpl implements EsModuleManager
     {
         String result;
         
-        if (object == null)
+        if (object == null || object == JSONObject.NULL)
         {
-            result = null;
+            result = "null";
         }
         else if (object instanceof String || object instanceof JSONLiteral)
         {

@@ -35,6 +35,8 @@ const isOpera = Object.prototype.toString.call(window.opera) === '[object Opera]
 // @ts-ignore
 const isIE = !!window.attachEvent && !isOpera;
 
+const requireJsEnabled = "true" == document.querySelector("body")?.dataset['requireJsEnabled'];
+
 const rebuildURL = function(path: string) {
   if (path.match(/^https?:/)) { return path; }
 
@@ -160,8 +162,13 @@ function loadLibraries(libraries: string[], callback: () => any) {
   // @ts-ignore
   const reducer = (callback, library) => (function() {
     console.debug(`Loading library ${library}`);
-    // @ts-ignore
-    return require([library], callback);
+    if (requireJsEnabled) {
+      // @ts-ignore
+      return require([library], callback);
+    }
+    else {
+      return import(library).then(callback);
+    }
   });
 
   const finalCallback = _.reduceRight(libraries, reducer, callback);
@@ -250,7 +257,7 @@ export default exports_ = _.extend(loadLibrariesAndInitialize, {
   // second, which helps ensure that other initializions on the page are in place.
   //
   // * fieldId - element id of field to focus on
-  focus(fieldId: string) {
+  focus: function(fieldId: string) {
     const field = dom(fieldId);
 
     if (field) {

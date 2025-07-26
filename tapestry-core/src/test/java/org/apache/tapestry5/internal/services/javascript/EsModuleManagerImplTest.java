@@ -32,42 +32,42 @@ public class EsModuleManagerImplTest
     @Test
     public void test_null_arguments()
     {
-        assertEquals(convert(null, true), "");
-        assertEquals(convert(null, false), "");
+        assertEquals(convert(JSONObject.NULL, true), "null");
+        assertEquals(convert(JSONObject.NULL, false), "null");
     }
     
     @Test
     public void test_empty_arguments()
     {
-        assertEquals(convert(new Object[0], true), "");
-        assertEquals(convert(new Object[0], false), "");
+        assertEquals(convert(new JSONArray(), true), "");
+        assertEquals(convert(new JSONArray(), false), "");
     }
     
     @Test
     public void test_one_argument()
     {
-        assertEquals(convert(new Object[] {null}, false), null);
+        assertEquals(convert(new JSONArray(JSONObject.NULL), false), "null");
         
-        assertEquals(convert(new Object[] {STRING}, false), quote(STRING));
+        assertEquals(convert(new JSONArray().put(STRING), false), quote(STRING));
         
-        assertEquals(convert(new Object[] {NUMBER}, false), NUMBER.toString());
-        assertEquals(convert(new Object[] {Boolean.TRUE}, false), Boolean.TRUE.toString());
-        assertEquals(convert(new Object[] {Boolean.FALSE}, false), Boolean.FALSE.toString());
+        assertEquals(convert(new JSONArray(NUMBER), false), NUMBER.toString());
+        assertEquals(convert(new JSONArray(Boolean.TRUE), false), Boolean.TRUE.toString());
+        assertEquals(convert(new JSONArray(Boolean.FALSE), false), Boolean.FALSE.toString());
 
-        assertEquals(convert(new Object[] {JSON_LITERAL}, false), quote(JSON_LITERAL.toString()));
+        assertEquals(convert(new JSONArray(JSON_LITERAL), false), quote(JSON_LITERAL.toString()));
 
-        assertEquals(convert(new Object[] {JSON_ARRAY}, false), JSON_ARRAY.toString(false));
-        assertEquals(convert(new Object[] {JSON_ARRAY}, true), JSON_ARRAY.toString(true));
+        assertEquals(convert(new JSONArray(JSON_ARRAY), false), JSON_ARRAY.toString(false));
+        assertEquals(convert(new JSONArray(JSON_ARRAY), true), JSON_ARRAY.toString(true));
 
-        assertEquals(convert(new Object[] {JSON_OBJECT}, false), JSON_OBJECT.toString(false));
-        assertEquals(convert(new Object[] {JSON_OBJECT}, true), JSON_OBJECT.toString(true));
+        assertEquals(convert(new JSONArray(JSON_OBJECT), false), JSON_OBJECT.toString(false));
+        assertEquals(convert(new JSONArray(JSON_OBJECT), true), JSON_OBJECT.toString(true));
         
     }
     
     @Test
     public void test_multiple_arguments()
     {
-        Object[] arguments = new Object[] { null, STRING, JSON_LITERAL, JSON_ARRAY, JSON_OBJECT };
+        JSONArray arguments = new JSONArray(JSONObject.NULL, STRING, JSON_LITERAL, JSON_ARRAY, JSON_OBJECT);
         final String format = "null, '%s', '%s', %s, %s";
         
         assertEquals(convert(arguments, false), 
@@ -84,10 +84,15 @@ public class EsModuleManagerImplTest
     {
         return "'" + string + "'";
     }
-
-    private String convert(Object[] blah, boolean compactJSON) 
+    
+    private String convert(Object object, boolean compactJSON) 
     {
-        return EsModuleManagerImpl.convertToJsFunctionParameters(blah, compactJSON);
+        return convert(new JSONArray(object), compactJSON);
+    }
+
+    private String convert(JSONArray array, boolean compactJSON) 
+    {
+        return EsModuleManagerImpl.convertToJsFunctionParameters(array, compactJSON);
     }
     
 }

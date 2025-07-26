@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 
@@ -22,7 +23,7 @@ public class EsModuleInitializationImpl extends BaseInitialization<EsModuleIniti
     
     private Map<String, String> attributes;
     private ImportPlacement placement = ImportPlacement.BODY_BOTTOM;
-    private Object[] arguments;
+    private JSONArray arguments;
     
     public EsModuleInitializationImpl(String moduleName) 
     {
@@ -45,7 +46,7 @@ public class EsModuleInitializationImpl extends BaseInitialization<EsModuleIniti
         return null;
     }
 
-    public String getModuleId() {
+    public String getModuleName() {
         return moduleName;
     }
 
@@ -66,10 +67,11 @@ public class EsModuleInitializationImpl extends BaseInitialization<EsModuleIniti
     @Override
     public void with(Object... arguments) 
     {
-        this.arguments = arguments;
+        assert arguments != null;
+        this.arguments = new JSONArray(arguments);
     }
     
-    public Object[] getArguments() 
+    public JSONArray getArguments() 
     {
         return arguments;
     }

@@ -25,11 +25,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 
 public class EsModuleInitsManager
@@ -37,13 +40,13 @@ public class EsModuleInitsManager
     private final Set<String> modules = CollectionFactory.newSet();
     
     private final List<EsModuleInitialization> initializations = CollectionFactory.newList();
-
+    
     public void add(EsModuleInitialization initialization)
     {
         assert initialization != null;
 
         // We ignore a module being added again.
-        final String moduleName = ((EsModuleInitializationImpl) initialization).getModuleId();
+        final String moduleName = ((EsModuleInitializationImpl) initialization).getModuleName();
         if (!modules.contains(moduleName))
         {
             initializations.add(initialization);
@@ -58,4 +61,36 @@ public class EsModuleInitsManager
     {
         return initializations;
     }
+    
+    /**
+     * Returns all previously added inits as JSONArray instances.
+     */
+    public List<JSONArray> getInitsAsJsonArrays()
+    {
+        
+        List<JSONArray> list;
+        if (!initializations.isEmpty()) 
+        {
+            list = new ArrayList<>(initializations.size());
+            for (EsModuleInitialization init : initializations) 
+            {
+                final EsModuleInitializationImpl initImpl = (EsModuleInitializationImpl) init;
+                final JSONArray arguments = initImpl.getArguments();
+                if (arguments != null)
+                {
+                    list.add(new JSONArray(initImpl.getModuleName(), arguments));
+                }
+                else
+                {
+                    list.add(new JSONArray().put(initImpl.getModuleName()));
+                }
+            }
+        }
+        else
+        {
+            list = Collections.emptyList();
+        }
+        return list;
+    }
+
 }
