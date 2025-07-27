@@ -556,28 +556,28 @@ public class JavaScriptModule
         }
     }
     
-    @Contribute(EsModuleManager.class)
-    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleManagerContribution> configuration,
-                                                        LocalizationSetter localizationSetter,
-                                                        ComponentMessagesSource messagesSource,
-                                                        ResourceChangeTracker resourceChangeTracker,
-                                                        @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
-    {
-        
-        EsModuleConfigurationCallback callback = jsonObject -> {
-        
-            for (Locale locale : localizationSetter.getSupportedLocales())
-            {
-                MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
-    
-                jsonObject.put("t5/core/messages/" + locale.toString(), resource.toURL());
-            }
-            
-        };
-        
-        configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
-        
-    }
+//    @Contribute(EsModuleManager.class)
+//    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleManagerContribution> configuration,
+//                                                        LocalizationSetter localizationSetter,
+//                                                        ComponentMessagesSource messagesSource,
+//                                                        ResourceChangeTracker resourceChangeTracker,
+//                                                        @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
+//    {
+//        
+//        EsModuleConfigurationCallback callback = jsonObject -> {
+//        
+//            for (Locale locale : localizationSetter.getSupportedLocales())
+//            {
+//                MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
+//    
+//                jsonObject.put("t5/core/messages/" + locale.toString(), resource.toURL());
+//            }
+//            
+//        };
+//        
+//        configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
+//        
+//    }
 
     @Contribute(EsShimManager.class)
     public static void setupBaseEsShims(
@@ -587,7 +587,11 @@ public class JavaScriptModule
             @Path("${tapestry.asset.root}/bootstrap4/js/bootstrap-util.js")
             Resource bootstrapUtil,
             Compatibility compatibility,
-            AssetSource assetSource)
+            AssetSource assetSource,
+            LocalizationSetter localizationSetter,
+            ComponentMessagesSource messagesSource,
+            ResourceChangeTracker resourceChangeTracker,
+            @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
     {
         
         final Resource jQuery = assetSource.getClasspathAsset("/META-INF/assets/tapestry5/jquery.js")
@@ -647,6 +651,14 @@ public class JavaScriptModule
             final String[] modules = new String[]{"alert", "dropdown", "collapse"};
             addBootstrap3EsShims(configuration, modules, transition);
         }
+        
+        for (Locale locale : localizationSetter.getSupportedLocales())
+        {
+            MessageCatalogResource resource = new MessageCatalogResource(true, locale, messagesSource, resourceChangeTracker, compactJSON);
+            configuration.add("t5/core/messages/" + locale.toString(),
+                    new EsShim(resource).getResource());
+        }
+        
     }
 
     @Contribute(EsModuleManager.class)

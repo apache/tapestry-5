@@ -281,22 +281,26 @@ public class EsModuleManagerImpl implements EsModuleManager
             // If we have not only the import, but also an automatic function call
             if (arguments != null || functionName != null)
             {
+                
+                // TODO: move this logic to a pageinit call, like AMD does
+                // t5/core/pageinit:loadLibrariesAndInitialize
                 final Element moduleFunctionCall = script.element("script");
                 
                 moduleFunctionCall.moveAfter(script);
                 
                 final String moduleFunctionCallFormat = 
-                        "import %s from '%s';\n"
-                        + "%s(%s);";
-                
-                final String importName = functionName != null ? functionName : GENERIC_IMPORTED_VARIABLE;
-                final String importDeclaration = functionName != null ? 
-                        "{ " + functionName + " }": 
-                            GENERIC_IMPORTED_VARIABLE;
+                        "import m from '%s';\n"
+                        + "import console from 't5/core/console';\n"
+                        + "\nif (console.debugEnabled) {"
+                        + "\n    console.debug('Invoking %1$s:%2$s(' + (Array.from(%4$s).map(function(arg) { return JSON.stringify(arg); })).join(\", \") + ')');"
+                        + "\n    m.%2$s(%3$s);" 
+                        + "\n}\n";
                 
                 moduleFunctionCall.text(String.format(moduleFunctionCallFormat, 
-                        importDeclaration, moduleId, importName,
-                        convertToJsFunctionParameters(arguments, compactJSON)));
+                        moduleId, 
+                        functionName,
+                        convertToJsFunctionParameters(arguments, compactJSON),
+                        arguments));
                 
                 writeAttributes(moduleFunctionCall, init);
                 
