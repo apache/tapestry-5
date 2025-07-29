@@ -44,7 +44,6 @@ import java.util.Map;
 public class BeanValidatorModule
 {
 
-    private static final String VALIDATION_MODULE_NAME = "t5/core/validation";
     private static final String MODULE_NAME = "t5/beanvalidator/beanvalidator-validation";
 
     public static void bind(final ServiceBinder binder)
@@ -100,8 +99,8 @@ public class BeanValidatorModule
     {
         
         final Runnable importJs = requireJsEnabled ?
-                () -> javaScriptSupport.require(VALIDATION_MODULE_NAME) :
-                () -> javaScriptSupport.importEsModule(VALIDATION_MODULE_NAME);
+                () -> javaScriptSupport.require(MODULE_NAME) :
+                () -> javaScriptSupport.importEsModule(MODULE_NAME);
         
         configuration.add(new BaseCCD(Max.class, "value")
         {
