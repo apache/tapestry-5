@@ -165,7 +165,7 @@ task testWithPrototypeAndRequireJsEnabled(type:Test) {
 task testWithPrototypeAndRequireJsDisabled(type:Test) {
   print("-------------------------------------");
   print("Test suite with Prototype.js as infrastructure and Require.js disabled")
-  print("-------------------------------------);
+  print("-------------------------------------");
   systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
   systemProperties."tapestry.require-js-enabled" = "false"
 }
