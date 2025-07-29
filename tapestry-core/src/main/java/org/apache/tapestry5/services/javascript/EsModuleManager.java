@@ -62,8 +62,9 @@ public interface EsModuleManager
      * this occurs after the ES module infrastructure
      * has been written into the page, along with the core libraries.
      *
-     * @param root
-     *         {@code <root>} element of the page.
+     * @param body {@code body} element of the page.
+     * @param libraryURLs URLs of the JS files to be included in the page.
+     *          
      */
     void writeInitialization(Element body, List<String> libraryURLs);
     
