@@ -116,7 +116,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             List<Object> allInits = new ArrayList<>(inits.size() + esModuleInits.size());
             allInits.addAll(inits);
             allInits.addAll(esModuleInits);
-            reply.in(InternalConstants.PARTIAL_KEY).put("inits", JSONArray.from(inits));
+            reply.in(InternalConstants.PARTIAL_KEY).put("inits", JSONArray.from(allInits));
         }
         
     }

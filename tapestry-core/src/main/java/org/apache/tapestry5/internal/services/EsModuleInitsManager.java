@@ -76,14 +76,17 @@ public class EsModuleInitsManager
             {
                 final EsModuleInitializationImpl initImpl = (EsModuleInitializationImpl) init;
                 final JSONArray arguments = initImpl.getArguments();
+                final JSONArray initArray = new JSONArray();
+                
+                initArray.add(initImpl.getModuleName());
+                
                 if (arguments != null)
                 {
-                    list.add(new JSONArray(initImpl.getModuleName(), arguments));
+                    initArray.addAll(arguments);
                 }
-                else
-                {
-                    list.add(new JSONArray().put(initImpl.getModuleName()));
-                }
+                
+                list.add(initArray);
+                
             }
         }
         else
