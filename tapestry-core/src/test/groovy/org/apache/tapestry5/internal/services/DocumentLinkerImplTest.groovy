@@ -5,6 +5,7 @@ import org.apache.tapestry5.dom.Element
 import org.apache.tapestry5.dom.XMLMarkupModel
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
 import org.apache.tapestry5.json.JSONArray
+import org.apache.tapestry5.services.javascript.EsModuleManager
 import org.apache.tapestry5.services.javascript.InitializationPriority
 import org.apache.tapestry5.services.javascript.ModuleManager
 import org.apache.tapestry5.services.javascript.StylesheetLink
@@ -32,7 +33,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         // Only checked if there's something to link.
 
@@ -55,7 +56,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         // Only checked if there's something to link.
 
@@ -76,7 +77,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     void missing_root_element_is_a_noop() {
         Document document = new Document()
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         linker.addLibrary("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
@@ -93,8 +94,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageINIT();")])
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
         replay()
 
@@ -122,7 +124,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3", true)
 
         linker.updateDocument(document)
 
@@ -141,7 +143,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, false, "1.2.3", true)
 
         linker.updateDocument(document)
 
@@ -158,7 +160,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
         linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")))
@@ -178,7 +180,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("head").comment(" existing head ").container.element("body").text(
             "body content")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
 
@@ -197,8 +199,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager([], [new JSONArray("t5/core/pageinit:evalJavaScript", "doSomething();")])
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, true, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, true, "1.2.3", true)
 
         replay()
 
@@ -223,8 +226,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager(["foo.js"], [])
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
         replay()
 
@@ -250,8 +254,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         head.element("script")
 
         def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")])
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
         replay()
 
@@ -273,7 +278,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"))
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")))
@@ -295,7 +300,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, false, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("whatever.css"))
         linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()))
@@ -318,8 +323,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222),
             new JSONArray("my/other/module:late", 333, 444)])
+        
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null, true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
         replay()
 
@@ -346,8 +353,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222)])
+        
+        def esManager = mockEsModuleManager([], [])
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, null,  true, false, "1.2.3")
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
         replay()
 
@@ -386,4 +395,28 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         return mock;
     }
+    
+    private EsModuleManager mockEsModuleManager(def libraryURLs, def inits) {
+        
+        EsModuleManager mock = newMock(EsModuleManager);
+
+/*        expect(mock.writeConfiguration(isA(Element),
+            eq([]))).andAnswer({
+            def body = EasyMock.currentArguments[0]
+
+            body.comment("MM-CONFIG")
+        } as IAnswer).once()
+
+        expect(mock.writeInitialization(isA(Element),
+            eq(libraryURLs),
+            eq(inits))).andAnswer({
+            def body = EasyMock.currentArguments[0];
+
+            body.comment("MM-INIT");
+        } as IAnswer).once()*/
+
+
+        return mock;
+    }
+        
 }
