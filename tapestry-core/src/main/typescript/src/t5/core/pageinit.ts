@@ -338,7 +338,7 @@ export default exports_ = _.extend(loadLibrariesAndInitialize, {
     addStylesheets(partial != null ? partial.stylesheets : undefined);
 
     // Make sure all libraries are loaded
-    exports_.loadLibraries(partial != null ? partial.libraries : undefined, function() {
+    exports_.loadLibraries(partial != null ? partial.libraries : undefined, requireJsEnabled, function() {
 
       // After libraries are loaded, update each zone:
       _(partial != null ? partial.content : undefined).each(function(...args) {
@@ -356,7 +356,7 @@ export default exports_ = _.extend(loadLibrariesAndInitialize, {
       callback && callback(response);
 
       // Lastly, perform initializations from the partial page render response.
-      return exports_.initialize(partial != null ? partial.inits : undefined);
+      return exports_.initialize(partial != null ? partial.inits : undefined, requireJsEnabled);
     });
 
   }
