@@ -229,7 +229,7 @@ function initialize(inits, requireJsModules, callback) {
       // @ts-ignore
       var [qualifiedName, ...initArguments] = Array.from(init);
       // @ts-ignore
-      invokeInitializer(tracker, qualifiedName, initArguments);
+      invokeInitializer(tracker, qualifiedName, initArguments, requireJsModules);
     }
   }
 
