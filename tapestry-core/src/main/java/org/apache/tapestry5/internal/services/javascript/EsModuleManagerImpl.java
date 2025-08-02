@@ -25,7 +25,6 @@ import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
@@ -48,8 +47,6 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
 public class EsModuleManagerImpl implements EsModuleManager
 {
 
-    private static final String GENERIC_IMPORTED_VARIABLE = "m";
-
     /**
      * Name of the JSON object property containing the imports in an import map.
      */
@@ -58,8 +55,8 @@ public class EsModuleManagerImpl implements EsModuleManager
     private static final String CLASSPATH_ROOT = "META-INF/assets/es-modules/";
 
     private final boolean compactJSON;
-
-    private final boolean productionMode;
+    
+    private final boolean requireJsEnabled;
 
     private final Set<String> extensions;
     
@@ -88,8 +85,8 @@ public class EsModuleManagerImpl implements EsModuleManager
                              StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
                              boolean compactJSON,
-                             @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                             boolean productionMode,
+                             @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+                             boolean requireJsEnabled,
                              @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
                              String infraProvider,                             
                              ClasspathScanner classpathScanner,
@@ -97,9 +94,9 @@ public class EsModuleManagerImpl implements EsModuleManager
                              @Core JavaScriptStack javaScriptStack)
     {
         this.compactJSON = compactJSON;
+        this.requireJsEnabled = requireJsEnabled;
         this.assetSource = assetSource;
         this.classpathScanner = classpathScanner;
-        this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
         this.infraProvider = infraProvider;
         
@@ -217,8 +214,6 @@ public class EsModuleManagerImpl implements EsModuleManager
         Element head = null;
         ImportPlacement placement;
         EsModuleInitializationImpl init;
-        String functionName;
-        JSONArray arguments;
         
         List<EsModuleInitialization> allInits = new ArrayList<>(coreStackInits.size() + inits.size());
         allInits.addAll(coreStackInits);
@@ -229,6 +224,7 @@ public class EsModuleManagerImpl implements EsModuleManager
             
             init = (EsModuleInitializationImpl) i;
             final String moduleId = init.getModuleName();
+            
             // Making sure the user doesn't shoot their own foot
             final String url = cache.get(moduleId);
             if (url == null)
@@ -266,65 +262,23 @@ public class EsModuleManagerImpl implements EsModuleManager
             
             writeAttributes(script, init);
             script.attribute("src", url);
-            
-            functionName = init.getFunctionName();
-            arguments = init.getArguments();
-            
-            if (!productionMode)
-            {
-                script.attribute("data-module-id", moduleId);
-                final Element log = script.element("script", "type", "text/javascript");
-                log.text(String.format("console.debug('Imported ES module %s');", moduleId));
-                log.moveBefore(script);
-            }
-            
-            // If we have not only the import, but also an automatic function call
-            if (arguments != null || functionName != null)
-            {
-                
-                // TODO: move this logic to a pageinit call, like AMD does
-                // t5/core/pageinit:loadLibrariesAndInitialize
-                final Element moduleFunctionCall = script.element("script");
-                
-                moduleFunctionCall.moveAfter(script);
-                
-                final String moduleFunctionCallFormat = 
-                        "import m from '%s';\n"
-                        + "import console from 't5/core/console';\n"
-                        + "\nif (console.debugEnabled) {"
-                        + "\n    console.debug('Invoking %1$s:%2$s(' + (Array.from(%4$s).map(function(arg) { return JSON.stringify(arg); })).join(\", \") + ')');"
-                        + "\n    m.%2$s(%3$s);" 
-                        + "\n}\n";
-                
-                moduleFunctionCall.text(String.format(moduleFunctionCallFormat, 
-                        moduleId, 
-                        functionName,
-                        convertToJsFunctionParameters(arguments, compactJSON),
-                        arguments));
-                
-                writeAttributes(moduleFunctionCall, init);
-                
-                // Avoiding duplicated ids
-                final String id = moduleFunctionCall.getAttribute("id");
-                if (id != null)
-                {
-                    moduleFunctionCall.forceAttributes("id", id + "-function-call");
-                }
-                
-            }
+            script.attribute("data-module-id", moduleId);
             
         }
         
     }
     
     @Override
-    public void writeInitialization(Element body, List<String> libraryURLs) 
+    public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits)
     {
 
-        Element element = body.element("script", "type", "module");
-
-        element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, []);",
-                convert(libraryURLs)));
+        if (!requireJsEnabled || !libraryURLs.isEmpty() || !inits.isEmpty())
+        {
+            Element element = body.element("script", "type", "module");
+    
+            element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s);",
+                    convert(libraryURLs), convert(inits)));
+        }
     }
     
     private String convert(List<?> input)

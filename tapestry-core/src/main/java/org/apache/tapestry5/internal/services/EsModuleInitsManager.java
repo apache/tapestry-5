@@ -39,27 +39,39 @@ public class EsModuleInitsManager
 {
     private final Set<String> modules = CollectionFactory.newSet();
     
+    private final List<EsModuleInitialization> imports = CollectionFactory.newList();
+    
     private final List<EsModuleInitialization> initializations = CollectionFactory.newList();
     
     public void add(EsModuleInitialization initialization)
     {
         assert initialization != null;
 
-        // We ignore a module being added again.
-        final String moduleName = ((EsModuleInitializationImpl) initialization).getModuleName();
-        if (!modules.contains(moduleName))
+        // We avoid having the same module being imported more than twice.
+        // Also notice non-pure inits (i.e. ones having a function name or 
+        // both) are added both to the imports, so they can have
+        // <script type="module"> added for them, and to initializations,
+        // the function call will be made by t5/core/pageinit.
+        final EsModuleInitializationImpl init = (EsModuleInitializationImpl) initialization;
+        final String moduleName = init.getModuleName();
+        final boolean alreadyPresent = modules.contains(moduleName);
+        if (!init.isPure())
         {
             initializations.add(initialization);
+        }
+        if (!alreadyPresent)
+        {
+            imports.add(initialization);
             modules.add(moduleName);
         }
     }
 
     /**
-     * Returns all previously added inits.
+     * Returns all imports.
      */
-    public List<EsModuleInitialization> getInits()
+    public List<EsModuleInitialization> getImports()
     {
-        return initializations;
+        return imports;
     }
     
     /**
@@ -78,7 +90,13 @@ public class EsModuleInitsManager
                 final JSONArray arguments = initImpl.getArguments();
                 final JSONArray initArray = new JSONArray();
                 
-                initArray.add(initImpl.getModuleName());
+                String moduleName = initImpl.getModuleName();
+                if (initImpl.getFunctionName() != null)
+                {
+                    moduleName = moduleName + ":" + initImpl.getFunctionName();
+                }
+                
+                initArray.add(moduleName);
                 
                 if (arguments != null)
                 {

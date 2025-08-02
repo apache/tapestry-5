@@ -35,7 +35,7 @@ const isOpera = Object.prototype.toString.call(window.opera) === '[object Opera]
 // @ts-ignore
 const isIE = !!window.attachEvent && !isOpera;
 
-const requireJsEnabled = "true" == document.querySelector("body")?.dataset['requireJsEnabled'];
+const requireJsEnabled = "true" == document.querySelector("html")?.dataset['requireJsEnabled'];
 
 const rebuildURL = function(path: string) {
   if (path.match(/^https?:/)) { return path; }
@@ -113,6 +113,10 @@ const invokeInitializer = function(tracker: () => any, qualifiedName: string, in
 
   function executeInitializer(moduleLib: any) {
 
+    if (!requireJsEnabled && moduleLib['default'] != null && _.isFunction(moduleLib['default'])) {
+      moduleLib = moduleLib['default'];
+    }
+
     try {
       // Some modules export nothing but do some full-page initialization, such as adding
       // event handlers to the body.
@@ -167,7 +171,7 @@ const invokeInitializer = function(tracker: () => any, qualifiedName: string, in
   } else {
 
     return import(moduleName).then(function(moduleLib: any) {
-      return executeInitializer(moduleLib['default']);
+      return executeInitializer(moduleLib);
     });
 
   }

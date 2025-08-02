@@ -76,4 +76,15 @@ public class EsModuleInitializationImpl extends BaseInitialization<EsModuleIniti
         return arguments;
     }
     
+    public boolean isPure() 
+    {
+        return functionName == null && arguments == null;
+    }
+
+    @Override
+    public String toString() 
+    {
+        return "ESInit[moduleName=" + moduleName + ", functionName=" + functionName + ", arguments=" + arguments + "]";
+    }
+    
 }

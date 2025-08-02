@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 
 /**
@@ -50,10 +51,10 @@ public interface EsModuleManager
      *
      * @param root
      *         {@code <root>} element of the page.
-     * @param inits
-     *         specify initialization on the page, based on loading modules, extacting functions from modules, and invoking those functions
+     * @param imports
+     *         imported modules as {@linkplain EsModuleInitialization} instances.
      */
-    void writeImports(Element root, List<EsModuleInitialization> inits);
+    void writeImports(Element root, List<EsModuleInitialization> imports);
     
 
     /**
@@ -64,9 +65,10 @@ public interface EsModuleManager
      *
      * @param body {@code body} element of the page.
      * @param libraryURLs URLs of the JS files to be included in the page.
-     *          
+     * @param inits a list of {@linkplain} JSONArray} instances containing the 
+     * module initializations.
      */
-    void writeInitialization(Element body, List<String> libraryURLs);
+    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
     
     /**
      * Encapsulates a contribution to {@linkplain EsModuleManager}.

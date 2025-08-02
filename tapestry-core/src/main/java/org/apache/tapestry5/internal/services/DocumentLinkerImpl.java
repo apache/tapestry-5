@@ -24,6 +24,7 @@ import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
     
-    private final EsModuleInitsManager esModulesinitsManager = new EsModuleInitsManager();
+    private final EsModuleInitsManager esModulesInitsManager = new EsModuleInitsManager();
 
     private final List<ModuleConfigurationCallback> moduleConfigurationCallbacks = CollectionFactory.newList();
     
@@ -154,11 +155,11 @@ public class DocumentLinkerImpl implements DocumentLinker
             addElementBefore(head, existingMeta, "meta", "name", "generator", "content", tapestryBanner);
         }
         
-        final List<EsModuleInitialization> esModuleInits = esModulesinitsManager.getInits();
-        if (isHtmlRoot && !esModuleInits.isEmpty())
+        final List<EsModuleInitialization> imports = esModulesInitsManager.getImports();
+        if (isHtmlRoot && !imports.isEmpty())
         {
             esModuleManager.writeImportMap(root.find("head"), esModuleConfigurationCallbacks);
-            esModuleManager.writeImports(root, esModuleInits);
+            esModuleManager.writeImports(root, imports);
         }
 
         addScriptElements(root);
@@ -271,14 +272,17 @@ public class DocumentLinkerImpl implements DocumentLinker
                     "src", url);
         }
 
+        // Write the initialization at this point.
         if (requireJsEnabled)
         {
-            // Write the initialization at this point.
             moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+            
+            // Libraries were already added in the line above.
+            esModuleManager.writeInitialization(body, Collections.emptyList(), esModulesInitsManager.getInitsAsJsonArrays());
         }
         else
         {
-            esModuleManager.writeInitialization(body, libraryURLs);
+            esModuleManager.writeInitialization(body, libraryURLs, esModulesInitsManager.getInitsAsJsonArrays());
         }
     }
 
@@ -350,7 +354,7 @@ public class DocumentLinkerImpl implements DocumentLinker
     public void addEsModuleInitialization(EsModuleInitialization initialization) 
     {
         assert initialization != null;
-        esModulesinitsManager.add(initialization);
+        esModulesInitsManager.add(initialization);
         hasScriptsOrInitializations = true;
     }
     
