@@ -94,7 +94,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("t5/core/pageinit:evalJavaScript", "pageINIT();")])
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
@@ -199,7 +199,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager([], [new JSONArray("t5/core/pageinit:evalJavaScript", "doSomething();")])
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, true, "1.2.3", true)
 
@@ -226,7 +226,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
         def manager = mockModuleManager(["foo.js"], [])
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
@@ -254,7 +254,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         head.element("script")
 
         def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")])
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
@@ -324,7 +324,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
             new JSONArray("my/other/module:normal", 111, 222),
             new JSONArray("my/other/module:late", 333, 444)])
         
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
@@ -354,7 +354,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222)])
         
-        def esManager = mockEsModuleManager([], [])
+        def esManager = mockEsModuleManager()
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, esManager, true, false, "1.2.3", true)
 
@@ -396,18 +396,14 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         return mock;
     }
     
-    private EsModuleManager mockEsModuleManager(def libraryURLs, def inits) {
+    private EsModuleManager mockEsModuleManager() {
         
         EsModuleManager mock = newMock(EsModuleManager);
 
-/*        expect(mock.writeConfiguration(isA(Element),
-            eq([]))).andAnswer({
-            def body = EasyMock.currentArguments[0]
-
-            body.comment("MM-CONFIG")
-        } as IAnswer).once()
-
         expect(mock.writeInitialization(isA(Element),
+            isA(java.util.List), isA(java.util.List))).once()
+
+        /*expect(mock.writeInitialization(isA(Element),
             eq(libraryURLs),
             eq(inits))).andAnswer({
             def body = EasyMock.currentArguments[0];
