@@ -23,9 +23,13 @@ class ModuleConfigurationCallbackTests extends App1TestCase {
     @Test
     void simple() {
         
-        openLinks "ModuleConfigurationCallback Demo"
+        if (isRequireJsEnabled()) {
         
-        assert getHtmlSource().contains("\"waitSeconds\" : \"13\"");
+            openLinks "ModuleConfigurationCallback Demo"
+            
+            assert getHtmlSource().contains("\"waitSeconds\" : \"13\"");
+            
+        }
 
     }
 

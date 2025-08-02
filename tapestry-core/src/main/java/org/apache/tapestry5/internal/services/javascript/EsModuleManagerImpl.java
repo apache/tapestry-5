@@ -272,13 +272,26 @@ public class EsModuleManagerImpl implements EsModuleManager
     public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits)
     {
 
-        if (!requireJsEnabled || !libraryURLs.isEmpty() || !inits.isEmpty())
+        final boolean noInits = !requireJsEnabled && libraryURLs.isEmpty() && inits.isEmpty();
+
+        if (noInits)
         {
-            Element element = body.element("script", "type", "module", "id", "__tapestry-es-module-pageinit__");
-    
-            element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s, false);",
-                    convert(libraryURLs), convert(inits)));
+            body.forceAttributes("data-page-initialized", "true");
+            Element script = body.element("script", "type", "text/javascript");
+            script.raw("document.querySelector(\"body > div.pageloading-mask\").remove()");        
         }
+        else
+        {
+            if (!requireJsEnabled || !libraryURLs.isEmpty() || !inits.isEmpty())
+            {
+                Element element = body.element("script", "type", "module", "id", "__tapestry-es-module-pageinit__");
+        
+                element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s, false);",
+                        convert(libraryURLs), convert(inits)));
+            }
+            
+        }
+        
     }
     
     private String convert(List<?> input)
