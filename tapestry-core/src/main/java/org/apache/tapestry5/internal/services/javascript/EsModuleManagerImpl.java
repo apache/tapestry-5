@@ -274,9 +274,9 @@ public class EsModuleManagerImpl implements EsModuleManager
 
         if (!requireJsEnabled || !libraryURLs.isEmpty() || !inits.isEmpty())
         {
-            Element element = body.element("script", "type", "module");
+            Element element = body.element("script", "type", "module", "id", "__tapestry-es-module-pageinit__");
     
-            element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s);",
+            element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s, false);",
                     convert(libraryURLs), convert(inits)));
         }
     }

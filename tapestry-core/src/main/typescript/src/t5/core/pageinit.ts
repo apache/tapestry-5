@@ -21,10 +21,11 @@
  * Any additional values in the initializer are passed to the function. The context of the function (this) is null.
  */
 
-import _ from "underscore";
+import _, { partial } from "underscore";
 import console from "t5/core/console";
 import dom from "t5/core/dom";
 import events from "t5/core/events";
+import { data } from "jquery";
 
 let exports_: any;
 let pathPrefix: String | null = null;
@@ -108,12 +109,12 @@ const addStylesheets = function(newStylesheets: StylesheetLink) {
 
 };
 
-const invokeInitializer = function(tracker: () => any, qualifiedName: string, initArguments: any[]) {
+const invokeInitializer = function(tracker: () => any, qualifiedName: string, initArguments: any[], requireJsModule: boolean) {
   const [moduleName, functionName] = Array.from(qualifiedName.split(':'));
 
   function executeInitializer(moduleLib: any) {
 
-    if (!requireJsEnabled && moduleLib['default'] != null && _.isFunction(moduleLib['default'])) {
+    if (!requireJsModule && moduleLib['default'] != null && _.isFunction(moduleLib['default'])) {
       moduleLib = moduleLib['default'];
     }
 
@@ -153,7 +154,7 @@ const invokeInitializer = function(tracker: () => any, qualifiedName: string, in
     
   }
 
-  if (requireJsEnabled) {
+  if (requireJsModule) {
 
     // @ts-ignore
     return require([moduleName], function(moduleLib: any) {
@@ -179,11 +180,11 @@ const invokeInitializer = function(tracker: () => any, qualifiedName: string, in
 
   // Pre-loads a number of libraries in order. When the last library is loaded,
   // invokes the callback (with no parameters).
-function loadLibraries(libraries: string[], callback: () => any) {
+function loadLibraries(libraries: string[], requireJsModules: boolean, callback: () => any) {
   // @ts-ignore
   const reducer = (callback, library) => (function() {
     console.debug(`Loading library ${library}`);
-    if (requireJsEnabled) {
+    if (requireJsModules) {
       // @ts-ignore
       return require([library], callback);
     }
@@ -200,9 +201,9 @@ function loadLibraries(libraries: string[], callback: () => any) {
   // Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
   // of modules, the exact order in which initializer functions are invoked is not predictable.
   // @ts-ignore
-function initialize(inits, callback) {
+function initialize(inits, requireJsModules, callback) {
   if (inits == null) { inits = []; }
-  console.debug(`Executing ${inits.length} inits`);
+  console.debug(`Executing ${inits.length} ${requireJsModules ? "AMD" : "ES module"} inits`);
   let callbackCountdown = inits.length + 1;
 
   // tracker gets invoked once after each require/callback, plus once extra
@@ -212,7 +213,7 @@ function initialize(inits, callback) {
     callbackCountdown--;
 
     if (callbackCountdown === 0) {
-      console.debug("All inits executed");
+      console.debug(`All ${requireJsModules ? "AMD" : "ES"} inits executed`);
       if (callback) { return callback(); }
     }
   };
@@ -223,7 +224,7 @@ function initialize(inits, callback) {
   // takes no parameters.
   for (var init of Array.from(inits)) {
     if (_.isString(init)) {
-      invokeInitializer(tracker, init, []);
+      invokeInitializer(tracker, init, [], requireJsModules);
     } else {
       // @ts-ignore
       var [qualifiedName, ...initArguments] = Array.from(init);
@@ -243,18 +244,35 @@ function initialize(inits, callback) {
 //
 // This is the main export of the module; other functions are attached as properties.
 // @ts-ignore
-const loadLibrariesAndInitialize = function(libraries, inits) {
+const loadLibrariesAndInitialize = function(libraries, inits, requireJsModules) {
   console.debug(`Loading ${(libraries != null ? libraries.length : undefined) || 0} libraries`);
+
+  const dataAttribute = "data-page-initialized";
+  const partialValue = "partial";
+  const hasEsModulePageInit = document.querySelector("script[id='__tapestry-es-module-pageinit__']") != null;
+
   // @ts-ignore
-  return loadLibraries(libraries,
+  return loadLibraries(libraries, requireJsModules,
     // @ts-ignore
-    () => initialize(inits,
+    () => initialize(inits, requireJsModules,
       function() {
         // At this point, all libraries have been loaded, and all inits should have executed. Unless some of
         // the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
         // be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
         // Later Ajax requests will cause the data-ajax-active attribute to be incremented (from 0)
         // and decremented (when the requests complete).
+
+        // If Require.js is enabled, this function may be called twice: once for the
+        // Require.js initializations, another for the ES module ones.
+        // That way, we need to only set the data-page-initialized attribute to
+        // true when this function is called by the second time.
+        if (requireJsEnabled && hasEsModulePageInit) {
+          var value = dom.body.attr(dataAttribute);
+          if (value !== partialValue) {
+            dom.body.attr(dataAttribute, "partial");
+            return;
+          }
+        }
 
         dom.body.attr("data-page-initialized", "true");
 
