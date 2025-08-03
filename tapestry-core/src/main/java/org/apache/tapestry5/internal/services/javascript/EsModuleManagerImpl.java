@@ -239,6 +239,14 @@ public class EsModuleManagerImpl implements EsModuleManager
                 if (head == null) 
                 {
                     head = root.find("head");
+                    // I think it's quite ugly, but HTML doesn't require
+                    // <head>, <body> nor even <html> itself. In this case,
+                    // if <head> isn't found, we just add the element to 
+                    // the root element.
+                    if (head == null)
+                    {
+                        head = root;
+                    }
                 }
                 script = head.element("script");
             }
@@ -246,6 +254,14 @@ public class EsModuleManagerImpl implements EsModuleManager
                 if (body == null)
                 {
                     body = root.find("body");
+                    // I think it's quite ugly, but HTML doesn't require
+                    // <head>, <body> nor even <html> itself. In this case,
+                    // if <body> isn't found, we just add the element to 
+                    // the root element.
+                    if (body == null)
+                    {
+                        body = root;
+                    }
                 }
                 if (placement.equals(ImportPlacement.BODY_BOTTOM)) {
                     script = body.element("script");
