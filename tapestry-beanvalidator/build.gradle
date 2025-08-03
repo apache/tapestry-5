@@ -6,19 +6,15 @@ import t5build.*
 
 description = 'Support for JSR-303 Bean Validation via the Hibernate validator implementation'
 
-def moduleLibs = [
-    hibernateValidator: 'org.hibernate:hibernate-validator:8.0.1.Final',
-]
-
 dependencies {
     implementation project(':tapestry-core')
 
     implementation libs.jakarta.validation.api
-    implementation moduleLibs.hibernateValidator
+    implementation libs.hibernate.validator
 
-    implementation libs.selenium.legrc, {
-        exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
-        exclude group: "org.testng", module: "testng"
+    implementation(libs.selenium.legrc) {
+        exclude group: 'org.seleniumhq.selenium', module: 'jetty-repacked'
+        exclude group: 'org.testng', module: 'testng'
     }
 
     testImplementation project(':tapestry-test')
@@ -33,7 +29,7 @@ task compileCoffeeScript(type: CompileCoffeeScript) {
 // Start up the test app, useful when debugging failing integration tests
 task runTestApp303(type:JavaExec) {
     mainClass = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/webapp", "-p", "8080"
+    args '-d', 'src/test/webapp', '-p', '8080'
     classpath += project.sourceSets.test.runtimeClasspath
 }
 

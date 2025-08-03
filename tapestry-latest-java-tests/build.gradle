@@ -8,13 +8,12 @@ sourceCompatibility = '17'
 targetCompatibility = '17'
 
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += "--enable-preview"
+    options.compilerArgs += '--enable-preview'
 }
 
 tasks.withType(Test).configureEach {
-    jvmArgs += "--enable-preview"
+    jvmArgs += '--enable-preview'
 }
-
 
 dependencies {
     testImplementation project(':tapestry-ioc')

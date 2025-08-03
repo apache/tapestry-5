@@ -35,11 +35,15 @@ dependencies {
     testImplementation libs.webdrivermanager
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
-
 test {
     systemProperties(
             'geb.build.reportsDir': "${reporting.baseDir}/geb",
             'tapestry.compiled-asset-cache-dir': "${buildDir}/compiled-asset-cache",
-            'tapestry.production-mode': "false")
+            'tapestry.production-mode': 'false')
+}
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
+    }
 }

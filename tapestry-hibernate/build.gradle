@@ -23,6 +23,6 @@ jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hiberna
 task runTestApp0(type:JavaExec) {
     description = 'Start tapestry-hibernate integration test app, useful when debugging failing integration tests'
     mainClass = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/webapp", "-p", "8080"
+    args '-d', 'src/test/webapp', '-p', '8080'
     classpath += project.sourceSets.test.runtimeClasspath
 }

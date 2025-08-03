@@ -3,21 +3,20 @@ plugins {
     id 'antlr'
 }
 
-description = "Fast class property discovery, reading and writing library based on bytecode generation. Extracted from Apache Tapestry, but not dependent on the Web framework (tapestry-core) nor the IoC one (tapestry-ioc)."
-
+description = 'Fast class property discovery, reading and writing library based on bytecode generation. Extracted from Apache Tapestry, but not dependent on the Web framework (tapestry-core) nor the IoC one (tapestry-ioc).'
 
 dependencies {
-    implementation project(":plastic")
-    implementation project(":tapestry5-annotations")
-    implementation project(":commons")
+    implementation project(':plastic')
+    implementation project(':tapestry5-annotations')
+    implementation project(':commons')
 
     implementation libs.slf4j.api
 
     antlr libs.antlr
 
     // Transitive will bring in the unwanted string template library as well
-    implementation libs.antlr.runtime, {
-        exclude group: "org.antlr", module: "stringtemplate"
+    implementation(libs.antlr.runtime) {
+        exclude group: 'org.antlr', module: 'stringtemplate'
     }
 
     testImplementation platform(libs.spock.bom)

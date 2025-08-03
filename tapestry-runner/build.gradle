@@ -19,5 +19,5 @@ dependencies {
     implementation "org.apache.tomcat:tomcat-jasper:${moduleVersions.tomcat}"
 
     implementation "org.apache.tomcat:tomcat-dbcp:${moduleVersions.tomcat}"
-    implementation "commons-cli:commons-cli:${moduleVersions.commonsCli}"
+    implementation libs.commons.cli
 }

@@ -10,9 +10,6 @@ description = 'Central module for Tapestry, containing all core services and com
 
 def mainGeneratedDir = 'src/main/generated'
 def testGeneratedDir = 'src/test/generated'
-def moduleVersions = [
-    httpclient: '4.5.14'
-]
 
 dependencies {
     api project(':tapestry-ioc')
@@ -31,13 +28,12 @@ dependencies {
 
     provided libs.jakarta.servlet.api
 
-    testImplementation "org.apache.httpcomponents:httpclient:${moduleVersions.httpclient}"
+    testImplementation libs.httpcomponents.httpclient
     testImplementation project(":tapestry-spock")
 
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
     testRuntimeOnly libs.guice
 }
-
 
 tasks.register('preprocessCoffeeScript', PreprocessCoffeeScript)
 
@@ -83,7 +79,7 @@ tasks.register('testWithPrototype', Test) {
     'appfolder'
 ].each { appName ->
     tasks.register("runTest${appName.capitalize()}", JavaExec) {
-        group = 'Application' // It's good practice to group custom run tasks
+        group = 'Application'
         description = "Starts the ${appName} integration test app, useful when debugging."
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
         args '-d', "src/test/${appName}", '-p', '8080'

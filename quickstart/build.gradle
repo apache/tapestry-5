@@ -15,7 +15,7 @@ task copyGradleWrapper(type: Copy) {
 
 task addGradleWrapper(type: Exec) {
     workingDir "$buildDir/wrapper"
-    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '7.3'
+    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '8.14.2'
 
     standardOutput = new ByteArrayOutputStream()
 
@@ -24,10 +24,10 @@ task addGradleWrapper(type: Exec) {
     }
 
     doFirst {
-        def wrapperDirectory = new File(buildDir, "wrapper")
+        def wrapperDirectory = new File(buildDir, 'wrapper')
         wrapperDirectory.mkdirs()
 
-        def settings = new File(wrapperDirectory, "settings.gradle")
+        def settings = new File(wrapperDirectory, 'settings.gradle')
         new FileOutputStream(settings).close()
     }
 
@@ -50,18 +50,18 @@ task processFiltered(type: Copy) {
     filter(ReplaceTokens, tokens: [
         quickstartVersion: project.parent.version,
         tapestryVersion: project.parent.version,
-        springBootVersion: '3.1.3',
-        junitVersion: '5.8.2',
-        jacksonVersion: '2.13.1',
-        jsonVersion: '1.1.4',
-        log4jVersion: '2.17.2',
-        yassonVersion: '2.0.4',
-        servletVersion: '5.0.0',
-        mavenCompilerVersion: '3.8.1',
-        mavenSurefireVersion: '3.1',
-        mavenWarVersion: '3.3.1',
-        mavenJettyVersion: '11.0.15',
-        grettyVersion: '3.0.6'
+        springBootVersion: libs.versions.quickstart.spring.boot.get(),
+        junitVersion: libs.versions.junit5.get(),
+        jacksonVersion: libs.versions.jackson.get(),
+        jsonVersion: libs.versions.quickstart.json.get(),
+        log4jVersion: libs.versions.quickstart.log4j.get(),
+        yassonVersion: libs.versions.quickstart.yasson.get(),
+        servletVersion: libs.versions.jakarta.servlet.api.get(),
+        mavenCompilerVersion: libs.versions.quickstart.maven.compiler.get(),
+        mavenSurefireVersion: libs.versions.quickstart.maven.surefire.get(),
+        mavenWarVersion: libs.versions.quickstart.maven.war.get(),
+        mavenJettyVersion: libs.versions.quickstart.maven.jetty.get(),
+        grettyVersion: libs.versions.quickstart.gretty.get()
     ])
 }
 

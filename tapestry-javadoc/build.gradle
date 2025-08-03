@@ -2,7 +2,7 @@ plugins {
     id 'tapestry.junit5-convention'
 }
 
-description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
+description = 'JavaDoc Plugin for Tapestry that generates component reference documentation for component classes'
 
 dependencies {
     implementation project(':tapestry-core')

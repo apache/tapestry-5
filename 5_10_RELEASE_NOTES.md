@@ -22,3 +22,9 @@ Scratch pad for changes destined for the 5.10.0 release notes page.
 
 
 # Overall notes
+
+* Gradle overhaul
+    * 8.5 -> 8.14.2
+    * Version catalogs
+    * Conventions
+    * ...

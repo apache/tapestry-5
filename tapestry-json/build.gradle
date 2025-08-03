@@ -5,11 +5,14 @@ plugins {
 description = 'Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json'
 
 dependencies {
-
     implementation project(':tapestry5-annotations')
     implementation project(':commons')
 
     testImplementation project(":tapestry-func")
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.json.modules.JSONModule'
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.json.modules.JSONModule'
+    }
+}

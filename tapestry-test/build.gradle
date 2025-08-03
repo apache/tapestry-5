@@ -13,7 +13,7 @@ dependencies {
 
     api libs.selenium.java
 
-    api libs.selenium.legrc, {
+    api(libs.selenium.legrc) {
         exclude group: 'org.seleniumhq.selenium', module: 'jetty-repacked'
         exclude group: 'org.testng', module: 'testng'
         exclude group: 'junit', module: 'junit'

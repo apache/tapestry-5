@@ -5,8 +5,6 @@ plugins {
 
 description = 'Provides support Tapestry injections in Spock specifications'
 
-apply plugin: 'groovy'
-
 dependencies {
     provided project(':commons')
     provided project(':tapestry-ioc')

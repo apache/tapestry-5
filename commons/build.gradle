@@ -2,11 +2,11 @@ plugins {
     id 'tapestry.junit5-spock-convention'
 }
 
-description = "Project including common classes for tapestry-core, tapestry-ioc and beanmodel."
-
+description = 'Project including common classes for tapestry-core, tapestry-ioc and beanmodel.'
 
 dependencies {
-    api project(":plastic")
-    api project(":tapestry5-annotations")
-    implementation project(":tapestry-func")
+    api project(':plastic')
+    api project(':tapestry5-annotations')
+
+    implementation project(':tapestry-func')
 }

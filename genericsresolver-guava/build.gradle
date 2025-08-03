@@ -3,14 +3,10 @@ plugins {
 }
 description = "Replaces the Tapestry Commons's own Java Generics resolution code with the one from Google Guava's one"
 
-def moduleLibs = [
-    guava: 'com.google.guava:guava:27.0.1-jre',
-]
-
 dependencies {
     implementation project(':commons')
 
-    provided moduleLibs.guava
+    provided libs.guava
 
     testImplementation project(':tapestry-core')
     testImplementation project(':tapestry-test')

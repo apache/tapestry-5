@@ -22,4 +22,8 @@ dependencies {
     testImplementation moduleLibs.embedMongo
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.mongodb.modules.MongodbModule'
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.mongodb.modules.MongodbModule'
+    }
+}
