@@ -480,8 +480,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         
         assert InternalUtils.isNonBlank(moduleName);
         
-        // TODO import core libraries (jQuery, Prototype/Scriptaculous/Underscore)
-
         EsModuleInitialization init = new EsModuleInitializationImpl(moduleName);
         if (!esModulesImported.contains(moduleName))
         {
