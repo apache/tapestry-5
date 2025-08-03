@@ -6,24 +6,28 @@ slf4j = "1.7.25"
 
 # JAKARTA
 
-jakartaAnnotationApi = "2.0.0"
-jakartaInjectApi = "2.0.1"
-jakartaPersistenceApi = "3.0.0"
-jakartaServletApi = "5.0.0"
-jakartaValidationApi = "3.0.2"
-jakartaXmlBindApi = "2.3.2"
+jakarta-annotation-api  = "2.0.0"
+jakarta-inject-api      = "2.0.1"
+jakarta-persistence-api = "3.0.0"
+jakarta-servlet-api     = "5.0.0"
+jakarta-validation-api  = "3.0.2"
+jakarta-xml-bind-api    = "2.3.2"
 
 # APACHE COMMONS
 
-commonsCodec = "1.18.0"
-commonsIo = "2.19.0"
-commonsLang = "3.17.0"
-commonsLogging = "1.3.5"
-commonsText = "1.13.1"
+commons-cli        = "1.2"
+commons-codec      = "1.18.0"
+commons-httpclient = "4.1"
+commons-io         = "2.19.0"
+commons-lang3      = "3.17.0"
+commons-logging    = "1.3.5"
+commons-text       = "1.13.1"
 
 # HIBERNATE
 
-hibernate = "5.4.32.Final"
+hibernate           = "5.4.32.Final"
+hibernate-validator = "8.0.1.Final"
+
 hsqldb = "2.7.3"
 
 # ANTLR
@@ -34,14 +38,19 @@ antlr = "3.5.3"
 
 snakeyaml = "2.3"
 cglib = "2.2"
-hamcrestCore = "1.3"
+hamcrest-core = "1.3"
 json = "20140107"
-xmlApis = "1.4.01"
+xml-apis = "1.4.01"
 guice = "3.0"
 groovy = "4.0.27"
 ant-jsch = "1.8.2"
+guava = "27.0.1-jre"
+jackson = "2.13.1"
+clojure = "1.6.0"
+httpcomponents-httpclient = "4.5.14"
 
 # TESTING
+
 slf4j-simple = "2.0.17"
 junit5 = "5.10.2"
 junit4 = "4.13.2"
@@ -51,37 +60,52 @@ spock = "2.3-groovy-4.0"
 geb = "2.0"
 webdrivermanager = "5.3.1"
 selenium = "4.5.0"
-seleniumJava = "4.12.1"
-seleniumServer = "4.12.1"
+selenium-java = "4.12.1"
+selenium-server = "4.12.1"
 
+# QUICKSTART
+
+quickstart-spring-boot    = "3.1.3"
+quickstart-json           = "1.1.4"
+quickstart-log4j          = "2.17.2"
+quickstart-yasson         = "2.0.4"
+quickstart-maven-compiler = "3.8.1"
+quickstart-maven-surefire = "3.1"
+quickstart-maven-war      = "3.3.1"
+quickstart-maven-jetty    = "11.0.15"
+quickstart-gretty         = "3.0.6"
 
 [libraries]
 
 # LOGGING
 
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-api     = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
 
 # JAKARTA
 
-jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotationApi" }
-jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakartaInjectApi" }
-jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistenceApi" }
-jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "jakartaServletApi" }
-jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaValidationApi" }
-jakarta-xml-bind-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jakartaXmlBindApi" }
+jakarta-annotation-api  = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation-api" }
+jakarta-inject-api      = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakarta-inject-api" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence-api" }
+jakarta-servlet-api     = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "jakarta-servlet-api" }
+jakarta-validation-api  = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-api" }
+jakarta-xml-bind-api    = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jakarta-xml-bind-api" }
 
 # APACHE COMMONS
 
-commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
-commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang" }
-commons-logging = { module = "commons-logging:commons-logging", version.ref = "commonsLogging" }
-commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
+commons-cli        = { module = "commons-cli:commons-cli", version.ref = "commons-cli" }
+commons-codec      = { module = "commons-codec:commons-codec", version.ref = "commons-codec" }
+commons-httpclient = { module = "commons-httpclient:commons-httpclient", version.ref = "commons-httpclient" }
+commons-io         = { module = "commons-io:commons-io", version.ref = "commons-io" }
+commons-lang3      = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+commons-logging    = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
+commons-text       = { module = "org.apache.commons:commons-text", version.ref = "commons-text" }
 
 # HIBERNATE
 
-hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
+hibernate-core      = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
+hibernate-validator = { module = "org.hibernate:hibernate-validator", version.ref = "hibernate-validator" }
+
 hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsqldb" }
 
 # ANTLR
@@ -93,47 +117,63 @@ antlr-runtime = { module = "org.antlr:antlr-runtime", version.ref = "antlr" }
 
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 cglib-nodep = { module = "cglib:cglib-nodep", version.ref = "cglib" }
-hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrestCore" }
+hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest-core" }
 json = { module = "org.json:json", version.ref = "json" }
-xml-apis = { module = "xml-apis:xml-apis", version.ref = "xmlApis" }
+xml-apis = { module = "xml-apis:xml-apis", version.ref = "xml-apis" }
 guice = { module = "com.google.inject:guice", version.ref = "guice" }
 ant-jsch = { module = "org.apache.ant:ant-jsch", version.ref = "ant-jsch" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+clojure = { module = "org.clojure:clojure", version.ref = "clojure" }
+httpcomponents-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpcomponents-httpclient" }
 
 # GROOVY
-groovy-core = { group = "org.apache.groovy", name = "groovy", version.ref = "groovy" }
-groovy-json = { group = "org.apache.groovy", name = "groovy-json", version.ref = "groovy" }
-groovy-nio = { group = "org.apache.groovy", name = "groovy-nio", version.ref = "groovy" }
 
-# BOM
+groovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
+groovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
+groovy-nio  = { module = "org.apache.groovy:groovy-nio", version.ref = "groovy" }
 
-junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
-spock-bom = { module = "org.spockframework:spock-bom", version.ref = "spock" }
+# JACKSON
+
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
 # TESTING
 
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-simple" }
 
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter"}
-
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-bom            = { module = "org.junit:junit-bom", version.ref = "junit5" }
+junit-jupiter        = { module = "org.junit.jupiter:junit-jupiter"}
+junit-jupiter-api    = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
 testng = { module = "org.testng:testng", version.ref = "testng" }
+
 easymock = { module = "org.easymock:easymock", version.ref = "easymock" }
+
+spock-bom  = { module = "org.spockframework:spock-bom", version.ref = "spock" }
 spock-core = { module = "org.spockframework:spock-core" }
+
 geb-spock = { module = "org.gebish:geb-spock", version.ref = "geb" }
-selenium-legrc = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium" }
-selenium-api = { module = "org.seleniumhq.selenium:selenium-api", version.ref = "selenium" }
-selenium-java = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "seleniumJava" }
-selenium-server = { module = "org.seleniumhq.selenium:selenium-server", version.ref = "seleniumServer" }
+
+selenium-legrc  = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium" }
+selenium-api    = { module = "org.seleniumhq.selenium:selenium-api", version.ref = "selenium" }
+selenium-java   = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
+selenium-server = { module = "org.seleniumhq.selenium:selenium-server", version.ref = "selenium-server" }
+
 webdrivermanager = { module = "io.github.bonigarcia:webdrivermanager", version.ref = "webdrivermanager" }
 
 
 [bundles]
 
-groovy = [ "groovy-core", "groovy-json", "groovy-nio" ]
-junit-jupiter-essentials = [ "junit-jupiter-api", "junit-jupiter-params" ]
+groovy = [
+    "groovy-core",
+    "groovy-json",
+    "groovy-nio"
+]
 
-
+junit-jupiter-essentials = [
+    "junit-jupiter-api",
+    "junit-jupiter-params"
+]
