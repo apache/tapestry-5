@@ -7,9 +7,7 @@ plugins {
     id 'maven-publish'
 }
 
-
 description = 'Apache Tapestry 5 Project'
-
 
 ext {
     tapestryMajorVersion = '5.10.0'
@@ -68,7 +66,6 @@ ext {
 // Provided so that the CI server can override the normal version number for nightly builds.
 version = TapestryBuildLogic.tapestryVersion(project)
 
-
 // Specific to top-level build, not set for subprojects:
 configurations {
     javadoc
@@ -80,7 +77,6 @@ configurations {
 
     binaries // additional dependencies included in the binary archive
 }
-
 
 dependencies {
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
@@ -357,7 +353,7 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     ]
 
     def subprojectsToConsider = subprojects.findAll {
-        it.name !in excludedProjects
+        !excludedProjects.contains(it.name)
     }
 
     dependsOn = subprojectsToConsider.test
@@ -521,7 +517,7 @@ if (canDeploy) {
         group 'Release artifact'
         description 'Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)'
 
-        destinationDir file(archiveDeployFolder.get())
+        destinationDirectory = file(archiveDeployFolder.get())
 
         from tasks.generateChecksums
         from configurations.uploads.allArtifacts.files

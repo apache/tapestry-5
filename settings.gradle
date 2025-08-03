@@ -3,7 +3,7 @@ plugins {
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '2.0.2'
 }
 
-rootProject.name = "tapestry-5"
+rootProject.name = 'tapestry-5'
 
 dependencyResolutionManagement {
     repositories {
@@ -21,55 +21,54 @@ dependencyResolutionManagement {
     }
 }
 
-include("plastic",
-        "tapestry5-annotations",
-        "tapestry-test",
-        "tapestry-func",
-        "tapestry-ioc",
-        "tapestry-json",
-        "tapestry-http",
-        "tapestry-core",
-        "tapestry-hibernate-core",
-        "tapestry-hibernate",
-        "tapestry-jmx",
-        "tapestry-upload",
-        "tapestry-beanvalidator",
-        "tapestry-jpa",
-        "tapestry-kaptcha",
-        "quickstart",
-        "tapestry-clojure",
-        "tapestry-mongodb",
-        "tapestry-test-data",
-        "tapestry-internal-test",
-        "tapestry-ioc-junit",
-        "tapestry-webresources",
-        "tapestry-runner",
-        "tapestry-test-constants",
-        "tapestry-ioc-jcache",
-        "beanmodel",
-        "commons",
-        "genericsresolver-guava",
-        "tapestry-version-migrator",
-        "tapestry-spock",
-        "tapestry-openapi-viewer",
-        "tapestry-rest-jackson")
+include('plastic',
+        'tapestry5-annotations',
+        'tapestry-test',
+        'tapestry-func',
+        'tapestry-ioc',
+        'tapestry-json',
+        'tapestry-http',
+        'tapestry-core',
+        'tapestry-hibernate-core',
+        'tapestry-hibernate',
+        'tapestry-jmx',
+        'tapestry-upload',
+        'tapestry-beanvalidator',
+        'tapestry-jpa',
+        'tapestry-kaptcha',
+        'quickstart',
+        'tapestry-clojure',
+        'tapestry-mongodb',
+        'tapestry-test-data',
+        'tapestry-internal-test',
+        'tapestry-ioc-junit',
+        'tapestry-webresources',
+        'tapestry-runner',
+        'tapestry-test-constants',
+        'tapestry-ioc-jcache',
+        'beanmodel',
+        'commons',
+        'genericsresolver-guava',
+        'tapestry-version-migrator',
+        'tapestry-spock',
+        'tapestry-openapi-viewer',
+        'tapestry-rest-jackson')
 
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-    include "tapestry-javadoc"
+    include('tapestry-javadoc')
 }
 
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
-    include "tapestry-latest-java-tests", "tapestry-spring"
+    include('tapestry-latest-java-tests', 'tapestry-spring')
 }
-
 
 def isTravisCI = System.getenv('TRAVIS_JOB_ID') != null
 def isJenkins = System.getenv('JENKINS_URL') != null
 def isCI = isTravisCI || isJenkins
 
 develocity {
-    server = "https://develocity.apache.org"
-    projectId = "tapestry"
+    server = 'https://develocity.apache.org'
+    projectId = 'tapestry'
     buildScan {
         uploadInBackground = !isCI
         publishing.onlyIf { it.authenticated }
@@ -78,13 +77,12 @@ develocity {
             // Alternatively, the build scan will provide the hostname for troubleshooting host-specific issues.
             ipAddresses { addresses ->
                 addresses.collect { address ->
-                    "0.0.0.0"
+                    '0.0.0.0'
                 }
             }
         }
     }
 }
-
 
 buildCache {
     local {
