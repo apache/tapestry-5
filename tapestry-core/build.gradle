@@ -147,25 +147,16 @@ task runTestAppfolder(type:JavaExec) {
 // other combinations
 
 task testWithJqueryAndRequireJsDisabled(type:Test) {
-  println "-------------------------------------"
-  println "Test suite with jQuery as infrastructure and Require.js disabled"
-  println "-------------------------------------"
   systemProperties."tapestry.javascript-infrastructure-provider" = "jquery"
   systemProperties."tapestry.require-js-enabled" = "false"
 }
 
 task testWithPrototypeAndRequireJsEnabled(type:Test) {
-  println "-------------------------------------"
-  println "Test suite with Prototype.js as infrastructure and Require.js enabled"
-  println "-------------------------------------"
   systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
   systemProperties."tapestry.require-js-enabled" = "true"
 }  
 
 task testWithPrototypeAndRequireJsDisabled(type:Test) {
-  println "-------------------------------------"
-  println "Test suite with Prototype.js as infrastructure and Require.js disabled"
-  println "-------------------------------------"
   systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
   systemProperties."tapestry.require-js-enabled" = "false"
 }

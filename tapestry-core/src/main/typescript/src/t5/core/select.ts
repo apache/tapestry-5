@@ -19,12 +19,12 @@
 
 import events from "t5/core/events";
 import dom from "t5/core/dom";
-import zone from "t5/core/zone";
+import { findZone } from "t5/core/zone";
 
 dom.onDocument("change", "select[data-update-zone]", function() {
 
   // @ts-ignore
-  const containingZone = zone.findZone(this);
+  const containingZone = findZone(this);
 
   if (containingZone) {
     containingZone.trigger(events.zone.refresh, {
