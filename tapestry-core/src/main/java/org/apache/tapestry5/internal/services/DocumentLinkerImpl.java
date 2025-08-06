@@ -278,11 +278,11 @@ public class DocumentLinkerImpl implements DocumentLinker
             moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
             
             // Libraries were already added in the line above.
-            esModuleManager.writeInitialization(body, Collections.emptyList(), esModulesInitsManager.getInitsAsJsonArrays());
+            esModuleManager.writeInitialization(body, Collections.emptyList(), esModulesInitsManager.getInitsAsJsonArrayList());
         }
         else
         {
-            esModuleManager.writeInitialization(body, libraryURLs, esModulesInitsManager.getInitsAsJsonArrays());
+            esModuleManager.writeInitialization(body, libraryURLs, esModulesInitsManager.getInitsAsJsonArrayList());
         }
     }
 

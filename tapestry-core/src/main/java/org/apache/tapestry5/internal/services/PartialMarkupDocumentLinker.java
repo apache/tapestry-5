@@ -109,7 +109,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         }
 
         List<?> inits = initsManager.getSortedInits();
-        final List<?> esModuleInits = esModulesinitsManager.getInitsAsJsonArrays();
+        final List<?> esModuleInits = esModulesinitsManager.getAllInitsAsJsonArrayList();
 
         if (inits.size() > 0 || esModuleInits.size() > 0)
         {

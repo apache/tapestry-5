@@ -556,29 +556,6 @@ public class JavaScriptModule
         }
     }
     
-//    @Contribute(EsModuleManager.class)
-//    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleManagerContribution> configuration,
-//                                                        LocalizationSetter localizationSetter,
-//                                                        ComponentMessagesSource messagesSource,
-//                                                        ResourceChangeTracker resourceChangeTracker,
-//                                                        @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
-//    {
-//        
-//        EsModuleConfigurationCallback callback = jsonObject -> {
-//        
-//            for (Locale locale : localizationSetter.getSupportedLocales())
-//            {
-//                MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
-//    
-//                jsonObject.put("t5/core/messages/" + locale.toString(), resource.toURL());
-//            }
-//            
-//        };
-//        
-//        configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
-//        
-//    }
-
     @Contribute(EsShimManager.class)
     public static void setupBaseEsShims(
             MappedConfiguration<String, Resource> configuration,
@@ -598,6 +575,12 @@ public class JavaScriptModule
                 .getResource();
         configuration.add("jquery", new EsShim(jQuery)
                 .defaultExport("jQuery.noConflict()")
+                .getResource());
+        
+        final Resource moment = assetSource.getClasspathAsset("/META-INF/assets/tapestry5//moment-2.15.1.js")
+                .getResource();
+        configuration.add("t5/core/moment", new EsShim(moment)
+                .defaultExport("moment")
                 .getResource());
         
         if (compatibility.enabled(Trait.BOOTSTRAP_3))

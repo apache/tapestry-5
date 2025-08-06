@@ -75,16 +75,38 @@ public class EsModuleInitsManager
     }
     
     /**
-     * Returns all previously added inits as JSONArray instances.
+     * Returns all inits (pure imports and initializations) as a JSONArray list.
      */
-    public List<JSONArray> getInitsAsJsonArrays()
+    public List<JSONArray> getAllInitsAsJsonArrayList()
     {
-        
         List<JSONArray> list;
-        if (!initializations.isEmpty()) 
+        if (!imports.isEmpty() || !initializations.isEmpty())
         {
-            list = new ArrayList<>(initializations.size());
-            for (EsModuleInitialization init : initializations) 
+            list = new ArrayList<>(imports.size() + initializations.size());
+            list.addAll(toJSONArray(imports));
+            list.addAll(toJSONArray(initializations));
+        }
+        else
+        {
+            list = Collections.emptyList();
+        }
+        return list;
+    }
+    
+    /**
+     * Returns all previously added inits as a JSONArray list.
+     */
+    public List<JSONArray> getInitsAsJsonArrayList()
+    {
+        return toJSONArray(initializations);
+    }
+
+    private List<JSONArray> toJSONArray(final List<EsModuleInitialization> inits) {
+        List<JSONArray> list;
+        if (!inits.isEmpty()) 
+        {
+            list = new ArrayList<>(inits.size());
+            for (EsModuleInitialization init : inits) 
             {
                 final EsModuleInitializationImpl initImpl = (EsModuleInitializationImpl) init;
                 final JSONArray arguments = initImpl.getArguments();
@@ -115,3 +137,4 @@ public class EsModuleInitsManager
     }
 
 }
+
