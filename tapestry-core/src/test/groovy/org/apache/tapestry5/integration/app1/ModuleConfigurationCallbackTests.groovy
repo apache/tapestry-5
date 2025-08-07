@@ -29,6 +29,11 @@ class ModuleConfigurationCallbackTests extends App1TestCase {
             
             assert getHtmlSource().contains("\"waitSeconds\" : \"13\"");
             
+            // Just to test @Import(module), since it's not used
+            // by Tapestry itself, being replaced by 
+            // RequireJsModeHelper.importModule() 
+            assert isElementPresent("css=script[data-requiremodule=validate-in-error]");
+            
         }
 
     }

@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
@@ -55,7 +58,6 @@ import org.slf4j.Logger;
  * @see Form
  */
 @SupportsInformalParameters
-@Import(module = "t5/core/form-fragment")
 public class FormFragment implements ClientElement
 {
     /**
@@ -147,7 +149,7 @@ public class FormFragment implements ClientElement
 
     @Inject
     private ClientDataEncoder clientDataEncoder;
-
+    
     String defaultElement()
     {
         return resources.getElementName("div");
@@ -174,6 +176,8 @@ public class FormFragment implements ClientElement
         }
 
         resources.renderInformalParameters(writer);
+        
+        requireJsModeHelper.importModule("t5/core/form-fragment");
 
         if (!visible)
         {

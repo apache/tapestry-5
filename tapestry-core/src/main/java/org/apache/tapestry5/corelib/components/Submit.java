@@ -14,10 +14,21 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -36,7 +47,6 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")
-@Import(module="t5/core/forms")
 public class Submit implements ClientElement
 {
     /**
@@ -120,6 +130,9 @@ public class Submit implements ClientElement
     @SuppressWarnings("unchecked")
     @Environmental
     private TrackableComponentEventCallback eventCallback;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     private String clientId;
 
@@ -150,6 +163,9 @@ public class Submit implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
+        
+        requireJsModeHelper.importModule("t5/core/forms");
+        
         clientId = javascriptSupport.allocateClientId(resources);
 
         String name = formSupport.allocateControlName(resources.getId());
