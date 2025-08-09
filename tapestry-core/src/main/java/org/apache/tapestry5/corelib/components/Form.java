@@ -33,6 +33,7 @@ import org.apache.tapestry5.internal.FormsRequirePostException;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.FormControlNameManager;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -239,6 +240,9 @@ public class Form implements ClientElement, FormValidationControl
     private JavaScriptSupport javascriptSupport;
 
     @Inject
+    private RequireJsModeHelper requireJsModeHelper;
+    
+    @Inject
     private Request request;
 
     @Inject
@@ -394,7 +398,7 @@ public class Form implements ClientElement, FormValidationControl
 
         if (async)
         {
-            javascriptSupport.require("t5/core/zone");
+            requireJsModeHelper.importModule("t5/core/zone");
             writer.attributes("data-async-trigger", true);
         }
 

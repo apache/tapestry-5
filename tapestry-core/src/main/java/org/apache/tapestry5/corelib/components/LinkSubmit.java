@@ -14,10 +14,20 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -34,7 +44,6 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")
-@Import(module = "t5/core/forms")
 public class LinkSubmit implements ClientElement
 {
     /**
@@ -94,13 +103,17 @@ public class LinkSubmit implements ClientElement
 
     @Inject
     private Request request;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Environmental
     private TrackableComponentEventCallback eventCallback;
 
     private String clientId;
 
+    @SuppressWarnings("serial")
     private static class ProcessSubmission implements ComponentAction<LinkSubmit>
     {
         private final String clientId;
@@ -143,6 +156,9 @@ public class LinkSubmit implements ClientElement
     {
         if (!disabled)
         {
+            
+            requireJsModeHelper.importModule("t5/core/forms");
+            
             clientId = javascriptSupport.allocateClientId(resources);
 
             formSupport.store(this, new ProcessSubmission(clientId));

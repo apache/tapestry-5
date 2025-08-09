@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
@@ -34,7 +35,7 @@ import java.util.List;
  * @tapestrydoc
  * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
-@Import(stylesheet = "ExceptionDisplay.css", module = "t5/core/exception-display")
+@Import(stylesheet = "ExceptionDisplay.css")
 public class ExceptionDisplay
 {
     /**
@@ -63,12 +64,17 @@ public class ExceptionDisplay
     @Inject
     @Primary
     private StackTraceElementAnalyzer frameAnalyzer;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     void setupRender()
     {
         ExceptionAnalysis analysis = analyzer.analyze(exception);
 
         stack = analysis.getExceptionInfos();
+        
+        requireJsModeHelper.importModule("t5/core/exception-display");
     }
 
     public Object getPropertyValue()

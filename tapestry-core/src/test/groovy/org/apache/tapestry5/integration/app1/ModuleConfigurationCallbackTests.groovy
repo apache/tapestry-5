@@ -23,9 +23,18 @@ class ModuleConfigurationCallbackTests extends App1TestCase {
     @Test
     void simple() {
         
-        openLinks "ModuleConfigurationCallback Demo"
+        if (isRequireJsEnabled()) {
         
-        assert getHtmlSource().contains("\"waitSeconds\" : \"13\"");
+            openLinks "ModuleConfigurationCallback Demo"
+            
+            assert getHtmlSource().contains("\"waitSeconds\" : \"13\"");
+            
+            // Just to test @Import(module), since it's not used
+            // by Tapestry itself, being replaced by 
+            // RequireJsModeHelper.importModule() 
+            assert isElementPresent("css=script[data-requiremodule=validate-in-error]");
+            
+        }
 
     }
 

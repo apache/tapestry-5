@@ -14,11 +14,19 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * @since 5.3
  */
-@Import(module = "client-console-demo")
 public class ClientConsoleDemo {
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
+    
+    void beginRender()
+    {
+        requireJsModeHelper.importModule("client-console-demo");
+    }
 }

@@ -12,10 +12,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
@@ -23,6 +26,7 @@ import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.mixins.TriggerFragment;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.Environment;
@@ -54,7 +58,6 @@ import org.slf4j.Logger;
  * @see Form
  */
 @SupportsInformalParameters
-@Import(module = "t5/core/form-fragment")
 public class FormFragment implements ClientElement
 {
     /**
@@ -122,9 +125,12 @@ public class FormFragment implements ClientElement
 
     @Inject
     private Environment environment;
-
+    
     @Environmental
     private JavaScriptSupport javascriptSupport;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     private ComponentResources resources;
@@ -143,7 +149,7 @@ public class FormFragment implements ClientElement
 
     @Inject
     private ClientDataEncoder clientDataEncoder;
-
+    
     String defaultElement()
     {
         return resources.getElementName("div");
@@ -170,6 +176,8 @@ public class FormFragment implements ClientElement
         }
 
         resources.renderInformalParameters(writer);
+        
+        requireJsModeHelper.importModule("t5/core/form-fragment");
 
         if (!visible)
         {
@@ -177,7 +185,7 @@ public class FormFragment implements ClientElement
 
             if (!alwaysSubmit)
             {
-                javascriptSupport.require("t5/core/form-fragment").invoke("hide").with(clientId);
+                requireJsModeHelper.importModule("t5/core/form-fragment").invoke("hide").with(clientId);
             }
         }
 

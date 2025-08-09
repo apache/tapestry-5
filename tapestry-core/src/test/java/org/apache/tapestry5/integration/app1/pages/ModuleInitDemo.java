@@ -1,16 +1,16 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class ModuleInitDemo
 {
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     void afterRender()
     {
-        javaScriptSupport.require("app/alert").invoke("alert").with("Module Initialization Demo");
+        requireJsModeHelper.importModule("app/alert").invoke("alert").with("Module Initialization Demo");
     }
 }

@@ -14,6 +14,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -94,6 +95,10 @@ public class DevTool
 
     @Inject
     private ReloadHelper reloadHelper;
+    
+    @Inject
+    @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+    private boolean requireJsEnabled;
 
     public String getZoneElement()
     {
@@ -122,7 +127,14 @@ public class DevTool
     {
         if (enabled)
         {
-            javaScriptSupport.importStack("core").require("bootstrap/dropdown");
+            if (requireJsEnabled)
+            {
+                javaScriptSupport.importStack("core").require("bootstrap/dropdown");
+            }
+            else
+            {
+                javaScriptSupport.importEsModule("bootstrap/dropdown");
+            }
         }
 
         return enabled;

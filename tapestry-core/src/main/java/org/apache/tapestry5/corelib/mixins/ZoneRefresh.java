@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -57,17 +58,17 @@ public class ZoneRefresh
     private Zone zone;
 
     @Inject
-    private JavaScriptSupport javaScriptSupport;
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     private ComponentResources resources;
 
     //For testing purpose
-    ZoneRefresh(Object[] context, ComponentResources resources, JavaScriptSupport javaScriptSupport, Zone zone)
+    ZoneRefresh(Object[] context, ComponentResources resources, RequireJsModeHelper requireJsModeHelper, Zone zone)
     {
         this.context = context;
         this.resources = resources;
-        this.javaScriptSupport = javaScriptSupport;
+        this.requireJsModeHelper = requireJsModeHelper;
         this.zone = zone;
     }
 
@@ -76,7 +77,7 @@ public class ZoneRefresh
     {
         Link link = resources.createEventLink("zoneRefresh", context);
 
-        javaScriptSupport.require("t5/core/zone-refresh").with(zone.getClientId(), period, link.toString());
+        requireJsModeHelper.importModule("t5/core/zone-refresh").with(zone.getClientId(), period, link.toString());
     }
 
     Object onZoneRefresh(EventContext eventContext)

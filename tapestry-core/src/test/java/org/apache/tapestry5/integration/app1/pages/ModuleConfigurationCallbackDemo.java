@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
  * {@link JavaScriptSupport#addModuleConfigurationCallback(ModuleConfigurationCallback)}.
  * Based on http://www.requirejs.org/jqueryui-amd/example/webapp/app.html.
  */
+@Import(module = "validate-in-error")
 public class ModuleConfigurationCallbackDemo
 {
 

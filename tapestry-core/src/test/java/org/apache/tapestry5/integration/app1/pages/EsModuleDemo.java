@@ -69,7 +69,7 @@ public class EsModuleDemo
             .with();
 
         javaScriptSupport.importEsModule("parameter-type-default-export")
-            .with(null, true, false, Math.PI * Math.E, "string", "jsonLiteral",
+            .with(JSONObject.NULL, true, false, Math.PI * Math.E, "string", "jsonLiteral",
                     new JSONObject("key", "value"), new JSONArray(1, "2"));
 
         if (overrideEsModuleImportAgain != null && overrideEsModuleImportAgain)

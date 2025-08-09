@@ -10,4 +10,12 @@ import org.apache.tapestry5.test.TapestryTestConfiguration;
 @TapestryTestConfiguration(webAppFolder = "src/test/app1")
 public abstract class App1TestCase extends TapestryCoreTestCase
 {
+    protected boolean isRequireJsEnabled()
+    {
+        if (!isElementPresent("require-js-enabled-value"))
+        {
+            openBaseURL();
+        }
+        return Boolean.valueOf(getText("require-js-enabled-value"));
+    }
 }

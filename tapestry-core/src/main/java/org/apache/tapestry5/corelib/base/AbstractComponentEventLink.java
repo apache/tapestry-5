@@ -20,8 +20,8 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Base class for link-generating components that are based on a component event request. Such events have an event
@@ -57,8 +57,8 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     @Inject
     private Request request;
 
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     void beginRender(MarkupWriter writer)
     {
@@ -72,7 +72,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         if (async)
         {
-            javaScriptSupport.require("t5/core/zone");
+            requireJsModeHelper.importModule("t5/core/zone");
             writer.attributes("data-async-trigger", true);
         }
     }

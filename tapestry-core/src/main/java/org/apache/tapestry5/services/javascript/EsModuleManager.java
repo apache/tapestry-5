@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 
 /**
@@ -45,15 +46,29 @@ public interface EsModuleManager
     /**
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the 
      * ES module imports (as per {@link JavaScriptSupport#importEsModule(String)} into the page. 
-     * this occurs after the ES module infrastructure
+     * This occurs after the ES module infrastructure
      * has been written into the page, along with the core libraries.
      *
      * @param root
      *         {@code <root>} element of the page.
-     * @param inits
-     *         specify initialization on the page, based on loading modules, extacting functions from modules, and invoking those functions
+     * @param imports
+     *         imported modules as {@linkplain EsModuleInitialization} instances.
      */
-    void writeImports(Element root, List<EsModuleInitialization> inits);
+    void writeImports(Element root, List<EsModuleInitialization> imports);
+    
+
+    /**
+     * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the 
+     * calls to {@code t5/core/pageinit} module.
+     * this occurs after the ES module infrastructure
+     * has been written into the page, along with the core libraries.
+     *
+     * @param body {@code body} element of the page.
+     * @param libraryURLs URLs of the JS files to be included in the page.
+     * @param inits a list of {@linkplain} JSONArray} instances containing the 
+     * module initializations.
+     */
+    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
     
     /**
      * Encapsulates a contribution to {@linkplain EsModuleManager}.
@@ -67,12 +82,16 @@ public interface EsModuleManager
         private final EsModuleConfigurationCallback callback;
         
         private final boolean isBase;
+        
+        // In case this is an ES shim contribution.
+        private final EsShim esWrapper;
 
-        EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
+        private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase, EsShim esWrapper) 
         {
             super();
             this.callback = callback;
             this.isBase = isBase;
+            this.esWrapper = esWrapper;
         }
         
         /**
@@ -83,9 +102,26 @@ public interface EsModuleManager
          */
         public static EsModuleManagerContribution base(EsModuleConfigurationCallback callback) 
         {
-            return new EsModuleManagerContribution(callback, true);
+            return new EsModuleManagerContribution(callback, true, null);
         }
 
+        /**
+         * Creates a base contribution (one that contributes a callback used 
+         * when creating the base import map to be used for all requests)
+         * which is also an ES module shim. 
+         * @param esWrapper an {@linkplain EsShim} instance. It cannot be null.
+         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+         * @return a corresponding {@linkplain EsModuleManagerContribution}.
+         */
+        public static EsModuleManagerContribution base(EsShim esWrapper, EsModuleConfigurationCallback callback) 
+        {
+            if (esWrapper == null)
+            {
+                throw new IllegalArgumentException("Parameter esWrapper cannot be null");
+            }
+            return new EsModuleManagerContribution(callback, true, esWrapper);
+        }        
+        
         /**
          * Creates a global per-request contribution (one that contributes a callback used 
          * in all requests after the callbacks added through 
@@ -96,7 +132,7 @@ public interface EsModuleManager
          */
         public static EsModuleManagerContribution globalPerRequest(EsModuleConfigurationCallback callback) 
         {
-            return new EsModuleManagerContribution(callback, false);
+            return new EsModuleManagerContribution(callback, false, null);
         }
         
         public EsModuleConfigurationCallback getCallback() {
@@ -105,6 +141,10 @@ public interface EsModuleManager
         
         public boolean isBase() {
             return isBase;
+        }
+        
+        public EsShim getEsWrapper() {
+            return esWrapper;
         }
 
     }

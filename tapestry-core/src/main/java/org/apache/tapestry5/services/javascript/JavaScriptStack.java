@@ -72,6 +72,14 @@ public interface JavaScriptStack
      * @since 5.4
      */
     List<String> getModules();
+    
+    /**
+     * Returns a list of ES modules to be automatically included in all pages.
+     * 
+     * @see EsModuleManager
+     * @since 5.10.0
+     */
+    List<String> getEsModules();
 
     /**
      * Identifies how to aggregate JavaScript within the stack.

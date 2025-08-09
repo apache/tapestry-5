@@ -12,9 +12,29 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.beanmodel.services.*;
+import java.util.List;
+
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentParameterConstants;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.FieldValidationSupport;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.OptionGroupModel;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SelectModelVisitor;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.corelib.base.AbstractField;
@@ -26,6 +46,7 @@ import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.AbstractEventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -34,11 +55,7 @@ import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. Any validation
@@ -180,12 +197,11 @@ public class Select extends AbstractField
     private FormSupport formSupport;
 
     @Inject
-    private JavaScriptSupport javascriptSupport;
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     private TypeCoercer typeCoercer;
 
-    @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
 
@@ -196,8 +212,6 @@ public class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
-    @SuppressWarnings(
-            {"unchecked"})
     @Override
     protected void processSubmission(String controlName)
     {
@@ -260,7 +274,7 @@ public class Select extends AbstractField
 
         if (this.zone != null)
         {
-            javaScriptSupport.require("t5/core/select");
+            requireJsModeHelper.importModule("t5/core/select");
 
             Link link = resources.createEventLink(CHANGE_EVENT, context);
 
@@ -391,17 +405,6 @@ public class Select extends AbstractField
         return false;
     }
 
-    private static <T> List<T> orEmpty(List<T> list)
-    {
-        if (list == null)
-        {
-            return Collections.emptyList();
-        }
-
-        return list;
-    }
-
-    @SuppressWarnings("unchecked")
     ValueEncoder defaultEncoder()
     {
         return defaultProvider.defaultValueEncoder("value", resources);

@@ -12,20 +12,33 @@
 
 package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.internal.AbstractEventContext;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on
@@ -61,6 +74,9 @@ public class Autocomplete
 
     @Environmental
     private JavaScriptSupport jsSupport;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     private TypeCoercer coercer;
@@ -129,7 +145,7 @@ public class Autocomplete
         JSONObject spec = new JSONObject("id", field.getClientId(),
                 "url", link.toString()).put("minChars", minChars).put("limit", maxSuggestions);
 
-        jsSupport.require("t5/core/autocomplete").with(spec);
+        requireJsModeHelper.importModule("t5/core/autocomplete").with(spec);
     }
 
     Object onAutocomplete(final EventContext context, @RequestParameter("t:input")
