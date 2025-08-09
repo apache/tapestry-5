@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
@@ -24,27 +25,27 @@ import org.apache.tapestry5.commons.util.AvailableValues;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.UnknownValueException;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ajax.EsModuleInitializationImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathMatcher;
 import org.apache.tapestry5.ioc.services.ClasspathScanner;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONCollection;
 import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 public class EsModuleManagerImpl implements EsModuleManager
 {
-
-    private static final String GENERIC_IMPORTED_VARIABLE = "m";
 
     /**
      * Name of the JSON object property containing the imports in an import map.
@@ -54,12 +55,14 @@ public class EsModuleManagerImpl implements EsModuleManager
     private static final String CLASSPATH_ROOT = "META-INF/assets/es-modules/";
 
     private final boolean compactJSON;
-
-    private final boolean productionMode;
+    
+    private final boolean requireJsEnabled;
 
     private final Set<String> extensions;
     
     private final AssetSource assetSource;
+    
+    private final List<EsModuleInitialization> coreStackInits;
 
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
@@ -73,23 +76,35 @@ public class EsModuleManagerImpl implements EsModuleManager
     private final List<EsModuleConfigurationCallback> baseCallbacks;
     
     private final List<EsModuleConfigurationCallback> globalPerRequestCallbacks;
-
+    
+    private final String infraProvider;
+    
     public EsModuleManagerImpl(
                              List<EsModuleManagerContribution> contributions,
                              AssetSource assetSource,
                              StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
                              boolean compactJSON,
-                             @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
-                             boolean productionMode,
+                             @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+                             boolean requireJsEnabled,
+                             @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
+                             String infraProvider,                             
                              ClasspathScanner classpathScanner,
-                             ResourceChangeTracker resourceChangeTracker)
+                             ResourceChangeTracker resourceChangeTracker,
+                             @Core JavaScriptStack javaScriptStack)
     {
         this.compactJSON = compactJSON;
+        this.requireJsEnabled = requireJsEnabled;
         this.assetSource = assetSource;
         this.classpathScanner = classpathScanner;
-        this.productionMode = productionMode;
         this.resourceChangeTracker = resourceChangeTracker;
+        this.infraProvider = infraProvider;
+        
+        final List<String> coreStackEsModules = javaScriptStack.getEsModules();
+        
+        coreStackInits = coreStackEsModules.stream()
+                .map(i -> new EsModuleInitializationImpl(i))
+                .collect(Collectors.toList());
         
         baseCallbacks = new ArrayList<>();
         globalPerRequestCallbacks = new ArrayList<>();
@@ -151,12 +166,22 @@ public class EsModuleManagerImpl implements EsModuleManager
             final Set<String> scan = classpathScanner.scan(CLASSPATH_ROOT, matcher);
             for (String file : scan) 
             {
-                String id = file.replace(CLASSPATH_ROOT, "");
-                id = id.substring(0, id.lastIndexOf('.'));
+                String moduleName = file.replace(CLASSPATH_ROOT, "");
+                moduleName = moduleName.substring(0, moduleName.lastIndexOf('.'));
+                
+                if (moduleName.startsWith("t5/core/t5-core-dom-"))
+                {
+                    // They're treated specially.
+                    continue;
+                }
+                else if (moduleName.equals("t5/core/dom"))
+                {
+                    file = file.replace("t5/core/dom", "t5/core/t5-core-dom-" + infraProvider);
+                }
                             
                 final Asset asset = assetSource.getClasspathAsset(file);
                 resourceChangeTracker.trackResource(asset.getResource());
-                imports.put(id, asset.toClientURL());
+                imports.put(moduleName, asset.toClientURL());
             }
         } catch (IOException e) 
         {
@@ -189,15 +214,18 @@ public class EsModuleManagerImpl implements EsModuleManager
         Element head = null;
         ImportPlacement placement;
         EsModuleInitializationImpl init;
-        String functionName;
-        Object[] arguments;
         
-        for (EsModuleInitialization i : inits) 
+        List<EsModuleInitialization> allInits = new ArrayList<>(coreStackInits.size() + inits.size());
+        allInits.addAll(coreStackInits);
+        allInits.addAll(inits);
+        
+        for (EsModuleInitialization i : allInits) 
         {
             
             init = (EsModuleInitializationImpl) i;
-            final String moduleId = init.getModuleId();
-            // Making sure the user doesn't shoot heir own foot
+            final String moduleId = init.getModuleName();
+            
+            // Making sure the user doesn't shoot their own foot
             final String url = cache.get(moduleId);
             if (url == null)
             {
@@ -211,6 +239,14 @@ public class EsModuleManagerImpl implements EsModuleManager
                 if (head == null) 
                 {
                     head = root.find("head");
+                    // I think it's quite ugly, but HTML doesn't require
+                    // <head>, <body> nor even <html> itself. In this case,
+                    // if <head> isn't found, we just add the element to 
+                    // the root element.
+                    if (head == null)
+                    {
+                        head = root;
+                    }
                 }
                 script = head.element("script");
             }
@@ -218,6 +254,14 @@ public class EsModuleManagerImpl implements EsModuleManager
                 if (body == null)
                 {
                     body = root.find("body");
+                    // I think it's quite ugly, but HTML doesn't require
+                    // <head>, <body> nor even <html> itself. In this case,
+                    // if <body> isn't found, we just add the element to 
+                    // the root element.
+                    if (body == null)
+                    {
+                        body = root;
+                    }
                 }
                 if (placement.equals(ImportPlacement.BODY_BOTTOM)) {
                     script = body.element("script");
@@ -234,73 +278,64 @@ public class EsModuleManagerImpl implements EsModuleManager
             
             writeAttributes(script, init);
             script.attribute("src", url);
+            script.attribute("data-module-id", moduleId);
             
-            functionName = init.getFunctionName();
-            arguments = init.getArguments();
-            
-            if (!productionMode)
+        }
+        
+    }
+    
+    @Override
+    public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits)
+    {
+
+        final boolean noInits = !requireJsEnabled && libraryURLs.isEmpty() && inits.isEmpty();
+
+        if (noInits)
+        {
+            body.forceAttributes("data-page-initialized", "true");
+            Element script = body.element("script", "type", "text/javascript");
+            script.raw("document.querySelector(\"body > div.pageloading-mask\").remove()");        
+        }
+        else
+        {
+            if (!requireJsEnabled || !libraryURLs.isEmpty() || !inits.isEmpty())
             {
-                script.attribute("data-module-id", moduleId);
-                final Element log = script.element("script", "type", "text/javascript");
-                log.text(String.format("console.debug('Imported ES module %s');", moduleId));
-                log.moveBefore(script);
-            }
-            
-            // If we have not only the import, but also an automatic function call
-            if (arguments != null || functionName != null)
-            {
-                final Element moduleFunctionCall = script.element("script");
-                
-                moduleFunctionCall.moveAfter(script);
-                
-                final String moduleFunctionCallFormat = 
-                        "import %s from '%s';\n"
-                        + "%s(%s);";
-                
-                final String importName = functionName != null ? functionName : GENERIC_IMPORTED_VARIABLE;
-                final String importDeclaration = functionName != null ? 
-                        "{ " + functionName + " }": 
-                            GENERIC_IMPORTED_VARIABLE;
-                
-                moduleFunctionCall.text(String.format(moduleFunctionCallFormat, 
-                        importDeclaration, moduleId, importName,
-                        convertToJsFunctionParameters(arguments, compactJSON)));
-                
-                writeAttributes(moduleFunctionCall, init);
-                
-                // Avoiding duplicated ids
-                final String id = moduleFunctionCall.getAttribute("id");
-                if (id != null)
-                {
-                    moduleFunctionCall.forceAttributes("id", id + "-function-call");
-                }
-                
+                Element element = body.element("script", "type", "module", "id", "__tapestry-es-module-pageinit__");
+        
+                element.raw(String.format("import pageinit from \"t5/core/pageinit\";\npageinit(%s, %s, false);",
+                        convert(libraryURLs), convert(inits)));
             }
             
         }
         
     }
     
-    static String convertToJsFunctionParameters(Object[] arguments, boolean compactJSON)
+    private String convert(List<?> input)
+    {
+        return new JSONArray().putAll(input).toString(compactJSON);
+    }
+
+
+    static String convertToJsFunctionParameters(JSONArray arguments, boolean compactJSON)
     {
         String result;
-        if (arguments == null || arguments.length == 0)
+        if (arguments == null || arguments.size() == 0)
         {
             result = "";
         }
-        else if (arguments.length == 1)
+        else if (arguments.size() == 1)
         {
-            result = convertToJsFunctionParameter(arguments[0], compactJSON);
+            result = convertToJsFunctionParameter(arguments.get(0), compactJSON);
         }
         else {
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < arguments.length; i++) 
+            for (int i = 0; i < arguments.size(); i++) 
             {
                 if (i > 0)
                 {
                     builder.append(", ");
                 }
-                builder.append(convertToJsFunctionParameter(arguments[i], compactJSON));
+                builder.append(convertToJsFunctionParameter(arguments.get(i), compactJSON));
             }
             result = builder.toString();
         }
@@ -311,9 +346,9 @@ public class EsModuleManagerImpl implements EsModuleManager
     {
         String result;
         
-        if (object == null)
+        if (object == null || object == JSONObject.NULL)
         {
-            result = null;
+            result = "null";
         }
         else if (object instanceof String || object instanceof JSONLiteral)
         {

@@ -22,12 +22,8 @@ import dom from "t5/core/dom";
 import events from "t5/core/events";
 import utils from "t5/core/utils";
 import messages from "t5/core/messages";
-import fields from "t5/core/fields";
+import "t5/core/fields";
 import { ElementWrapper } from "t5/core/types";
-
-// Line below is used to force the TypeScript compiler to actually import t5/core/fields
-// as it's not used directly here. This file uses events set up by the imported files.
-let workaround = fields;
 
 const REGEXP_META = "t5:regular-expression";
 

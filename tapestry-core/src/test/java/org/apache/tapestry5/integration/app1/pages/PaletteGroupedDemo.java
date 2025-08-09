@@ -30,20 +30,22 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
 import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.util.AbstractSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
-@Import(module="palette-demo")
 public class PaletteGroupedDemo
 {
     @Inject
     private ComponentResources resources;
+    
+    @Inject private RequireJsModeHelper requireJsModeHelper;
 
     @Persist
     @Property
     private List<ProgrammingLanguage> languages;
-
+    
     @Persist
     @Property
     private boolean reorder;
@@ -55,6 +57,11 @@ public class PaletteGroupedDemo
             ProgrammingLanguage.ERLANG, ProgrammingLanguage.HASKELL, ProgrammingLanguage.LISP);
     private static final Iterable<ProgrammingLanguage> OO = Arrays.asList(ProgrammingLanguage.JAVA,
             ProgrammingLanguage.RUBY);
+    
+    void beginRender()
+    {
+        requireJsModeHelper.importModule("palette-demo");
+    }
 
     void onPrepareFromDemo()
     {

@@ -12,15 +12,15 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.util.Date;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.DateUtilities;
-
-import java.util.Date;
 
 /**
  * Used to present an interval value using Moment.js's from() or fromNow() functions. The interval
@@ -40,7 +40,6 @@ import java.util.Date;
  * @since 5.4
  */
 @SupportsInformalParameters
-@Import(module = "t5/core/time-interval")
 public class TimeInterval
 {
     /**
@@ -65,6 +64,9 @@ public class TimeInterval
 
     @Inject
     ComponentResources resources;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     DateUtilities dateUtilities;
@@ -76,6 +78,9 @@ public class TimeInterval
 
     boolean beginRender(MarkupWriter writer)
     {
+        
+        requireJsModeHelper.importModule("t5/core/time-interval");
+        
         writer.element(resources.getElementName("span"),
                 // Trigger the client-side logic:
                 "data-timeinterval", "true",

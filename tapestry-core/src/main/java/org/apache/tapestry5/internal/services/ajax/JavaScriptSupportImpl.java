@@ -22,16 +22,19 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BooleanHook;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.AbstractInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.Initialization;
@@ -44,6 +47,8 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class JavaScriptSupportImpl implements JavaScriptSupport
 {
+    private static final String PAGEINIT_MODULE_NAME = "t5/core/pageinit";
+
     private final IdAllocator idAllocator;
 
     private final DocumentLinker linker;
@@ -77,11 +82,14 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private String focusFieldId;
 
     private Map<String, String> libraryURLToStackName, moduleNameToStackName;
+    
+    private final boolean requireJsEnabled;
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
-                                 JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook)
+                                 JavaScriptStackPathConstructor stackPathConstructor, BooleanHook suppressCoreStylesheetsHook,
+                                 @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
-        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, suppressCoreStylesheetsHook);
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, suppressCoreStylesheetsHook, requireJsEnabled);
     }
 
     /**
@@ -105,7 +113,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
      */
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
                                  JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode,
-                                 BooleanHook suppressCoreStylesheetsHook)
+                                 BooleanHook suppressCoreStylesheetsHook,
+                                 @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
@@ -113,6 +122,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         this.stackPathConstructor = stackPathConstructor;
         this.partialMode = partialMode;
         this.suppressCoreStylesheetsHook = suppressCoreStylesheetsHook;
+        this.requireJsEnabled = requireJsEnabled;
 
         // In partial mode, assume that the infrastructure stack is already present
         // (from the original page render).
@@ -126,10 +136,21 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void commit()
     {
         
+        final String pageInitModuleName = PAGEINIT_MODULE_NAME;
         // TODO make no Require.js version of this
         if (focusFieldId != null)
         {
-            require("t5/core/pageinit").invoke("focus").with(focusFieldId);
+            final AbstractInitialization<?> initialization;
+            
+            if (requireJsEnabled)
+            {
+                initialization = require(pageInitModuleName);
+            }
+            else
+            {
+                initialization = importEsModule(pageInitModuleName);
+            }
+            initialization.invoke("focus").with(focusFieldId);
         }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
@@ -217,7 +238,16 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (partialMode)
         {
-            require("t5/core/pageinit").invoke("evalJavaScript").with(newScript);
+            final AbstractInitialization<?> initialization;
+            if (requireJsEnabled)
+            {
+                initialization = require(PAGEINIT_MODULE_NAME);
+            }
+            else
+            {
+                initialization = importEsModule(PAGEINIT_MODULE_NAME);
+            }
+            initialization.invoke("evalJavaScript").with(newScript);
         } else
         {
             linker.addScript(priority, newScript);
@@ -450,8 +480,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         
         assert InternalUtils.isNonBlank(moduleName);
         
-        // TODO import core libraries (jQuery, Prototype/Scriptaculous/Underscore)
-
         EsModuleInitialization init = new EsModuleInitializationImpl(moduleName);
         if (!esModulesImported.contains(moduleName))
         {
@@ -465,6 +493,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback) 
     {
         linker.addEsModuleConfigurationCallback(callback);
+    }
+
+    @Override
+    public boolean isRequireJsEnabled() 
+    {
+        return requireJsEnabled;
     }
 
 }

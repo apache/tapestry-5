@@ -43,6 +43,10 @@ const locale = (document.documentElement.getAttribute("data-locale")) || "en";
 // @ts-ignore
 let messages: any = await import(`t5/core/messages/${locale}`);
 
+if (messages['default'] != null && typeof messages['default'] === 'object') {
+  messages = messages.default;
+}
+
 // Returns the application message catalog message for the given key. Returns
 // a placeholder if the key is not found.
 const get = function(key: string) {

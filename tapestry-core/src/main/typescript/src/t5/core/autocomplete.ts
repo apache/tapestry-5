@@ -22,11 +22,13 @@ import dom from "t5/core/dom";
 import _ from "underscore";
 import $ from "jquery"
 import utils from "t5/core/utils";
-import typeahead from "t5/core/typeahead";
+import "t5/core/typeahead";
 
 // Line below is used to force the TypeScript compiler to actually import t5/core/typeahead
 // as it's not used directly here. 
-let workaround = typeahead;
+// let workaround = typeahead;
+
+let Bloodhound = window.Bloodhound;
 
 export default function(spec) {
   const $field = $(document.getElementById(spec.id));

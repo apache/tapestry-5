@@ -19,7 +19,7 @@ import _ from "underscore";
 import dom from "t5/core/dom";
 import events from "t5/core/events";
 import forms from  "t5/core/forms";
-import { ElementWrapper, EventWrapper }from "t5/core/types";
+import { ElementWrapper, EventWrapper } from "t5/core/types";
 
 // Line below is used to force the TypeScript compiler to actually import t5/core/forms
 // as it's not used directly here. This file uses events set up by the imported files.
@@ -82,7 +82,7 @@ dom.onDocument(events.formfragment.changeVisibility, SELECTOR, function(event: E
 
 // When a FormFragment is initially rendered as hidden, then we need to do some
 // book-keeping on the client side.
-const hide = function(id: string) {
+export const hide = function(id: string) {
   const field = dom(id);
 
   return updateFields(field!, false);
@@ -93,7 +93,7 @@ const hide = function(id: string) {
 // * spec.triggerId - id of checkbox or radio button
 // * spec.fragmentId - id of FormFragment element
 // * spec.invert - (optional) if true, then checked trigger hides (not shows) the fragment
-const linkTrigger = function(spec: { triggerId: string | HTMLElement | null; fragmentId: string | HTMLElement | null; invert: boolean; }) {
+export const linkTrigger = function(spec: { triggerId: string | HTMLElement | null; fragmentId: string | HTMLElement | null; invert: boolean; }) {
   if (spec.triggerId == null) { throw new Error("Incomplete parameters, triggerId is null"); }
   if (spec.fragmentId == null) { throw new Error("Incomplete parameters, fragmentId is null"); }
   const trigger = dom(spec.triggerId);
@@ -119,6 +119,3 @@ const linkTrigger = function(spec: { triggerId: string | HTMLElement | null; fra
     return trigger!.on("click", null, update);
   }
 };
-
-// Module exports:
-export default { linkTrigger, hide };

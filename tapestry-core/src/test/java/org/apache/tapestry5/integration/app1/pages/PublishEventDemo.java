@@ -1,4 +1,4 @@
-// Copyright 2016 The Apache Software Foundation
+// Copyright 2017, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,14 +25,43 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.PublishEvent;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
-@Import(stack = "core", library = "PublishEventDemo.js")
 public class PublishEventDemo
 {
+
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
+    
+    @Inject
+    @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+    private boolean requireJsEnabled;
+    
+    @Inject
+    @Path("PublishEventDemo.js")
+    private Asset publishEventDemoAmdAsset;
+    
+    void beginRender()
+    {
+        if (requireJsEnabled)
+        {
+            javaScriptSupport.importStack("core");
+            javaScriptSupport.importJavaScriptLibrary(publishEventDemoAmdAsset);
+        }
+        else
+        {
+            javaScriptSupport.importEsModule("publish-event-demo");
+        }
+    }
 
     @PublishEvent
     JSONObject onAction()

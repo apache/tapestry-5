@@ -237,4 +237,4 @@ dom.onDocument(events.field.showValidationError, null, function(event: EventWrap
 
 });
 
-export default {findHelpBlocks, createHelpBlock, showValidationError};
+export {findHelpBlocks, createHelpBlock, showValidationError};

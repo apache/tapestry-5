@@ -22,12 +22,12 @@ import org.apache.tapestry5.corelib.data.GridPagerPosition;
 import org.apache.tapestry5.grid.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -234,8 +234,8 @@ public class Grid implements GridModel, ClientElement
     @Inject
     private BeanModelSource modelSource;
 
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Component(parameters =
             {"index=inherit:columnIndex", "lean=inherit:lean", "overrides=overrides", "zone=zone"})
@@ -591,7 +591,7 @@ public class Grid implements GridModel, ClientElement
 
         if (inPlace && zone == null)
         {
-            javaScriptSupport.require("t5/core/zone");
+            requireJsModeHelper.importModule("t5/core/zone");
 
             writer.element("div", "data-container-type", "zone");
 

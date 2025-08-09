@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.commons.Messages;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -49,8 +50,7 @@ import java.util.Locale;
  * @see TextField
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
-@Import(stylesheet = "${tapestry.datepicker}/css/datepicker.css",
-        module = "t5/core/datefield")
+@Import(stylesheet = "${tapestry.datepicker}/css/datepicker.css")
 @Events(EventConstants.VALIDATE)
 public class DateField extends AbstractField
 {
@@ -127,6 +127,9 @@ public class DateField extends AbstractField
 
     @Inject
     private DeprecationWarning deprecationWarning;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     @Symbol(SymbolConstants.LENIENT_DATE_FORMAT)
@@ -225,6 +228,9 @@ public class DateField extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
+        
+        requireJsModeHelper.importModule("t5/core/datefield");
+        
         String value = validationTracker.getInput(this);
 
         if (value == null)

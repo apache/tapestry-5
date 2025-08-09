@@ -28,11 +28,15 @@ import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.internal.services.ajax.EsShimManagerImpl;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelperImpl;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.AddBrowserCompatibilityStyles;
 import org.apache.tapestry5.internal.services.javascript.ConfigureHTMLElementFilter;
 import org.apache.tapestry5.internal.services.javascript.EsModuleManagerImpl;
+import org.apache.tapestry5.internal.services.javascript.EsShimDispatcher;
 import org.apache.tapestry5.internal.services.javascript.Internal;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
@@ -48,6 +52,7 @@ import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentOverride;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.Environment;
@@ -58,12 +63,15 @@ import org.apache.tapestry5.services.MarkupRendererFilter;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.apache.tapestry5.services.PathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.compatibility.Compatibility;
 import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
+import org.apache.tapestry5.services.javascript.EsShim;
+import org.apache.tapestry5.services.javascript.EsShimManager;
 import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -100,6 +108,8 @@ public class JavaScriptModule
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
         binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Internal.class).withId("InternalJavaScriptStack");
+        binder.bind(RequireJsModeHelper.class, RequireJsModeHelperImpl.class);
+        binder.bind(EsShimManager.class, EsShimManagerImpl.class);
     }
 
     /**
@@ -126,15 +136,15 @@ public class JavaScriptModule
     /**
      * The core JavaScriptStack has a number of entries:
      * <dl>
-     * <dt>requirejs</dt> <dd>The RequireJS AMD JavaScript library</dd>
+     * <dt>requirejs</dt> <dd>The RequireJS AMD JavaScript library (if Require.js is enabled)</dd>
      * <dt>scriptaculous.js, effects.js</dt> <dd>Optional JavaScript libraries in compatibility mode (see {@link Trait#SCRIPTACULOUS})</dd>
      * <dt>t53-compatibility.js</dt> <dd>Optional JavaScript library (see {@link Trait#INITIALIZERS})</dd>
-     * <dt>underscore-library, underscore-module</dt>
+     * <dt>underscore-library, underscore-module (if Require.js is enabled. An ES module version of it is provided by Tapestry)</dt>
      * <dt>The Underscore JavaScript library, and the shim that allows underscore to be injected</dt>
      * <dt>t5/core/init</dt> <dd>Optional module related to t53-compatibility.js</dd>
-     * <dt>jquery-library</dt> <dd>The jQuery library</dd>
-     * <dt>jquery-noconflict</dt> <dd>Switches jQuery to no-conflict mode (only present when the infrastructure is "prototype").</dd>
-     * <dt>jquery</dt> <dd>A module shim that allows jQuery to be injected (and also switches jQuery to no-conflict mode)</dd>
+     * <dt>jquery-library</dt> <dd>The jQuery library (if Require.js is enabled. An ES module version of it is provided by Tapestry)</dd>
+     * <dt>jquery-noconflict</dt> <dd>Switches jQuery to no-conflict mode (only present when the infrastructure is "prototype" and Require.js is enabled).</dd>
+     * <dt>jquery</dt> <dd>A module shim that allows jQuery to be injected (and also switches jQuery to no-conflict mode) (if Require.js is enabled. An ES module version of it is provided by Tapestry)</dd>
      * <dt>bootstrap.css, tapestry.css, exception-frame.css, tapestry-console.css, tree.css</dt>
      * <dd>CSS files</dd>
      * <dt>t5/core/[...]</dt>
@@ -150,10 +160,14 @@ public class JavaScriptModule
     public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration,
                                                 Compatibility compatibility,
                                                 @Symbol(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER)
-                                                String provider)
+                                                String provider,
+                                                @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) boolean requireJsEnabled)
     {
-        configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
-        configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.13.7.js"));
+        if (requireJsEnabled)
+        {
+            configuration.add("requirejs", StackExtension.library(ROOT + "/require.js"));
+            configuration.add("underscore-library", StackExtension.library(ROOT + "/underscore-1.13.7.js"));
+        }
 
         if (provider.equals("prototype"))
         {
@@ -171,18 +185,32 @@ public class JavaScriptModule
 
         if (compatibility.enabled(Trait.INITIALIZERS))
         {
-            add(configuration, StackExtensionType.LIBRARY, ROOT + "/t53-compatibility.js");
-            configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
+            if (requireJsEnabled)
+            {
+                add(configuration, StackExtensionType.LIBRARY, ROOT + "/t53-compatibility.js");
+                configuration.add("t5/core/init", new StackExtension(StackExtensionType.MODULE, "t5/core/init"));
+            }
+            else
+            {
+                add(configuration, StackExtensionType.ES_MODULE, "t5/core/t53-compatibility");
+                add(configuration, StackExtensionType.ES_MODULE, "t5/core/init");
+            }
         }
 
-        configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery.js"));
+        if (requireJsEnabled)
+        {
+            configuration.add("jquery-library", StackExtension.library(ROOT + "/jquery.js"));
+        }
 
-        if (provider.equals("prototype"))
+        if (provider.equals("prototype") && requireJsEnabled)
         {
             configuration.add("jquery-noconflict", StackExtension.library(ROOT + "/jquery-noconflict.js"));
         }
 
-        add(configuration, StackExtensionType.MODULE, "jquery");
+        if (requireJsEnabled)
+        {
+            add(configuration, StackExtensionType.MODULE, "jquery");
+        }
         
         add(configuration, StackExtensionType.STYLESHEET, "${" + SymbolConstants.FONT_AWESOME_ROOT + "}/css/font-awesome.css");
 
@@ -280,6 +308,9 @@ public class JavaScriptModule
                                               JavaScriptStackSource javaScriptStackSource,
                                               JavaScriptStackPathConstructor javaScriptStackPathConstructor,
                                               LocalizationSetter localizationSetter,
+                                              EsShimManager esShimManager,
+                                              StreamableResourceSource streamableResourceSource,
+                                              ResourceChangeTracker resourceChangeTracker,
                                               @Symbol(SymbolConstants.MODULE_PATH_PREFIX)
                                               String modulePathPrefix,
                                               @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
@@ -296,6 +327,15 @@ public class JavaScriptModule
                     javaScriptStackSource, javaScriptStackPathConstructor, localizationSetter, modulePathPrefix,
                     assetPathPrefix, true),
                 "after:Modules", "before:ComponentEvent");
+        
+        configuration.add("EsShims", new EsShimDispatcher(esShimManager, streamableResourceSource, resourceChangeTracker, 
+                resourceStreamer, tracker, false),
+                "before:Asset", "before:ComponentEvent");
+        
+        configuration.add("CompressedEsShims", new EsShimDispatcher(esShimManager, streamableResourceSource, resourceChangeTracker, 
+                resourceStreamer, tracker, true),
+                "after:EsShims", "before:Asset", "before:ComponentEvent");
+
     }
 
     /**
@@ -312,7 +352,8 @@ public class JavaScriptModule
     public void exposeJavaScriptSupportForFullPageRenders(OrderedConfiguration<MarkupRendererFilter> configuration,
                                                           final JavaScriptStackSource javascriptStackSource,
                                                           final JavaScriptStackPathConstructor javascriptStackPathConstructor,
-                                                          final Request request)
+                                                          final Request request,
+                                                          @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) final boolean requireJsEnabled)
     {
 
         final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
@@ -324,7 +365,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, suppressCoreStylesheetsHook);
+                        javascriptStackPathConstructor, suppressCoreStylesheetsHook, requireJsEnabled);
 
                 environment.push(JavaScriptSupport.class, support);
 
@@ -353,7 +394,9 @@ public class JavaScriptModule
 
                                                             final JavaScriptStackPathConstructor javascriptStackPathConstructor,
 
-                                                            final Request request)
+                                                            final Request request,
+                                                            
+                                                            @Symbol(SymbolConstants.REQUIRE_JS_ENABLED) final boolean requireJsEnabled)
     {
         final BooleanHook suppressCoreStylesheetsHook = createSuppressCoreStylesheetHook(request);
 
@@ -379,7 +422,7 @@ public class JavaScriptModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true, suppressCoreStylesheetsHook);
+                        javascriptStackPathConstructor, idAllocator, true, suppressCoreStylesheetsHook, requireJsEnabled);
 
                 environment.push(JavaScriptSupport.class, support);
 
@@ -513,29 +556,123 @@ public class JavaScriptModule
         }
     }
     
-    @Contribute(EsModuleManager.class)
-    public static void setupApplicationCatalogEsModules(OrderedConfiguration<EsModuleManagerContribution> configuration,
-                                                        LocalizationSetter localizationSetter,
-                                                        ComponentMessagesSource messagesSource,
-                                                        ResourceChangeTracker resourceChangeTracker,
-                                                        @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
+    @Contribute(EsShimManager.class)
+    public static void setupBaseEsShims(
+            MappedConfiguration<String, Resource> configuration,
+            @Path("${tapestry.asset.root}/bootstrap/js/transition.js")
+            Resource transition,
+            @Path("${tapestry.asset.root}/bootstrap4/js/bootstrap-util.js")
+            Resource bootstrapUtil,
+            Compatibility compatibility,
+            AssetSource assetSource,
+            LocalizationSetter localizationSetter,
+            ComponentMessagesSource messagesSource,
+            ResourceChangeTracker resourceChangeTracker,
+            @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
     {
         
-        EsModuleConfigurationCallback callback = jsonObject -> {
+        final Resource jQuery = assetSource.getClasspathAsset("/META-INF/assets/tapestry5/jquery.js")
+                .getResource();
+        configuration.add("jquery", new EsShim(jQuery)
+                .defaultExport("jQuery.noConflict()")
+                .getResource());
         
-            for (Locale locale : localizationSetter.getSupportedLocales())
-            {
-                MessageCatalogResource resource = new MessageCatalogResource(false, locale, messagesSource, resourceChangeTracker, compactJSON);
-    
-                jsonObject.put("t5/core/messages/" + locale.toString(), resource.toURL());
-            }
+        final Resource moment = assetSource.getClasspathAsset("/META-INF/assets/tapestry5//moment-2.15.1.js")
+                .getResource();
+        configuration.add("t5/core/moment", new EsShim(moment)
+                .defaultExport("moment")
+                .getResource());
+        
+        if (compatibility.enabled(Trait.BOOTSTRAP_3))
+        {
+            final String[] modules = new String[]{"affix", "alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip"};
+            addBootstrap3EsShims(configuration, modules, transition);
+
+            Resource popover = transition.forFile("popover.js");
+
+            final String popoverModuleName = "bootstrap/popover";
+            configuration.add(popoverModuleName,
+                    new EsShim(popover)
+                        .importModule("jquery")
+                        .importModule("bootstrap/tooltip")
+                        .getResource());
+        }
+
+        if (compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            final String bootstrapUtilModuleName = "bootstrap/bootstrap-util";
+            configuration.add(bootstrapUtilModuleName, 
+                    new EsShim(bootstrapUtil)
+                        .getResource());
             
-        };
+            final String popperModuleName = "bootstrap/popper";
+            final Resource popper = bootstrapUtil.forFile("popper.js");
+            configuration.add(popperModuleName, 
+                    new EsShim(popper).getResource());
+            
+            for (String name : new String[]{"alert", "button", "carousel", "collapse", "dropdown", "modal",
+                    "scrollspy", "tab", "tooltip"})
+            {
+                Resource lib = bootstrapUtil.forFile(name + ".js");
+                if (lib.exists())
+                {
+                    final String moduleName = "bootstrap/" + name;
+                    configuration.add(moduleName, 
+                            new EsShim(lib)
+                                .importModule(bootstrapUtilModuleName)
+                                .importModule(popperModuleName)
+                                .getResource());
+                }
+            }
+        }
+
+        // Just the minimum to have alerts and AJAX validation working when Bootstrap
+        // is completely disabled
+        if (!compatibility.enabled(Trait.BOOTSTRAP_3) && !compatibility.enabled(Trait.BOOTSTRAP_4))
+        {
+            final String[] modules = new String[]{"alert", "dropdown", "collapse"};
+            addBootstrap3EsShims(configuration, modules, transition);
+        }
         
-        configuration.add("ApplicationCatalog", EsModuleManagerContribution.base(callback));
+        for (Locale locale : localizationSetter.getSupportedLocales())
+        {
+            MessageCatalogResource resource = new MessageCatalogResource(true, locale, messagesSource, resourceChangeTracker, compactJSON);
+            configuration.add("t5/core/messages/" + locale.toString(),
+                    new EsShim(resource).getResource());
+        }
         
     }
-    
+
+    @Contribute(EsModuleManager.class)
+    public static void setupBaseEsModules(
+            OrderedConfiguration<EsModuleManagerContribution> configuration,
+            EsShimManager esShimManager)
+    {
+        for (String moduleName : esShimManager.getShims().keySet())
+        {
+            configuration.add(moduleName, EsModuleManagerContribution.base(
+                    c -> EsModuleConfigurationCallback.setImport(c, moduleName, esShimManager.getUrl(moduleName))));
+        }
+    }
+
+    private static void addBootstrap3EsShims(
+            MappedConfiguration<String, Resource> configuration, 
+            String[] modules, 
+            Resource reference) 
+    {
+        for (String module : modules) 
+        {
+            final String moduleId = "bootstrap/" + module;
+            final Resource resource = reference.forFile(module + ".js");
+            if (resource.exists())
+            {
+                configuration.add(moduleId, new EsShim(resource)
+                        .importModule("jquery")
+                        .getResource());
+            }
+        }
+    }
 
     /**
      * Contributes 'ConfigureHTMLElement', which writes the attributes into the HTML tag to describe locale, etc.

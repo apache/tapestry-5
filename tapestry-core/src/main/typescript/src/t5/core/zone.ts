@@ -213,5 +213,5 @@ const deferredZoneUpdate = (id: string, url: string) => _.defer(function() {
 });
 
 // Most of this module is document-level event handlers, but there's also some exports:
-export default { deferredZoneUpdate, findZone };
+export { deferredZoneUpdate, findZone };
 
