@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.Request;
@@ -30,8 +32,6 @@ import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.EsShim;
 import org.apache.tapestry5.services.javascript.EsShimManager;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Handler contributed to {@link AssetDispatcher} with key "es-shims". 
