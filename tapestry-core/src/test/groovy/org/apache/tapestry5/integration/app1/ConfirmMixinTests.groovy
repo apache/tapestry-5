@@ -12,6 +12,9 @@ class ConfirmMixinTests extends App1TestCase {
         click "link=Click This"
 
         waitForVisible "css=.modal-dialog"
+        
+        // TAP5-2811: XSS
+        assertText("css=.modal-content h3", "something else");
 
         clickAndWait "css=.modal-dialog .btn-warning"
 

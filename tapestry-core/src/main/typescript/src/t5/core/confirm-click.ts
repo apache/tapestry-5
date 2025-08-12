@@ -17,7 +17,8 @@
  */
 
 import $ from "jquery";
-import  "bootstrap/modal";
+import "bootstrap/modal";
+import sanitizeHtml from "t5/core/html-sanitizer";
 
 /**
  * Dialog options.
@@ -40,7 +41,7 @@ interface DialogOptions {
 // options.okLabel - default "OK"
 // options.cancelLabel - default "Cancel"
 // options.ok - callback function, required
-const runDialog = function(options: DialogOptions) {
+export const runDialog = function(options: DialogOptions) {
 
   let confirmed = false;
 
@@ -50,12 +51,12 @@ const runDialog = function(options: DialogOptions) {
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">&times;</a>
-        <h3>${options.title || "Confirm"}</h3>
+        <h3>${sanitizeHtml(options.title || "Confirm")}</h3>
       </div>
-      <div class="modal-body">${options.message}</div>
+      <div class="modal-body">${sanitizeHtml(options.message)}</div>
       <div class="modal-footer">
-        <button class="btn ${options.okClass || "btn-warning"}" data-dismiss="modal">${options.okLabel || "OK"}</button>
-        <button class="btn btn-default" data-dismiss="modal">${options.cancelLabel || "Cancel"}</button>
+        <button class="btn ${sanitizeHtml(options.okClass || "btn-warning")}" data-dismiss="modal">${sanitizeHtml(options.okLabel || "OK")}</button>
+        <button class="btn btn-default" data-dismiss="modal">${sanitizeHtml(options.cancelLabel || "Cancel")}</button>
       </div>
     </div>
   </div>
@@ -124,5 +125,3 @@ $("body").on("click", "[data-confirm-message]:not(.disabled)", function(event){
   window.location.href = target.attr("href");
   return false;
 });
-
-export default runDialog;

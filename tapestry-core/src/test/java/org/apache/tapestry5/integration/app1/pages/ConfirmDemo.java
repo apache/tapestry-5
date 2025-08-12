@@ -12,4 +12,9 @@ public class ConfirmDemo
     {
         alertManager.info("Action was confirmed.");
     }
+    
+    public String getTitle()
+    {
+        return "some<span><script>window.alert('ouch1');</script></span><em onclick=\"window.alert('ouch2')\">thing</em> else";
+    }
 }
