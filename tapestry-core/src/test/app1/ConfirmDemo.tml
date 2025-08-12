@@ -2,7 +2,7 @@
 
     <h1>Confirm Mixin Demo</h1>
 
-    <t:actionlink t:id="confirmed" class="btn btn-primary" t:mixins="confirm">Click This</t:actionlink>
+    <t:actionlink t:id="confirmed" class="btn btn-primary" t:mixins="confirm" t:title="prop:title">Click This</t:actionlink>
 
 </html>
 
