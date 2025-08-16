@@ -20,6 +20,7 @@ import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
@@ -62,7 +63,6 @@ import java.util.Iterator;
  */
 @Events(
         {EventConstants.ADD_ROW, EventConstants.REMOVE_ROW})
-@Import(module = "t5/core/ajaxformloop")
 @SupportsInformalParameters
 public class AjaxFormLoop
 {
@@ -139,6 +139,9 @@ public class AjaxFormLoop
 
     @Inject
     private ComponentResources resources;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Environmental
     private FormSupport formSupport;
@@ -167,7 +170,7 @@ public class AjaxFormLoop
 
     @Inject
     private DeprecationWarning deprecationWarning;
-
+    
     void pageLoaded()
     {
         deprecationWarning.ignoredComponentParameters(resources, "show");
@@ -325,6 +328,9 @@ public class AjaxFormLoop
 
     void setupRender(MarkupWriter writer)
     {
+        
+        requireJsModeHelper.importModule("t5/core/ajaxformloop");
+
         pushContext();
 
         iterator = source == null ? Collections.EMPTY_LIST.iterator() : source.iterator();

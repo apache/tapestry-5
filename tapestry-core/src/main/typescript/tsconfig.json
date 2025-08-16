@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    /* Language and Environment */
+    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    
+    /* Modules */
+    "module": "ES2022",                                  /* Specify what module code is generated. */
+    "esModuleInterop": true,                               /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+
+    "baseUrl": "src/",
+
+    "paths": {
+      "t5/core/*": ["t5/core/*", "t5/core/*.js"],
+      "underscore": [
+        "../node_modules/@types/underscore/index.d.mts"
+      ],
+      "https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js": [
+        "../node_modules/@hpcc-js/wasm/types/index.d.ts"
+      ],
+      "moment": [
+        "../node_modules/moment/moment.d.ts"
+      ]
+    },
+
+    // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+
+    /* Type Checking */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+
+    /* Completeness */
+    // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
+    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */,
+
+    "outDir": "../resources/META-INF/assets/es-modules/t5/core/",
+
+  },
+
+  "include": [ "src/**/*.ts" ],
+
+  "exclude": ["node_modules", ".vscode"],
+
+  "typedocOptions": {
+    "entryPoints": [
+      "src/t5/core/*.ts",
+      "src/t5/beanvalidator/*.ts"
+    ],
+    "out": "docs/" // <--- output directory
+  }
+
+}

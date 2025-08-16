@@ -12,13 +12,25 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import java.util.List;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.http.Link;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
@@ -26,9 +38,11 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.tree.*;
-
-import java.util.List;
+import org.apache.tapestry5.tree.DefaultTreeExpansionModel;
+import org.apache.tapestry5.tree.TreeExpansionModel;
+import org.apache.tapestry5.tree.TreeModel;
+import org.apache.tapestry5.tree.TreeNode;
+import org.apache.tapestry5.tree.TreeSelectionModel;
 
 /**
  * A component used to render a recursive tree structure, with expandable/collapsable/selectable nodes. The data that is displayed
@@ -45,9 +59,8 @@ import java.util.List;
  * @since 5.3
  */
 @SuppressWarnings(
-        {"rawtypes", "unchecked", "unused"})
+        {"rawtypes", "unchecked"})
 @Events({EventConstants.NODE_SELECTED, EventConstants.NODE_UNSELECTED})
-@Import(module = "t5/core/tree")
 public class Tree
 {
     /**
@@ -143,6 +156,14 @@ public class Tree
 
     @Environmental
     private Heartbeat heartbeat;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
+    
+    void beginRender()
+    {
+        requireJsModeHelper.importModule("t5/core/tree");
+    }
 
     /**
      * Renders a single node (which may be the last within its containing node).
@@ -160,6 +181,7 @@ public class Tree
     {
         return new RenderCommand()
         {
+            @SuppressWarnings("deprecation")
             public void render(MarkupWriter writer, RenderQueue queue)
             {
                 // Inform the component's container about what value is being rendered

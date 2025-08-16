@@ -12,17 +12,16 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.util.Date;
+
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.DateUtilities;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-
-import java.util.Date;
 
 /**
  * Used to present a date, formatted in the time zone of the client browser.
@@ -62,8 +61,8 @@ public class LocalDate
     @Inject
     ComponentResources resources;
 
-    @Environmental
-    JavaScriptSupport javaScriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     DateUtilities dateUtilities;
@@ -81,7 +80,7 @@ public class LocalDate
 
             writer.end();
 
-            javaScriptSupport.require("t5/core/localdate");
+            requireJsModeHelper.importModule("t5/core/localdate");
         }
 
         // Skip the body regardless.

@@ -24,6 +24,7 @@ import org.apache.tapestry5.services.javascript.ModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
     
-    private final EsModuleInitsManager esModulesinitsManager = new EsModuleInitsManager();
+    private final EsModuleInitsManager esModulesInitsManager = new EsModuleInitsManager();
 
     private final List<ModuleConfigurationCallback> moduleConfigurationCallbacks = CollectionFactory.newList();
     
@@ -53,6 +54,8 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final boolean omitGeneratorMetaTag, enablePageloadingMask;
 
     private final String tapestryBanner;
+    
+    private final boolean requireJsEnabled;
 
     // Initially false; set to true when a scriptURL or any kind of initialization is added.
     private boolean hasScriptsOrInitializations;
@@ -66,12 +69,14 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param tapestryVersion
      */
     public DocumentLinkerImpl(ModuleManager moduleManager, EsModuleManager esModuleManager,
-            boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion)
+            boolean omitGeneratorMetaTag, boolean enablePageloadingMask, String tapestryVersion,
+            boolean requireJsEnabled)
     {
         this.moduleManager = moduleManager;
         this.esModuleManager = esModuleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
         this.enablePageloadingMask = enablePageloadingMask;
+        this.requireJsEnabled = requireJsEnabled;
 
         tapestryBanner = "Apache Tapestry Framework (version " + tapestryVersion + ')';
     }
@@ -149,15 +154,15 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             addElementBefore(head, existingMeta, "meta", "name", "generator", "content", tapestryBanner);
         }
-
-        addScriptElements(root);
         
-        final List<EsModuleInitialization> esModuleInits = esModulesinitsManager.getInits();
-        if (isHtmlRoot && !esModuleInits.isEmpty())
+        final List<EsModuleInitialization> imports = esModulesInitsManager.getImports();
+        if (isHtmlRoot && !imports.isEmpty())
         {
             esModuleManager.writeImportMap(root.find("head"), esModuleConfigurationCallbacks);
-            esModuleManager.writeImports(root, esModuleInits);
+            esModuleManager.writeImports(root, imports);
         }
+
+        addScriptElements(root);
         
     }
 
@@ -252,8 +257,11 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             script.moveToTop(body);
         }
-
-        moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
+        
+        if (requireJsEnabled)
+        {
+            moduleManager.writeConfiguration(body, moduleConfigurationCallbacks);
+        }
 
         // Write the core libraries, which includes RequireJS:
 
@@ -265,8 +273,17 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
 
         // Write the initialization at this point.
-
-        moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+        if (requireJsEnabled)
+        {
+            moduleManager.writeInitialization(body, libraryURLs, initsManager.getSortedInits());
+            
+            // Libraries were already added in the line above.
+            esModuleManager.writeInitialization(body, Collections.emptyList(), esModulesInitsManager.getInitsAsJsonArrayList());
+        }
+        else
+        {
+            esModuleManager.writeInitialization(body, libraryURLs, esModulesInitsManager.getInitsAsJsonArrayList());
+        }
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
@@ -337,7 +354,7 @@ public class DocumentLinkerImpl implements DocumentLinker
     public void addEsModuleInitialization(EsModuleInitialization initialization) 
     {
         assert initialization != null;
-        esModulesinitsManager.add(initialization);
+        esModulesInitsManager.add(initialization);
         hasScriptsOrInitializations = true;
     }
     

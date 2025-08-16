@@ -30,12 +30,12 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
 import org.apache.tapestry5.internal.OptionGroupModelImpl;
 import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.util.AbstractSelectModel;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
-@Import(module="palette-demo")
 public class PaletteDemo
 {
     @Inject
@@ -52,6 +52,13 @@ public class PaletteDemo
     @Inject
     private TypeCoercer typeCoercer;
 
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
+    
+    void beginRender()
+    {
+        requireJsModeHelper.importModule("palette-demo");
+    }
 
     void onPrepareFromDemo()
     {

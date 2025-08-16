@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.commons.Messages;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -59,6 +60,9 @@ public class Graphviz
     private JavaScriptSupport javaScriptSupport;
     
     @Inject
+    private RequireJsModeHelper requireJsModeHelper;
+    
+    @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
     
     @Inject
@@ -83,8 +87,12 @@ public class Graphviz
         final String id = javaScriptSupport.allocateClientId(resources);
         writer.element(elementName, "id", id);
         writer.end();
+
         
-        javaScriptSupport.require("t5/core/graphviz").with(cachedValue, id, showDownloadLink);
+        // TODO import https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/graphviz.js 
+        // if Require.js is disabled @hpcc-js/wasm
+        
+        requireJsModeHelper.importModule("t5/core/graphviz").with(cachedValue, id, showDownloadLink);
         
         if (showDownloadLink)
         {

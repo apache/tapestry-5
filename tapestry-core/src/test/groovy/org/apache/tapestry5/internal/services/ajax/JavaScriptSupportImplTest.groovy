@@ -34,7 +34,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupport jss = new JavaScriptSupportImpl(null, null, null, null)
+        JavaScriptSupport jss = new JavaScriptSupportImpl(null, null, null, null, true)
 
         assertEquals(jss.allocateClientId(resources), "tracy")
         assertEquals(jss.allocateClientId(resources), "tracy_0")
@@ -45,7 +45,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
     @Test
     void commit_with_no_javascript() {
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(null, null, null, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(null, null, null, null, true)
 
         jss.commit()
     }
@@ -62,7 +62,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, null, new IdAllocator(), true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, null, new IdAllocator(), true, null, true)
 
         jss.addScript("doSomething();")
 
@@ -108,7 +108,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook, true)
 
         jss.addScript(InitializationPriority.IMMEDIATE, "doSomething();")
 
@@ -129,7 +129,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.importJavaScriptLibrary(library)
 
@@ -165,7 +165,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.importJavaScriptLibrary(library1)
 
@@ -196,7 +196,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, false, new StaticHook(true))
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, false, new StaticHook(true), true)
 
         jss.importStack(InternalConstants.CORE_STACK_NAME)
 
@@ -233,7 +233,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.require("foo/bar")
 
@@ -275,7 +275,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook, true)
 
         jss.importStack("custom")
 
@@ -331,7 +331,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook, true)
 
         jss.importStack("child")
 
@@ -356,7 +356,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.importJavaScriptLibrary(library1)
         jss.importJavaScriptLibrary(library2)
@@ -380,7 +380,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck")
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "charley")
@@ -406,7 +406,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", chuck)
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", buzz)
@@ -436,7 +436,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, null, true)
 
         jss.addInitializerCall("setup", "chuck")
 
@@ -470,7 +470,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, null, true, falseHook, true)
 
         jss.addInitializerCall("setup", chuck)
 
@@ -494,7 +494,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook, true)
 
         jss.importStylesheet(stylesheet)
 
@@ -517,7 +517,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         replay()
 
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook)
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor, falseHook, true)
 
         jss.importStylesheet(new StylesheetLink("style.css", options))
         jss.importStylesheet(new StylesheetLink("style.css", new StylesheetOptions("hologram")))

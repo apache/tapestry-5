@@ -30,7 +30,6 @@ import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.testng.annotations.Test;
 
 /**

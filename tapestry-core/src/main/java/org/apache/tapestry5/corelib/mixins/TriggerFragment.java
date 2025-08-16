@@ -17,13 +17,13 @@ package org.apache.tapestry5.corelib.mixins;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.FormFragment;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A mixin that can be applied to a {@link org.apache.tapestry5.corelib.components.Checkbox} or
@@ -53,8 +53,8 @@ public class TriggerFragment
     @Parameter
     private boolean invert;
 
-    @Environmental
-    private JavaScriptSupport javascriptSupport;
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @HeartbeatDeferred
     void beginRender()
@@ -73,6 +73,6 @@ public class TriggerFragment
             spec.put("invert", true);
         }
 
-        javascriptSupport.require("t5/core/form-fragment").invoke("linkTrigger").with(spec);
+        requireJsModeHelper.importModule("t5/core/form-fragment").invoke("linkTrigger").with(spec);
     }
 }

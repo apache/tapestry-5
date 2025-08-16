@@ -13,9 +13,11 @@
 package org.apache.tapestry5.integration.app1.components;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
 
@@ -25,7 +27,7 @@ import java.util.Calendar;
  * Here's a component with a template, including a t:body element. Really should rename this to "Layout" as that's the
  * T5 naming.
  */
-@Import(stylesheet = "context:css/app.css", module = {"bootstrap/collapse", "app/test-support"})
+@Import(stylesheet = "context:css/app.css")
 public class Border
 {
     @Inject
@@ -37,6 +39,9 @@ public class Border
     
     @Inject @Property
     private PageClassLoaderContextManager pccm; 
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     public static final int year;
 
@@ -65,6 +70,13 @@ public class Border
             version = System.getProperty("java.vm.version");
         }
         return version + " from " + System.getProperty("java.vendor");
+    }
+    
+    @BeginRender
+    void beginRender()
+    {
+        requireJsModeHelper.importModule("bootstrap/collapse");
+        requireJsModeHelper.importModule("app/test-support");
     }
     
 }

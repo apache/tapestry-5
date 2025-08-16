@@ -297,5 +297,13 @@ public interface JavaScriptSupport
      * @since 5.10.0
      */
     void addEsModuleConfigurationCallback(EsModuleConfigurationCallback callback);
+    
+    /**
+     * Returns whether Require.js is enabled or not (i.e. the value of the 
+     * {@linkplain SymbolConstants#REQUIRE_JS_ENABLED} configuration symbol.
+     * 
+     * @since 5.10.0.
+     */
+    boolean isRequireJsEnabled();
 
 }

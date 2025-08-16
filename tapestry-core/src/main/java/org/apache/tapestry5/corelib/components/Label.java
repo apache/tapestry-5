@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -67,6 +68,9 @@ public class Label
 
     @Inject
     private JavaScriptSupport javaScriptSupport;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     @Inject
     @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
@@ -120,7 +124,7 @@ public class Label
             // TAP5-2500
             String warningText = "The Label component " + resources.getCompleteId()
               + " is linked to a Field that failed to return a clientId. The 'for' attibute will not be rendered.";
-            javaScriptSupport.require("t5/core/console").invoke("warn").with(warningText);
+            requireJsModeHelper.importModule("t5/core/console").invoke("warn").with(warningText);
         }
         
         String id = clientId != null ? clientId : javaScriptSupport.allocateClientId(fieldId + "-label");

@@ -3,8 +3,8 @@ plugins {
     id 'tapestry.testng-convention'
 }
 
+import t5build.TapestryBuildLogic
 import org.apache.tools.ant.filters.ReplaceTokens
-import t5build.*
 
 description = 'Central module for Tapestry, containing all core services and components'
 
@@ -35,38 +35,75 @@ dependencies {
     testRuntimeOnly libs.guice
 }
 
-tasks.register('preprocessCoffeeScript', PreprocessCoffeeScript)
+def npmWorkingDir = 'src/main/typescript/'
+def npmExec = TapestryBuildLogic.isWindows() ? 'npm.cmd' : 'npm'
 
-tasks.register('compileCoffeeScript', CompileCoffeeScript) {
-    outputDir = file("${mainGeneratedDir}/compiled-coffeescript")
+tasks.register('npmInstall', Exec) {
+    group 'TypeScript'
+    description "Runs npm install"
+    
+    workingDir = npmWorkingDir
+    commandLine npmExec, 'install'
 }
 
-tasks.register('compileProcessedCoffeescript', CompileCoffeeScript) {
-    dependsOn tasks.named('preprocessCoffeeScript')
-    srcDir tasks.named('preprocessCoffeeScript').map { it.outputDir }
-    outputDir = file("${mainGeneratedDir}/compiled-processed-coffeescript")
+tasks.register('compileTypeScriptToAmd', Exec) {
+    group 'TypeScript'
+
+    dependsOn npmInstall
+
+    workingDir = npmWorkingDir
+    commandLine npmExec, 'run', 'build-amd'
 }
 
-tasks.register('compileTestCoffeeScript', CompileCoffeeScript) {
-    srcDir = file('src/test/coffeescript')
-    outputDir = file("${testGeneratedDir}/compiled-coffeescript")
+tasks.register('compileTypeScriptToEsModule', Exec) {
+    group 'TypeScript'
+
+    dependsOn npmInstall
+    
+    workingDir = npmWorkingDir
+    commandLine npmExec, 'run', 'build-es-module'
 }
 
-tasks.named('processResources') {
-    from tasks.named('compileCoffeeScript')
-    from tasks.named('compileProcessedCoffeescript')
+tasks.register('compileTypeScript', Delete) {
+    group = 'TypeScript'
+
+    dependsOn(compileTypeScriptToAmd)
+    dependsOn(compileTypeScriptToEsModule)
 }
 
-tasks.named('processTestResources') {
-    from tasks.named('compileTestCoffeeScript')
+tasks.register('generateTypeScriptDocs', Exec) {
+    group 'TypeScript'
+
+    dependsOn npmInstall
+    
+    workingDir = npmWorkingDir
+    commandLine npmExec, 'run', 'docs'
 }
 
-clean {
-    delete mainGeneratedDir, testGeneratedDir
+tasks.register('cleanTypeScriptFiles', Delete) {
+    delete fileTree("src/main/resources/META-INF/assets/es-modules/t5/core") {
+        include '**.js'
+    }
+    delete fileTree("src/main/resources/META-INF/modules/t5/core") {
+        include '**.js'
+    }
+    delete "src/main/typescript/docs"
 }
 
-tasks.register('testWithPrototype', Test) {
-    systemProperties['tapestry.javascript-infrastructure-provider'] = 'prototype'
+processResources.dependsOn compileTypeScript
+clean.dependsOn cleanTypeScriptFiles
+
+// Not sure why this is necessary:
+compileTestGroovy.dependsOn compileTestJava
+
+test {
+    // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
+        jvmArgs('--add-opens=java.base/java.nio.charset=ALL-UNNAMED')
+    }
+
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
 }
 
 [
@@ -85,4 +122,22 @@ tasks.register('testWithPrototype', Test) {
         args '-d', "src/test/${appName}", '-p', '8080'
         classpath = sourceSets.test.runtimeClasspath
     }
+}
+
+// Default is jQuery and Require.js enabled, so here are the tests for the
+// other combinations
+
+task testWithJqueryAndRequireJsDisabled(type: Test) {
+    systemProperties."tapestry.javascript-infrastructure-provider" = 'jquery'
+    systemProperties."tapestry.require-js-enabled" = 'false'
+}
+
+task testWithPrototypeAndRequireJsEnabled(type: Test) {
+    systemProperties."tapestry.javascript-infrastructure-provider" = 'prototype'
+    systemProperties."tapestry.require-js-enabled" = 'true'
+}  
+
+task testWithPrototypeAndRequireJsDisabled(type: Test) {
+    systemProperties."tapestry.javascript-infrastructure-provider" = 'prototype'
+    systemProperties."tapestry.require-js-enabled" = 'false'
 }

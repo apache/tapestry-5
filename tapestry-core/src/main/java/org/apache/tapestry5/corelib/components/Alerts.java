@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.BaseClientElement;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.services.Request;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
@@ -63,6 +64,9 @@ public class Alerts extends BaseClientElement
 
     @Inject
     private Request request;
+    
+    @Inject
+    private RequireJsModeHelper requireJsModeHelper;
 
     void onPageLoaded()
     {
@@ -120,7 +124,7 @@ public class Alerts extends BaseClientElement
 
         for (Alert alert : storage.getAlerts())
         {
-            javaScriptSupport.require("t5/core/alert").with(alert.toJSON());
+            requireJsModeHelper.importModule("t5/core/alert").with(alert.toJSON());
         }
 
         storage.dismissNonPersistent();

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -24,6 +25,8 @@ import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.ajax.JavaScriptCallback;
+import org.apache.tapestry5.services.javascript.AbstractInitialization;
+import org.apache.tapestry5.services.javascript.Initialization;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.Date;
@@ -46,7 +49,7 @@ public class MultiZoneUpdateDemo
     {
         return new Date();
     }
-
+    
     Object onActionFromUpdate()
     {
         wilmaMessage = "His Wife, Wilma.";
@@ -58,7 +61,12 @@ public class MultiZoneUpdateDemo
         {
             public void run(JavaScriptSupport javascriptSupport)
             {
-                javascriptSupport.require("app/multi-zone-update").with("message", "Updated");
+                final String moduleName = "app/multi-zone-update";
+                final AbstractInitialization<?> initialization = 
+                        javascriptSupport.isRequireJsEnabled() ?
+                        javascriptSupport.require(moduleName) :
+                        javascriptSupport.importEsModule(moduleName);
+                initialization.with("message", "Updated");
             }
         });
 

@@ -23,6 +23,7 @@ import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
@@ -59,6 +60,10 @@ public class Upload extends AbstractField
 
     @Inject
     private Locale locale;
+    
+    @Inject
+    @Symbol(SymbolConstants.REQUIRE_JS_ENABLED)
+    private boolean requireJsEnabled;
 
     @SuppressWarnings("unused")
     @Mixin
@@ -123,7 +128,8 @@ public class Upload extends AbstractField
     {
         formSupport.setEncodingType(MULTIPART_ENCTYPE);
 
-        writer.element("input", "type", "file", "name", getControlName(), "id", getClientId(), "class", cssClass);
+        final String clientId = getClientId();
+        writer.element("input", "type", "file", "name", getControlName(), "id", clientId, "class", cssClass);
 
         validate.render(writer);
 
@@ -134,7 +140,15 @@ public class Upload extends AbstractField
         // TAPESTRY-2453
         if (request.isXHR())
         {
-            javaScriptSupport.require("t5/core/injected-upload").with(getClientId());
+            final String moduleName = "t5/core/injected-upload";
+            if (requireJsEnabled)
+            {
+                javaScriptSupport.require(moduleName).with(clientId);
+            }
+            else
+            {
+                javaScriptSupport.importEsModule(moduleName).with(clientId);
+            }
         }
     }
 

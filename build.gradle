@@ -303,34 +303,12 @@ tasks.register('aggregateJavadoc', Javadoc) {
     }
 }
 
-tasks.register('coffeeScriptDocs', Exec) {
-    group 'Documentation'
-    description 'Build docco documentation for all CoffeeScript sources'
-    dependsOn project(':tapestry-core').tasks.preprocessCoffeeScript
+tasks.register('typeScriptDocs') {
+    group = 'Documentation'
+    description = 'Builds typedoc documentation for all TypeScript sources'
 
-    def outputDir = file('$buildDir/documentation/coffeescript')
-
-    def sources = files()
-
-    subprojects.each { sub ->
-        def coffeeDir = sub.file('src/main/coffeescript')
-        if (coffeeDir.exists()) {
-            sources += sub.fileTree(coffeeDir) {
-                include '**/*.coffee'
-            }
-        }
-    }
-
-    sources += project(':tapestry-core').tasks.preprocessCoffeeScript.outputs.files.asFileTree
-
-    // Needs to be installed via 'npm install -g docco@0.6.3'
-    executable TapestryBuildLogic.isWindows() ? 'docco.cmd' : 'docco'
-    args '--output', outputDir
-    args sources.files.sort({ a, b ->
-        a.name.compareTo b.name
-    })
+    dependsOn(project(':tapestry-core').tasks.named('generateTypeScriptDocs'))
 }
-
 
 dependencies {
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
@@ -380,20 +358,28 @@ tasks.register('continuousIntegration') {
     group = 'Verification'
     description 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
 
-    dependsOn subprojects.check
-    dependsOn ':tapestry-core:testWithPrototype'
-    dependsOn combinedJacocoReport
-    dependsOn subprojects.assemble
+    def dependants = [
+        'tapestry-core:testWithPrototypeAndRequireJsDisabled',
+        'tapestry-core:testWithJqueryAndRequireJsDisabled',
+        'tapestry-core:testWithPrototypeAndRequireJsEnabled', 
+        subprojects.check, // jQuery and Require.js enabled
+        combinedJacocoReport
+    ]
+
+    // tapestry-javadoc doesn't work with Java 8 anymore. That's why it's only added if != 8.
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        dependants << aggregateJavadoc
+    }
+
+    dependsOn(dependants)
 }
 
 
 tasks.register('zippedSources', Zip) {
     description "Creates a combined Zip file of all sub-project's sources"
     group 'Release artifact'
-
-    dependsOn('tapestry-beanvalidator:compileCoffeeScript')
-    dependsOn('tapestry-core:compileCoffeeScript')
-    dependsOn('tapestry-core:compileProcessedCoffeescript')
+    
+    dependsOn('tapestry-core:compileTypeScript')
 
     destinationDirectory = buildDir
     archiveBaseName = 'apache-tapestry'
@@ -409,13 +395,17 @@ tasks.register('zippedSources', Zip) {
     exclude '**/bin/**'
     exclude '**/target/**'
     exclude '**/build/**'
-    exclude '**/test-output/**'  // Left around by TestNG sometimes
+    exclude '**/test-output/**'  // Left around by TestNG sometime
+    exclude '**/modules/***.js'
+    exclude '**/es-modules/***.js'
 }
 
-tasks.register('zippedApidoc', Zip) {
-    dependsOn aggregateJavadoc
-    description "Zip archive of the project's aggregate JavaDoc and CoffeeScript documentation"
+task zippedApidoc(type: Zip) {
+    description "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
     group 'Release artifact'
+
+    dependsOn(typeScriptDocs)
+    dependsOn(aggregateJavadoc)
 
     destinationDirectory = buildDir
     archiveBaseName = 'apache-tapestry'
@@ -435,9 +425,8 @@ tasks.register('zippedApidoc', Zip) {
         from aggregateJavadoc.outputs.files
     }
 
-
-    into 'coffeescript', {
-        from coffeeScriptDocs.outputs.files
+    into 'typescript', {
+        from typeScriptDocs.outputs.files
     }
 }
 

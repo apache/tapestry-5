@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.commons.services.TypeCoercer;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -29,22 +23,28 @@ import java.text.ParseException;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.tapestry5.commons.services.TypeCoercer;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ajax.RequireJsModeHelper;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+
 public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 {
     private final TypeCoercer typeCoercer;
 
     private final ThreadLocale threadLocale;
 
-    private final JavaScriptSupport javascriptSupport;
+    private final RequireJsModeHelper requireJsModeHelper;
 
     private final Set<Class> integerTypes = CollectionFactory.newSet();
 
     public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale,
-                                        JavaScriptSupport javascriptSupport)
+                                        RequireJsModeHelper requireJsModeHelper)
     {
         this.typeCoercer = typeCoercer;
         this.threadLocale = threadLocale;
-        this.javascriptSupport = javascriptSupport;
+        this.requireJsModeHelper = requireJsModeHelper;
 
         Class[] integerTypes =
                 {Byte.class, Short.class, Integer.class, Long.class, BigInteger.class};
@@ -60,7 +60,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     {
         String translation = isIntegerType(type) ? "integer" : "numeric";
 
-        javascriptSupport.require("t5/core/validation");
+        requireJsModeHelper.importModule("t5/core/validation");
 
         element.attributes("data-validation", "true",
                 "data-translation", translation,

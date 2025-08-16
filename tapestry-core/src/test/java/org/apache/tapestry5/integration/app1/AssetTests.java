@@ -52,10 +52,10 @@ public class AssetTests extends App1TestCase
     {
         openLinks("AssetDemo");
         
-        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js", getText("httpAsset"));
-        assertEquals("https://cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js", getText("httpsAsset"));
-        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js", getText("protocolRelativeAsset"));
-        assertEquals("ftp://cdnjs.cloudflare.com/ajax/libs/d3/3.0.0/d3.js", getText("ftpAsset"));
+        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.js", getText("httpAsset"));
+        assertEquals("https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.js", getText("httpsAsset"));
+        assertEquals("http://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.js", getText("protocolRelativeAsset"));
+        assertEquals("ftp://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.js", getText("ftpAsset"));
         
         // check whether externaly @Import'ed d3 works
         assertTrue(isElementPresent("css=svg"));
