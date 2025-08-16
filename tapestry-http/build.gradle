@@ -25,9 +25,11 @@ dependencies {
 }
 
 // Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
+tasks.named('compileTestGroovy') {
+    dependsOn compileTestJava
+}
 
-jar {
+tasks.named('jar', Jar) {
     from('src/main/filtered-resources') {
         filter(ReplaceTokens, tokens: [version: project.parent.version])
     }

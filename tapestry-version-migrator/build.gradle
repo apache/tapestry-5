@@ -12,7 +12,7 @@ tasks.withType(Test).configureEach {
     }
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Main-Class': 'org.apache.tapestry5.versionmigrator.Main'
     }

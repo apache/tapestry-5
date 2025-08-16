@@ -23,21 +23,17 @@ dependencies {
     testImplementation project(':tapestry-test')
 }
 
-task runTestApp(type:JavaExec) {
-    description 'Start tapestry-spring integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args '-d', 'src/test/webapp', '-p', '8080'
-    classpath += project.sourceSets.test.runtimeClasspath
+['', '1'].each { suffix ->
+    tasks.register("runTestApp${suffix}", JavaExec) {
+        group = 'Application'
+        description = "Start tapestry-spring integration test app${suffix}, useful when debugging failing integration tests"
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args '-d', "src/test/webapp${suffix}", '-p', '8080'
+        classpath += project.sourceSets.test.runtimeClasspath
+    }
 }
 
-task runTestApp1(type:JavaExec) {
-    description 'Start tapestry-spring integration test app 1, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args '-d', 'src/test/webapp1', '-p', '8080'
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.spring.modules.SpringModule'
     }

@@ -26,16 +26,16 @@ dependencies {
     testImplementation libs.testng
 }
 
-(1..6).each { i ->
-    tasks.register("runTestApp$i", JavaExec) {
-        description = "Start app$i integration test app, useful when debugging failing integration tests"
+(1..6).each {
+    tasks.register("runTestApp${it}", JavaExec) {
+        description = "Start app${it} integration test app, useful when debugging failing integration tests"
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
-        args '-d', "src/test/app$i", '-p', '8080'
+        args '-d', "src/test/app${it}", '-p', '8080'
         classpath = project.sourceSets.test.runtimeClasspath
     }
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.modules.JpaModule'
     }

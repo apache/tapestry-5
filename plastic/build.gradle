@@ -9,4 +9,10 @@ dependencies {
 }
 
 // add vendored ASM
-sourceSets.main.java.srcDir 'src/external/java'
+sourceSets {
+    main {
+        java {
+            srcDir 'src/external/java'
+        }
+    }
+}

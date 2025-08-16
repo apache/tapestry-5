@@ -20,7 +20,7 @@ dependencies {
     testImplementation project(':tapestry-test')
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.upload.modules.UploadModule'
     }

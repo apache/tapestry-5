@@ -81,6 +81,9 @@ configurations {
 dependencies {
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
         javadoc project(':tapestry-javadoc')
+        meta providers.provider {
+            tasks.named('aggregateJavadoc').get().outputs.files
+        }
     }
 
     // From tapestry-ioc:
@@ -116,7 +119,9 @@ subprojects {
         }
     }
 
-    assemble.dependsOn(processResources, compileJava, jar)
+    tasks.named('assemble') {
+        dependsOn processResources, compileJava, jar
+    }
 
     artifacts {
         archives sourcesJar
@@ -215,7 +220,7 @@ subprojects {
         }
     }
 
-    task uploadPublished {
+    tasks.register('uploadPublished') {
         doFirst {
             if (!canDeploy) {
                 throw new InvalidUserDataException("Missing upload credentials. Set '${deployUsernameProperty}' and '${deployPasswordProperty}' root project properties.")
@@ -228,12 +233,13 @@ subprojects {
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
 tasks.register('aggregateJavadoc', Javadoc) {
-    dependsOn configurations.javadoc
     group = 'Documentation'
     description = 'Build the aggregated JavaDocs for all modules'
 
+    dependsOn configurations.javadoc
+
     maxMemory = '512m'
-    destinationDir = file("${buildDir}/documentation/javadocs")
+    destinationDir = layout.buildDirectory.dir('documentation/javadocs').get().asFile
 
     def tapestryStylesheet = file('src/javadoc/stylesheet7.css')
     int thisYear = java.time.Year.now().getValue()
@@ -310,13 +316,10 @@ tasks.register('typeScriptDocs') {
     dependsOn(project(':tapestry-core').tasks.named('generateTypeScriptDocs'))
 }
 
-dependencies {
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-        meta aggregateJavadoc.outputs.files
-    }
-}
-
 tasks.register('combinedJacocoReport', JacocoReport) {
+    group = 'Verification'
+    description = 'Generates combined JaCoCo coverage report for all subprojects'
+    
     def excludedProjects = [
         'quickstart',
         'beanmodel',
@@ -347,7 +350,7 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     reports {
         html {
             required = true
-            destination = file("${buildDir}/reports/jacoco")
+            outputLocation = layout.buildDirectory.dir('reports/jacoco')
         }
         xml.required = false
         csv.required = false
@@ -356,7 +359,7 @@ tasks.register('combinedJacocoReport', JacocoReport) {
 
 tasks.register('continuousIntegration') {
     group = 'Verification'
-    description 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
+    description = 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
 
     def dependants = [
         'tapestry-core:testWithPrototypeAndRequireJsDisabled',
@@ -376,12 +379,12 @@ tasks.register('continuousIntegration') {
 
 
 tasks.register('zippedSources', Zip) {
-    description "Creates a combined Zip file of all sub-project's sources"
-    group 'Release artifact'
+    group = 'Release artifact'
+    description = "Creates a combined Zip file of all sub-project's sources"
     
-    dependsOn('tapestry-core:compileTypeScript')
+    dependsOn 'tapestry-core:compileTypeScript'
 
-    destinationDirectory = buildDir
+    destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
     version project.version
     archiveClassifier = 'sources'
@@ -400,45 +403,46 @@ tasks.register('zippedSources', Zip) {
     exclude '**/es-modules/***.js'
 }
 
-task zippedApidoc(type: Zip) {
-    description "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
-    group 'Release artifact'
+tasks.register('zippedApidoc', Zip) {
+    group = 'Release artifact'
+    description = "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
 
-    dependsOn(typeScriptDocs)
-    dependsOn(aggregateJavadoc)
+    dependsOn typeScriptDocs
+    dependsOn aggregateJavadoc
 
-    destinationDirectory = buildDir
+    destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
     version project.version
     archiveClassifier = 'apidocs'
 
-    from file('src/docroot-template'), {
+    from(file('src/docroot-template')) {
         filter ReplaceTokens, tokens: [version: project.version]
         include '*.html'
     }
 
-    from file('src/docroot-template'), {
+    from(file('src/docroot-template')) {
         exclude '*.html'
     }
 
-    into 'apidocs', {
+    into('apidocs') {
         from aggregateJavadoc.outputs.files
     }
 
-    into 'typescript', {
+    into('typescript') {
         from typeScriptDocs.outputs.files
     }
 }
 
 tasks.register('zippedBinaries', Zip) {
-    description 'Zip archive of binaries of each sub-project'
-    // TODO: Plus dependencies?
     group 'Release artifact'
+    description 'Zip archive of binaries of each sub-project'
+
+    // TODO: Plus dependencies?
     // This may create a few unwanted dependencies, but does
     // seem to ensure that the subprojects are created
     inputs.files subprojects*.configurations*.archives.artifacts.files
 
-    destinationDirectory = buildDir
+    destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
     version project.version
     archiveClassifier = 'bin'
@@ -480,12 +484,12 @@ if (canDeploy) {
         upload.extendsFrom archives, signatures
     }
 
-    task generateChecksums(type: GenerateChecksums) {
+    tasks.register('generateChecksums', GenerateChecksums) {
         group 'Release artifact'
         description 'Creates MD5/SHA256 checksums for archives of source and JavaDoc'
 
         source tasks.withType(Zip)
-        outputDir = file("${buildDir}/checksums")
+        outputDir = layout.buildDirectory.dir('checksums')
     }
 
     // This requires that you have the apacheArchivesFolder property configured in your
@@ -513,13 +517,17 @@ if (canDeploy) {
     }
 
     tasks.register('generateRelease') {
-        dependsOn subprojects.assemble, subprojects.uploadPublished, subprojects.publish, copyArchives
         group 'Release artifact'
         description 'Generates and uploads a final release to Apache Nexus and copies archives for deployment'
+
+        dependsOn subprojects.assemble, subprojects.uploadPublished, subprojects.publish, copyArchives
     }
 }
 
 tasks.register('updateBootstrap') {
+    group = 'Maintenance'
+    description = 'Updates the included Bootstrap dependencies from GitHub'
+
     doLast {
         def bootstrapVersion = '3.3.7'
         def target = new File(temporaryDir, 'bootstrap.zip')

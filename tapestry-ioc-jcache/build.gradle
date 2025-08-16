@@ -23,7 +23,7 @@ dependencies {
     testRuntimeOnly moduleLibs.infinispanJcache /* Just to be able to run the tests */
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
     }

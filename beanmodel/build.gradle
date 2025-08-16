@@ -23,9 +23,11 @@ dependencies {
     testImplementation libs.spock.core
 }
 
-clean.delete generateGrammarSource.outputDirectory
+tasks.named('clean') {
+    delete generateGrammarSource.outputDirectory
+}
 
-compileJava {
+tasks.named('compileJava', JavaCompile) {
     dependsOn generateGrammarSource
     options.fork = true
     options.forkOptions.memoryMaximumSize = '512M'
@@ -33,6 +35,13 @@ compileJava {
 
 tasks.named('sourcesJar') {
     dependsOn 'generateGrammarSource'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-sourceSets.main.java.srcDirs += generateGrammarSource.outputDirectory
+sourceSets {
+    main {
+        java {
+            srcDir generateGrammarSource.outputDirectory
+        }
+    }
+}

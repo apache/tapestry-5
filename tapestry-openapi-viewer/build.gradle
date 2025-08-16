@@ -6,7 +6,7 @@ dependencies {
     testImplementation libs.jakarta.servlet.api
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.openapiviewer.modules.TapestryOpenApiViewerModule'
     }

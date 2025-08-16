@@ -8,8 +8,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 description = 'Central module for Tapestry, containing all core services and components'
 
-def mainGeneratedDir = 'src/main/generated'
-def testGeneratedDir = 'src/test/generated'
+def npmWorkingDir = 'src/main/typescript/'
+def npmExec = TapestryBuildLogic.isWindows() ? 'npm.cmd' : 'npm'
 
 dependencies {
     api project(':tapestry-ioc')
@@ -35,19 +35,17 @@ dependencies {
     testRuntimeOnly libs.guice
 }
 
-def npmWorkingDir = 'src/main/typescript/'
-def npmExec = TapestryBuildLogic.isWindows() ? 'npm.cmd' : 'npm'
-
 tasks.register('npmInstall', Exec) {
-    group 'TypeScript'
-    description "Runs npm install"
+    group = 'TypeScript'
+    description = 'Runs npm install'
     
     workingDir = npmWorkingDir
     commandLine npmExec, 'install'
 }
 
 tasks.register('compileTypeScriptToAmd', Exec) {
-    group 'TypeScript'
+    group = 'TypeScript'
+    description = 'Compiles TypeScript to AMD modules'
 
     dependsOn npmInstall
 
@@ -56,7 +54,8 @@ tasks.register('compileTypeScriptToAmd', Exec) {
 }
 
 tasks.register('compileTypeScriptToEsModule', Exec) {
-    group 'TypeScript'
+    group = 'TypeScript'
+    description = 'Compiles TypeScript to ES modules'
 
     dependsOn npmInstall
     
@@ -66,35 +65,51 @@ tasks.register('compileTypeScriptToEsModule', Exec) {
 
 tasks.register('compileTypeScript', Delete) {
     group = 'TypeScript'
+    description = 'Compiles all TypeScript variants'
 
-    dependsOn(compileTypeScriptToAmd)
-    dependsOn(compileTypeScriptToEsModule)
+    dependsOn compileTypeScriptToAmd, compileTypeScriptToEsModule
+}
+
+tasks.named('sourcesJar') {
+    dependsOn compileTypeScript
 }
 
 tasks.register('generateTypeScriptDocs', Exec) {
-    group 'TypeScript'
+    group = 'TypeScript'
+    description = 'Generates TypeScript documentation'
 
     dependsOn npmInstall
-    
+
     workingDir = npmWorkingDir
     commandLine npmExec, 'run', 'docs'
 }
 
 tasks.register('cleanTypeScriptFiles', Delete) {
-    delete fileTree("src/main/resources/META-INF/assets/es-modules/t5/core") {
-        include '**.js'
+    group = 'TypeScript'
+    description = 'Cleans generated TypeScript files'
+
+    delete fileTree('src/main/resources/META-INF/assets/es-modules/t5/core') {
+        include '**/*.js'
     }
-    delete fileTree("src/main/resources/META-INF/modules/t5/core") {
-        include '**.js'
+    delete fileTree('src/main/resources/META-INF/modules/t5/core') {
+        include '**/*.js'
     }
-    delete "src/main/typescript/docs"
+    delete 'src/main/typescript/docs'
 }
 
-processResources.dependsOn compileTypeScript
-clean.dependsOn cleanTypeScriptFiles
+tasks.named('processResources') {
+    dependsOn compileTypeScript
+}
+
+tasks.named('clean') {
+    dependsOn cleanTypeScriptFiles
+}
+
 
 // Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
+tasks.named('compileTestGroovy') {
+    dependsOn compileTestJava
+}
 
 test {
     // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
@@ -118,6 +133,7 @@ test {
     tasks.register("runTest${appName.capitalize()}", JavaExec) {
         group = 'Application'
         description = "Starts the ${appName} integration test app, useful when debugging."
+
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
         args '-d', "src/test/${appName}", '-p', '8080'
         classpath = sourceSets.test.runtimeClasspath
@@ -127,17 +143,26 @@ test {
 // Default is jQuery and Require.js enabled, so here are the tests for the
 // other combinations
 
-task testWithJqueryAndRequireJsDisabled(type: Test) {
-    systemProperties."tapestry.javascript-infrastructure-provider" = 'jquery'
-    systemProperties."tapestry.require-js-enabled" = 'false'
+tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
+    group = 'Verification'
+    description = 'Runs tests with jQuery and Require.js disabled'
+
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'jquery'
+    systemProperty 'tapestry.require-js-enabled', 'false'
 }
 
-task testWithPrototypeAndRequireJsEnabled(type: Test) {
-    systemProperties."tapestry.javascript-infrastructure-provider" = 'prototype'
-    systemProperties."tapestry.require-js-enabled" = 'true'
-}  
+tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
+    group = 'Verification'  
+    description = 'Runs tests with Prototype and Require.js enabled'
 
-task testWithPrototypeAndRequireJsDisabled(type: Test) {
-    systemProperties."tapestry.javascript-infrastructure-provider" = 'prototype'
-    systemProperties."tapestry.require-js-enabled" = 'false'
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
+    systemProperty 'tapestry.require-js-enabled', 'true'
+}
+
+tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
+    group = 'Verification'
+    description = 'Runs tests with Prototype and Require.js disabled'
+
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
+    systemProperty 'tapestry.require-js-enabled', 'false'
 }

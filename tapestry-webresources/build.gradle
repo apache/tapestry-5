@@ -18,10 +18,9 @@ dependencies {
     api moduleLibs.closureCompiler
 
     implementation moduleLibs.less4j
+    implementation moduleLibs.rhino
 
     compileOnly moduleLibs.autoValueAnnotations
-
-    implementation moduleLibs.rhino
 
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-runner')
@@ -35,14 +34,18 @@ dependencies {
     testImplementation libs.webdrivermanager
 }
 
+
 test {
     systemProperties(
-            'geb.build.reportsDir': "${reporting.baseDir}/geb",
-            'tapestry.compiled-asset-cache-dir': "${buildDir}/compiled-asset-cache",
-            'tapestry.production-mode': 'false')
+        'geb.build.reportsDir': "$reporting.baseDir/geb",
+        'tapestry.compiled-asset-cache-dir': "$buildDir/compiled-asset-cache",
+        'tapestry.production-mode': 'false',
+        'tapestry.compress-whitespace': 'false',
+        'tapestry.combine-scripts': 'false'
+    )
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
     }

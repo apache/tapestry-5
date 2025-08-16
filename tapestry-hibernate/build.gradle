@@ -18,11 +18,16 @@ dependencies {
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.web.modules.HibernateModule'
-
-task runTestApp0(type:JavaExec) {
+tasks.register('runTestApp0', JavaExec) {
     description = 'Start tapestry-hibernate integration test app, useful when debugging failing integration tests'
+
     mainClass = 'org.apache.tapestry5.test.JettyRunner'
     args '-d', 'src/test/webapp', '-p', '8080'
     classpath += project.sourceSets.test.runtimeClasspath
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.web.modules.HibernateModule'
+    }
 }
