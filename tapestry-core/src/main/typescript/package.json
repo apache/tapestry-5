@@ -24,8 +24,18 @@
   },
   "license": "Apache-2.0",
   "name": "tapestry-5",
+  "url": "https://tapestry.apache.org",
+  "bugs": {
+    "url": "https://issues.apache.org/jira/projects/TAP5/issues/"
+  },
   "description": "Apache Tapestry's TypeScript/JavaScript code",
   "homepage": "https://tapestry.apache.org",
+  "displayName": "Apache Tapestry's JS code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/tapestry-5",
+    "directory": "tapestry-core/src/main/typescript"
+  },
   "keywords": [
     "tapestry"
   ]
