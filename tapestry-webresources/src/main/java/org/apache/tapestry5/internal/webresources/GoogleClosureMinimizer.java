@@ -30,7 +30,6 @@ import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.webresources.GoogleClosureMinimizerOptionsProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
@@ -43,8 +42,6 @@ import com.google.javascript.jscomp.SourceFile;
  */
 public class GoogleClosureMinimizer extends AbstractMinimizer
 {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleClosureMinimizer.class);
 
     private final List<SourceFile> EXTERNS = Collections.emptyList();
 
@@ -108,13 +105,9 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
         {
             return IOUtils.toInputStream(compiler.toSource(), StandardCharsets.UTF_8);
         }
-        else
-        {
-            logger.warn(String.format("Minimization failed for %s. Errors: %s.",
+
+        throw new RuntimeException(String.format("Compilation failed for %s. Errors: %s.",
         		resource,
-                InternalUtils.join(CollectionFactory.newList(result.errors), ";")) + 
-                    " Providing unchanged resource instead.");
-            return resource.openStream();
-        }
+                InternalUtils.join(CollectionFactory.newList(result.errors), ";")));
     }
 }
