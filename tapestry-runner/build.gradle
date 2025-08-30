@@ -3,7 +3,6 @@ description = 'Utilities for running a Tapestry application in Jetty or Tomcat a
 def moduleVersions = [
     jetty: '11.0.16',
     tomcat: '10.1.13',
-    commonsCli: '1.2',
 ]
 
 dependencies {

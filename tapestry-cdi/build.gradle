@@ -7,7 +7,6 @@ plugins {
 
 description = 'Bridge to CDI for Apache Tapestry 5 Project'
 
-
 buildDir = 'target/gradle-build'
 
 def moduleLibs = [

@@ -22,8 +22,6 @@ dependencies {
 
     testRuntimeOnly moduleLibs.dbcp
     testRuntimeOnly moduleLibs.h2
-    
-    testImplementation libs.testng
 }
 
 (1..6).each {

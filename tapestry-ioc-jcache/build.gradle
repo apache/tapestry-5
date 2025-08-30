@@ -29,7 +29,6 @@ tasks.named('jar', Jar) {
     }
 }
 
-
 test {
     if (JavaVersion.current().isJava9Compatible()) {
             jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED'
