@@ -8,22 +8,27 @@
     "moment": "^2.30.1",
     "@types/underscore": "^1.13.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
-    "build": "npm run build-es-module; npm run build-amd",
-    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/t5/; npm run adjust-es-module;",
-    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/t5/; npm run adjust-amd;",
+    "build": "npm run build-es-module; npm run build-amd; rm -f .",
+    "build-es-module": "npx tsc --outDir ../resources/META-INF/assets/es-modules/; npm run adjust-es-module;",
+    "build-amd": "npx tsc --module amd --outDir ../resources/META-INF/modules/; npm run adjust-amd;",
     "clean-amd": "rm -rf ../resources/META-INF/modules/t5/core/*.js; rm -rf ../resources/META-INF/modules/t5/beanvalidation/*.js;",
-    "clean-es-module": "rm -rf ../resources/META-INF/assets/es-modules/t5/core/*.js; ../resources/META-INF/assets/es-modules/t5/beanvalidation/*.js",
-    "clean": "npm run clean-amd; npm run clean-es-module; npm run clean-docs;",
+    "clean-es-module": "rm -rf ../resources/META-INF/assets/es-modules/t5/core/*.js; ../resources/META-INF/assets/es-modules/t5/beanvalidation/*.js;",
+    "clean": "npm run clean-amd; npm run clean-es-module; npm run clean-docs; npm run clean-tsc;",
     "adjust-amd": "mv ../resources/META-INF/modules/t5/core/messages-amd.js ../resources/META-INF/modules/t5/core/messages.js; rm ../resources/META-INF/modules/t5/core/messages-es-module.js;",
-    "adjust-es-module": "mv ../resources/META-INF/assets/es-modules/t5/core/messages-es-module.js ../resources/META-INF/assets/es-modules/t5/core/messages.js; rm ../resources/META-INF/assets/es-modules/t5/core/messages-amd.js",
+    "adjust-es-module": "mv ../resources/META-INF/assets/es-modules/t5/core/messages-es-module.js ../resources/META-INF/assets/es-modules/t5/core/messages.js; rm ../resources/META-INF/assets/es-modules/t5/core/messages-amd.js;",
     "docs": "typedoc",
-    "clean-docs": "rm -rf docs"
+    "clean-docs": "rm -rf docs",
+    "tsc": "tsc",
+    "clean-tsc": "rm -rf ./types/*",
+    "generate-type-definitions": "tsc --emitDeclarationOnly --outDir ./types",
+    "test-publish-to-npm": "npm run clean-tsc; npm run generate-type-definitions; npm pack;",
+    "publish-to-npm": "npm run clean-tsc; npm run generate-type-definitions; npm publish --access public;"
   },
   "license": "Apache-2.0",
-  "name": "tapestry-5",
+  "name": "@thiagohp/tapestry-5",
+  "version": "0.0.3",
   "url": "https://tapestry.apache.org",
   "bugs": {
     "url": "https://issues.apache.org/jira/projects/TAP5/issues/"
@@ -33,10 +38,13 @@
   "displayName": "Apache Tapestry's JS code",
   "repository": {
     "type": "git",
-    "url": "https://github.com/apache/tapestry-5",
+    "url": "git+https://github.com/apache/tapestry-5.git",
     "directory": "tapestry-core/src/main/typescript"
   },
   "keywords": [
     "tapestry"
+  ],
+  "files": [
+    "types"
   ]
 }

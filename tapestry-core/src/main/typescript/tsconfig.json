@@ -34,7 +34,10 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */,
 
-    "outDir": "../resources/META-INF/assets/es-modules/t5/core/",
+    "declaration": true,
+
+    "outDir": "output",
+    "rootDir": "src",
 
   },
 
