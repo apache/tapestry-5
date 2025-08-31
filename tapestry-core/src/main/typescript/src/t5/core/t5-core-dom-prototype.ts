@@ -110,7 +110,7 @@ type PrototypeEvent = {
 }
 
 const onevent = function(elements: HTMLElement[], eventNames: string[], match: string | null, handler: OnEventHandler) {
-  let element, eventHandlers, eventName, i, j, len, len1, wrapped;
+  let element, eventHandlers: Array<any>, eventName, i, j, len, len1, wrapped;
   if (handler == null) {
     throw new Error("No event handler was provided.");
   }
@@ -474,7 +474,9 @@ const ajaxRequest = function(url: string, options: AjaxRequestOptions | undefine
 
     onException(ajaxRequest: any, exception: any) {
       adjustAjaxCount(-1);
+      // @ts-ignore
       if (options.exception) {
+        // @ts-ignore
         options.exception(exception);
       } else {
         throw exception;
@@ -492,7 +494,9 @@ const ajaxRequest = function(url: string, options: AjaxRequestOptions | undefine
         message += " -- " + text;
       }
       message += ".";
+      // @ts-ignore
       if (options.failure) {
+        // @ts-ignore
         options.failure(new PrototypeResponseWrapper(response), message);
       } else {
         throw new Error(message);
@@ -507,6 +511,7 @@ const ajaxRequest = function(url: string, options: AjaxRequestOptions | undefine
         finalOptions.onFailure(new PrototypeResponseWrapper(response));
         return;
       }
+      // @ts-ignore
       options.success && options.success(new PrototypeResponseWrapper(response));
     }
   };

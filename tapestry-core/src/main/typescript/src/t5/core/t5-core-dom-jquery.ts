@@ -400,7 +400,9 @@ let ajaxRequest = function(url: string, options?: AjaxRequestOptions) {
         message += " -- " + text;
       }
       message += ".";
+      // @ts-ignore
       if (options.failure) {
+        // @ts-ignore
         options.failure(new JQueryResponseWrapper(jqXHR, {}), message);
       } else {
         throw new Error(message);
@@ -408,6 +410,7 @@ let ajaxRequest = function(url: string, options?: AjaxRequestOptions) {
     },
     success: function(data, textStatus, jqXHR) {
       adjustAjaxCount(-1);
+      // @ts-ignore
       options.success && options.success(new JQueryResponseWrapper(jqXHR, data));
     }
   });

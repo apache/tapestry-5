@@ -34,6 +34,7 @@ import { ElementWrapper, ResponseWrapper }from "t5/core/types";
 
 if ((typeof ajax) !== "function") {
   console.error("ajax variable is not a function, but instead it is " + JSON.stringify(ajax));
+  // @ts-ignore
   console.error(ajax);
   throw new Error("ajax variable is not a function");
 }

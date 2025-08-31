@@ -1,0 +1,21 @@
+# Tapestry 5 TypeScript type files
+
+This package provides the TypeScript type files for the
+[Apache Tapestry 5](https://tapestry.apache.org)-provided 
+JavaScript code.
+
+Their installation in your npm/pnpm/yarn TypeScript project requires executing once these 2 actions:
+
+1. Running `npm install --save @thiagohp/tapestry-5` in your command line (or the corresponding command in pnpm or yarn).
+2. Adding an entry to the `paths` setting
+of your `tsconfig.json` file like this:
+
+```
+{
+  "compilerOptions": {
+    "paths": {
+      "t5/core/*": [ "./node_modules/@thiagohp/tapestry-5/types/t5/core/*.d.ts" ],
+    }
+  }
+}
+```
