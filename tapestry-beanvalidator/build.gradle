@@ -1,28 +1,34 @@
+plugins {
+    id 'tapestry.testng-convention'
+}
+
 import t5build.*
 
-description = "Support for JSR-303 Bean Validation via the Hibernate validator implementation"
+description = 'Support for JSR-303 Bean Validation via the Hibernate validator implementation'
 
 dependencies {
-  implementation project(':tapestry-core')
+    implementation project(':tapestry-core')
 
-  implementation "javax.validation:validation-api:1.0.0.GA"
-  implementation "org.hibernate:hibernate-validator:4.3.2.Final"
+    implementation libs.javax.validation.api
+    implementation libs.hibernate.validator
 
-  testImplementation project(':tapestry-test')
-  implementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
-      exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
-      exclude group: "org.testng", module: "testng"
-      exclude group: "javax.servlet", module: "javax.servlet-api"
-  }
-  testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-  
+    implementation(libs.selenium.legrc) {
+        exclude group: 'org.seleniumhq.selenium', module: 'jetty-repacked'
+        exclude group: 'org.testng', module: 'testng'
+    }
+
+    testImplementation project(':tapestry-test')
 }
 
 // Start up the test app, useful when debugging failing integration tests
-task runTestApp303(type:JavaExec) {
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/webapp", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+tasks.register('runTestApp303', JavaExec) {
+    mainClass = 'org.apache.tapestry5.test.JettyRunner'
+    args '-d', 'src/test/webapp', '-p', '8080'
+    classpath += project.sourceSets.test.runtimeClasspath
 }
 
-jar.manifest.attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule'
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.beanvalidator.modules.BeanValidatorModule'
+    }
+}

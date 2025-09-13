@@ -1,48 +1,52 @@
-description = "Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more."
-
-//configurations {
-//	all {
-//		exclude group: "org.codehaus.groovy", module: "groovy-all" // avoid multiple Groovy compilers on classpath
-//	}
-//}
-
-dependencies {
-    api            project(":tapestry-core")
-    testImplementation project(":tapestry-test")
-    api            "com.google.javascript:closure-compiler-unshaded:v20220502"
-    implementation "com.github.sommeri:less4j:1.12.0"
-    
-    compileOnly    "com.google.auto.value:auto-value-annotations:1.9"
-    
-    implementation "org.mozilla:rhino:1.7.7.2"
-
-    testImplementation project(":tapestry-runner")
-    testImplementation "org.gebish:geb-spock:${versions.geb}", {
-		exclude group: "org.codehaus.groovy", module: "groovy-all" // avoid multiple Groovy compilers on classpath
-	}
-    testImplementation "org.spockframework:spock-tapestry:${versions.spock}", {
-    	exclude group: "org.apache.tapestry"
-    }
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-    testImplementation "org.seleniumhq.selenium:selenium-leg-rc:${versions.selenium}", {
-        exclude group: "org.seleniumhq.selenium", module: "jetty-repacked"
-        exclude group: "org.testng", module: "testng"
-        exclude group: "javax.servlet", module: "javax.servlet-api"
-        exclude group: "org.seleniumhq.selenium", module: "selenium-firefox-driver"
-    }
-    testImplementation "org.seleniumhq.selenium:selenium-java:${versions.seleniumServer}"
-    testImplementation ("io.github.bonigarcia:webdrivermanager:${versions.webdriverManager}")
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'tapestry.testng-convention'
 }
 
-jar.manifest {
-    attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
+description = 'Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more.'
+
+def moduleLibs = [
+    closureCompiler: 'com.google.javascript:closure-compiler-unshaded:v20220502',
+    less4j: 'com.github.sommeri:less4j:1.12.0',
+    autoValueAnnotations: 'com.google.auto.value:auto-value-annotations:1.9',
+    rhino: 'org.mozilla:rhino:1.7.7.2',
+]
+
+dependencies {
+    api project(':tapestry-core')
+
+    api moduleLibs.closureCompiler
+
+    implementation moduleLibs.less4j
+    implementation moduleLibs.rhino
+
+    compileOnly moduleLibs.autoValueAnnotations
+
+    testImplementation project(':tapestry-test')
+    testImplementation project(':tapestry-runner')
+
+    testImplementation(libs.geb.spock) {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all' // avoid multiple Groovy compilers on classpath
+    }
+
+    testImplementation project(":tapestry-spock")
+    testImplementation libs.selenium.java
+    testImplementation libs.webdrivermanager
 }
 
 
 test {
-    useJUnitPlatform()
+    systemProperties(
+        'geb.build.reportsDir': "$reporting.baseDir/geb",
+        'tapestry.compiled-asset-cache-dir': "$buildDir/compiled-asset-cache",
+        'tapestry.production-mode': 'false',
+        'tapestry.compress-whitespace': 'false',
+        'tapestry.combine-scripts': 'false'
+    )
+}
 
-    systemProperties("geb.build.reportsDir": "$reporting.baseDir/geb",
-        "tapestry.compiled-asset-cache-dir": "$buildDir/compiled-asset-cache",
-        "tapestry.production-mode": "false")
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.webresources.modules.WebResourcesModule'
+    }
 }

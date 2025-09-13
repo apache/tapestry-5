@@ -1,0 +1,9 @@
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'groovy'
+}
+
+dependencies {
+    testImplementation platform(libs.spock.bom)
+    testImplementation libs.spock.core
+}

@@ -1,0 +1,27 @@
+plugins {
+    id 'tapestry.testing-base-convention'
+}
+
+dependencies {
+    testImplementation libs.testng
+    testImplementation libs.easymock
+    testImplementation libs.hamcrest.core
+}
+
+tasks.withType(Test).configureEach { testTask ->
+
+    def suiteFile = [
+        'src/test/resources/testng.xml',
+        'src/test/conf/testng.xml'
+    ].find { path ->
+        project.file(path).exists()
+    }
+
+    if (suiteFile) {
+        testTask.useTestNG {
+            suites suiteFile
+        }
+    } else {
+        testTask.useTestNG()
+    }
+}

@@ -1,17 +1,22 @@
-description = "Utilities for running a Tapestry application in Jetty or Tomcat as part of test suite."
+description = 'Utilities for running a Tapestry application in Jetty or Tomcat as part of test suite.'
+
+def moduleVersions = [
+    jetty: '8.1.19.v20160209',
+    tomcat: '7.0.70',
+]
 
 dependencies {
+    api project(':tapestry-test-constants')
 
-    api project(":tapestry-test-constants")
-    implementation "org.eclipse.jetty:jetty-server:${versions.jetty}"
-    implementation "org.eclipse.jetty:jetty-jndi:${versions.jetty}"
-    implementation "org.eclipse.jetty:jetty-plus:${versions.jetty}"
-    implementation "org.eclipse.jetty:jetty-webapp:${versions.jetty}"
+    implementation "org.eclipse.jetty:jetty-server:${moduleVersions.jetty}"
+    implementation "org.eclipse.jetty:jetty-jndi:${moduleVersions.jetty}"
+    implementation "org.eclipse.jetty:jetty-plus:${moduleVersions.jetty}"
+    implementation "org.eclipse.jetty:jetty-webapp:${moduleVersions.jetty}"
 
-    implementation "org.apache.tomcat:tomcat-catalina:${versions.tomcat}"
-    implementation "org.apache.tomcat:tomcat-coyote:${versions.tomcat}"
-    implementation "org.apache.tomcat:tomcat-jasper:${versions.tomcat}"
+    implementation "org.apache.tomcat:tomcat-catalina:${moduleVersions.tomcat}"
+    implementation "org.apache.tomcat:tomcat-coyote:${moduleVersions.tomcat}"
+    implementation "org.apache.tomcat:tomcat-jasper:${moduleVersions.tomcat}"
 
-    implementation "org.apache.tomcat:tomcat-dbcp:${versions.tomcat}"
-    implementation "commons-cli:commons-cli:1.2"
+    implementation "org.apache.tomcat:tomcat-dbcp:${moduleVersions.tomcat}"
+    implementation libs.commons.cli
 }

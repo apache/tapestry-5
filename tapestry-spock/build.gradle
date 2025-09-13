@@ -1,14 +1,16 @@
-description = "Provides support Tapestry injections in Spock specifications"
-
-dependencies {
-	implementation project(':commons')
-	implementation project(':tapestry-ioc')
-	implementation "org.spockframework:spock-core:${versions.spock}"
-	
-	testImplementation "javax.inject:javax.inject:1"
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'groovy'
 }
 
-test {
-	useJUnitPlatform()
+description = 'Provides support Tapestry injections in Spock specifications'
+
+dependencies {
+    provided project(':commons')
+    provided project(':tapestry-ioc')
+
+    api platform(libs.spock.bom)
+    api libs.spock.core
+
+    testImplementation libs.javax.inject
 }

@@ -8,21 +8,19 @@ apply plugin: JavaPlugin
 buildDir = 'target/gradle-build'
        
 project.ext.libraryVersions = [
-    javaeeapi: '6.0-4', 
-    tomee: '1.6.0', 
-    ziplock: '1.5.1',
-    junit: '4.8.1', 
-    commonsHttpclient: '3.1',
-    arquillian: '1.1.1.Final', 
-    jbossJavaeeSpec: '1.0.0.Final',
-    arquillianGlassfish: '1.0.0.CR4',
-    glassfishDistrib: '3.1.1-b04', 
-    jbossDistrib: '7.1.1.Final', 
-    cdi: '1.0-SP4',
-    jbossAS7: '7.1.1.Final', 
-    shrinkwrapDesc: '2.0.0-alpha-3'
+    tomee: 'org.apache.openejb:arquillian-tomee-embedded:1.6.0',
+    ziplock: 'org.apache.openejb:ziplock:1.5.1',
+    commonsHttpclient: 'commons-httpclient:commons-httpclient:3.1',
+    arquillianJunitContainer: 'org.jboss.arquillian.junit:arquillian-junit-container:1.1.1.Final',
+    arquillianGlassfish: 'org.jboss.arquillian.container:arquillian-glassfish-managed-3.1:1.0.0.CR4',
+    glassfishDistrib: 'org.glassfish.distributions:glassfish:3.1.1-b04@zip',
+    jbossAS7: 'org.jboss.as:jboss-as-arquillian-container-managed:7.1.1.Final',
+    jbossDistrib: 'org.jboss.as:jboss-as-dist:7.1.1.Final@zip',
+    jbossJavaeeSpec: 'org.jboss.spec:jboss-javaee-6.0:1.0.0.Final',
+    cdiApi: 'jakarta.enterprise:cdi-api:1.0-SP4',
+    shrinkwrapDescriptorsApi: 'org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0-alpha-3',
+    shrinkwrapDescriptorsImpl: 'org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0-alpha-3',
 ]
-
 
 configurations {
     compileOnly 
@@ -36,30 +34,28 @@ configurations {
 dependencies {
     compile project(':tapestry-core')
     compile project(':tapestry-ioc')
-    testCompile (project(':tapestry-test')){
-         transitive = false
-     } 
-      
-    // replace javax.enterprise:cdi-api with group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec to compile against full Java EE API
-    compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
+    testCompile (project(':tapestry-test')) {
+        transitive = false
+     }
+
+    // replace jakarta.enterprise:cdi-api with group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec to compile against full Java EE API
+    compileOnly moduleLibs.cdiApi
+
+    testCompile moduleLibs.ziplock
+    testCompile moduleLibs.commonsHttpclient
     
+    testCompile moduleLibs.arquillianJunitContainer
+    testCompile moduleLibs.shrinkwrapDescriptorsApi
+    testRuntime moduleLibs.shrinkwrapDescriptorsImpl
     
-    testCompile group: 'org.apache.openejb', name: 'ziplock', version: libraryVersions.ziplock
-    testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-    testCompile group: 'commons-httpclient', name: 'commons-httpclient', version: libraryVersions.commonsHttpclient
+    tomeeEmbeddedTestRuntime mopduleLibs.tomee
     
-    testCompile group: 'org.jboss.arquillian.junit', name: 'arquillian-junit-container', version: libraryVersions.arquillian
-    testCompile group: 'org.jboss.shrinkwrap.descriptors', name: 'shrinkwrap-descriptors-api-javaee', version: libraryVersions.shrinkwrapDesc
-    testRuntime group: 'org.jboss.shrinkwrap.descriptors', name: 'shrinkwrap-descriptors-impl-javaee', version: libraryVersions.shrinkwrapDesc
-    
-    tomeeEmbeddedTestRuntime group: 'org.apache.openejb', name: 'arquillian-tomee-embedded', version: libraryVersions.tomee
-    
-    jbossAS7ManagedTestRuntime group: 'org.jboss.as', name: 'jboss-as-arquillian-container-managed', version: libraryVersions.jbossAS7
-    jbossAS7ManagedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-    jboss "org.jboss.as:jboss-as-dist:$libraryVersions.jbossDistrib@zip"
+    jbossAS7ManagedTestRuntime moduleLibs.jbossAS7
+    jbossAS7ManagedTestRuntime moduleLibs.jbossJavaeeSpec
+    jboss moduleLibs.jbossDistrib
  
-    glassfishManagedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-managed-3.1', version: libraryVersions.arquillianGlassfish
-    glassfish "org.glassfish.distributions:glassfish:$libraryVersions.glassfishDistrib@zip"     
+    glassfishManagedTestRuntime moduleLibs.arquillianGlassfish
+    glassfish moduleLibs.glassfishDistrib
 }
 
 sourceSets {
@@ -72,10 +68,10 @@ sourceSets {
 }
 
 idea {
-      module {
-        scopes.PROVIDED.plus += configurations.compileOnly
-      }
+    module {
+       scopes.PROVIDED.plus += configurations.compileOnly
     }
+}
 
 eclipse {
     classpath {
@@ -83,8 +79,8 @@ eclipse {
     }
 }
 
-task resolveJBoss(type: Copy) {  
-    destinationDir = file('target') 
+task resolveJBoss(type: Copy) {
+    destinationDir = file('target')
     from { zipTree(configurations.jboss.singleFile) }
 }
 
@@ -95,16 +91,16 @@ task resolveGlassfish(type: Copy) {
 
 
 task tomeeEmbeddedTest(type: Test) {
-  systemProperty 'arquillian.launch', "tomee_embedded"
+  systemProperty 'arquillian.launch', 'tomee_embedded'
 }
 
 task jbossAS7ManagedTest(type: Test) {
-  systemProperty 'arquillian.launch', "jbossas_managed"
+  systemProperty 'arquillian.launch', 'jbossas_managed'
    dependsOn { resolveJBoss }
 }
 
 task glassfishManagedTest(type: Test){
-  systemProperty 'arquillian.launch', "glassfish_managed"
+  systemProperty 'arquillian.launch', 'glassfish_managed'
    dependsOn { resolveGlassfish }
 }
 
@@ -118,9 +114,8 @@ test {
   setEnabled(false)
 }
 
-jar {	
-
-	manifest {	
-		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.cdi.CDIInjectModule'
-		}
- }
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.cdi.CDIInjectModule'
+    }
+}

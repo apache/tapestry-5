@@ -1,40 +1,41 @@
-description = "Provides support for simple CRUD applications built on top of Tapestry and JPA"
-
-dependencies {
-  implementation project(':tapestry-core')
-  implementation "org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1"
-  implementation 'javax.enterprise:cdi-api:1.2'
-
-
-  testImplementation project(':tapestry-test')
-  testImplementation 'org.eclipse.persistence:eclipselink:2.7.7'
-
-  testRuntimeOnly "com.h2database:h2:1.2.145"
-  testRuntimeOnly "org.apache.tomcat:dbcp:6.0.32"
-  testRuntimeOnly 'com.h2database:h2:1.3.175'
+plugins {
+    id 'tapestry.testng-convention'
 }
 
-repositories {
-    maven {
-        name "EclipseLink"
-        url "https://download.eclipse.org/rt/eclipselink/maven.repo/"
+description = 'Provides support for simple CRUD applications built on top of Tapestry and JPA'
+
+def moduleLibs = [
+    jpaSpecs: 'org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1',
+    javaxCdiApi: 'javax.enterprise:cdi-api:1.2',
+    eclipselink: 'org.eclipse.persistence:eclipselink:2.7.7',
+    dbcp: 'org.apache.tomcat:dbcp:6.0.32',
+    h2: 'com.h2database:h2:1.3.175'
+]
+
+dependencies {
+    implementation project(':tapestry-core')
+
+    implementation moduleLibs.jpaSpecs
+    implementation moduleLibs.javaxCdiApi
+
+    testImplementation project(':tapestry-test')
+    testImplementation moduleLibs.eclipselink
+
+    testRuntimeOnly moduleLibs.dbcp
+    testRuntimeOnly moduleLibs.h2
+}
+
+(1..6).each {
+    tasks.register("runTestApp${it}", JavaExec) {
+        description = "Start app${it} integration test app, useful when debugging failing integration tests"
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args '-d', "src/test/app${it}", '-p', '8080'
+        classpath = project.sourceSets.test.runtimeClasspath
     }
 }
 
-test {
-    systemProperties "tapestry.service-reloading-enabled": "false"
-}
-
-
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.modules.JpaModule'
     }
-}
-
-task runTestApp6(type:JavaExec) {
-    description 'Start app6 integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/app6", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
 }

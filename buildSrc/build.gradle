@@ -1,0 +1,20 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation('ro.isdc.wro4j:wro4j-extensions:1.8.0') {
+        exclude group: 'org.jruby'
+        exclude module: 'spring-web'
+        exclude module: 'closure-compiler'
+        exclude module: 'gmaven-runtime-1.7'
+        exclude module: 'less4j'
+    }
+    implementation 'org.apache.ant:ant-jsch:1.8.2'
+
+    gradleApi()
+}

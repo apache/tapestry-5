@@ -1,15 +1,26 @@
-description = "File Upload component, with supporting services"
-
-dependencies {
-  implementation project(':tapestry-core')
-  api "commons-fileupload:commons-fileupload:1.5"
-  implementation "commons-io:commons-io:${versions.commonsIo}"
-  provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
-
-  testImplementation project(':tapestry-test')
+plugins {
+    id 'tapestry.testng-convention'
 }
 
-jar {
+description = 'File Upload component, with supporting services'
+
+def moduleLibs = [
+    commonsFileupload: 'commons-fileupload:commons-fileupload:1.5',
+]
+
+dependencies {
+    implementation project(':tapestry-core')
+
+    implementation libs.commons.io
+
+    api moduleLibs.commonsFileupload
+
+    provided libs.javax.servlet.api
+
+    testImplementation project(':tapestry-test')
+}
+
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.upload.modules.UploadModule'
     }

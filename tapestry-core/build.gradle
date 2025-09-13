@@ -1,15 +1,15 @@
-import org.gradle.plugins.ide.idea.model.*
-import org.apache.tools.ant.filters.ReplaceTokens
-//import t5build.*
-
-description = "Central module for Tapestry, containing all core services and components"
-
-project.ext {
-    mainGeneratedDir = "src/main/generated"
-    testGeneratedDir = "src/test/generated"
+plugins {
+    id 'tapestry.junit5-convention'
+    id 'tapestry.testng-convention'
 }
 
-clean.delete mainGeneratedDir, testGeneratedDir
+import t5build.TapestryBuildLogic
+import org.apache.tools.ant.filters.ReplaceTokens
+
+description = 'Central module for Tapestry, containing all core services and components'
+
+def npmWorkingDir = 'src/main/typescript/'
+def npmExec = TapestryBuildLogic.isWindows() ? 'npm.cmd' : 'npm'
 
 dependencies {
     api project(':tapestry-ioc')
@@ -17,148 +17,152 @@ dependencies {
     api project(':beanmodel')
     api project(':tapestry-http')
 
-    api "org.apache.commons:commons-lang3:${versions.commonsLang}"
+    implementation libs.jakarta.annotation.api
+    implementation libs.jakarta.xml.bind.api
 
-    
-    implementation 'jakarta.annotation:jakarta.annotation-api:1.3.4'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-    implementation 'com.sun.xml.ws:jaxws-rt:2.3.2'
-    implementation 'javax.xml.ws:jaxws-api:2.3.1'
+    implementation libs.commons.codec
+    implementation libs.commons.lang3
 
-    provided project(":tapestry-test")
-    provided project(":tapestry-test-constants")
+    provided project(':tapestry-test')
+    provided project(':tapestry-test-constants')
 
-    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
+    provided libs.javax.servlet.api
 
-    implementation "commons-codec:commons-codec:1.10"
-    
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
-    testImplementation "org.apache.httpcomponents:httpclient:4.5.14"
-    testRuntimeOnly project(':tapestry-spock')
+    testImplementation libs.httpcomponents.httpclient
+    testImplementation project(":tapestry-spock")
 
-    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
-    testRuntimeOnly 'com.google.inject:guice:3.0'
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.guice
 }
 
-def npmWorkingDir = "src/main/typescript/"
-
-task npmInstall(type: Exec) {
-    group "TypeScript"
-    description "Runs npm install"
+tasks.register('npmInstall', Exec) {
+    group = 'TypeScript'
+    description = 'Runs npm install'
     
     workingDir = npmWorkingDir
-    commandLine isWindows() ? "npm.cmd" : "npm", 'install'
+    commandLine npmExec, 'install'
 }
 
-task compileTypeScriptToAmd(type: Exec) {
+tasks.register('compileTypeScriptToAmd', Exec) {
+    group = 'TypeScript'
+    description = 'Compiles TypeScript to AMD modules'
+
     dependsOn npmInstall
 
     workingDir = npmWorkingDir
-    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'build-amd'
+    commandLine npmExec, 'run', 'build-amd'
 }
 
-task compileTypeScriptToEsModule(type: Exec) {
+tasks.register('compileTypeScriptToEsModule', Exec) {
+    group = 'TypeScript'
+    description = 'Compiles TypeScript to ES modules'
+
     dependsOn npmInstall
     
     workingDir = npmWorkingDir
-    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'build-es-module'
+    commandLine npmExec, 'run', 'build-es-module'
 }
 
-task compileTypeScript() {
-    dependsOn compileTypeScriptToAmd
-    dependsOn compileTypeScriptToEsModule
+tasks.register('compileTypeScript', Delete) {
+    group = 'TypeScript'
+    description = 'Compiles all TypeScript variants'
+
+    dependsOn compileTypeScriptToAmd, compileTypeScriptToEsModule
 }
 
-task generateTypeScriptDocs(type: Exec) {
+tasks.named('sourcesJar') {
+    dependsOn compileTypeScript
+}
+
+tasks.register('generateTypeScriptDocs', Exec) {
+    group = 'TypeScript'
+    description = 'Generates TypeScript documentation'
+
     dependsOn npmInstall
-    
+
     workingDir = npmWorkingDir
-    commandLine isWindows() ? "npm.cmd" : "npm", 'run', 'docs'
+    commandLine npmExec, 'run', 'docs'
 }
 
-task cleanTypeScriptFiles(type: Delete) {
-    delete fileTree("src/main/resources/META-INF/assets/es-modules/t5/core") {
-        include '**.js'
+tasks.register('cleanTypeScriptFiles', Delete) {
+    group = 'TypeScript'
+    description = 'Cleans generated TypeScript files'
+
+    delete fileTree('src/main/resources/META-INF/assets/es-modules/t5/core') {
+        include '**/*.js'
     }
-    delete fileTree("src/main/resources/META-INF/modules/t5/core") {
-        include '**.js'
+    delete fileTree('src/main/resources/META-INF/modules/t5/core') {
+        include '**/*.js'
     }
-    delete "src/main/typescript/docs"
+    delete 'src/main/typescript/docs'
 }
 
-processResources.dependsOn compileTypeScript
-clean.dependsOn cleanTypeScriptFiles
+tasks.named('processResources') {
+    dependsOn compileTypeScript
+}
+
+tasks.named('clean') {
+    dependsOn cleanTypeScriptFiles
+}
+
 
 // Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
+tasks.named('compileTestGroovy') {
+    dependsOn compileTestJava
+}
 
 test {
-	// Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
+    // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED");
+        jvmArgs('--add-opens=java.base/java.nio.charset=ALL-UNNAMED')
     }
-	// TAP5-2722
-	systemProperty 'user.language', 'en'
+
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
 }
 
-task runTestApp1(type:JavaExec) {
-  description 'Start app1 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app1", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestApp2(type:JavaExec) {
-  description 'Start app2 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app2", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestApp3(type:JavaExec) {
-  description 'Start app3 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app3", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestApp4(type:JavaExec) {
-  description 'Start app4 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app4", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestApp5(type:JavaExec) {
-  description 'Start app5 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app5", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestApp7(type:JavaExec) {
-  description 'Start app7 integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/app7", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
-}
-task runTestAppfolder(type:JavaExec) {
-  description 'Start appFolder integration test app, useful when debugging failing integration tests'
-  main = 'org.apache.tapestry5.test.JettyRunner'
-  args "-d", "src/test/appfolder", "-p", "8080"
-  classpath += project.sourceSets.test.runtimeClasspath
+[
+    'app1',
+    'app2',
+    'app3',
+    'app4',
+    'app5',
+    'app7',
+    'appfolder'
+].each { appName ->
+    tasks.register("runTest${appName.capitalize()}", JavaExec) {
+        group = 'Application'
+        description = "Starts the ${appName} integration test app, useful when debugging."
+
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args '-d', "src/test/${appName}", '-p', '8080'
+        classpath = sourceSets.test.runtimeClasspath
+    }
 }
 
 // Default is jQuery and Require.js enabled, so here are the tests for the
 // other combinations
 
-task testWithJqueryAndRequireJsDisabled(type:Test) {
-  systemProperties."tapestry.javascript-infrastructure-provider" = "jquery"
-  systemProperties."tapestry.require-js-enabled" = "false"
+tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
+    group = 'Verification'
+    description = 'Runs tests with jQuery and Require.js disabled'
+
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'jquery'
+    systemProperty 'tapestry.require-js-enabled', 'false'
 }
 
-task testWithPrototypeAndRequireJsEnabled(type:Test) {
-  systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
-  systemProperties."tapestry.require-js-enabled" = "true"
-}  
+tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
+    group = 'Verification'  
+    description = 'Runs tests with Prototype and Require.js enabled'
 
-task testWithPrototypeAndRequireJsDisabled(type:Test) {
-  systemProperties."tapestry.javascript-infrastructure-provider" = "prototype"
-  systemProperties."tapestry.require-js-enabled" = "false"
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
+    systemProperty 'tapestry.require-js-enabled', 'true'
+}
+
+tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
+    group = 'Verification'
+    description = 'Runs tests with Prototype and Require.js disabled'
+
+    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
+    systemProperty 'tapestry.require-js-enabled', 'false'
 }
