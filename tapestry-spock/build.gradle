@@ -9,6 +9,8 @@ dependencies {
     provided project(':commons')
     provided project(':tapestry-ioc')
 
+    api libs.bundles.groovy
+
     api platform(libs.spock.bom)
     api libs.spock.core
 

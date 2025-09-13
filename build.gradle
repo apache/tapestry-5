@@ -108,6 +108,8 @@ subprojects {
 
     dependencies {
         implementation libs.slf4j.api
+        implementation libs.bundles.groovy
+
     }
 
     tasks.withType(GroovyCompile).configureEach {

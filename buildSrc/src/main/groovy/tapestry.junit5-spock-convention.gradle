@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    testImplementation libs.bundles.groovy
+
     testImplementation platform(libs.spock.bom)
     testImplementation libs.spock.core
 }
