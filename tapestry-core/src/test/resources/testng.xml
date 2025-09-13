@@ -1,0 +1,167 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!-- Copyright 2008, 2009 The Apache Software Foundation Licensed under the Apache License, Version 2.0 (the "License"); 
+  you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS 
+  IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language 
+  governing permissions and limitations under the License. -->
+
+<!-- The suite may no longer be run in parallel, because of some tricky issues related to locking of class loaders. Running 
+  in parallel causes thread deadlocks, when unmanaged tests run at the same time as Selenium-based integration tests. See TAPESTRY-2561. -->
+<suite
+    name="Tapestry Core"
+    annotations="1.5"
+    verbose="2">
+    <test
+        name="Component Unit Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.pagetester" />
+            <package name="org.apache.tapestry5.integration.pagelevel" />
+            <package name="org.apache.tapestry5.corelib.base" />
+            <package name="org.apache.tapestry5.corelib.components" />
+            <package name="org.apache.tapestry5.corelib.mixins" />
+            <package name="org.apache.tapestry5.corelib.internal" />
+        </packages>
+    </test>
+
+    <test
+        name="Service Unit Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.root" />
+            <package name="org.apache.tapestry5.dom" />
+            <package name="org.apache.tapestry5.runtime" />
+            <package name="org.apache.tapestry5.services" />
+            <package name="org.apache.tapestry5.services.javascript" />
+            <package name="org.apache.tapestry5.util" />
+            <package name="org.apache.tapestry5.validator" />
+            <package name="org.apache.tapestry5.internal" />
+            <package name="org.apache.tapestry5.internal.beaneditor" />
+            <package name="org.apache.tapestry5.internal.bindings" />
+            <package name="org.apache.tapestry5.internal.grid" />
+            <package name="org.apache.tapestry5.internal.model" />
+            <package name="org.apache.tapestry5.internal.pageload" />
+            <package name="org.apache.tapestry5.internal.services" />
+            <package name="org.apache.tapestry5.internal.services.assets" />
+            <package name="org.apache.tapestry5.internal.services.messages" />
+            <package name="org.apache.tapestry5.internal.services.meta" />
+            <package name="org.apache.tapestry5.internal.services.templates" />
+            <package name="org.apache.tapestry5.internal.structure" />
+            <package name="org.apache.tapestry5.internal.test" />
+            <package name="org.apache.tapestry5.internal.transform" />
+            <package name="org.apache.tapestry5.internal.translator" />
+            <package name="org.apache.tapestry5.internal.util" />
+            <package name="org.apache.tapestry5.internal.services.ajax" />
+        </packages>
+    </test>
+
+    <!-- We break these out by which of the test applications they apply to. We have a bunch. -->
+    <test
+        name="Core Integration Tests"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/app1" />
+
+        <packages>
+            <package name="org.apache.tapestry5.integration.app1" />
+        </packages>
+    </test>
+
+    <test
+        name="Additional Integration Tests"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/app3" />
+
+        <packages>
+            <package name="org.apache.tapestry5.integration.app3" />
+        </packages>
+    </test>
+
+    <test
+        name="Live Reload Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.reload" />
+        </packages>
+    </test>
+
+    <test
+        name="LinkTransformer Tests"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/linktrans" />
+        <packages>
+            <package name="org.apache.tapestry5.integration.linktrans" />
+        </packages>
+    </test>
+
+    <test
+        name="App Skinning and Misc. Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.app5" />
+        </packages>
+    </test>
+
+    <test
+        name="Bootstrap 4 related Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.app7" />
+        </packages>
+    </test>
+
+    <test
+        name="Components Param Symbols Tests"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/symbolparam" />
+        <packages>
+            <package name="org.apache.tapestry5.integration.symbolparam" />
+        </packages>
+    </test>
+
+    <test
+        name="AppFolder Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.appfolder" />
+        </packages>
+    </test>
+
+    <test
+        name="PageTester Tests"
+        enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.pagetester" />
+        </packages>
+    </test>
+
+    <test
+        name="Activation Context Tests"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/activationctx" />
+        <packages>
+            <package name="org.apache.tapestry5.integration.activationctx" />
+        </packages>
+    </test>
+
+    <test
+        name="Activation Context Tests 2 old behavior"
+        enabled="true">
+        <parameter
+            name="tapestry.web-app-folder"
+            value="src/test/activationctx2" />
+        <packages>
+            <package name="org.apache.tapestry5.integration.activationctx2" />
+        </packages>
+    </test>
+
+</suite>

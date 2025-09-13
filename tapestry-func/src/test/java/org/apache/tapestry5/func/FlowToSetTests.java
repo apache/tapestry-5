@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FlowToSetTests extends BaseFuncTest
 {
     @Test
     public void empty_flow_to_set()
     {
-        assertSame(F.emptyFlow().toSet(), Collections.EMPTY_SET);
+        assertSame(Collections.emptySet(), F.emptyFlow().toSet());
     }
 
     @Test

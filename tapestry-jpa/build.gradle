@@ -15,6 +15,7 @@ def moduleLibs = [
 dependencies {
     implementation project(':tapestry-core')
 
+    api libs.javax.persistence.api
     implementation moduleLibs.jpaSpecs
     implementation moduleLibs.javaxCdiApi
 

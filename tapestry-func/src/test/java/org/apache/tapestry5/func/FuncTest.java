@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FuncTest extends BaseFuncTest
 {
@@ -44,11 +50,11 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void map_empty_collection_is_the_empty_list()
     {
-        List<String> source = Arrays.asList();
+        List<String> source = Collections.emptyList();
 
         List<Integer> lengths = F.flow(source).map(stringToLength).toList();
 
-        assertSame(lengths, Collections.EMPTY_LIST);
+        assertSame(Collections.emptyList(), lengths);
     }
 
     @Test
@@ -58,21 +64,16 @@ public class FuncTest extends BaseFuncTest
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> worker = new Worker<String>()
-        {
-            @Override
-            public void work(String value)
-            {
-                if (buffer.length() > 0)
-                    buffer.append(' ');
+        Worker<String> worker = value -> {
+            if (buffer.length() > 0)
+                buffer.append(' ');
 
-                buffer.append(value);
-            }
+            buffer.append(value);
         };
 
         F.flow(source).each(worker);
 
-        assertEquals(buffer.toString(), "Mary had a little lamb");
+        assertEquals("Mary had a little lamb", buffer.toString());
     }
 
     @Test
@@ -82,28 +83,16 @@ public class FuncTest extends BaseFuncTest
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> worker = new Worker<String>()
-        {
-            @Override
-            public void work(String value)
-            {
-                if (buffer.length() > 0)
-                    buffer.append(' ');
+        Worker<String> worker = value -> {
+            if (buffer.length() > 0)
+                buffer.append(' ');
 
-                buffer.append(value);
-            }
+            buffer.append(value);
         };
 
-        F.flow(source).filter(new Predicate<String>()
-        {
-            @Override
-            public boolean accept(String object)
-            {
-                return object.contains("a");
-            }
-        }).each(worker);
+        F.flow(source).filter(object -> object.contains("a")).each(worker);
 
-        assertEquals(buffer.toString(), "Mary had a lamb");
+        assertEquals("Mary had a lamb", buffer.toString());
     }
 
     @Test
@@ -113,21 +102,16 @@ public class FuncTest extends BaseFuncTest
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> worker = new Worker<String>()
-        {
-            @Override
-            public void work(String value)
-            {
-                if (buffer.length() > 0)
-                    buffer.append(' ');
+        Worker<String> worker = value -> {
+            if (buffer.length() > 0)
+                buffer.append(' ');
 
-                buffer.append(value);
-            }
+            buffer.append(value);
         };
 
-        assertSame(flow.each(worker), flow);
+        assertSame(flow, flow.each(worker));
 
-        assertEquals(buffer.toString(), "Mary had a little lamb");
+        assertEquals("Mary had a little lamb", buffer.toString());
     }
 
     @Test
@@ -135,32 +119,22 @@ public class FuncTest extends BaseFuncTest
     {
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> appendWorker = new Worker<String>()
-        {
-            @Override
-            public void work(String value)
-            {
-                if (buffer.length() > 0)
-                    buffer.append(' ');
+        Worker<String> appendWorker = value -> {
+            if (buffer.length() > 0)
+                buffer.append(' ');
 
-                buffer.append(value);
-            }
+            buffer.append(value);
         };
 
-        Worker<String> appendLength = new Worker<String>()
-        {
-            @Override
-            public void work(String value)
-            {
-                buffer.append('(');
-                buffer.append(value.length());
-                buffer.append(')');
-            }
+        Worker<String> appendLength = value -> {
+            buffer.append('(');
+            buffer.append(value.length());
+            buffer.append(')');
         };
 
         F.flow("Mary", "had", "a", "little", "lamb").each(F.combine(appendWorker, appendLength));
 
-        assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
+        assertEquals("Mary(4) had(3) a(1) little(6) lamb(4)", buffer.toString());
     }
 
     @Test
@@ -204,7 +178,7 @@ public class FuncTest extends BaseFuncTest
 
         List<Integer> output = F.flow(input).filter(evenp).toList();
 
-        assertSame(output, Collections.EMPTY_LIST);
+        assertSame(Collections.emptyList(), output);
     }
 
     @Test
@@ -272,11 +246,11 @@ public class FuncTest extends BaseFuncTest
         Predicate<String> isNull = F.isNull();
         Predicate<String> isNotNull = F.notNull();
 
-        assertEquals(isNull.accept(null), true);
-        assertEquals(isNotNull.accept(null), false);
+        assertTrue(isNull.accept(null));
+        assertFalse(isNotNull.accept(null));
 
-        assertEquals(isNull.accept("foo"), false);
-        assertEquals(isNotNull.accept("bar"), true);
+        assertFalse(isNull.accept("foo"));
+        assertTrue(isNotNull.accept("bar"));
     }
 
     @Test
@@ -285,7 +259,7 @@ public class FuncTest extends BaseFuncTest
         int total = F.flow(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList()).reduce(
                 F.SUM_INTS, 0);
 
-        assertEquals(total, 18);
+        assertEquals(18, total);
     }
 
     @Test
@@ -293,7 +267,7 @@ public class FuncTest extends BaseFuncTest
     {
         int total = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).reduce(F.SUM_INTS, 0);
 
-        assertEquals(total, 18);
+        assertEquals(18, total);
     }
 
     @Test
@@ -301,11 +275,11 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<Integer> empty = F.flow();
 
-        assertSame(empty.reverse(), empty);
+        assertSame(empty, empty.reverse());
 
         Flow<Integer> one = F.flow(1);
 
-        assertSame(one.reverse(), one);
+        assertSame(one, one.reverse());
     }
 
     @Test
@@ -324,7 +298,7 @@ public class FuncTest extends BaseFuncTest
         Flow<Integer> empty = F.flow();
         Flow<Integer> flow = F.flow(1, 2, 3);
 
-        assertSame(empty.concat(flow), flow);
+        assertSame(flow, empty.concat(flow));
     }
 
     @Test
@@ -358,46 +332,32 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<String> zero = F.flow();
 
-        Comparator<String> comparator = new Comparator<String>()
-        {
-            @Override
-            public int compare(String o1, String o2)
-            {
-                return o1.length() - o2.length();
-            }
-        };
+        Comparator<String> comparator = (o1, o2) -> o1.length() - o2.length();
 
-        assertSame(zero.sort(), zero);
-        assertSame(zero.sort(comparator), zero);
+        assertSame(zero, zero.sort());
+        assertSame(zero, zero.sort(comparator));
 
         Flow<String> one = F.flow("Hello");
 
-        assertSame(one.sort(), one);
-        assertSame(one.sort(comparator), one);
+        assertSame(one, one.sort());
+        assertSame(one, one.sort(comparator));
     }
 
     @Test
     public void sort_using_explicit_comparator()
     {
         Flow<String> flow = F.flow("a", "eeeee", "ccc", "bb", "dddd");
-        Comparator<String> comparator = new Comparator<String>()
-        {
-            @Override
-            public int compare(String o1, String o2)
-            {
-                return o1.length() - o2.length();
-            }
-        };
+        Comparator<String> comparator = (o1, o2) -> o1.length() - o2.length();
 
         assertFlowValues(flow.sort(comparator), "a", "bb", "ccc", "dddd", "eeeee");
     }
 
-    @Test(expectedExceptions = ClassCastException.class)
+    @Test
     public void unable_to_sort_a_flow_of_non_comparables()
     {
         Flow<Locale> flow = F.flow(Locale.ENGLISH, Locale.FRANCE);
 
-        flow.sort();
+        assertThrows(ClassCastException.class, flow::sort);
     }
 
     @Test
@@ -412,19 +372,23 @@ public class FuncTest extends BaseFuncTest
             total += i;
         }
 
-        assertEquals(total, 16);
+        assertEquals(16, total);
     }
 
     @Test
     public void first_of_non_empty_flow()
     {
-        assertEquals(F.flow("Mary", "had", "a", "little", "lamb").first(), "Mary");
+        String first = F.flow("Mary", "had", "a", "little", "lamb").first();
+
+        assertEquals("Mary", first);
     }
 
     @Test
     public void rest_of_non_empty_flow()
     {
-        assertFlowValues(F.flow("Mary", "had", "a", "little", "lamb").rest(), "had", "a", "little", "lamb");
+        Flow<String> rest = F.flow("Mary", "had", "a", "little", "lamb").rest();
+
+        assertFlowValues(rest, "had", "a", "little", "lamb");
     }
 
     @Test
@@ -451,7 +415,7 @@ public class FuncTest extends BaseFuncTest
     public void list_of_empty_flow_is_empty()
     {
         assertTrue(filteredEmpty.isEmpty());
-        assertSame(filteredEmpty.toList(), Collections.EMPTY_LIST);
+        assertSame(Collections.emptyList(), filteredEmpty.toList());
     }
 
     @Test
@@ -459,16 +423,11 @@ public class FuncTest extends BaseFuncTest
     {
         assertSame(filteredEmpty.reverse(), F.EMPTY_FLOW);
         assertSame(filteredEmpty.sort(), F.EMPTY_FLOW);
-        assertSame(filteredEmpty.sort(new Comparator<Integer>()
-        {
-            @Override
-            public int compare(Integer o1, Integer o2)
-            {
-                unreachable();
+        assertSame(F.EMPTY_FLOW, filteredEmpty.sort((o1, o2) -> {
+            unreachable();
 
-                return 0;
-            }
-        }), F.EMPTY_FLOW);
+            return 0;
+        }));
     }
 
     @Test
@@ -483,7 +442,7 @@ public class FuncTest extends BaseFuncTest
         assertFlowValues(filteredEmpty.append(1, 2, 3).reverse(), 3, 2, 1);
     }
 
-    @Test(expectedExceptions = UnsupportedOperationException.class)
+    @Test
     public void remove_on_flow_iterator_is_not_supported()
     {
         Flow<Integer> flow = F.flow(1, 2, 3).filter(evenp);
@@ -493,7 +452,7 @@ public class FuncTest extends BaseFuncTest
         assertTrue(it.hasNext());
         assertEquals(it.next(), Integer.valueOf(2));
 
-        it.remove();
+        assertThrows(UnsupportedOperationException.class, it::remove);
     }
 
     @Test
@@ -501,22 +460,10 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
 
-        List<String> result = flow.filter(new Predicate<String>()
-        {
-            @Override
-            public boolean accept(String object)
-            {
-                return object.contains("a");
-            }
-        }).sort(new Comparator<String>()
-        {
-            @Override
-            public int compare(String o1, String o2)
-            {
-                return o1.length() - o2.length();
-
-            };
-        }).toList();
+        List<String> result = flow
+            .filter(object -> object.contains("a"))
+            .sort((o1, o2) -> o1.length() - o2.length())
+            .toList();
 
         assertListsEquals(result, "a", "had", "Mary", "lamb");
     }
@@ -526,14 +473,7 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<Integer> flow = F.emptyFlow();
 
-        assertSame(flow.each(new Worker<Integer>()
-        {
-            @Override
-            public void work(Integer value)
-            {
-                unreachable();
-            }
-        }), flow);
+        assertSame(flow, flow.each(value -> unreachable()));
     }
 
     @Test
@@ -541,7 +481,7 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<Integer> flow = F.emptyFlow();
 
-        assertSame(flow.remove(evenp), flow);
+        assertSame(flow, flow.remove(evenp));
     }
 
     @Test
@@ -550,28 +490,23 @@ public class FuncTest extends BaseFuncTest
         Flow<Integer> flow = F.emptyFlow();
         Integer initial = 99;
 
-        assertSame(flow.reduce(new Reducer<Integer, Integer>()
-        {
-            @Override
-            public Integer reduce(Integer accumulator, Integer value)
-            {
-                unreachable();
+        assertSame(initial, flow.reduce((accumulator, value) -> {
+            unreachable();
 
-                return null;
-            }
-        }, initial), initial);
+            return null;
+        }, initial));
     }
 
     @Test
     public void count_of_the_empty_flow_is_zero()
     {
-        assertEquals(F.flow().count(), 0);
+        assertEquals(0, F.flow().count());
     }
 
     @Test
     public void count_of_array_flow()
     {
-        assertEquals(F.flow(1, 2, 3).count(), 3);
+        assertEquals(3, F.flow(1, 2, 3).count());
     }
 
     @Test
@@ -579,16 +514,16 @@ public class FuncTest extends BaseFuncTest
     {
         Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
 
-        assertEquals(flow.filter(F.isNull()).count(), 0);
-        assertEquals(flow.removeNulls().count(), 5);
+        assertEquals(0, flow.filter(F.isNull()).count());
+        assertEquals(5, flow.removeNulls().count());
     }
 
     @Test
     public void count_of_a_large_flow()
     {
-        Flow<Integer> flow = F.series(1, 1).take(50000);
+        Flow<Integer> flow = F.series(1, 1).take(50_000);
 
-        assertEquals(flow.count(), 50000);
+        assertEquals(50_000, flow.count());
     }
 
     @Test
@@ -611,15 +546,7 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void lazy_flow_from_iterable()
     {
-        Iterable<Integer> iterable = new Iterable<Integer>()
-        {
-
-            @Override
-            public Iterator<Integer> iterator()
-            {
-                return Arrays.asList(9, 7, 1).iterator();
-            }
-        };
+        Iterable<Integer> iterable = () -> Arrays.asList(9, 7, 1).iterator();
 
         Flow<Integer> flow = F.flow(iterable);
 

@@ -35,6 +35,7 @@ public class WebResourcesTest extends SeleniumTestCase {
     public void test_Less_compilation()
     {
         open("/");
+        waitForInitializedPage();
         click("css=.navbar .dropdown-toggle");
         click("link=MultiLess");
         waitForInitializedPage();

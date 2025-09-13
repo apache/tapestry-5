@@ -15,9 +15,12 @@
 package org.apache.tapestry5.jpa.integration.app5;
 
 import javax.persistence.Cache;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 import java.util.Map;
@@ -75,6 +78,36 @@ final class DummyEntityManagerFactory implements EntityManagerFactory
 
     @Override
     public void close()
+    {
+
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType)
+    {
+        return null;
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map)
+    {
+        return null;
+    }
+
+    @Override
+    public void addNamedQuery(String name, Query query)
+    {
+
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> cls)
+    {
+        return null;
+    }
+
+    @Override
+    public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph)
     {
 
     }

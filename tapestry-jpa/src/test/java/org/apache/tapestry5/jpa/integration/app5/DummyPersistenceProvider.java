@@ -41,4 +41,15 @@ public class DummyPersistenceProvider implements PersistenceProvider
         return null;
     }
 
+    @Override
+    public void generateSchema(PersistenceUnitInfo info, Map map) 
+    {
+
+    }
+
+    @Override
+    public boolean generateSchema(String persistenceUnitName, Map map) 
+    {
+        return false;
+    }
 }
