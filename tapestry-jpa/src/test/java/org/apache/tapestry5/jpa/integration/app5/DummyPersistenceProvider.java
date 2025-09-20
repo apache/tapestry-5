@@ -44,6 +44,7 @@ public class DummyPersistenceProvider implements PersistenceProvider
     @Override
     public void generateSchema(PersistenceUnitInfo info, Map map) 
     {
+
     }
 
     @Override

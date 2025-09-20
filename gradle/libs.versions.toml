@@ -75,6 +75,7 @@ quickstart-maven-war      = "3.3.1"
 quickstart-maven-jetty    = "11.0.15"
 quickstart-gretty         = "3.0.6"
 
+
 [libraries]
 
 # LOGGING

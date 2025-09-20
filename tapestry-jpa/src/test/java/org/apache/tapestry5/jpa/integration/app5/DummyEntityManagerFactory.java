@@ -84,32 +84,32 @@ final class DummyEntityManagerFactory implements EntityManagerFactory
     }
 
     @Override
-    public EntityManager createEntityManager(SynchronizationType synchronizationType) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void addNamedQuery(String name, Query query) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> cls) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) 
+    public EntityManager createEntityManager(SynchronizationType synchronizationType)
     {
-        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map)
+    {
+        return null;
+    }
+
+    @Override
+    public void addNamedQuery(String name, Query query)
+    {
+
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> cls)
+    {
+        return null;
+    }
+
+    @Override
+    public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph)
+    {
+
     }
 }

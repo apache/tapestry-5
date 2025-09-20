@@ -10,7 +10,6 @@ description = 'Bridge to CDI for Apache Tapestry 5 Project'
 buildDir = 'target/gradle-build'
 
 def moduleLibs = [
-    javaeeapi: '6.0-4',
     tomee: 'org.apache.openejb:arquillian-tomee-embedded:1.6.0',
     ziplock: 'org.apache.openejb:ziplock:1.5.1',
     arquillianJunitContainer: 'org.jboss.arquillian.junit:arquillian-junit-container:1.1.1.Final',
@@ -70,10 +69,10 @@ sourceSets {
 }
 
 idea {
-      module {
-        scopes.PROVIDED.plus += configurations.compileOnly
-      }
+    module {
+       scopes.PROVIDED.plus += configurations.compileOnly
     }
+}
 
 eclipse {
     classpath {

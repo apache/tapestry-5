@@ -3,7 +3,6 @@ package org.apache.tapestry5.http.test.services;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
-import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.http.services.CompressionAnalyzer;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.HttpServletRequestFilter;

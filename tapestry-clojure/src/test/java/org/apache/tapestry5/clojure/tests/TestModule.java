@@ -2,7 +2,6 @@ package org.apache.tapestry5.clojure.tests;
 
 import org.apache.tapestry5.clojure.ClojureBuilder;
 import org.apache.tapestry5.commons.MappedConfiguration;
-import org.apache.tapestry5.http.TapestryHttpConstants;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
@@ -17,6 +16,7 @@ public class TestModule
     {
         conf.add(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "test");
     }
+
     public static Fixture buildFixture(ClojureBuilder builder)
     {
         return builder.build(Fixture.class);
