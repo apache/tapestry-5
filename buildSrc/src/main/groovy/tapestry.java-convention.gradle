@@ -42,7 +42,6 @@ dependencies {
         implementation libs.commons.io
         implementation libs.commons.logging
         implementation("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
-        implementation libs.json
         implementation libs.xml.apis
     }
 }

@@ -18,7 +18,6 @@ ext {
         tapestry: "@tapestryVersion@",
         jackson: "@jacksonVersion@",
         log4j: "@log4jVersion@",
-        json: "@jsonVersion@",
         junit: "@junitVersion@",
         yasson: "@yassonVersion@",
         servlet: "@servletVersion@"

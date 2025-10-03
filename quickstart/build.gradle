@@ -58,7 +58,6 @@ tasks.register('processFiltered', Copy) {
         springBootVersion: libs.versions.quickstart.spring.boot.get(),
         junitVersion: libs.versions.junit5.get(),
         jacksonVersion: libs.versions.jackson.get(),
-        jsonVersion: libs.versions.quickstart.json.get(),
         log4jVersion: libs.versions.quickstart.log4j.get(),
         yassonVersion: libs.versions.quickstart.yasson.get(),
         servletVersion: libs.versions.jakarta.servlet.api.get(),
