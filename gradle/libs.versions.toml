@@ -2,7 +2,7 @@
 
 # LOGGING
 
-slf4j = "1.7.25"
+slf4j = "2.0.17"
 
 # JAVAX/JAKARTA
 
@@ -16,20 +16,20 @@ jakarta-xml-bind-api   = "2.3.2"
 
 # APACHE COMMONS
 
-commons-cli        = "1.2"
-commons-codec      = "1.18.0"
-commons-httpclient = "4.1"
-commons-io         = "2.19.0"
-commons-lang3      = "3.17.0"
+commons-cli        = "1.10.0"
+commons-codec      = "1.19.0"
+commons-httpclient = "4.5.14"
+commons-io         = "2.20.0"
+commons-lang3      = "3.19.0"
 commons-logging    = "1.3.5"
-commons-text       = "1.13.1"
+commons-text       = "1.40.0"
 
-# HIBERNATE
+# DATABASE
 
 hibernate           = "5.4.32.Final"
 hibernate-validator = "4.3.2.Final"
 
-hsqldb = "2.7.3"
+hsqldb = "2.7.4"
 
 # ANTLR
 
@@ -37,37 +37,31 @@ antlr = "3.5.3"
 
 # MISC
 
-snakeyaml = "2.3"
-cglib = "2.2"
-hamcrest-core = "1.3"
-json = "20140107"
 xml-apis = "1.4.01"
-guice = "3.0"
-groovy = "4.0.27"
-ant-jsch = "1.8.2"
+groovy = "4.0.28"
+ant-jsch = "1.10.15"
 guava = "27.0.1-jre"
-jackson = "2.13.1"
-clojure = "1.6.0"
-httpcomponents-httpclient = "4.5.14"
+jackson = "2.20.0"
+clojure = "1.12.2"
 
 # TESTING
 
-slf4j-simple = "2.0.17"
-junit5 = "5.10.2"
+junit5 = "5.14.0"
 junit4 = "4.13.2"
-testng = "7.5.1"
+
+testng   = "7.5.1"
 easymock = "5.4.0"
+
 spock = "2.3-groovy-4.0"
-geb = "2.0"
-webdrivermanager = "5.3.1"
-selenium = "4.5.0"
-selenium-java = "4.12.1"
-selenium-server = "4.12.1"
+geb   = "2.0"
+
+selenium-java    = "4.12.1"
+selenium-legrc   = "4.5.0"
+webdrivermanager = "5.5.2"
 
 # QUICKSTART
 
 quickstart-spring-boot    = "2.5.4"
-quickstart-json           = "1.1.4"
 quickstart-log4j          = "2.17.2"
 quickstart-yasson         = "2.0.4"
 quickstart-maven-compiler = "3.8.1"
@@ -97,7 +91,7 @@ jakarta-xml-bind-api    = { module = "jakarta.xml.bind:jakarta.xml.bind-api", ve
 
 commons-cli        = { module = "commons-cli:commons-cli", version.ref = "commons-cli" }
 commons-codec      = { module = "commons-codec:commons-codec", version.ref = "commons-codec" }
-commons-httpclient = { module = "commons-httpclient:commons-httpclient", version.ref = "commons-httpclient" }
+commons-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "commons-httpclient" }
 commons-io         = { module = "commons-io:commons-io", version.ref = "commons-io" }
 commons-lang3      = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
 commons-logging    = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
@@ -117,16 +111,10 @@ antlr-runtime = { module = "org.antlr:antlr-runtime", version.ref = "antlr" }
 
 # MISC
 
-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
-cglib-nodep = { module = "cglib:cglib-nodep", version.ref = "cglib" }
-hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest-core" }
-json = { module = "org.json:json", version.ref = "json" }
 xml-apis = { module = "xml-apis:xml-apis", version.ref = "xml-apis" }
-guice = { module = "com.google.inject:guice", version.ref = "guice" }
 ant-jsch = { module = "org.apache.ant:ant-jsch", version.ref = "ant-jsch" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 clojure = { module = "org.clojure:clojure", version.ref = "clojure" }
-httpcomponents-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpcomponents-httpclient" }
 
 # GROOVY
 
@@ -140,13 +128,14 @@ jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", ver
 
 # TESTING
 
-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-simple" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 
-junit-bom            = { module = "org.junit:junit-bom", version.ref = "junit5" }
-junit-jupiter        = { module = "org.junit.jupiter:junit-jupiter"}
-junit-jupiter-api    = { module = "org.junit.jupiter:junit-jupiter-api" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+junit-bom               = { module = "org.junit:junit-bom", version.ref = "junit5" }
+junit-jupiter           = { module = "org.junit.jupiter:junit-jupiter"}
+junit-jupiter-api       = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-jupiter-params    = { module = "org.junit.jupiter:junit-jupiter-params" }
+junit-jupiter-engine    = { module = "org.junit.jupiter:junit-jupiter-engine" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
@@ -159,11 +148,8 @@ spock-core = { module = "org.spockframework:spock-core" }
 
 geb-spock = { module = "org.gebish:geb-spock", version.ref = "geb" }
 
-selenium-legrc  = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium" }
-selenium-api    = { module = "org.seleniumhq.selenium:selenium-api", version.ref = "selenium" }
-selenium-java   = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
-selenium-server = { module = "org.seleniumhq.selenium:selenium-server", version.ref = "selenium-server" }
-
+selenium-java    = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
+selenium-legrc   = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium-legrc" }
 webdrivermanager = { module = "io.github.bonigarcia:webdrivermanager", version.ref = "webdrivermanager" }
 
 

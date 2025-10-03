@@ -28,11 +28,10 @@ dependencies {
 
     provided libs.javax.servlet.api
 
-    testImplementation libs.httpcomponents.httpclient
+    testImplementation libs.commons.httpclient
     testImplementation project(":tapestry-spock")
 
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
-    testRuntimeOnly libs.guice
 }
 
 tasks.register('npmInstall', Exec) {

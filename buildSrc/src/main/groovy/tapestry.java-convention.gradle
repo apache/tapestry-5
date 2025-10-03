@@ -38,14 +38,10 @@ eclipse.classpath.plusConfigurations += [configurations.provided]
 // The versions themselves are defined in `gradle/libs.versions.toml`.
 dependencies {
     constraints {
-        implementation libs.cglib.nodep
         implementation libs.commons.codec
         implementation libs.commons.io
         implementation libs.commons.logging
         implementation("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
-        implementation libs.hamcrest.core
-        implementation libs.json
-        implementation libs.snakeyaml
         implementation libs.xml.apis
     }
 }

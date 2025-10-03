@@ -5,7 +5,6 @@ plugins {
 dependencies {
     testImplementation libs.testng
     testImplementation libs.easymock
-    testImplementation libs.hamcrest.core
 }
 
 tasks.withType(Test).configureEach { testTask ->

@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     testImplementation libs.junit4
-    testImplementation libs.hamcrest.core
 }
 
 tasks.withType(Test).configureEach {
