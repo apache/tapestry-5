@@ -1,0 +1,3 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+	<t:cachedGenerics/>
+</html>
