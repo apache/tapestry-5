@@ -66,4 +66,11 @@ public class CacheTests extends App1TestCase
                 "Method org.apache.tapestry5.integration.app1.pages.ParamsMethodWithCached.invalidMethod(java.lang.String)",
                 "may not be used with @Cached because it has parameters.");
     }
+    
+    @Test 
+    public void at_cached_at_method_returning_generic_types()
+    {
+        // Fails without the fix
+        openLinks("@Cached on method returning type with generics");
+    }
 }
