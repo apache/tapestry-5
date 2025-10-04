@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.tapestry5.SymbolConstants;
@@ -33,6 +34,9 @@ public class ComponentModelSourceImpl implements ComponentModelSource
     private final PageSource pageSource;
     
     private final boolean multipleClassLoaders;
+    
+    private final static ThreadLocal<Set<String>> CALL_STACK = 
+            ThreadLocal.withInitial(HashSet::new);    
 
     public ComponentModelSourceImpl(ComponentClassResolver resolver, ComponentInstantiatorSource source,
             ComponentDependencyRegistry componentDependencyRegistry,
@@ -51,15 +55,16 @@ public class ComponentModelSourceImpl implements ComponentModelSource
     {
         if (multipleClassLoaders && isPage(componentClassName))
         {
-            
             final Set<String> superclasses = componentDependencyRegistry.getDependencies(
                     componentClassName, DependencyType.SUPERCLASS);
             
             if (!superclasses.isEmpty())
             {
                 final String superclass = superclasses.iterator().next();
-                if (isPage(superclass))
+                final Set<String> callStack = CALL_STACK.get();
+                if (!callStack.contains(superclass) && isPage(superclass))
                 {
+                    callStack.add(superclass);
                     getModel(superclass);
                     try
                     {
@@ -73,6 +78,7 @@ public class ComponentModelSourceImpl implements ComponentModelSource
                         // so the objective of the line above is already
                         // fulfilled and we can safely ignore the exception
                     }
+                    callStack.remove(superclass);
                 }
             }
         }

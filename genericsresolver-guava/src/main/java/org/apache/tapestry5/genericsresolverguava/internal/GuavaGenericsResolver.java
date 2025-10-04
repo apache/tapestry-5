@@ -22,7 +22,7 @@ import org.apache.tapestry5.genericsresolverguava.internal.GuavaGenericsResolver
 import com.google.common.reflect.TypeToken;
 
 /**
- * {@link GuavaGenericsResolver} implementation using Guava.
+ * {@link GenericsResolver} implementation using Guava.
  */
 public class GuavaGenericsResolver implements GenericsResolver {
 

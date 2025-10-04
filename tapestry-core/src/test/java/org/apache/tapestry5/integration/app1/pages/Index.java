@@ -632,7 +632,9 @@ public class Index
                     
                     new Item("SelfRecursiveDemo", "Self-Recursive Demo", "check for handling of self-recursive components"),
                     
-                    new Item("EsModuleDemo", "ES Module Demo", "tests and demonstrations for the ES module support")
+                    new Item("EsModuleDemo", "ES Module Demo", "tests and demonstrations for the ES module support"),
+                    
+                    new Item("CachedGenericsDemo", "@Cached on method returning type with generics", "tests fix for TAP5-2813")
                 );
 
     static
