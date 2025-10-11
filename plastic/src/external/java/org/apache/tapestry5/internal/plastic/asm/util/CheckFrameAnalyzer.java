@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.util;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
@@ -124,7 +123,7 @@ class CheckFrameAnalyzer<V extends Value> extends Analyzer<V> {
     }
 
     Frame<V>[] frames = getFrames();
-    Frame<V> currentFrame = frames[0];
+    Frame<V> currentFrame = newFrame(frames[0]);
     expandFrames(owner, method, currentFrame);
     for (int insnIndex = 0; insnIndex < insnList.size(); ++insnIndex) {
       Frame<V> oldFrame = frames[insnIndex];
@@ -139,7 +138,7 @@ class CheckFrameAnalyzer<V extends Value> extends Analyzer<V> {
         if (insnType == AbstractInsnNode.LABEL
             || insnType == AbstractInsnNode.LINE
             || insnType == AbstractInsnNode.FRAME) {
-          checkFrame(insnIndex + 1, oldFrame, /* requireFrame = */ false);
+          checkFrame(insnIndex + 1, oldFrame, /* requireFrame= */ false);
         } else {
           currentFrame.init(oldFrame).execute(insnNode, interpreter);
 
@@ -149,40 +148,40 @@ class CheckFrameAnalyzer<V extends Value> extends Analyzer<V> {
             }
             JumpInsnNode jumpInsn = (JumpInsnNode) insnNode;
             int targetInsnIndex = insnList.indexOf(jumpInsn.label);
-            checkFrame(targetInsnIndex, currentFrame, /* requireFrame = */ true);
+            checkFrame(targetInsnIndex, currentFrame, /* requireFrame= */ true);
             if (insnOpcode == GOTO) {
               endControlFlow(insnIndex);
             } else {
-              checkFrame(insnIndex + 1, currentFrame, /* requireFrame = */ false);
+              checkFrame(insnIndex + 1, currentFrame, /* requireFrame= */ false);
             }
           } else if (insnNode instanceof LookupSwitchInsnNode) {
             LookupSwitchInsnNode lookupSwitchInsn = (LookupSwitchInsnNode) insnNode;
             int targetInsnIndex = insnList.indexOf(lookupSwitchInsn.dflt);
-            checkFrame(targetInsnIndex, currentFrame, /* requireFrame = */ true);
+            checkFrame(targetInsnIndex, currentFrame, /* requireFrame= */ true);
             for (int i = 0; i < lookupSwitchInsn.labels.size(); ++i) {
               LabelNode label = lookupSwitchInsn.labels.get(i);
               targetInsnIndex = insnList.indexOf(label);
               currentFrame.initJumpTarget(insnOpcode, label);
-              checkFrame(targetInsnIndex, currentFrame, /* requireFrame = */ true);
+              checkFrame(targetInsnIndex, currentFrame, /* requireFrame= */ true);
             }
             endControlFlow(insnIndex);
           } else if (insnNode instanceof TableSwitchInsnNode) {
             TableSwitchInsnNode tableSwitchInsn = (TableSwitchInsnNode) insnNode;
             int targetInsnIndex = insnList.indexOf(tableSwitchInsn.dflt);
             currentFrame.initJumpTarget(insnOpcode, tableSwitchInsn.dflt);
-            checkFrame(targetInsnIndex, currentFrame, /* requireFrame = */ true);
+            checkFrame(targetInsnIndex, currentFrame, /* requireFrame= */ true);
             newControlFlowEdge(insnIndex, targetInsnIndex);
             for (int i = 0; i < tableSwitchInsn.labels.size(); ++i) {
               LabelNode label = tableSwitchInsn.labels.get(i);
               currentFrame.initJumpTarget(insnOpcode, label);
               targetInsnIndex = insnList.indexOf(label);
-              checkFrame(targetInsnIndex, currentFrame, /* requireFrame = */ true);
+              checkFrame(targetInsnIndex, currentFrame, /* requireFrame= */ true);
             }
             endControlFlow(insnIndex);
           } else if (insnOpcode == RET) {
             throw new AnalyzerException(insnNode, "RET instructions are unsupported");
           } else if (insnOpcode != ATHROW && (insnOpcode < IRETURN || insnOpcode > RETURN)) {
-            checkFrame(insnIndex + 1, currentFrame, /* requireFrame = */ false);
+            checkFrame(insnIndex + 1, currentFrame, /* requireFrame= */ false);
           } else {
             endControlFlow(insnIndex);
           }
@@ -200,7 +199,7 @@ class CheckFrameAnalyzer<V extends Value> extends Analyzer<V> {
             Frame<V> handler = newFrame(oldFrame);
             handler.clearStack();
             handler.push(interpreter.newExceptionValue(tryCatchBlock, handler, catchType));
-            checkFrame(insnList.indexOf(tryCatchBlock.handler), handler, /* requireFrame = */ true);
+            checkFrame(insnList.indexOf(tryCatchBlock.handler), handler, /* requireFrame= */ true);
           }
         }
 

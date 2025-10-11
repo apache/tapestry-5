@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;

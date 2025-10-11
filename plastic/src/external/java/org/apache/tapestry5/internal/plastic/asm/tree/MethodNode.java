@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
@@ -606,6 +605,8 @@ public class MethodNode extends MethodVisitor {
           if (isInterface != (insn.opcode == Opcodes.INVOKEINTERFACE)) {
             throw new UnsupportedClassVersionException();
           }
+        } else if (insn instanceof InvokeDynamicInsnNode) {
+          throw new UnsupportedClassVersionException();
         } else if (insn instanceof LdcInsnNode) {
           Object value = ((LdcInsnNode) insn).cst;
           if (value instanceof Handle

@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 
@@ -41,6 +40,9 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
  * @author Bing Ran
  */
 public class SimpleVerifier extends BasicVerifier {
+
+  /** The type of the Object class. */
+  private static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
 
   /** The type of the class that is verified. */
   private final Type currentClass;
@@ -197,30 +199,70 @@ public class SimpleVerifier extends BasicVerifier {
 
   @Override
   protected boolean isSubTypeOf(final BasicValue value, final BasicValue expected) {
-    Type expectedType = expected.getType();
     Type type = value.getType();
+    Type expectedType = expected.getType();
+    // Null types correspond to BasicValue.UNINITIALIZED_VALUE.
+    if (type == null || expectedType == null) {
+      return type == null && expectedType == null;
+    }
+    if (type.equals(expectedType)) {
+      return true;
+    }
     switch (expectedType.getSort()) {
       case Type.INT:
       case Type.FLOAT:
       case Type.LONG:
       case Type.DOUBLE:
-        return type.equals(expectedType);
+        return false;
       case Type.ARRAY:
       case Type.OBJECT:
         if (type.equals(NULL_TYPE)) {
           return true;
-        } else if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-          if (isAssignableFrom(expectedType, type)) {
-            return true;
-          } else if (getClass(expectedType).isInterface()) {
-            // The merge of class or interface types can only yield class types (because it is not
-            // possible in general to find an unambiguous common super interface, due to multiple
-            // inheritance). Because of this limitation, we need to relax the subtyping check here
-            // if 'value' is an interface.
-            return Object.class.isAssignableFrom(getClass(type));
-          } else {
+        }
+        // Convert 'type' to its element type and array dimension. Arrays of primitive values are
+        // seen as Object arrays with one dimension less. Hence the element type is always of
+        // Type.OBJECT sort.
+        int dim = 0;
+        if (type.getSort() == Type.ARRAY) {
+          dim = type.getDimensions();
+          type = type.getElementType();
+          if (type.getSort() != Type.OBJECT) {
+            dim = dim - 1;
+            type = OBJECT_TYPE;
+          }
+        }
+        // Do the same for expectedType.
+        int expectedDim = 0;
+        if (expectedType.getSort() == Type.ARRAY) {
+          expectedDim = expectedType.getDimensions();
+          expectedType = expectedType.getElementType();
+          if (expectedType.getSort() != Type.OBJECT) {
+            // If the expected type is an array of some primitive type, it does not have any subtype
+            // other than itself. And 'type' is different by hypothesis.
             return false;
           }
+        }
+        // A type with less dimensions than expected can't be a subtype of the expected type.
+        if (dim < expectedDim) {
+          return false;
+        }
+        // A type with more dimensions than expected is seen as an array with the expected
+        // dimensions but with an Object element type. For instance an array of arrays of Integer is
+        // seen as an array of Object if the expected type is an array of Serializable.
+        if (dim > expectedDim) {
+          type = OBJECT_TYPE;
+        }
+        // type and expectedType have a Type.OBJECT sort by construction (see above),
+        // as expected by isAssignableFrom.
+        if (isAssignableFrom(expectedType, type)) {
+          return true;
+        }
+        if (getClass(expectedType).isInterface()) {
+          // The merge of class or interface types can only yield class types (because it is not
+          // possible in general to find an unambiguous common super interface, due to multiple
+          // inheritance). Because of this limitation, we need to relax the subtyping check here
+          // if 'value' is an interface.
+          return Object.class.isAssignableFrom(getClass(type));
         } else {
           return false;
         }
@@ -231,48 +273,71 @@ public class SimpleVerifier extends BasicVerifier {
 
   @Override
   public BasicValue merge(final BasicValue value1, final BasicValue value2) {
-    if (!value1.equals(value2)) {
-      Type type1 = value1.getType();
-      Type type2 = value2.getType();
-      if (type1 != null
-          && (type1.getSort() == Type.OBJECT || type1.getSort() == Type.ARRAY)
-          && type2 != null
-          && (type2.getSort() == Type.OBJECT || type2.getSort() == Type.ARRAY)) {
-        if (type1.equals(NULL_TYPE)) {
-          return value2;
-        }
-        if (type2.equals(NULL_TYPE)) {
-          return value1;
-        }
-        if (isAssignableFrom(type1, type2)) {
-          return value1;
-        }
-        if (isAssignableFrom(type2, type1)) {
-          return value2;
-        }
-        int numDimensions = 0;
-        if (type1.getSort() == Type.ARRAY
-            && type2.getSort() == Type.ARRAY
-            && type1.getDimensions() == type2.getDimensions()
-            && type1.getElementType().getSort() == Type.OBJECT
-            && type2.getElementType().getSort() == Type.OBJECT) {
-          numDimensions = type1.getDimensions();
-          type1 = type1.getElementType();
-          type2 = type2.getElementType();
-        }
-        while (true) {
-          if (type1 == null || isInterface(type1)) {
-            return newArrayValue(Type.getObjectType("java/lang/Object"), numDimensions);
-          }
-          type1 = getSuperClass(type1);
-          if (isAssignableFrom(type1, type2)) {
-            return newArrayValue(type1, numDimensions);
-          }
-        }
-      }
+    Type type1 = value1.getType();
+    Type type2 = value2.getType();
+    // Null types correspond to BasicValue.UNINITIALIZED_VALUE.
+    if (type1 == null || type2 == null) {
       return BasicValue.UNINITIALIZED_VALUE;
     }
-    return value1;
+    if (type1.equals(type2)) {
+      return value1;
+    }
+    // The merge of a primitive type with a different type is the type of uninitialized values.
+    if (type1.getSort() != Type.OBJECT && type1.getSort() != Type.ARRAY) {
+      return BasicValue.UNINITIALIZED_VALUE;
+    }
+    if (type2.getSort() != Type.OBJECT && type2.getSort() != Type.ARRAY) {
+      return BasicValue.UNINITIALIZED_VALUE;
+    }
+    // Special case for the type of the "null" literal.
+    if (type1.equals(NULL_TYPE)) {
+      return value2;
+    }
+    if (type2.equals(NULL_TYPE)) {
+      return value1;
+    }
+    // Convert type1 to its element type and array dimension. Arrays of primitive values are seen as
+    // Object arrays with one dimension less. Hence the element type is always of Type.OBJECT sort.
+    int dim1 = 0;
+    if (type1.getSort() == Type.ARRAY) {
+      dim1 = type1.getDimensions();
+      type1 = type1.getElementType();
+      if (type1.getSort() != Type.OBJECT) {
+        dim1 = dim1 - 1;
+        type1 = OBJECT_TYPE;
+      }
+    }
+    // Do the same for type2.
+    int dim2 = 0;
+    if (type2.getSort() == Type.ARRAY) {
+      dim2 = type2.getDimensions();
+      type2 = type2.getElementType();
+      if (type2.getSort() != Type.OBJECT) {
+        dim2 = dim2 - 1;
+        type2 = OBJECT_TYPE;
+      }
+    }
+    // The merge of array types of different dimensions is an Object array type.
+    if (dim1 != dim2) {
+      return newArrayValue(OBJECT_TYPE, Math.min(dim1, dim2));
+    }
+    // Type1 and type2 have a Type.OBJECT sort by construction (see above),
+    // as expected by isAssignableFrom.
+    if (isAssignableFrom(type1, type2)) {
+      return newArrayValue(type1, dim1);
+    }
+    if (isAssignableFrom(type2, type1)) {
+      return newArrayValue(type2, dim1);
+    }
+    if (!isInterface(type1)) {
+      while (!type1.equals(OBJECT_TYPE)) {
+        type1 = getSuperClass(type1);
+        if (isAssignableFrom(type1, type2)) {
+          return newArrayValue(type1, dim1);
+        }
+      }
+    }
+    return newArrayValue(OBJECT_TYPE, dim1);
   }
 
   private BasicValue newArrayValue(final Type type, final int dimensions) {
@@ -293,7 +358,7 @@ public class SimpleVerifier extends BasicVerifier {
    * implementation of this method loads the class and uses the reflection API to return its result
    * (unless the given type corresponds to the class being verified).
    *
-   * @param type a type.
+   * @param type an object reference type (i.e., with Type.OBJECT sort).
    * @return whether 'type' corresponds to an interface.
    */
   protected boolean isInterface(final Type type) {
@@ -308,8 +373,9 @@ public class SimpleVerifier extends BasicVerifier {
    * of this method loads the class and uses the reflection API to return its result (unless the
    * given type corresponds to the class being verified).
    *
-   * @param type a type.
-   * @return the type corresponding to the super class of 'type'.
+   * @param type an object reference type (i.e., with Type.OBJECT sort).
+   * @return the type corresponding to the super class of 'type', or {@literal null} if 'type' is
+   *     the type of the Object class.
    */
   protected Type getSuperClass(final Type type) {
     if (currentClass != null && currentClass.equals(type)) {
@@ -326,8 +392,8 @@ public class SimpleVerifier extends BasicVerifier {
    * result (unless the result can be computed from the class being verified, and the types of its
    * super classes and implemented interfaces).
    *
-   * @param type1 a type.
-   * @param type2 another type.
+   * @param type1 an object reference type (i.e., with Type.OBJECT sort).
+   * @param type2 another object reference type (i.e., with Type.OBJECT sort).
    * @return whether the class corresponding to 'type1' is either the same as, or is a superclass or
    *     superinterface of the class corresponding to 'type2'.
    */
@@ -336,14 +402,16 @@ public class SimpleVerifier extends BasicVerifier {
       return true;
     }
     if (currentClass != null && currentClass.equals(type1)) {
-      if (getSuperClass(type2) == null) {
+      Type superType2 = getSuperClass(type2);
+      if (superType2 == null) {
         return false;
-      } else {
-        if (isInterface) {
-          return type2.getSort() == Type.OBJECT || type2.getSort() == Type.ARRAY;
-        }
-        return isAssignableFrom(type1, getSuperClass(type2));
       }
+      if (isInterface) {
+        // This should always be true, given the preconditions of this method, but is kept for
+        // backward compatibility.
+        return type2.getSort() == Type.OBJECT || type2.getSort() == Type.ARRAY;
+      }
+      return isAssignableFrom(type1, superType2);
     }
     if (currentClass != null && currentClass.equals(type2)) {
       if (isAssignableFrom(type1, currentSuperClass)) {
@@ -366,12 +434,14 @@ public class SimpleVerifier extends BasicVerifier {
    * specified with {@link #setClassLoader}, or with the class loader of this class if no class
    * loader was specified.
    *
-   * @param type a type.
+   * @param type an object reference type (i.e., with Type.OBJECT sort).
    * @return the class corresponding to 'type'.
    */
   protected Class<?> getClass(final Type type) {
     try {
       if (type.getSort() == Type.ARRAY) {
+        // This should never happen, given the preconditions of this method, but is kept for
+        // backward compatibility.
         return Class.forName(type.getDescriptor().replace('/', '.'), false, loader);
       }
       return Class.forName(type.getClassName(), false, loader);

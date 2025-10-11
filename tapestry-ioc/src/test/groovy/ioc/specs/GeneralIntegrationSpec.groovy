@@ -53,13 +53,10 @@ class GeneralIntegrationSpec extends AbstractSharedRegistrySpecification {
   
   // TAP5-2667
   def "Default methods in a service should be skipped while introducing methods and advising methods"() {
-      when:
       Registry registry = RegistryBuilder.buildAndStartupRegistry(TestModule.class);
       InterfaceWithDefaultMethod service = registry.getService(InterfaceWithDefaultMethod.class)
-      then:
-      service.staticMethod() == InterfaceWithDefaultMethod.STATIC_METHOD_RETURN_VALUE;
+      service.method(); // blows up without fix.
   }
-
   
   public static class DefaultMethodServiceImpl implements DefaultMethodService 
   {

@@ -30,7 +30,6 @@ package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.Collections;
 import java.util.Comparator;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;

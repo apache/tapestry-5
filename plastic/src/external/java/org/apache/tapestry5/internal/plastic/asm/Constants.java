@@ -191,15 +191,15 @@ final class Constants {
   }
 
   static boolean isWhitelisted(final String internalName) {
-    if (!internalName.startsWith("org/apache/tapestry5/internal/plastic/asm/")) {
+    if (!internalName.startsWith("org/objectweb/asm/")) {
       return false;
     }
     String member = "(Annotation|Class|Field|Method|Module|RecordComponent|Signature)";
     return internalName.contains("Test$")
         || Pattern.matches(
-            "org/apache/tapestry5/internal/plastic/asm/util/Trace" + member + "Visitor(\\$.*)?", internalName)
+            "org/objectweb/asm/util/Trace" + member + "Visitor(\\$.*)?", internalName)
         || Pattern.matches(
-            "org/apache/tapestry5/internal/plastic/asm/util/Check" + member + "Adapter(\\$.*)?", internalName);
+            "org/objectweb/asm/util/Check" + member + "Adapter(\\$.*)?", internalName);
   }
 
   static void checkIsPreview(final InputStream classInputStream) {
@@ -215,7 +215,7 @@ final class Constants {
     }
     if (minorVersion != 0xFFFF) {
       throw new IllegalStateException(
-          "ASM9_EXPERIMENTAL can only be used by classes compiled with --enable-preview");
+          "ASM10_EXPERIMENTAL can only be used by classes compiled with --enable-preview");
     }
   }
 }

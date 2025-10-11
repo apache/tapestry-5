@@ -30,7 +30,6 @@ package org.apache.tapestry5.internal.plastic.asm.commons;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
@@ -397,6 +396,9 @@ public class GeneratorAdapter extends LocalVariablesSorter {
       mv.visitInsn(Opcodes.ACONST_NULL);
     } else {
       switch (value.getSort()) {
+        case Type.VOID:
+          mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/Void", "TYPE", CLASS_DESCRIPTOR);
+          break;
         case Type.BOOLEAN:
           mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/Boolean", "TYPE", CLASS_DESCRIPTOR);
           break;

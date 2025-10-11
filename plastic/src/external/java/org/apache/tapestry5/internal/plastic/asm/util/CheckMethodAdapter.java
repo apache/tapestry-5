@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
@@ -788,7 +787,7 @@ public class CheckMethodAdapter extends MethodVisitor {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
     checkOpcodeMethod(opcode, Method.VISIT_JUMP_INSN);
-    checkLabel(label, /* checkVisited = */ false, "label");
+    checkLabel(label, /* checkVisited= */ false, "label");
     super.visitJumpInsn(opcode, label);
     ++insnCount;
   }
@@ -797,7 +796,7 @@ public class CheckMethodAdapter extends MethodVisitor {
   public void visitLabel(final Label label) {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
-    checkLabel(label, /* checkVisited = */ false, "label");
+    checkLabel(label, /* checkVisited= */ false, "label");
     if (labelInsnIndices.get(label) != null) {
       throw new IllegalStateException("Already visited label");
     }
@@ -833,12 +832,12 @@ public class CheckMethodAdapter extends MethodVisitor {
       throw new IllegalArgumentException(
           "Max = " + max + " must be greater than or equal to min = " + min);
     }
-    checkLabel(dflt, /* checkVisited = */ false, "default label");
+    checkLabel(dflt, /* checkVisited= */ false, "default label");
     if (labels == null || labels.length != max - min + 1) {
       throw new IllegalArgumentException("There must be max - min + 1 labels");
     }
     for (int i = 0; i < labels.length; ++i) {
-      checkLabel(labels[i], /* checkVisited = */ false, "label at index " + i);
+      checkLabel(labels[i], /* checkVisited= */ false, "label at index " + i);
     }
     super.visitTableSwitchInsn(min, max, dflt, labels);
     ++insnCount;
@@ -848,12 +847,17 @@ public class CheckMethodAdapter extends MethodVisitor {
   public void visitLookupSwitchInsn(final Label dflt, final int[] keys, final Label[] labels) {
     checkVisitMaxsNotCalled();
     checkVisitCodeCalled();
-    checkLabel(dflt, /* checkVisited = */ false, "default label");
+    checkLabel(dflt, /* checkVisited= */ false, "default label");
     if (keys == null || labels == null || keys.length != labels.length) {
       throw new IllegalArgumentException("There must be the same number of keys and labels");
     }
+    for (int i = 1; i < keys.length; ++i) {
+      if (keys[i] < keys[i - 1]) {
+        throw new IllegalArgumentException("The keys must be sorted in increasing order");
+      }
+    }
     for (int i = 0; i < labels.length; ++i) {
-      checkLabel(labels[i], /* checkVisited = */ false, "label at index " + i);
+      checkLabel(labels[i], /* checkVisited= */ false, "label at index " + i);
     }
     super.visitLookupSwitchInsn(dflt, keys, labels);
     ++insnCount;
@@ -909,9 +913,9 @@ public class CheckMethodAdapter extends MethodVisitor {
       final Label start, final Label end, final Label handler, final String type) {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
-    checkLabel(start, /* checkVisited = */ false, START_LABEL);
-    checkLabel(end, /* checkVisited = */ false, END_LABEL);
-    checkLabel(handler, /* checkVisited = */ false, "handler label");
+    checkLabel(start, /* checkVisited= */ false, START_LABEL);
+    checkLabel(end, /* checkVisited= */ false, END_LABEL);
+    checkLabel(handler, /* checkVisited= */ false, "handler label");
     if (labelInsnIndices.get(start) != null
         || labelInsnIndices.get(end) != null
         || labelInsnIndices.get(handler) != null) {
@@ -955,8 +959,8 @@ public class CheckMethodAdapter extends MethodVisitor {
     if (signature != null) {
       CheckClassAdapter.checkFieldSignature(signature);
     }
-    checkLabel(start, /* checkVisited = */ true, START_LABEL);
-    checkLabel(end, /* checkVisited = */ true, END_LABEL);
+    checkLabel(start, /* checkVisited= */ true, START_LABEL);
+    checkLabel(end, /* checkVisited= */ true, END_LABEL);
     checkUnsignedShort(index, INVALID_LOCAL_VARIABLE_INDEX);
     int startInsnIndex = labelInsnIndices.get(start).intValue();
     int endInsnIndex = labelInsnIndices.get(end).intValue();
@@ -993,8 +997,8 @@ public class CheckMethodAdapter extends MethodVisitor {
           "Invalid start, end and index arrays (must be non null and of identical length");
     }
     for (int i = 0; i < start.length; ++i) {
-      checkLabel(start[i], /* checkVisited = */ true, START_LABEL);
-      checkLabel(end[i], /* checkVisited = */ true, END_LABEL);
+      checkLabel(start[i], /* checkVisited= */ true, START_LABEL);
+      checkLabel(end[i], /* checkVisited= */ true, END_LABEL);
       checkUnsignedShort(index[i], INVALID_LOCAL_VARIABLE_INDEX);
       int startInsnIndex = labelInsnIndices.get(start[i]).intValue();
       int endInsnIndex = labelInsnIndices.get(end[i]).intValue();
@@ -1012,7 +1016,7 @@ public class CheckMethodAdapter extends MethodVisitor {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
     checkUnsignedShort(line, "Invalid line number");
-    checkLabel(start, /* checkVisited = */ true, START_LABEL);
+    checkLabel(start, /* checkVisited= */ true, START_LABEL);
     super.visitLineNumber(line, start);
   }
 
@@ -1089,7 +1093,7 @@ public class CheckMethodAdapter extends MethodVisitor {
     if (value instanceof String) {
       checkInternalName(version, (String) value, "Invalid stack frame value");
     } else if (value instanceof Label) {
-      checkLabel((Label) value, /* checkVisited = */ false, "label");
+      checkLabel((Label) value, /* checkVisited= */ false, "label");
     } else {
       throw new IllegalArgumentException("Invalid stack frame value: " + value);
     }
