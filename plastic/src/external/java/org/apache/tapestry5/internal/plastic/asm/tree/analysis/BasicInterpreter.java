@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;

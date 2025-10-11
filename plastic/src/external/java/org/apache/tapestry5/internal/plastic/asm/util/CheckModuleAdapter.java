@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.util;
 
 import java.util.HashSet;
-
 import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 

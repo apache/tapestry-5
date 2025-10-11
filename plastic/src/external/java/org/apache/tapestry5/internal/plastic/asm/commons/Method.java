@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Type;
 
 /**

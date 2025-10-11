@@ -34,15 +34,16 @@ package org.apache.tapestry5.internal.plastic.asm;
  * visitTypeAnnotation} | {@code visitAttribute} )* [ {@code visitCode} ( {@code visitFrame} |
  * {@code visit<i>X</i>Insn} | {@code visitLabel} | {@code visitInsnAnnotation} | {@code
  * visitTryCatchBlock} | {@code visitTryCatchAnnotation} | {@code visitLocalVariable} | {@code
- * visitLocalVariableAnnotation} | {@code visitLineNumber} )* {@code visitMaxs} ] {@code visitEnd}.
- * In addition, the {@code visit<i>X</i>Insn} and {@code visitLabel} methods must be called in the
- * sequential order of the bytecode instructions of the visited code, {@code visitInsnAnnotation}
- * must be called <i>after</i> the annotated instruction, {@code visitTryCatchBlock} must be called
- * <i>before</i> the labels passed as arguments have been visited, {@code
- * visitTryCatchBlockAnnotation} must be called <i>after</i> the corresponding try catch block has
- * been visited, and the {@code visitLocalVariable}, {@code visitLocalVariableAnnotation} and {@code
- * visitLineNumber} methods must be called <i>after</i> the labels passed as arguments have been
- * visited.
+ * visitLocalVariableAnnotation} | {@code visitLineNumber} | {@code visitAttribute} )* {@code
+ * visitMaxs} ] {@code visitEnd}. In addition, the {@code visit<i>X</i>Insn} and {@code visitLabel}
+ * methods must be called in the sequential order of the bytecode instructions of the visited code,
+ * {@code visitInsnAnnotation} must be called <i>after</i> the annotated instruction, {@code
+ * visitTryCatchBlock} must be called <i>before</i> the labels passed as arguments have been
+ * visited, {@code visitTryCatchBlockAnnotation} must be called <i>after</i> the corresponding try
+ * catch block has been visited, and the {@code visitLocalVariable}, {@code
+ * visitLocalVariableAnnotation} and {@code visitLineNumber} methods must be called <i>after</i> the
+ * labels passed as arguments have been visited. Finally, the {@code visitAttribute} method must be
+ * called before {@code visitCode} for non-code attributes, and after it for code attributes.
  *
  * @author Eric Bruneton
  */
@@ -595,7 +596,7 @@ public abstract class MethodVisitor {
    * Visits a LOOKUPSWITCH instruction.
    *
    * @param dflt beginning of the default handler block.
-   * @param keys the values of the keys.
+   * @param keys the values of the keys. Keys must be sorted in increasing order.
    * @param labels beginnings of the handler blocks. {@code labels[i]} is the beginning of the
    *     handler block for the {@code keys[i]} key.
    */

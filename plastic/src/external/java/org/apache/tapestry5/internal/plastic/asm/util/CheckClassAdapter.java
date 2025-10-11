@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
@@ -163,7 +162,7 @@ public class CheckClassAdapter extends ClassVisitor {
    * @param classVisitor the class visitor to which this adapter must delegate calls.
    */
   public CheckClassAdapter(final ClassVisitor classVisitor) {
-    this(classVisitor, /* checkDataFlow = */ true);
+    this(classVisitor, /* checkDataFlow= */ true);
   }
 
   /**
@@ -381,7 +380,7 @@ public class CheckClassAdapter extends ClassVisitor {
       final String name, final String descriptor, final String signature) {
     checkState();
     CheckMethodAdapter.checkUnqualifiedName(version, name, "record component name");
-    CheckMethodAdapter.checkDescriptor(version, descriptor, /* canBeVoid = */ false);
+    CheckMethodAdapter.checkDescriptor(version, descriptor, /* canBeVoid= */ false);
     if (signature != null) {
       checkFieldSignature(signature);
     }
@@ -411,7 +410,7 @@ public class CheckClassAdapter extends ClassVisitor {
             | Opcodes.ACC_MANDATED
             | Opcodes.ACC_DEPRECATED);
     CheckMethodAdapter.checkUnqualifiedName(version, name, "field name");
-    CheckMethodAdapter.checkDescriptor(version, descriptor, /* canBeVoid = */ false);
+    CheckMethodAdapter.checkDescriptor(version, descriptor, /* canBeVoid= */ false);
     if (signature != null) {
       checkFieldSignature(signature);
     }
@@ -1049,7 +1048,7 @@ public class CheckClassAdapter extends ClassVisitor {
       final PrintWriter printWriter) {
     ClassNode classNode = new ClassNode();
     classReader.accept(
-        new CheckClassAdapter(/*latest*/ Opcodes.ASM10_EXPERIMENTAL, classNode, false) {},
+        new CheckClassAdapter(/*latest*/ Opcodes.ASM9, classNode, false) {},
         ClassReader.SKIP_DEBUG);
 
     Type syperType = classNode.superName == null ? null : Type.getObjectType(classNode.superName);

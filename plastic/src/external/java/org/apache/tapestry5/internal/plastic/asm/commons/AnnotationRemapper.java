@@ -57,7 +57,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
    */
   @Deprecated
   public AnnotationRemapper(final AnnotationVisitor annotationVisitor, final Remapper remapper) {
-    this(/* descriptor = */ null, annotationVisitor, remapper);
+    this(/* descriptor= */ null, annotationVisitor, remapper);
   }
 
   /**
@@ -86,7 +86,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
   @Deprecated
   protected AnnotationRemapper(
       final int api, final AnnotationVisitor annotationVisitor, final Remapper remapper) {
-    this(api, /* descriptor = */ null, annotationVisitor, remapper);
+    this(api, /* descriptor= */ null, annotationVisitor, remapper);
   }
 
   /**
@@ -139,7 +139,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
     } else {
       return annotationVisitor == av
           ? this
-          : createAnnotationRemapper(/* descriptor = */ null, annotationVisitor);
+          : createAnnotationRemapper(/* descriptor= */ null, annotationVisitor);
     }
   }
 
@@ -153,7 +153,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
    */
   @Deprecated
   protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
-    return new AnnotationRemapper(api, /* descriptor = */ null, annotationVisitor, remapper);
+    return new AnnotationRemapper(api, /* descriptor= */ null, annotationVisitor, remapper);
   }
 
   /**
