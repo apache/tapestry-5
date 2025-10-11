@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.tree.JumpInsnNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.LabelNode;
 

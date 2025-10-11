@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
 import org.apache.tapestry5.internal.plastic.asm.Label;

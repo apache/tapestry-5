@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.util;
 
 import java.io.PrintWriter;
-
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
@@ -120,7 +119,7 @@ public final class TraceClassVisitor extends ClassVisitor {
    */
   public TraceClassVisitor(
       final ClassVisitor classVisitor, final Printer printer, final PrintWriter printWriter) {
-    super(/* latest api = */ Opcodes.ASM10_EXPERIMENTAL, classVisitor);
+    super(/* latest api = */ Opcodes.ASM9, classVisitor);
     this.printWriter = printWriter;
     this.p = printer;
   }

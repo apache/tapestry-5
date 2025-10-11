@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.ModuleVisitor;
 
 /**

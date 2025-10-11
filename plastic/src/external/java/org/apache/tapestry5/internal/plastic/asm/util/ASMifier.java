@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Handle;
@@ -113,6 +112,10 @@ public class ASMifier extends Printer {
     classVersions.put(Opcodes.V20, "V20");
     classVersions.put(Opcodes.V21, "V21");
     classVersions.put(Opcodes.V22, "V22");
+    classVersions.put(Opcodes.V23, "V23");
+    classVersions.put(Opcodes.V24, "V24");
+    classVersions.put(Opcodes.V25, "V25");
+    classVersions.put(Opcodes.V26, "V26");
     CLASS_VERSIONS = Collections.unmodifiableMap(classVersions);
   }
 
@@ -671,7 +674,11 @@ public class ASMifier extends Printer {
   public void visitParameter(final String parameterName, final int access) {
     stringBuilder.setLength(0);
     stringBuilder.append(name).append(".visitParameter(");
-    appendString(stringBuilder, parameterName);
+    if (parameterName == null) {
+      stringBuilder.append("null");
+    } else {
+      appendString(stringBuilder, parameterName);
+    }
     stringBuilder.append(", ");
     appendAccessFlags(access);
     text.add(stringBuilder.append(");\n").toString());
@@ -1469,24 +1476,24 @@ public class ASMifier extends Printer {
       }
       stringBuilder.append("})");
     } else if (value instanceof Byte) {
-      stringBuilder.append("new Byte((byte)").append(value).append(')');
+      stringBuilder.append("Byte.valueOf((byte)").append(value).append(')');
     } else if (value instanceof Boolean) {
       stringBuilder.append(((Boolean) value).booleanValue() ? "Boolean.TRUE" : "Boolean.FALSE");
     } else if (value instanceof Short) {
-      stringBuilder.append("new Short((short)").append(value).append(')');
+      stringBuilder.append("Short.valueOf((short)").append(value).append(')');
     } else if (value instanceof Character) {
       stringBuilder
-          .append("new Character((char)")
+          .append("Character.valueOf((char)")
           .append((int) ((Character) value).charValue())
           .append(')');
     } else if (value instanceof Integer) {
-      stringBuilder.append("new Integer(").append(value).append(')');
+      stringBuilder.append("Integer.valueOf(").append(value).append(')');
     } else if (value instanceof Float) {
-      stringBuilder.append("new Float(\"").append(value).append("\")");
+      stringBuilder.append("Float.valueOf(\"").append(value).append("\")");
     } else if (value instanceof Long) {
-      stringBuilder.append("new Long(").append(value).append("L)");
+      stringBuilder.append("Long.valueOf(").append(value).append("L)");
     } else if (value instanceof Double) {
-      stringBuilder.append("new Double(\"").append(value).append("\")");
+      stringBuilder.append("Double.valueOf(\"").append(value).append("\")");
     } else if (value instanceof byte[]) {
       byte[] byteArray = (byte[]) value;
       stringBuilder.append("new byte[] {");

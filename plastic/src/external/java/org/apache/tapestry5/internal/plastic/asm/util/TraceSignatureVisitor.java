@@ -30,7 +30,6 @@ package org.apache.tapestry5.internal.plastic.asm.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.signature.SignatureVisitor;
 

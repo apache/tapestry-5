@@ -36,7 +36,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
 import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
@@ -424,7 +423,7 @@ public class SerialVersionUIDAdder extends ClassVisitor {
   // DontCheck(AbbreviationAsWordInName): can't be renamed (for backward binary compatibility).
   protected byte[] computeSHAdigest(final byte[] value) {
     try {
-      return MessageDigest.getInstance("SHA").digest(value);
+      return MessageDigest.getInstance("SHA-1").digest(value);
     } catch (NoSuchAlgorithmException e) {
       throw new UnsupportedOperationException(e);
     }

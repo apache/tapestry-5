@@ -30,7 +30,6 @@ package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ByteVector;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;

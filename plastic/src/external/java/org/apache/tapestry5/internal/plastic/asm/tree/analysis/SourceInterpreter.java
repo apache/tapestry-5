@@ -30,7 +30,7 @@ package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.apache.tapestry5.internal.plastic.asm.ConstantDynamic;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
@@ -87,8 +87,22 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements Opcod
         size = 2;
         break;
       case LDC:
+        // Values able to be pushed by LDC:
+        //   - int, float, string (object), type (Class, object), type (MethodType, object),
+        //       handle (MethodHandle, object): one word
+        //   - long, double, ConstantDynamic (can produce either single word values, or double word
+        //       values): (up to) two words
         Object value = ((LdcInsnNode) insn).cst;
-        size = value instanceof Long || value instanceof Double ? 2 : 1;
+        if (value instanceof Long || value instanceof Double) {
+          // two words guaranteed
+          size = 2;
+        } else if (value instanceof ConstantDynamic) {
+          // might yield two words
+          size = ((ConstantDynamic) value).getSize();
+        } else {
+          // one word guaranteed
+          size = 1;
+        }
         break;
       case GETSTATIC:
         size = Type.getType(((FieldInsnNode) insn).desc).getSize();
