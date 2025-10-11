@@ -28,7 +28,6 @@
 package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
 
 import java.util.Set;
-
 import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
 
 /**

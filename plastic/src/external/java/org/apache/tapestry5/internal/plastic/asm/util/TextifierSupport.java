@@ -22,7 +22,6 @@
 package org.apache.tapestry5.internal.plastic.asm.util;
 
 import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Label;
 
 /**

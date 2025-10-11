@@ -544,6 +544,9 @@ public class InstructionAdapter extends MethodVisitor {
       final String descriptor,
       final Handle bootstrapMethodHandle,
       final Object... bootstrapMethodArguments) {
+    if (api < Opcodes.ASM5) {
+      throw new UnsupportedOperationException("This feature requires ASM5");
+    }
     invokedynamic(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
   }
 

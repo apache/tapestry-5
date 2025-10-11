@@ -44,6 +44,41 @@ import org.apache.tapestry5.internal.plastic.asm.signature.SignatureWriter;
 public abstract class Remapper {
 
   /**
+   * The ASM API version supported by this remapper, or 0 for instances created with the deprecated
+   * constructor.
+   */
+  final int api;
+
+  /**
+   * Creates a new {@link Remapper}.
+   *
+   * @deprecated use {@link #Remapper(int)} instead.
+   */
+  @Deprecated
+  public Remapper() {
+    this.api = 0;
+  }
+
+  /**
+   * Creates a new {@link Remapper}.
+   *
+   * @param api the ASM API version supported by this remapper. Must be one of the {@code
+   *     ASM}<i>x</i> values in {@link Opcodes}.
+   */
+  public Remapper(final int api) {
+    if (api != Opcodes.ASM9
+        && api != Opcodes.ASM8
+        && api != Opcodes.ASM7
+        && api != Opcodes.ASM6
+        && api != Opcodes.ASM5
+        && api != Opcodes.ASM4
+        && api != Opcodes.ASM10_EXPERIMENTAL) {
+      throw new IllegalArgumentException("Unsupported api " + api);
+    }
+    this.api = api;
+  }
+
+  /**
    * Returns the given descriptor, remapped with {@link #map(String)}.
    *
    * @param descriptor a type descriptor.
@@ -177,17 +212,26 @@ public abstract class Remapper {
     }
     if (value instanceof ConstantDynamic) {
       ConstantDynamic constantDynamic = (ConstantDynamic) value;
+      String name = constantDynamic.getName();
+      String descriptor = constantDynamic.getDescriptor();
+      Handle bootstrapMethod = constantDynamic.getBootstrapMethod();
       int bootstrapMethodArgumentCount = constantDynamic.getBootstrapMethodArgumentCount();
+      Object[] bootstrapMethodArguments = new Object[bootstrapMethodArgumentCount];
       Object[] remappedBootstrapMethodArguments = new Object[bootstrapMethodArgumentCount];
       for (int i = 0; i < bootstrapMethodArgumentCount; ++i) {
-        remappedBootstrapMethodArguments[i] =
-            mapValue(constantDynamic.getBootstrapMethodArgument(i));
+        bootstrapMethodArguments[i] = constantDynamic.getBootstrapMethodArgument(i);
+        remappedBootstrapMethodArguments[i] = mapValue(bootstrapMethodArguments[i]);
       }
-      String descriptor = constantDynamic.getDescriptor();
+      if (api == 0) {
+        name = mapInvokeDynamicMethodName(name, descriptor);
+      } else {
+        name =
+            mapInvokeDynamicMethodName(name, descriptor, bootstrapMethod, bootstrapMethodArguments);
+      }
       return new ConstantDynamic(
-          mapInvokeDynamicMethodName(constantDynamic.getName(), descriptor),
+          name,
           mapDesc(descriptor),
-          (Handle) mapValue(constantDynamic.getBootstrapMethod()),
+          (Handle) mapValue(bootstrapMethod),
           remappedBootstrapMethodArguments);
     }
     return value;
@@ -316,8 +360,31 @@ public abstract class Remapper {
    * @param name the name of the method.
    * @param descriptor the descriptor of the method.
    * @return the new name of the method.
+   * @deprecated use {@link #mapInvokeDynamicMethodName(String, String, Handle, Object...)} instead.
    */
+  @Deprecated
   public String mapInvokeDynamicMethodName(final String name, final String descriptor) {
+    return name;
+  }
+
+  /**
+   * Maps an invokedynamic or a constant dynamic method name to its new name. The default
+   * implementation of this method returns the given name, unchanged. Subclasses can override.
+   *
+   * @param name the name of the method.
+   * @param descriptor the descriptor of the method.
+   * @param bootstrapMethodHandle the bootstrap method.
+   * @param bootstrapMethodArguments the bootstrap method constant arguments. Each argument must be
+   *     an {@link Integer}, {@link Float}, {@link Long}, {@link Double}, {@link String}, {@link
+   *     Type}, {@link Handle} or {@link ConstantDynamic} value. This method is allowed to modify
+   *     the content of the array so a caller should expect that this array may change.
+   * @return the new name of the method.
+   */
+  public String mapInvokeDynamicMethodName(
+      final String name,
+      final String descriptor,
+      final Handle bootstrapMethodHandle,
+      final Object... bootstrapMethodArguments) {
     return name;
   }
 

@@ -29,7 +29,6 @@
 package org.apache.tapestry5.internal.plastic.asm.commons;
 
 import java.util.ArrayList;
-
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.signature.SignatureVisitor;
 

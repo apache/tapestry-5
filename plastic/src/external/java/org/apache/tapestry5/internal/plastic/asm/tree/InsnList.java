@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 
 /**

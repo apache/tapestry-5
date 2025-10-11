@@ -75,7 +75,7 @@ public class MethodRemapper extends MethodVisitor {
     AnnotationVisitor annotationVisitor = super.visitAnnotationDefault();
     return annotationVisitor == null
         ? annotationVisitor
-        : createAnnotationRemapper(/* descriptor = */ null, annotationVisitor);
+        : createAnnotationRemapper(/* descriptor= */ null, annotationVisitor);
   }
 
   @Override
@@ -170,17 +170,26 @@ public class MethodRemapper extends MethodVisitor {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
   public void visitInvokeDynamicInsn(
       final String name,
       final String descriptor,
       final Handle bootstrapMethodHandle,
       final Object... bootstrapMethodArguments) {
+    String remappedName;
+    if (remapper.api == 0) {
+      remappedName = remapper.mapInvokeDynamicMethodName(name, descriptor);
+    } else {
+      remappedName =
+          remapper.mapInvokeDynamicMethodName(
+              name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+    }
     Object[] remappedBootstrapMethodArguments = new Object[bootstrapMethodArguments.length];
     for (int i = 0; i < bootstrapMethodArguments.length; ++i) {
       remappedBootstrapMethodArguments[i] = remapper.mapValue(bootstrapMethodArguments[i]);
     }
     super.visitInvokeDynamicInsn(
-        remapper.mapInvokeDynamicMethodName(name, descriptor),
+        remappedName,
         remapper.mapMethodDesc(descriptor),
         (Handle) remapper.mapValue(bootstrapMethodHandle),
         remappedBootstrapMethodArguments);
@@ -271,7 +280,7 @@ public class MethodRemapper extends MethodVisitor {
    */
   @Deprecated
   protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
-    return new AnnotationRemapper(api, /* descriptor = */ null, annotationVisitor, remapper);
+    return new AnnotationRemapper(api, /* descriptor= */ null, annotationVisitor, remapper);
   }
 
   /**

@@ -29,7 +29,6 @@ package org.apache.tapestry5.internal.plastic.asm.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Attribute;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
@@ -91,8 +90,8 @@ public class ClassNode extends ClassVisitor {
 
   /**
    * The internal name of the enclosing class of this class (see {@link
-   * org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). Must be {@literal null} if this class has no
-   * enclosing class, or if it is a local or anonymous class.
+   * org.apache.tapestry5.internal.plastic.asm.Type#getInternalName()}). Must be {@literal null} if this class is not a
+   * local or anonymous class.
    */
   public String outerClass;
 
