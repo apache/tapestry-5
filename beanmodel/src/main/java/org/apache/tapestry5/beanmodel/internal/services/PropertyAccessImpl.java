@@ -96,7 +96,7 @@ public class PropertyAccessImpl implements PropertyAccess
 
         try
         {
-            BeanInfo info = Introspector.getBeanInfo(forClass);
+            BeanInfo info = getBeanInfo(forClass);
 
             List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
@@ -109,7 +109,6 @@ public class PropertyAccessImpl implements PropertyAccess
 
             addPropertiesFromScala(forClass, descriptors);
 
-
             return new ClassPropertyAdapterImpl(forClass, descriptors);
         }
         catch (Throwable ex)
@@ -118,6 +117,36 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
+    private BeanInfo getBeanInfo(Class<?> forClass) throws IntrospectionException 
+    {
+        BeanInfo beanInfo;
+        try 
+        {
+            beanInfo = Introspector.getBeanInfo(forClass);
+        } catch (IntrospectionException | NullPointerException e) 
+        {
+            
+            // TAP5-2813: if we get a problem while trying to inspect 
+            // the transformed class, let's try inspecting the original
+            // class. This problem only happens in multiple classloader mode
+            // AND using the @Cached annotation in a method that returns
+            // a type with generics. Quite specific.
+            Class<?> untransformedClass;
+            try
+            {
+                untransformedClass = this.getClass().getClassLoader()
+                        .loadClass(forClass.getName());
+                beanInfo = Introspector.getBeanInfo(untransformedClass);
+            }
+            catch (ClassNotFoundException e2)
+            {
+                throw new RuntimeException(e2);
+            }
+            
+        }
+        return beanInfo;
+    }
+    
     private static <T> void addAll(List<T> list, T[] array)
     {
         if (array.length > 0){
@@ -135,7 +164,7 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
-    private static void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
+    private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
 
@@ -151,7 +180,7 @@ public class PropertyAccessImpl implements PropertyAccess
         {
             Class c = queue.removeFirst();
 
-            BeanInfo info = Introspector.getBeanInfo(c);
+            BeanInfo info = getBeanInfo(c);
 
             // Duplicates occur and are filtered out in ClassPropertyAdapter which stores
             // a property name to descriptor map.

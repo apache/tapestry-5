@@ -1,0 +1,4 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+	<p id="subclassValue0">${source.get(0)}</p>
+	<p id="subclassValue1">${source.get(1)}</p>
+</div>

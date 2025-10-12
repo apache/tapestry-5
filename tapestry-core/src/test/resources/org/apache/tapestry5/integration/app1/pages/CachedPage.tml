@@ -10,4 +10,12 @@
 	<span class="watch">${value3}</span>
 	${incrWatchValue()}
 	<span class="watch">${value3}</span>
+
+	<div>
+		<h2>@Cached subclass</h2>
+		<t:atCachedSubclass/>
+		<h2>@Cached superclass</h2>
+		<t:atCachedSuperclass/>
+	</div>
+	
 </html>
