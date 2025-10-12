@@ -275,16 +275,11 @@ public class CachedWorker implements ComponentClassTransformWorker2
     {
         final MethodDescription description = method.getDescription();
         
-        // TAP5-2813
-        final String genericSignature = description.genericSignature != null ?
-                description.genericSignature.replaceAll("<[^>]+>", "") : null;
-        
-        
         return new JSONObject(
                 MODIFIERS, description.modifiers,
                 RETURN_TYPE, description.returnType,
                 NAME, description.methodName,
-                GENERIC_SIGNATURE, genericSignature,
+                GENERIC_SIGNATURE, description.genericSignature,
                 ARGUMENT_TYPES, new JSONArray(description.argumentTypes),
                 CHECKED_EXCEPTION_TYPES, new JSONArray(description.checkedExceptionTypes),
                 WATCH, method.getAnnotation(Cached.class).watch());

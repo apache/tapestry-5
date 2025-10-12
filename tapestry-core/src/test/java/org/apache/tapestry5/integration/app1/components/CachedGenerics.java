@@ -12,7 +12,7 @@ public class CachedGenerics extends AbstractCachedGenerics<GenericsEntity, Strin
     @Override
     protected GenericsClass<GenericsEntity, String> createTable(List<GenericsEntity> itemsInCurrentPage) 
     {
-        return new GenericsClass<>();
+        return new GenericsClass<>(itemsInCurrentPage);
     }
 
 }
