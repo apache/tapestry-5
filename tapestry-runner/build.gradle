@@ -1,22 +1,17 @@
 description = 'Utilities for running a Tapestry application in Jetty or Tomcat as part of test suite.'
 
-def moduleVersions = [
-    jetty: '8.1.19.v20160209',
-    tomcat: '7.0.70',
-]
-
 dependencies {
     api project(':tapestry-test-constants')
 
-    implementation "org.eclipse.jetty:jetty-server:${moduleVersions.jetty}"
-    implementation "org.eclipse.jetty:jetty-jndi:${moduleVersions.jetty}"
-    implementation "org.eclipse.jetty:jetty-plus:${moduleVersions.jetty}"
-    implementation "org.eclipse.jetty:jetty-webapp:${moduleVersions.jetty}"
+    implementation libs.runner.jetty.server
+    implementation libs.runner.jetty.jndi
+    implementation libs.runner.jetty.plus
+    implementation libs.runner.jetty.webapp
 
-    implementation "org.apache.tomcat:tomcat-catalina:${moduleVersions.tomcat}"
-    implementation "org.apache.tomcat:tomcat-coyote:${moduleVersions.tomcat}"
-    implementation "org.apache.tomcat:tomcat-jasper:${moduleVersions.tomcat}"
+    implementation libs.runner.tomcat.catalina
+    implementation libs.runner.tomcat.coyote
+    implementation libs.runner.tomcat.jasper
+    implementation libs.runner.tomcat.dbcp
 
-    implementation "org.apache.tomcat:tomcat-dbcp:${moduleVersions.tomcat}"
     implementation libs.commons.cli
 }

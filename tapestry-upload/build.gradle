@@ -4,16 +4,12 @@ plugins {
 
 description = 'File Upload component, with supporting services'
 
-def moduleLibs = [
-    commonsFileupload: 'commons-fileupload:commons-fileupload:1.5',
-]
-
 dependencies {
     implementation project(':tapestry-core')
 
     implementation libs.commons.io
 
-    api moduleLibs.commonsFileupload
+    api libs.commons.fileupload
 
     provided libs.javax.servlet.api
 

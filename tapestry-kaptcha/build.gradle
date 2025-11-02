@@ -4,14 +4,10 @@ plugins {
 
 description = 'Kaptcha user verification support'
 
-def moduleLibs= [
-    kaptcha: 'com.github.axet:kaptcha:0.0.8',
-]
-
 dependencies {
     implementation project(':tapestry-core')
 
-    implementation moduleLibs.kaptcha
+    implementation libs.kaptcha
 
     provided libs.javax.servlet.api
 

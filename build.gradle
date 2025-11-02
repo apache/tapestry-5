@@ -575,3 +575,10 @@ tasks.register('updateBootstrap') {
         }
     }
 }
+
+
+tasks.register('depsAll') {
+    group = 'help'
+    description = 'Print dependency trees for every project (respects --configuration)'
+    dependsOn allprojects.collect { "${it.path}:dependencies" }
+}

@@ -4,26 +4,18 @@ plugins {
 
 description = 'Provides support for simple CRUD applications built on top of Tapestry and JPA'
 
-def moduleLibs = [
-    jpaSpecs: 'org.apache.geronimo.specs:geronimo-jpa_2.0_spec:1.1',
-    javaxCdiApi: 'javax.enterprise:cdi-api:1.2',
-    eclipselink: 'org.eclipse.persistence:eclipselink:2.7.7',
-    dbcp: 'org.apache.tomcat:dbcp:6.0.32',
-    h2: 'com.h2database:h2:1.3.175'
-]
-
 dependencies {
     implementation project(':tapestry-core')
 
     api libs.javax.persistence.api
-    implementation moduleLibs.jpaSpecs
-    implementation moduleLibs.javaxCdiApi
+    implementation libs.jpa.specs
+    implementation libs.javax.cdi.api
 
     testImplementation project(':tapestry-test')
-    testImplementation moduleLibs.eclipselink
+    testImplementation libs.eclipselink
 
-    testRuntimeOnly moduleLibs.dbcp
-    testRuntimeOnly moduleLibs.h2
+    testRuntimeOnly libs.dbcp
+    testRuntimeOnly libs.h2
 }
 
 (1..6).each {

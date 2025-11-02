@@ -15,12 +15,12 @@ def moduleLibs = [
 dependencies {
     api project(':tapestry-core')
 
-    api moduleLibs.closureCompiler
+    api libs.closure.compiler
 
-    implementation moduleLibs.less4j
-    implementation moduleLibs.rhino
+    implementation libs.less4j
+    implementation libs.rhino
 
-    compileOnly moduleLibs.autoValueAnnotations
+    compileOnly libs.auto.value.annotations
 
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-runner')

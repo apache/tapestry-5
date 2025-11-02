@@ -4,13 +4,10 @@ plugins {
 
 description = 'Integration of Tapestry with the Spring Inversion Of Control Container'
 
-def moduleLibs = [
-    springWeb: 'org.springframework:spring-web:3.2.9.RELEASE',
-]
 dependencies {
     implementation project(':tapestry-core')
 
-    implementation moduleLibs.springWeb
+    implementation libs.spring.web
 
     provided libs.javax.servlet.api
 
