@@ -6,20 +6,14 @@ import groovy.transform.AutoExternalize
 
 description = 'Basic MongoDB services for Tapestry, useable outside of a Tapestry web application'
 
-def moduleLibs = [
-    mongoJavaDriver: 'org.mongodb:mongo-java-driver:2.10.1',
-    jongo: 'org.jongo:jongo:0.3',
-    embedMongo: 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.28',
-]
-
 dependencies {
     implementation project(':tapestry-ioc')
 
-    implementation moduleLibs.mongoJavaDriver
+    implementation libs.mongo.driver
 
     testImplementation project(':tapestry-test')
-    testImplementation moduleLibs.jongo
-    testImplementation moduleLibs.embedMongo
+    testImplementation libs.mongo.jongo
+    testImplementation libs.mongo.embed
 }
 
 jar {

@@ -4,16 +4,12 @@ plugins {
 
 description = 'Basic Hibernate services for Tapestry, useable outside of a Tapestry web application'
 
-def moduleLibs = [
-    jaxbRuntime: 'org.glassfish.jaxb:jaxb-runtime:2.3.2',
-]
-
 dependencies {
     implementation project(':tapestry-ioc')
 
     api libs.hibernate.core
 
-    implementation moduleLibs.jaxbRuntime
+    implementation libs.jaxb.runtime
 
     testImplementation project(':tapestry-test')
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")

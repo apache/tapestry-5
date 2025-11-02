@@ -4,24 +4,17 @@ plugins {
 
 description = 'Provides support for simple CRUD applications built on top of Tapestry and JPA'
 
-def moduleLibs = [
-    jakartaCdiApi: 'jakarta.enterprise:jakarta.enterprise.cdi-api:3.0.1',
-    eclipselink: 'org.eclipse.persistence:eclipselink:3.0.4',
-    dbcp: 'org.apache.tomcat:dbcp:6.0.32',
-    h2: 'com.h2database:h2:1.3.175'
-]
-
 dependencies {
     implementation project(':tapestry-core')
 
     api libs.jakarta.persistence.api
-    implementation moduleLibs.jakartaCdiApi
+    implementation libs.jakarta.cdi.api
 
     testImplementation project(':tapestry-test')
-    testImplementation moduleLibs.eclipselink
+    testImplementation libs.eclipselink
 
-    testRuntimeOnly moduleLibs.dbcp
-    testRuntimeOnly moduleLibs.h2
+    testRuntimeOnly libs.dbcp
+    testRuntimeOnly libs.h2
 }
 
 (1..6).each {

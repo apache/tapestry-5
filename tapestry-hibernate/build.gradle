@@ -4,15 +4,11 @@ plugins {
 
 description = 'Provides support for simple CRUD applications built on top of Tapestry and Hibernate'
 
-def moduleLibs = [
-    jbossLogging: 'org.jboss.logging:jboss-logging:3.3.0.Final',
-]
-
 dependencies {
     api project(':tapestry-core')
     api project(':tapestry-hibernate-core')
 
-    implementation moduleLibs.jbossLogging
+    implementation libs.jboss.logging
 
     testImplementation project(':tapestry-test')
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")

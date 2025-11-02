@@ -8,15 +8,11 @@ description = 'Integration of Tapestry with the Spring Inversion Of Control Cont
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
-def moduleLibs = [
-    springWebsocket: 'org.springframework:spring-websocket:6.0.11',
-]
-
 dependencies {
     implementation project(':tapestry-core')
     implementation project(':tapestry-ioc')
 
-    implementation moduleLibs.springWebsocket
+    implementation libs.spring.websocket
 
     provided libs.jakarta.servlet.api
 

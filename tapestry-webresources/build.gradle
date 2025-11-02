@@ -5,22 +5,15 @@ plugins {
 
 description = 'Integration with WRO4J to perform runtime CoffeeScript compilation, JavaScript minimization, and more.'
 
-def moduleLibs = [
-    closureCompiler: 'com.google.javascript:closure-compiler-unshaded:v20220502',
-    less4j: 'com.github.sommeri:less4j:1.12.0',
-    autoValueAnnotations: 'com.google.auto.value:auto-value-annotations:1.9',
-    rhino: 'org.mozilla:rhino:1.7.7.2',
-]
-
 dependencies {
     api project(':tapestry-core')
 
-    api moduleLibs.closureCompiler
+    api libs.closure.compiler
 
-    implementation moduleLibs.less4j
-    implementation moduleLibs.rhino
+    implementation libs.less4j
+    implementation libs.rhino
 
-    compileOnly moduleLibs.autoValueAnnotations
+    compileOnly libs.auto.value.annotations
 
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-runner')

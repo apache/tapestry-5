@@ -19,7 +19,6 @@ dependencies {
     testImplementation libs.commons.lang3
     testImplementation libs.hibernate.core
     testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
-
 }
 
 tasks.named('test', Test) {
