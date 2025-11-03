@@ -217,7 +217,7 @@ webdrivermanager = { module = "io.github.bonigarcia:webdrivermanager", version.r
 
 # RUNNER JETTY
 
-runner-jetty-server = { module = "org.eclipse.jetty:jettyserver", version.ref = "runner-jetty" }
+runner-jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "runner-jetty" }
 runner-jetty-jndi   = { module = "org.eclipse.jetty:jetty-jndi", version.ref = "runner-jetty" }
 runner-jetty-plus   = { module = "org.eclipse.jetty:jetty-plus", version.ref = "runner-jetty" }
 runner-jetty-webapp = { module = "org.eclipse.jetty:jetty-webapp", version.ref = "runner-jetty" }
