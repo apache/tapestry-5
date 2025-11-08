@@ -12,6 +12,12 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.alerts.AlertManager;
@@ -19,7 +25,6 @@ import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.UnknownActivationContextCheck;
-import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.commons.services.InvalidationEventHub;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.corelib.base.AbstractInternalPage;
@@ -42,13 +47,6 @@ import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.pageload.PageClassLoaderContextManager;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
@@ -192,7 +190,6 @@ public class ExceptionReport extends AbstractInternalPage implements ExceptionRe
 
     public void reportException(Throwable exception)
     {
-        System.out.print(pageClassLoaderContextManager.getRoot().toRecursiveString());
         rootException = exception;
 
         rootURL = baseURLSource.getBaseURL(request.isSecure());

@@ -12,7 +12,7 @@ public abstract class AbstractCachedGenerics<T, H>
     
     protected abstract GenericsClass<T, H> createTable(List<T> itemsInCurrentPage);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Cached
     public GenericsClass<T, H> getEmptyTable() 
     {
