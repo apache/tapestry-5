@@ -1,0 +1,5 @@
+<t:extend xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<t:replace id="bottom">
+		<p>Some string property: ${string}</p>
+	</t:replace>
+</t:extend>

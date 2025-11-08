@@ -14,6 +14,16 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -28,24 +38,26 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.ComputedValue;
+import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticManagerDelegate;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.PlasticUtils.FieldInfo;
+import org.apache.tapestry5.plastic.PropertyAccessType;
+import org.apache.tapestry5.plastic.PropertyValueProvider;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
@@ -85,7 +97,6 @@ public class CachedWorker implements ComponentClassTransformWorker2
     {
         MethodResultCache create(Object instance);
     }
-
 
     private class SimpleMethodResultCache implements MethodResultCache
     {
@@ -275,16 +286,55 @@ public class CachedWorker implements ComponentClassTransformWorker2
     {
         final MethodDescription description = method.getDescription();
         
+        // TAP5-2813
+        String genericSignature = description.genericSignature;
+        if (genericSignature != null) 
+        {
+            genericSignature = getGenericSignature(method);
+        }
+        
         return new JSONObject(
                 MODIFIERS, description.modifiers,
                 RETURN_TYPE, description.returnType,
                 NAME, description.methodName,
-                GENERIC_SIGNATURE, description.genericSignature,
+                GENERIC_SIGNATURE, genericSignature,
                 ARGUMENT_TYPES, new JSONArray(description.argumentTypes),
                 CHECKED_EXCEPTION_TYPES, new JSONArray(description.checkedExceptionTypes),
                 WATCH, method.getAnnotation(Cached.class).watch());
     }
 
+    private static String getGenericSignature(String signature)
+    {
+        int startIndex = signature.indexOf('<');
+        int endIndex = signature.lastIndexOf('>');
+        if (startIndex > 0 && endIndex > 0 && startIndex < endIndex)
+        {
+            String typesSignature = signature.substring(startIndex + 1, endIndex);
+            final String[] types = typesSignature.split(";");
+            boolean changed = false;
+            for (int i = 0; i < types.length; i++) 
+            {
+                if (types[i].startsWith("T"))
+                {
+                    types[i] = "Ljava/lang/Object";
+                    changed = true;
+                }
+            }
+            if (changed)
+            {
+                final String newGenericTypeSignature = "<" + String.join(";", types) + ";>";
+                final String oldGenericTypeSignature = signature.substring(startIndex, endIndex + 1);
+                signature = signature.replace(oldGenericTypeSignature, newGenericTypeSignature);
+            }
+        }
+        return signature;
+    }
+
+    private static String getGenericSignature(PlasticMethod method) 
+    {
+        return getGenericSignature(method.getDescription().genericSignature);
+    }
+    
     private void adviseMethod(PlasticClass plasticClass, PlasticMethod method, Set<FieldInfo> fieldInfos,
             MutableComponentModel model, Map<String, String> extraMethodCachedWatchMap)
     {

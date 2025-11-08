@@ -96,7 +96,7 @@ public class PropertyAccessImpl implements PropertyAccess
 
         try
         {
-            BeanInfo info = getBeanInfo(forClass);
+            BeanInfo info = Introspector.getBeanInfo(forClass);
 
             List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
@@ -116,36 +116,6 @@ public class PropertyAccessImpl implements PropertyAccess
             throw new RuntimeException(ex);
         }
     }
-
-    private BeanInfo getBeanInfo(Class<?> forClass) throws IntrospectionException 
-    {
-        BeanInfo beanInfo;
-        try 
-        {
-            beanInfo = Introspector.getBeanInfo(forClass);
-        } catch (IntrospectionException | NullPointerException e) 
-        {
-            
-            // TAP5-2813: if we get a problem while trying to inspect 
-            // the transformed class, let's try inspecting the original
-            // class. This problem only happens in multiple classloader mode
-            // AND using the @Cached annotation in a method that returns
-            // a type with generics. Quite specific.
-            Class<?> untransformedClass;
-            try
-            {
-                untransformedClass = this.getClass().getClassLoader()
-                        .loadClass(forClass.getName());
-                beanInfo = Introspector.getBeanInfo(untransformedClass);
-            }
-            catch (ClassNotFoundException e2)
-            {
-                throw new RuntimeException(e2);
-            }
-            
-        }
-        return beanInfo;
-    }
     
     private static <T> void addAll(List<T> list, T[] array)
     {
@@ -164,7 +134,7 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
-    private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
+    private static void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
 
@@ -180,7 +150,7 @@ public class PropertyAccessImpl implements PropertyAccess
         {
             Class c = queue.removeFirst();
 
-            BeanInfo info = getBeanInfo(c);
+            BeanInfo info = Introspector.getBeanInfo(c);
 
             // Duplicates occur and are filtered out in ClassPropertyAdapter which stores
             // a property name to descriptor map.
