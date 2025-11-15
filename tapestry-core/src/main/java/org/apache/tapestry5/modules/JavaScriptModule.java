@@ -69,7 +69,7 @@ import org.apache.tapestry5.services.compatibility.Trait;
 import org.apache.tapestry5.services.javascript.AMDWrapper;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
-import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
+import org.apache.tapestry5.services.javascript.EsModuleManagerContribution;
 import org.apache.tapestry5.services.javascript.EsShim;
 import org.apache.tapestry5.services.javascript.EsShimManager;
 import org.apache.tapestry5.services.javascript.ExtensibleJavaScriptStack;
@@ -651,7 +651,7 @@ public class JavaScriptModule
     {
         for (String moduleName : esShimManager.getShims().keySet())
         {
-            configuration.add(moduleName, EsModuleManager.toBaseContribution(
+            configuration.add(moduleName, EsModuleManagerContribution.base(
                     c -> EsModuleConfigurationCallback.setImport(c, moduleName, esShimManager.getUrl(moduleName))));
         }
     }
