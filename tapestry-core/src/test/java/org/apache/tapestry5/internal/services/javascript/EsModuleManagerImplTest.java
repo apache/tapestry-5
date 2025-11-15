@@ -43,6 +43,7 @@ public class EsModuleManagerImplTest
         assertEquals(convert(new JSONArray(), false), "");
     }
     
+    @SuppressWarnings("deprecation")
     @Test
     public void test_one_argument()
     {

@@ -41,6 +41,7 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.EsModuleInitialization;
 import org.apache.tapestry5.services.javascript.EsModuleManager;
+import org.apache.tapestry5.services.javascript.EsModuleManagerContribution;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 

@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.javascript.EsModuleManager.EsModuleManagerContribution;
 
 /**
  * Responsible for managing access to the ES modules. This service's distributed
@@ -69,61 +68,5 @@ public interface EsModuleManager
      * module initializations.
      */
     void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
-    
-    /**
-     * Creates a global per-request contribution (one that contributes a callback used 
-     * in all requests after the callbacks added through 
-     * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
-     * were called).
-     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
-     * @return a corresponding {@linkplain EsModuleManagerContribution}.
-     */
-    static EsModuleManagerContribution toGlobalPerRequestContribution(EsModuleConfigurationCallback callback)
-    {
-        return new EsModuleManagerContribution(callback, false);
-    }
-
-    /**
-     * Creates a base contribution (one that contributes a callback used 
-     * when creating the base import map to be used for all requests).
-     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
-     * @return a corresponding {@linkplain EsModuleManagerContribution}.
-     */
-    static EsModuleManagerContribution toBaseContribution(EsModuleConfigurationCallback callback)
-    {
-        return new EsModuleManagerContribution(callback, true);
-    }
-
-    /**
-     * Encapsulates a contribution to {@linkplain EsModuleManager}.
-     *
-     * @since 5.10.0
-     * @see EsModuleManager
-     * @see EsModuleConfigurationCallback
-     */
-    public final class EsModuleManagerContribution
-    {
-        private final EsModuleConfigurationCallback callback;
-        
-        private final boolean isBase;
-        
-        private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
-        {
-            super();
-            this.callback = callback;
-            this.isBase = isBase;
-        }
-        
-        public EsModuleConfigurationCallback getCallback() 
-        {
-            return callback;
-        }
-        
-        public boolean isBase() 
-        {
-            return isBase;
-        }
-        
-    }
 
 }

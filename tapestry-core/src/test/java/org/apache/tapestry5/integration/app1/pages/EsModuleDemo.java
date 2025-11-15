@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import static org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback.create;
+
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -19,7 +21,6 @@ import org.apache.tapestry5.integration.app1.services.AppModule;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.EsModuleConfigurationCallback;
 import org.apache.tapestry5.services.javascript.ImportPlacement;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -75,13 +76,12 @@ public class EsModuleDemo
         if (overrideEsModuleImportAgain != null && overrideEsModuleImportAgain)
         {
             javaScriptSupport.addEsModuleConfigurationCallback(
-                    o -> EsModuleConfigurationCallback.setImport(o, 
-                            AppModule.OVERRIDDEN_ES_MODULE_ID, REQUEST_OVERRIDEN_MODULE_URL));
+                    create(AppModule.OVERRIDDEN_ES_MODULE_ID, 
+                            REQUEST_OVERRIDEN_MODULE_URL));
         }
         
         javaScriptSupport.addEsModuleConfigurationCallback(
-                o -> EsModuleConfigurationCallback.setImport(o, 
-                        AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ID, 
+                create(AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ID, 
                             AppModule.OVERRIDDEN_GLOBALLY_ES_MODULE_ORIGINAL_URL));
         
     }
