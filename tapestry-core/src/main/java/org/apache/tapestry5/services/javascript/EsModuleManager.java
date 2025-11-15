@@ -75,7 +75,6 @@ public interface EsModuleManager
      * in all requests after the callbacks added through 
      * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
      * were called).
-     * Utility method to call {@linkplain EsModuleManagerContribution#globalPerRequest(EsModuleConfigurationCallback)}
      * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
      * @return a corresponding {@linkplain EsModuleManagerContribution}.
      */
@@ -87,7 +86,6 @@ public interface EsModuleManager
     /**
      * Creates a base contribution (one that contributes a callback used 
      * when creating the base import map to be used for all requests).
-     * Utility method to call {@linkplain EsModuleManagerContribution#base(EsModuleConfigurationCallback)}
      * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
      * @return a corresponding {@linkplain EsModuleManagerContribution}.
      */
