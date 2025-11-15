@@ -71,6 +71,32 @@ public interface EsModuleManager
     void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
     
     /**
+     * Creates a global per-request contribution (one that contributes a callback used 
+     * in all requests after the callbacks added through 
+     * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
+     * were called).
+     * Utility method to call {@linkplain EsModuleManagerContribution#globalPerRequest(EsModuleConfigurationCallback)}
+     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+     * @return a corresponding {@linkplain EsModuleManagerContribution}.
+     */
+    static EsModuleManagerContribution toGlobalPerRequestContribution(EsModuleConfigurationCallback callback)
+    {
+        return new EsModuleManagerContribution(callback, false);
+    }
+
+    /**
+     * Creates a base contribution (one that contributes a callback used 
+     * when creating the base import map to be used for all requests).
+     * Utility method to call {@linkplain EsModuleManagerContribution#base(EsModuleConfigurationCallback)}
+     * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
+     * @return a corresponding {@linkplain EsModuleManagerContribution}.
+     */
+    static EsModuleManagerContribution toBaseContribution(EsModuleConfigurationCallback callback)
+    {
+        return new EsModuleManagerContribution(callback, true);
+    }
+
+    /**
      * Encapsulates a contribution to {@linkplain EsModuleManager}.
      *
      * @since 5.10.0
@@ -83,70 +109,23 @@ public interface EsModuleManager
         
         private final boolean isBase;
         
-        // In case this is an ES shim contribution.
-        private final EsShim esWrapper;
-
-        private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase, EsShim esWrapper) 
+        private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
         {
             super();
             this.callback = callback;
             this.isBase = isBase;
-            this.esWrapper = esWrapper;
         }
         
-        /**
-         * Creates a base contribution (one that contributes a callback used 
-         * when creating the base import map to be used for all requests).
-         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
-         * @return a corresponding {@linkplain EsModuleManagerContribution}.
-         */
-        public static EsModuleManagerContribution base(EsModuleConfigurationCallback callback) 
+        public EsModuleConfigurationCallback getCallback() 
         {
-            return new EsModuleManagerContribution(callback, true, null);
-        }
-
-        /**
-         * Creates a base contribution (one that contributes a callback used 
-         * when creating the base import map to be used for all requests)
-         * which is also an ES module shim. 
-         * @param esWrapper an {@linkplain EsShim} instance. It cannot be null.
-         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
-         * @return a corresponding {@linkplain EsModuleManagerContribution}.
-         */
-        public static EsModuleManagerContribution base(EsShim esWrapper, EsModuleConfigurationCallback callback) 
-        {
-            if (esWrapper == null)
-            {
-                throw new IllegalArgumentException("Parameter esWrapper cannot be null");
-            }
-            return new EsModuleManagerContribution(callback, true, esWrapper);
-        }        
-        
-        /**
-         * Creates a global per-request contribution (one that contributes a callback used 
-         * in all requests after the callbacks added through 
-         * {@linkplain JavaScriptSupport#addEsModuleConfigurationCallback(EsModuleConfigurationCallback)} 
-         * were called).
-         * @param callback an {@linkplain EsModuleConfigurationCallback} instance.
-         * @return a corresponding {@linkplain EsModuleManagerContribution}.
-         */
-        public static EsModuleManagerContribution globalPerRequest(EsModuleConfigurationCallback callback) 
-        {
-            return new EsModuleManagerContribution(callback, false, null);
-        }
-        
-        public EsModuleConfigurationCallback getCallback() {
             return callback;
         }
         
-        public boolean isBase() {
+        public boolean isBase() 
+        {
             return isBase;
         }
         
-        public EsShim getEsWrapper() {
-            return esWrapper;
-        }
-
     }
 
 }

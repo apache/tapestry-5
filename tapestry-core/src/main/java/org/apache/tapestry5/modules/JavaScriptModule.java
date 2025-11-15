@@ -651,7 +651,7 @@ public class JavaScriptModule
     {
         for (String moduleName : esShimManager.getShims().keySet())
         {
-            configuration.add(moduleName, EsModuleManagerContribution.base(
+            configuration.add(moduleName, EsModuleManager.toBaseContribution(
                     c -> EsModuleConfigurationCallback.setImport(c, moduleName, esShimManager.getUrl(moduleName))));
         }
     }
