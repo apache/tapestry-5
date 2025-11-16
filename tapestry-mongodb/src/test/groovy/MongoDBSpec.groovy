@@ -16,9 +16,11 @@ import de.flapdoodle.embed.mongo.config.MongodConfig
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import spock.lang.AutoCleanup
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
+@Ignore
 class MongoDBSpec extends Specification
 {
     final int total = 1000

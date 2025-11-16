@@ -1,32 +1,35 @@
-import org.gradle.plugins.ide.idea.model.*
-import org.apache.tools.ant.filters.ReplaceTokens
-import t5build.*
+plugins {
+    id 'tapestry.testng-convention'
+}
 
-description = "Tapestry classes that handle HTTP requests"
+import org.apache.tools.ant.filters.ReplaceTokens
+
+description = 'Tapestry classes that handle HTTP requests'
 
 dependencies {
     implementation project(':tapestry-ioc')
     implementation project(':tapestry-json')
     implementation project(':beanmodel')
 
-    provided project(":tapestry-test")
-    provided project(":tapestry-test-constants")
+    provided libs.javax.servlet.api
 
-    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
+    implementation libs.commons.codec
+    implementation libs.commons.io
 
-    implementation "commons-codec:commons-codec:1.10"
-    implementation "commons-io:commons-io:${versions.commonsIo}"
+    testImplementation project(':tapestry-test')
+    testImplementation project(':tapestry-test-constants')
 
-    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
-
-    testRuntimeOnly 'com.google.inject:guice:3.0'
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.slf4j.simple
 }
 
 // Not sure why this is necessary:
-compileTestGroovy.dependsOn compileTestJava
+tasks.named('compileTestGroovy') {
+    dependsOn compileTestJava
+}
 
-jar {
-    from("src/main/filtered-resources") {
+tasks.named('jar', Jar) {
+    from('src/main/filtered-resources') {
         filter(ReplaceTokens, tokens: [version: project.parent.version])
     }
 }

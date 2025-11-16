@@ -1,0 +1,244 @@
+[versions]
+
+# LOGGING
+
+slf4j = "2.0.17"
+
+jboss-logging = "3.3.0.Final"
+
+# JAVAX/JAKARTA
+
+javax-cdi-api         = "1.2"
+javax-inject          = "1"
+javax-persistence-api = "2.2"
+javax-servlet-api     = "3.0.1"
+javax-validation-api  = "1.0.0.GA"
+
+jakarta-annotation-api = "1.3.4"
+jakarta-xml-bind-api   = "2.3.2"
+
+# APACHE COMMONS
+
+commons-cli        = "1.10.0"
+commons-codec      = "1.19.0"
+commons-fileupload = "1.5"
+commons-httpclient = "4.5.14"
+commons-io         = "2.20.0"
+commons-lang3      = "3.19.0"
+commons-logging    = "1.3.5"
+commons-text       = "1.40.0"
+
+# DATABASE/PERSISTENCE
+
+hibernate           = "5.4.32.Final"
+hibernate-validator = "4.3.2.Final"
+
+hsqldb = "2.7.4"
+h2 = "2.2.224"
+dbcp = "6.0.32"
+eclipselink = "2.7.7"
+jpa-specs = "1.1"
+
+mongo-driver = "2.10.1"
+mongo-jongo  = "0.3"
+mongo-embed  = "1.28"
+
+# ANTLR
+
+antlr = "3.5.3"
+
+# MISC
+
+xml-apis = "1.4.01"
+groovy = "4.0.28"
+ant-jsch = "1.10.15"
+guava = "27.0.1-jre"
+jackson = "2.20.0"
+clojure = "1.12.2"
+jaxb-runtime = "2.3.2"
+kaptcha = "0.0.8"
+spring-web = "3.2.9.RELEASE"
+
+# IOC JCACHE
+
+javax-cache       = "1.0.0"
+infinispan-jcache = "7.0.0.Alpha4"
+
+# WEBRESOURCES
+
+closure-compiler       = "v20220502"
+less4j                 = "1.12.0"
+auto-value-annotations = "1.9"
+rhino                  = "1.7.7.2"
+
+# TESTING
+
+junit5 = "5.14.0"
+junit4 = "4.13.2"
+
+testng   = "7.5.1"
+easymock = "5.4.0"
+
+spock = "2.3-groovy-4.0"
+geb   = "2.0"
+
+selenium-java    = "4.12.1"
+selenium-legrc   = "4.5.0"
+webdrivermanager = "5.5.2"
+
+# QUICKSTART
+
+quickstart-spring-boot    = "2.5.4"
+quickstart-log4j          = "2.17.2"
+quickstart-yasson         = "2.0.4"
+quickstart-maven-compiler = "3.8.1"
+quickstart-maven-surefire = "3.1"
+quickstart-maven-war      = "3.3.1"
+quickstart-maven-jetty    = "10.0.6"
+quickstart-gretty         = "3.0.6"
+
+# RUNNER
+
+runner-jetty  = "8.1.19.v20160209"
+runner-tomcat = "7.0.70"
+
+
+[libraries]
+
+# LOGGING
+
+slf4j-api     = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
+
+jboss-logging = { module = "org.jboss.logging:jboss-logging", version.ref = "jboss-logging" }
+
+# JAVAX/JAKARTA
+
+javax-cdi-api         = { module = "javax.enterprise:cdi-api", version.ref = "javax-cdi-api" }
+javax-inject          = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
+javax-persistence-api = { module = "javax.persistence:javax.persistence-api", version.ref = "javax-persistence-api" }
+javax-servlet-api     = { module = "javax.servlet:javax.servlet-api", version.ref = "javax-servlet-api" }
+javax-validation-api  = { module = "javax.validation:validation-api", version.ref = "javax-validation-api" }
+
+jakarta-annotation-api  = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation-api" }
+jakarta-xml-bind-api    = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jakarta-xml-bind-api" }
+
+# APACHE COMMONS
+
+commons-cli        = { module = "commons-cli:commons-cli", version.ref = "commons-cli" }
+commons-codec      = { module = "commons-codec:commons-codec", version.ref = "commons-codec" }
+commons-fileupload = { module = "commons-fileupload:commons-fileupload", version.ref = "commons-fileupload" }
+commons-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "commons-httpclient" }
+commons-io         = { module = "commons-io:commons-io", version.ref = "commons-io" }
+commons-lang3      = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+commons-logging    = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
+commons-text       = { module = "org.apache.commons:commons-text", version.ref = "commons-text" }
+
+# DATABASE/PERSISTENCE
+
+hibernate-core      = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
+hibernate-validator = { module = "org.hibernate:hibernate-validator", version.ref = "hibernate-validator" }
+
+hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsqldb" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+dbcp = { module = "org.apache.tomcat:dbcp", version.ref = "dbcp" }
+eclipselink = { module = "org.eclipse.persistence:eclipselink", version.ref = "eclipselink" }
+jpa-specs = { module = "org.apache.geronimo.specs:geronimo-jpa_2.0_spec", version.ref = "jpa-specs" }
+
+mongo-driver = { module = "org.mongodb:mongo-java-driver", version.ref = "mongo-driver" }
+mongo-jongo  = { module = "org.jongo:jongo", version.ref = "mongo-jongo" }
+mongo-embed  = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version.ref = "mongo-embed" }
+
+# ANTLR
+
+antlr = { module = "org.antlr:antlr", version.ref = "antlr" }
+antlr-runtime = { module = "org.antlr:antlr-runtime", version.ref = "antlr" }
+
+# MISC
+
+xml-apis = { module = "xml-apis:xml-apis", version.ref = "xml-apis" }
+ant-jsch = { module = "org.apache.ant:ant-jsch", version.ref = "ant-jsch" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+clojure = { module = "org.clojure:clojure", version.ref = "clojure" }
+jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-runtime" }
+kaptcha = { module = "com.github.axet:kaptcha", version.ref = "kaptcha" }
+spring-web = { module = "org.springframework:spring-web", version.ref = "spring-web" }
+
+# IOC JCACHE
+
+javax-cache-api = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
+javax-cache-tests = { module = "javax.cache:cache-tests", version.ref = "javax-cache" }
+javax-cache-test-domain = { module = "javax.cache:test-domain", version.ref = "javax-cache" }
+cache-annotations = { module = "org.jsr107.ri:cache-annotations-ri-common", version.ref = "javax-cache" }
+infinispan-jcache = { module = "org.infinispan:infinispan-jcache", version.ref = "infinispan-jcache" }
+
+# WEBRESOURCES
+
+closure-compiler       = { module = "com.google.javascript:closure-compiler-unshaded", version.ref = "closure-compiler" }
+less4j                 = { module = "com.github.sommeri:less4j", version.ref = "less4j" }
+auto-value-annotations = { module = "com.google.auto.value:auto-value-annotations", version.ref = "auto-value-annotations" }
+rhino                  = { module = "org.mozilla:rhino", version.ref = "rhino" }
+
+# GROOVY
+
+groovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
+groovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
+groovy-nio  = { module = "org.apache.groovy:groovy-nio", version.ref = "groovy" }
+
+# JACKSON
+
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+
+# TESTING
+
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+junit-bom               = { module = "org.junit:junit-bom", version.ref = "junit5" }
+junit-jupiter           = { module = "org.junit.jupiter:junit-jupiter"}
+junit-jupiter-api       = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-jupiter-params    = { module = "org.junit.jupiter:junit-jupiter-params" }
+junit-jupiter-engine    = { module = "org.junit.jupiter:junit-jupiter-engine" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+
+testng = { module = "org.testng:testng", version.ref = "testng" }
+
+easymock = { module = "org.easymock:easymock", version.ref = "easymock" }
+
+spock-bom  = { module = "org.spockframework:spock-bom", version.ref = "spock" }
+spock-core = { module = "org.spockframework:spock-core" }
+
+geb-spock = { module = "org.gebish:geb-spock", version.ref = "geb" }
+
+selenium-java    = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
+selenium-legrc   = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium-legrc" }
+webdrivermanager = { module = "io.github.bonigarcia:webdrivermanager", version.ref = "webdrivermanager" }
+
+# RUNNER JETTY
+
+runner-jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "runner-jetty" }
+runner-jetty-jndi   = { module = "org.eclipse.jetty:jetty-jndi", version.ref = "runner-jetty" }
+runner-jetty-plus   = { module = "org.eclipse.jetty:jetty-plus", version.ref = "runner-jetty" }
+runner-jetty-webapp = { module = "org.eclipse.jetty:jetty-webapp", version.ref = "runner-jetty" }
+
+# RUNNER TOMCAT
+
+runner-tomcat-catalina = { module = "org.apache.tomcat:tomcat-catalina", version.ref = "runner-tomcat" }
+runner-tomcat-coyote   = { module = "org.apache.tomcat:tomcat-coyote", version.ref = "runner-tomcat" }
+runner-tomcat-jasper   = { module = "org.apache.tomcat:tomcat-jasper", version.ref = "runner-tomcat" }
+runner-tomcat-dbcp     = { module = "org.apache.tomcat:tomcat-dbcp", version.ref = "runner-tomcat" }
+
+
+[bundles]
+
+groovy = [
+    "groovy-core",
+    "groovy-json",
+    "groovy-nio"
+]
+
+junit-jupiter-essentials = [
+    "junit-jupiter-api",
+    "junit-jupiter-params"
+]

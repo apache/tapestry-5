@@ -19,7 +19,6 @@
         <tapestry-version>@tapestryVersion@</tapestry-version>
         <jackson-version>@jacksonVersion@</jackson-version>
         <log4j-version>@log4jVersion@</log4j-version>
-        <json-version>@jsonVersion@</json-version>
         <junit-version>@junitVersion@</junit-version>
         <yasson-version>@yassonVersion@</yasson-version>
         <servlet-version>@servletVersion@</servlet-version>

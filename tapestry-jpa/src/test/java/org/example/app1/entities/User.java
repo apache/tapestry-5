@@ -17,9 +17,11 @@ package org.example.app1.entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 @Entity
+@Table(name = "USERS")
 public class User
 {
     private Long id;

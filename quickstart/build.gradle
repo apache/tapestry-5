@@ -50,18 +50,17 @@ task processFiltered(type: Copy) {
     filter(ReplaceTokens, tokens: [
         quickstartVersion: project.parent.version,
         tapestryVersion: project.parent.version,
-        springBootVersion: '2.5.4',
-        junitVersion: '5.8.2',
-        jacksonVersion: '2.13.1',
-        jsonVersion: '1.1.4',
-        log4jVersion: '2.17.2',
-        yassonVersion: '2.0.4',
-        servletVersion: '3.1.0',
-        mavenCompilerVersion: '3.8.1',
-        mavenSurefireVersion: '3.0.0-M5',
-        mavenWarVersion: '3.3.1',
-        mavenJettyVersion: '10.0.6',
-        grettyVersion: '3.0.6'
+        springBootVersion: libs.versions.quickstart.spring.boot.get(),
+        junitVersion: libs.versions.junit5.get(),
+        jacksonVersion: libs.versions.jackson.get(),
+        log4jVersion: libs.versions.quickstart.log4j.get(),
+        yassonVersion: libs.versions.quickstart.yasson.get(),
+        servletVersion: libs.versions.javax.servlet.api.get(),
+        mavenCompilerVersion: libs.versions.quickstart.maven.compiler.get(),
+        mavenSurefireVersion: libs.versions.quickstart.maven.surefire.get(),
+        mavenWarVersion: libs.versions.quickstart.maven.war.get(),
+        mavenJettyVersion: libs.versions.quickstart.maven.jetty.get(),
+        grettyVersion: libs.versions.quickstart.gretty.get()
     ])
 }
 

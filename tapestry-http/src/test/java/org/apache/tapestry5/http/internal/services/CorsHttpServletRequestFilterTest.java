@@ -11,7 +11,7 @@ import org.apache.tapestry5.http.services.CorsHandler;
 import org.apache.tapestry5.http.services.CorsHttpServletRequestFilter;
 import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.easymock.EasyMock;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**

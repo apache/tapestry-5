@@ -106,7 +106,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
             return IOUtils.toInputStream(compiler.toSource(), StandardCharsets.UTF_8);
         }
 
-        throw new RuntimeException(String.format("Compilation failed for %s. Errors: %s.",
+        throw new ResourceMinimizationException(String.format("Compilation failed for %s. Errors: %s.",
         		resource,
                 InternalUtils.join(CollectionFactory.newList(result.errors), ";")));
     }

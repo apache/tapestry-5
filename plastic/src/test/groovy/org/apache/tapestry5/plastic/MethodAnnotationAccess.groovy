@@ -20,7 +20,7 @@ class MethodAnnotationAccess extends AbstractPlasticSpecification {
 
         then:
 
-        methods.size == 2
+        methods.size() == 2
 
         noMethod.description.methodName == "no"
         yesMethod.description.methodName == "yes"
@@ -34,7 +34,7 @@ class MethodAnnotationAccess extends AbstractPlasticSpecification {
         def methods = pc.getMethodsWithAnnotation(PrimitiveValues)
 
         then:
-        methods.size == 1
+        methods.size() == 1
 
         when:
         def pv = methods[0].getAnnotation(PrimitiveValues)

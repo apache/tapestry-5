@@ -1,17 +1,18 @@
-description = "Basic Hibernate services for Tapestry, useable outside of a Tapestry web application"
+plugins {
+    id 'tapestry.testng-convention'
+}
 
+description = 'Basic Hibernate services for Tapestry, useable outside of a Tapestry web application'
 
 dependencies {
     implementation project(':tapestry-ioc')
 
-    api group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate
-    
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    api libs.hibernate.core
+
+    implementation libs.jaxb.runtime
 
     testImplementation project(':tapestry-test')
-    testImplementation "org.easymock:easymock:${versions.easymock}"
-    testImplementation "org.testng:testng:${versions.testng}", { transitive = false }
-    testRuntimeOnly "org.hsqldb:hsqldb:${versions.hsqldb}"
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
 }
 
 jar {

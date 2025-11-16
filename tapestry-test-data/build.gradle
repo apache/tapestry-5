@@ -1,5 +1,5 @@
-description = "Utilities for generating random data used when populating entities"
+description = 'Utilities for generating random data used when populating entities'
 
 dependencies {
-    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation libs.slf4j.api
 }

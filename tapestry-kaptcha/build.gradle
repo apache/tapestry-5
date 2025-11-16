@@ -1,16 +1,20 @@
-description = "Kaptcha user verification support"
+plugins {
+    id 'tapestry.testng-convention'
+}
+
+description = 'Kaptcha user verification support'
 
 dependencies {
     implementation project(':tapestry-core')
 
-    implementation "com.github.axet:kaptcha:0.0.8"
+    implementation libs.kaptcha
 
-    provided "javax.servlet:javax.servlet-api:${versions.servletapi}"
+    provided libs.javax.servlet.api
 
     testImplementation project(':tapestry-test')
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.kaptcha.modules.KaptchaModule'
     }

@@ -16,6 +16,8 @@ import org.apache.tapestry5.plastic.MethodInvocation
 import org.hibernate.Session
 import org.hibernate.cfg.Configuration
 
+import spock.lang.Ignore
+
 class GeneralIntegrationSpec extends AbstractSharedRegistrySpecification {
 
   def "PropertyAccess service is available"() {
@@ -52,6 +54,9 @@ class GeneralIntegrationSpec extends AbstractSharedRegistrySpecification {
   }
   
   // TAP5-2667
+  // This test no longer works as calling static methods on instances was a Groovy bug
+  // See: https://issues.apache.org/jira/browse/GROOVY-10590
+  @Ignore
   def "Default methods in a service should be skipped while introducing methods and advising methods"() {
       Registry registry = RegistryBuilder.buildAndStartupRegistry(TestModule.class);
       InterfaceWithDefaultMethod service = registry.getService(InterfaceWithDefaultMethod.class)

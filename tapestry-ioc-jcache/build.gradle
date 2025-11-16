@@ -1,35 +1,33 @@
-import org.gradle.plugins.ide.idea.model.*
-import t5build.*
-
-description = "JCache (JSR 107) integration for Tapestry-IoC"
-
-//apply plugin: JavaPlugin
-
-project.ext.libraryVersions = [
-    jcache: '1.0.0',
-]
-
-dependencies {
-    /*compile "org.apache.tapestry:tapestry-ioc:${tapestryVersion()}"*/
-	provided project(":tapestry-ioc")
-	implementation "javax.cache:cache-api:${libraryVersions.jcache}"
-	implementation "org.jsr107.ri:cache-annotations-ri-common:${libraryVersions.jcache}"
-    testImplementation "javax.cache:cache-tests:${libraryVersions.jcache}"
-    testImplementation "javax.cache:test-domain:${libraryVersions.jcache}"
-    testRuntimeOnly "org.infinispan:infinispan-jcache:7.0.0.Alpha4" /* Just to be able to run the tests */
+plugins {
+    id 'tapestry.junit4-legacy-convention'
 }
 
-jar {
-	manifest {
-		attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
-	}
+description = 'JCache (JSR 107) integration for Tapestry-IoC'
+
+dependencies {
+    provided project(":tapestry-ioc")
+
+    implementation libs.javax.cache.api
+    implementation libs.cache.annotations
+
+    testImplementation libs.javax.cache.tests
+    testImplementation libs.javax.cache.test.domain
+    testRuntimeOnly libs.infinispan.jcache /* Just to be able to run the tests */
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jcache.module.JCacheModule'
+    }
 }
 
 test {
-  useJUnit()
-
-  // those tests do not work with JDK 6 (java.lang.UnsupportedClassVersionError)
-  exclude '**/InterceptionUsingDefaultCacheNameTest.class',
-   '**/InterceptionCacheNameOnEachMethodTest.class',
-   '**/InterceptionUsingCacheConfigTest.class'
+    if (JavaVersion.current().isJava9Compatible()) {
+        jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED'
+        jvmArgs '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED'
+        jvmArgs '--add-opens', 'java.base/java.io=ALL-UNNAMED'
+        jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+        jvmArgs '--add-opens', 'java.base/java.lang.invoke=ALL-UNNAMED'
+        jvmArgs '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED'
+    }
 }

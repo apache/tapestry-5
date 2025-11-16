@@ -1,10 +1,13 @@
-description = "Utilities for junit testing a tapestry-ioc application"
+plugins {
+    id 'tapestry.junit5-convention'
+}
+
+description = 'Utilities for junit testing a tapestry-ioc application'
 
 dependencies {
     implementation project(':tapestry-ioc')
-	implementation 'junit:junit:4.11'
-}
 
-test {
-    useJUnit()
+    // We also need these in implementation
+    implementation platform(libs.junit.bom)
+    implementation libs.junit.jupiter.api
 }

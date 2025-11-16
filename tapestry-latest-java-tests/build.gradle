@@ -1,26 +1,20 @@
-description = "Test suite for making sure Tapestry runs on latest Java"
-
-sourceCompatibility = "17"
-targetCompatibility = "17"
-
-tasks.withType(JavaCompile).each { 
-    it.options.compilerArgs.add("--enable-preview")
+plugins {
+    id 'tapestry.junit5-spock-convention'
 }
 
-test {
-    dependsOn 'testNG'
-    useJUnitPlatform()
-    jvmArgs(["--enable-preview"])
+description = 'Test suite for making sure Tapestry runs on latest Java'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += '--enable-preview'
 }
 
-tasks.register('testNG', Test) {
-    useTestNG()
-    jvmArgs(["--enable-preview"])
+tasks.withType(Test).configureEach {
+    jvmArgs += '--enable-preview'
 }
 
 dependencies {
     testImplementation project(':tapestry-ioc')
-    testImplementation "org.slf4j:slf4j-api:${versions.slf4j}"
-    testImplementation "org.testng:testng:${versions.testng}"
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
 }

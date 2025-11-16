@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for a method which creates a {@link org.apache.tapestry5.ioc.def.ModuleDef}.
- * Used by the {@link TapestryIOCJUnit4ClassRunner}, methods with this annotation must be public, static, no-args methods
+ * Used by the {@link TapestryIOCJUnitExtension}, methods with this annotation must be public, static, no-args methods
  * which return {@link org.apache.tapestry5.ioc.def.ModuleDef} (or a subclass)
  */
 @Retention(RetentionPolicy.RUNTIME)

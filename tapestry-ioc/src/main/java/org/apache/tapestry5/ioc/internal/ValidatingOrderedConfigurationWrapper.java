@@ -25,8 +25,6 @@ import java.util.Map;
 /**
  * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.commons.OrderedConfiguration}, implementing validation of
  * values provided to an {@link org.apache.tapestry5.commons.OrderedConfiguration}.
- *
- * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurationImpl<T> implements
         OrderedConfiguration<T>

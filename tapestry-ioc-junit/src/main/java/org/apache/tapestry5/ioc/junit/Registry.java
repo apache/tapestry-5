@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used by the {@link TapestryIOCJUnit4ClassRunner} to configure a test {@link org.apache.tapestry5.ioc.Registry}
+ * Used by the {@link TapestryIOCJUnitExtension} to configure a test {@link org.apache.tapestry5.ioc.Registry}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

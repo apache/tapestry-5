@@ -16,7 +16,6 @@ package org.apache.tapestry5.integration.app1
 
 import org.apache.tapestry5.services.PartialTemplateRenderer;
 import org.testng.annotations.Test
-import org.junit.Assert;
 
 /**
  * Tests the {@link PartialTemplateRenderer} service.

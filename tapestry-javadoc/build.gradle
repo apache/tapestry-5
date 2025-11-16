@@ -1,32 +1,35 @@
-description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
+plugins {
+    id 'tapestry.junit5-convention'
+}
+
+description = 'JavaDoc Plugin for Tapestry that generates component reference documentation for component classes'
 
 dependencies {
-  implementation project(':tapestry-core')
-  implementation "commons-lang:commons-lang:2.6"
-  
-  if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
-    implementation files(getTools())
-  }
-  
+    implementation project(':tapestry-core')
+
+    implementation libs.commons.lang3
+    implementation libs.commons.text
+
+    testImplementation platform(libs.spock.bom)
+    testImplementation libs.spock.core
 }
 
-/** Returns the tools.jar/classes.jar of the Java runtime. */
-File getTools() {
-
-  def dir = isMacOSX_1_6() ? "classes" : "lib"
-	
-  def jar = isMacOSX_1_6() ? "classes" : "tools.jar"
-  
-  def jreRelpath = "../${dir}/${jar}"
-  def jdkRelpath = "$dir/${jar}"
-  
-  def javaHome = System.properties['java.home']
-
-  return new File(javaHome, jdkRelpath).exists() ? new File(javaHome, jdkRelpath) : new File(javaHome, jreRelpath)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
-boolean isMacOSX_1_6() {
-  System.properties['os.name'].toLowerCase().contains('mac os') &&
-      System.properties['java.version'].startsWith("1.6.")
+tasks.withType(JavaCompile).configureEach {
+    // Override Java 8 compatibility inherited from root
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+
+    // Only apply --add-modules if target is not 1.8
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+        options.compilerArgs += [
+            '--add-modules',
+            'jdk.compiler'
+        ]
+    }
 }
-  

@@ -34,6 +34,8 @@ public interface DocumentLinker
      * the core libraries have loaded and initialized. Thus difference between core libraries and other libraries
      * is new in 5.4, and represents a conflict between asynchronous loading of modules (introduced in 5.4) and
      * sequential loading of libraries (in 5.3 and earlier).
+     *
+     * @param libraryURL non-core JavaScript library to add. It cannot be null.
      */
     void addLibrary(String libraryURL);
 
@@ -42,17 +44,20 @@ public interface DocumentLinker
      * and is used to bootstrap up to adding non-core libraries.
      *
      * @since 5.4
+     * @param libraryURL core JavaScript library to add. It cannot be null.
      */
     void addCoreLibrary(String libraryURL);
 
     /**
      * Adds a link to load a CSS stylesheet.
+     *
+     * @param stylesheet {@link StylesheetLink} to add. It cannot be null.
      */
     void addStylesheetLink(StylesheetLink stylesheet);
     
     /**
      * Adds a module configuration callback for this request.
-     * 
+     *
      * @param callback a {@link ModuleConfigurationCallback}. It cannot be null.
      * @since 5.4
      */
@@ -60,7 +65,7 @@ public interface DocumentLinker
     
     /**
      * Adds an ES module configuration callback for this request.
-     * 
+     *
      * @param callback a {@link EsModuleConfigurationCallback}. It cannot be null.
      * @since 5.10.0
      */
@@ -101,6 +106,8 @@ public interface DocumentLinker
     
     /**
      * Adds ES module initialization.
+     *
+     * @param initialization a {@link EsModuleInitialization} to configure details of the ES module import. It cannot be null.
      * @since 5.10.0
      */
     void addEsModuleInitialization(EsModuleInitialization initialization);

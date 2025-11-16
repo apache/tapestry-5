@@ -1,15 +1,18 @@
-description = "High-level runtime transformations of Java classes"
+plugins {
+    id 'tapestry.junit5-spock-convention'
+}
+
+description = 'High-level runtime transformations of Java classes'
 
 dependencies {
-    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+    implementation libs.slf4j.api
 }
 
-test { 
-  useJUnit()
+// add vendored ASM
+sourceSets {
+    main {
+        java {
+            srcDir 'src/external/java'
+        }
+    }
 }
-
-// Add the source directory for the imported/repackaged ASM 7.0.1 code
-
-sourceSets.main.java.srcDir "src/external/java"
-

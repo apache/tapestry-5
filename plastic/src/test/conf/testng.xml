@@ -1,6 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<!-- This file is only needed for compatibility with the Maven build, it is not needed for the Gradle build -->
-<suite name="Plastic" annotations="1.5" verbose="2">
-  <test name="Placeholder -- Maven Build / TestNG Can't Run The Spock Tests">
-  </test>
-</suite>
