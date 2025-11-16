@@ -1,5 +1,5 @@
 package org.apache.tapestry5.func;
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,11 @@ package org.apache.tapestry5.func;
 // limitations under the License.
 
 import org.apache.tapestry5.func.Tuple;
-import org.testng.annotations.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TupleTests extends BaseFuncTest
 {

@@ -3,16 +3,16 @@ package org.apache.tapestry5.http.internal.services;
 import java.io.IOException;
 import java.util.Arrays;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry5.http.CorsHandlerResult;
 import org.apache.tapestry5.http.services.CorsHandler;
 import org.apache.tapestry5.http.services.CorsHttpServletRequestFilter;
 import org.apache.tapestry5.http.services.HttpServletRequestHandler;
 import org.easymock.EasyMock;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Test suite for {@link CorsHttpServletRequestFilter}.

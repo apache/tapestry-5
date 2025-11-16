@@ -17,9 +17,11 @@ package org.example.app6.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
 @Entity
+@Table(name = "USERS")
 public class User
 {
     private Long id;

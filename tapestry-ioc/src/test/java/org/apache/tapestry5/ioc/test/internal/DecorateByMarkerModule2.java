@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.test.Greeter;
 import org.apache.tapestry5.ioc.test.RedMarker;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
-import org.testng.Assert;
+import org.spockframework.util.Assert;
 
 
 public class DecorateByMarkerModule2

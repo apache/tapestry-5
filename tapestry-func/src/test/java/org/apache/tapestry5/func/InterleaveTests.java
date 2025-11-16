@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.func;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 public class InterleaveTests extends BaseFuncTest
 {
@@ -23,9 +23,9 @@ public class InterleaveTests extends BaseFuncTest
     {
         Flow<Integer> first = F.flow(1, 2, 3);
         Flow<Integer> second = F.flow(100, 200, 300);
-        Flow<Integer> third = F.flow(1000, 2000, 3000);
+        Flow<Integer> third = F.flow(1_000, 2_000, 3_000);
 
-        assertFlowValues(first.interleave(second, third), 1, 100, 1000, 2, 200, 2000, 3, 300, 3000);
+        assertFlowValues(first.interleave(second, third), 1, 100, 1_000, 2, 200, 2_000, 3, 300, 3_000);
     }
 
     @Test
@@ -33,9 +33,8 @@ public class InterleaveTests extends BaseFuncTest
     {
         Flow<Integer> first = F.flow(1, 2, 3);
         Flow<Integer> second = F.flow(100);
-        Flow<Integer> third = F.flow(1000, 2000, 3000);
+        Flow<Integer> third = F.flow(1_000, 2_000, 3_000);
 
-        assertFlowValues(first.interleave(second, third), 1, 100, 1000);
-
+        assertFlowValues(first.interleave(second, third), 1, 100, 1_000);
     }
 }

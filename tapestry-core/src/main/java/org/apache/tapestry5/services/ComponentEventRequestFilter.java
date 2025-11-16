@@ -26,6 +26,7 @@ public interface ComponentEventRequestFilter
      *
      * @param parameters defining details of the request
      * @param handler    to delegate to
+     * @throws IOException
      */
     void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler) throws IOException;
 }

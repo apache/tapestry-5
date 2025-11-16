@@ -16,6 +16,7 @@ package org.example.app0.pages;
 
 import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
@@ -37,7 +38,7 @@ public class CachedForm
     private int index;
 
     @Inject
-    private Session session;
+    private HibernateSessionManager sessionManager;
 
     @Inject
     private UserDAO userDAO;
@@ -48,20 +49,18 @@ public class CachedForm
         User user = new User();
         user.setFirstName(name);
 
-        session.save(user);
+        sessionManager.getSession().save(user);
     }
 
     @SuppressWarnings("unchecked")
     @Cached
     public List<User> getUsers()
     {
-        return session.createQuery("from User").list();
+        return sessionManager.getSession().createQuery("from User").list();
     }
 
     void onActionFromSetup()
     {
         userDAO.deleteAll();
     }
-
-
 }

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -104,40 +104,41 @@ import org.testng.annotations.Test;
 @SuppressWarnings("deprecation")
 public class ComponentDependencyRegistryImplTest
 {
-    
+
     private ComponentDependencyRegistryImpl componentDependencyRegistry;
-    
+
     private PageClassLoaderContextManager pageClassLoaderContextManager;
-    
+
     private ComponentClassResolver resolver;
-    
+
     private PlasticManager plasticManager;
-    
+
     private TemplateParser templateParser;
-    
+
     private ComponentTemplateLocator componentTemplateLocator;
-    
+
     @BeforeMethod
     public void setup()
     {
-        assertFalse(
-                String.format("During testing, %s shouldn't exist", ComponentDependencyRegistry.FILENAME), 
-                new File(ComponentDependencyRegistry.FILENAME).exists());
-        
+        assertFalse(new File(ComponentDependencyRegistry.FILENAME).exists(), String.format(
+                "During testing, %s shouldn't exist", ComponentDependencyRegistry.FILENAME));
+
         MockMappedConfiguration<String, URL> templateConfiguration = new MockMappedConfiguration<String, URL>();
         TapestryModule.contributeTemplateParser(templateConfiguration);
-        templateParser = new TemplateParserImpl(templateConfiguration.map, false, new QuietOperationTracker());
-        
+        templateParser = new TemplateParserImpl(templateConfiguration.map, false,
+                new QuietOperationTracker());
+
         final String rootFolder = "src/test/app1/";
         final File folderFile = new File(rootFolder);
         final Resource app1ContextFolderResource = new FileResource("/", folderFile);
-        
-        final PageTemplateLocator pageTemplateLocator = new PageTemplateLocator(app1ContextFolderResource, resolver, "");
+
+        final PageTemplateLocator pageTemplateLocator = new PageTemplateLocator(
+                app1ContextFolderResource, resolver, "");
         final DefaultTemplateLocator defaultTemplateLocator = new DefaultTemplateLocator();
-        componentTemplateLocator = new ComponentTemplateLocator() 
+        componentTemplateLocator = new ComponentTemplateLocator()
         {
             @Override
-            public Resource locateTemplate(ComponentModel model, Locale locale) 
+            public Resource locateTemplate(ComponentModel model, Locale locale)
             {
                 Resource resource = defaultTemplateLocator.locateTemplate(model, locale);
                 if (resource == null)
@@ -147,16 +148,16 @@ public class ComponentDependencyRegistryImplTest
                 return resource != null && resource.exists() ? resource : null;
             }
         };
-        
+
         resolver = EasyMock.createMock(ComponentClassResolver.class);
-        
+
         EasyMock.expect(resolver.resolvePageClassNameToPageName(EasyMock.anyString()))
                 .andAnswer(() -> {
                     String s = ((String) EasyMock.getCurrentArguments()[0]);
                     final String pageName = s.substring(s.lastIndexOf('.') + 1);
                     return pageName;
                 }).anyTimes();
-        
+
         expectResolveComponent(TextField.class);
         expectResolveComponent(PasswordField.class);
         expectResolveComponent(Border.class);
@@ -165,7 +166,7 @@ public class ComponentDependencyRegistryImplTest
         expectResolveComponent(ActionLink.class);
         expectResolveComponent(If.class);
         expectResolveComponent(ErrorComponent.class);
-        expectResolveComponent(EventLink.class);        
+        expectResolveComponent(EventLink.class);
         expectResolveComponent(Output.class);
         expectResolveComponent(Delegate.class);
         expectResolveComponent(TextOutput.class);
@@ -184,101 +185,105 @@ public class ComponentDependencyRegistryImplTest
         expectResolveComponent(Glyphicon.class);
         expectResolveComponent(SubclassWithImport.class);
         expectResolveComponent(OutputRaw.class);
-        
+
         EasyMock.expect(resolver.resolveMixinTypeToClassName("textonlyondisabled"))
-            .andReturn(TextOnlyOnDisabled.class.getName()).anyTimes();
+                .andReturn(TextOnlyOnDisabled.class.getName()).anyTimes();
         EasyMock.expect(resolver.resolveMixinTypeToClassName("echovalue2"))
-            .andReturn(EchoValue2.class.getName()).anyTimes();
+                .andReturn(EchoValue2.class.getName()).anyTimes();
         EasyMock.expect(resolver.resolveMixinTypeToClassName("alttitledefault"))
-            .andReturn(AltTitleDefault.class.getName()).anyTimes();
+                .andReturn(AltTitleDefault.class.getName()).anyTimes();
         EasyMock.expect(resolver.resolveMixinTypeToClassName("formgroup"))
-            .andReturn(FormGroup.class.getName()).anyTimes();
-        
+                .andReturn(FormGroup.class.getName()).anyTimes();
+
         EasyMock.expect(resolver.isPage(EasyMock.anyString())).andAnswer(() -> {
             String string = (String) EasyMock.getCurrentArguments()[0];
             return string.contains(".pages.");
         }).anyTimes();
-        
+
         pageClassLoaderContextManager = EasyMock.createMock(PageClassLoaderContextManager.class);
         plasticManager = EasyMock.createMock(PlasticManager.class);
         EasyMock.expect(plasticManager.shouldInterceptClassLoading(EasyMock.anyString()))
-            .andAnswer(() -> {
-                String className = (String) EasyMock.getCurrentArguments()[0];
-                return className.contains(".pages.") || className.contains(".mixins.") ||
-                        className.contains(".components.") || className.contains(".base.");
-            }).anyTimes();
-        
+                .andAnswer(() -> {
+                    String className = (String) EasyMock.getCurrentArguments()[0];
+                    return className.contains(".pages.") || className.contains(".mixins.")
+                            || className.contains(".components.") || className.contains(".base.");
+                }).anyTimes();
+
         componentDependencyRegistry = new ComponentDependencyRegistryImpl(
-                pageClassLoaderContextManager, plasticManager, resolver, templateParser, 
+                pageClassLoaderContextManager, plasticManager, resolver, templateParser,
                 componentTemplateLocator, ComponentDependencyRegistry.FILENAME, false);
         EasyMock.replay(pageClassLoaderContextManager, plasticManager, resolver);
     }
 
-    private void expectResolveComponent(final Class<?> clasz) {
+    private void expectResolveComponent(final Class<?> clasz)
+    {
         final String className = clasz.getName();
         final java.lang.String simpleName = clasz.getSimpleName();
-        EasyMock.expect(resolver.resolveComponentTypeToClassName(simpleName))
-            .andReturn(className).anyTimes();
+        EasyMock.expect(resolver.resolveComponentTypeToClassName(simpleName)).andReturn(className)
+                .anyTimes();
         EasyMock.expect(resolver.resolveComponentTypeToClassName(simpleName.toLowerCase()))
-            .andReturn(className).anyTimes();
+                .andReturn(className).anyTimes();
         EasyMock.expect(resolver.resolveComponentTypeToClassName(
                 simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1)))
-            .andReturn(className).anyTimes();
+                .andReturn(className).anyTimes();
     }
-    
+
     private void configurePCCM(boolean merging)
     {
         EasyMock.reset(pageClassLoaderContextManager);
         EasyMock.expect(pageClassLoaderContextManager.isMerging()).andReturn(merging).anyTimes();
         EasyMock.replay(pageClassLoaderContextManager);
     }
-    
+
     @Test(timeOut = 5000)
     public void listen()
     {
-        
+
         componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
-        
+
         add("foo", "bar");
         add("d", "a");
         add("dd", "aa");
         add("dd", "a");
         add("dd", "a");
-        
+
         final List<String> resources = Arrays.asList("a", "aa", "none");
-        
+
         configurePCCM(true);
         List<String> result = componentDependencyRegistry.listen(resources);
-        assertEquals(0, result.size());
-        
+        assertEquals(result.size(), 0);
+
         configurePCCM(false);
         result = componentDependencyRegistry.listen(resources);
         Collections.sort(result);
         assertEquals(result, Arrays.asList("d", "dd"));
         assertEquals("bar", getDependencies("foo").iterator().next());
-        assertEquals("foo", componentDependencyRegistry.getDependents("bar").iterator().next());        
-        
+        assertEquals("foo", componentDependencyRegistry.getDependents("bar").iterator().next());
+
         configurePCCM(false);
         result = componentDependencyRegistry.listen(Collections.emptyList());
         assertEquals(result, Collections.emptyList());
         assertEquals(componentDependencyRegistry.getDependents("bar").size(), 0);
         assertEquals(getDependencies("foo").size(), 0);
-        
+
     }
-    
+
     private Set<String> getDependencies(String className)
     {
         Set<String> dependencies = new HashSet<>();
-        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
-        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
-        dependencies.addAll(componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE));
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(className, DependencyType.USAGE));
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(className, DependencyType.SUPERCLASS));
+        dependencies.addAll(
+                componentDependencyRegistry.getDependencies(className, DependencyType.INJECT_PAGE));
         return Collections.unmodifiableSet(dependencies);
     }
-    
+
     @Test
     public void dependency_methods()
     {
-        
+
         final String foo = "foo";
         final String bar = "bar";
         final String something = "something";
@@ -286,22 +291,18 @@ public class ComponentDependencyRegistryImplTest
         final String fulano = "fulano";
         final String beltrano = "beltrano";
         final String sicrano = "sicrano";
-        
-        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
-        
-        assertEquals(
-                "getDependents() should never return null", 
-                Collections.emptySet(),
-                getDependencies(foo));
 
-        assertEquals(
-                "getDependents() should never return null", 
-                Collections.emptySet(),
-                componentDependencyRegistry.getDependents(foo));
+        componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
+
+        assertEquals(getDependencies(foo), Collections.emptySet(),
+                "getDependents() should never return null");
+
+        assertEquals(componentDependencyRegistry.getDependents(foo), Collections.emptySet(),
+                "getDependents() should never return null");
 
         // In Brazil, Fulano, Beltrano and Sicrano are the most used people
         // placeholder names, in that order.
-        
+
         add(foo, bar);
         add(something, fulano);
         add(other, beltrano);
@@ -312,7 +313,7 @@ public class ComponentDependencyRegistryImplTest
         add(beltrano, null);
         add(beltrano, sicrano);
         add(sicrano, null);
-        
+
         assertEquals(new HashSet<>(Arrays.asList(fulano, beltrano)), getDependencies(other));
         assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(something));
         assertEquals(new HashSet<>(Arrays.asList()), getDependencies(fulano));
@@ -320,15 +321,20 @@ public class ComponentDependencyRegistryImplTest
         assertEquals(new HashSet<>(Arrays.asList()), getDependencies(bar));
         assertEquals(new HashSet<>(Arrays.asList(sicrano)), getDependencies(beltrano));
 
-        assertEquals(new HashSet<>(Arrays.asList(foo)), componentDependencyRegistry.getDependents(bar));
-        assertEquals(new HashSet<>(Arrays.asList(other, something)), componentDependencyRegistry.getDependents(fulano));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(foo));
-        assertEquals(new HashSet<>(Arrays.asList(other)), componentDependencyRegistry.getDependents(beltrano));
-        assertEquals(new HashSet<>(Arrays.asList(beltrano)), componentDependencyRegistry.getDependents(sicrano));
-        
-        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)), 
+        assertEquals(new HashSet<>(Arrays.asList(foo)),
+                componentDependencyRegistry.getDependents(bar));
+        assertEquals(new HashSet<>(Arrays.asList(other, something)),
+                componentDependencyRegistry.getDependents(fulano));
+        assertEquals(new HashSet<>(Arrays.asList()),
+                componentDependencyRegistry.getDependents(foo));
+        assertEquals(new HashSet<>(Arrays.asList(other)),
+                componentDependencyRegistry.getDependents(beltrano));
+        assertEquals(new HashSet<>(Arrays.asList(beltrano)),
+                componentDependencyRegistry.getDependents(sicrano));
+
+        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)),
                 componentDependencyRegistry.getRootClasses());
-        
+
         assertTrue(componentDependencyRegistry.contains(foo));
         assertTrue(componentDependencyRegistry.contains(bar));
         assertTrue(componentDependencyRegistry.contains(other));
@@ -346,10 +352,10 @@ public class ComponentDependencyRegistryImplTest
         assertTrue(componentDependencyRegistry.getClassNames().contains(beltrano));
         assertTrue(componentDependencyRegistry.getClassNames().contains(sicrano));
         assertFalse(componentDependencyRegistry.getClassNames().contains("blah"));
-        
+
         // Testing the clear method
         componentDependencyRegistry.clear(beltrano);
-        
+
         assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(other));
         assertEquals(new HashSet<>(Arrays.asList(fulano)), getDependencies(something));
         assertEquals(new HashSet<>(Arrays.asList()), getDependencies(fulano));
@@ -357,14 +363,20 @@ public class ComponentDependencyRegistryImplTest
         assertEquals(new HashSet<>(Arrays.asList()), getDependencies(bar));
         assertEquals(new HashSet<>(Arrays.asList()), getDependencies(sicrano));
 
-        assertEquals(new HashSet<>(Arrays.asList(foo)), componentDependencyRegistry.getDependents(bar));
-        assertEquals(new HashSet<>(Arrays.asList(other, something)), componentDependencyRegistry.getDependents(fulano));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(foo));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(beltrano));
-        assertEquals(new HashSet<>(Arrays.asList()), componentDependencyRegistry.getDependents(sicrano));
-        
-        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)), componentDependencyRegistry.getRootClasses());
-        
+        assertEquals(new HashSet<>(Arrays.asList(foo)),
+                componentDependencyRegistry.getDependents(bar));
+        assertEquals(new HashSet<>(Arrays.asList(other, something)),
+                componentDependencyRegistry.getDependents(fulano));
+        assertEquals(new HashSet<>(Arrays.asList()),
+                componentDependencyRegistry.getDependents(foo));
+        assertEquals(new HashSet<>(Arrays.asList()),
+                componentDependencyRegistry.getDependents(beltrano));
+        assertEquals(new HashSet<>(Arrays.asList()),
+                componentDependencyRegistry.getDependents(sicrano));
+
+        assertEquals(new HashSet<>(Arrays.asList(bar, fulano, sicrano)),
+                componentDependencyRegistry.getRootClasses());
+
         assertTrue(componentDependencyRegistry.contains(foo));
         assertTrue(componentDependencyRegistry.contains(bar));
         assertTrue(componentDependencyRegistry.contains(other));
@@ -382,13 +394,13 @@ public class ComponentDependencyRegistryImplTest
         assertTrue(componentDependencyRegistry.getClassNames().contains(sicrano));
         assertFalse(componentDependencyRegistry.getClassNames().contains(beltrano));
         assertFalse(componentDependencyRegistry.getClassNames().contains("blah"));
-        
+
     }
-    
+
     @Test
     public void get_all_non_page_dependencies()
     {
-        
+
         final String page = "page";
         final String className = "root";
         final String superclass = "superclass";
@@ -397,14 +409,14 @@ public class ComponentDependencyRegistryImplTest
             expectedAllNonPageDependencies.add(d);
             add(c, d, DependencyType.USAGE);
         };
-        
+
         componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(false);
-        
+
         add(className, page, DependencyType.INJECT_PAGE);
-        
+
         add(className, superclass, DependencyType.SUPERCLASS);
         expectedAllNonPageDependencies.add(superclass);
-        
+
         add.accept(className, "child1");
         add.accept(className, "child2");
         add.accept("child1", "child1.1");
@@ -412,155 +424,152 @@ public class ComponentDependencyRegistryImplTest
         add.accept("child2.1", className);
         add.accept(superclass, "child2.1");
         add.accept(superclass, "superclassDependency");
-        
+
         expectedAllNonPageDependencies.remove(className);
 
-        final Set<String> allNonPageDependencies = componentDependencyRegistry.getAllNonPageDependencies(className);
+        final Set<String> allNonPageDependencies = componentDependencyRegistry
+                .getAllNonPageDependencies(className);
         assertFalse(allNonPageDependencies.contains(className));
         assertEquals(expectedAllNonPageDependencies, allNonPageDependencies);
-        
+
     }
-    
+
     @Test
     public void register()
     {
-        
+
         componentDependencyRegistry.setEnableEnsureClassIsAlreadyProcessed(true);
-        
+
         componentDependencyRegistry.clear();
-        
+
         // Dynamic dependency definitions
         componentDependencyRegistry.register(PropertyDisplay.class);
         assertDependencies(PropertyDisplay.class, AbstractPropertyOutput.class);
 
         componentDependencyRegistry.register(PropertyEditor.class);
         assertDependencies(PropertyEditor.class);
-        
+
         // Superclass
         componentDependencyRegistry.register(EventLink.class);
 
         // Superclass, recursively
         assertDependencies(AbstractComponentEventLink.class, AbstractLink.class);
-        assertDependencies(AbstractLink.class);        
-        
-        // @InjectComponent 
+        assertDependencies(AbstractLink.class);
+
+        // @InjectComponent
         // Components declared in templates
         componentDependencyRegistry.register(AlertsDemo.class);
         assertDependencies(AlertsDemo.class, Zone.class, // @InjectComponent
                 // Components declared in template
-                Border.class, BeanEditForm.class, Zone.class, If.class, 
-                ActionLink.class, ErrorComponent.class, EventLink.class);
-        
+                Border.class, BeanEditForm.class, Zone.class, If.class, ActionLink.class,
+                ErrorComponent.class, EventLink.class);
+
         // Mixins defined in in templates (t:mixins="...").
         componentDependencyRegistry.register(MixinParameterDefault.class);
         assertDependencies(MixinParameterDefault.class, AltTitleDefault.class, // Mixin
                 ActionLink.class, Border.class); // Components declared in template);
-        
+
         // @Component, type() not defined
         componentDependencyRegistry.register(OuterAny.class);
         assertDependencies(OuterAny.class, Any.class);
-        
+
         // @Component, type() defined
         componentDependencyRegistry.register(AtComponentType.class);
         assertDependencies(AtComponentType.class, TextField.class, Border.class);
 
         // @Mixin, type() not defined
         componentDependencyRegistry.register(AbstractTextField.class);
-        assertDependencies(AbstractTextField.class, 
-                RenderDisabled.class, AbstractField.class);
+        assertDependencies(AbstractTextField.class, RenderDisabled.class, AbstractField.class);
 
         // @Mixin, type() defined
         componentDependencyRegistry.register(TextOnlyOnDisabledTextField.class);
-        assertDependencies(TextOnlyOnDisabledTextField.class, 
-                TextOnlyOnDisabled.class, TextField.class);
-        
+        assertDependencies(TextOnlyOnDisabledTextField.class, TextOnlyOnDisabled.class,
+                TextField.class);
+
         // @MixinClasses and @Mixins
         componentDependencyRegistry.register(InstanceMixinDependencies.class);
-        assertDependencies(InstanceMixinDependencies.class, 
-                EchoValue.class, EchoValue2.class, TextField.class);
+        assertDependencies(InstanceMixinDependencies.class, EchoValue.class, EchoValue2.class,
+                TextField.class);
 
         // Templates with <t:extension-point>
         componentDependencyRegistry.register(BaseLayoutPage.class);
-        assertDependencies(BaseLayoutPage.class,
-                Delegate.class, SubclassWithImport.class, Border.class);
-        
+        assertDependencies(BaseLayoutPage.class, Delegate.class, SubclassWithImport.class,
+                Border.class);
+
         // Templates with <t:replace>
         componentDependencyRegistry.register(SubclassWithImport.class);
-        assertDependencies(SubclassWithImport.class,
-                OutputRaw.class, SuperclassWithImport.class, Loop.class);
-        
+        assertDependencies(SubclassWithImport.class, OutputRaw.class, SuperclassWithImport.class,
+                Loop.class);
+
         // Circular dependency: BlockHolder <-> BlockCaller
         componentDependencyRegistry.register(BlockHolder.class);
-        assertDependencies(BlockHolder.class, 
-                BlockCaller.class, Loop.class, ActionLink.class);
-        assertDependencies(BlockCaller.class, 
-                BlockHolder.class, Border.class, PageLink.class, Delegate.class);
-        
-    }
-    
-    private void assertDependencies(Class<?> clasz, Class<?>... dependencies) {
-        assertEquals(
-                setOf(dependencies),
-                getDependencies(clasz.getName()));
+        assertDependencies(BlockHolder.class, BlockCaller.class, Loop.class, ActionLink.class);
+        assertDependencies(BlockCaller.class, BlockHolder.class, Border.class, PageLink.class,
+                Delegate.class);
+
     }
 
-    private static Set<String> setOf(Class<?> ... classes)
+    private void assertDependencies(Class<?> clasz, Class<?>... dependencies)
     {
-        return Arrays.asList(classes).stream()
-            .map(Class::getName)
-            .collect(Collectors.toSet());
+        assertEquals(setOf(dependencies), getDependencies(clasz.getName()));
+    }
+
+    private static Set<String> setOf(Class<?>... classes)
+    {
+        return Arrays.asList(classes).stream().map(Class::getName).collect(Collectors.toSet());
     }
 
     private void add(String component, String dependency)
     {
         add(component, dependency, DependencyType.USAGE);
     }
-    
+
     private void add(String component, String dependency, DependencyType type)
     {
         componentDependencyRegistry.add(component, dependency, type, true);
     }
 
     @SuppressWarnings("hiding")
-    private static final class MockMappedConfiguration<String, URL> implements MappedConfiguration<String, URL>
+    private static final class MockMappedConfiguration<String, URL>
+            implements MappedConfiguration<String, URL>
     {
-        
+
         private final Map<String, URL> map = new HashMap<>();
 
         @Override
-        public void add(String key, URL value) 
+        public void add(String key, URL value)
         {
             map.put(key, value);
         }
 
         @Override
-        public void override(String key, URL value) 
+        public void override(String key, URL value)
         {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void addInstance(String key, Class<? extends URL> clazz) 
+        public void addInstance(String key, Class<? extends URL> clazz)
         {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void overrideInstance(String key, Class<? extends URL> clazz) 
+        public void overrideInstance(String key, Class<? extends URL> clazz)
         {
-            throw new UnsupportedOperationException();            
+            throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
     final private static class FileResource extends AbstractResource
     {
-        
+
         final private File file;
-        
+
         final private String path;
 
-        public FileResource(String path, File file) 
+        public FileResource(String path, File file)
         {
             super(path);
             this.file = file;
@@ -568,30 +577,31 @@ public class ComponentDependencyRegistryImplTest
         }
 
         @Override
-        public java.net.URL toURL() 
+        public java.net.URL toURL()
         {
-            try 
+            try
             {
                 final File actualFile = new File(file, path);
                 return actualFile.exists() ? actualFile.toURL() : null;
-            } catch (MalformedURLException e) 
+            }
+            catch (MalformedURLException e)
             {
                 throw new RuntimeException(e);
             }
         }
 
         @Override
-        protected Resource newResource(String path) 
+        protected Resource newResource(String path)
         {
             return new FileResource(path, file);
         }
 
         @Override
-        public String toString() 
+        public String toString()
         {
             return "FileResource [file=" + file + "/" + path + "]";
         }
-        
+
     }
-    
+
 }

@@ -1,16 +1,17 @@
-description = "Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json"
+plugins {
+    id 'tapestry.junit5-convention'
+}
+
+description = 'Repackaged, improved (and tested) version of code originally from https://github.com/tdunning/open-json'
 
 dependencies {
     implementation project(':tapestry5-annotations')
     implementation project(':commons')
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junitJupiter}"
+
+    testImplementation project(":tapestry-func")
 }
 
-test {
-    useJUnit()
-}
-
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.json.modules.JSONModule'
     }

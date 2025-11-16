@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.func;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RangeTests extends BaseFuncTest
 {
@@ -27,7 +28,6 @@ public class RangeTests extends BaseFuncTest
     @Test
     public void ascending_range()
     {
-
         assertFlowValues(F.range(5, 8), 5, 6, 7);
     }
 
@@ -56,14 +56,7 @@ public class RangeTests extends BaseFuncTest
     @Test
     public void iterate()
     {
-        Mapper<Integer, Integer> times2 = new Mapper<Integer, Integer>()
-        {
-            @Override
-            public Integer map(Integer value)
-            {
-                return 2 * value;
-            }
-        };
+        Mapper<Integer, Integer> times2 = value -> 2 * value;
 
         assertFlowValues(F.iterate(1, times2).take(5), 1, 2, 4, 8, 16);
     }

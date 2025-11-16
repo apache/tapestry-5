@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.hibernate.web.internal;
 
-import org.apache.tapestry5.hibernate.web.internal.EntityPersistentFieldStrategy;
-import org.apache.tapestry5.hibernate.web.internal.SessionRestorable;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

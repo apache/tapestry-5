@@ -14,6 +14,7 @@
 
 package org.example.app0.services;
 
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 
@@ -21,30 +22,31 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO
 {
-    private final Session session;
+    private final HibernateSessionManager sessionManager;
 
-    public UserDAOImpl(Session session)
+    public UserDAOImpl(HibernateSessionManager sessionManager)
     {
-        this.session = session;
+        this.sessionManager = sessionManager;
     }
 
     @Override
     public void add(User user)
     {
-        session.save(user);
+        sessionManager.getSession().save(user);
     }
 
     @Override
     @SuppressWarnings({ "unchecked" })
     public List<User> findAll()
     {
-        return (List<User>) session.createQuery("from User").list();
+        return (List<User>) sessionManager.getSession().createQuery("from User").list();
     }
 
     @Override
     public void delete(User... users)
     {
-        for (User user : users) session.delete(user);
+        for (User user : users)
+            sessionManager.getSession().delete(user);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class UserDAOImpl implements UserDAO
     {
         for (User u : findAll())
         {
-            session.delete(u);
+            sessionManager.getSession().delete(u);
         }
     }
 }

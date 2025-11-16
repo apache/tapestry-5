@@ -1,72 +1,78 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
-task copyGradleWrapper(type: Copy) {
-    ext.srcDir = file("$buildDir/wrapper")
+tasks.register('copyGradleWrapper', Copy) {
+    group = 'Build Setup'
+    description = 'Copies Gradle wrapper files to archetype resources'
 
+    def srcDir = layout.buildDirectory.dir('wrapper')
     inputs.dir srcDir
-    outputs.dir file("$buildDir/resources/main/archetype-resources")
+    outputs.dir layout.buildDirectory.dir('resources/main/archetype-resources')
 
     from srcDir
-    into file("$buildDir/resources/main/archetype-resources")
-
+    into layout.buildDirectory.dir('resources/main/archetype-resources')
     exclude '.gradle'
 }
 
-task addGradleWrapper(type: Exec) {
-    workingDir "$buildDir/wrapper"
-    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '7.3'
+tasks.register('addGradleWrapper', Exec) {
+    group = 'Build Setup'
+    description = 'Generates Gradle wrapper in temporary directory'
 
+    workingDir = layout.buildDirectory.dir('wrapper')
+    commandLine = ["${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '8.14.2']
     standardOutput = new ByteArrayOutputStream()
 
-    ext.output = {
-        return standardOutput.toString()
-    }
-
     doFirst {
-        def wrapperDirectory = new File(buildDir, "wrapper")
+        def wrapperDirectory = layout.buildDirectory.dir('wrapper').get().asFile
         wrapperDirectory.mkdirs()
 
-        def settings = new File(wrapperDirectory, "settings.gradle")
-        new FileOutputStream(settings).close();
+        def settings = new File(wrapperDirectory, 'settings.gradle')
+        settings.createNewFile()
     }
 
-    finalizedBy 'copyGradleWrapper'
+    finalizedBy copyGradleWrapper
 }
 
-task addWrappers(dependsOn: [addGradleWrapper]) {
+tasks.register('addWrappers') {
+    group = 'Build Setup'
+    description = 'Coordinates wrapper generation tasks'
+
+    dependsOn addGradleWrapper
 }
 
-task processFiltered(type: Copy) {
-    ext.srcDir = file('src/main/resources-filtered')
+tasks.register('processFiltered', Copy) {
+    group = 'Build'
+    description = 'Processes filtered resources with token replacement'
 
+    def srcDir = layout.projectDirectory.dir('src/main/resources-filtered')
     inputs.dir srcDir
-    outputs.dir sourceSets.main.output.resourcesDir
+    outputs.dir layout.buildDirectory.dir('resources/main')
 
     from srcDir
-    into sourceSets.main.output.resourcesDir
+    into layout.buildDirectory.dir('resources/main')
 
     filter(FixCrLfFilter)
     filter(ReplaceTokens, tokens: [
         quickstartVersion: project.parent.version,
         tapestryVersion: project.parent.version,
-        springBootVersion: '3.1.3',
-        junitVersion: '5.8.2',
-        jacksonVersion: '2.13.1',
-        jsonVersion: '1.1.4',
-        log4jVersion: '2.17.2',
-        yassonVersion: '2.0.4',
-        servletVersion: '5.0.0',
-        mavenCompilerVersion: '3.8.1',
-        mavenSurefireVersion: '3.1',
-        mavenWarVersion: '3.3.1',
-        mavenJettyVersion: '11.0.15',
-        grettyVersion: '3.0.6'
+        springBootVersion: libs.versions.quickstart.spring.boot.get(),
+        junitVersion: libs.versions.junit5.get(),
+        jacksonVersion: libs.versions.jackson.get(),
+        log4jVersion: libs.versions.quickstart.log4j.get(),
+        yassonVersion: libs.versions.quickstart.yasson.get(),
+        servletVersion: libs.versions.jakarta.servlet.api.get(),
+        mavenCompilerVersion: libs.versions.quickstart.maven.compiler.get(),
+        mavenSurefireVersion: libs.versions.quickstart.maven.surefire.get(),
+        mavenWarVersion: libs.versions.quickstart.maven.war.get(),
+        mavenJettyVersion: libs.versions.quickstart.maven.jetty.get(),
+        grettyVersion: libs.versions.quickstart.gretty.get()
     ])
 }
 
-processResources.dependsOn([addWrappers, processFiltered])
+tasks.named('processResources') {
+    dependsOn addWrappers, processFiltered
+}
 
-jar {
-    dependsOn(copyGradleWrapper)
+tasks.named('jar') {
+    dependsOn copyGradleWrapper
 }

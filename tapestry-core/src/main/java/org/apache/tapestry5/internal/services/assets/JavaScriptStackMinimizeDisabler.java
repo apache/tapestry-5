@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.services.Request;
@@ -21,8 +23,8 @@ import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Attempts to match resources against a {@link org.apache.tapestry5.services.javascript.JavaScriptStack}, and
@@ -33,6 +35,8 @@ import java.io.IOException;
 public class JavaScriptStackMinimizeDisabler extends DelegatingSRS
 {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaScriptStackMinimizeDisabler.class);
+    
     private final JavaScriptStackSource javaScriptStackSource;
 
     private final Request request;
@@ -59,7 +63,29 @@ public class JavaScriptStackMinimizeDisabler extends DelegatingSRS
         try
         {
             return delegate.getStreamableResource(baseResource, processing, dependencies);
-        } finally
+        } 
+        catch (RuntimeException e)
+        {
+            if (processing != StreamableResourceProcessing.FOR_AGGREGATION)
+            {
+                // We know our current minimizer, Google Closure Compiler,
+                // doesn't support ES modules
+                if (LOGGER.isWarnEnabled() && 
+                        !baseResource.toString().contains("/es-modules/") &&
+                        !baseResource.toString().toLowerCase().contains("es module wrapper"))
+                {
+                    LOGGER.warn("Exception happened while processing " + baseResource + 
+                            "Trying again without compression nor minification.", e);
+                }
+                request.setAttribute(TapestryConstants.DISABLE_JAVASCRIPT_MINIMIZATION, true);
+                return delegate.getStreamableResource(baseResource, StreamableResourceProcessing.FOR_AGGREGATION, dependencies);
+            }
+            else
+            {
+                throw e;
+            }
+        }
+        finally
         {
             request.setAttribute(TapestryConstants.DISABLE_JAVASCRIPT_MINIMIZATION, null);
         }

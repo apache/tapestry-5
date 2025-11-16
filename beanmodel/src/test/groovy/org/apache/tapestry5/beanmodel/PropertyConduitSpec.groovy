@@ -1,14 +1,15 @@
 package org.apache.tapestry5.beanmodel
 
-import org.apache.tapestry5.beanmodel.BeanModelSourceBuilder.CoercionTupleConfiguration
 import org.apache.tapestry5.beanmodel.internal.services.PropertyAccessImpl
 import org.apache.tapestry5.beanmodel.internal.services.PropertyConduitSourceImpl
 import org.apache.tapestry5.beanmodel.internal.services.PropertyExpressionException
 import org.apache.tapestry5.beanmodel.services.PlasticProxyFactoryImpl
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource
+import org.apache.tapestry5.commons.MappedConfiguration
 import org.apache.tapestry5.commons.internal.BasicTypeCoercions
 import org.apache.tapestry5.commons.internal.services.StringInternerImpl
 import org.apache.tapestry5.commons.internal.services.TypeCoercerImpl
+import org.apache.tapestry5.commons.services.CoercionTuple
 import org.apache.tapestry5.commons.services.PlasticProxyFactory
 import org.apache.tapestry5.commons.util.IntegerRange
 import org.slf4j.LoggerFactory
@@ -85,6 +86,35 @@ class PropertyConduitSpec extends Specification {
     }
 
     void setWriteOnly(String value) {
+    }
+  }
+
+  private static class CoercionTupleConfiguration implements MappedConfiguration<CoercionTuple.Key, CoercionTuple> {
+
+    final Map<CoercionTuple.Key, CoercionTuple> tuples = [:]
+
+    @Override
+    void add(CoercionTuple.Key key, CoercionTuple tuple) {
+        tuples[key] = tuple
+    }
+
+    @Override
+    void addInstance(CoercionTuple.Key key, Class<? extends CoercionTuple> clazz) {
+        throw new RuntimeException("Not implemented")
+    }
+
+    Map<CoercionTuple.Key, CoercionTuple> getTuples() {
+        return tuples
+    }
+
+    @Override
+    void override(CoercionTuple.Key key, CoercionTuple value) {
+        throw new RuntimeException("Not implemented")
+    }
+
+    @Override
+    void overrideInstance(CoercionTuple.Key key, Class<? extends CoercionTuple> clazz) {
+        throw new RuntimeException("Not implemented")
     }
   }
 

@@ -1,6 +1,7 @@
 package org.apache.tapestry5.ioc.test.internal;
 
-import org.testng.Assert;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import org.spockframework.util.Assert;
 
 /**
  * Used by {@link org.apache.tapestry5.ioc.test.internal.services.ServiceDecoratorImplSpec}.
@@ -15,15 +16,15 @@ public class ServiceDecoratorFixture extends Assert
 
     public <T> T decoratorReturnsInterceptor(Class<T> serviceInterface, T delegate)
     {
-        assertSame(serviceInterface, FieService.class);
-        assertSame(delegate, expectedDelegate);
+        assertSame(FieService.class, serviceInterface);
+        assertSame(expectedDelegate, delegate);
 
         return serviceInterface.cast(interceptorToReturn);
     }
 
     public Object decoratorUntyped(Object delegate)
     {
-        assertSame(delegate, expectedDelegate);
+        assertSame(expectedDelegate, delegate);
 
         return interceptorToReturn;
     }

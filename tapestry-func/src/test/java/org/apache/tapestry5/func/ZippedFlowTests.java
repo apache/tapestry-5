@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@
 
 package org.apache.tapestry5.func;
 
-import org.apache.commons.lang.StringUtils;
-import org.testng.annotations.Test;
+import org.apache.commons.lang3.StringUtils;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,14 +40,14 @@ public class ZippedFlowTests extends BaseFuncTest
     {
         Map<Integer, String> map = zipped.toMap();
 
-        assertEquals(map.size(), 3);
-        assertEquals(map.get(2), "barney");
+        assertEquals(3, map.size());
+        assertEquals("barney", map.get(2));
     }
 
     @Test
     public void map_to_zipped_flow()
     {
-        Map<Integer, String> map = new HashMap<Integer, String>();
+        Map<Integer, String> map = new HashMap<>();
         map.put(1, "fred");
         map.put(2, "barney");
 
@@ -105,7 +109,7 @@ public class ZippedFlowTests extends BaseFuncTest
     @Test
     public void first_tuple_from_zipped_flow()
     {
-        assertEquals(zipped.drop(2).first(), Tuple.create(3, "wilma"));
+        assertEquals(Tuple.create(3, "wilma"), zipped.drop(2).first());
     }
 
     @Test
@@ -124,28 +128,28 @@ public class ZippedFlowTests extends BaseFuncTest
         ZippedFlow<Integer, String> extendedFlow = zipped.concat(Arrays.asList(null, pebbles, null));
         ZippedFlow<Integer, String> noNulls = extendedFlow.removeNulls();
 
-        assertEquals(extendedFlow.count(), 6);
-        assertEquals(noNulls.count(), 4);
+        assertEquals(6, extendedFlow.count());
+        assertEquals(4, noNulls.count());
 
-        assertEquals(noNulls.reverse().seconds().first(), "pebbles");
+        assertEquals("pebbles", noNulls.reverse().seconds().first());
     }
 
     @Test
     public void rest_of_zipped_flow()
     {
-        assertEquals(zipped.rest().first().second, "barney");
+        assertEquals("barney", zipped.rest().first().second);
     }
 
     @Test
     public void count_of_zipped_flow()
     {
-        assertEquals(zipped.count(), 3);
+        assertEquals(3, zipped.count());
     }
 
     @Test
     public void take_from_zipped_flow()
     {
-        assertEquals(zipped.take(2).reverse().first().second, "barney");
+        assertEquals("barney", zipped.take(2).reverse().first().second);
     }
 
     @Test
@@ -153,39 +157,23 @@ public class ZippedFlowTests extends BaseFuncTest
     {
         final AtomicInteger count = new AtomicInteger();
 
-        zipped.each(new Worker<Tuple<Integer, String>>()
-        {
-            @Override
-            public void work(Tuple<Integer, String> value)
-            {
-                count.addAndGet(value.second.length());
-            }
+        zipped.each(value -> count.addAndGet(value.second.length()));
 
-        });
-
-        assertEquals(count.get(), 15);
+        assertEquals(15, count.get());
     }
 
     @Test
     public void reduce_zipped_flow()
     {
-        int totalLength = zipped.reduce(new Reducer<Integer, Tuple<Integer, String>>()
-        {
-            @Override
-            public Integer reduce(Integer accumulator, Tuple<Integer, String> value)
-            {
-                return accumulator + value.second.length();
-            }
+        int totalLength = zipped.reduce((acc, value) -> acc + value.second.length(), 0);
 
-        }, 0);
-
-        assertEquals(totalLength, 15);
+        assertEquals(15, totalLength);
     }
 
     @Test
     public void remove_from_zipped_flow()
     {
-        assertEquals(zipped.remove(F.notNull()).count(), 0);
+        assertEquals(0, zipped.remove(F.notNull()).count());
     }
 
     @SuppressWarnings("unchecked")
@@ -198,21 +186,21 @@ public class ZippedFlowTests extends BaseFuncTest
 
         ZippedFlow<Integer, String> zipped2 = zipped.concat(asList);
 
-        assertEquals(zipped2.count(), 4);
+        assertEquals(4, zipped2.count());
 
-        assertEquals(zipped2.reverse().seconds().first(), "bam-bam");
+        assertEquals("bam-bam", zipped2.reverse().seconds().first());
     }
 
     @Test
     public void firsts()
     {
-        assertEquals(zipped.reverse().firsts().first(), (Integer) 3);
+        assertEquals((Integer)3, zipped.reverse().firsts().first());
     }
 
     @Test
     public void seconds()
     {
-        assertEquals(zipped.seconds().first(), "fred");
+        assertEquals("fred", zipped.seconds().first());
     }
 
     @Test
@@ -229,7 +217,7 @@ public class ZippedFlowTests extends BaseFuncTest
 
         }).first();
 
-        assertEquals(firstTuple.first, "derf");
-        assertEquals(firstTuple.second, "1-4");
+        assertEquals("derf", firstTuple.first);
+        assertEquals("1-4", firstTuple.second);
     }
 }

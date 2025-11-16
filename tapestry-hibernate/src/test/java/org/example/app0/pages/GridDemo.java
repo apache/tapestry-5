@@ -15,24 +15,24 @@
 package org.example.app0.pages;
 
 import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.hibernate.web.HibernateGridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;
-import org.hibernate.Session;
 
 public class GridDemo
 {
     @Inject
-    private Session session;
+    private HibernateSessionManager sessionManager;
 
     @Inject
     private UserDAO userDAO;
 
     public GridDataSource getSource()
     {
-        return new HibernateGridDataSource(session, User.class);
+        return new HibernateGridDataSource(sessionManager.getSession(), User.class);
     }
 
     @CommitAfter
@@ -51,7 +51,7 @@ public class GridDemo
             user.setEncodedPassword("####");
             user.setEmail("joe" + suffix + "@null.com");
 
-            session.persist(user);
+            sessionManager.getSession().persist(user);
         }
 
     }

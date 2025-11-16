@@ -1,0 +1,11 @@
+plugins {
+    id 'tapestry.testing-base-convention'
+}
+
+dependencies {
+    testImplementation libs.junit4
+}
+
+tasks.withType(Test).configureEach {
+    useJUnit()
+}

@@ -1,34 +1,36 @@
-description = "Integration of Tapestry with the Spring Inversion Of Control Container"
-
-// Spring 6 requires Java 17
-sourceCompatibility = "17"
-targetCompatibility = "17"
-
-dependencies {
-  implementation project(':tapestry-core')
-  implementation "org.springframework:spring-websocket:6.0.11"
-
-  provided "jakarta.servlet:jakarta.servlet-api:${versions.servletapi}"
-
-  testImplementation project(':tapestry-test')
+plugins {
+    id 'tapestry.testng-convention'
 }
 
-jar {
-    manifest {
-        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.spring.modules.SpringModule'
+description = 'Integration of Tapestry with the Spring Inversion Of Control Container'
+
+// Spring 6 requires Java 17
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+dependencies {
+    implementation project(':tapestry-core')
+    implementation project(':tapestry-ioc')
+
+    implementation libs.spring.websocket
+
+    provided libs.jakarta.servlet.api
+
+    testImplementation project(':tapestry-test')
+}
+
+['', '1'].each { suffix ->
+    tasks.register("runTestApp${suffix}", JavaExec) {
+        group = 'Application'
+        description = "Start tapestry-spring integration test app${suffix}, useful when debugging failing integration tests"
+        mainClass = 'org.apache.tapestry5.test.JettyRunner'
+        args '-d', "src/test/webapp${suffix}", '-p', '8080'
+        classpath += project.sourceSets.test.runtimeClasspath
     }
 }
 
-task runTestApp(type:JavaExec) {
-    description 'Start tapestry-spring integration test app, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/webapp", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
-}
-
-task runTestApp1(type:JavaExec) {
-    description 'Start tapestry-spring integration test app 1, useful when debugging failing integration tests'
-    main = 'org.apache.tapestry5.test.JettyRunner'
-    args "-d", "src/test/webapp1", "-p", "8080"
-    classpath += project.sourceSets.test.runtimeClasspath
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.spring.modules.SpringModule'
+    }
 }

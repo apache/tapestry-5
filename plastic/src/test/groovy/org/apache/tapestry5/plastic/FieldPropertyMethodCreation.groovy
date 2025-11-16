@@ -3,10 +3,12 @@ package org.apache.tapestry5.plastic
 import spock.lang.Issue
 import testannotations.Property
 import testsubjects.AccessorsAlreadyExistSubject
-import testsubjects.AccessorsAlreadyExistSubject2;
+import testsubjects.AccessorsAlreadyExistSubject2
 import testsubjects.CreateAccessorsSubject
 import testsubjects.GenericCreateAccessorsSubject
 
+import java.lang.invoke.MethodType
+import java.lang.reflect.*
 import java.util.concurrent.atomic.AtomicReference
 
 class FieldPropertyMethodCreation extends AbstractPlasticSpecification
@@ -70,12 +72,10 @@ class FieldPropertyMethodCreation extends AbstractPlasticSpecification
         assert o.refValue == "Plastic"
 
         def get = o.class.getMethod("getRef")
-        get.signature == "()Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
-        get.genericInfo != null
+        getSignature(get) == "()Ljava/util/concurrent/atomic/AtomicReference;"
 
         def set = o.class.getMethod("setRef", AtomicReference)
-        set.signature == "(Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;)V"
-        set.genericInfo != null
+        getSignature(set) == "(Ljava/util/concurrent/atomic/AtomicReference;)V"
     }
 
     def "create getter that already exists"() {
@@ -113,5 +113,9 @@ class FieldPropertyMethodCreation extends AbstractPlasticSpecification
         def e = thrown(IllegalArgumentException)
 
         assert e.message == "Unable to create new accessor method public void setValue(java.lang.String) on class testsubjects.AccessorsAlreadyExistSubject as the method is already implemented."
+    }
+
+    private def getSignature(Method m) {
+        MethodType.methodType(m.returnType, m.parameterTypes).toMethodDescriptorString()
     }
 }

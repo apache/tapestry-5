@@ -118,7 +118,7 @@ class ChainBuilderImplSpec extends AbstractSharedRegistrySpecification {
     chain.toString() == "<Command chain of ioc.specs.ChainCommand>"
   }
   
-  final private static class InterfaceWithStaticMethodImpl implements InterfaceWithStaticMethod 
+  final private static class InterfaceWithStaticMethodImpl implements InterfaceWithStaticMethod
   {
     public int something() { return 2; }
   }

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.tapestry5.internal.plastic.asm.util.ASMifier;
 import org.apache.tapestry5.plastic.test.PlasticUtilsTestObject;
 import org.apache.tapestry5.plastic.test.PlasticUtilsTestObjectSuperclass;
 import org.apache.tapestry5.plastic.test_.Enumeration;

@@ -46,7 +46,9 @@ dependencies {
 
     // Test
     testImplementation("org.apache.tapestry:tapestry-test:${versions.tapestry}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${versions.junit}")
+    testImplementation platform("org.junit:junit-bom:${versions.junitJupiter}")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 
     // Miscellaneous
     implementation("org.apache.logging.log4j:log4j-api:${versions.log4j}")

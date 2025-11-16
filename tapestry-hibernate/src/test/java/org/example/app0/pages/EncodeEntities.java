@@ -14,18 +14,18 @@
 
 package org.example.app0.pages;
 
+import java.util.List;
+
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
-import org.hibernate.Session;
-
-import java.util.List;
 
 public class EncodeEntities
 {
     @Inject
-    private Session session;
+    private HibernateSessionManager sessionManager;
 
     @SuppressWarnings("unused")
     @Property
@@ -37,14 +37,15 @@ public class EncodeEntities
         User user = new User();
         user.setFirstName("name");
 
-        session.save(user);
+        sessionManager.getSession().save(user);
     }
 
     @SuppressWarnings("unchecked")
     User onPassivate()
     {
     	// Use ordering so that we get the most recently inserted users first.    	
-        List<User> users = session.createQuery("from User order by id desc").list();
+        List<User> users = sessionManager.getSession().createQuery("from User order by id desc")
+                .list();
         if (users.isEmpty())
             return null;
 

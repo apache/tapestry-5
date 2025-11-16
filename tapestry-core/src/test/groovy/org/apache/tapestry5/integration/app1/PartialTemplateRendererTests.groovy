@@ -14,9 +14,7 @@
 
 package org.apache.tapestry5.integration.app1
 
-import org.apache.tapestry5.services.PartialTemplateRenderer;
 import org.testng.annotations.Test
-import org.junit.Assert;
 
 /**
  * Tests the {@link PartialTemplateRenderer} service.
@@ -27,37 +25,33 @@ class PartialTemplateRendererTests extends App1TestCase {
 
     @Test
     void render_block() {
-        
+
         open "/partialtemplaterendererdemo"
 
         assertEquals(getAttribute("css=#original dl@class"), getAttribute("css=#serviceRenderedBlock dl@class"))
-        
+
         // checking whether service-rendered block is the same as the original
         for (int i = 1; i <= getXpathCount("//div[@id='original']/dl/*"); i++) {
-            
-            assertEquals(
-                getAttribute("//div[@id='original']/dl/*[" + i + "]@class"),
-                getAttribute("//div[@id='serviceRenderedBlock']/dl/*[" + i + "]/@class")) 
 
             assertEquals(
-                getText("//div[@id='original']/dl/*[" + i + "]"),
-                getText("//div[@id='serviceRenderedBlock']/dl/*[" + i + "]"))
+                    getAttribute("//div[@id='original']/dl/*[" + i + "]@class"),
+                    getAttribute("//div[@id='serviceRenderedBlock']/dl/*[" + i + "]/@class"))
 
-        } 
+            assertEquals(
+                    getText("//div[@id='original']/dl/*[" + i + "]"),
+                    getText("//div[@id='serviceRenderedBlock']/dl/*[" + i + "]"))
+        }
 
         // checking whether service-rendered component is the same as the original
         for (int i = 1; i <= getXpathCount("//div[@id='original']/dl/*"); i++) {
-            
-            assertEquals(
-                getAttribute("//div[@id='originalBeanDisplay']/dl/*[" + i + "]@class"),
-                getAttribute("//div[@id='serviceRenderedComponent']/dl/*[" + i + "]/@class"))
 
             assertEquals(
-                getText("//div[@id='originalBeanDisplay']/dl/*[" + i + "]"),
-                getText("//div[@id='serviceRenderedComponent']/dl/*[" + i + "]"))
+                    getAttribute("//div[@id='originalBeanDisplay']/dl/*[" + i + "]@class"),
+                    getAttribute("//div[@id='serviceRenderedComponent']/dl/*[" + i + "]/@class"))
 
+            assertEquals(
+                    getText("//div[@id='originalBeanDisplay']/dl/*[" + i + "]"),
+                    getText("//div[@id='serviceRenderedComponent']/dl/*[" + i + "]"))
         }
-
     }
-
 }

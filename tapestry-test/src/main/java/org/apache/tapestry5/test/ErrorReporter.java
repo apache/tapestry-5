@@ -25,7 +25,8 @@ public interface ErrorReporter
      * Writes an error report file into the TestNG output directory, based on the name of the test,
      * containing the current page content.
      *
-     * @param reportText text to store in an associated .txt file, describing the failure.
+     * @param reportText
+     *            text to store in an associated .txt file, describing the failure.
      */
     void writeErrorReport(String reportText);
 }

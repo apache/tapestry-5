@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2025 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,23 +18,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MapperTest extends BaseFuncTest
 {
-    protected Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
-    {
+    protected Mapper<Integer, Flow<Integer>> sequencer = value -> {
+        Flow<Integer> flow = F.flow();
 
-        @Override
-        public Flow<Integer> map(Integer value)
-        {
-            Flow<Integer> flow = F.flow();
+        for (int i = 0; i < value; i++)
+            flow = flow.append(value);
 
-            for (int i = 0; i < value; i++)
-                flow = flow.append(value);
-
-            return flow;
-        }
+        return flow;
     };
 
     @Test
@@ -56,15 +53,10 @@ public class MapperTest extends BaseFuncTest
     @Test
     public void map_of_filtered_empty_is_empty()
     {
-        assertTrue(filteredEmpty.map(new Mapper<Integer, Integer>()
-        {
-            @Override
-            public Integer map(Integer value)
-            {
-                unreachable();
+        assertTrue(filteredEmpty.map(value -> {
+            unreachable();
 
-                return value;
-            }
+            return value;
         }).isEmpty());
     }
 
@@ -73,7 +65,7 @@ public class MapperTest extends BaseFuncTest
     {
         Flow<Integer> flow = F.flow();
 
-        assertSame(flow.mapcat(sequencer), flow);
+        assertSame(flow, flow.mapcat(sequencer));
 
         assertTrue(filteredEmpty.mapcat(sequencer).isEmpty());
     }
@@ -92,7 +84,7 @@ public class MapperTest extends BaseFuncTest
         Flow<Integer> flow = F.flow("Mary", "had", "etc.").filter(F.isNull()).map(stringToLength);
 
         assertTrue(flow.isEmpty());
-        assertEquals(flow.count(), 0);
+        assertEquals(0, flow.count());
     }
 
     @Test
@@ -108,20 +100,14 @@ public class MapperTest extends BaseFuncTest
     {
         final AtomicInteger count = new AtomicInteger();
 
-        Mapper<Integer, Integer> doubler = new Mapper<Integer, Integer>()
-        {
-            @Override
-            public Integer map(Integer value)
-            {
-                count.incrementAndGet();
-
-                return value * 2;
-            }
+        Mapper<Integer, Integer> doubler = value -> {
+            count.incrementAndGet();
+            return value * 2;
         };
 
         assertFlowValues(F.range(1, 100).filter(F.gt(10)).map(doubler).take(3), 22, 24, 26);
 
-        assertEquals(count.get(), 3);
+        assertEquals(3, count.get());
 
         count.set(0);
 
@@ -129,17 +115,17 @@ public class MapperTest extends BaseFuncTest
         // ever actually running the mapper to determine the final value.
 
         assertEquals(F.range(1, 100).map(doubler).count(), 99);
-        assertEquals(count.get(), 0);
+        assertEquals(0, count.get());
 
         // Because values are now lazily evaluated as well as flows, we can count the size of a flow
         // without ever actually calculating (via the mapper) an output value.
 
         Flow<Integer> flow = F.range(1, 100).map(doubler).concat(F.range(1, 10).map(doubler));
-        assertEquals(flow.count(), 108);
-        assertEquals(count.get(), 0);
+        assertEquals(108, flow.count());
+        assertEquals(0, count.get());
 
         assertFlowValues(flow.take(2), 2, 4);
-        assertEquals(count.get(), 2);
+        assertEquals(2, count.get());
 
         count.set(0);
 
@@ -147,7 +133,7 @@ public class MapperTest extends BaseFuncTest
         // of the original flow, and previously computed values (2 and 4) are still accessible!
 
         assertFlowValues(flow.take(3), 2, 4, 6);
-        assertEquals(count.get(), 1);
+        assertEquals(1, count.get());
     }
 
     @Test
@@ -155,8 +141,8 @@ public class MapperTest extends BaseFuncTest
     {
         Flow<Integer> flow = F.flow(1, 2, 3);
 
-        assertSame(flow.map(F.ADD_INTS, filteredEmpty), F.EMPTY_FLOW);
-        assertSame(filteredEmpty.map(F.ADD_INTS, flow), F.EMPTY_FLOW);
+        assertSame(F.emptyFlow(), flow.map(F.ADD_INTS, filteredEmpty));
+        assertSame(F.emptyFlow(), filteredEmpty.map(F.ADD_INTS, flow));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.apache.tapestry5.genericsresolverguava.internal;
 //Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -32,849 +33,877 @@ import org.testng.annotations.Test;
 
 /**
  * Copied from tapestry-core's tests due to the lack of a better option.
-* Tests for the bean editor model source itself, as well as the model classes.
-*/
+ * Tests for the bean editor model source itself, as well as the model classes.
+ */
+@Test
 public abstract class AbstractBeanModelSourceImplTest extends IOCTestCase
 {
- private BeanModelSource source;
+    private BeanModelSource source;
 
- protected abstract BeanModelSource create();
- 
- @BeforeClass
- public void setup()
- {
-     source = create();
- }
+    protected abstract BeanModelSource create();
 
- /**
-  * Tests defaults for property names, labels and conduits.
-  */
- @Test
- public void default_model_for_bean()
- {
-     Messages messages = mockMessages();
+    @BeforeClass
+    public void setup()
+    {
+        source = create();
+    }
 
-     stub_contains(messages, false);
+    /**
+     * Tests defaults for property names, labels and conduits.
+     */
+    @Test
+    public void default_model_for_bean()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertSame(model.getBeanType(), SimpleBean.class);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     // Based on order of the getter methods (no longer alphabetical)
+        assertSame(model.getBeanType(), SimpleBean.class);
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        // Based on order of the getter methods (no longer alphabetical)
 
-     assertEquals(model.toString(),
-             "BeanModel[org.apache.tapestry5.genericsresolverguava.internal.SimpleBean properties:firstName, lastName, age]");
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-     PropertyModel age = model.get("age");
+        assertEquals(model.toString(),
+                "BeanModel[org.apache.tapestry5.genericsresolverguava.internal.SimpleBean properties:firstName, lastName, age]");
 
-     assertEquals(age.getLabel(), "Age");
-     assertSame(age.getPropertyType(), int.class);
-     assertEquals(age.getDataType(), "number");
+        PropertyModel age = model.get("age");
 
-     PropertyModel firstName = model.get("firstName");
+        assertEquals(age.getLabel(), "Age");
+        assertSame(age.getPropertyType(), int.class);
+        assertEquals(age.getDataType(), "number");
 
-     assertEquals(firstName.getLabel(), "First Name");
-     assertEquals(firstName.getPropertyType(), String.class);
-     assertEquals(firstName.getDataType(), "text");
+        PropertyModel firstName = model.get("firstName");
 
-     assertEquals(model.get("lastName").getLabel(), "Last Name");
+        assertEquals(firstName.getLabel(), "First Name");
+        assertEquals(firstName.getPropertyType(), String.class);
+        assertEquals(firstName.getDataType(), "text");
 
-     PropertyConduit conduit = model.get("lastName").getConduit();
+        assertEquals(model.get("lastName").getLabel(), "Last Name");
 
-     SimpleBean instance = new SimpleBean();
+        PropertyConduit conduit = model.get("lastName").getConduit();
 
-     instance.setLastName("Lewis Ship");
+        SimpleBean instance = new SimpleBean();
 
-     assertEquals(conduit.get(instance), "Lewis Ship");
+        instance.setLastName("Lewis Ship");
 
-     conduit.set(instance, "TapestryDude");
+        assertEquals(conduit.get(instance), "Lewis Ship");
 
-     assertEquals(instance.getLastName(), "TapestryDude");
+        conduit.set(instance, "TapestryDude");
 
-     // Now, one with some type coercion.
+        assertEquals(instance.getLastName(), "TapestryDude");
 
-     age.getConduit().set(instance, "40");
+        // Now, one with some type coercion.
 
-     assertEquals(instance.getAge(), 40);
+        age.getConduit().set(instance, "40");
 
-     verify();
- }
+        assertEquals(instance.getAge(), 40);
 
- @Test
- public void include_properties()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void include_properties()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertSame(model.getBeanType(), SimpleBean.class);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     model.include("lastname", "firstname");
+        assertSame(model.getBeanType(), SimpleBean.class);
 
-     // Based on order of the getter methods (no longer alphabetical)
+        model.include("lastname", "firstname");
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "firstName"));
+        // Based on order of the getter methods (no longer alphabetical)
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "firstName"));
 
- @Test
- public void add_before()
- {
-     Messages messages = mockMessages();
-     PropertyConduit conduit = mockPropertyConduit();
+        verify();
+    }
 
-     Class propertyType = String.class;
+    @Test
+    public void add_before()
+    {
+        Messages messages = mockMessages();
+        PropertyConduit conduit = mockPropertyConduit();
 
-     stub_contains(messages, false);
+        Class propertyType = String.class;
 
-     expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
-     expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
+        stub_contains(messages, false);
 
-     replay();
+        expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
+        expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     // Note the use of case insensitivity here.
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-     PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "middleInitial", conduit);
+        // Note the use of case insensitivity here.
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "middleInitial", "lastName", "age"));
+        PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "middleInitial",
+                conduit);
 
-     assertEquals(property.getPropertyName(), "middleInitial");
-     assertSame(property.getConduit(), conduit);
-     assertSame(property.getPropertyType(), propertyType);
+        assertEquals(model.getPropertyNames(),
+                Arrays.asList("firstName", "middleInitial", "lastName", "age"));
 
-     verify();
- }
+        assertEquals(property.getPropertyName(), "middleInitial");
+        assertSame(property.getConduit(), conduit);
+        assertSame(property.getPropertyType(), propertyType);
 
- /**
-  * TAPESTRY-2202
-  */
- @Test
- public void new_instance()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    /**
+     * TAPESTRY-2202
+     */
+    @Test
+    public void new_instance()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel<SimpleBean> model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     SimpleBean s1 = model.newInstance();
+        BeanModel<SimpleBean> model = source.create(SimpleBean.class, true, messages);
 
-     assertNotNull(s1);
+        SimpleBean s1 = model.newInstance();
 
-     SimpleBean s2 = model.newInstance();
+        assertNotNull(s1);
 
-     assertNotNull(s2);
-     assertNotSame(s1, s2);
+        SimpleBean s2 = model.newInstance();
 
-     verify();
- }
+        assertNotNull(s2);
+        assertNotSame(s1, s2);
 
- @Test
- public void add_before_using_default_conduit()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void add_before_using_default_conduit()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     model.exclude("firstname");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age"));
+        model.exclude("firstname");
 
-     // Note the use of case insensitivity here.
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age"));
 
-     PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "firstName");
+        // Note the use of case insensitivity here.
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "firstName");
 
-     assertEquals(property.getPropertyName(), "firstName");
-     assertSame(property.getPropertyType(), String.class);
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-     verify();
- }
+        assertEquals(property.getPropertyName(), "firstName");
+        assertSame(property.getPropertyType(), String.class);
 
- @Test
- public void add_after()
- {
-     Messages messages = mockMessages();
-     PropertyConduit conduit = mockPropertyConduit();
+        verify();
+    }
 
-     Class propertyType = String.class;
+    @Test
+    public void add_after()
+    {
+        Messages messages = mockMessages();
+        PropertyConduit conduit = mockPropertyConduit();
 
-     stub_contains(messages, false);
+        Class propertyType = String.class;
 
-     expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
+        stub_contains(messages, false);
 
-     expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
+        expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
 
-     replay();
+        expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     PropertyModel property = model.add(RelativePosition.AFTER, "firstname", "middleInitial", conduit);
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "middleInitial", "lastName", "age"));
+        PropertyModel property = model.add(RelativePosition.AFTER, "firstname", "middleInitial",
+                conduit);
 
-     assertEquals(property.getPropertyName(), "middleInitial");
-     assertSame(property.getConduit(), conduit);
-     assertSame(property.getPropertyType(), propertyType);
+        assertEquals(model.getPropertyNames(),
+                Arrays.asList("firstName", "middleInitial", "lastName", "age"));
 
-     verify();
- }
+        assertEquals(property.getPropertyName(), "middleInitial");
+        assertSame(property.getConduit(), conduit);
+        assertSame(property.getPropertyType(), propertyType);
 
- @Test
- public void filtering_out_read_only_properties()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void filtering_out_read_only_properties()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(ReadOnlyBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("value"));
+        BeanModel model = source.create(ReadOnlyBean.class, true, messages);
 
-     model = source.create(ReadOnlyBean.class, false, messages);
+        assertEquals(model.getPropertyNames(), Arrays.asList("value"));
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("value", "readOnly"));
+        model = source.create(ReadOnlyBean.class, false, messages);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("value", "readOnly"));
 
- @Test
- public void non_text_property()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void non_text_property()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(EnumBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("token"));
+        BeanModel model = source.create(EnumBean.class, true, messages);
 
-     assertEquals(model.get("token").getDataType(), "enum");
+        assertEquals(model.getPropertyNames(), Arrays.asList("token"));
 
-     verify();
- }
+        assertEquals(model.get("token").getDataType(), "enum");
 
- @Test
- public void add_duplicate_property_name_is_failure()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void add_duplicate_property_name_is_failure()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     try
-     {
-         model.add("age");
-         unreachable();
-     } catch (RuntimeException ex)
-     {
-         assertEquals(
-                 ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean already contains a property model for property \'age\'.");
-     }
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     verify();
- }
+        try
+        {
+            model.add("age");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean already contains a property model for property \'age\'.");
+        }
 
- @Test
- public void unknown_property_name()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void unknown_property_name()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     try
-     {
-         model.get("frobozz");
-         unreachable();
-     } catch (UnknownValueException ex)
-     {
-         assertEquals(
-                 ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property named \'frobozz\'.");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-         assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName");
-     }
+        try
+        {
+            model.get("frobozz");
+            unreachable();
+        }
+        catch (UnknownValueException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property named \'frobozz\'.");
 
-     verify();
- }
+            assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName");
+        }
 
- @Test
- public void unknown_property_id()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void unknown_property_id()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     model.addEmpty("shrub.foo()");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     try
-     {
-         model.getById("frobozz");
-         unreachable();
-     } catch (UnknownValueException ex)
-     {
-         assertEquals(
-                 ex.getMessage(),
-                 "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property with id \'frobozz\'.");
+        model.addEmpty("shrub.foo()");
 
-         assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName", "shrubfoo");
-     }
+        try
+        {
+            model.getById("frobozz");
+            unreachable();
+        }
+        catch (UnknownValueException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.genericsresolverguava.internal.SimpleBean does not contain a property with id \'frobozz\'.");
 
-     verify();
- }
+            assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName",
+                    "shrubfoo");
+        }
 
- @Test
- public void get_added_property_by_name()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void get_added_property_by_name()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     PropertyModel pm = model.addEmpty("shrub.foo()");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertSame(model.get("Shrub.Foo()"), pm);
+        PropertyModel pm = model.addEmpty("shrub.foo()");
 
-     verify();
- }
+        assertSame(model.get("Shrub.Foo()"), pm);
 
- @Test
- public void get_added_property_by_id()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void get_added_property_by_id()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     PropertyModel pm = model.addEmpty("shrub.foo()");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertSame(model.getById("ShrubFoo"), pm);
+        PropertyModel pm = model.addEmpty("shrub.foo()");
 
-     verify();
+        assertSame(model.getById("ShrubFoo"), pm);
 
- }
+        verify();
 
- @Test
- public void order_via_annotation()
- {
-     Messages messages = mockMessages();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void order_via_annotation()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(StoogeBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("larry", "moe", "shemp", "curly"));
+        BeanModel model = source.create(StoogeBean.class, true, messages);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("larry", "moe", "shemp", "curly"));
 
- @Test
- public void edit_property_label()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void edit_property_label()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages).get("age").label("Decrepitude").model();
+        replay();
 
-     assertEquals(model.get("age").getLabel(), "Decrepitude");
+        BeanModel model = source.create(SimpleBean.class, true, messages).get("age")
+                .label("Decrepitude").model();
 
-     verify();
- }
+        assertEquals(model.get("age").getLabel(), "Decrepitude");
 
- @Test
- public void label_from_component_messages()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void label_from_component_messages()
+    {
+        Messages messages = mockMessages();
 
-     train_contains(messages, "age-label", true);
-     train_get(messages, "age-label", "Decrepitude");
+        stub_contains(messages, false);
 
-     replay();
+        train_contains(messages, "age-label", true);
+        train_get(messages, "age-label", "Decrepitude");
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertEquals(model.get("age").getLabel(), "Decrepitude");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     verify();
- }
+        assertEquals(model.get("age").getLabel(), "Decrepitude");
 
- @Test
- public void array_type_bean()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void array_type_bean()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(StringArrayBean.class, true, messages);
+        replay();
 
-     // There's not editor for string arrays yet, so it won't show up normally.
+        BeanModel model = source.create(StringArrayBean.class, true, messages);
 
-     PropertyModel propertyModel = model.add("array");
+        // There's not editor for string arrays yet, so it won't show up normally.
 
-     assertSame(propertyModel.getPropertyType(), String[].class);
+        PropertyModel propertyModel = model.add("array");
 
-     String[] value =
-             {"foo", "bar"};
+        assertSame(propertyModel.getPropertyType(), String[].class);
 
-     StringArrayBean bean = new StringArrayBean();
+        String[] value =
+        { "foo", "bar" };
 
-     PropertyConduit conduit = propertyModel.getConduit();
+        StringArrayBean bean = new StringArrayBean();
 
-     conduit.set(bean, value);
+        PropertyConduit conduit = propertyModel.getConduit();
 
-     assertSame(bean.getArray(), value);
+        conduit.set(bean, value);
 
-     assertSame(conduit.get(bean), value);
+        assertSame(bean.getArray(), value);
 
-     verify();
- }
+        assertSame(conduit.get(bean), value);
 
- @Test
- public void composite_bean()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void composite_bean()
+    {
+        Messages messages = mockMessages();
 
-     train_contains(messages, "simpleage-label", true);
-     train_get(messages, "simpleage-label", "Years of Age");
+        stub_contains(messages, false);
 
-     replay();
+        train_contains(messages, "simpleage-label", true);
+        train_get(messages, "simpleage-label", "Years of Age");
 
-     BeanModel model = source.create(CompositeBean.class, true, messages);
+        replay();
 
-     // No editor for CompositeBean, so this will be empty.
+        BeanModel model = source.create(CompositeBean.class, true, messages);
 
-     assertEquals(model.getPropertyNames(), Collections.emptyList());
+        // No editor for CompositeBean, so this will be empty.
 
-     // There's not editor for string arrays yet, so it won't show up normally.
+        assertEquals(model.getPropertyNames(), Collections.emptyList());
 
-     PropertyModel firstName = model.add("simple.firstName");
+        // There's not editor for string arrays yet, so it won't show up normally.
 
-     assertEquals(firstName.getLabel(), "First Name");
+        PropertyModel firstName = model.add("simple.firstName");
 
-     PropertyModel age = model.add("simple.age");
-     assertEquals(age.getLabel(), "Years of Age");
+        assertEquals(firstName.getLabel(), "First Name");
 
-     CompositeBean bean = new CompositeBean();
+        PropertyModel age = model.add("simple.age");
+        assertEquals(age.getLabel(), "Years of Age");
 
-     firstName.getConduit().set(bean, "Fred");
-     age.getConduit().set(bean, "97");
+        CompositeBean bean = new CompositeBean();
 
-     assertEquals(bean.getSimple().getFirstName(), "Fred");
-     assertEquals(bean.getSimple().getAge(), 97);
+        firstName.getConduit().set(bean, "Fred");
+        age.getConduit().set(bean, "97");
 
-     bean.getSimple().setAge(24);
+        assertEquals(bean.getSimple().getFirstName(), "Fred");
+        assertEquals(bean.getSimple().getAge(), 97);
 
-     assertEquals(age.getConduit().get(bean), new Integer(24));
+        bean.getSimple().setAge(24);
 
-     verify();
- }
+        assertEquals(age.getConduit().get(bean), new Integer(24));
 
- @Test
- public void default_properties_exclude_write_only()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void default_properties_exclude_write_only()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(WriteOnlyBean.class, false, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("readOnly", "readWrite"));
+        BeanModel model = source.create(WriteOnlyBean.class, false, messages);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("readOnly", "readWrite"));
 
- @Test
- public void add_synthetic_property()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void add_synthetic_property()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     PropertyModel property = model.addEmpty("placeholder");
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertFalse(property.isSortable());
-     assertSame(property.getPropertyType(), Object.class);
-     assertEquals(property.getLabel(), "Placeholder");
+        PropertyModel property = model.addEmpty("placeholder");
 
-     verify();
- }
+        assertFalse(property.isSortable());
+        assertSame(property.getPropertyType(), Object.class);
+        assertEquals(property.getLabel(), "Placeholder");
 
- @Test
- public void add_missing_property_is_failure()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void add_missing_property_is_failure()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     try
-     {
-         model.add("doesNotExist");
-         unreachable();
-     } catch (Exception ex)
-     {
-         assertMessageContains(ex, "does not contain", "doesNotExist");
-     }
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     verify();
- }
+        try
+        {
+            model.add("doesNotExist");
+            unreachable();
+        }
+        catch (Exception ex)
+        {
+            assertMessageContains(ex, "does not contain", "doesNotExist");
+        }
 
- @Test
- public void exclude_property()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void exclude_property()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertSame(model.exclude("age"), model);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName"));
+        assertSame(model.exclude("age"), model);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName"));
 
- @Test
- public void exclude_unknown_property_is_noop()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void exclude_unknown_property_is_noop()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertSame(model.exclude("frobozz"), model);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        assertSame(model.exclude("frobozz"), model);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
- @Test
- public void nonvisual_properties_are_excluded()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void nonvisual_properties_are_excluded()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(NonVisualBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("name"));
+        BeanModel model = source.create(NonVisualBean.class, true, messages);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("name"));
 
- @Test
- public void reorder()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void reorder()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(SimpleBean.class, true, messages);
+        replay();
 
-     assertSame(model.getBeanType(), SimpleBean.class);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
-     // Based on order of the getter methods (no longer alphabetical)
+        assertSame(model.getBeanType(), SimpleBean.class);
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+        // Based on order of the getter methods (no longer alphabetical)
 
-     // Testing a couple of things here:
-     // 1) case insensitive
-     // 2) unreferenced property names added to the end.
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-     model.reorder("lastname", "AGE");
+        // Testing a couple of things here:
+        // 1) case insensitive
+        // 2) unreferenced property names added to the end.
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age", "firstName"));
+        model.reorder("lastname", "AGE");
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age", "firstName"));
 
- @Test
- public void reoder_from_annotation()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    @Test
+    public void reoder_from_annotation()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel model = source.create(PropertyOrderBean.class, true, messages);
+        replay();
 
-     assertEquals(model.getPropertyNames(), Arrays.asList("third", "first", "second"));
+        BeanModel model = source.create(PropertyOrderBean.class, true, messages);
 
-     verify();
- }
+        assertEquals(model.getPropertyNames(), Arrays.asList("third", "first", "second"));
 
- // https://issues.apache.org/jira/browse/TAP5-1798
- @Test
- public void static_fields_are_ignored()
- {
-     Messages messages = mockMessages();
+        verify();
+    }
 
-     stub_contains(messages, false);
+    // https://issues.apache.org/jira/browse/TAP5-1798
+    @Test
+    public void static_fields_are_ignored()
+    {
+        Messages messages = mockMessages();
 
-     replay();
+        stub_contains(messages, false);
 
-     BeanModel<BeanWithStaticField> model = source.createDisplayModel(BeanWithStaticField.class,  messages);
+        replay();
 
-     assertListsEquals(model.getPropertyNames(), "name");
+        BeanModel<BeanWithStaticField> model = source.createDisplayModel(BeanWithStaticField.class,
+                messages);
 
-     verify();
- }
- 
- // https://issues.apache.org/jira/browse/TAP5-2305
- @Test
- public void sortable_annotation() 
- {
-     Messages messages = mockMessages();
+        assertListsEquals(model.getPropertyNames(), "name");
 
-     stub_contains(messages, false);
+        verify();
+    }
 
-     replay();
+    // https://issues.apache.org/jira/browse/TAP5-2305
+    @Test
+    public void sortable_annotation()
+    {
+        Messages messages = mockMessages();
 
-     BeanModel<SortableBean> model = source.createDisplayModel(SortableBean.class,  messages);
-     model.add("nonSortableByDefault");
-     model.add("sortable");
-     
-     // checking whether non-@Sortable annotated properties still behave in the old ways
-     assertTrue(model.get("sortableByDefault").isSortable());
-     assertFalse(model.get("nonSortableByDefault").isSortable());
-     
-     // checking @Sortable itself
-     assertFalse(model.get("nonSortable").isSortable());
-     assertTrue(model.get("sortable").isSortable());
+        stub_contains(messages, false);
 
-     verify();
- }
- 
- // https://issues.apache.org/jira/browse/TAP5-2560
- @Test
- public void missing_property_due_to_wrong_type_parameter_resolution() 
- {
+        replay();
 
-     Messages messages = mockMessages();
+        BeanModel<SortableBean> model = source.createDisplayModel(SortableBean.class, messages);
+        model.add("nonSortableByDefault");
+        model.add("sortable");
 
-     stub_contains(messages, false);
+        // checking whether non-@Sortable annotated properties still behave in the old ways
+        assertTrue(model.get("sortableByDefault").isSortable());
+        assertFalse(model.get("nonSortableByDefault").isSortable());
 
-     replay();
+        // checking @Sortable itself
+        assertFalse(model.get("nonSortable").isSortable());
+        assertTrue(model.get("sortable").isSortable());
 
-     BeanModel<FileContentUnit> beanModel = source.createDisplayModel(FileContentUnit.class, messages);
-     
-     // throws "org.apache.tapestry5.internal.services.PropertyExpressionException: Exception generating conduit for expression 'content.mimeType': Class org.apache.tapestry5.internal.services.AbstractBeanModelSourceImplTest$ContentData does not contain a property (or public field) named 'mimeType'." without fix
-     beanModel.add("content.mimeType");
+        verify();
+    }
 
-     verify();
+    // https://issues.apache.org/jira/browse/TAP5-2560
+    @Test
+    public void missing_property_due_to_wrong_type_parameter_resolution()
+    {
 
- }
- 
- // https://issues.apache.org/jira/browse/TAP5-2560
- @Test
- public void handling_nested_generics() 
- {
+        Messages messages = mockMessages();
 
-     Messages messages = mockMessages();
+        stub_contains(messages, false);
 
-     stub_contains(messages, false);
+        replay();
 
-     replay();
+        BeanModel<FileContentUnit> beanModel = source.createDisplayModel(FileContentUnit.class,
+                messages);
 
-     BeanModel<BeanHolder> beanModel = source.createDisplayModel(BeanHolder.class, messages);
-     
-     // this line would throw an exception
-     beanModel.add("bean.value");
+        // throws "org.apache.tapestry5.internal.services.PropertyExpressionException: Exception
+        // generating conduit for expression 'content.mimeType': Class
+        // org.apache.tapestry5.internal.services.AbstractBeanModelSourceImplTest$ContentData does
+        // not contain a property (or public field) named 'mimeType'." without fix
+        beanModel.add("content.mimeType");
 
-     verify();
+        verify();
 
- }
- 
+    }
+
+    // https://issues.apache.org/jira/browse/TAP5-2560
+    @Test
+    public void handling_nested_generics()
+    {
+
+        Messages messages = mockMessages();
+
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel<BeanHolder> beanModel = source.createDisplayModel(BeanHolder.class, messages);
+
+        // this line would throw an exception
+        beanModel.add("bean.value");
+
+        verify();
+
+    }
+
     // https://issues.apache.org/jira/browse/TAP5-2032
     @Test
-    public void tap5_2032() 
+    public void tap5_2032()
     {
         // explodes without fix
         new PropertyAccessImpl().getAdapter(ById.class);
     }
- 
-    public interface IdentifiableEnum<E extends Enum<E>, ID extends Number> 
+
+    public interface IdentifiableEnum<E extends Enum<E>, ID extends Number>
     {
         ID getId();
     }
 
-    public enum ById implements IdentifiableEnum<ById, Byte> 
+    public enum ById implements IdentifiableEnum<ById, Byte>
     {
         ;
-        public Byte getId() 
+        public Byte getId()
         {
             return null;
         }
     }
- 
- final private static class SortableBean
- {
-     private int sortableByDefault;
-     private int nonSortable;
-     private SimpleBean sortable;
-     private SimpleBean nonSortableByDefault;
-     
-     public int getSortableByDefault()
-     {
-         return sortableByDefault;
-     }
-     
-     @Sortable(false)
-     public int getNonSortable()
-     {
-         return nonSortable;
-     }
-     
-     @Sortable(true)
-     public SimpleBean getSortable()
-     {
-         return sortable;
-     }
-     
-     public SimpleBean getNonSortableByDefault()
-     {
-         return nonSortableByDefault;
-     }
-     
- }
- 
-    public interface NonTranslatableContentUnit<T extends ContentData> {
+
+    final private static class SortableBean
+    {
+        private int sortableByDefault;
+        private int nonSortable;
+        private SimpleBean sortable;
+        private SimpleBean nonSortableByDefault;
+
+        public int getSortableByDefault()
+        {
+            return sortableByDefault;
+        }
+
+        @Sortable(false)
+        public int getNonSortable()
+        {
+            return nonSortable;
+        }
+
+        @Sortable(true)
+        public SimpleBean getSortable()
+        {
+            return sortable;
+        }
+
+        public SimpleBean getNonSortableByDefault()
+        {
+            return nonSortableByDefault;
+        }
+
+    }
+
+    public interface NonTranslatableContentUnit<T extends ContentData>
+    {
         T getContent();
     }
 
-    public interface BinaryContentUnit<T extends BinaryContent> extends NonTranslatableContentUnit<T> {
+    public interface BinaryContentUnit<T extends BinaryContent>
+            extends NonTranslatableContentUnit<T>
+    {
     }
 
-    public interface FileContentUnit extends BinaryContentUnit<FileContent> {
+    public interface FileContentUnit extends BinaryContentUnit<FileContent>
+    {
     }
 
-    public interface ContentData {
+    public interface ContentData
+    {
 
         boolean isEmpty();
     }
 
-    public interface BinaryContent extends ContentData {
+    public interface BinaryContent extends ContentData
+    {
 
         String getMimeType();
     }
 
-    public interface FileContent extends BinaryContent {
+    public interface FileContent extends BinaryContent
+    {
     }
 
-    public class ConcreteFileContent implements FileContentUnit {
+    public class ConcreteFileContent implements FileContentUnit
+    {
 
         @Override
-        public FileContent getContent() {
+        public FileContent getContent()
+        {
             return null;
         }
 
     }
-    
-    public class BeanHolder {
+
+    public class BeanHolder
+    {
         private final Bean bean;
 
-        public BeanHolder(Bean bean) {
+        public BeanHolder(Bean bean)
+        {
             super();
             this.bean = bean;
         }
 
-        
-        public Bean getBean() {
+        public Bean getBean()
+        {
             return bean;
         }
-        
+
     }
-    
-    public class Bean<T> implements Comparable<Bean<T>> {
+
+    public class Bean<T> implements Comparable<Bean<T>>
+    {
 
         private final T value_;
 
-        public Bean(T value) {
+        public Bean(T value)
+        {
             value_ = value;
         }
 
         @Override
-        public int compareTo(Bean<T> o) {
+        public int compareTo(Bean<T> o)
+        {
             return 0;
         }
 
-        public T getValue() {
+        public T getValue()
+        {
             return value_;
         }
     }

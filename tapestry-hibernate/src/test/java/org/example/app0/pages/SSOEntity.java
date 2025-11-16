@@ -23,7 +23,7 @@ import org.example.app0.services.UserDAO;
 
 import java.util.List;
 
-public class SSOEntity 
+public class SSOEntity
 {
     @SessionState
     @Property
@@ -31,10 +31,10 @@ public class SSOEntity
 
     @Inject
     private UserDAO userDAO;
-    
+
     @Inject
     private Request request;
-    
+
     void onPersistEntity()
     {
         User user = new User();
@@ -44,7 +44,7 @@ public class SSOEntity
 
         this.user = user;
     }
-    
+
     void onSetToNull()
     {
         user = null;
@@ -55,17 +55,14 @@ public class SSOEntity
         List<User> users = userDAO.findAll();
 
         userDAO.delete(users.toArray(new User[0]));
-        System.err.println("DELETED");
     }
-    
+
     public String getPersistedEntityClassName()
     {
-    	Session session = request.getSession(true);
-    	
-    	Object value = session.getAttribute("sso:"+User.class.getName());
-    	
-    	System.err.println("getPersistedEntityClassName(): "+value);
-    	
-    	return value.getClass().getName();
+        Session session = request.getSession(true);
+
+        Object value = session.getAttribute("sso:" + User.class.getName());
+
+        return value.getClass().getName();
     }
 }

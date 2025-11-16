@@ -14,18 +14,6 @@
 
 package org.apache.tapestry5.javadoc;
 
-import com.sun.source.doctree.DocTree;
-import jdk.javadoc.doclet.Doclet;
-import jdk.javadoc.doclet.DocletEnvironment;
-import jdk.javadoc.doclet.Taglet;
-import org.apache.commons.lang.StringUtils;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,6 +21,21 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
+import com.sun.source.doctree.DocTree;
+
+import jdk.javadoc.doclet.Doclet;
+import jdk.javadoc.doclet.DocletEnvironment;
+import jdk.javadoc.doclet.Taglet;
 
 /**
  * An inline tag allowed inside a type; it produces Tapestry component reference and other information.
