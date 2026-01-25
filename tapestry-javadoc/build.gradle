@@ -25,11 +25,8 @@ tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = '11'
     targetCompatibility = '11'
 
-    // Only apply --add-modules if target is not 1.8
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-        options.compilerArgs += [
-            '--add-modules',
-            'jdk.compiler'
-        ]
-    }
+    options.compilerArgs += [
+        '--add-modules',
+        'jdk.compiler'
+    ]
 }

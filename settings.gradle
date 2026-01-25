@@ -31,6 +31,7 @@ include('plastic',
         'tapestry-core',
         'tapestry-hibernate-core',
         'tapestry-hibernate',
+        'tapestry-javadoc',
         'tapestry-jmx',
         'tapestry-upload',
         'tapestry-beanvalidator',
@@ -53,10 +54,6 @@ include('plastic',
         'tapestry-spock',
         'tapestry-openapi-viewer',
         'tapestry-rest-jackson')
-
-if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-    include('tapestry-javadoc')
-}
 
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
     include('tapestry-latest-java-tests', 'tapestry-spring')

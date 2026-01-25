@@ -79,11 +79,9 @@ configurations {
 }
 
 dependencies {
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-        javadoc project(':tapestry-javadoc')
-        meta providers.provider {
-            tasks.named('aggregateJavadoc').get().outputs.files
-        }
+    javadoc project(':tapestry-javadoc')
+    meta providers.provider {
+        tasks.named('aggregateJavadoc').get().outputs.files
     }
 
     // From tapestry-ioc:
