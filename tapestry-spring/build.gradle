@@ -5,8 +5,18 @@ plugins {
 description = 'Integration of Tapestry with the Spring Inversion Of Control Container'
 
 // Spring 6 requires Java 17
-sourceCompatibility = '17'
-targetCompatibility = '17'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+}
 
 dependencies {
     implementation project(':tapestry-core')

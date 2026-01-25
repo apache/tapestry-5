@@ -14,17 +14,7 @@ dependencies {
     testImplementation libs.spock.core
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
-}
-
 tasks.withType(JavaCompile).configureEach {
-    // Override Java 8 compatibility inherited from root
-    sourceCompatibility = '11'
-    targetCompatibility = '11'
-
     options.compilerArgs += [
         '--add-modules',
         'jdk.compiler'
