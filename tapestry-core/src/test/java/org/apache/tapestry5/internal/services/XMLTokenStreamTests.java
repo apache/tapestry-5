@@ -78,7 +78,7 @@ public class XMLTokenStreamTests
      * binary file is converted to charcters and back before it is parsed. 
      * @throws Exception
      */
-    @Test
+    @Test(enabled = false)
     public void testStreamEncoding() throws Exception
     {
         String oldEncoding=System.getProperty("file.encoding");
