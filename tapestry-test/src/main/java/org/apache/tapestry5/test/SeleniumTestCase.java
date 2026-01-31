@@ -221,21 +221,21 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
-//        FirefoxDriverManager.getInstance().setup();
         FirefoxDriverManager.firefoxdriver().setup();
 
         File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-//        options.setLogLevel(FirefoxDriverLogLevel.TRACE);
+        // options.setHeadless(true);
+        // options.setLogLevel(FirefoxDriverLogLevel.TRACE);
         
         if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
         {
             LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
             FirefoxProfile profile = new FirefoxProfile(ffProfileTemplate);
             options.setProfile(profile);
-//            profile.layoutOnDisk();
+            // profile.layoutOnDisk();
         }
         else 
         {
@@ -1727,7 +1727,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             {
                 try 
                 {
-                    waitForCondition(ExpectedConditions.presenceOfElementLocated(By.linkText(text)), 3);
+                    // TAP5-2816: Firefox Security Manager might veto By.linkText atoms. (NS_ERROR_XPC_SECURITY_MANAGER_VETO)
+                    // Using an XPath selector does the exact same thing.
+                    String xpath = "//a[normalize-space(.)=" + escapeXPathContent(text) + "]";
+                    waitForCondition(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), 3);
                 }
                 catch (Exception e)
                 {
@@ -1935,7 +1938,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         if (locator.startsWith("link="))
         {
-            return By.linkText(locator.substring(5));
+            // TAP5-2816: Replacing By.linkText with By.xpath to bypass Firefox Security Manager veto.
+            // By.link uses a JS "atom" to do its job, where xpath uses native browser functionality.
+            String text = locator.substring(5);
+            return By.xpath("//a[normalize-space(.)=" + escapeXPathContent(text) + "]");
         }
         else if (locator.startsWith("css="))
         {
@@ -1957,5 +1963,26 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         {
             return By.id(locator);
         }
+    }
+
+    /**
+     * TAP5-2816: Escapes a string for use in an XPath expression, as backslash escaping isn't supported
+     * - If no single quotes: wrap in single quotes: 'foo'
+     * - If single quotes present: wrap in double quotes: "foo'bar"
+     * - If both present: use concat(): concat('foo', "'", 'bar')
+     */
+    private static String escapeXPathContent(String text) {
+        if (!text.contains("'"))
+        {
+            return "'" + text + "'";
+        }
+
+        if (!text.contains("\""))
+        {
+            return "\"" + text + "\"";
+        }
+
+        // If both quote types are present, we must use: concat('foo', "'", 'bar')
+        return "concat('" + text.replace("'", "', \"'\", '") + "')";
     }
 }

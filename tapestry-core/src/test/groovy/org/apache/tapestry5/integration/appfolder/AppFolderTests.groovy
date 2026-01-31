@@ -31,7 +31,11 @@ class AppFolderTests extends GroovyTapestryCoreTestCase
     @Test
     void component_event_request()
     {
-        openLinks "t5app/", "show index page alert"
+        // Don't use "show index page alert" as second argument here, as the first one needs to be the acutal page
+        // not the folder to make it work.
+        openLinks "t5app/"
+
+        clickAndWait "link=show index page alert"
 
         assertTextPresent "index page alert"
     }
