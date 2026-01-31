@@ -15,7 +15,7 @@
         <t:form>
             <t:errors/>
             <div t:type="any" t:id="injector">
-                <a href="#" id="trigger">add row</a>
+                <a href="#" id="trigger">Add row</a>
             </div>
 
             <br/>
