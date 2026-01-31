@@ -1730,7 +1730,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                     // TAP5-2816: Firefox Security Manager might veto By.linkText atoms. (NS_ERROR_XPC_SECURITY_MANAGER_VETO)
                     // Using an XPath selector does the exact same thing.
                     String xpath = "//a[normalize-space(.)=" + escapeXPathContent(text) + "]";
-                    waitForCondition(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), 3);
+                    waitForCondition(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), 10);
                 }
                 catch (Exception e)
                 {
