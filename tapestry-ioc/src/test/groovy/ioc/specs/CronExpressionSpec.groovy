@@ -52,9 +52,6 @@ class CronExpressionSpec extends Specification {
     ois.readObject()
   }
 
-  // This test is in the original TestNG test but failed there (making me think that the test case was probably
-  // not being run). It's clear that CronExpressions do not deserialize correctly by looking at the source!
-  @Ignore
   def "check that CronExpressions serialize and deserialize"() {
 
     CronExpression original = new CronExpression("19 15 10 4 Apr ? ")
