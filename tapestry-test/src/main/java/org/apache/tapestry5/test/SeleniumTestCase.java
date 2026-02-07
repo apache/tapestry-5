@@ -68,9 +68,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
 
-    public static final String TOMCAT_6 = "tomcat6";
+    public static final String TOMCAT = "tomcat";
 
-    public static final String JETTY_7 = "jetty7";
+    public static final String JETTY = "jetty";
 
     /**
      * An XPath expression for locating a submit element (very commonly used
@@ -416,12 +416,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     private ServletContainerRunner createWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort) throws Exception
     {
-        if (TOMCAT_6.equals(container))
+        if (TOMCAT.equals(container))
         {
             return new TomcatRunner(webAppFolder, contextPath, port, sslPort);
         }
 
-        if (JETTY_7.equals(container))
+        if (JETTY.equals(container))
         {
             return new JettyRunner(webAppFolder, contextPath, port, sslPort);
         }
