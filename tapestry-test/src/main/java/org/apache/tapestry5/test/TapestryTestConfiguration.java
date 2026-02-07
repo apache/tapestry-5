@@ -38,10 +38,10 @@ public @interface TapestryTestConfiguration
     String webAppFolder() default "src/main/webapp";
 
     /**
-     * Which container to use. Can be one of {@link SeleniumTestCase#JETTY_7} or {@link SeleniumTestCase#TOMCAT_6}.
-     * Defaults to {@link SeleniumTestCase#JETTY_7}.
+     * Which container to use. Can be one of {@link SeleniumTestCase#JETTY} or {@link SeleniumTestCase#TOMCAT}.
+     * Defaults to {@link SeleniumTestCase#JETTY}.
      */
-    String container() default SeleniumTestCase.JETTY_7;
+    String container() default SeleniumTestCase.JETTY;
 
     /**
      * The context path to make the application available under. Defaults to "", i.e. the context root.
