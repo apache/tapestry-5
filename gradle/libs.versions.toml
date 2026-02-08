@@ -34,7 +34,7 @@ hibernate           = "5.4.32.Final"
 hibernate-validator = "4.3.2.Final"
 
 hsqldb = "2.7.4"
-h2 = "2.4.240"
+h2 = "2.2.224"
 dbcp = "6.0.32"
 eclipselink = "2.7.7"
 jpa-specs = "1.1"
