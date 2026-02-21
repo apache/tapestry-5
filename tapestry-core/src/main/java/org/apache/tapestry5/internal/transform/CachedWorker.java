@@ -302,6 +302,12 @@ public class CachedWorker implements ComponentClassTransformWorker2
                 CHECKED_EXCEPTION_TYPES, new JSONArray(description.checkedExceptionTypes),
                 WATCH, method.getAnnotation(Cached.class).watch());
     }
+    
+    private static final String OBJECT_SIGNATURE = "Ljava/lang/Object";
+    
+    private static final String GENERIC_NON_LIST_METHOD_TYPE_PREFIX = "()T";
+    
+    private static final String GENERIC_NON_LIST_METHOD_TYPE = "()" + OBJECT_SIGNATURE + ";";
 
     private static String getGenericSignature(String signature)
     {
@@ -316,7 +322,7 @@ public class CachedWorker implements ComponentClassTransformWorker2
             {
                 if (types[i].startsWith("T"))
                 {
-                    types[i] = "Ljava/lang/Object";
+                    types[i] = OBJECT_SIGNATURE;
                     changed = true;
                 }
             }
@@ -325,6 +331,10 @@ public class CachedWorker implements ComponentClassTransformWorker2
                 final String newGenericTypeSignature = "<" + String.join(";", types) + ";>";
                 final String oldGenericTypeSignature = signature.substring(startIndex, endIndex + 1);
                 signature = signature.replace(oldGenericTypeSignature, newGenericTypeSignature);
+            }
+        } else {
+            if (signature.startsWith(GENERIC_NON_LIST_METHOD_TYPE_PREFIX)) {
+                signature = GENERIC_NON_LIST_METHOD_TYPE;
             }
         }
         return signature;
