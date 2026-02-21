@@ -1,4 +1,4 @@
-gradle-options := "--watch-fs"
+gradle-options := "--watch-fs --info"
 
 # Print all recipes
 default:

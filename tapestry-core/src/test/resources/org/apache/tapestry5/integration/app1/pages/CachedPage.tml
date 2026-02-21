@@ -18,4 +18,8 @@
 		<t:atCachedSuperclass/>
 	</div>
 	
+	<div>
+		<t:dogSelectionStep/>
+	</div>
+	
 </html>

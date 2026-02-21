@@ -642,6 +642,10 @@ public class PageClassLoaderContextManagerImpl implements PageClassLoaderContext
             finally
             {
                 componentDependencyRegistry.enableInvalidations();
+                for (int i = 0; i < 5; i++) 
+                {
+                    System.gc();
+                }
             }
             
         }

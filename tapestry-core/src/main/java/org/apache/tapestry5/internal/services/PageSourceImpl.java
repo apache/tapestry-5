@@ -323,6 +323,12 @@ public class PageSourceImpl implements PageSource
                     abstractClassInfoCache.remove(className);
                 }
             }
+            
+            for (int i = 0; i < 5; i++) 
+            {
+                System.gc();
+            }
+            
         }
             
         return Collections.emptyList();
