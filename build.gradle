@@ -144,7 +144,6 @@ subprojects {
                     artifactId = project.name + artifactSuffix
                 }
                 from components.java
-                artifact sourcesJar
 
                 pom {
                     name = project.name
