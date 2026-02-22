@@ -16,10 +16,8 @@ local-snapshot-full:
 tapestry-core-maven-local-snapshot:
 	./gradlew tapestry-core:publishToMavenLocal {{gradle-options}} -Dci=true
 
-_deploy_branch branch extra-options:
+_deploy_branch branch extra-options: fail-if-repository-not-clean
 	echo "Releasing branch: {{branch}} with Gradle extra options '{{extra-options}}'"
-	# Fail if there are untracked files or uncommitted changes
-	git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
 	git checkout {{branch}}
 	./gradlew clean generateRelease {{gradle-options}} {{extra-options}}
 
@@ -37,6 +35,10 @@ release version: (_deploy_branch "master" "") (_deploy_branch "javax" "")
 	git checkout javax
 	git tag {{version}}-javax
 	git push --tags
+
+# Fail if there are untracked files or uncommitted changes
+@fail-if-repository-not-clean:
+	git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
 
 # Builds Tapestry without running tests
 build:
