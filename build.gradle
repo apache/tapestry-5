@@ -314,7 +314,7 @@ tasks.register('typeScriptDocs') {
     group = 'Documentation'
     description = 'Builds typedoc documentation for all TypeScript sources'
 
-    dependsOn(project(':tapestry-core').tasks.named('generateTypeScriptDocs'))
+    dependsOn(':tapestry-core:generateTypeScriptDocs')
 }
 
 tasks.register('combinedJacocoReport', JacocoReport) {
