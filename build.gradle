@@ -487,7 +487,7 @@ if (canDeploy) {
         description 'Creates MD5/SHA256 checksums for archives of source and JavaDoc'
 
         source tasks.withType(Zip)
-        outputDir = layout.buildDirectory.dir('checksums')
+        outputDir = layout.buildDirectory.dir('checksums').get().getAsFile()
     }
 
     // This requires that you have the apacheArchivesFolder property configured in your
@@ -508,7 +508,7 @@ if (canDeploy) {
         group 'Release artifact'
         description 'Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)'
 
-        destinationDirectory = file(archiveDeployFolder.get())
+        destinationDir = file(archiveDeployFolder.get())
 
         from tasks.generateChecksums
         from configurations.uploads.allArtifacts.files
