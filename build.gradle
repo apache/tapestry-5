@@ -333,12 +333,15 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     def subprojectsToConsider = subprojects.findAll {
         !excludedProjects.contains(it.name)
     }
+    dependsOn subprojectsToConsider.test
 
-    dependsOn = subprojectsToConsider.test
+    def classFiles = files(subprojectsToConsider.sourceSets.main.output).asFileTree.matching {
+        exclude 'org/apache/tapestry5/internal/plastic/asm/**'
+    }
+    classDirectories.from(classFiles)
 
     additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
     sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
-    classDirectories.from(files(subprojectsToConsider.sourceSets.main.output))
     executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData).filter {
         it.exists()
     })
@@ -347,9 +350,12 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     reports {
         html {
             required = true
-            outputLocation = layout.buildDirectory.dir('reports/jacoco')
+            outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
         }
-        xml.required = false
+        xml {
+            required = true
+            outputLocation = layout.buildDirectory.file('reports/jacoco/jacoco.xml')
+        }
         csv.required = false
     }
 }
