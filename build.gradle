@@ -13,7 +13,7 @@ ext {
     tapestryMajorVersion = '5.10.0'
     tapestryMinorVersion = '' // Use for release suffixes like '-alpha-1'
 
-    artifactSuffix = '-jakarta'
+    artifactSuffix = ''
 
     // Artifacts that have both an unsuffixed artifact from the javax branch
     // and a suffixed one from the master branch
