@@ -227,9 +227,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-        // options.setHeadless(true);
         // options.setLogLevel(FirefoxDriverLogLevel.TRACE);
-        
+
+        // TAP5-2819: Run headless on CI
+        if (Boolean.parseBoolean(System.getProperty("ci", "false"))) {
+            options.addArguments("-headless");
+        }
+
         if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
         {
             LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
