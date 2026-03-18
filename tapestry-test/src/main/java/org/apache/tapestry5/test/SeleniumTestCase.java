@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 import org.openqa.selenium.By;
@@ -65,6 +64,8 @@ import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 public abstract class SeleniumTestCase extends Assert implements Selenium
 {
     public final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
+
+    public static final long WAIT_TIMEOUT = Long.getLong("selenium.wait.timeout", 15L);
 
     /**
      * 15 seconds
@@ -256,8 +257,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         FirefoxDriver driver = profileRoot != null
                 ? new FirefoxDriver(createGeckoDriverService(profileRoot), options)
                 : new FirefoxDriver(options);
-        
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        // Implicit waiting can interfere with WebDriverWait
+        // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
 
@@ -1410,7 +1412,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected void waitForCondition(ExpectedCondition condition)
     {
-      waitForCondition(condition, 10l);
+      waitForCondition(condition, WAIT_TIMEOUT);
     }
 
     protected void waitForCondition(ExpectedCondition condition, long timeoutSeconds)

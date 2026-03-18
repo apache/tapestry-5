@@ -14,7 +14,8 @@ tasks.withType(Test).configureEach { testTask ->
         'java.io.tmpdir': temporaryDir.absolutePath,
         'file.encoding': 'UTF-8',
         'user.language': 'en', // TAP5-2722
-        'ci': System.getProperty('ci', 'false') // TAP5-2819: Propagate 'ci' from possible GRADLE_OPTS to forked test workers
+        'ci': System.getProperty('ci', 'false'), // TAP5-2819: Propagate 'ci' from possible GRADLE_OPTS to forked test workers
+        'selenium.wait.timeout': System.getProperty('selenium.wait.timeout', '15')
     )
 
     environment.LANG = 'en_US.UTF-8'
