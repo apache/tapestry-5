@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        GRADLE_OPTS  = '-Dci=true -Dfile.encoding=UTF-8'
+        GRADLE_OPTS  = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=30'
     }
 
     tools {
