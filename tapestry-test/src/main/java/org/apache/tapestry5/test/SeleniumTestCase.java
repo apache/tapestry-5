@@ -224,38 +224,51 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         FirefoxDriverManager.firefoxdriver().setup();
 
-        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-        // options.setLogLevel(FirefoxDriverLogLevel.TRACE);
 
         // TAP5-2819: Run headless on CI
-        if (Boolean.parseBoolean(System.getProperty("ci", "false"))) {
+        if (Boolean.parseBoolean(System.getProperty("ci", "false")))
+        {
             options.addArguments("-headless");
+            options.addArguments("--width=1920");
+            options.addArguments("--height=1080");
         }
 
-        if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
-        {
-            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
-            FirefoxProfile profile = new FirefoxProfile(ffProfileTemplate);
-            options.setProfile(profile);
-            // profile.layoutOnDisk();
-        }
-        else 
-        {
-            FirefoxProfile profile = new FirefoxProfile();
-            options.setProfile(profile);
-            profile.setPreference("intl.accept_languages", "en,fr,de");
-        }
-        
+        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
+
         // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
         String osName = System.getProperty("os.name");
-        String profileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
+        String snapProfileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
                 ? createProfileRootInUserHome()
                 : null;
-        FirefoxDriver driver = profileRoot != null
-                ? new FirefoxDriver(createGeckoDriverService(profileRoot), options)
+
+        FirefoxProfile profile;
+        if (ffProfileTemplate.isDirectory())
+        {
+            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
+            profile = new FirefoxProfile(ffProfileTemplate);
+        }
+        else if (snapProfileRoot != null)
+        {
+            File snapSafeDir = new File(snapProfileRoot, "tmp-profile");
+            snapSafeDir.mkdirs();
+            LOGGER.info("Creating Snap-compatible Firefox profile in: {}", snapSafeDir);
+
+            profile = new FirefoxProfile(snapSafeDir);
+            profile.setPreference("intl.accept_languages", "en,fr,de");
+        }
+        else
+        {
+            LOGGER.info("Using default Firefox profile");
+            profile = new FirefoxProfile();
+            profile.setPreference("intl.accept_languages", "en,fr,de");
+        }
+
+        options.setProfile(profile);
+
+        FirefoxDriver driver = snapProfileRoot != null
+                ? new FirefoxDriver(createGeckoDriverService(snapProfileRoot), options)
                 : new FirefoxDriver(options);
 
         // Implicit waiting can interfere with WebDriverWait
@@ -337,10 +350,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     private static String createProfileRootInUserHome() {
         String userHome = System.getProperty("user.home");
         File profileRoot = new File(userHome, "snap/firefox/common/.firefox-profile-root");
-        if (!profileRoot.exists()) {
-            if (!profileRoot.mkdirs()) {
-                return null;
-            }
+        if (!profileRoot.exists() && !profileRoot.mkdirs()) {
+            return null;
         }
         return profileRoot.getAbsolutePath();
     }    
