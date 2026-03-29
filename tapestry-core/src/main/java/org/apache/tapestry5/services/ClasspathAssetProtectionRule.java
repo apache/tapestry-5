@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
  * based on their paths. Access is blocked if any rule says it should be blocked.
  * 
  * @see ComponentEventRequestHandler
+ * @since 5.5.0
  */
 @UsesOrderedConfiguration(ClasspathAssetProtectionRule.class)
 public interface ClasspathAssetProtectionRule

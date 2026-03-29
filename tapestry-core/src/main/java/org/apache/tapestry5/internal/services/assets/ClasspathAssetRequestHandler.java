@@ -61,7 +61,10 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
         ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
         
         final boolean handled;
-        if (classpathAssetProtectionRule.block(path.resourcePath) && !path.resourcePath.equals(ChecksumPath.NON_EXISTING_RESOURCE)) 
+        
+        final String resourcePath = path.resourcePath.replace("\\.", "");
+        
+        if (classpathAssetProtectionRule.block(resourcePath) && !path.resourcePath.equals(ChecksumPath.NON_EXISTING_RESOURCE)) 
         {
             if (LOGGER.isWarnEnabled()) 
             {

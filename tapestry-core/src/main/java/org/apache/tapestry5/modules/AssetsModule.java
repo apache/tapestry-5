@@ -429,6 +429,8 @@ public class AssetsModule
         configuration.add("PropertiesFile", propertiesFileRule);
         ClasspathAssetProtectionRule xmlFileRule = (s) -> s.toLowerCase().endsWith(".xml");
         configuration.add("XMLFile", xmlFileRule);
+        ClasspathAssetProtectionRule tmlFileRule = (s) -> s.toLowerCase().endsWith(".tml");
+        configuration.add("TemplateFile", tmlFileRule);
         ClasspathAssetProtectionRule folderRule = (s) -> isFolderToBlock(s);
         configuration.add("Folder", folderRule);
     }
