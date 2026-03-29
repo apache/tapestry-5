@@ -32,7 +32,7 @@ pipeline {
 
         stage('Test: Check') {
             steps {
-                sh './gradlew check'
+                sh './gradlew check --continue'
             }
             post {
                 always {
