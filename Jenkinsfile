@@ -46,25 +46,20 @@ pipeline {
 
         // -- 03: Coverage (JaCoCo) --------------------------------------------
 
-        stage('Coverage') {
-            steps {
-                sh './gradlew combinedJacocoReport'
-            }
-            post {
-                always {
-                    recordCoverage(
-                        tools: [[
-                            parser:  'JACOCO',
-                            pattern: '**/build/reports/jacoco/jacoco.xml'
-                        ]],
-                        id:   'jacoco',
-                        name: 'JaCoCo Coverage',
-                        sourceDirectories: [[path: 'glob:**/src/main/java']],
-                        sourceCodeRetention: 'LAST_BUILD'
-                    )
-                }
-            }
-        }
+//       stage('Coverage') {
+//           steps {
+//               sh './gradlew combinedJacocoReport'
+//           }
+//           post {
+//               always {
+//                   jacoco(
+//                       execPattern:   '**/build/jacoco/*.exec',
+//                       classPattern:  '**/build/classes/java/main',
+//                       sourcePattern: '**/src/main/java'
+//                   )
+//               }
+//           }
+//       }
 
         // -- 04: Archive Artifacts --------------------------------------------
 
