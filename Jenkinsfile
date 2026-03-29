@@ -28,9 +28,9 @@ pipeline {
             }
         }
 
-        // -- 02: Test: Check + jQuery + RequireJS Enabled ---------------------
+        // -- 02: Test: Check - Unit + integration tests (jQuery + RequireJS) --
 
-        stage('Test: Check + jQuery + RequireJS Enabled') {
+        stage('Test: Check') {
             steps {
                 sh './gradlew check'
             }
@@ -44,69 +44,7 @@ pipeline {
             }
         }
 
-        // -- 03: Test Variants ------------------------------------------------
-
-        stage('Test: Prototype + RequireJS Disabled') {
-            steps {
-                sh './gradlew tapestry-core:testWithPrototypeAndRequireJsDisabled'
-            }
-            post {
-                always {
-                     sh '''
-                        if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled" ]; then
-                            find tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="PrototypeAndRequireJsDisabled./g' {} +
-                        fi
-                    '''
-
-                    junit(
-                        testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled/**/*.xml',
-                        allowEmptyResults: true
-                    )
-                }
-            }
-        }
-
-        stage('Test: jQuery + RequireJS Disabled') {
-            steps {
-                sh './gradlew tapestry-core:testWithJqueryAndRequireJsDisabled'
-            }
-            post {
-                always {
-                   sh '''
-                        if [ -d "tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled" ]; then
-                            find tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="JqueryAndRequireJsDisabled./g' {} +
-                        fi
-                    '''
-
-                    junit(
-                        testResults: 'tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled/**/*.xml',
-                        allowEmptyResults: true
-                    )
-                }
-            }
-        }
-
-        stage('Test: Prototype + RequireJS Enabled') {
-            steps {
-                sh './gradlew tapestry-core:testWithPrototypeAndRequireJsEnabled'
-            }
-            post {
-                always {
-                    sh '''
-                        if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled" ]; then
-                            find tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="PrototypeAndRequireJsEnabled./g' {} +
-                        fi
-                    '''
-
-                    junit(
-                        testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled/**/*.xml',
-                        allowEmptyResults: true
-                    )
-                }
-            }
-        }
-
-        // -- 04: Coverage (JaCoCo) --------------------------------------------
+        // -- 03: Coverage (JaCoCo) --------------------------------------------
 
         stage('Coverage') {
             steps {
@@ -128,7 +66,7 @@ pipeline {
             }
         }
 
-        // -- 05: Archive Artifacts --------------------------------------------
+        // -- 04: Archive Artifacts --------------------------------------------
 
         stage('Archive') {
             steps {
@@ -139,7 +77,7 @@ pipeline {
             }
         }
 
-        // -- 06: Aggregate Javadoc --------------------------------------------
+        // -- 05: Aggregate Javadoc --------------------------------------------
 
         stage('Aggregate Javadoc') {
             steps {
