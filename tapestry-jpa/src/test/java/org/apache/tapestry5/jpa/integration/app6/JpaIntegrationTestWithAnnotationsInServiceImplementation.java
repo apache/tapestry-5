@@ -140,11 +140,18 @@ public class JpaIntegrationTestWithAnnotationsInServiceImplementation extends Se
         open("/griddemo");
 
         clickAndWait("link=setup");
+        
+        final String firstNameSelector = "th[data-grid-property=firstName] a";
+        waitForCssSelectorToAppear(firstNameSelector);
 
+        if (!isElementPresent("link=First Name")) {
+            throw new IllegalStateException("link=First Name not found. HTML:\n" + getHtmlSource());
+        }
         clickAndWait("link=First Name");
 
         assertText("//td[@data-grid-column-sort='ascending']", "Joe_1");
 
+        waitForCssSelectorToAppear(firstNameSelector);
         clickAndWait("link=First Name");
 
         assertText("//td[@data-grid-column-sort='descending']", "Joe_9");

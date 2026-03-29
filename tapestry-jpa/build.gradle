@@ -18,10 +18,13 @@ dependencies {
 }
 
 (1..6).each {
-    tasks.register("runTestApp${it}", JavaExec) {
-        description = "Start app${it} integration test app, useful when debugging failing integration tests"
+    
+    var number = it;
+    
+    tasks.register("runTestApp${number}", JavaExec) {
+        description = "Start app${number} integration test app, useful when debugging failing integration tests"
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
-        args '-d', "src/test/app${it}", '-p', '8080'
+        args '-d', "src/test/app${number}", '-p', '8080'
         classpath = project.sourceSets.test.runtimeClasspath
     }
 }
