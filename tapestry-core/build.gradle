@@ -144,22 +144,34 @@ tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
     group = 'Verification'
     description = 'Runs tests with jQuery and Require.js disabled'
 
-    systemProperty 'tapestry.javascript-infrastructure-provider', 'jquery'
-    systemProperty 'tapestry.require-js-enabled', 'false'
+    systemProperties(
+        'tapestry.javascript-infrastructure-provider': 'jquery',
+        'tapestry.require-js-enabled':                 'false',
+        'tapestry.port':                               '9091',
+        'tapestry.ssl-port':                           '8444'
+    )
 }
 
 tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
     group = 'Verification'  
     description = 'Runs tests with Prototype and Require.js enabled'
 
-    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
-    systemProperty 'tapestry.require-js-enabled', 'true'
+    systemProperties(
+        'tapestry.javascript-infrastructure-provider': 'prototype',
+        'tapestry.require-js-enabled':                 'true',
+        'tapestry.port':                               '9092',
+        'tapestry.ssl-port':                           '8445'
+    )
 }
 
 tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
     group = 'Verification'
     description = 'Runs tests with Prototype and Require.js disabled'
 
-    systemProperty 'tapestry.javascript-infrastructure-provider', 'prototype'
-    systemProperty 'tapestry.require-js-enabled', 'false'
+    systemProperties(
+        'tapestry.javascript-infrastructure-provider': 'prototype',
+        'tapestry.require-js-enabled':                 'false',
+        'tapestry.port':                               '9093',
+        'tapestry.ssl-port':                           '8446'
+    )
 }

@@ -360,12 +360,18 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         String value = xmlTest.getParameter(key);
 
+        if (value == null)
+        {
+            // fall back to JVM system property
+            value = System.getProperty(key);
+        }
+
         return value != null ? value : defaultValue;
     }
 
     private final int getIntParameter(XmlTest xmlTest, String key, int defaultValue)
     {
-        String value = xmlTest.getParameter(key);
+        String value = getParameter(xmlTest, key, null);
 
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
