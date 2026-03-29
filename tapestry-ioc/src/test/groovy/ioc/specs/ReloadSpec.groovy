@@ -149,9 +149,9 @@ class ReloadSpec extends Specification {
 
     update()
 
-    touch classFile
-
     createImplementationClass "updated"
+
+    touch classFile
 
     then:
 
@@ -207,9 +207,9 @@ class ReloadSpec extends Specification {
 
     when:
 
-    touch(new File(pathForInternalName(baseClassInternalName)))
-
     createImplementationClass BASE_CLASS, "updated from base"
+
+    touch(new File(pathForInternalName(baseClassInternalName)))
 
     update()
 
@@ -267,9 +267,9 @@ class ReloadSpec extends Specification {
 
     when:
 
-    touch classFile
-
     createImplementationClass "updated proxy"
+
+    touch classFile
 
     update()
 
@@ -279,9 +279,9 @@ class ReloadSpec extends Specification {
 
     when:
 
-    touch classFile
-
     createImplementationClass "re-updated proxy"
+
+    touch classFile
 
     update()
 
@@ -300,9 +300,9 @@ class ReloadSpec extends Specification {
 
     ReloadableService reloadable = getService ReloadableService
 
-    touch classFile
-
     createInvalidImplementationClass()
+
+    touch classFile
 
     update()
 
@@ -398,7 +398,7 @@ class ReloadSpec extends Specification {
       // catches the change to the file. The Ubuntu CI Server appears
       // to need longer waits.
 
-      Thread.sleep 50 * (2 ^ index++)
+      Thread.sleep 50 * (2 ** index++)
     }
   }
 }
