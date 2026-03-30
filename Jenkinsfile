@@ -40,39 +40,31 @@ pipeline {
                         testResults: '**/build/test-results/test/**/*.xml',
                         allowEmptyResults: true
                     )
+                    archiveArtifacts(
+                        artifacts: '**/build/reports/tests/**/*, **/build/test-results/**/*',
+                        allowEmptyArchive: true
+                    )
                 }
             }
         }
 
         // -- 03: Coverage (JaCoCo) --------------------------------------------
 
-//       stage('Coverage') {
-//           steps {
-//               sh './gradlew combinedJacocoReport'
-//           }
-//           post {
-//               always {
-//                   jacoco(
-//                       execPattern:   '**/build/jacoco/*.exec',
-//                       classPattern:  '**/build/classes/java/main',
-//                       sourcePattern: '**/src/main/java'
-//                   )
-//               }
-//           }
-//       }
-
-        // -- 04: Archive Artifacts --------------------------------------------
-
-        stage('Archive') {
-            steps {
-                archiveArtifacts(
-                    artifacts: '**/build/reports/**/*, **/build/test-results/**/*',
-                    allowEmptyArchive: true
-                )
-            }
+       stage('Coverage') {
+           steps {
+               sh './gradlew combinedJacocoReport'
+           }
+           post {
+               always {
+                    archiveArtifacts(
+                        artifacts: '**/build/reports/jacoco/**/*',
+                        allowEmptyArchive: true
+                    )
+               }
+           }
         }
 
-        // -- 05: Aggregate Javadoc --------------------------------------------
+        // -- 04: Aggregate Javadoc --------------------------------------------
 
         stage('Aggregate Javadoc') {
             steps {
