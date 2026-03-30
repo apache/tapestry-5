@@ -17,14 +17,11 @@ dependencies {
     testRuntimeOnly libs.h2
 }
 
-(1..6).each {
-    
-    var number = it;
-    
-    tasks.register("runTestApp${number}", JavaExec) {
-        description = "Start app${number} integration test app, useful when debugging failing integration tests"
+(1..6).each { n ->
+    tasks.register("runTestApp${n}", JavaExec) {
+        description = "Start app${n} integration test app, useful when debugging failing integration tests"
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
-        args '-d', "src/test/app${number}", '-p', '8080'
+        args '-d', "src/test/app${n}", '-p', '8080'
         classpath = project.sourceSets.test.runtimeClasspath
     }
 }
