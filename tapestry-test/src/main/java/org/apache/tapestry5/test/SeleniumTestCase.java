@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -102,6 +103,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     private ErrorReporter errorReporter;
 
     private ITestContext testContext;
+
+    private boolean errorReportWritten = false;
 
     /**
      * Starts up the servers for the entire test (i.e., for multiple TestCases). By placing &lt;parameter&gt; elements
@@ -236,7 +239,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         }
 
         File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
-
         // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
         String osName = System.getProperty("os.name");
         String snapProfileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
@@ -481,6 +483,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected void writeErrorReport(String reportText)
     {
+        errorReportWritten = true;
         errorReporter.writeErrorReport(reportText);
     }
 
@@ -498,6 +501,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @BeforeMethod
     public void indicateTestMethodName(Method testMethod)
     {
+        errorReportWritten = false;
+
         LOGGER.info("Executing " + testMethod);
 
         testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, testMethod);
@@ -509,8 +514,14 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     @AfterMethod
-    public void cleanupTestMethod()
+    public void cleanupTestMethod(ITestResult result)
     {
+        if (result.getStatus() == ITestResult.FAILURE && !errorReportWritten)
+        {
+            Throwable t = result.getThrowable();
+            String message = t != null ? t.toString() : "Test failed";
+            writeErrorReport(message);
+        }
         testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, null);
     }
 
