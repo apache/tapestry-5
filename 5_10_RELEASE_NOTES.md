@@ -40,10 +40,11 @@ If you need to use Underscore.js or jQuery, they're automatically available for 
 
 ### New/Updated Features
 
-*   Gradle 8.5 -> 8.14.2
+*   Gradle 8.5 -> 8.14.4
 *   Gradle conventions (`buildSrc`)
 *   Versions catalog plus a few project-specific dependencies in their `build.gradle` files
 *   Moving (slowly) away from TestNG towards Junit/Jupiter
+*   Removing unused dependencies (like Geb for testing)
 
 ### Non-backward-compatible changes
 
@@ -51,15 +52,35 @@ If you need to use Underscore.js or jQuery, they're automatically available for 
 
 ---
 
+## Build System Overhaul
+
+*   Move to multi-branch declarative Jenkins pipeline
+
+*   Multiple Jenkinsfiles to split up core testing (unit + default integration tests) and the integration test variants to stabilize build behaviour.
+
+---
+
 ## Selenium / tapestry-test
+
+*   `SeleniumTestCase` had minor improvements:
+    *   CI always runs headless, with explicit window size
+    *   Implicit waiting removed in favour of actual WebDriver waiting
+    *   Always report errors (HTML/screenshot)
 
 ### Non-backward-compatible changes (but that probably won't cause problems)
 
 *   The `link=` selector used in tests is now converted to XPath to circumvent legacy Selenium behavior.
     Before, Selenium used JS to find the link, which might no longer work in newer versions.
-    This is a minimal fix before TAP5-2817 will revamp SeleniumTestCase.
+    This is a minimal fix before TAP5-2817 will revamp `SeleniumTestCase`.
 
 *   Renaming constants to reflect reality.
-    As the testing container version dependes on the version catalog / outside context, a version-independent name is more sensible.
+    As the testing container version depends on the version catalog / outside context, a version-independent name is more sensible.
     *   `SeleniumTestCase.JETTY_7` ("jetty7") -> `SeleniumTestCase.JETTY` ("jetty")
-    *   `SeleniumTestCase.TOMCAT_6` ("tomcat6") -> `SeleniumTestCase.TOMCAT` ("tomcate")
+    *   `SeleniumTestCase.TOMCAT_6` ("tomcat6") -> `SeleniumTestCase.TOMCAT` ("tomcat")
+
+---
+
+## Minor Improvements and Bugfixes
+
+*   `ConcurrentBarrier`:
+    Possible starvation issue fixed (only a test issue, should occur in production).
