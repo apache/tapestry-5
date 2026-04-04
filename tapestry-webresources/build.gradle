@@ -25,10 +25,6 @@ dependencies {
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-runner')
 
-    testImplementation(libs.geb.spock) {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all' // avoid multiple Groovy compilers on classpath
-    }
-
     testImplementation project(":tapestry-spock")
     testImplementation libs.selenium.java
     testImplementation libs.webdrivermanager

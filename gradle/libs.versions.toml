@@ -79,8 +79,7 @@ junit4 = "4.13.2"
 testng   = "7.5.1"
 easymock = "5.4.0"
 
-spock = "2.3-groovy-4.0"
-geb   = "2.0"
+spock = "2.4-groovy-4.0"
 
 selenium-java    = "4.12.1"
 selenium-legrc   = "4.5.0"
@@ -208,8 +207,6 @@ easymock = { module = "org.easymock:easymock", version.ref = "easymock" }
 
 spock-bom  = { module = "org.spockframework:spock-bom", version.ref = "spock" }
 spock-core = { module = "org.spockframework:spock-core" }
-
-geb-spock = { module = "org.gebish:geb-spock", version.ref = "geb" }
 
 selenium-java    = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
 selenium-legrc   = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium-legrc" }
