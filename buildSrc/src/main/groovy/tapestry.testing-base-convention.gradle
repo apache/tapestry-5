@@ -9,14 +9,16 @@ dependencies {
 tasks.withType(Test).configureEach { testTask ->
     maxHeapSize = '600M'
 
-    systemProperties['tapestry.service-reloading-enabled'] = 'false'
-    systemProperties['java.io.tmpdir'] = temporaryDir.absolutePath
+    systemProperties(
+        'tapestry.service-reloading-enabled': 'false',
+        'java.io.tmpdir': temporaryDir.absolutePath,
+        'file.encoding': 'UTF-8',
+        'user.language': 'en', // TAP5-2722
+        'ci': System.getProperty('ci', 'false'), // TAP5-2819: Propagate 'ci' from possible GRADLE_OPTS to forked test workers
+        'selenium.wait.timeout': System.getProperty('selenium.wait.timeout', '15')
+    )
 
-    jvmArgs '-Dfile.encoding=UTF-8'
     environment.LANG = 'en_US.UTF-8'
-
-    // TAP5-2722
-    systemProperty 'user.language', 'en'
 
     testLogging {
         exceptionFormat 'full'

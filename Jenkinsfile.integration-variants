@@ -1,0 +1,122 @@
+pipeline {
+    // Don't set an agent, or it won't parallelize correctly.
+    // Each stage should ask for it's own agent
+    agent none
+
+    environment {
+        // Disable the daemon to prevent parallal issues
+        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dorg.gradle.daemon=false'
+    }
+
+    tools {
+        jdk 'jdk_8_latest'
+    }
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        skipStagesAfterUnstable()
+    }
+
+    stages {
+        stage('Integration Test Variants') {
+            parallel {
+                stage('Test: Prototype + RequireJS Disabled') {
+                    agent {
+                        node {
+                            label 'ubuntu'
+                        }
+                    }
+                    steps {
+                        sh './gradlew tapestry-core:testWithPrototypeAndRequireJsDisabled --continue'
+                    }
+                    post {
+                        always {
+                            sh '''
+                                if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled" ]; then
+                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Prototype./g' {} +
+                                fi
+                            '''
+
+                            junit(
+                                testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled/**/*.xml',
+                                allowEmptyResults: true
+                            )
+                        }
+                    }
+                }
+
+                stage('Test: jQuery + RequireJS Disabled') {
+                    agent {
+                        node {
+                            label 'ubuntu'
+                        }
+                    }
+                    steps {
+                        sh './gradlew tapestry-core:testWithJqueryAndRequireJsDisabled --continue'
+                    }
+                    post {
+                        always {
+                        sh '''
+                                if [ -d "tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled" ]; then
+                                    find tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Jquery./g' {} +
+                                fi
+                            '''
+
+                            junit(
+                                testResults: 'tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled/**/*.xml',
+                                allowEmptyResults: true
+                            )
+                        }
+                    }
+                }
+
+                stage('Test: Prototype + RequireJS Enabled') {
+                    agent {
+                        node {
+                            label 'ubuntu'
+                        }
+                    }
+                    steps {
+                        sh './gradlew tapestry-core:testWithPrototypeAndRequireJsEnabled --continue'
+                    }
+                    post {
+                        always {
+                            sh '''
+                                if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled" ]; then
+                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="PrototypeRjs./g' {} +
+                                fi
+                            '''
+
+                            junit(
+                                testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled/**/*.xml',
+                                allowEmptyResults: true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            emailext (
+                to: "${env.MAIL_NOTIFICATION}",
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                         <p>Check console output at &quot;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&quot;</p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+
+        unstable {
+            emailext (
+                to: "${env.MAIL_NOTIFICATION}",
+                subject: "UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                         <p>Check console output at &quot;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&quot;</p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+    }
+}
