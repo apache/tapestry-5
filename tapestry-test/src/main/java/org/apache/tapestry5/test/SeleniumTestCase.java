@@ -12,21 +12,22 @@
 
 package org.apache.tapestry5.test;
 
-import com.thoughtworks.selenium.CommandProcessor;
-import com.thoughtworks.selenium.Selenium;
-import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
-import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.tapestry5.test.constants.TapestryRunnerConstants;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
@@ -38,19 +39,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
-import org.testng.annotations.*;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.xml.XmlTest;
 
-import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
+import com.thoughtworks.selenium.CommandProcessor;
+import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
+import com.thoughtworks.selenium.webdriven.WebDriverCommandProcessor;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import io.github.bonigarcia.wdm.managers.FirefoxDriverManager;
 
 /**
  * Base class for creating Selenium-based integration test cases. This class implements all the
@@ -62,6 +65,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class SeleniumTestCase extends Assert implements Selenium
 {
     public final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
+
+    public static final long WAIT_TIMEOUT = Long.getLong("selenium.wait.timeout", 15L);
 
     /**
      * 15 seconds
@@ -98,6 +103,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     private ErrorReporter errorReporter;
 
     private ITestContext testContext;
+
+    private boolean errorReportWritten = false;
 
     /**
      * Starts up the servers for the entire test (i.e., for multiple TestCases). By placing &lt;parameter&gt; elements
@@ -220,37 +227,54 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         FirefoxDriverManager.firefoxdriver().setup();
 
-        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-
         FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-        // options.setHeadless(true);
-        // options.setLogLevel(FirefoxDriverLogLevel.TRACE);
-        
-        if (ffProfileTemplate.isDirectory() && ffProfileTemplate.exists())
+
+        // TAP5-2819: Run headless on CI
+        if (Boolean.parseBoolean(System.getProperty("ci", "false")))
         {
-            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
-            FirefoxProfile profile = new FirefoxProfile(ffProfileTemplate);
-            options.setProfile(profile);
-            // profile.layoutOnDisk();
+            options.addArguments("-headless");
+            options.addArguments("--width=1920");
+            options.addArguments("--height=1080");
         }
-        else 
-        {
-            FirefoxProfile profile = new FirefoxProfile();
-            options.setProfile(profile);
-            profile.setPreference("intl.accept_languages", "en,fr,de");
-        }
-        
+
+        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
         String osName = System.getProperty("os.name");
-        String profileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
+        String snapProfileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
                 ? createProfileRootInUserHome()
                 : null;
-        FirefoxDriver driver = profileRoot != null
-                ? new FirefoxDriver(createGeckoDriverService(profileRoot), options)
+
+        FirefoxProfile profile;
+        if (ffProfileTemplate.isDirectory())
+        {
+            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
+            profile = new FirefoxProfile(ffProfileTemplate);
+        }
+        else if (snapProfileRoot != null)
+        {
+            File snapSafeDir = new File(snapProfileRoot, "tmp-profile");
+            snapSafeDir.mkdirs();
+            LOGGER.info("Creating Snap-compatible Firefox profile in: {}", snapSafeDir);
+
+            profile = new FirefoxProfile(snapSafeDir);
+            profile.setPreference("intl.accept_languages", "en,fr,de");
+        }
+        else
+        {
+            LOGGER.info("Using default Firefox profile");
+            profile = new FirefoxProfile();
+            profile.setPreference("intl.accept_languages", "en,fr,de");
+        }
+
+        options.setProfile(profile);
+
+        FirefoxDriver driver = snapProfileRoot != null
+                ? new FirefoxDriver(createGeckoDriverService(snapProfileRoot), options)
                 : new FirefoxDriver(options);
-        
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        // Implicit waiting can interfere with WebDriverWait
+        // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
 
         CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
 
@@ -328,10 +352,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     private static String createProfileRootInUserHome() {
         String userHome = System.getProperty("user.home");
         File profileRoot = new File(userHome, "snap/firefox/common/.firefox-profile-root");
-        if (!profileRoot.exists()) {
-            if (!profileRoot.mkdirs()) {
-                return null;
-            }
+        if (!profileRoot.exists() && !profileRoot.mkdirs()) {
+            return null;
         }
         return profileRoot.getAbsolutePath();
     }    
@@ -351,12 +373,18 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         String value = xmlTest.getParameter(key);
 
+        if (value == null)
+        {
+            // fall back to JVM system property
+            value = System.getProperty(key);
+        }
+
         return value != null ? value : defaultValue;
     }
 
     private final int getIntParameter(XmlTest xmlTest, String key, int defaultValue)
     {
-        String value = xmlTest.getParameter(key);
+        String value = getParameter(xmlTest, key, null);
 
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
@@ -455,6 +483,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected void writeErrorReport(String reportText)
     {
+        errorReportWritten = true;
         errorReporter.writeErrorReport(reportText);
     }
 
@@ -472,6 +501,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     @BeforeMethod
     public void indicateTestMethodName(Method testMethod)
     {
+        errorReportWritten = false;
+
         LOGGER.info("Executing " + testMethod);
 
         testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, testMethod);
@@ -483,8 +514,14 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     @AfterMethod
-    public void cleanupTestMethod()
+    public void cleanupTestMethod(ITestResult result)
     {
+        if (result.getStatus() == ITestResult.FAILURE && !errorReportWritten)
+        {
+            Throwable t = result.getThrowable();
+            String message = t != null ? t.toString() : "Test failed";
+            writeErrorReport(message);
+        }
         testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, null);
     }
 
@@ -1403,7 +1440,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected void waitForCondition(ExpectedCondition condition)
     {
-      waitForCondition(condition, 10l);
+      waitForCondition(condition, WAIT_TIMEOUT);
     }
 
     protected void waitForCondition(ExpectedCondition condition, long timeoutSeconds)
