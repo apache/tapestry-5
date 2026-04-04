@@ -103,7 +103,7 @@ subprojects {
     plugins.apply 'groovy'
 
     jacoco {
-        toolVersion = '0.8.7'
+        toolVersion = '0.8.14'
     }
 
     dependencies {
@@ -248,10 +248,6 @@ tasks.register('aggregateJavadoc', Javadoc) {
     def allMainJavaFiles = allMainSourceSets*.java
     def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
 
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
-        exclude 'org/apache/tapestry5/spring/**'
-    }
-
     exclude 'org/apache/tapestry5/internal/plastic/asm/**'
     exclude 'org/apache/tapestry5/internal/webresources/**'
     exclude 'org/apache/tapestry5/webresources/modules/**'
@@ -268,14 +264,13 @@ tasks.register('aggregateJavadoc', Javadoc) {
         stylesheetFile tapestryStylesheet
         windowTitle "Tapestry API - ${project.version}"
         header "Tapestry API - ${project.version}"
-        docTitle "Tapestry API - ($project.version)"
+        docTitle "Tapestry API - (${project.version})"
         bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
         setUse(use)
         links 'https://docs.oracle.com/javase/8/docs/api/'
 
-        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-            tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
-        }
+        tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
+
         //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
         //        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
         addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
@@ -283,10 +278,8 @@ tasks.register('aggregateJavadoc', Javadoc) {
         taglets 'org.apache.tapestry5.javadoc.TapestryDocTaglet'
 
         // Javadoc became stricer, so lets do this to actually build for now
-        if (JavaVersion.current().isJava9Compatible()) {
-            addBooleanOption('html5', true)
-            addStringOption('Xdoclint:none', '-quiet')
-        }
+        addBooleanOption('html5', true)
+        addStringOption('Xdoclint:none', '-quiet')
     }
 
     // As part of generating the documentation, ALSO copy any related files:
@@ -336,12 +329,15 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     def subprojectsToConsider = subprojects.findAll {
         !excludedProjects.contains(it.name)
     }
+    dependsOn subprojectsToConsider.test
 
-    dependsOn = subprojectsToConsider.test
+    def classFiles = files(subprojectsToConsider.sourceSets.main.output).asFileTree.matching {
+        exclude 'org/apache/tapestry5/internal/plastic/asm/**'
+    }
+    classDirectories.from(classFiles)
 
     additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
     sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
-    classDirectories.from(files(subprojectsToConsider.sourceSets.main.output))
     executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData).filter {
         it.exists()
     })
@@ -350,9 +346,12 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     reports {
         html {
             required = true
-            outputLocation = layout.buildDirectory.dir('reports/jacoco')
+            outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
         }
-        xml.required = false
+        xml {
+            required = true
+            outputLocation = layout.buildDirectory.file('reports/jacoco/jacoco.xml')
+        }
         csv.required = false
     }
 }
