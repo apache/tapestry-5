@@ -76,26 +76,26 @@ pipeline {
                     }
                 }
             }
+        }
 
-            // -- 03: JavaDoc Generation -------------------------------------------
+        // -- 03: JavaDoc Generation -------------------------------------------
 
-            stage('Aggregate Javadoc') {
-                agent { node { label 'ubuntu' } }
-                tools {
-                    jdk 'jdk_21_latest'
-                }
-                steps {
-                    sh './gradlew aggregateJavadoc'
-                }
-                post {
-                    always {
-                        publishHTML(target: [
-                            reportDir:   'build/documentation/javadocs',
-                            reportFiles: 'index.html',
-                            reportName:  'Aggregate Javadoc',
-                            keepAll:     true
-                        ])
-                    }
+        stage('Aggregate Javadoc') {
+            agent { node { label 'ubuntu' } }
+            tools {
+                jdk 'jdk_21_latest'
+            }
+            steps {
+                sh './gradlew aggregateJavadoc'
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        reportDir:   'build/documentation/javadocs',
+                        reportFiles: 'index.html',
+                        reportName:  'Aggregate Javadoc',
+                        keepAll:     true
+                    ])
                 }
             }
         }
