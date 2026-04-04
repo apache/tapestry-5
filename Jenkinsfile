@@ -1,83 +1,101 @@
 pipeline {
-    agent {
-        node {
-            label 'ubuntu'
-        }
-    }
+    agent none
 
     environment {
-        GRADLE_OPTS  = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=30'
-    }
-
-    tools {
-        jdk 'jdk_11_latest'
+        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=30'
     }
 
     options {
-        timeout(time: 3, unit: 'HOURS')
+        timeout(time: 90, unit: 'MINUTES')
         skipStagesAfterUnstable()
     }
 
     stages {
+        stage('Matrix') {
+            matrix {
+                axes {
+                    axis {
+                        name   'JDK_VERSION'
+                        values 'jdk_11_latest', 'jdk_21_latest'
+                    }
+                }
 
-        // -- 01: Clean + Assemble ---------------------------------------------
+                agent { node { label 'ubuntu' } }
 
-        stage('Assemble') {
-            steps {
-                sh './gradlew clean assemble'
-            }
-        }
+                tools {
+                    jdk "${JDK_VERSION}"
+                }
 
-        // -- 02: Test: Check - Unit + integration tests (jQuery + RequireJS) --
+                stages {
 
-        stage('Test: Check') {
-            steps {
-                sh './gradlew check --continue'
-            }
-            post {
-                always {
-                    junit(
-                        testResults: '**/build/test-results/test/**/*.xml',
-                        allowEmptyResults: true
-                    )
-                    archiveArtifacts(
-                        artifacts: '**/build/reports/tests/**/*, **/build/test-results/**/*',
-                        allowEmptyArchive: true
-                    )
+                    // -- 01: Clean + Assemble ---------------------------------------------
+
+                    stage('Assemble') {
+                        steps {
+                            sh './gradlew clean assemble'
+                        }
+                    }
+
+                    // -- 02: Test + Coverage ----------------------------------------------
+
+                    stage('Test: Check') {
+                        steps {
+                            // This will run unit tests and the default integration variant (jQuery + RequireJS).
+                            // We include the coverage report in this step, as modifying the test results with
+                            // sed would trigger a test rerun if it would be its own stage.
+                            sh './gradlew check combinedJacocoReport --continue'
+                        }
+                        post {
+                            always {
+                                // Prefix the JUnit classnames so the Test UI shows which JDK ran which test
+                                sh """
+                                    find . -path '*/build/test-results/test/*.xml' -exec \
+                                        sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
+                                """
+
+                                junit(
+                                    testResults: '**/build/test-results/test/**/*.xml',
+                                    allowEmptyResults: true
+                                )
+
+                                // Copy reports into a JDK-named folder to avoid overwriting between matrix cells
+                                sh """
+                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) -type d | while IFS= read -r src; do
+                                        dest="matrix-artifacts/${JDK_VERSION}/\${src#./}"
+                                        mkdir -p -- "\$dest"
+                                        cp -r -- "\$src/." "\$dest/"
+                                    done
+                                """
+
+                                archiveArtifacts(
+                                    artifacts: "matrix-artifacts/${JDK_VERSION}/**/*",
+                                    allowEmptyArchive: true
+                                )
+                            }
+                        }
+                    }
                 }
             }
-        }
 
-        // -- 03: Coverage (JaCoCo) --------------------------------------------
+            // -- 03: JavaDoc Generation -------------------------------------------
 
-       stage('Coverage') {
-           steps {
-               sh './gradlew combinedJacocoReport'
-           }
-           post {
-               always {
-                    archiveArtifacts(
-                        artifacts: '**/build/reports/jacoco/**/*',
-                        allowEmptyArchive: true
-                    )
-               }
-           }
-        }
-
-        // -- 04: Aggregate Javadoc --------------------------------------------
-
-        stage('Aggregate Javadoc') {
-            steps {
-                sh './gradlew aggregateJavadoc'
-            }
-            post {
-                always {
-                    publishHTML(target: [
-                        reportDir:   'build/documentation/javadocs',
-                        reportFiles: 'index.html',
-                        reportName:  'Aggregate Javadoc',
-                        keepAll:     true
-                    ])
+            stage('Aggregate Javadoc') {
+                agent { node { label 'ubuntu' } }
+                tools {
+                    jdk 'jdk_21_latest'
+                }
+                steps {
+                    sh './gradlew aggregateJavadoc'
+                }
+                post {
+                    always {
+                        publishHTML(target: [
+                            reportDir:   'build/documentation/javadocs',
+                            reportFiles: 'index.html',
+                            reportName:  'Aggregate Javadoc',
+                            keepAll:     true
+                        ])
+                    }
                 }
             }
         }
