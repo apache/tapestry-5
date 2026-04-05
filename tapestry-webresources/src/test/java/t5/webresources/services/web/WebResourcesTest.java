@@ -1,4 +1,4 @@
-//  Copyright 2023 The Apache Software Foundation
+//  Copyright 2023, 2026 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 /**
  * Adapted from WebResourcesSpec.groovy.s
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp", pageLoadTimeout = 60L)
 public class WebResourcesTest extends SeleniumTestCase {
 
     @Test
@@ -39,12 +39,12 @@ public class WebResourcesTest extends SeleniumTestCase {
         click("css=.navbar .dropdown-toggle");
         click("link=MultiLess");
         waitForInitializedPage();
-        waitForCondition("document.getElementById('demo') != null", PAGE_LOAD_TIMEOUT);
+        waitForCondition("document.getElementById('demo') != null", getPageLoadTimeout());
         assertEquals(getEval("window.getComputedStyle(document.getElementById('demo'), null).getPropertyValue('background-color')"), "rgb(179, 179, 255)");
     }
 
     private void waitForInitializedPage() {
-        waitForCondition("$('body').attr('data-page-initialized') == 'true' ", PAGE_LOAD_TIMEOUT);
+        waitForCondition("document.body.getAttribute('data-page-initialized') == 'true' ",
+                getPageLoadTimeout());
     }
-
 }

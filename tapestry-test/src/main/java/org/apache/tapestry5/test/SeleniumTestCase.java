@@ -66,13 +66,6 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 {
     public final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestCase.class);
 
-    public static final long WAIT_TIMEOUT = Long.getLong("selenium.wait.timeout", 15L);
-
-    /**
-     * 15 seconds
-     */
-    public static final String PAGE_LOAD_TIMEOUT = "15000";
-
     public static final String TOMCAT = "tomcat";
 
     public static final String JETTY = "jetty";
@@ -84,6 +77,9 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * @since 5.3
      */
     public static final String SUBMIT = "//input[@type='submit']";
+
+    private long waitTimeout = 0L;
+    private String pageLoadTimeout = null;
 
     /**
      * The underlying {@link Selenium} instance that all the methods of this class delegate to;
@@ -199,6 +195,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             annotation = EmptyInnerClass.class.getAnnotation(TapestryTestConfiguration.class);
         }
 
+        this.waitTimeout = getLongParameter(xmlTest, "selenium.wait.timeout", annotation.waitTimeout());
+        long pageLoadNum = getLongParameter(xmlTest, "selenium.page-load.timout", annotation.pageLoadTimeout());
+        this.pageLoadTimeout = String.valueOf(pageLoadNum * 1_000L);
+
         String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER,
                 annotation.webAppFolder());
         String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER,
@@ -215,13 +215,15 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         String sep = System.getProperty("line.separator");
 
         LOGGER.info("Starting SeleniumTestCase:" + sep +
-                "    currentDir: " + System.getProperty("user.dir") + sep +
-                "  webAppFolder: " + webAppFolder + sep +
-                "     container: " + container + sep +
-                "   contextPath: " + contextPath + sep +
-                String.format("         ports: %d / %d", port, sslPort) + sep +
-                "  browserStart: " + browserStartCommand + sep +
-                "       baseURL: " + baseURL);
+                "      currentDir: " + System.getProperty("user.dir") + sep +
+                "    webAppFolder: " + webAppFolder + sep +
+                "       container: " + container + sep +
+                "     contextPath: " + contextPath + sep +
+                String.format("           ports: %d / %d", port, sslPort) + sep +
+                "    browserStart: " + browserStartCommand + sep +
+                "         baseURL: " + baseURL + sep +
+                "     waitTimeout: " + this.waitTimeout + "s" + sep +
+                " pageLoadTimeout: " + pageLoadNum + "s");
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
@@ -386,7 +388,14 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         String value = getParameter(xmlTest, key, null);
 
-        return value != null ? Integer.parseInt(value) : defaultValue;
+        return value != null && !value.isEmpty() ? Integer.parseInt(value) : defaultValue;
+    }
+
+    private final long getLongParameter(XmlTest xmlTest, String key, long defaultValue)
+    {
+        String value = getParameter(xmlTest, key, null);
+
+        return value != null && !value.isEmpty() ? Long.parseLong(value) : defaultValue;
     }
 
     /**
@@ -496,6 +505,24 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     public String getBaseURL()
     {
         return baseURL;
+    }
+
+    /**
+     * Returns the WebDriver wait timeout in seconds.
+     *
+     * Either default vaule (15L) or set via system properties (selenium.wait.timeout).
+     */
+    public long getWaitTimeout() {
+        return this.waitTimeout;
+    }
+
+    /**
+     * Returns the Selenium page load timeout in millis as String.
+     *
+     * Either default vaule ("15000") or set via system properties (selenium.page-loag.timeout).
+     */
+    public String getPageLoadTimeout() {
+        return this.pageLoadTimeout;
     }
 
     @BeforeMethod
@@ -1440,7 +1467,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
     protected void waitForCondition(ExpectedCondition condition)
     {
-      waitForCondition(condition, WAIT_TIMEOUT);
+      waitForCondition(condition, getWaitTimeout());
     }
 
     protected void waitForCondition(ExpectedCondition condition, long timeoutSeconds)
@@ -1669,7 +1696,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected final void waitForPageToLoad()
     {
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+        waitForPageToLoad(getPageLoadTimeout());
     }
 
     /**
@@ -1833,7 +1860,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         String condition = String.format("selenium.browserbot.getCurrentWindow().document.getElementById(\"%s\")", elementId);
 
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        waitForCondition(condition, getPageLoadTimeout());
     }
     
     /**
@@ -1848,7 +1875,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         String condition = String.format("selenium.browserbot.getCurrentWindow().document.querySelector(\"%s\")", selector);
 
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        waitForCondition(condition, getPageLoadTimeout());
     }
 
     /**
@@ -1866,7 +1893,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         String condition = String.format("selenium.browserbot.getCurrentWindow().testSupport.doesNotExist(\"%s\")", elementId);
 
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        waitForCondition(condition, getPageLoadTimeout());
     }
 
     /**
