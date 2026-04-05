@@ -1,0 +1,28 @@
+plugins {
+    id 'tapestry.junit5-spock-convention'
+    id 'groovy'
+}
+
+description = 'Provides support for JPA without a dependency on tapestry-core'
+
+dependencies {
+    api libs.jakarta.persistence.api
+    implementation libs.jakarta.cdi.api
+
+    implementation project(':commons')
+    implementation project(':tapestry-ioc')
+
+    testImplementation project(':tapestry-spock')
+    testImplementation project(':tapestry-test')
+
+    testImplementation libs.eclipselink
+
+    testRuntimeOnly libs.dbcp
+    testRuntimeOnly libs.h2
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.core.modules.JpaCoreModule'
+    }
+}

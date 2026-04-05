@@ -16,8 +16,8 @@ package org.apache.tapestry5.jpa.test;
 import jakarta.persistence.EntityManager;
 
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.jpa.EntityTransactionManager;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.EntityTransactionManager;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.apache.tapestry5.jpa.test.entities.ThingOne;
 
 public class TopLevelServiceImpl implements TopLevelService

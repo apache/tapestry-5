@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 import jakarta.persistence.PersistenceContext;
 
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.example.app6.AppConstants;
 import org.example.app6.entities.User;
 

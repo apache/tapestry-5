@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,11 +23,12 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
 
+import org.apache.tapestry5.internal.jpa.core.JpaCoreInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
 import org.apache.tapestry5.jpa.JpaConstants;
 
-public class JpaInternalUtils
+public class JpaInternalUtils extends JpaCoreInternalUtils
 {
     public static PersistedEntity convertApplicationValueToPersisted(
             final EntityManagerManager entityManagerManager, final Object newValue)
@@ -75,22 +76,5 @@ public class JpaInternalUtils
                 String.format(
                         "Failed persisting the entity. The entity '%s' does not belong to any of the existing persistence contexts.",
                         entity));
-    }
-
-    public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
-                                                 PersistenceContext annotation)
-    {
-        String unitName = annotation == null ? null : annotation.unitName();
-
-        if (InternalUtils.isNonBlank(unitName))
-            return entityManagerManager.getEntityManager(unitName);
-
-        Map<String, EntityManager> entityManagers = entityManagerManager.getEntityManagers();
-
-        if (entityManagers.size() == 1)
-            return entityManagers.values().iterator().next();
-
-        throw new RuntimeException("Unable to locate a single EntityManager. " +
-                "You must provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation.");
     }
 }

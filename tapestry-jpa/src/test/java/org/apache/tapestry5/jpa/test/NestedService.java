@@ -13,7 +13,7 @@
  */
 package org.apache.tapestry5.jpa.test;
 
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 
 public interface NestedService
 {

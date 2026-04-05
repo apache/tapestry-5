@@ -24,7 +24,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.jpa.JpaPersistenceConstants;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.example.app6.entities.Thang;
 
 public class PersistThang

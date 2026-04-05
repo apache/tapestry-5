@@ -23,7 +23,7 @@ import jakarta.persistence.criteria.Root;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.jpa.JpaGridDataSource;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.example.app1.AppConstants;
 import org.example.app1.entities.User;
 import org.example.app1.services.UserDAO;
