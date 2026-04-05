@@ -12,7 +12,7 @@ dependencies {
 
     testImplementation libs.javax.cache.tests
     testImplementation libs.javax.cache.test.domain
-    testRuntimeOnly libs.infinispan.jcache /* Just to be able to run the tests */
+    testRuntimeOnly libs.cache.ri.impl /* Just to be able to run the tests */
 }
 
 tasks.named('jar', Jar) {

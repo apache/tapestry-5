@@ -61,8 +61,7 @@ spring-web = "3.2.9.RELEASE"
 
 # IOC JCACHE
 
-javax-cache       = "1.0.0"
-infinispan-jcache = "7.0.0.Alpha4"
+javax-cache = "1.0.0"
 
 # WEBRESOURCES
 
@@ -165,11 +164,12 @@ spring-web = { module = "org.springframework:spring-web", version.ref = "spring-
 
 # IOC JCACHE
 
-javax-cache-api = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
-javax-cache-tests = { module = "javax.cache:cache-tests", version.ref = "javax-cache" }
+javax-cache-api         = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
+javax-cache-tests       = { module = "javax.cache:cache-tests", version.ref = "javax-cache" }
 javax-cache-test-domain = { module = "javax.cache:test-domain", version.ref = "javax-cache" }
+
 cache-annotations = { module = "org.jsr107.ri:cache-annotations-ri-common", version.ref = "javax-cache" }
-infinispan-jcache = { module = "org.infinispan:infinispan-jcache", version.ref = "infinispan-jcache" }
+cache-ri-impl     = { module = "org.jsr107.ri:cache-ri-impl", version.ref = "javax-cache" }
 
 # WEBRESOURCES
 
