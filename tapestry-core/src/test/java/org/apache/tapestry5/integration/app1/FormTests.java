@@ -350,7 +350,7 @@ public class FormTests extends App1TestCase
 
     private void waitForSelectedToBeRemoved()
     {
-        waitForCondition("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount('td.selected') == 0", PAGE_LOAD_TIMEOUT);
+        waitForCondition("selenium.browserbot.getCurrentWindow().testSupport.findCSSMatchCount('td.selected') == 0", getPageLoadTimeout());
     }
 
     // TAP5-1408, TAP5-2203

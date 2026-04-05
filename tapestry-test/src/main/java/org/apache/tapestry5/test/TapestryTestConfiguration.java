@@ -1,4 +1,4 @@
-//  Copyright 2011-2013 The Apache Software Foundation
+//  Copyright 2011-2013, 2026 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
 package org.apache.tapestry5.test;
 
 import java.lang.annotation.*;
+
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * To be used on Selenium-based integration tests that extend {@link SeleniumTestCase} as an alternative to using a
@@ -62,4 +66,17 @@ public @interface TapestryTestConfiguration
      * The browser start command to use with Selenium. Defaults to "*firefox".
      */
     String browserStartCommand() default "*firefox";
+
+    /**
+     * The duration of seconds {@link WebDriverWait} should use.
+     * Defaults to 15, overridable via TestNG xml or system properties: {@code selenium.wait.timeout}
+     */
+    long waitTimeout() default 15L;
+
+    /**
+     * The duration of seconds {@link Selenium#waitForPageToLoad(String)} is using.
+     * Defaults to 15, overridable via TestNG or system properties: {@code selenium.page-load.timeout}
+     * The value is automatically converted to String.
+     */
+    long pageLoadTimeout() default 15L;
 }
