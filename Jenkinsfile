@@ -102,24 +102,59 @@ pipeline {
     }
 
     post {
-        failure {
-            emailext (
-                to: "${env.MAIL_NOTIFICATION}",
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                         <p>Check console output at &quot;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&quot;</p>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-            )
-        }
+        fixed    { sendMail('FIXED') }
+        unstable { sendMail('UNSTABLE') }
+        failure  { sendMail('FAILURE') }
+        aborted  { sendMail('ABORTED') }
+    }
+}
 
-        unstable {
-            emailext (
-                to: "${env.MAIL_NOTIFICATION}",
-                subject: "UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """<p>UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                         <p>Check console output at &quot;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&quot;</p>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-            )
+// MAIL NOTIFICATIONS
+
+def getChangeLog() {
+    def log = ""
+    def changeSets = currentBuild.changeSets
+
+    if (changeSets.isEmpty()) {
+        return "No changes recorded (Manual build or no new commits)."
+    }
+
+    for (int i = 0; i < changeSets.size(); i++) {
+        def entries = changeSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            log += "[${entry.author}] ${entry.msg}\n"
         }
     }
+    return log
+}
+
+def sendMail(buildStatus) {
+    emailext (
+        subject: "[${buildStatus}] ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+        body: """
+STATUS: ${buildStatus}
+Build URL: ${env.BUILD_URL}
+Duration: ${currentBuild.durationString.replace(' and counting', '')}
+
+-----------------------------------------------------------
+CHANGES
+-----------------------------------------------------------
+${getChangeLog()}
+
+-----------------------------------------------------------
+TEST RESULTS
+-----------------------------------------------------------
+\${TEST_COUNTS, var="total"} Tests: \${TEST_COUNTS, var="pass"} Passed, \${TEST_COUNTS, var="fail"} Failed, \${TEST_COUNTS, var="skipped"} Skipped
+
+-----------------------------------------------------------
+FAILED TESTS (if any)
+-----------------------------------------------------------
+\${FAILED_TESTS, maxTests=10, showStack=false}
+        """,
+        recipientProviders: [
+            developers(), // People who have commits in this build
+            requestor()   // The person who manually triggered the build
+        ]
+    )
 }
