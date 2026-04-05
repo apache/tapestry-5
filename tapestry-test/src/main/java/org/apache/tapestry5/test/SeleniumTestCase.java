@@ -388,7 +388,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         String value = getParameter(xmlTest, key, null);
 
-        return value != null && value.isBlank() ? Integer.parseInt(value) : defaultValue;
+        return value != null && !value.isBlank() ? Integer.parseInt(value) : defaultValue;
     }
 
     private final long getLongParameter(XmlTest xmlTest, String key, long defaultValue)
