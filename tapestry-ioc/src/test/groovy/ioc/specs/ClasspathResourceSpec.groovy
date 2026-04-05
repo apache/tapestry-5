@@ -288,7 +288,9 @@ class ClasspathResourceSpec extends Specification {
       def currentCl = Thread.currentThread().contextClassLoader 
       def resourcePath = 'META-INF/maven/org.slf4j/slf4j-api/pom.xml'
       
-      def resourceURLs = currentCl.findResources resourcePath
+      // TAP5-2825: This failes on Java 21, as Groovy can no longer access the
+      // protected methods `findResources`, so we use `getResources` instead
+      def resourceURLs = currentCl.getResources(resourcePath).toList()
       def slf4jApiURL = resourceURLs.find{it.toString().contains('.jar!')} 
       ClassLoader cl = new URLClassLoader(slf4jApiURL as URL[], (ClassLoader) null)
      
