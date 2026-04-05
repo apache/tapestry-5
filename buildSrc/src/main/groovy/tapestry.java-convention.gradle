@@ -12,10 +12,6 @@ java {
     withSourcesJar()
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.release = 8
-}
-
 configurations {
     provided
     meta
