@@ -162,11 +162,12 @@ spring-websocket = { module = "org.springframework:spring-websocket", version.re
 
 # IOC JCACHE
 
-javax-cache-api = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
-javax-cache-tests = { module = "javax.cache:cache-tests", version.ref = "javax-cache" }
+javax-cache-api         = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
+javax-cache-tests       = { module = "javax.cache:cache-tests", version.ref = "javax-cache" }
 javax-cache-test-domain = { module = "javax.cache:test-domain", version.ref = "javax-cache" }
+
 cache-annotations = { module = "org.jsr107.ri:cache-annotations-ri-common", version.ref = "javax-cache" }
-infinispan-jcache = { module = "org.infinispan:infinispan-jcache", version.ref = "infinispan-jcache" }
+cache-ri-impl     = { module = "org.jsr107.ri:cache-ri-impl", version.ref = "javax-cache" }
 
 # WEBRESOURCES
 
