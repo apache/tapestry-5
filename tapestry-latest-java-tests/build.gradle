@@ -6,15 +6,14 @@ description = 'Test suite for making sure Tapestry runs on latest Java'
 
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 17
+    options.release = 21
 }
 
 tasks.withType(JavaCompile).configureEach {
