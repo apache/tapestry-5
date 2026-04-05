@@ -294,11 +294,14 @@ public abstract class AbstractResource extends LockSupport implements Resource
             int indexOfExclamationMark = urlAsString.indexOf('!');
 
             String resourceInJar = urlAsString.substring(indexOfExclamationMark + 2);
+            if (!resourceInJar.endsWith("/"))
+            {
+                resourceInJar += "/";
+            }
 
-            URL directoryResource = Thread.currentThread().getContextClassLoader().getResource(resourceInJar + "/");
+            URL directoryResource = Thread.currentThread().getContextClassLoader().getResource(resourceInJar);
 
             boolean isDirectory = directoryResource != null && "jar".equals(directoryResource.getProtocol());
-
             if (isDirectory)
             {
                 throw new IOException("Cannot open a stream for a resource that references a directory inside a JAR file (" + url + ").");
