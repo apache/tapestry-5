@@ -49,7 +49,8 @@ pipeline {
                             always {
                                 // Prefix the JUnit classnames so the Test UI shows which JDK ran which test
                                 sh """
-                                    find . -path '*/build/test-results/test/*.xml' -exec \
+                                    find . -path '*/build/test-results/test/*.xml' \
+                                           -not -path './matrix-artifacts/*' -exec \
                                         sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
                                 """
 
@@ -74,28 +75,27 @@ pipeline {
                             }
                         }
                     }
-                }
-            }
-        }
 
-        // -- 03: JavaDoc Generation -------------------------------------------
+                    // -- 03: JavaDoc Generation -------------------------------------------
 
-        stage('Aggregate Javadoc') {
-            agent { node { label 'ubuntu' } }
-            tools {
-                jdk 'jdk_21_latest'
-            }
-            steps {
-                sh './gradlew aggregateJavadoc'
-            }
-            post {
-                always {
-                    publishHTML(target: [
-                        reportDir:   'build/documentation/javadocs',
-                        reportFiles: 'index.html',
-                        reportName:  'Aggregate Javadoc',
-                        keepAll:     true
-                    ])
+                    stage('Aggregate Javadoc') {
+                        when {
+                            expression { JDK_VERSION == 'jdk_21_latest' }
+                        }
+                        steps {
+                            sh './gradlew aggregateJavadoc'
+                        }
+                        post {
+                            always {
+                                publishHTML(target: [
+                                    reportDir:   'build/documentation/javadocs',
+                                    reportFiles: 'index.html',
+                                    reportName:  'Aggregate Javadoc',
+                                    keepAll:     true
+                                ])
+                            }
+                        }
+                    }
                 }
             }
         }
