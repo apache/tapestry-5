@@ -11,19 +11,15 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
 
-/**
- * Tests for Tapestry-IoC and the only Java language feature introduced in Java SE 10 and 11,
- * local variable type inference (introduced in 10 and improved in 11).
- */
-public class Java10And11NewFeatureTests 
+public class Java10And11NewFeatureTests
 {
-    
-    public static class Java10And11Module 
+
+    public static class Java10And11Module
     {
         public static void bind(ServiceBinder binder)
         {
@@ -31,24 +27,21 @@ public class Java10And11NewFeatureTests
             binder.bind(Java10And11ConcreteService.class);
         }
     }
-    
-    private Java10And11Service java10And11Service;
-    
-    private Java10And11ConcreteService java10And11ConcreteService;
-    
-    @BeforeSuite
-    public void setup() 
+
+    private static Java10And11Service java10And11Service;
+    private static Java10And11ConcreteService java10And11ConcreteService;
+
+    @BeforeAll
+    static void setup()
     {
-        var registry = RegistryBuilder.buildAndStartupRegistry(Java10And11Module.class);
+        Registry registry = RegistryBuilder.buildAndStartupRegistry(Java10And11Module.class);
         java10And11Service = registry.getService(Java10And11Service.class);
         java10And11ConcreteService = registry.getService(Java10And11ConcreteService.class);
     }
 
-    @Test
-    public void localVariableTypeInference() throws Exception 
+    void localVariableTypeInference() throws Exception
     {
         java10And11Service.localVariableTypeInference();
-        java10And11ConcreteService.localVariableTypeInference();;
+        java10And11ConcreteService.localVariableTypeInference();
     }
-    
 }

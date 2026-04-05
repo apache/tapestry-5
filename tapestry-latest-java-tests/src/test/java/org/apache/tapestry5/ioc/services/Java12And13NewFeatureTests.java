@@ -11,10 +11,11 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Tapestry-IoC and the Java language features introduced in Java SE 12 and 13,
@@ -32,14 +33,14 @@ public class Java12And13NewFeatureTests
         }
     }
     
-    private Java12And13Service java12And13Service;
+    private static Java12And13Service java12And13Service;
     
-    private Java12And13ConcreteService java12And13ConcreteService;
+    private static Java12And13ConcreteService java12And13ConcreteService;
     
-    @BeforeSuite
-    public void setup() 
+    @BeforeAll
+    public static void setup()
     {
-        var registry = RegistryBuilder.buildAndStartupRegistry(Java12And13Module.class);
+        Registry registry = RegistryBuilder.buildAndStartupRegistry(Java12And13Module.class);
         java12And13Service = registry.getService(Java12And13Service.class);
         java12And13ConcreteService = registry.getService(Java12And13ConcreteService.class);
     }

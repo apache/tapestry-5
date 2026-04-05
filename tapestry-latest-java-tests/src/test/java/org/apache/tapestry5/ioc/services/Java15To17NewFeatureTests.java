@@ -16,10 +16,10 @@ import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 /**
  * Tests for Tapestry-IoC To the only Java language feature introduced in Java SE 10 To 11,
@@ -80,14 +80,14 @@ public class Java15To17NewFeatureTests
 
     }
     
-    private Java15To17Service java15To17Service;
+    private static Java15To17Service java15To17Service;
     
-    private Java15To17ConcreteService java15To17ConcreteService;
+    private static Java15To17ConcreteService java15To17ConcreteService;
 
-    private Registry registry;
+    private static Registry registry;
     
-    @BeforeSuite
-    public void setup() 
+    @BeforeAll
+    public static void setup()
     {
         registry = RegistryBuilder.buildAndStartupRegistry(Java15To17Module.class);
         java15To17Service = registry.getService(Java15To17Service.class);
