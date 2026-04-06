@@ -33,7 +33,7 @@ dependencies {
 
 test {
     systemProperties(
-        'geb.build.reportsDir': "$reporting.baseDir/geb",
+        'tapestry.page-load-timeout': '60',
         'tapestry.compiled-asset-cache-dir': "$buildDir/compiled-asset-cache",
         'tapestry.production-mode': 'false',
         'tapestry.compress-whitespace': 'false',

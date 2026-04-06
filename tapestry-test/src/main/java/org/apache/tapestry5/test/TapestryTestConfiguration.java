@@ -66,17 +66,4 @@ public @interface TapestryTestConfiguration
      * The browser start command to use with Selenium. Defaults to "*firefox".
      */
     String browserStartCommand() default "*firefox";
-
-    /**
-     * The duration of seconds {@link WebDriverWait} should use.
-     * Defaults to 15, overridable via TestNG xml or system properties: {@code selenium.wait.timeout}
-     */
-    long waitTimeout() default 15L;
-
-    /**
-     * The duration of seconds {@link Selenium#waitForPageToLoad(String)} is using.
-     * Defaults to 15, overridable via TestNG or system properties: {@code selenium.page-load.timeout}
-     * The value is automatically converted to String.
-     */
-    long pageLoadTimeout() default 15L;
 }
