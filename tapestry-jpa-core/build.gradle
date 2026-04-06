@@ -12,8 +12,8 @@ dependencies {
     implementation project(':commons')
     implementation project(':tapestry-ioc')
 
-    testImplementation project(':tapestry-spock')
     testImplementation project(':tapestry-test')
+    testRuntimeOnly project(':tapestry-spock')
 
     testImplementation libs.eclipselink
 

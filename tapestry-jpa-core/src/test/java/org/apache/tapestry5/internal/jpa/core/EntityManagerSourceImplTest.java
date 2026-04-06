@@ -14,22 +14,24 @@
 
 package org.apache.tapestry5.internal.jpa.core;
 
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.jpa.core.PersistenceUnitConfigurer;
-import org.apache.tapestry5.jpa.core.TapestryPersistenceUnitInfo;
-import org.apache.tapestry5.internal.jpa.core.EntityManagerSourceImpl;
-import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.Test;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.spi.PersistenceUnitTransactionType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class EntityManagerSourceImplTest extends IOCTestCase
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.jpa.core.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.core.TapestryPersistenceUnitInfo;
+import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
+
+public class EntityManagerSourceImplTest
 {
     @Test
     public void multiple_persistence_units_include_unlisted_classes()

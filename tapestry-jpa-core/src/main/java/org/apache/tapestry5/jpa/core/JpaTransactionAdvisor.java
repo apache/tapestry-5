@@ -29,7 +29,7 @@ import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 public interface JpaTransactionAdvisor
 {
     /**
-     * Identifies any methods with the {@link org.apache.tapestry5.jpa.annotations.CommitAfter} annotation and
+     * Identifies any methods with the {@link org.apache.tapestry5.jpa.core.annotations.CommitAfter} annotation and
      * applies the transaction logic to those methods.
      * 
      * @param receiver
