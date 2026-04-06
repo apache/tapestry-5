@@ -51,7 +51,7 @@ public class HarnessModule
 
     public static CacheManager buildCacheManager()
     {
-        CachingProvider provider = Caching.getCachingProvider();
+        CachingProvider provider = Caching.getCachingProvider("org.jsr107.ri.spi.RICachingProvider");
         return provider.getCacheManager(provider.getDefaultURI(), provider.getDefaultClassLoader());
     }
 
