@@ -112,21 +112,14 @@ pipeline {
 // MAIL NOTIFICATIONS
 
 def getChangeLog() {
-    def log = ""
     def changeSets = currentBuild.changeSets
-
     if (changeSets.isEmpty()) {
         return "No changes recorded (Manual build or no new commits)."
     }
-
-    for (int i = 0; i < changeSets.size(); i++) {
-        def entries = changeSets[i].items
-        for (int j = 0; j < entries.length; j++) {
-            def entry = entries[j]
-            log += "[${entry.author}] ${entry.msg}\n"
-        }
-    }
-    return log
+    return changeSets
+        .collectMany { it.items as List }
+        .collect { "[${it.author}] ${it.msg}" }
+        .join('\n')
 }
 
 def sendMail(buildStatus) {
