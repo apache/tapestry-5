@@ -46,11 +46,10 @@ pipeline {
                             sh './gradlew check combinedJacocoReport --continue'
                         }
                         post {
-                            always {
+                                always {
                                 // Prefix the JUnit classnames so the Test UI shows which JDK ran which test
                                 sh """
-                                    find . -path '*/build/test-results/test/*.xml' \
-                                           -not -path './matrix-artifacts/*' -exec \
+                                    find . -path '*/build/test-results/test/*.xml' -exec \
                                         sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
                                 """
 
@@ -59,17 +58,19 @@ pipeline {
                                     allowEmptyResults: true
                                 )
 
-                                // Copy reports into a JDK-named folder to avoid overwriting between matrix cells
+                                // Copy reports into a JDK-named folder to avoid overwriting between matrix cells.
+                                // Using ./build/ so it gets cleaned automatically by ./gradlew clean.
                                 sh """
-                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) -type d | while IFS= read -r src; do
-                                        dest="matrix-artifacts/${JDK_VERSION}/\${src#./}"
+                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
+                                         -not -path './build/matrix-artifacts/*' -type d | while IFS= read -r src; do
+                                        dest="build/matrix-artifacts/${JDK_VERSION}/\${src#./}"
                                         mkdir -p -- "\$dest"
                                         cp -r -- "\$src/." "\$dest/"
                                     done
                                 """
 
                                 archiveArtifacts(
-                                    artifacts: "matrix-artifacts/${JDK_VERSION}/**/*",
+                                    artifacts: "build/matrix-artifacts/${JDK_VERSION}/**/*",
                                     allowEmptyArchive: true
                                 )
                             }
