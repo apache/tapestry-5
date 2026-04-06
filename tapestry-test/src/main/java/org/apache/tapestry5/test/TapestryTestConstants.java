@@ -1,4 +1,4 @@
-// Copyright 2007, 2010, 2013 The Apache Software Foundation
+// Copyright 2007, 2010, 2013, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,4 +106,20 @@ public class TapestryTestConstants
      * @since 5.3
      */
     public static final String SERVLET_CONTAINER_PARAMETER = "tapestry.servlet-container";
+
+    /**
+     * {@link XmlTest} parameter (in seconds) and {@link ITestContext} attribute (stored as millis String)
+     * for the page-load timeout passed to Selenium.
+     *
+     * @since 5.10
+     */
+    public static final String PAGE_LOAD_TIMEOUT_PARAMETER = "tapestry.page-load-timeout";
+
+    /**
+     * {@link XmlTest} parameter (in seconds) and {@link ITestContext} attribute for the
+     * WebDriverWait timeout used by Selenium conditions.
+     *
+     * @since 5.10
+     */
+    public static final String WEBDRIVER_WAIT_TIMEOUT_PARAMETER = "tapestry.wait-timeout";
 }

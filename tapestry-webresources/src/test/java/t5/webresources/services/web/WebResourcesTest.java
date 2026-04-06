@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 /**
  * Adapted from WebResourcesSpec.groovy.s
  */
-@TapestryTestConfiguration(webAppFolder = "src/test/webapp", pageLoadTimeout = 60L)
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class WebResourcesTest extends SeleniumTestCase {
 
     @Test
