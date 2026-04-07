@@ -30,8 +30,8 @@ dependencies {
 
 test {
     systemProperties(
-        'geb.build.reportsDir': "$reporting.baseDir/geb",
-        'tapestry.compiled-asset-cache-dir': "$buildDir/compiled-asset-cache",
+        'geb.build.reportsDir': "${reporting.baseDirectory.get().asFile}/geb",
+        'tapestry.compiled-asset-cache-dir': "${layout.buildDirectory.get().asFile}/compiled-asset-cache",
         'tapestry.production-mode': 'false',
         'tapestry.compress-whitespace': 'false',
         'tapestry.combine-scripts': 'false'

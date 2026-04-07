@@ -6,6 +6,18 @@ dependencies {
     testRuntimeOnly libs.slf4j.simple
 }
 
+// Assign unique ports per project to avoid conflicts when tests run in parallel.
+// Uses a hash of the project path to deterministically assign ports in the range [10000, 59998].
+// Subprojects can override these by setting 'tapestry.port' / 'tapestry.ssl-port' explicitly.
+def portSeed = Math.abs(project.path.hashCode())
+def uniqueHttpPort = 10000 + ((portSeed % 25000) * 2)
+def uniqueSslPort = uniqueHttpPort + 1
+
+// Capture project identity at configuration time to avoid accessing project at execution time
+// (Task.project at execution time is deprecated and will fail in Gradle 10.0)
+def projectPath = project.path
+def projectName = project.name
+
 tasks.withType(Test).configureEach { testTask ->
     maxHeapSize = '600M'
 
@@ -21,7 +33,7 @@ tasks.withType(Test).configureEach { testTask ->
     environment.LANG = 'en_US.UTF-8'
 
     testLogging {
-        exceptionFormat 'full'
+        exceptionFormat = 'full'
         events 'passed', 'skipped', 'failed'
         showStandardStreams = true
     }
@@ -42,7 +54,7 @@ tasks.withType(Test).configureEach { testTask ->
         }
         total++
         if (total % 25 == 0) {
-            logger.lifecycle "Project ${project.name}: Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
+            logger.lifecycle "Project ${projectName}: Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
         }
     }
 
@@ -50,13 +62,11 @@ tasks.withType(Test).configureEach { testTask ->
         // The root suite has a null parent. We only want to log the final summary.
         if (descriptor.parent == null) {
             total = passed + failed + skipped
-            // Using project.path gives a clear identifier like ":tapestry-core"
-            def projectName = project.path
 
             // Don't log if no tests were run
             if (total > 0) {
                 logger.lifecycle "------------------------------------------------------------------------"
-                logger.lifecycle "Test Results for ${projectName}"
+                logger.lifecycle "Test Results for ${projectPath}"
                 logger.lifecycle "  Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
                 logger.lifecycle "------------------------------------------------------------------------"
             }

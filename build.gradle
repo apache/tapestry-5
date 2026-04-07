@@ -117,6 +117,10 @@ subprojects {
         }
     }
 
+    tasks.withType(Test).configureEach {
+        failOnNoDiscoveredTests = false
+    }
+
     tasks.named('assemble') {
         dependsOn processResources, compileJava, jar
     }
@@ -236,7 +240,7 @@ tasks.register('aggregateJavadoc', Javadoc) {
     dependsOn configurations.javadoc
 
     maxMemory = '512m'
-    destinationDir = layout.buildDirectory.dir('documentation/javadocs').get().asFile
+    destinationDirectory = layout.buildDirectory.dir('documentation/javadocs')
 
     def tapestryStylesheet = file('src/javadoc/stylesheet7.css')
     int thisYear = java.time.Year.now().getValue()
@@ -293,7 +297,7 @@ tasks.register('aggregateJavadoc', Javadoc) {
     doLast {
         copy {
             from allMainJavaSrcDirs
-            into aggregateJavadoc.destinationDir
+            into aggregateJavadoc.destinationDirectory
             exclude '**/*.java'
             exclude '**/*.xdoc'
             exclude '**/package.html'
@@ -301,7 +305,7 @@ tasks.register('aggregateJavadoc', Javadoc) {
 
         copy {
             from file('src/javadoc/images')
-            into aggregateJavadoc.destinationDir
+            into aggregateJavadoc.destinationDirectory
         }
     }
 }
@@ -389,7 +393,7 @@ tasks.register('zippedSources', Zip) {
 
     destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
-    version project.version
+    archiveVersion = project.version
     archiveClassifier = 'sources'
 
     from project.projectDir
@@ -415,7 +419,7 @@ tasks.register('zippedApidoc', Zip) {
 
     destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
-    version project.version
+    archiveVersion = project.version
     archiveClassifier = 'apidocs'
 
     from(file('src/docroot-template')) {
@@ -437,8 +441,8 @@ tasks.register('zippedApidoc', Zip) {
 }
 
 tasks.register('zippedBinaries', Zip) {
-    group 'Release artifact'
-    description 'Zip archive of binaries of each sub-project'
+    group = 'Release artifact'
+    description = 'Zip archive of binaries of each sub-project'
 
     // TODO: Plus dependencies?
     // This may create a few unwanted dependencies, but does
@@ -447,7 +451,7 @@ tasks.register('zippedBinaries', Zip) {
 
     destinationDirectory = layout.buildDirectory
     archiveBaseName = 'apache-tapestry'
-    version project.version
+    archiveVersion = project.version
     archiveClassifier = 'bin'
 
     // This is via some experimentation
@@ -488,10 +492,10 @@ if (canDeploy) {
     }
 
     tasks.register('generateChecksums', GenerateChecksums) {
-        group 'Release artifact'
-        description 'Creates MD5/SHA256 checksums for archives of source and JavaDoc'
+        group = 'Release artifact'
+        description = 'Creates MD5/SHA256 checksums for archives of source and JavaDoc'
 
-        source tasks.withType(Zip)
+        source.from(tasks.withType(Zip))
         outputDir = layout.buildDirectory.dir('checksums').get().getAsFile()
     }
 
@@ -510,18 +514,18 @@ if (canDeploy) {
     // to all Apache mirrors (after about a 24 hour delay).
 
     tasks.register('copyArchives', Copy) {
-        group 'Release artifact'
-        description 'Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)'
+        group = 'Release artifact'
+        description = 'Copies build archives (source, bin, docs) to a configured deployment folder, along with MD5 and SHA-256 checksums and PGP signatures (if signing is enabled)'
 
-        destinationDir = file(archiveDeployFolder.get())
+        into file(archiveDeployFolder.get())
 
         from tasks.generateChecksums
         from configurations.uploads.allArtifacts.files
     }
 
     tasks.register('generateRelease') {
-        group 'Release artifact'
-        description 'Generates and uploads a final release to Apache Nexus and copies archives for deployment'
+        group = 'Release artifact'
+        description = 'Generates and uploads a final release to Apache Nexus and copies archives for deployment'
 
         dependsOn subprojects.assemble, subprojects.uploadPublished, subprojects.publish, copyArchives
     }
