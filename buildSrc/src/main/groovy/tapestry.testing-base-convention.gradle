@@ -6,18 +6,6 @@ dependencies {
     testRuntimeOnly libs.slf4j.simple
 }
 
-// Assign unique ports per project to avoid conflicts when tests run in parallel.
-// Uses a hash of the project path to deterministically assign ports in the range [10000, 59998].
-// Subprojects can override these by setting 'tapestry.port' / 'tapestry.ssl-port' explicitly.
-def portSeed = Math.abs(project.path.hashCode())
-def uniqueHttpPort = 10000 + ((portSeed % 25000) * 2)
-def uniqueSslPort = uniqueHttpPort + 1
-
-// Capture project identity at configuration time to avoid accessing project at execution time
-// (Task.project at execution time is deprecated and will fail in Gradle 10.0)
-def projectPath = project.path
-def projectName = project.name
-
 tasks.withType(Test).configureEach { testTask ->
     maxHeapSize = '600M'
 
