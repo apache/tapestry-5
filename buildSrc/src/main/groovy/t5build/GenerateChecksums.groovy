@@ -1,16 +1,14 @@
 package t5build
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.SourceTask
 import org.gradle.api.file.ConfigurableFileCollection
 
 import java.security.MessageDigest
 
-class GenerateChecksums extends SourceTask {
+class GenerateChecksums extends DefaultTask {
 
     enum Algorithm {
         MD5('MD5', 32, 'md5'),
@@ -26,6 +24,9 @@ class GenerateChecksums extends SourceTask {
             this.extension = extension
         }
     }
+
+    @InputFiles
+    ConfigurableFileCollection source = project.objects.fileCollection()
 
     @OutputDirectory
     File outputDir
