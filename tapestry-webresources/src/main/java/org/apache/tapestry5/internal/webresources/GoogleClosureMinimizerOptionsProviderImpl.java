@@ -11,7 +11,10 @@ import com.google.javascript.jscomp.CheckLevel;
 import com.google.javascript.jscomp.ClosureCodingConvention;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.DependencyOptions;
+import com.google.javascript.jscomp.DiagnosticGroup;
 import com.google.javascript.jscomp.DiagnosticGroups;
+import com.google.javascript.jscomp.deps.ModuleLoader;
 
 public class GoogleClosureMinimizerOptionsProviderImpl implements GoogleClosureMinimizerOptionsProvider
 {
@@ -29,12 +32,16 @@ public class GoogleClosureMinimizerOptionsProviderImpl implements GoogleClosureM
     {
         CompilerOptions options = new CompilerOptions();
 
-        options.setCodingConvention(new ClosureCodingConvention());
-        options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES, CheckLevel.WARNING);
-
         compilationLevel.setOptionsForCompilationLevel(options);
+
+        options.setLanguageIn(CompilerOptions.LanguageMode.UNSTABLE);
+        options.setWarningLevel(DiagnosticGroup.forType(ModuleLoader.INVALID_MODULE_PATH), CheckLevel.OFF);
+        options.setWarningLevel(DiagnosticGroups.NON_STANDARD_JSDOC, CheckLevel.OFF);
+        options.setWarningLevel(DiagnosticGroups.PARSING, CheckLevel.OFF);
+        options.setModuleResolutionMode(ModuleLoader.ResolutionMode.BROWSER);
+        options.setDependencyOptions(DependencyOptions.none());
+        options.setCodingConvention(new ClosureCodingConvention());
 
         return Optional.of(options);
     }
-
 }

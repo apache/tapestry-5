@@ -86,12 +86,12 @@ public class CoreBehaviorsTests extends App1TestCase
         assertTextPresent("[]");
 
         select("//select[@id='blockName']", "fred");
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+        waitForPageToLoad(getPageLoadTimeout());
 
         assertTextPresent("[Block fred.]");
 
         select("//select[@id='blockName']", "barney");
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+        waitForPageToLoad(getPageLoadTimeout());
 
         assertTextPresent("[Block barney.]");
 
@@ -1063,7 +1063,7 @@ public class CoreBehaviorsTests extends App1TestCase
         assertTextPresent("Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
 
         refresh();
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+        waitForPageToLoad(getPageLoadTimeout());
 
         // Before this bug was fixed, this message would not appear; instead on
         // complaining about _$resources would appear which was very confusing.

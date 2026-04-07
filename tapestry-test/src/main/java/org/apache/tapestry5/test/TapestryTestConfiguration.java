@@ -1,4 +1,4 @@
-//  Copyright 2011-2013 The Apache Software Foundation
+//  Copyright 2011-2013, 2026 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
 package org.apache.tapestry5.test;
 
 import java.lang.annotation.*;
+
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * To be used on Selenium-based integration tests that extend {@link SeleniumTestCase} as an alternative to using a
