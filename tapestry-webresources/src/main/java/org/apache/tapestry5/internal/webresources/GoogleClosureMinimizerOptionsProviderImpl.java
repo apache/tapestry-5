@@ -7,6 +7,7 @@ import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.webresources.GoogleClosureMinimizerOptionsProvider;
 import org.apache.tapestry5.webresources.WebResourcesSymbols;
 
+import com.google.javascript.jscomp.BlackHoleErrorManager;
 import com.google.javascript.jscomp.CheckLevel;
 import com.google.javascript.jscomp.ClosureCodingConvention;
 import com.google.javascript.jscomp.CompilationLevel;
@@ -41,6 +42,8 @@ public class GoogleClosureMinimizerOptionsProviderImpl implements GoogleClosureM
         options.setModuleResolutionMode(ModuleLoader.ResolutionMode.BROWSER);
         options.setDependencyOptions(DependencyOptions.none());
         options.setCodingConvention(new ClosureCodingConvention());
+
+        options.setErrorHandler(new BlackHoleErrorManager());
 
         return Optional.of(options);
     }
