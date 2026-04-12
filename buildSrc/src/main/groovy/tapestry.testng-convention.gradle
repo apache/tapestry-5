@@ -9,7 +9,7 @@ dependencies {
 
 def testNGTask = tasks.register('testNG', Test) {
     group = 'verification'
-    description = 'Runs TESTNG tests.'
+    description = 'Runs TetstNG tests.'
 
     def suiteFiles = [
         'src/test/resources/testng.xml',

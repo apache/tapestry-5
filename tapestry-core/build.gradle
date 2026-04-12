@@ -1,10 +1,13 @@
+import org.gradle.api.tasks.testing.Test
+import t5build.TapestryBuildLogic
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
+    id 'tapestry.testing-base-convention'
     id 'tapestry.junit5-convention'
     id 'tapestry.testng-convention'
 }
 
-import t5build.TapestryBuildLogic
-import org.apache.tools.ant.filters.ReplaceTokens
 
 description = 'Central module for Tapestry, containing all core services and components'
 
@@ -138,12 +141,64 @@ test {
 }
 
 // Default is jQuery and Require.js enabled, so here are the tests for the
-// other combinations
+// other combinations.
+// Tests need to run both JUnit and TestNG, so we need to register both
+// and connect them all.
 
-tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
-    group = 'Verification'
-    description = 'Runs tests with jQuery and Require.js disabled'
+def registerTestPair(String baseName, Closure configuration) {
 
+    // Logic to configure a task with the user-provided closure
+    def configureTask = { Test task ->
+        // Create a copy of the closure to avoid side effects
+        Closure configClone = configuration.clone()
+        configClone.delegate = task
+        configClone.resolveStrategy = Closure.DELEGATE_FIRST
+        configClone.call()
+    }
+
+    def jUnit = tasks.register("${baseName}JUnit", Test) {
+        group = 'verification'
+        description = "Runs JUnit tests for ${baseName}"
+
+        useJUnitPlatform()
+
+        binaryResultsDirectory = layout.buildDirectory.dir("test-results/$name")
+        reports.html.outputLocation = layout.buildDirectory.dir("reports/tests/$name")
+
+        configureTask(it)
+    }
+
+    def testNG = tasks.register("${baseName}TestNG", Test) {
+        group = 'verification'
+        description = "Rest TestNG tests for ${baseName}"
+
+        // Logic to find TestNG suite file
+        def suiteFile = [
+            'src/test/resources/testng.xml',
+            'src/test/conf/testng.xml'
+        ].collect { layout.projectDirectory.file(it).asFile }.find { it.exists() }
+
+        useTestNG {
+            if (suiteFile) {
+                suites(suiteFile)
+            }
+        }
+
+        binaryResultsDirectory = layout.buildDirectory.dir("test-results/$name")
+        reports.html.outputLocation = layout.buildDirectory.dir("reports/tests/$name")
+
+        configureTask(it)
+    }
+
+    tasks.register(baseName) {
+        group = 'verification'
+        description = "Runs JUnit and TestNG tests for ${baseName}"
+
+        dependsOn jUnit, testNG
+    }
+}
+
+registerTestPair('testWithJqueryAndRequireJsDisabled') {
     systemProperties(
         'tapestry.javascript-infrastructure-provider': 'jquery',
         'tapestry.require-js-enabled':                 'false',
@@ -152,10 +207,7 @@ tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
     )
 }
 
-tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
-    group = 'Verification'  
-    description = 'Runs tests with Prototype and Require.js enabled'
-
+registerTestPair('testWithPrototypeAndRequireJsEnabled') {
     systemProperties(
         'tapestry.javascript-infrastructure-provider': 'prototype',
         'tapestry.require-js-enabled':                 'true',
@@ -164,10 +216,7 @@ tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
     )
 }
 
-tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
-    group = 'Verification'
-    description = 'Runs tests with Prototype and Require.js disabled'
-
+registerTestPair('testWithPrototypeAndRequireJsDisabled') {
     systemProperties(
         'tapestry.javascript-infrastructure-provider': 'prototype',
         'tapestry.require-js-enabled':                 'false',
