@@ -50,7 +50,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
     static
     {
-        Compiler.setLoggingLevel(Level.SEVERE);
+        Compiler.setLoggingLevel(Level.OFF);
     }
 
     public GoogleClosureMinimizer(Logger logger,
@@ -106,8 +106,8 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
             return IOUtils.toInputStream(compiler.toSource(), StandardCharsets.UTF_8);
         }
 
-        throw new ResourceMinimizationException(String.format("Compilation failed for %s. Errors: %s.",
-        		resource,
-                InternalUtils.join(CollectionFactory.newList(result.errors), ";")));
+        logger.warn("Compilation failed for {}. Errors: %{}", resource, InternalUtils.join(CollectionFactory.newList(result.errors), ";"));
+
+        return IOUtils.toInputStream(source, StandardCharsets.UTF_8);
     }
 }
