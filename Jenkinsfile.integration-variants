@@ -135,7 +135,7 @@ ${getChangeLog()}
 -----------------------------------------------------------
 TEST RESULTS
 -----------------------------------------------------------
-\${TEST_COUNTS, var="total"} Tests: \${TEST_COUNTS, var="pass"} Passed, \${TEST_COUNTS, var="fail"} Failed, \${TEST_COUNTS, var="skipped"} Skipped
+\${TEST_COUNTS, var="total"} Tests: \${TEST_COUNTS, var="pass"} Passed, \${TEST_COUNTS, var="fail"} Failed, \${TEST_COUNTS, var="skip"} Skipped
 
 -----------------------------------------------------------
 FAILED TESTS (if any)
