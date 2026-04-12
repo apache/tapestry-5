@@ -1,11 +1,7 @@
 plugins {
-    id 'tapestry.testing-base-convention'
+    id 'tapestry.junit5-convention'
 }
 
 dependencies {
-    testImplementation libs.junit4
-}
-
-tasks.withType(Test).configureEach {
-    useJUnit()
+    testRuntimeOnly libs.junit.vintage.engine
 }

@@ -7,20 +7,26 @@ dependencies {
     testImplementation libs.easymock
 }
 
-tasks.withType(Test).configureEach { testTask ->
+def testNGTask = tasks.register('testNG', Test) {
+    group = 'verification'
+    description = 'Runs TESTNG tests.'
 
-    def suiteFile = [
+    def suiteFiles = [
         'src/test/resources/testng.xml',
         'src/test/conf/testng.xml'
-    ].find { path ->
-        project.file(path).exists()
-    }
+    ].collect { path -> layout.projectDirectory.file(path).asFile }
 
-    if (suiteFile) {
-        testTask.useTestNG {
-            suites suiteFile
+    def existingSuite = suiteFiles.find { it.exists() }
+
+    if (existingSuite) {
+        useTestNG {
+            suites(existingSuite)
         }
     } else {
-        testTask.useTestNG()
+        useTestNG()
     }
+}
+
+tasks.named('check') {
+    dependsOn(testNGTask)
 }

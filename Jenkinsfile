@@ -46,10 +46,11 @@ pipeline {
                             sh './gradlew check combinedJacocoReport --continue'
                         }
                         post {
-                                always {
-                                // Prefix the JUnit classnames so the Test UI shows which JDK ran which test
+                            always {
+                                // Prefix the classnames for JUnit and TestNG results
                                 sh """
-                                    find . -path '*/build/test-results/test/*.xml' -exec \
+                                    find . -path '*/build/test-results/**/*.xml' \
+                                           -not -path '*/matrix-artifacts/*' -exec \
                                         sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
                                 """
 

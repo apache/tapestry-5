@@ -50,13 +50,13 @@ tasks.withType(Test).configureEach { testTask ->
         // The root suite has a null parent. We only want to log the final summary.
         if (descriptor.parent == null) {
             total = passed + failed + skipped
-            // Using project.path gives a clear identifier like ":tapestry-core"
-            def projectName = project.path
+            // Using project.path plus task gives a clear identifier like ":tapestry-core:test"
+            def taskIdentifier = "${project.path}:${name}"
 
             // Don't log if no tests were run
             if (total > 0) {
                 logger.lifecycle "------------------------------------------------------------------------"
-                logger.lifecycle "Test Results for ${projectName}"
+                logger.lifecycle "Test Results for ${taskIdentifier}"
                 logger.lifecycle "  Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
                 logger.lifecycle "------------------------------------------------------------------------"
             }
