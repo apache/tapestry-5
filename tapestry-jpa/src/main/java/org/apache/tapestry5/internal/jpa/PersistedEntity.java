@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.io.Serializable;
 import jakarta.persistence.EntityManager;
 
 import org.apache.tapestry5.http.annotations.ImmutableSessionPersistedObject;
-import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
 
 /**
  * Encapsulates a JPA entity name with an entity id.

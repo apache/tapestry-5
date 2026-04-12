@@ -1,4 +1,4 @@
-// Copyright 2011-2013 The Apache Software Foundation
+// Copyright 2011-2013, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.tapestry5.commons.services.PropertyAdapter;
 import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.commons.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
 import org.slf4j.Logger;
 
 import jakarta.persistence.EntityManager;

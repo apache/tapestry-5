@@ -1,4 +1,4 @@
-// Copyright 2011-2014 The Apache Software Foundation
+// Copyright 2011-2014, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,20 +31,16 @@ import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
 import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
-import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
-import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
 import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
-import org.apache.tapestry5.internal.jpa.EntityTransactionManagerImpl;
-import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
 import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
-import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
 import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Startup;
@@ -52,15 +48,17 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.EntityManagerSource;
-import org.apache.tapestry5.jpa.EntityTransactionManager;
-import org.apache.tapestry5.jpa.JpaEntityPackageManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerSource;
+import org.apache.tapestry5.jpa.core.EntityTransactionManager;
+import org.apache.tapestry5.jpa.core.JpaEntityPackageManager;
 import org.apache.tapestry5.jpa.JpaPersistenceConstants;
 import org.apache.tapestry5.jpa.JpaSymbols;
-import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
-import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.core.JpaTransactionAdvisor;
+import org.apache.tapestry5.jpa.core.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.core.modules.JpaCoreModule;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
@@ -76,40 +74,9 @@ import org.slf4j.Logger;
  *
  * @since 5.3
  */
+@ImportModule(JpaCoreModule.class)
 public class JpaModule
 {
-    public static void bind(final ServiceBinder binder)
-    {
-        binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
-        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withSimpleId();
-        binder.bind(EntityManagerSource.class, EntityManagerSourceImpl.class);
-        binder.bind(EntityTransactionManager.class, EntityTransactionManagerImpl.class);
-
-    }
-
-    public static JpaEntityPackageManager buildJpaEntityPackageManager(final Collection<String> packageNames)
-    {
-        return new JpaEntityPackageManager()
-        {
-            @Override
-            public Collection<String> getPackageNames()
-            {
-                return packageNames;
-            }
-        };
-    }
-
-    @Scope(ScopeConstants.PERTHREAD)
-    public static EntityManagerManager buildEntityManagerManager(final EntityManagerSource entityManagerSource,
-                                                                 final PerthreadManager perthreadManager, final Logger logger)
-    {
-        final EntityManagerManagerImpl service = new EntityManagerManagerImpl(entityManagerSource, logger);
-
-        perthreadManager.addThreadCleanupListener(service);
-
-        return service;
-    }
-
     @Contribute(JpaEntityPackageManager.class)
     public static void provideEntityPackages(Configuration<String> configuration,
 
@@ -141,21 +108,14 @@ public class JpaModule
         configuration.addInstance("JPACommitAfter", CommitAfterWorker.class, "after:Log");
     }
 
-    @Contribute(MasterObjectProvider.class)
-    public static void provideObjectProviders(final OrderedConfiguration<ObjectProvider> configuration)
-    {
-        configuration.addInstance("EntityManager", EntityManagerObjectProvider.class,
-                "before:AnnotationBasedContributions");
-    }
-
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
     public static void provideFactoryDefaults(final MappedConfiguration<String, String> configuration)
     {
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
-        configuration.add(JpaSymbols.EARLY_START_UP, "true");
+        configuration.override(JpaSymbols.EARLY_START_UP, "true");
         configuration.add(JpaSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "true");
-        configuration.add(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/META-INF/persistence.xml");
+        configuration.override(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/META-INF/persistence.xml");
     }
 
     @Contribute(ValueEncoderSource.class)

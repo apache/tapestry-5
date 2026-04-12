@@ -36,7 +36,7 @@ import org.apache.tapestry5.internal.jpa.PersistedEntity;
 import org.apache.tapestry5.internal.test.PageTesterContext;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
 import org.apache.tapestry5.jpa.modules.JpaModule;
 import org.apache.tapestry5.jpa.test.entities.ThingOne;
 import org.apache.tapestry5.jpa.test.entities.ThingTwo;

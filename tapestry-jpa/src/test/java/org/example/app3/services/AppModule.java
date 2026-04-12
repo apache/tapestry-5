@@ -17,10 +17,10 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.jpa.EntityManagerSource;
+import org.apache.tapestry5.jpa.core.EntityManagerSource;
 import org.apache.tapestry5.jpa.JpaSymbols;
-import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
-import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+import org.apache.tapestry5.jpa.core.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.core.TapestryPersistenceUnitInfo;
 import org.apache.tapestry5.jpa.modules.JpaModule;
 
 @ImportModule(JpaModule.class)

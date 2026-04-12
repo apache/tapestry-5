@@ -17,7 +17,7 @@ package org.example.app2.pages;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.example.app2.entities.Item;
 import org.example.app2.services.UserDAO;
 

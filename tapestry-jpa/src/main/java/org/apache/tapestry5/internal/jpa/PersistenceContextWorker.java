@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.jpa;
 
 import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
-import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.PlasticClass;

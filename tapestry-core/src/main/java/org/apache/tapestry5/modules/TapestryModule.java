@@ -1213,7 +1213,7 @@ public final class TapestryModule
                 return assetSource.resourceForPath(input);
             }
         });
-        configuration.add(stringToResource.getKey(), stringToResource);
+        configuration.override(stringToResource.getKey(), stringToResource);
 
         CoercionTuple<Renderable, RenderCommand> renderableToRenderCommand = CoercionTuple.create(Renderable.class, RenderCommand.class,
                 new Coercion<Renderable, RenderCommand>()

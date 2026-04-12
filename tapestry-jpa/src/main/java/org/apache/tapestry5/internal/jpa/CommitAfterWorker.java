@@ -1,4 +1,4 @@
-// Copyright 2011, 2014 The Apache Software Foundation
+// Copyright 2011, 2014, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import java.util.Map;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.EntityTransactionManager;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.internal.jpa.core.CommitAfterMethodAdvice;
+import org.apache.tapestry5.jpa.core.EntityManagerManager;
+import org.apache.tapestry5.jpa.core.EntityTransactionManager;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.PlasticClass;

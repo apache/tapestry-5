@@ -20,7 +20,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.jpa.core.annotations.CommitAfter;
 import org.example.app6.AppConstants;
 import org.example.app6.entities.User;
 import org.example.app6.services.UserDAO;

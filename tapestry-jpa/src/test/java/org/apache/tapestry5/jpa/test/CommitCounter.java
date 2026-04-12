@@ -21,7 +21,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostUpdate;
 
-import org.apache.tapestry5.jpa.EntityTransactionManager;
+import org.apache.tapestry5.jpa.core.EntityTransactionManager;
 import org.apache.tapestry5.jpa.test.entities.VersionedThing;
 
 public class CommitCounter

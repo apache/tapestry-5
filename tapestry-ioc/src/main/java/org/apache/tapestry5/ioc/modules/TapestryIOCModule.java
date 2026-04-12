@@ -60,6 +60,7 @@ import org.apache.tapestry5.ioc.internal.services.ThunkCreatorImpl;
 import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
 import org.apache.tapestry5.ioc.internal.services.ValueObjectProvider;
 import org.apache.tapestry5.ioc.internal.services.cron.PeriodicExecutorImpl;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
@@ -310,6 +311,23 @@ public final class TapestryIOCModule
     public static void provideJSR10TypeCoercions(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
     {
         BasicTypeCoercions.provideJSR310TypeCoercions(configuration);
+    }
+    
+    @Contribute(TypeCoercer.class)
+    public static void provideAdditionalCoercions(MappedConfiguration<CoercionTuple.Key, CoercionTuple> configuration)
+    {
+        Coercion<String, Resource> stringToResource = new Coercion<String, Resource>()
+        {
+            @Override
+            public Resource coerce(String input)
+            {
+                return new ClasspathResource(input);
+            }
+        };
+
+        CoercionTuple<String, Resource> stringToResourceTuple = CoercionTuple.create(String.class, Resource.class, stringToResource);
+
+        configuration.add(stringToResourceTuple.getKey(), stringToResourceTuple);
     }
     
     /**

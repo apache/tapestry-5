@@ -6,6 +6,7 @@ description = 'Provides support for simple CRUD applications built on top of Tap
 
 dependencies {
     implementation project(':tapestry-core')
+    implementation project(':tapestry-jpa-core')
 
     api libs.jakarta.persistence.api
     implementation libs.jakarta.cdi.api
