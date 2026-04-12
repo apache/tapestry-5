@@ -7,7 +7,12 @@ rootProject.name = 'tapestry-5'
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
+        mavenLocal {
+            content {
+                // https://github.com/gradle/gradle/issues/18519
+                excludeGroup "io.netty"
+            }
+        }
         mavenCentral()
         maven {
             name = 'JBoss'
@@ -56,7 +61,11 @@ include('plastic',
         'tapestry-rest-jackson')
 
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
-    include('tapestry-latest-java-tests', 'tapestry-spring')
+    include('tapestry-spring')
+}
+
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
+    include('tapestry-latest-java-tests')
 }
 
 def isTravisCI = System.getenv('TRAVIS_JOB_ID') != null
