@@ -47,29 +47,23 @@ pipeline {
                         }
                         post {
                             always {
-                                // Prefix the classnames for JUnit and TestNG results
-                                sh """
-                                    find . -path '*/build/test-results/**/*.xml' \
-                                           -not -path '*/matrix-artifacts/*' -exec \
-                                        sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
-                                """
-
-                                junit(
-                                    testResults: '**/build/test-results/test/**/*.xml',
-                                    allowEmptyResults: true
-                                )
-
-                                // Copy reports into a JDK-named folder to avoid overwriting between matrix cells.
-                                // Using ./build/ so it gets cleaned automatically by ./gradlew clean.
+                                // Copy all reports and test results into a matrix-named folder
                                 sh """
                                     find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
-                                         -not -path './build/matrix-artifacts/*' -type d | while IFS= read -r src; do
+                                        -not -path './build/matrix-artifacts/*' -type d | while IFS= read -r src; do
                                         dest="build/matrix-artifacts/${JDK_VERSION}/\${src#./}"
                                         mkdir -p -- "\$dest"
                                         cp -r -- "\$src/." "\$dest/"
                                     done
                                 """
 
+                                // Point JUnit to the XMLs inside the new folder
+                                junit(
+                                    testResults: "build/matrix-artifacts/${JDK_VERSION}/**/test-results/**/*.xml",
+                                    allowEmptyResults: true
+                                )
+
+                                // Archive matrix artifacts
                                 archiveArtifacts(
                                     artifacts: "build/matrix-artifacts/${JDK_VERSION}/**/*",
                                     allowEmptyArchive: true
