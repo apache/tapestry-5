@@ -42,7 +42,6 @@ public class GoogleClosureMinimizerOptionsProviderImpl implements GoogleClosureM
         options.setModuleResolutionMode(ModuleLoader.ResolutionMode.BROWSER);
         options.setDependencyOptions(DependencyOptions.none());
         options.setCodingConvention(new ClosureCodingConvention());
-
         options.setErrorHandler(new BlackHoleErrorManager());
 
         return Optional.of(options);
