@@ -19,8 +19,6 @@
     <test name="Tapesty Upload Component">
         <parameter name="tapestry.web-app-folder" value="src/test/webapp"/>
         <packages>
-            <package name="org.apache.tapestry5.upload.components"/>
-            <package name="org.apache.tapestry5.upload.internal.services"/>
             <package name="org.apache.tapestry5.upload.integration"/>
         </packages>
     </test>

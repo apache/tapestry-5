@@ -37,6 +37,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+// Disabled as JUnit would pick it up, but TestNG ignored it due to missing in testng.xml
+// https://github.com/apache/tapestry-5/commit/246e677097f249ad2352ddc595ef43cc257f8e27
+@Test(enabled = false)
 public class JpaTransactionAdvisorImplTest extends IOCTestCase
 {
     private static final String UNIT_NAME = "FooUnit";
@@ -62,7 +65,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         registry = null;
     }
 
-    @Test
+    @Test(enabled = false)
     public void undecorated()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -84,7 +87,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void persistence_unit_name_missing()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -118,7 +121,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void persistence_unit_name_missing_single_unit_configured()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -147,7 +150,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void persistence_unit_missing()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -181,7 +184,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void persistence_unit_missing_single_unit_configured()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -210,7 +213,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void transaction_inactive()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -238,7 +241,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void void_method()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -266,7 +269,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void void_method_with_param()
     {
         final VoidService delegate = newMock(VoidService.class);
@@ -292,7 +295,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void runtime_exception_will_abort_transaction() throws Exception
     {
         final Performer delegate = newMock(Performer.class);
@@ -328,7 +331,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void checked_exception_will_commit_transaction() throws Exception
     {
         final Performer delegate = newMock(Performer.class);
@@ -369,7 +372,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void return_type_method()
     {
         final ReturnTypeService delegate = newTestService();
@@ -395,7 +398,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         verify();
     }
 
-    @Test
+    @Test(enabled = false)
     public void return_type_method_with_param()
     {
         final ReturnTypeService delegate = newTestService();

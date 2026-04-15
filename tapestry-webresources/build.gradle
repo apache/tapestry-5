@@ -24,7 +24,19 @@ dependencies {
 }
 
 
-test {
+tasks.named('test') {
+    useJUnitPlatform()
+    exclude '**/services/web/**'
+}
+
+tasks.register('testNG', Test) {
+    group = 'verification'
+    description = 'Runs Selenium integration tests via native TestNG'
+
+    useTestNG()
+
+    include '**/services/web/**'
+
     systemProperties(
         'tapestry.page-load-timeout': '60',
         'tapestry.compiled-asset-cache-dir': "$buildDir/compiled-asset-cache",
@@ -32,6 +44,10 @@ test {
         'tapestry.compress-whitespace': 'false',
         'tapestry.combine-scripts': 'false'
     )
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
 }
 
 tasks.named('jar', Jar) {

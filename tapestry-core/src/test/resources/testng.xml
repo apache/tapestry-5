@@ -11,50 +11,6 @@
     name="Tapestry Core"
     annotations="1.5"
     verbose="2">
-    <test
-        name="Component Unit Tests"
-        enabled="true">
-        <packages>
-            <package name="org.apache.tapestry5.pagetester" />
-            <package name="org.apache.tapestry5.integration.pagelevel" />
-            <package name="org.apache.tapestry5.corelib.base" />
-            <package name="org.apache.tapestry5.corelib.components" />
-            <package name="org.apache.tapestry5.corelib.mixins" />
-            <package name="org.apache.tapestry5.corelib.internal" />
-        </packages>
-    </test>
-
-    <test
-        name="Service Unit Tests"
-        enabled="true">
-        <packages>
-            <package name="org.apache.tapestry5.root" />
-            <package name="org.apache.tapestry5.dom" />
-            <package name="org.apache.tapestry5.runtime" />
-            <package name="org.apache.tapestry5.services" />
-            <package name="org.apache.tapestry5.services.javascript" />
-            <package name="org.apache.tapestry5.util" />
-            <package name="org.apache.tapestry5.validator" />
-            <package name="org.apache.tapestry5.internal" />
-            <package name="org.apache.tapestry5.internal.beaneditor" />
-            <package name="org.apache.tapestry5.internal.bindings" />
-            <package name="org.apache.tapestry5.internal.grid" />
-            <package name="org.apache.tapestry5.internal.model" />
-            <package name="org.apache.tapestry5.internal.pageload" />
-            <package name="org.apache.tapestry5.internal.services" />
-            <package name="org.apache.tapestry5.internal.services.assets" />
-            <package name="org.apache.tapestry5.internal.services.messages" />
-            <package name="org.apache.tapestry5.internal.services.meta" />
-            <package name="org.apache.tapestry5.internal.services.templates" />
-            <package name="org.apache.tapestry5.internal.structure" />
-            <package name="org.apache.tapestry5.internal.test" />
-            <package name="org.apache.tapestry5.internal.transform" />
-            <package name="org.apache.tapestry5.internal.translator" />
-            <package name="org.apache.tapestry5.internal.util" />
-            <package name="org.apache.tapestry5.internal.services.ajax" />
-        </packages>
-    </test>
-
     <!-- We break these out by which of the test applications they apply to. We have a bunch. -->
     <test
         name="Core Integration Tests"

@@ -2,7 +2,7 @@ import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
 tasks.register('copyGradleWrapper', Copy) {
-    group = 'Build Setup'
+    group = 'build setup'
     description = 'Copies Gradle wrapper files to archetype resources'
 
     def srcDir = layout.buildDirectory.dir('wrapper')
@@ -15,7 +15,7 @@ tasks.register('copyGradleWrapper', Copy) {
 }
 
 tasks.register('addGradleWrapper', Exec) {
-    group = 'Build Setup'
+    group = 'build setup'
     description = 'Generates Gradle wrapper in temporary directory'
 
     workingDir = layout.buildDirectory.dir('wrapper')
@@ -34,14 +34,14 @@ tasks.register('addGradleWrapper', Exec) {
 }
 
 tasks.register('addWrappers') {
-    group = 'Build Setup'
+    group = 'build setup'
     description = 'Coordinates wrapper generation tasks'
 
     dependsOn addGradleWrapper
 }
 
 tasks.register('processFiltered', Copy) {
-    group = 'Build'
+    group = 'build'
     description = 'Processes filtered resources with token replacement'
 
     def srcDir = layout.projectDirectory.dir('src/main/resources-filtered')

@@ -10,6 +10,21 @@ dependencies {
     testImplementation project(':tapestry-test')
 }
 
+tasks.named('test') {
+    exclude '**/integration/**'
+}
+
+tasks.register('testNG', Test) {
+    group = 'verification'
+    useTestNG {
+        suiteXmlFiles << project.file('src/test/resources/testng.xml')
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
+}
+
 jar {
     manifest {
         attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jmx.modules.JmxModule'

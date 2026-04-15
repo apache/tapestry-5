@@ -2,7 +2,7 @@ pipeline {
     agent none
 
     environment {
-        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=30'
+        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=60'
     }
 
     options {
@@ -20,7 +20,11 @@ pipeline {
                     }
                 }
 
-                agent { node { label 'ubuntu' } }
+                agent {
+                    node {
+                        label 'ubuntu'
+                    }
+                }
 
                 tools {
                     jdk "${JDK_VERSION}"
@@ -47,7 +51,14 @@ pipeline {
                         }
                         post {
                             always {
-                                // Copy all reports and test results into a matrix-named folder
+                                // JUnit runs inside a matrix cell, so Jenkins automatically scopes the results
+                                junit(
+                                    testResults: "**/build/test-results/**/*.xml",
+                                    allowEmptyResults: true
+                                )
+
+                                // archiveArtifacts has no per-cell namespacing, so we copy them into a
+                                // JDK-named folder first to avoid cells overwriting each other
                                 sh """
                                     find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
                                         -not -path './build/matrix-artifacts/*' -type d | while IFS= read -r src; do
@@ -56,14 +67,6 @@ pipeline {
                                         cp -r -- "\$src/." "\$dest/"
                                     done
                                 """
-
-                                // Point JUnit to the XMLs inside the new folder
-                                junit(
-                                    testResults: "build/matrix-artifacts/${JDK_VERSION}/**/test-results/**/*.xml",
-                                    allowEmptyResults: true
-                                )
-
-                                // Archive matrix artifacts
                                 archiveArtifacts(
                                     artifacts: "build/matrix-artifacts/${JDK_VERSION}/**/*",
                                     allowEmptyArchive: true

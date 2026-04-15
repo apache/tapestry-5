@@ -19,7 +19,7 @@ dependencies {
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-test-constants')
 
-    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.hsqldb
     testRuntimeOnly libs.slf4j.simple
 }
 
@@ -32,4 +32,19 @@ tasks.named('jar', Jar) {
     from('src/main/filtered-resources') {
         filter(ReplaceTokens, tokens: [version: project.parent.version])
     }
+}
+
+tasks.named('test') {
+    exclude '**/TapestryHttpIntegrationTests*'
+}
+
+tasks.register('testNG', Test) {
+    group = 'verification'
+    useTestNG {
+        suiteXmlFiles << project.file('src/test/resources/testng.xml')
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
 }

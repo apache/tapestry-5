@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Tapestry HTTP" annotations="1.5" verbose="2">
+
+    <test name="Tapestry HTTP Integration Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.http.test" />
+        </packages>
+    </test>
+
+</suite>

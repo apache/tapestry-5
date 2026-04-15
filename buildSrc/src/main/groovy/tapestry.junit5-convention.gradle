@@ -1,14 +1,16 @@
+// Use for modules whose test sources use JUnit 5 (Jupiter) annotations (@Test, @ExtendWith, …).
+//
+// Convention hierarchy:
+//   tapestry.testing-base-convention           platform runner, BOM, logging
+//    └─ tapestry.junit5-convention               + Jupiter API + engine (this file)
+//        ├─ tapestry.junit5-spock-convention         + Spock
+//        └─ tapestry.junit4-legacy-convention        + Vintage engine for JUnit 4
+
 plugins {
     id 'tapestry.testing-base-convention'
 }
 
 dependencies {
-    testImplementation platform(libs.junit.bom)
     testImplementation libs.bundles.junit.jupiter.essentials
     testRuntimeOnly libs.junit.jupiter.engine
-    testRuntimeOnly libs.junit.platform.launcher
-}
-
-tasks.withType(Test).configureEach {
-    useJUnitPlatform()
 }

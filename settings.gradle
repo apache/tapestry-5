@@ -10,7 +10,10 @@ dependencyResolutionManagement {
         mavenLocal {
             content {
                 // https://github.com/gradle/gradle/issues/18519
-                excludeGroup "io.netty"
+                // Netty-related dependencies are os/arch-dependent, but gradle might fail
+                // to resolve the correct one if finding anything in the local Maven, as
+                // it stops looking further.
+                excludeGroup 'io.netty'
             }
         }
         mavenCentral()

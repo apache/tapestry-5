@@ -1,3 +1,7 @@
+// Use for modules that write tests in Spock (Groovy-based BDD framework).
+// Extends tapestry.junit5-convention with the Spock BOM and spock-core.
+// Spock runs on the JUnit Platform, so no additional runner config is needed.
+
 plugins {
     id 'tapestry.junit5-convention'
     id 'groovy'

@@ -12,7 +12,7 @@ dependencies {
     implementation libs.jaxb.runtime
 
     testImplementation project(':tapestry-test')
-    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.hsqldb
 }
 
 jar {
