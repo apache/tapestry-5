@@ -13,7 +13,7 @@ pipeline {
     }
 
     options {
-        timeout(time: 1, unit: 'HOURS')
+        timeout(time: 2, unit: 'HOURS')
         skipStagesAfterUnstable()
     }
 
@@ -33,7 +33,7 @@ pipeline {
                         always {
                             sh '''
                                 if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled" ]; then
-                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Prototype./g' {} +
+                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="org\./classname="Prototype.org./g' {} +
                                 fi
                             '''
 
@@ -58,7 +58,7 @@ pipeline {
                         always {
                         sh '''
                                 if [ -d "tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled" ]; then
-                                    find tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Jquery./g' {} +
+                                    find tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="org\./classname="Jquery.org./g' {} +
                                 fi
                             '''
 
@@ -83,7 +83,7 @@ pipeline {
                         always {
                             sh '''
                                 if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled" ]; then
-                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="PrototypeRjs./g' {} +
+                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled -name "*.xml" -type f -exec sed -i 's/classname="org\./classname="PrototypeRjs.org./g' {} +
                                 fi
                             '''
 
