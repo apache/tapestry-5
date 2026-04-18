@@ -12,6 +12,9 @@
 // The JUnit BOM ensures all JUnit Platform artifacts (launcher, engines) use the same version,
 // even in modules that only use TestNG and never write a single @Test(jupiter) method.
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.TestResult.ResultType
+
 plugins {
     id 'java-library'
 }
@@ -38,7 +41,7 @@ tasks.withType(Test).configureEach { testTask ->
     environment.LANG = 'en_US.UTF-8'
 
     testLogging {
-        exceptionFormat 'full'
+        exceptionFormat = TestExceptionFormat.FULL
         events 'passed', 'skipped', 'failed'
         showStandardStreams = true
     }
@@ -49,13 +52,13 @@ tasks.withType(Test).configureEach { testTask ->
 
     afterTest { descriptor, result ->
         switch (result.resultType) {
-            case org.gradle.api.tasks.testing.TestResult.ResultType.SUCCESS:
+            case ResultType.SUCCESS:
                 passed++
                 break
-            case org.gradle.api.tasks.testing.TestResult.ResultType.FAILURE:
+            case ResultType.FAILURE:
                 failed++
                 break
-            case org.gradle.api.tasks.testing.TestResult.ResultType.SKIPPED:
+            case ResultType.SKIPPED:
                 skipped++
                 break
         }

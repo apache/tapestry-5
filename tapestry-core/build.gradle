@@ -119,10 +119,14 @@ test {
 // This task runs the default integration tests that are defined in the testng.xml
 tasks.register('testNG', Test) {
     group = 'verification'
+    classpath = sourceSets.test.runtimeClasspath
 
     useTestNG {
         suiteXmlFiles << project.file('src/test/resources/testng.xml')
     }
+
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
 }
 
 tasks.named('check') {
@@ -152,43 +156,44 @@ tasks.named('check') {
 // These three tasks exercise the other combinations. They are NOT wired into 'check'
 // and run only via the 'continuousIntegration' task in the root build.
 
-tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
-    group = 'verification'
-    description = 'Runs tests with jQuery and Require.js disabled'
+[
+    [
+        name: 'testWithJqueryAndRequireJsDisabled',
+        provider: 'jquery',
+        requireJs: 'false',
+        port: '9091',
+        sslPort: '8444'
+    ],
+    [
+        name: 'testWithPrototypeAndRequireJsEnabled',
+        provider: 'prototype',
+        requireJs: 'true',
+        port: '9092',
+        sslPort:
+        '8445'
+    ],
+    [
+        name: 'testWithPrototypeAndRequireJsDisabled',
+        provider: 'prototype',
+        requireJs: 'false',
+        port: '9093',
+        sslPort: '8446'
+    ]
+].each { cfg ->
+    tasks.register(cfg.name, Test) {
+        group = 'verification'
+        description = "Runs integration tests with ${cfg.provider} and RequireJS ${cfg.requireJs == 'true' ? 'enabled' : 'disabled'}"
+        classpath = sourceSets.test.runtimeClasspath
 
-    useTestNG()
+        useTestNG {
+            suiteXmlFiles << project.file('src/test/resources/testng.xml')
+        }
 
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'jquery',
-        'tapestry.require-js-enabled':                 'false',
-        'tapestry.port':                               '9091',
-        'tapestry.ssl-port':                           '8444'
-    )
-}
-
-tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
-    group = 'verification'  
-    description = 'Runs tests with Prototype and Require.js enabled'
-    useTestNG()
-
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'prototype',
-        'tapestry.require-js-enabled':                 'true',
-        'tapestry.port':                               '9092',
-        'tapestry.ssl-port':                           '8445'
-    )
-}
-
-tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
-    group = 'verification'
-    description = 'Runs tests with Prototype and Require.js disabled'
-
-    useTestNG()
-
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'prototype',
-        'tapestry.require-js-enabled':                 'false',
-        'tapestry.port':                               '9093',
-        'tapestry.ssl-port':                           '8446'
-    )
+        systemProperties(
+            'tapestry.javascript-infrastructure-provider': cfg.provider,
+            'tapestry.require-js-enabled': cfg.requireJs,
+            'tapestry.port': cfg.port,
+            'tapestry.ssl-port': cfg.sslPort
+        )
+    }
 }
