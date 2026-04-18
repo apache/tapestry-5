@@ -73,7 +73,10 @@ class NpmTask extends Exec {
         def cmd = [
             'docker', 'run', '--rm',
             '-v', "${project.projectDir}/src/main:/work",
-            '-w', '/work/typescript']
+            '-w', '/work/typescript',
+            // The node:lts-alpine image has a root-owned /.npm cache baked in.
+            // Redirect to /tmp so the container user can always write to it.
+            '-e', 'NPM_CONFIG_CACHE=/tmp/.npm']
         if (isLinux()) {
             cmd += ['--user', "${['id', '-u'].execute().text.trim()}:${['id', '-g'].execute().text.trim()}"]
         }
