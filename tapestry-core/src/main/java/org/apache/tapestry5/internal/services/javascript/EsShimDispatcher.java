@@ -51,6 +51,8 @@ public class EsShimDispatcher implements Dispatcher
 
     private final boolean compress;
     
+    private final int requestPrefixLength;
+    
     private Map<String, StreamableResource> shimMap;
 
     public EsShimDispatcher(EsShimManager esShimManager,
@@ -81,15 +83,18 @@ public class EsShimDispatcher implements Dispatcher
         }
 
         requestPrefix = esShimManager.getRequestPrefix(compress);
+        requestPrefixLength = requestPrefix.length();
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
     {
         String path = request.getPath();
+        
+        int index = path.indexOf(requestPrefix);
 
-        if (path.startsWith(requestPrefix))
+        if (index >= 0)
         {
-            String extraPath = path.substring(requestPrefix.length());
+            String extraPath = path.substring(index + requestPrefixLength);
 
             if (!handleModuleRequest(extraPath, response))
             {

@@ -31,6 +31,10 @@ public class EsShimManagerImpl implements EsShimManager
     
     private final String assetPrefix;
     
+    private final String compressedRequestPrefix;
+    
+    private final String uncompressedRequestPrefix;
+    
     public EsShimManagerImpl(Map<String, Resource> shims,
             PathConstructor pathConstructor,
             @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
@@ -40,6 +44,8 @@ public class EsShimManagerImpl implements EsShimManager
         this.shims = shims;
         this.assetPrefix = assetPrefix;
         this.pathConstructor = pathConstructor;
+        this.compressedRequestPrefix = getRequestPrefixUncached(true);
+        this.uncompressedRequestPrefix = getRequestPrefixUncached(false);
     }
 
     /**
@@ -53,9 +59,14 @@ public class EsShimManagerImpl implements EsShimManager
     }
     
     @Override
-    public String getRequestPrefix(boolean compress)
+    public String getRequestPrefix(boolean compress) 
     {
-        return pathConstructor.constructDispatchPath(assetPrefix + "/" + (compress ? ES_SUBPATH + ".gz" : ES_SUBPATH) + "/");
+        return compress ? compressedRequestPrefix : uncompressedRequestPrefix;
+    }
+    
+    public String getRequestPrefixUncached(boolean compress)
+    {
+        return pathConstructor.constructDispatchPath(assetPrefix, (compress ? ES_SUBPATH + ".gz" : ES_SUBPATH)) + "/";
     }
 
     @Override
