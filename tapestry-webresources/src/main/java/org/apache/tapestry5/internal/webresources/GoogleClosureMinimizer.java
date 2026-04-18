@@ -50,7 +50,7 @@ public class GoogleClosureMinimizer extends AbstractMinimizer
 
     static
     {
-        Compiler.setLoggingLevel(Level.SEVERE);
+        Compiler.setLoggingLevel(Level.OFF);
     }
 
     public GoogleClosureMinimizer(Logger logger,
