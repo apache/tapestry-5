@@ -1,15 +1,11 @@
+import t5build.NpmTask
+
 plugins {
     id 'tapestry.junit5-convention'
     id 'tapestry.testng-convention'
 }
 
 description = 'Central module for Tapestry, containing all core services and components'
-
-def npmWorkingDir = 'src/main/typescript/'
-def npmExec = 'npm'
-if (System.properties['os.name'].toLowerCase().contains('windows')) {
-    npmExec += '.cmd'
-}
 
 dependencies {
     api project(':tapestry-ioc')
@@ -29,37 +25,32 @@ dependencies {
     provided libs.jakarta.servlet.api
 
     testImplementation libs.commons.httpclient
-    testImplementation project(":tapestry-spock")
+    testImplementation project(':tapestry-spock')
 
     testRuntimeOnly libs.hsqldb
 }
 
-tasks.register('npmInstall', Exec) {
+tasks.register('npmInstall', NpmTask) {
     group = 'typescript'
-    description = 'Runs npm install'
-    
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'install'
+    description = 'Runs npm ci'
+
+    npmArgs = ['ci']
 }
 
-tasks.register('compileTypeScriptToAmd', Exec) {
+tasks.register('compileTypeScriptToAmd', NpmTask) {
     group = 'typescript'
     description = 'Compiles TypeScript to AMD modules'
-
     dependsOn npmInstall
 
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'build-amd'
+    npmArgs = ['run', 'build-amd']
 }
 
-tasks.register('compileTypeScriptToEsModule', Exec) {
+tasks.register('compileTypeScriptToEsModule', NpmTask) {
     group = 'typescript'
     description = 'Compiles TypeScript to ES modules'
-
     dependsOn npmInstall
-    
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'build-es-module'
+
+    npmArgs = ['run', 'build-es-module']
 }
 
 // Lifecycle task that triggers both TypeScript compilations.
@@ -76,14 +67,12 @@ tasks.named('sourcesJar') {
     dependsOn compileTypeScript
 }
 
-tasks.register('generateTypeScriptDocs', Exec) {
+tasks.register('generateTypeScriptDocs', NpmTask) {
     group = 'typescript'
     description = 'Generates TypeScript documentation'
-
     dependsOn npmInstall
 
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'docs'
+    npmArgs = ['run', 'docs']
 }
 
 tasks.register('cleanTypeScriptFiles', Delete) {
