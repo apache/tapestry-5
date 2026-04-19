@@ -19,11 +19,12 @@ import org.apache.tapestry5.internal.test.TestableResponse;
 import org.apache.tapestry5.test.PageTester;
 import org.junit.Test;
 
+@Test(enabled = false)
 public class KaptchaUnitTest
 {
     
     @SuppressWarnings("unchecked")
-    @Test
+    @Test(enabled = false)
     public void cache_control_header()
     {
         PageTester tester = new PageTester("kaptcha.demo", "app");

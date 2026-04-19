@@ -1,3 +1,19 @@
+// Use for modules whose test sources use TestNG annotations (@Test, @BeforeMethod, ...).
+//
+// Adds TestNG + EasyMock to the test compile classpath, and testng-engine at runtime
+// so the standard 'test' task (JUnit Platform) discovers and runs TestNG unit tests
+// without any configuration change.
+//
+// Modules that ALSO have Selenium integration tests must additionally declare:
+//   - A 'testNG' task using useTestNG { suiteXmlFiles << ... } for native TestNG execution
+//     (needed for correct @BeforeTest / ITestContext scoping across multiple test apps)
+//   - An exclusion on the 'test' task to skip integration classes
+//   - tasks.named('check') { dependsOn 'testNG' }
+//
+// Convention hierarchy:
+//   tapestry.testing-base-convention       platform runner, BOM, logging
+//     └─ tapestry.testng-convention          + TestNG + EasyMock + testng-engine (this file)
+
 plugins {
     id 'tapestry.testing-base-convention'
 }
@@ -5,22 +21,5 @@ plugins {
 dependencies {
     testImplementation libs.testng
     testImplementation libs.easymock
-}
-
-tasks.withType(Test).configureEach { testTask ->
-
-    def suiteFile = [
-        'src/test/resources/testng.xml',
-        'src/test/conf/testng.xml'
-    ].find { path ->
-        project.file(path).exists()
-    }
-
-    if (suiteFile) {
-        testTask.useTestNG {
-            suites suiteFile
-        }
-    } else {
-        testTask.useTestNG()
-    }
+    testRuntimeOnly libs.testng.engine
 }

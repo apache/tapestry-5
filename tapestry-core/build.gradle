@@ -1,15 +1,11 @@
+import t5build.NpmTask
+
 plugins {
     id 'tapestry.junit5-convention'
     id 'tapestry.testng-convention'
 }
 
-import t5build.TapestryBuildLogic
-import org.apache.tools.ant.filters.ReplaceTokens
-
 description = 'Central module for Tapestry, containing all core services and components'
-
-def npmWorkingDir = 'src/main/typescript/'
-def npmExec = TapestryBuildLogic.isWindows() ? 'npm.cmd' : 'npm'
 
 dependencies {
     api project(':tapestry-ioc')
@@ -29,41 +25,39 @@ dependencies {
     provided libs.javax.servlet.api
 
     testImplementation libs.commons.httpclient
-    testImplementation project(":tapestry-spock")
+    testImplementation project(':tapestry-spock')
 
-    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.hsqldb
 }
 
-tasks.register('npmInstall', Exec) {
-    group = 'TypeScript'
-    description = 'Runs npm install'
-    
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'install'
+tasks.register('npmInstall', NpmTask) {
+    group = 'typescript'
+    description = 'Runs npm ci'
+
+    npmArgs = ['ci']
 }
 
-tasks.register('compileTypeScriptToAmd', Exec) {
-    group = 'TypeScript'
+tasks.register('compileTypeScriptToAmd', NpmTask) {
+    group = 'typescript'
     description = 'Compiles TypeScript to AMD modules'
-
     dependsOn npmInstall
 
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'build-amd'
+    npmArgs = ['run', 'build-amd']
 }
 
-tasks.register('compileTypeScriptToEsModule', Exec) {
-    group = 'TypeScript'
+tasks.register('compileTypeScriptToEsModule', NpmTask) {
+    group = 'typescript'
     description = 'Compiles TypeScript to ES modules'
-
     dependsOn npmInstall
-    
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'build-es-module'
+
+    npmArgs = ['run', 'build-es-module']
 }
 
+// Lifecycle task that triggers both TypeScript compilations.
+// Typed as Delete only because Gradle requires a concrete type
+// and this task performs no actions of its own.
 tasks.register('compileTypeScript', Delete) {
-    group = 'TypeScript'
+    group = 'typescript'
     description = 'Compiles all TypeScript variants'
 
     dependsOn compileTypeScriptToAmd, compileTypeScriptToEsModule
@@ -73,18 +67,16 @@ tasks.named('sourcesJar') {
     dependsOn compileTypeScript
 }
 
-tasks.register('generateTypeScriptDocs', Exec) {
-    group = 'TypeScript'
+tasks.register('generateTypeScriptDocs', NpmTask) {
+    group = 'typescript'
     description = 'Generates TypeScript documentation'
-
     dependsOn npmInstall
 
-    workingDir = npmWorkingDir
-    commandLine npmExec, 'run', 'docs'
+    npmArgs = ['run', 'docs']
 }
 
 tasks.register('cleanTypeScriptFiles', Delete) {
-    group = 'TypeScript'
+    group = 'typescript'
     description = 'Cleans generated TypeScript files'
 
     delete fileTree('src/main/resources/META-INF/assets/es-modules/t5/core') {
@@ -105,12 +97,18 @@ tasks.named('clean') {
 }
 
 
-// Not sure why this is necessary:
+// Groovy test classes extend Java test base classes, so Java must be compiled first.
+// Gradle does not infer this ordering automatically in mixed-language source sets.
 tasks.named('compileTestGroovy') {
     dependsOn compileTestJava
 }
 
 test {
+    useJUnitPlatform()
+
+    // Don't run integration tests via Jupiter testng-runner
+    exclude '**/integration/**'
+
     // Needed to have XMLTokenStreamTests.testStreamEncoding() passing on Java 9+
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
         jvmArgs('--add-opens=java.base/java.nio.charset=ALL-UNNAMED')
@@ -118,6 +116,23 @@ test {
 
     // TAP5-2722
     systemProperty 'user.language', 'en'
+}
+
+// This task runs the default integration tests that are defined in the testng.xml
+tasks.register('testNG', Test) {
+    group = 'verification'
+    classpath = sourceSets.test.runtimeClasspath
+
+    useTestNG {
+        suiteXmlFiles << project.file('src/test/resources/testng.xml')
+    }
+
+    // TAP5-2722
+    systemProperty 'user.language', 'en'
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
 }
 
 [
@@ -130,7 +145,7 @@ test {
     'appfolder'
 ].each { appName ->
     tasks.register("runTest${appName.capitalize()}", JavaExec) {
-        group = 'Application'
+        group = 'application'
         description = "Starts the ${appName} integration test app, useful when debugging."
 
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
@@ -139,41 +154,48 @@ test {
     }
 }
 
-// Default is jQuery and Require.js enabled, so here are the tests for the
-// other combinations
+// The default testNG run uses jQuery + Require.js (the most common production config).
+// These three tasks exercise the other combinations. They are NOT wired into 'check'
+// and run only via the 'continuousIntegration' task in the root build.
 
-tasks.register('testWithJqueryAndRequireJsDisabled', Test) {
-    group = 'Verification'
-    description = 'Runs tests with jQuery and Require.js disabled'
+[
+    [
+        name: 'testWithJqueryAndRequireJsDisabled',
+        provider: 'jquery',
+        requireJs: 'false',
+        port: '9091',
+        sslPort: '8444'
+    ],
+    [
+        name: 'testWithPrototypeAndRequireJsEnabled',
+        provider: 'prototype',
+        requireJs: 'true',
+        port: '9092',
+        sslPort:
+        '8445'
+    ],
+    [
+        name: 'testWithPrototypeAndRequireJsDisabled',
+        provider: 'prototype',
+        requireJs: 'false',
+        port: '9093',
+        sslPort: '8446'
+    ]
+].each { cfg ->
+    tasks.register(cfg.name, Test) {
+        group = 'verification'
+        description = "Runs integration tests with ${cfg.provider} and RequireJS ${cfg.requireJs == 'true' ? 'enabled' : 'disabled'}"
+        classpath = sourceSets.test.runtimeClasspath
 
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'jquery',
-        'tapestry.require-js-enabled':                 'false',
-        'tapestry.port':                               '9091',
-        'tapestry.ssl-port':                           '8444'
-    )
-}
+        useTestNG {
+            suiteXmlFiles << project.file('src/test/resources/testng.xml')
+        }
 
-tasks.register('testWithPrototypeAndRequireJsEnabled', Test) {
-    group = 'Verification'  
-    description = 'Runs tests with Prototype and Require.js enabled'
-
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'prototype',
-        'tapestry.require-js-enabled':                 'true',
-        'tapestry.port':                               '9092',
-        'tapestry.ssl-port':                           '8445'
-    )
-}
-
-tasks.register('testWithPrototypeAndRequireJsDisabled', Test) {
-    group = 'Verification'
-    description = 'Runs tests with Prototype and Require.js disabled'
-
-    systemProperties(
-        'tapestry.javascript-infrastructure-provider': 'prototype',
-        'tapestry.require-js-enabled':                 'false',
-        'tapestry.port':                               '9093',
-        'tapestry.ssl-port':                           '8446'
-    )
+        systemProperties(
+            'tapestry.javascript-infrastructure-provider': cfg.provider,
+            'tapestry.require-js-enabled': cfg.requireJs,
+            'tapestry.port': cfg.port,
+            'tapestry.ssl-port': cfg.sslPort
+        )
+    }
 }

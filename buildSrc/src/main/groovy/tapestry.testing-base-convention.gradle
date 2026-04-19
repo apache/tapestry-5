@@ -1,12 +1,32 @@
+// Shared test infrastructure for all testing conventions.
+// Applied indirectly via tapestry.junit5-convention and tapestry.testng-convention.
+//
+// DO NOT USE DIRECTLY!
+//
+// Configures every Test task in the project (via tasks.withType(Test)):
+//   - JUnit Platform as the test runner (required by both Jupiter and testng-engine)
+//   - junit-platform-launcher + JUnit BOM on the runtime classpath
+//   - Standard system properties: encoding, locale, CI flag, Selenium timeout
+//   - Consistent test logging (full exception format, pass/skip/fail events, progress counter)
+//
+// The JUnit BOM ensures all JUnit Platform artifacts (launcher, engines) use the same version,
+// even in modules that only use TestNG and never write a single @Test(jupiter) method.
+
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.TestResult.ResultType
+
 plugins {
     id 'java-library'
 }
 
 dependencies {
+    testImplementation platform(libs.junit.bom)
     testRuntimeOnly libs.slf4j.simple
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 tasks.withType(Test).configureEach { testTask ->
+    useJUnitPlatform()
     maxHeapSize = '600M'
 
     systemProperties(
@@ -21,22 +41,24 @@ tasks.withType(Test).configureEach { testTask ->
     environment.LANG = 'en_US.UTF-8'
 
     testLogging {
-        exceptionFormat 'full'
+        exceptionFormat = TestExceptionFormat.FULL
         events 'passed', 'skipped', 'failed'
         showStandardStreams = true
     }
+
+    // The code below is a helper to output test progress during testing
 
     def total = 0, passed = 0, failed = 0, skipped = 0
 
     afterTest { descriptor, result ->
         switch (result.resultType) {
-            case org.gradle.api.tasks.testing.TestResult.ResultType.SUCCESS:
+            case ResultType.SUCCESS:
                 passed++
                 break
-            case org.gradle.api.tasks.testing.TestResult.ResultType.FAILURE:
+            case ResultType.FAILURE:
                 failed++
                 break
-            case org.gradle.api.tasks.testing.TestResult.ResultType.SKIPPED:
+            case ResultType.SKIPPED:
                 skipped++
                 break
         }
@@ -50,17 +72,16 @@ tasks.withType(Test).configureEach { testTask ->
         // The root suite has a null parent. We only want to log the final summary.
         if (descriptor.parent == null) {
             total = passed + failed + skipped
-            // Using project.path gives a clear identifier like ":tapestry-core"
-            def projectName = project.path
 
-            // Don't log if no tests were run
+            // Only log if we actually have tested something
             if (total > 0) {
+                // Using project.path plus task gives a clear identifier like ":tapestry-core:test"
+                def taskIdentifier = "${project.path}:${name}"
                 logger.lifecycle "------------------------------------------------------------------------"
-                logger.lifecycle "Test Results for ${projectName}"
+                logger.lifecycle "Test Results for ${taskIdentifier}"
                 logger.lifecycle "  Tests run: ${total}, Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}"
                 logger.lifecycle "------------------------------------------------------------------------"
             }
         }
     }
 }
-

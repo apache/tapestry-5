@@ -47,6 +47,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+// Disabled as JUnit would pick it up, but TestNG ignored it due to missing in testng.xml
+// https://github.com/apache/tapestry-5/commit/246e677097f249ad2352ddc595ef43cc257f8e27
+@Test(enabled = false)
 public class JpaTest
 {
 
@@ -149,7 +152,7 @@ public class JpaTest
         return em.createQuery(query).getResultList();
     }
 
-    @Test
+    @Test(enabled = false)
     public void commitBothInNestedTransaction()
     {
         topLevelService.createThingOneAndTwo("one", "two");
@@ -158,19 +161,19 @@ public class JpaTest
         assertTrue(getEntityManager().find(VersionedThing.class, 1).getVersion() > 0);
     }
 
-    @Test(expectedExceptions = RollbackException.class)
+    @Test(expectedExceptions = RollbackException.class, enabled = false)
     public void rollbackNestedFails()
     {
         topLevelService.createThingOneAndTwo("one", null);
     }
 
-    @Test(expectedExceptions = RollbackException.class)
+    @Test(expectedExceptions = RollbackException.class, enabled = false)
     public void rollbackTopFails()
     {
         topLevelService.createThingOneAndTwo(null, "two");
     }
 
-    @Test
+    @Test(enabled = false)
     public void sequentialCommitUsingInvokeAfterCommit()
     {
         topLevelService.createThingOneThenTwo("one", "two");
@@ -179,7 +182,7 @@ public class JpaTest
         assertTrue(getEntityManager().find(VersionedThing.class, 1).getVersion() > 1);
     }
 
-    @Test
+    @Test(enabled = false)
     public void sequentialCommitUsingInvokeAfterCommitAndCommitAfterAnnotation()
     {
         topLevelService.createThingOneThenTwoWithNestedCommitAfter("one", "two");
@@ -188,7 +191,7 @@ public class JpaTest
         assertTrue(getEntityManager().find(VersionedThing.class, 1).getVersion() > 1);
     }
 
-    @Test
+    @Test(enabled = false)
     public void sequentialRollbackAndAbortUsingInvokeAfterCommit()
     {
         try
@@ -203,7 +206,7 @@ public class JpaTest
         assertEquals(0, getInstances(ThingTwo.class).size());
     }
 
-    @Test
+    @Test(enabled = false)
     public void trySomething()
     {
         ThingOne thingOne = new ThingOne();

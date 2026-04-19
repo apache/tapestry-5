@@ -11,7 +11,7 @@ dependencies {
     implementation libs.jboss.logging
 
     testImplementation project(':tapestry-test')
-    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
+    testRuntimeOnly libs.hsqldb
 }
 
 tasks.register('runTestApp0', JavaExec) {
@@ -20,6 +20,21 @@ tasks.register('runTestApp0', JavaExec) {
     mainClass = 'org.apache.tapestry5.test.JettyRunner'
     args '-d', 'src/test/webapp', '-p', '8080'
     classpath += project.sourceSets.test.runtimeClasspath
+}
+
+tasks.named('test') {
+    exclude '**/integration/**'
+}
+
+tasks.register('testNG', Test) {
+    group = 'verification'
+    useTestNG {
+        suiteXmlFiles << project.file('src/test/resources/testng.xml')
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
 }
 
 tasks.named('jar', Jar) {

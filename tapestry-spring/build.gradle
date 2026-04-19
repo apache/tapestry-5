@@ -16,12 +16,27 @@ dependencies {
 
 ['', '1'].each { suffix ->
     tasks.register("runTestApp${suffix}", JavaExec) {
-        group = 'Application'
+        group = 'application'
         description = "Start tapestry-spring integration test app${suffix}, useful when debugging failing integration tests"
         mainClass = 'org.apache.tapestry5.test.JettyRunner'
         args '-d', "src/test/webapp${suffix}", '-p', '8080'
         classpath += project.sourceSets.test.runtimeClasspath
     }
+}
+
+tasks.named('test') {
+    exclude '**/integration/**'
+}
+
+tasks.register('testNG', Test) {
+    group = 'verification'
+    useTestNG {
+        suiteXmlFiles << project.file('src/test/resources/testng.xml')
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'testNG'
 }
 
 tasks.named('jar', Jar) {

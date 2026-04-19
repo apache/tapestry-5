@@ -26,6 +26,11 @@ public class WebResourcesTest extends SeleniumTestCase {
     @Test
     public void test_CoffeeScript_compilation()
     {
+        // It appears that the initial CoffeeScriptCompiler/Rhino initialization might
+        // take too long on Apache CI, so we allow Selenium some more time to wait
+        // after initiating the request.
+        setTimeout("90000"); // 90s
+
         open("/");
         waitForInitializedPage();
         assertEquals(getText("banner"), "Index module loaded, bare!");

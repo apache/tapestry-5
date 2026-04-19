@@ -1,11 +1,15 @@
+// Use ONLY for existing modules still using JUnit 4 test sources (@RunWith, @Rule, etc.).
+//
+// Adds the JUnit Vintage engine so those tests run on the JUnit Platform alongside
+// any Jupiter tests in the same module.
+// No test source changes required.
+//
+// Prefer migrating tests to JUnit 5 over adding this convention to new modules.
+
 plugins {
-    id 'tapestry.testing-base-convention'
+    id 'tapestry.junit5-convention'
 }
 
 dependencies {
-    testImplementation libs.junit4
-}
-
-tasks.withType(Test).configureEach {
-    useJUnit()
+    testRuntimeOnly libs.junit.vintage.engine
 }
