@@ -19,7 +19,7 @@ dependencies {
     testImplementation project(':tapestry-test')
     testImplementation project(':tapestry-test-constants')
 
-    testRuntimeOnly libs.hsqldb
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
     testRuntimeOnly libs.slf4j.simple
 }
 

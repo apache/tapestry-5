@@ -11,7 +11,7 @@ dependencies {
     implementation libs.jboss.logging
 
     testImplementation project(':tapestry-test')
-    testRuntimeOnly libs.hsqldb
+    testRuntimeOnly("${libs.hsqldb.get().module.group}:${libs.hsqldb.get().module.name}:${libs.hsqldb.get().version}:jdk8")
 }
 
 tasks.register('runTestApp0', JavaExec) {

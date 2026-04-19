@@ -109,7 +109,7 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         {
             assertMessageContains(
                     ex,
-                    "Exception converting 'xyz' to instance of java.lang.Long (id type for entity org.apache.tapestry5.internal.hibernate.SampleEntity)");
+                    "Exception converting 'xyz' to instance of java.lang.Long (id type for entity org.apache.tapestry5.hibernate.web.internal.SampleEntity)");
         }
 
         assertNull(encoder.toValue(""));
