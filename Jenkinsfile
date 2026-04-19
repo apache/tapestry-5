@@ -23,6 +23,9 @@ pipeline {
                 agent {
                     node {
                         label 'ubuntu'
+                        // Use cell-based workspaces.
+                        // This shouldn't be needed, but we had some weird matrix issues.
+                        customWorkspace "workspace/${env.JOB_NAME}-${JDK_VERSION}"
                     }
                 }
 
@@ -49,39 +52,29 @@ pipeline {
                         }
                         post {
                             always {
-                                script {
-                                    // Define a clean, unique destination for this cell
-                                    def cellArtifactPath = "build/matrix-artifacts/${JDK_VERSION}"
+                                // JUnit namespaces automatically on matrix cells
+                                junit(
+                                    testResults: '**/build/test-results/**/*.xml',
+                                    allowEmptyResults: true
+                                )
 
-                                    sh """
-                                        # Remove any old artifacts from previous runs on this same node
-                                        rm -rf -- "${cellArtifactPath}"
-                                        mkdir -p -- "${cellArtifactPath}"
+                                // archiveArtifacts has no per-cell namespacing in matrix builds,
+                                // so we copy into a JDK-labelled folder first to avoid cells
+                                // overwriting each other's reports in the artifact store.
+                                sh """
+                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
+                                        -not -path '*/matrix-artifacts/*' -type d | while read -r src; do
+                                        dest="build/matrix-artifacts/${JDK_VERSION}/\${src#./}"
+                                        mkdir -p -- "\$dest"
+                                        cp -r -- "\$src/." "\$dest/"
+                                    done
+                                """
 
-                                        # Find all test results and reports, but EXCLUDE our own destination.
-                                        # We use -mindepth to ensure we don't pick up the root accidentally.
-                                        find . -mindepth 2 \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
-                                            -not -path '*/matrix-artifacts/*' -type d | while read -r src; do
-                                            # Create a path-based destination name to avoid collisions
-                                            rel_src=\${src#./}
-                                            dest_dir="${cellArtifactPath}/\${rel_src}"
-                                            mkdir -p -- "\$dest_dir"
-                                            cp -r -- "\$src/." "\$dest_dir/"
-                                        done
-                                    """
-
-                                    // Point JUnit ONLY to the namespaced folder for this specific matrix cell
-                                    junit(
-                                        testResults: "${cellArtifactPath}/**/test-results/**/*.xml",
-                                        allowEmptyResults: true
-                                    )
-
-                                    // Archive only the namespaced artifacts
-                                    archiveArtifacts(
-                                        artifacts: "${cellArtifactPath}/**/*",
-                                        allowEmptyArchive: true
-                                    )
-                                }
+                                archiveArtifacts(
+                                    artifacts: "build/matrix-artifacts/${JDK_VERSION}/**/*",
+                                    allowEmptyArchive: true,
+                                    fingerprint: false
+                                )
                             }
                         }
                     }
