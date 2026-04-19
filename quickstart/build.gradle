@@ -1,50 +1,55 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
-task copyGradleWrapper(type: Copy) {
-    ext.srcDir = file("$buildDir/wrapper")
+tasks.register('copyGradleWrapper', Copy) {
+    group = 'build setup'
+    description = 'Copies Gradle wrapper files to archetype resources'
 
+    def srcDir = layout.buildDirectory.dir('wrapper')
     inputs.dir srcDir
-    outputs.dir file("$buildDir/resources/main/archetype-resources")
+    outputs.dir layout.buildDirectory.dir('resources/main/archetype-resources')
 
     from srcDir
-    into file("$buildDir/resources/main/archetype-resources")
-
+    into layout.buildDirectory.dir('resources/main/archetype-resources')
     exclude '.gradle'
 }
 
-task addGradleWrapper(type: Exec) {
-    workingDir "$buildDir/wrapper"
-    commandLine "${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '7.3'
+tasks.register('addGradleWrapper', Exec) {
+    group = 'build setup'
+    description = 'Generates Gradle wrapper in temporary directory'
 
+    workingDir = layout.buildDirectory.dir('wrapper')
+    commandLine = ["${rootProject.projectDir}/gradlew", 'wrapper', '--gradle-version', '8.14.2']
     standardOutput = new ByteArrayOutputStream()
 
-    ext.output = {
-        return standardOutput.toString()
-    }
-
     doFirst {
-        def wrapperDirectory = new File(buildDir, "wrapper")
+        def wrapperDirectory = layout.buildDirectory.dir('wrapper').get().asFile
         wrapperDirectory.mkdirs()
 
-        def settings = new File(wrapperDirectory, "settings.gradle")
-        new FileOutputStream(settings).close();
+        def settings = new File(wrapperDirectory, 'settings.gradle')
+        settings.createNewFile()
     }
 
-    finalizedBy 'copyGradleWrapper'
+    finalizedBy copyGradleWrapper
 }
 
-task addWrappers(dependsOn: [addGradleWrapper]) {
+tasks.register('addWrappers') {
+    group = 'build setup'
+    description = 'Coordinates wrapper generation tasks'
+
+    dependsOn addGradleWrapper
 }
 
-task processFiltered(type: Copy) {
-    ext.srcDir = file('src/main/resources-filtered')
+tasks.register('processFiltered', Copy) {
+    group = 'build'
+    description = 'Processes filtered resources with token replacement'
 
+    def srcDir = layout.projectDirectory.dir('src/main/resources-filtered')
     inputs.dir srcDir
-    outputs.dir sourceSets.main.output.resourcesDir
+    outputs.dir layout.buildDirectory.dir('resources/main')
 
     from srcDir
-    into sourceSets.main.output.resourcesDir
+    into layout.buildDirectory.dir('resources/main')
 
     filter(FixCrLfFilter)
     filter(ReplaceTokens, tokens: [
@@ -55,7 +60,7 @@ task processFiltered(type: Copy) {
         jacksonVersion: libs.versions.jackson.get(),
         log4jVersion: libs.versions.quickstart.log4j.get(),
         yassonVersion: libs.versions.quickstart.yasson.get(),
-        servletVersion: libs.versions.javax.servlet.api.get(),
+        servletVersion: libs.versions.jakarta.servlet.api.get(),
         mavenCompilerVersion: libs.versions.quickstart.maven.compiler.get(),
         mavenSurefireVersion: libs.versions.quickstart.maven.surefire.get(),
         mavenWarVersion: libs.versions.quickstart.maven.war.get(),
@@ -64,8 +69,10 @@ task processFiltered(type: Copy) {
     ])
 }
 
-processResources.dependsOn([addWrappers, processFiltered])
+tasks.named('processResources') {
+    dependsOn addWrappers, processFiltered
+}
 
-jar {
-    dependsOn(copyGradleWrapper)
+tasks.named('jar') {
+    dependsOn copyGradleWrapper
 }

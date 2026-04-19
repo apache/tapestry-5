@@ -1,5 +1,4 @@
 import org.gradle.plugins.ide.idea.model.*
-import t5build.*
 
 description = "Bridge to CDI for Apache Tapestry 5 Project"
 

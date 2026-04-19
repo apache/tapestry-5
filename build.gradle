@@ -1,5 +1,4 @@
 import t5build.GenerateChecksums
-import t5build.TapestryBuildLogic
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
@@ -43,15 +42,16 @@ ext {
         'tapestry-core',
     ]
 
+    // Set via GRADLE_OPTS='-Dci=true' in CI (see Jenkinsfile).
+    // Controls version suffix, deploy target, and if integration tests will run headless
     continuousIntegrationBuild = Boolean.getBoolean('ci')
+
     stagingUrl = 'https://repository.apache.org/service/local/staging/deploy/maven2/'
     snapshotUrl = 'https://repository.apache.org/content/repositories/snapshots'
     doSign = !project.hasProperty('noSign') && project.hasProperty('signing.keyId')
 
     // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
-
-    def deployFlavor = TapestryBuildLogic.isSnapshot(project) ? 'snapshot' : 'apache'
-
+    def deployFlavor = continuousIntegrationBuild ? 'snapshot' : 'apache'
     deployUsername = providers.gradleProperty("${deployFlavor}DeployUserName")
     deployPassword = providers.gradleProperty("${deployFlavor}DeployPassword")
     archiveDeployFolder = providers.gradleProperty('apacheArchivesFolder')
@@ -64,18 +64,18 @@ ext {
 }
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-version = TapestryBuildLogic.tapestryVersion(project)
+version = continuousIntegrationBuild ? tapestryMajorVersion + '-SNAPSHOT' : tapestryMajorVersion + tapestryMinorVersion
 
 // Specific to top-level build, not set for subprojects:
 configurations {
     javadoc
-    published.extendsFrom archives, meta
 
+    published.extendsFrom archives, meta
     if (doSign) {
         published.extendsFrom signatures
     }
 
-    binaries // additional dependencies included in the binary archive
+    binaries
 }
 
 dependencies {
@@ -130,9 +130,8 @@ subprojects {
     }
 
     configurations {
-        // published -- what gets uploaded to the Nexus repository
+        // published: what gets uploaded to the Nexus repository
         published.extendsFrom archives, meta
-
         if (rootProject.doSign) {
             published.extendsFrom signatures
         }
@@ -150,8 +149,9 @@ subprojects {
 
                 pom {
                     name = project.name
-                    // TODO: find some way to get the subproject description here.
-                    // description =
+                    description = providers.provider {
+                        project.description
+                    }
                     url = 'https://tapestry.apache.org/'
                     licenses {
                         license {
@@ -162,13 +162,12 @@ subprojects {
                     scm {
                         connection = 'scm:git:https://gitbox.apache.org/repos/asf/tapestry-5.git'
                         developerConnection = 'scm:git://gitbox.apache.org/repos/asf/tapestry-5.git'
-                        url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git;a=summary'
+                        url = 'https://git-wip-us.apache.org/repos/asf?p=tapestry-5.git'
                     }
                     // Changes the generated pom.xml so its dependencies on suffixed artifacts
                     // get properly updated with suffixed artifact ids
                     withXml {
-                        def artifactIdQName = new groovy.namespace.QName(
-                                'http://maven.apache.org/POM/4.0.0', 'artifactId')
+                        def artifactIdQName = new groovy.namespace.QName('http://maven.apache.org/POM/4.0.0', 'artifactId')
                         def node = asNode()
                         def dependencies = node.get('dependencies')[0]
                         if (dependencies != null) {
@@ -183,6 +182,7 @@ subprojects {
                 }
             }
         }
+
         if (canDeploy) {
             repositories {
                 mavenLocal()
@@ -209,8 +209,9 @@ subprojects {
         }
     }
 
+    // Modules not in suffixedArtifactNames have no -jakarta counterpart
+    // and should not be published when artifactSuffix is empty (i.e. the javax branch)
     def actuallyPublish = !artifactSuffix.isEmpty() || suffixedArtifactNames.contains(project.name)
-    // println 'XXXXXX Actually publish? ' + actuallyPublish + ' project ' + project.name + ' ' + '!artifactSuffix.isEmpty() ' + !artifactSuffix.isEmpty()
     if (!actuallyPublish) {
         tasks.withType(PublishToMavenRepository).configureEach {
             it.enabled = false
@@ -233,7 +234,7 @@ subprojects {
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
 tasks.register('aggregateJavadoc', Javadoc) {
-    group = 'Documentation'
+    group = 'documentation'
     description = 'Build the aggregated JavaDocs for all modules'
 
     dependsOn configurations.javadoc
@@ -303,14 +304,14 @@ tasks.register('aggregateJavadoc', Javadoc) {
 }
 
 tasks.register('typeScriptDocs') {
-    group = 'Documentation'
+    group = 'documentation'
     description = 'Builds typedoc documentation for all TypeScript sources'
 
     dependsOn(':tapestry-core:generateTypeScriptDocs')
 }
 
 tasks.register('combinedJacocoReport', JacocoReport) {
-    group = 'Verification'
+    group = 'verification'
     description = 'Generates combined JaCoCo coverage report for all subprojects'
     
     def excludedProjects = [
@@ -329,7 +330,7 @@ tasks.register('combinedJacocoReport', JacocoReport) {
     def subprojectsToConsider = subprojects.findAll {
         !excludedProjects.contains(it.name)
     }
-    dependsOn subprojectsToConsider.test
+    dependsOn subprojectsToConsider.collect { it.tasks.named('check') }
 
     def classFiles = files(subprojectsToConsider.sourceSets.main.output).asFileTree.matching {
         exclude 'org/apache/tapestry5/internal/plastic/asm/**'
@@ -338,9 +339,12 @@ tasks.register('combinedJacocoReport', JacocoReport) {
 
     additionalSourceDirs.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
     sourceDirectories.from(files(subprojectsToConsider.sourceSets.main.allSource.srcDirs))
-    executionData.from(files(subprojectsToConsider.jacocoTestReport.executionData).filter {
-        it.exists()
+    // Glob picks up all exec files regardless of task name: test.exec, testNG.exec, etc.
+    executionData.from(subprojectsToConsider.collect { p ->
+        p.fileTree(p.layout.buildDirectory) { include 'jacoco/*.exec' }
     })
+
+    // Reuse the JaCoCo agent classpath that each subproject's jacocoTestReport task already resolved.
     jacocoClasspath = files(subprojectsToConsider.jacocoTestReport.jacocoClasspath)
 
     reports {
@@ -357,7 +361,7 @@ tasks.register('combinedJacocoReport', JacocoReport) {
 }
 
 tasks.register('continuousIntegration') {
-    group = 'Verification'
+    group = 'verification'
     description = 'Runs a full CI build: assembles all artifacts, runs all checks, and generates aggregate reports.'
 
     def dependants = [
@@ -365,20 +369,16 @@ tasks.register('continuousIntegration') {
         'tapestry-core:testWithJqueryAndRequireJsDisabled',
         'tapestry-core:testWithPrototypeAndRequireJsEnabled', 
         subprojects.check, // jQuery and Require.js enabled
-        combinedJacocoReport
+        combinedJacocoReport,
+        aggregateJavadoc
     ]
-
-    // tapestry-javadoc doesn't work with Java 8 anymore. That's why it's only added if != 8.
-    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-        dependants << aggregateJavadoc
-    }
 
     dependsOn(dependants)
 }
 
 
 tasks.register('zippedSources', Zip) {
-    group = 'Release artifact'
+    group = 'release artifact'
     description = "Creates a combined Zip file of all sub-project's sources"
     
     dependsOn 'tapestry-core:compileTypeScript'
@@ -403,7 +403,7 @@ tasks.register('zippedSources', Zip) {
 }
 
 tasks.register('zippedApidoc', Zip) {
-    group = 'Release artifact'
+    group = 'release artifact'
     description = "Zip archive of the project's aggregate JavaDoc and TypeScript documentation"
 
     dependsOn typeScriptDocs
@@ -474,7 +474,6 @@ if (canDeploy) {
         uploads.extendsFrom archives, signatures
     }
 
-
     artifacts {
         archives zippedApidoc, zippedSources, zippedBinaries
     }
@@ -524,7 +523,7 @@ if (canDeploy) {
 }
 
 tasks.register('updateBootstrap') {
-    group = 'Maintenance'
+    group = 'maintenance'
     description = 'Updates the included Bootstrap dependencies from GitHub'
 
     doLast {

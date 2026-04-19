@@ -1,3 +1,9 @@
+// Base convention applied to every subproject in root build.gradle via `subprojects {}`
+//   - Java 11 source/target compatibility
+//   - 'provided' configuration (compile-only scope, like Maven <scope>provided</scope>)
+//   - Dependency version constraints to keep the classpath consistent across modules
+//   - JAR manifest: Automatic-Module-Name for JPMS, LICENSE/NOTICE in META-INF
+
 plugins {
     id 'java-library'
     id 'eclipse'
@@ -13,7 +19,10 @@ java {
 }
 
 configurations {
+    // 'provided': on compile + test classpaths but excluded from the runtime jar/war.
     provided
+
+    // 'meta': collects artifacts (e.g. sourcesJar) that should be published alongside the main jar.
     meta
 }
 
@@ -53,7 +62,8 @@ tasks.withType(Jar).configureEach {
         into 'META-INF'
     }
 
-    // JPMS compatibility
+    // Stable module name for JPMS (e.g. tapestry-ioc → org.apache.tapestry.ioc).
+    // Keeps the module name consistent even if the JAR file is renamed.
     manifest {
         attributes("Automatic-Module-Name": "org.apache.tapestry.${project.name}"
         .replace('tapestry-', '')
