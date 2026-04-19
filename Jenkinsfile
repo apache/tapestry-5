@@ -20,7 +20,14 @@ pipeline {
                     }
                 }
 
-                agent { node { label 'ubuntu' } }
+                agent {
+                    node {
+                        label 'ubuntu'
+                        // Use cell-based workspaces.
+                        // This shouldn't be needed, but we had some weird matrix issues.
+                        customWorkspace "workspace/${env.JOB_NAME}-${JDK_VERSION}"
+                    }
+                }
 
                 tools {
                     jdk "${JDK_VERSION}"
@@ -40,37 +47,33 @@ pipeline {
 
                     stage('Test: Check') {
                         steps {
-                            // This will run unit tests and the default integration variant (jQuery + RequireJS).
-                            // We include the coverage report in this step, as modifying the test results with
-                            // sed would trigger a test rerun if it would be its own stage.
+                            // This will run unit tests (JUnit & TestNG) and the default integration variant (jQuery + RequireJS).
                             sh './gradlew check combinedJacocoReport --continue'
                         }
                         post {
                             always {
-                                // Prefix the JUnit classnames so the Test UI shows which JDK ran which test
-                                sh """
-                                    find . -path '*/build/test-results/test/*.xml' \
-                                           -not -path './matrix-artifacts/*' -exec \
-                                        sed -i 's/classname="/classname="${JDK_VERSION}./g' {} +
-                                """
-
+                                // JUnit namespaces automatically on matrix cells
                                 junit(
-                                    testResults: '**/build/test-results/test/**/*.xml',
+                                    testResults: '**/build/test-results/**/*.xml',
                                     allowEmptyResults: true
                                 )
 
-                                // Copy reports into a JDK-named folder to avoid overwriting between matrix cells
+                                // archiveArtifacts has no per-cell namespacing in matrix builds,
+                                // so we copy into a JDK-labelled folder first to avoid cells
+                                // overwriting each other's reports in the artifact store.
                                 sh """
-                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) -type d | while IFS= read -r src; do
-                                        dest="matrix-artifacts/${JDK_VERSION}/\${src#./}"
+                                    find . \\( -path '*/build/reports' -o -path '*/build/test-results' \\) \
+                                        -not -path '*/matrix-artifacts/*' -type d | while read -r src; do
+                                        dest="build/matrix-artifacts/${JDK_VERSION}/\${src#./}"
                                         mkdir -p -- "\$dest"
                                         cp -r -- "\$src/." "\$dest/"
                                     done
                                 """
 
                                 archiveArtifacts(
-                                    artifacts: "matrix-artifacts/${JDK_VERSION}/**/*",
-                                    allowEmptyArchive: true
+                                    artifacts: "build/matrix-artifacts/${JDK_VERSION}/**/*",
+                                    allowEmptyArchive: true,
+                                    fingerprint: false
                                 )
                             }
                         }
@@ -138,7 +141,7 @@ ${getChangeLog()}
 -----------------------------------------------------------
 TEST RESULTS
 -----------------------------------------------------------
-\${TEST_COUNTS, var="total"} Tests: \${TEST_COUNTS, var="pass"} Passed, \${TEST_COUNTS, var="fail"} Failed, \${TEST_COUNTS, var="skipped"} Skipped
+\${TEST_COUNTS, var="total"} Tests: \${TEST_COUNTS, var="pass"} Passed, \${TEST_COUNTS, var="fail"} Failed, \${TEST_COUNTS, var="skip"} Skipped
 
 -----------------------------------------------------------
 FAILED TESTS (if any)

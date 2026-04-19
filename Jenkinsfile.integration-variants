@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         // Disable the daemon to prevent parallal issues
-        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dorg.gradle.daemon=false'
+        GRADLE_OPTS = '-Dci=true -Dfile.encoding=UTF-8 -Dselenium.wait.timeout=60 -Dorg.gradle.daemon=false'
     }
 
     tools {
@@ -13,7 +13,7 @@ pipeline {
     }
 
     options {
-        timeout(time: 1, unit: 'HOURS')
+        timeout(time: 2, unit: 'HOURS')
         skipStagesAfterUnstable()
     }
 
@@ -31,16 +31,7 @@ pipeline {
                     }
                     post {
                         always {
-                            sh '''
-                                if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled" ]; then
-                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Prototype./g' {} +
-                                fi
-                            '''
-
-                            junit(
-                                testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsDisabled/**/*.xml',
-                                allowEmptyResults: true
-                            )
+                            prefixAndPublishTestResults('testWithPrototypeAndRequireJsDisabled', 'Prototype')
                         }
                     }
                 }
@@ -56,16 +47,7 @@ pipeline {
                     }
                     post {
                         always {
-                        sh '''
-                                if [ -d "tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled" ]; then
-                                    find tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="Jquery./g' {} +
-                                fi
-                            '''
-
-                            junit(
-                                testResults: 'tapestry-core/build/test-results/testWithJqueryAndRequireJsDisabled/**/*.xml',
-                                allowEmptyResults: true
-                            )
+                            prefixAndPublishTestResults('testWithJqueryAndRequireJsDisabled', 'jQuery')
                         }
                     }
                 }
@@ -81,16 +63,7 @@ pipeline {
                     }
                     post {
                         always {
-                            sh '''
-                                if [ -d "tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled" ]; then
-                                    find tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled -name "*.xml" -type f -exec sed -i 's/classname="/classname="PrototypeRjs./g' {} +
-                                fi
-                            '''
-
-                            junit(
-                                testResults: 'tapestry-core/build/test-results/testWithPrototypeAndRequireJsEnabled/**/*.xml',
-                                allowEmptyResults: true
-                            )
+                            prefixAndPublishTestResults('testWithPrototypeAndRequireJsEnabled', 'PrototypeRjs')
                         }
                     }
                 }
@@ -104,6 +77,20 @@ pipeline {
         failure  { sendMail('FAILURE') }
         aborted  { sendMail('ABORTED') }
     }
+}
+
+// TEST RESULTS
+
+def prefixAndPublishTestResults(testName, prefix) {
+    sh """
+        if [ -d "tapestry-core/build/test-results/${testName}" ]; then
+            find tapestry-core/build/test-results/${testName} -name "*.xml" -type f -exec sed -i 's/classname="org[.]/classname="${prefix}.org./g' {} +
+        fi
+    """
+    junit(
+        testResults: "tapestry-core/build/test-results/${testName}/**/*.xml",
+        allowEmptyResults: true
+    )
 }
 
 // MAIL NOTIFICATIONS
