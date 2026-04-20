@@ -94,10 +94,14 @@ public class GeneralComponentTests extends App1TestCase
         // multiple renders w/ multiple parameters
         assertText("xpath=(//p[@class='superhero'])[1]", "Steve Rogers");
         assertText("xpath=(//p[@class='superhero'])[2]", "Bruce Banner");
+
+        assertText("block3", "isNull");
+
     }
     
     /** TAP5-742 */
-    @Test public void component_tracing_comments() throws Exception {
+    @Test public void component_tracing_comments() throws Exception
+    {
         String contents = IOUtils.toString(new URL(getBaseURL()).openStream());
         
         // off by default

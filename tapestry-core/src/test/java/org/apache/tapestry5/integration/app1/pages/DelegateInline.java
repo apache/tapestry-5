@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006-2010, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,4 +16,9 @@ package org.apache.tapestry5.integration.app1.pages;
 
 public class DelegateInline {
 
+    // TAP5-2826
+    public String getNullRenderVar()
+    {
+        return null;
+    }
 }

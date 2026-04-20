@@ -175,7 +175,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @param name
      *         of value to store
      * @param value
-     *         value to store (may not be null)
+     *         value to store
      * @throws IllegalStateException
      *         if the component is not currently rendering
      */
