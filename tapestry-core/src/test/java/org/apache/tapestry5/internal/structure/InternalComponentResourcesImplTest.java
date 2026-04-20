@@ -1,4 +1,4 @@
-// Copyright 2006-2014 The Apache Software Foundation
+// Copyright 2006-2014, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -299,4 +299,29 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    // TAP5-2826
+    @Test
+    public void get_set_render_variable_null()
+    {
+        Component component = mockComponent();
+        Instantiator ins = mockInstantiator(component);
+        ComponentModel model = mockComponentModel();
+
+        train_getModel(ins, model);
+
+        replay();
+
+        ComponentResources resources = new InternalComponentResourcesImpl(null, null, null, elementResources, "id",
+                null, ins, false);
+
+        resources.storeRenderVariable("myRenderVar", null);
+
+        Object result = resources.getRenderVariable("myRenderVar");
+
+        assertNull(result);
+
+        verify();
+    }
+    
 }

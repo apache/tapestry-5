@@ -551,21 +551,18 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
     {
         Map<String, Object> variablesMap = getRenderVariables(false);
 
-        Object result = InternalUtils.get(variablesMap, name);
-
-        if (result == null)
+        if (variablesMap == null || !variablesMap.containsKey(name))
         {
             throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(), name,
                     variablesMap == null ? null : variablesMap.keySet()));
         }
 
-        return result;
+        return InternalUtils.get(variablesMap, name);
     }
 
     public void storeRenderVariable(String name, Object value)
     {
         assert InternalUtils.isNonBlank(name);
-        assert value != null;
 
         Map<String, Object> renderVariables = getRenderVariables(true);
 
