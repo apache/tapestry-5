@@ -4,7 +4,6 @@ on: pull_request
 env:
   MOZ_HEADLESS: true
   DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
-  GECKODRIVER_VERSION: v0.36.0
 
 jobs:
   build:
