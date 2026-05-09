@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,23 +15,27 @@
 package org.apache.tapestry5.dom;
 
 /**
- * A callback interface used to traverse the nodes of a DOM subtree. Traversal is depth-first
- * pre-order (render order), visiting {@link Element}, {@link Text}, {@link Comment}, {@link CData},
- * and {@link Raw} nodes.
+ * A callback interface used to traverse every kind of {@link Node} in a DOM subtree:
+ * {@link Element}, {@link Text}, {@link Comment}, {@link CData}, and {@link Raw}.
  * <p>
- * {@link #visit(Element)} is the only required method; the remaining overloads have empty default
- * implementations so implementors only override the node types they care about.
+ * All methods have empty default implementations so implementors only override the node types
+ * they care about. Traversal is depth-first pre-order (render order), matching the behaviour of
+ * {@link Element#visit(Visitor)} but including non-element nodes.
+ * <p>
+ * Use {@link Element#visit(NodeVisitor)} or {@link Document#visit(NodeVisitor)} to start a
+ * traversal.
  *
- * @since 5.1.0.0
+ * @since 5.10
+ * @see Visitor
  */
-public interface Visitor
+public interface NodeVisitor
 {
     /**
      * Called for each {@link Element} encountered during traversal.
      *
      * @param element the element being visited
      */
-    void visit(Element element);
+    default void visit(Element element) {}
 
     /**
      * Called for each {@link Text} node encountered during traversal.

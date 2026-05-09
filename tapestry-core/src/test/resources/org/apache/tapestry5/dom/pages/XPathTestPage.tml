@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+        <!-- Single element for singleNode()/singleElement() lookups -->
+        <div id="single-div">Single Div</div>
+
+        <!-- Two children: first has id+class+title, second has class+title only -->
+        <div id="attr-parent">
+            <div id="attr-with-id" class="cls-first" title="First">With ID</div>
+            <div                   class="cls-second" title="Second">No ID</div>
+        </div>
+
+        <!-- Two differently-tagged children for element/childMarkup selection -->
+        <div id="child-elements">
+            <div>Div Child</div>
+            <span>Span Child</span>
+        </div>
+
+        <!-- Mixed text and comment nodes -->
+        <div id="comment-parent">Before Comment<!-- First -->After Comment<!-- Second --></div>
+
+        <!-- Tree for parent/ancestor/descendant axis tests -->
+        <div id="tree">
+            <div id="branch-a">
+                <div id="branch-a-leaf"/>
+            </div>
+            <div id="branch-b">
+                <div id="branch-b-leaf-one"/>
+                <div id="branch-b-leaf-two"/>
+            </div>
+        </div>
+
+        <!-- Mixed text/element for singleNormalizedDescendantText (double-space is intentional) -->
+        <div id="mixed-text">
+            before <span>inner  text</span> after
+        </div>
+
+        <!-- Two rows for normalizedDescendantText over a node list -->
+        <div id="multi-text">
+            <div>left <span>center</span> right</div>
+            <div>top <span>middle</span> bottom</div>
+        </div>
+
+        <!-- Non-breaking space for whitespace-normalization edge case -->
+        <div id="nbsp-text">&nbsp;</div>
+    </body>
+</html>

@@ -33,7 +33,7 @@ public final class Element extends Node
 
     private final String name;
 
-    private Node firstChild;
+    Node firstChild;
 
     private Node lastChild;
 
@@ -706,6 +706,64 @@ public final class Element extends Node
     }
 
     /**
+     * Inserts {@code node} as the first child of this element, shifting any existing children
+     * forward. If {@code node} is currently attached to another parent, it is detached first.
+     * <p>
+     * This is the anchor-centric complement to {@link Node#moveToTop(Element)}.
+     *
+     * @param node the node to prepend; must not be {@code null} or an ancestor of this element
+     * @return this element, for method chaining
+     * @throws IllegalArgumentException if {@code node} is {@code null} or is this element or an ancestor of it
+     * @since 5.10
+     */
+    public Element prependChild(Node node)
+    {
+        if (node == null)
+            throw new IllegalArgumentException("node must not be null");
+
+        Node search = this;
+        while (search != null)
+        {
+            if (search == node)
+                throw new IllegalArgumentException("Cannot prepend a node to itself or one of its ancestors");
+            search = search.container;
+        }
+
+        node.detach();
+        insertChildAt(0, node);
+        return this;
+    }
+
+    /**
+     * Appends {@code node} as the last child of this element. If {@code node} is currently
+     * attached to another parent, it is detached first.
+     * <p>
+     * This is the anchor-centric complement to {@link Node#moveToBottom(Element)}.
+     *
+     * @param node the node to append; must not be {@code null} or an ancestor of this element
+     * @return this element, for method chaining
+     * @throws IllegalArgumentException if {@code node} is {@code null} or is this element or an ancestor of it
+     * @since 5.10
+     */
+    public Element appendChild(Node node)
+    {
+        if (node == null)
+            throw new IllegalArgumentException("node must not be null");
+
+        Node search = this;
+        while (search != null)
+        {
+            if (search == node)
+                throw new IllegalArgumentException("Cannot append a node to itself or one of its ancestors");
+            search = search.container;
+        }
+
+        node.detach();
+        addChild(node);
+        return this;
+    }
+
+    /**
      * Removes all children from this element.
      *
      * @return the element, for method chaining
@@ -865,6 +923,46 @@ public final class Element extends Node
         }
     }
 
+    /**
+     * Depth-first visitor traversal of this Element and <em>all</em> its descendant nodes,
+     * including {@link Text}, {@link Comment}, {@link CData}, and {@link Raw} nodes. The traversal
+     * order is the same as render order (pre-order).
+     * <p>
+     * All {@link NodeVisitor} methods have default no-op implementations, so implementors only
+     * need to override the node types they are interested in.
+     *
+     * @param visitor callback
+     * @since 5.10
+     */
+    public void visit(NodeVisitor visitor)
+    {
+        Stack<Node> queue = CollectionFactory.newStack();
+
+        queue.push(this);
+
+        while (!queue.isEmpty())
+        {
+            Node n = queue.pop();
+
+            if (n instanceof Element)
+            {
+                Element e = (Element) n;
+                visitor.visit(e);
+
+                List<Node> children = CollectionFactory.newList();
+                for (Node cursor = e.firstChild; cursor != null; cursor = cursor.nextSibling)
+                    children.add(cursor);
+                Collections.reverse(children);
+                for (Node child : children)
+                    queue.push(child);
+            }
+            else if (n instanceof Text)    visitor.visit((Text) n);
+            else if (n instanceof Comment) visitor.visit((Comment) n);
+            else if (n instanceof CData)   visitor.visit((CData) n);
+            else if (n instanceof Raw)     visitor.visit((Raw) n);
+        }
+    }
+
     private void queueChildren(Stack<Element> queue)
     {
         if (firstChild == null)
@@ -945,12 +1043,15 @@ public final class Element extends Node
 
     /**
      * @return the concatenation of the String representations {@link #toString()} of its children.
+     * Uses {@link DefaultMarkupModel} as a fallback when the element is not attached to a document.
      */
     public final String getChildMarkup()
     {
         PrintOutCollector collector = new PrintOutCollector();
 
-        writeChildMarkup(getDocument(), collector.getPrintWriter(), null);
+        Document doc = getDocument();
+
+        writeChildMarkup(doc != null ? doc : new Document(), collector.getPrintWriter(), null);
 
         return collector.getPrintOut();
     }
@@ -974,6 +1075,137 @@ public final class Element extends Node
         }
 
         return result;
+    }
+
+    /**
+     * Returns a deep copy of this element and its entire subtree, detached from any parent or
+     * document.
+     * <p>
+     * The clone has no {@link #getContainer() container} and, for elements, no owning
+     * {@link Document}. It needs to be attached to a tree before calling rendering or
+     * document-traversal methods.
+     *
+     * @return a fully independent deep copy of this element
+     * @since 5.10
+     */
+    @Override
+    public Element deepClone()
+    {
+        Element clone = new Element((Element) null, namespace, name);
+        copyInto(clone);
+        return clone;
+    }
+
+    /**
+     * Detaches this element from its containing element and returns it as an {@link Element},
+     * allowing fluent use without a cast. If already detached, this is a no-op.
+     *
+     * @return this element, now detached
+     * @since 5.10
+     */
+    @Override
+    public Element detach()
+    {
+        return (Element) super.detach();
+    }
+
+    /**
+     * Copies this element's namespace mappings, attributes, and children (recursively deep-cloned)
+     * into {@code target}. Used internally by {@link #deepClone()} and
+     * {@link Document#deepClone()}.
+     */
+    void copyInto(Element target)
+    {
+        if (namespaceToPrefix != null)
+        {
+            target.namespaceToPrefix = CollectionFactory.newMap();
+            target.namespaceToPrefix.putAll(namespaceToPrefix);
+        }
+
+        // Rebuild the attribute linked-list in the same order.
+        Attribute srcAttr = firstAttribute;
+        Attribute prevCloneAttr = null;
+        Attribute firstCloneAttr = null;
+
+        while (srcAttr != null)
+        {
+            Attribute cloneAttr = new Attribute(target,
+                    srcAttr.getNamespace(), srcAttr.getName(), srcAttr.getValue(), null);
+
+            if (prevCloneAttr == null)
+                firstCloneAttr = cloneAttr;
+            else
+                prevCloneAttr.nextAttribute = cloneAttr;
+
+            prevCloneAttr = cloneAttr;
+            srcAttr = srcAttr.nextAttribute;
+        }
+
+        target.firstAttribute = firstCloneAttr;
+
+        // Recursively clone children.
+        Node cursor = firstChild;
+        while (cursor != null)
+        {
+            target.addChild(cursor.deepClone());
+            cursor = cursor.nextSibling;
+        }
+    }
+
+    /**
+     * Returns the next sibling of this element that is itself an {@link Element}, skipping over
+     * any intervening text, comment, or other non-element nodes. Returns {@code null} if no such
+     * sibling exists, or if this element has no container (root element or detached).
+     *
+     * @return the next sibling element, or {@code null}
+     * @since 5.10
+     */
+    public Element getNextSiblingElement()
+    {
+        Node cursor = nextSibling;
+
+        while (cursor != null)
+        {
+            if (cursor instanceof Element)
+                return (Element) cursor;
+
+            cursor = cursor.nextSibling;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the previous sibling of this element that is itself an {@link Element}, skipping
+     * over any intervening text, comment, or other non-element nodes. Returns {@code null} if no
+     * such sibling exists, or if this element has no container (root element or detached).
+     * <p>
+     * Because the DOM uses a singly-linked sibling list, this method walks forward from the
+     * parent's first child; it is O(n) in the number of siblings.
+     *
+     * @return the previous sibling element, or {@code null}
+     * @since 5.10
+     */
+    public Element getPreviousSiblingElement()
+    {
+        if (container == null)
+            return null;
+
+        Element previousElement = null;
+        Node cursor = container.firstChild;
+
+        while (cursor != null)
+        {
+            if (cursor == this)
+                return previousElement;
+
+            if (cursor instanceof Element)
+                previousElement = (Element) cursor;
+
+            cursor = cursor.nextSibling;
+        }
+
+        throw new IllegalStateException("Element is not a child of its own container.");
     }
 
     void remove(Node node)

@@ -56,6 +56,7 @@ clojure = "1.12.2"
 jaxb-runtime = "2.3.2"
 kaptcha = "0.0.8"
 spring-websocket = "6.0.11"
+jaxen = "2.0.0"
 
 # IOC JCACHE
 
@@ -158,7 +159,7 @@ clojure = { module = "org.clojure:clojure", version.ref = "clojure" }
 jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-runtime" }
 kaptcha = { module = "com.github.axet:kaptcha", version.ref = "kaptcha" }
 spring-websocket = { module = "org.springframework:spring-websocket", version.ref = "spring-websocket" }
-
+jaxen = { module = "jaxen:jaxen", version.ref = "jaxen" }
 # IOC JCACHE
 
 javax-cache-api         = { module = "javax.cache:cache-api", version.ref = "javax-cache" }
