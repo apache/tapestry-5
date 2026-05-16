@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.Resource;
+import org.apache.tapestry5.http.services.BaseURLSource;
+import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PathConstructor;
 import org.apache.tapestry5.services.javascript.EsShimManager;
@@ -31,12 +33,18 @@ public class EsShimManagerImpl implements EsShimManager
     
     private final String assetPrefix;
     
+    private final BaseURLSource baseURLSource;
+    
+    private final Request request;
+    
     private final String compressedRequestPrefix;
     
     private final String uncompressedRequestPrefix;
     
     public EsShimManagerImpl(Map<String, Resource> shims,
             PathConstructor pathConstructor,
+            BaseURLSource baseURLSource,
+            Request request,
             @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
             String assetPrefix) 
     {
@@ -44,6 +52,8 @@ public class EsShimManagerImpl implements EsShimManager
         this.shims = shims;
         this.assetPrefix = assetPrefix;
         this.pathConstructor = pathConstructor;
+        this.baseURLSource = baseURLSource;
+        this.request = request;
         this.compressedRequestPrefix = getRequestPrefixUncached(true);
         this.uncompressedRequestPrefix = getRequestPrefixUncached(false);
     }
@@ -71,7 +81,8 @@ public class EsShimManagerImpl implements EsShimManager
 
     @Override
     public String getUrl(String moduleName) {
-        return getRequestPrefix(true) + moduleName + ".js";
+        return baseURLSource.getBaseURL(request.isSecure()) + 
+                getRequestPrefix(true) + moduleName + ".js";
     }
     
 }
