@@ -78,7 +78,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     }
 
     /**
-     * @see {@link https://issues.apache.org/jira/browse/TAPESTRY-1949}
+     * @see <a href="https://issues.apache.org/jira/browse/TAPESTRY-1949">TAPESTRY-1949</a>
      */
     @Test
     public void event_on_page_with_name_and_dotted_parameters() throws Exception

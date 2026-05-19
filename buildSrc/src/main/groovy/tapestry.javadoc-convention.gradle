@@ -1,0 +1,19 @@
+// Javadoc convention applied to all subprojects (via tapestry.java-convention) 
+// and to the root project's aggregateJavadoc task.
+//   - HTML5 output
+//   - Java 8 source parsing
+//   - JDK API cross-links
+//   - suppress unresolvable cross-module {@link} references
+//   - declare @tapestrydoc so per-module builds don't treat it as an unknown tag
+
+plugins {
+    id 'java-base'
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:all,-reference', '-quiet')
+    options.addStringOption('source', '8')
+    options.addBooleanOption('html5', true)
+    options.links('https://docs.oracle.com/javase/8/docs/api/')
+    options.tags = ['tapestrydoc:a:Component Documentation']
+}

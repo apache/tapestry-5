@@ -73,14 +73,14 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Default: 15 seconds
      * 
-     * @see {@link TapestryTestConstants#PAGE_LOAD_TIMEOUT_PARAMETER}
+     * @see TapestryTestConstants#PAGE_LOAD_TIMEOUT_PARAMETER
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
 
     /**
      * Default: 15 seconds
      *
-     * @see {@link TapestryTestConstants#WEBDRIVER_WAIT_TIMEOUT_PARAMETER}
+     * @see TapestryTestConstants#WEBDRIVER_WAIT_TIMEOUT_PARAMETER
      * @since 5.10
      */
     public static final long WEBDRIVER_WAIT_TIMEOUT = 15L;

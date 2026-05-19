@@ -59,12 +59,16 @@ include('plastic',
         'tapestry-openapi-viewer',
         'tapestry-rest-jackson')
 
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+    include('tapestry-javadoc')
+}
+
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
     include('tapestry-spring')
 }
 
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_21)) {
-    include('tapestry-javadoc', 'tapestry-latest-java-tests')
+    include('tapestry-latest-java-tests')
 }
 
 def isTravisCI = System.getenv('TRAVIS_JOB_ID') != null

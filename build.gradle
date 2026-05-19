@@ -4,6 +4,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'base'
     id 'maven-publish'
+    id 'tapestry.javadoc-convention'
 }
 
 description = 'Apache Tapestry 5 Project'
@@ -268,19 +269,12 @@ tasks.register('aggregateJavadoc', Javadoc) {
         docTitle "Tapestry API - (${project.version})"
         bottom "${project.version} - Copyright &copy; 2003-${thisYear} <a href=\"http://tapestry.apache.org/\">The Apache Software Foundation</a>."
         setUse(use)
-        links 'https://docs.oracle.com/javase/8/docs/api/'
-
         tagletPath Collections.unmodifiableList(new ArrayList<>((Set) configurations.javadoc.files))
 
         //  Uncomment jFlags to debug `./gradlew aggregateJavadoc`
         //        jFlags '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
         addStringOption '-source-path', files(allMainJavaSrcDirs.flatten()).asPath
-        addStringOption 'source', '8'
         taglets 'org.apache.tapestry5.javadoc.TapestryDocTaglet'
-
-        // Javadoc became stricer, so lets do this to actually build for now
-        addBooleanOption('html5', true)
-        addStringOption('Xdoclint:none', '-quiet')
     }
 
     // As part of generating the documentation, ALSO copy any related files:
