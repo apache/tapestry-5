@@ -14,7 +14,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.http.services.Dispatcher;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.Response;
@@ -34,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Locale;
 
 public class ComponentEventDispatcherTest extends InternalBaseTestCase
 {
@@ -78,7 +76,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     }
 
     /**
-     * @see {@link https://issues.apache.org/jira/browse/TAPESTRY-1949}
+     * @see https://issues.apache.org/jira/browse/TAPESTRY-1949
      */
     @Test
     public void event_on_page_with_name_and_dotted_parameters() throws Exception

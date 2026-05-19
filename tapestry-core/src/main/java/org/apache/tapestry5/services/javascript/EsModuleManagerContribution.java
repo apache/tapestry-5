@@ -30,21 +30,21 @@ import org.apache.tapestry5.commons.OrderedConfiguration;
 public final class EsModuleManagerContribution
 {
     private final EsModuleConfigurationCallback callback;
-    
+
     private final boolean isBase;
-    
+
     private EsModuleManagerContribution(EsModuleConfigurationCallback callback, boolean isBase) 
     {
         super();
         this.callback = callback;
         this.isBase = isBase;
     }
-    
+
     public EsModuleConfigurationCallback getCallback() 
     {
         return callback;
     }
-    
+
     public boolean isBase() 
     {
         return isBase;
@@ -59,13 +59,13 @@ public final class EsModuleManagerContribution
     {
         return new EsModuleManagerContribution(callback, true);
     }
-    
+
     /**
      * Creates a base contribution which sets or overrides 
      * one module and its URL.
      * @param id the module id.
      * @param url the module URL.
-     * @see EsModuleConfigurationCallback#create(String, String).
+     * @see EsModuleConfigurationCallback#create(String, String)
      */
     public static EsModuleManagerContribution base(String id, String url)
     {
@@ -82,7 +82,7 @@ public final class EsModuleManagerContribution
     {
         return new EsModuleManagerContribution(callback, false);
     }
-    
+
     /**
      * Contributes a base contribution which sets or overrides 
      * one module and its URL.
@@ -98,20 +98,20 @@ public final class EsModuleManagerContribution
     {
         configuration.add(id, base(id, url));
     }
-    
+
     /**
      * Creates a global per-request contribution which sets or overrides 
      * one module and its URL.
      * @param id the module id.
      * @param url the module URL.
-     * @see EsModuleConfigurationCallback#create(String, String).
+     * @see EsModuleConfigurationCallback#create(String, String)
      */
     public static EsModuleManagerContribution globalPerRequest(String id, String url)
     {
         return new EsModuleManagerContribution(
                 EsModuleConfigurationCallback.create(id, url), false);
     }
-    
+
     /**
      * Contributes a global per-thread contribution which sets or overrides 
      * one module and its URL.
@@ -127,5 +127,4 @@ public final class EsModuleManagerContribution
     {
         configuration.add(id, globalPerRequest(id, url));
     }
-    
 }
