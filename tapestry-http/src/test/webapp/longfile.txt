@@ -2158,7 +2158,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.BEAN_EDITOR_BOOLEAN_PROPERTY_DIV_CSS_CLASS, "input-group");
         configuration.add(SymbolConstants.ERROR_CSS_CLASS, "help-block");
         configuration.add(SymbolConstants.AJAX_FORM_LOOP_ADD_ROW_LINK_CSS_CLASS, "btn btn-default btn-sm");
-        configuration.add(SymbolConstants.ERRORS_BASE_CSS_CLASS, "alert-dismissable");
+        configuration.add(SymbolConstants.ERRORS_BASE_CSS_CLASS, "alert-dismissible");
         configuration.add(SymbolConstants.ERRORS_DEFAULT_CLASS_PARAMETER_VALUE, "alert alert-danger");
         configuration.add(SymbolConstants.ERRORS_CLOSE_BUTTON_CSS_CLASS, "close");
 
