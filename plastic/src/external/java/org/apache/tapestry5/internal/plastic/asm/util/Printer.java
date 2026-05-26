@@ -953,7 +953,7 @@ public abstract class Printer {
    * @param descriptor the method's descriptor (see {@link Type}).
    * @deprecated use {@link #visitMethodInsn(int, String, String, String, boolean)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void visitMethodInsn(
       final int opcode, final String owner, final String name, final String descriptor) {
     // This method was abstract before ASM5, and was therefore always overridden (without any

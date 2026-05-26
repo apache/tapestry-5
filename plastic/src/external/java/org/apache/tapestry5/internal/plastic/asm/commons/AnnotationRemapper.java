@@ -55,7 +55,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
    * @param remapper the remapper to use to remap the types in the visited annotation.
    * @deprecated use {@link #AnnotationRemapper(String, AnnotationVisitor, Remapper)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public AnnotationRemapper(final AnnotationVisitor annotationVisitor, final Remapper remapper) {
     this(/* descriptor= */ null, annotationVisitor, remapper);
   }
@@ -83,7 +83,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
    * @param remapper the remapper to use to remap the types in the visited annotation.
    * @deprecated use {@link #AnnotationRemapper(int, String, AnnotationVisitor, Remapper)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   protected AnnotationRemapper(
       final int api, final AnnotationVisitor annotationVisitor, final Remapper remapper) {
     this(api, /* descriptor= */ null, annotationVisitor, remapper);
@@ -151,7 +151,7 @@ public class AnnotationRemapper extends AnnotationVisitor {
    * @return the newly created remapper.
    * @deprecated use {@link #createAnnotationRemapper(String, AnnotationVisitor)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
     return new AnnotationRemapper(api, /* descriptor= */ null, annotationVisitor, remapper);
   }

@@ -97,7 +97,7 @@ public class RecordComponentRemapper extends RecordComponentVisitor {
    * @return the newly created remapper.
    * @deprecated use {@link #createAnnotationRemapper(String, AnnotationVisitor)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   protected AnnotationVisitor createAnnotationRemapper(final AnnotationVisitor annotationVisitor) {
     return new AnnotationRemapper(api, /* descriptor= */ null, annotationVisitor, remapper);
   }

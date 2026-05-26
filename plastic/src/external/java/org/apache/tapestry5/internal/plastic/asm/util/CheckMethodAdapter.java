@@ -290,6 +290,7 @@ public class CheckMethodAdapter extends MethodVisitor {
   private static final String MUST_NOT_BE_NULL_OR_EMPTY = " (must not be null or empty)";
   private static final String START_LABEL = "start label";
   private static final String END_LABEL = "end label";
+  private static final String LABEL = "label";
 
   /** The class version number. */
   public int version;
@@ -787,7 +788,7 @@ public class CheckMethodAdapter extends MethodVisitor {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
     checkOpcodeMethod(opcode, Method.VISIT_JUMP_INSN);
-    checkLabel(label, /* checkVisited= */ false, "label");
+    checkLabel(label, /* checkVisited= */ false, LABEL);
     super.visitJumpInsn(opcode, label);
     ++insnCount;
   }
@@ -796,7 +797,7 @@ public class CheckMethodAdapter extends MethodVisitor {
   public void visitLabel(final Label label) {
     checkVisitCodeCalled();
     checkVisitMaxsNotCalled();
-    checkLabel(label, /* checkVisited= */ false, "label");
+    checkLabel(label, /* checkVisited= */ false, LABEL);
     if (labelInsnIndices.get(label) != null) {
       throw new IllegalStateException("Already visited label");
     }
@@ -1093,7 +1094,7 @@ public class CheckMethodAdapter extends MethodVisitor {
     if (value instanceof String) {
       checkInternalName(version, (String) value, "Invalid stack frame value");
     } else if (value instanceof Label) {
-      checkLabel((Label) value, /* checkVisited= */ false, "label");
+      checkLabel((Label) value, /* checkVisited= */ false, LABEL);
     } else {
       throw new IllegalArgumentException("Invalid stack frame value: " + value);
     }

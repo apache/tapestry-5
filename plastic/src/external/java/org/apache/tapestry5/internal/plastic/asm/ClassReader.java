@@ -100,7 +100,7 @@ public class ClassReader {
    * @deprecated Use {@link #readByte(int)} and the other read methods instead. This field will
    *     eventually be deleted.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   // DontCheck(MemberName): can't be renamed (for backward binary compatibility).
   public final byte[] b;
 
@@ -3539,6 +3539,9 @@ public class ClassReader {
       final char[] charBuffer,
       final int codeAttributeOffset,
       final Label[] labels) {
+    if (length > classFileBuffer.length - offset) {
+      throw new IllegalArgumentException();
+    }
     for (Attribute attributePrototype : attributePrototypes) {
       if (attributePrototype.type.equals(type)) {
         return attributePrototype.read(

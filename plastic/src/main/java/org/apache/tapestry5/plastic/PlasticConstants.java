@@ -20,7 +20,7 @@ public final class PlasticConstants
     /**
      * The minimum Java version we support
      */
-    public static final int DEFAULT_VERSION_OPCODE = Opcodes.V1_6;
+    public static final int DEFAULT_VERSION_OPCODE = Opcodes.V11;
 
     private PlasticConstants()
     {

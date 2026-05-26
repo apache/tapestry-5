@@ -1072,7 +1072,7 @@ public class InstructionAdapter extends MethodVisitor {
    * @param descriptor the method's descriptor (see {@link Type}).
    * @deprecated use {@link #invokevirtual(String, String, String, boolean)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void invokevirtual(final String owner, final String name, final String descriptor) {
     if (api >= Opcodes.ASM5) {
       invokevirtual(owner, name, descriptor, false);
@@ -1111,7 +1111,7 @@ public class InstructionAdapter extends MethodVisitor {
    * @param descriptor the method's descriptor (see {@link Type}).
    * @deprecated use {@link #invokespecial(String, String, String, boolean)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void invokespecial(final String owner, final String name, final String descriptor) {
     if (api >= Opcodes.ASM5) {
       invokespecial(owner, name, descriptor, false);
@@ -1150,7 +1150,7 @@ public class InstructionAdapter extends MethodVisitor {
    * @param descriptor the method's descriptor (see {@link Type}).
    * @deprecated use {@link #invokestatic(String, String, String, boolean)} instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void invokestatic(final String owner, final String name, final String descriptor) {
     if (api >= Opcodes.ASM5) {
       invokestatic(owner, name, descriptor, false);

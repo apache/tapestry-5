@@ -55,3 +55,7 @@ clean-build:
 # Compiles and generates all JavaScript files from CoffeeScript
 generate-javascript:
 	./gradlew tapestry-core:compileCoffeeScript tapestry-core:compileProcessedCoffeeScript tapestry-core:compileTestCoffeeScript
+
+# Vendors ASM based on Git tag, no tag lists the available ones
+vendor-asm tag="":
+	./plastic/vendor-asm.sh {{tag}}
