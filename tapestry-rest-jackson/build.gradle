@@ -9,6 +9,7 @@ dependencies {
 
     implementation libs.jackson.databind
     implementation moduleLibs.jsonschemaGenerator
+    testImplementation project(':tapestry-openapi-viewer')
 
     provided libs.jakarta.servlet.api
 }

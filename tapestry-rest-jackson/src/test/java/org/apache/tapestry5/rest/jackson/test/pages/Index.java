@@ -35,19 +35,19 @@ public class Index
     
     @Inject private PageRenderLinkSource pageRenderLinkSource;
     
+    @RestInfo(returnType = int.class, produces = "text/plain")
+    @OnEvent(EventConstants.HTTP_GET)
+    public Object getUserCount(@StaticActivationContextValue("count") String ignored)
+    {
+        return new TextStreamResponse("UTF-8", String.valueOf(USERS.size()));
+    }
+    
     @RestInfo(returnType = User.class, produces = "application/json")
     @OnEvent(EventConstants.HTTP_GET)
     public Object getUserByEmail(String email)
     {
         final Optional<User> user = USERS.stream().filter(u -> email.equals(u.getEmail())).findFirst();
         return user.isPresent() ? user.get() : HttpStatus.notFound();
-    }
-    
-    @RestInfo(returnType = int.class, produces = "text/plain")
-    @OnEvent(EventConstants.HTTP_GET)
-    public Object getUserCount(@StaticActivationContextValue("count") String ignored)
-    {
-        return new TextStreamResponse("UTF-8", String.valueOf(USERS.size()));
     }
     
     @RestInfo(consumes = "application/json")
