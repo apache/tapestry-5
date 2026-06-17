@@ -58,7 +58,7 @@ Caller roles:
 | Asset serving | classpath/context asset URLs | filesystem/classpath | **Yes (traversal)** |
 | Access whitelisting | `@WhitelistAccessOnly`, `ClientWhitelist`/`LocalhostOnly` | client address | **Yes** |
 | Transport/link security | `RequestSecurityManager`, `LinkSecurity` (HTTP↔HTTPS) | network | **Yes** |
-| Tests / sample apps / docs | `tapestry-core/src/test/app1`, samples | — | No → §3 |
+| Tests / sample apps / docs | **all** `src/test/**` across modules (incl. `tapestry-core/src/test`), samples, docs — none of it deploys | — | No → §3 |
 
 ## §3 Out of scope (explicit non-goals)
 
@@ -67,7 +67,10 @@ Caller roles:
 - **Misconfiguration** (no HMAC passphrase set, raw output of untrusted data, exposing a whitelisted page) —
   Tapestry provides the controls; using them is the developer/operator's job (§9/§10/§11).
 - **The application's business-logic authorization** beyond the framework's whitelist/secure-link mechanisms.
-- **Tests, sample apps (`app1`), and documentation** *(inferred)*.
+- **All internal test code (`src/test/**` in every module, e.g.
+  `tapestry-core/src/test`), sample apps (`app1`), and documentation** — none
+  of it is deployed, so it is not an adversary surface *(maintainer —
+  thiagohp)*.
 - **The JVM serialization/JCE internals** except as Tapestry selects and uses them.
 
 ## §4 Trust boundaries and data flow
@@ -204,7 +207,7 @@ parameters; upload-based DoS / content-type confusion.
 - **"Java deserialization in Tapestry"** reports that ignore the **HMAC gate** — `KNOWN-NON-FINDING` when the
   HMAC verification is in place (the post-CVE-2021-27850 design); only an HMAC bypass or unset passphrase is `VALID`.
 - **XSS attributed to a developer's raw output** — developer responsibility (§9/§10), not a framework default.
-- **Findings in `tapestry-core/src/test/app1` / samples / docs** — out of scope (§3).
+- **Findings in any `src/test/**` (internal test code, e.g. `tapestry-core/src/test`) / samples / docs** — out of scope (§3).
 - **Whitelisted page reachable from localhost** — by design (§8.4).
 - **Dev-mode information disclosure** against a dev configuration — operator posture (§5a/§11).
 
