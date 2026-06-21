@@ -23,10 +23,11 @@ limitations under the License.
   serialization of some server-side state into the client (page activation context, form data) which it
   validates and deserializes on postback *(documented — README; source `tapestry-core`, `tapestry-http`)*.
 - **Modelled against:** `apache/tapestry-5` `master`/HEAD (2026-05-31).
-- **Status:** **DRAFT — v0, not yet reviewed by the Tapestry PMC.** Produced by the ASF Security team via the
-  `threat-model-producer` rubric (<https://gist.github.com/potiuk/da14a826283038ddfe38cc9fe6310573>).
+- **Status:** **DRAFT — under Tapestry PMC review** (thiagohp, benweidig; 2026-06); wave-1/2 questions
+  answered and folded. Produced by the ASF Security team via the `threat-model-producer` rubric
+  (<https://gist.github.com/potiuk/da14a826283038ddfe38cc9fe6310573>).
 - **Reporting / version-binding / legend** as in the sibling models. **Draft confidence:** ~12 documented /
-  0 maintainer / ~46 inferred. Each *(inferred)* routes to §14.
+  ~10 maintainer / ~36 inferred (wave-1/2 §14 answers folded from PR #61 review). Each *(inferred)* routes to §14.
 
 **Framing note:** Tapestry is a *framework*. The **application developer** authors pages, components,
 templates, and event handlers — that code is **trusted** (§3). The **untrusted web client** sending requests,
@@ -112,12 +113,12 @@ the developer to have emitted raw untrusted output is `OUT-OF-MODEL: non-default
 
 | Knob | Effect | Ruling needed |
 | --- | --- | --- |
-| `tapestry.hmac-passphrase` | Integrity of serialized client state ⇒ deserialization-RCE protection | **Open (wave-1):** is it required / fail-closed when unset, or does an unset value void §8.1? |
-| Production mode vs. dev | Exposure of stack traces, component source, reload | **Open (wave-1):** prod defaults |
-| Output escaping default | XSS posture (raw output opt-in) | **Open (wave-1):** escaped by default? |
-| Asset path / `tapestry.asset-path-prefix` + protection | Traversal/arbitrary-read posture | Confirm |
-| `@WhitelistAccessOnly` analyzer (default LocalhostOnly) | Who may reach whitelisted pages | Confirm default |
-| Secure-link / `RequestSecurityManager` | HTTPS enforcement for secure pages | Developer choice |
+| `tapestry.hmac-passphrase` | Integrity of serialized client state ⇒ deserialization-RCE protection | **Answered (maintainer):** unset is currently a *loud error* (logged + AlertManager client alert), non-fatal; a startup failure in production mode is planned ([TAP5-2834](https://issues.apache.org/jira/browse/TAP5-2834)). |
+| Production mode vs. dev | Exposure of stack traces, component source, reload | Prod disables dev conveniences (§5). |
+| Output escaping default | XSS posture (raw output opt-in) | **Answered (maintainer):** escaped by default; raw is explicit opt-in via `MarkupWriter.writeRaw` / `OutputRaw`. |
+| Asset path / `tapestry.asset-path-prefix` + protection | Traversal/arbitrary-read posture | **Answered (maintainer):** container path normalization + Tapestry's own sensitive-extension exclusions; could be improved further. |
+| `@WhitelistAccessOnly` analyzer (default LocalhostOnly) | Who may reach whitelisted pages | **Answered (maintainer):** default `LocalhostOnly` (localhost IPv4/IPv6). |
+| Secure-link / `RequestSecurityManager` | HTTPS enforcement for secure pages | **Answered (maintainer):** decided by the `@Secure` annotation; on by default in production mode; configurable via `tapestry.secure-enabled`. |
 
 ## §6 Assumptions about inputs
 
@@ -148,23 +149,36 @@ the developer to have emitted raw untrusted output is `OUT-OF-MODEL: non-default
    only after its **HMAC verifies** against the configured passphrase, so an attacker cannot submit an
    arbitrary serialized object *(inferred — load-bearing; the post-CVE-2021-27850 protection)*. *Symptom:*
    accepted forged serialized object ⇒ RCE. *Severity:* critical.
-2. **Output escaping by default.** Rendered component output is HTML-escaped unless the developer explicitly
-   emits raw output *(inferred)*. *Symptom:* reflected/stored XSS from framework-rendered values. *Severity:*
-   high–critical.
-3. **Asset access control.** Asset URLs resolve only to intended classpath/context resources; traversal /
-   arbitrary file read is prevented *(inferred)*. *Symptom:* read of files outside the asset roots. *Severity:*
-   critical.
-4. **Whitelist enforcement.** `@WhitelistAccessOnly` resources are served only to whitelisted clients (default
-   localhost) *(documented — `ClientWhitelist`/`LocalhostOnly`)*. *Symptom:* a whitelisted page reachable by a
-   non-whitelisted client. *Severity:* high.
-5. **Secure-link / HTTPS enforcement.** Pages marked secure are served/linked over HTTPS via
-   `RequestSecurityManager`/`LinkSecurity` *(documented — classes present)*. *Symptom:* secure page served over
-   plain HTTP. *Severity:* medium–high.
+2. **Output escaping by default.** Rendered component output is HTML-escaped; raw output is an **explicit
+   opt-in** via `MarkupWriter.writeRaw` or the `OutputRaw` component, where the developer must escape/validate
+   beforehand. (The PMC notes any *unchecked* passthrough of data in an internal component should itself be
+   treated as a bug.) *(maintainer — benweidig.)* *Symptom:* reflected/stored XSS from framework-rendered
+   values. *Severity:* high–critical.
+3. **Asset access control.** Asset URLs resolve only to intended classpath/context resources; traversal is
+   prevented by a mix of the servlet container's path normalization and Tapestry's own checks (e.g. explicit
+   exclusion of sensitive file extensions). The PMC notes these checks could be improved further. *(maintainer
+   — benweidig.)* *Symptom:* read of files outside the asset roots. *Severity:* critical.
+4. **Whitelist enforcement.** `@WhitelistAccessOnly` resources are served only to whitelisted clients; by
+   default only `LocalhostOnly` is contributed (localhost IPv4/IPv6) *(maintainer — benweidig)*. *Symptom:* a
+   whitelisted page reachable by a non-whitelisted client. *Severity:* high. (The PMC noted a correctness bug
+   where certain shortened IPv6 addresses are falsely *denied* — over-restrictive, not a bypass:
+   [TAP5-2832](https://issues.apache.org/jira/browse/TAP5-2832).)
+5. **Secure-link / HTTPS enforcement.** `RequestSecurityManager` decides whether HTTPS is required from a
+   page's `@Secure` annotation; enforcement is on by default in **production mode** and configurable via the
+   `tapestry.secure-enabled` symbol *(maintainer — benweidig)*. *Symptom:* secure page served over plain HTTP.
+   *Severity:* medium–high.
 
 ## §9 Security properties the project does NOT provide
 
 - **No serialized-state protection without a configured HMAC passphrase** — if unset/weak, §8.1 is void and the
-  deserialization surface reopens *(inferred — wave-1)*.
+  deserialization surface reopens. An unset passphrase is currently a *loud error* (logged + an AlertManager
+  client-side alert), **not yet a hard startup failure**; making it fail-closed in production mode is planned
+  ([TAP5-2834](https://issues.apache.org/jira/browse/TAP5-2834)) *(maintainer — benweidig)*.
+- **No built-in CSRF protection.** Tapestry ships no CSRF module/component. The HMAC guards *invalid* requests,
+  but a *valid* request is still subject to CSRF, so CSRF defence is the **application's responsibility** until
+  a built-in lands (the PMC is planning one; prior art:
+  <https://github.com/porscheinformatik/tapestry-csrf-protection>, primarily by a Tapestry committer/PMC
+  member) *(maintainer — benweidig)*.
 - **No XSS protection for developer-emitted raw output** — `OutputRaw`/raw markup of untrusted data is the
   developer's responsibility (§10).
 - **No defence against the application developer or operator** (§3).
@@ -235,20 +249,24 @@ parameters; upload-based DoS / content-type confusion.
 
 ## §14 Open questions for the maintainers
 
-**Wave 1 — the deserialization gate + defaults (§5a/§8):**
-1. Is a configured **`tapestry.hmac-passphrase`** effectively **required** (fail-closed / hard warning) so the
-   serialized-state deserialization (§8.1) is always HMAC-gated in production? What happens if it is unset?
-   *Proposed:* required; unset = startup failure/loud warning, not silent insecure default.
-2. Is framework-rendered output **HTML-escaped by default**, with raw output an explicit opt-in? *Proposed:* yes.
-3. Are **assets** protected against path traversal / arbitrary classpath read by default? *Proposed:* yes.
+**Wave 1 — the deserialization gate + defaults (§5a/§8) — answered (benweidig, PR #61):**
+1. **HMAC passphrase when unset — answered.** Not currently fail-closed: an unset passphrase is a *loud error*
+   (logged + an AlertManager client-side alert), non-fatal. A startup failure in production mode is planned
+   ([TAP5-2834](https://issues.apache.org/jira/browse/TAP5-2834)). Folded into §5a / §8.1 / §9.
+2. **Output escaping — answered.** Escaped by default; raw output is an explicit opt-in via
+   `MarkupWriter.writeRaw` / the `OutputRaw` component, where the developer must escape/validate. Folded into §8.2.
+3. **Asset traversal — answered.** Mitigated by the servlet container's path normalization plus Tapestry's own
+   checks (explicit sensitive-extension exclusions); "could be improved further." Folded into §8.3.
 
-**Wave 2 — whitelist, secure-link, CSRF (§8/§9):**
-4. Confirm the default **whitelist analyzer** (localhost-only) for `@WhitelistAccessOnly`, and how
-   `RequestSecurityManager` decides "secure". *Proposed:* default localhost; secure pages per annotation/config.
-5. Does Tapestry provide **CSRF** protection for form/event posts, or is that the application's responsibility?
-   *Proposed:* application responsibility unless a built-in token exists — confirm.
+**Wave 2 — whitelist, secure-link, CSRF (§8/§9) — answered (benweidig, PR #61):**
+4. **Whitelist + secure-link — answered.** Default analyzer is `LocalhostOnly` (localhost IPv4/IPv6; note the
+   over-restrictive IPv6 bug [TAP5-2832](https://issues.apache.org/jira/browse/TAP5-2832)).
+   `RequestSecurityManager` requires HTTPS based on the `@Secure` annotation, enforced in production mode by
+   default and configurable via `tapestry.secure-enabled`. Folded into §8.4 / §8.5.
+5. **CSRF — answered.** No built-in CSRF protection; it is the application's responsibility until one lands
+   (planned; prior art porscheinformatik/tapestry-csrf-protection). Folded into §9.
 
-**Wave 3 — §11a (§11a):**
+**Wave 3 — §11a (still with the PMC):**
 6. The component categorization you shared earlier — please confirm the §2 family table and the §11a
    non-findings list (especially the "deserialization is HMAC-gated" entry). *Proposed:* per §2/§11a above.
 7. What do scanners most often (re)report that the PMC considers a **non-finding**? (Seeds §11a.)
