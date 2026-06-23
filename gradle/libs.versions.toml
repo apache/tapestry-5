@@ -56,7 +56,7 @@ clojure = "1.12.2"
 jaxb-runtime = "2.3.2"
 kaptcha = "0.0.8"
 spring-websocket = "6.0.11"
-jaxen = "2.0.0"
+jaxen = "2.0.6"
 
 # IOC JCACHE
 
