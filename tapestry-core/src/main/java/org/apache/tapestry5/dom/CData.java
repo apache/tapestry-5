@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007-2009, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,15 @@ public class CData extends Node
         this.content = content;
     }
 
+    /**
+     * Returns the raw character content stored in this node, without any CDATA wrapping or entity encoding.
+     * @since 5.10
+     */
+    public String getContent()
+    {
+        return content;
+    }
+
     @Override
     void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
@@ -48,5 +57,16 @@ public class CData extends Node
         // CDATA not supported, so write it normally, with entities escaped.
 
         writer.print(model.encode(content));
+    }
+
+    /**
+     * Returns a deep copy of this CDATA node, detached from any parent.
+     *
+     * @since 5.10
+     */
+    @Override
+    public CData deepClone()
+    {
+        return new CData(null, content);
     }
 }

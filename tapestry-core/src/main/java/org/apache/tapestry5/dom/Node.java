@@ -15,8 +15,11 @@
 package org.apache.tapestry5.dom;
 
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Map;
 
+import org.apache.tapestry5.dom.xpath.XPath;
+import org.apache.tapestry5.dom.xpath.XPathException;
 import org.apache.tapestry5.internal.util.PrintOutCollector;
 
 /**
@@ -51,14 +54,18 @@ public abstract class Node
         return container;
     }
 
+    /**
+     * Returns the owning {@link Document}, or {@code null} if this node is detached (not part of
+     * any document tree).
+     */
     public Document getDocument()
     {
-        return container.getDocument();
+        return container != null ? container.getDocument() : null;
     }
-
 
     /**
      * Invokes {@link #toMarkup(PrintWriter)}, collecting output in a string, which is returned.
+     * When the node is detached from a document, {@link DefaultMarkupModel} is used as a fallback.
      */
     @Override
     public String toString()
@@ -70,20 +77,46 @@ public abstract class Node
         return collector.getPrintOut();
     }
 
+    /**
+     * Renders this node to a {@code String} using the specified {@link MarkupModel}, without
+     * requiring the node to be attached to a {@link Document}.
+     * <p>
+     * This is the preferred rendering method for detached nodes (such as those returned by
+     * {@link #deepClone()}). For attached nodes, {@link #toString()} uses the document's
+     * model automatically.
+     *
+     * @param model the markup model controlling encoding and tag-style decisions; must not be null
+     * @return the rendered markup as a string
+     * @since 5.10
+     */
+    public String toMarkup(MarkupModel model)
+    {
+        assert model != null;
+
+        PrintOutCollector collector = new PrintOutCollector();
+
+        toMarkup(new Document(model), collector.getPrintWriter(), getNamespaceURIToPrefix());
+
+        return collector.getPrintOut();
+    }
 
     /**
-     * Writes the markup for this node to the writer.
+     * Writes the markup for this node to the writer, using {@link DefaultMarkupModel} as a
+     * fallback when the node is not attached to a document.
      */
     public void toMarkup(PrintWriter writer)
     {
-        toMarkup(getDocument(), writer, getNamespaceURIToPrefix());
+        Document doc = getDocument();
+
+        toMarkup(doc != null ? doc : new Document(), writer, getNamespaceURIToPrefix());
     }
 
     protected Map<String, String> getNamespaceURIToPrefix()
     {
         // For non-Elements, the container (which should be an Element) will provide the mapping.
+        // For detached nodes the container is null; return an empty map (no ancestor namespaces).
 
-        return container.getNamespaceURIToPrefix();
+        return container != null ? container.getNamespaceURIToPrefix() : Collections.emptyMap();
     }
 
     /**
@@ -160,6 +193,150 @@ public abstract class Node
         return this;
     }
 
+    /**
+     * Inserts {@code node} immediately before {@code this} in the parent's child list, detaching
+     * it from any prior parent first.
+     * <p>
+     * This is the anchor-centric complement to {@link #moveBefore(Element)}; unlike
+     * {@code moveBefore}, the anchor ({@code this}) may be any {@link Node} type, not just an
+     * {@link Element}.
+     *
+     * @param node the node to insert; must not be {@code null} or {@code this}
+     * @return the inserted {@code node}, now in position
+     * @throws IllegalArgumentException if {@code node} is {@code null}, is {@code this}, or is an ancestor of {@code this}
+     * @throws IllegalStateException    if {@code this} is detached (has no parent)
+     * @since 5.10
+     */
+    public Node insertBefore(Node node)
+    {
+        if (node == null)
+        {
+            throw new IllegalArgumentException("node must not be null");
+        }
+        if (node == this)
+        {
+            throw new IllegalArgumentException("A node cannot be inserted relative to itself");
+        }
+        if (container == null)
+        {
+            throw new IllegalStateException("Cannot insert relative to a detached node");
+        }
+
+        Node search = container;
+        while (search != null)
+        {
+            if (search == node)
+            {
+                throw new IllegalArgumentException("Cannot insert an ancestor node");
+            }
+
+            search = search.container;
+        }
+
+        node.detach();
+        container.insertChildBefore(this, node);
+
+        return node;
+    }
+
+    /**
+     * Inserts {@code node} immediately after {@code this} in the parent's child list, detaching
+     * it from any prior parent first.
+     * <p>
+     * This is the anchor-centric complement to {@link #moveAfter(Element)}; unlike
+     * {@code moveAfter}, the anchor ({@code this}) may be any {@link Node} type, not just an
+     * {@link Element}.
+     *
+     * @param node the node to insert; must not be {@code null} or {@code this}
+     * @return the inserted {@code node}, now in position
+     * @throws IllegalArgumentException if {@code node} is {@code null}, is {@code this}, or is an ancestor of {@code this}
+     * @throws IllegalStateException    if {@code this} is detached (has no parent)
+     * @since 5.10
+     */
+    public Node insertAfter(Node node)
+    {
+        if (node == null)
+        {
+            throw new IllegalArgumentException("node must not be null");
+        }
+        if (node == this)
+        {
+            throw new IllegalArgumentException("A node cannot be inserted relative to itself");
+        }
+        if (container == null)
+        {
+            throw new IllegalStateException("Cannot insert relative to a detached node");
+        }
+
+        Node search = container;
+        while (search != null)
+        {
+            if (search == node)
+            {
+                throw new IllegalArgumentException("Cannot insert an ancestor node");
+            }
+
+            search = search.container;
+        }
+
+        node.detach();
+        container.insertChildAfter(this, node);
+
+        return node;
+    }
+
+    /**
+     * Returns the next sibling node within the containing element, or {@code null}
+     * if {@code this} is:
+     * <ul>
+     * <li>the last child</li>
+     * <li>not part of a sibling list (root element, document-preamble node, or
+     * detached node)</li>
+     * </ul>
+     *
+     * @return the next sibling node, or {@code null}
+     * @since 5.10
+     */
+    public Node getNextSibling()
+    {
+        return nextSibling;
+    }
+
+    /**
+     * Returns the previous sibling node within the containing element, or {@code null}
+     * if {@this} is:
+     * <ul>
+     * <li>the first child</li>
+     * <li>not part of a sibling list (root element, document-preamble node, or detached node).
+     * </ul>
+     *
+     * @return the previous sibling node, or {@code null}
+     * @since 5.10
+     */
+    public Node getPreviousSibling()
+    {
+        if (container == null)
+        {
+            return null;
+        }
+
+        Node previous = null;
+        Node cursor = container.firstChild;
+
+        while (cursor != null)
+        {
+            if (cursor == this)
+            {
+                return previous;
+            }
+
+            previous = cursor;
+            cursor = cursor.nextSibling;
+        }
+
+        throw new IllegalStateException("Node is not a child of its own container.");
+    }
+
     private void validateElement(Element element)
     {
         assert element != null;
@@ -188,6 +365,69 @@ public abstract class Node
     }
 
     /**
+     * Replaces this node in the DOM with the given {@code replacement} node, detaching this node and
+     * inserting the replacement in its place.
+     * <p>
+     * If {@code replacement} is currently attached to another parent, it is detached first.
+     *
+     * @param replacement the node to put in place of this node, must not be {@code null} or {@this}
+     * @return the replacement node, now in position
+     * @throws IllegalArgumentException if {@code replacement} is {@code null}, is {@this}, or is an ancestor of {@this}
+     * @throws IllegalStateException    if {@this} is detached (has no parent)
+     * @since 5.10
+     */
+    public Node replaceWith(Node replacement)
+    {
+        if (replacement == null)
+        {
+            throw new IllegalArgumentException("replacement must not be null");
+        }
+        if (replacement == this)
+        {
+            throw new IllegalArgumentException("A node cannot replace itself");
+        }
+        if (container == null)
+        {
+            throw new IllegalStateException("Cannot replace a detached node");
+        }
+
+        // Guard against ancestor cycles: replacement must not be an ancestor of this node.
+        Node search = container;
+        while (search != null)
+        {
+            if (search == replacement)
+            {
+                throw new IllegalArgumentException("Cannot replace a node with one of its ancestors");
+            }
+
+            search = search.container;
+        }
+
+        Element parent = container;
+        replacement.detach();
+        parent.insertChildBefore(this, replacement);
+        remove();
+
+        return replacement;
+    }
+
+    /**
+     * Detaches this node from its containing element and returns it.
+     * <p>
+     * If the node is already detached (no container), this method is a no-op.
+     *
+     * @return this node, now detached
+     * @since 5.10
+     */
+    public Node detach()
+    {
+        if (container != null)
+            remove();
+
+        return this;
+    }
+
+    /**
      * Wraps a node inside a new element.  The new element is created before the node, then the node is moved inside the
      * new element.
      *
@@ -206,5 +446,40 @@ public abstract class Node
         moveToTop(element);
 
         return element;
+    }
+
+    /**
+     * Returns a deep copy of this node and its entire subtree, detached from any parent or
+     * document.
+     * <p>
+     * Detached nodes can be still be rendered via {@link #toString()} (which falls back to
+     * {@link DefaultMarkupModel}) or with an explicit model via {@link #toMarkup(MarkupModel)}.
+     *
+     * @return a fully independent deep copy of this node
+     * @since 5.10
+     */
+    public abstract Node deepClone();
+
+    /**
+     * Creates a {@link BoundXPath} for the given XPath expression with this node as the context,
+     * allowing fluent queries without repeating the context node:
+     * <pre>
+     * List&lt;Element&gt; items = element.xpath("ul/li").elements();
+     * </pre>
+     *
+     * @param expression XPath expression; must not be null or empty
+     * @return a {@link BoundXPath} bound to this node
+     * @throws IllegalArgumentException if {@code expression} is null or empty
+     * @throws XPathException if the expression cannot be parsed
+     * @since 5.10
+     */
+    public BoundXPath xpath(String expression)
+    {
+        if (expression == null || expression.isEmpty())
+        {
+            throw new IllegalArgumentException("XPath expression must not be null or empty");
+        }
+
+        return new BoundXPath(XPath.of(expression), this);
     }
 }

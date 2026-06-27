@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2014 The Apache Software Foundation
+// Copyright 2006-2010, 2014, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -248,6 +248,18 @@ public final class Document extends Node
         rootElement.visit(visitor);
     }
 
+    /**
+     * Visits all nodes in the document tree, starting from the root element, invoking the
+     * appropriate {@link NodeVisitor} method for each node type encountered.
+     *
+     * @param visitor callback
+     * @since 5.10
+     */
+    public void visit(NodeVisitor visitor)
+    {
+        rootElement.visit(visitor);
+    }
+
     private <T extends Node> T newChild(T child)
     {
         if (preamble == null)
@@ -306,6 +318,40 @@ public final class Document extends Node
     }
 
     /**
+     * Returns an independent deep copy of this document, including its DTD, preamble nodes, and
+     * entire element tree.
+     *
+     * @return a fully independent deep copy of this document
+     * @since 5.10
+     */
+    @Override
+    public Document deepClone()
+    {
+        Document clone = new Document(model, encoding, mimeType);
+
+        // DTD is immutable after construction, so sharing the reference is safe.
+        clone.dtd = dtd;
+
+        if (preamble != null)
+        {
+            clone.preamble = CollectionFactory.newList();
+            for (Node n : preamble)
+                clone.preamble.add(n.deepClone());
+        }
+
+        if (rootElement != null)
+        {
+            // Use the Document-accepting constructor so the clone's root element
+            // has its 'document' back-reference set correctly.
+            Element cloneRoot = new Element(clone, rootElement.getNamespace(), rootElement.getName());
+            clone.rootElement = cloneRoot;
+            rootElement.copyInto(cloneRoot);
+        }
+
+        return clone;
+    }
+
+    /**
      * Returns the MIME type of this document.
      * @return the MIME type.
      * @since 5.4
@@ -314,5 +360,4 @@ public final class Document extends Node
     {
         return mimeType;
     }
-    
 }
