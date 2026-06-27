@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,5 +38,16 @@ public final class Raw extends Node
     void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         writer.print(text);
+    }
+
+    /**
+     * Returns a deep copy of this raw-markup node, detached from any parent.
+     *
+     * @since 5.10
+     */
+    @Override
+    public Raw deepClone()
+    {
+        return new Raw(null, text);
     }
 }

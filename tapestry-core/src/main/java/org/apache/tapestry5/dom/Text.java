@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import java.util.Map;
  */
 public final class Text extends Node
 {
-    private final StringBuilder buffer;
+    private final StringBuilder builder;
 
     Text(Element container, String text)
     {
         super(container);
 
-        buffer = new StringBuilder(text.length());
+        builder = new StringBuilder(text.length());
 
         write(text);
     }
 
     boolean isEmpty()
     {
-        return buffer.length() == 0 || buffer.toString().trim().length() == 0;
+        return builder.length() == 0 || builder.toString().trim().length() == 0;
     }
 
     /**
@@ -43,7 +43,7 @@ public final class Text extends Node
      */
     public void write(String text)
     {
-        buffer.append(text);
+        builder.append(text);
     }
 
     public void writef(String format, Object... args)
@@ -54,8 +54,19 @@ public final class Text extends Node
     @Override
     void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
-        String encoded = document.getMarkupModel().encode(buffer.toString());
+        String encoded = document.getMarkupModel().encode(builder.toString());
 
         writer.print(encoded);
+    }
+
+    /**
+     * Returns a deep copy of this text node, detached from any parent.
+     *
+     * @since 5.10
+     */
+    @Override
+    public Text deepClone()
+    {
+        return new Text(null, builder.toString());
     }
 }

@@ -19,6 +19,8 @@ dependencies {
     implementation libs.commons.codec
     implementation libs.commons.lang3
 
+    implementation libs.jaxen
+
     provided project(':tapestry-test')
     provided project(':tapestry-test-constants')
 

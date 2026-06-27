@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,45 +14,51 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import org.junit.jupiter.api.Test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.commons.util.CollectionFactory;
-import org.apache.tapestry5.internal.services.MarkupWriterImpl;
-import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.testng.annotations.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
  * org.apache.tapestry5.dom.Document}.
  */
-public class DOMTest extends InternalBaseTestCase
+class DOMTest
 {
     @Test
-    public void document_with_empty_root_element()
+    void document_with_empty_root_element()
     {
         Document d = new Document();
 
         d.newRootElement("empty");
 
-        assertEquals(d.toString(), "<empty></empty>");
+        assertEquals("<empty></empty>", d.toString());
     }
 
     @Test
-    public void xml_style_empty_element()
+    void xml_style_empty_element()
     {
         Document d = new Document(new XMLMarkupModel());
 
         d.newRootElement("empty");
 
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<empty/>");
+        assertEquals("<?xml version=\"1.0\"?>\n<empty/>", d.toString());
     }
 
     @Test
-    public void namespaced_elements() throws Exception
+    void namespaced_elements() throws Exception
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -65,11 +71,11 @@ public class DOMTest extends InternalBaseTestCase
 
         nested.elementNS("barneyns", "deepest");
 
-        assertEquals(d.toString(), readFile("namespaced_elements.txt"));
+        assertEquals(readFile("namespaced_elements.txt"), d.toString());
     }
 
     @Test
-    public void quote_using_apostrophes() throws Exception
+    void quote_using_apostrophes() throws Exception
     {
         Document d = new Document(new XMLMarkupModel(true));
 
@@ -84,11 +90,11 @@ public class DOMTest extends InternalBaseTestCase
 
         nested.elementNS("barneyns", "deepest");
 
-        assertEquals(d.toString(), readFile("quote_using_apostrophes.txt"));
+        assertEquals(readFile("quote_using_apostrophes.txt"), d.toString());
     }
 
     @Test
-    public void namespace_element_without_a_prefix() throws Exception
+    void namespace_element_without_a_prefix() throws Exception
     {
 
         Document d = new Document(new XMLMarkupModel());
@@ -104,11 +110,11 @@ public class DOMTest extends InternalBaseTestCase
         barney.attribute("bettyns", "betty", "b");
         barney.attribute("wilmans", "wilma", "c");
 
-        assertEquals(d.toString(), readFile("namespace_element_without_a_prefix.txt"));
+        assertEquals(readFile("namespace_element_without_a_prefix.txt"), d.toString());
     }
 
     @Test
-    public void default_namespace()
+    void default_namespace()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -120,14 +126,14 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute(namespaceURI, "gnip", "gnop");
 
 
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<root gnip=\"gnop\" xmlns=\"http://foo.com\"/>");
+        assertEquals("<?xml version=\"1.0\"?>\n<root gnip=\"gnop\" xmlns=\"http://foo.com\"/>", d.toString());
     }
 
     /**
      * Also demonstrates that attributes are provided in alphabetical order.
      */
     @Test
-    public void document_with_root_element_and_attributes() throws Exception
+    void document_with_root_element_and_attributes() throws Exception
     {
         Document d = new Document();
 
@@ -136,11 +142,11 @@ public class DOMTest extends InternalBaseTestCase
         e.attribute("fred", "flintstone");
         e.attribute("barney", "rubble");
 
-        assertEquals(d.toString(), readFile("document_with_root_element_and_attributes.txt"));
+        assertEquals(readFile("document_with_root_element_and_attributes.txt"), d.toString());
     }
 
     @Test
-    public void nested_elements() throws Exception
+    void nested_elements() throws Exception
     {
         Document d = new Document();
 
@@ -150,29 +156,29 @@ public class DOMTest extends InternalBaseTestCase
         p.attribute("first-name", "Fred");
         p.attribute("last-name", "Flintstone");
 
-        assertSame(p.getContainer(), e);
+        assertSame(e, p.getContainer());
 
         p = e.element("person");
         p.attribute("first-name", "Barney");
         p.attribute("last-name", "Rubble");
 
-        assertSame(p.getContainer(), e);
+        assertSame(e, p.getContainer());
 
-        assertEquals(d.toString(), readFile("nested_elements.txt"));
+        assertEquals(readFile("nested_elements.txt"), d.toString());
     }
 
-    @Test(expectedExceptions = AssertionError.class)
-    public void attribute_names_may_not_be_blank()
+    @Test
+    void attribute_names_may_not_be_blank()
     {
         Document d = new Document();
 
         Element e = d.newRootElement("fred");
 
-        e.attribute("", "value");
+        assertThrows(AssertionError.class, () -> e.attribute("", "value"));
     }
 
     @Test
-    public void element_name_may_not_be_blank()
+    void element_name_may_not_be_blank()
     {
         Document d = new Document();
 
@@ -180,7 +186,7 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void attribute_value_null_is_no_op()
+    void attribute_value_null_is_no_op()
     {
         Document d = new Document();
 
@@ -190,19 +196,19 @@ public class DOMTest extends InternalBaseTestCase
 
         final String expected = "<root foo=\"bar\"></root>";
 
-        assertEquals(d.toString(), expected);
+        assertEquals(expected, d.toString());
 
         e.attribute("foo", null);
 
-        assertEquals(d.toString(), expected);
+        assertEquals(expected, d.toString());
 
         e.attribute("gnip", null);
 
-        assertEquals(d.toString(), expected);
+        assertEquals(expected, d.toString());
     }
 
     @Test
-    public void comments() throws Exception
+    void comments() throws Exception
     {
         Document d = new Document();
 
@@ -212,11 +218,11 @@ public class DOMTest extends InternalBaseTestCase
 
         e.comment(" Created by Tapestry 5.0 ");
 
-        assertEquals(d.toString(), "<html><!-- Created by Tapestry 5.0 --></html>");
+        assertEquals("<html><!-- Created by Tapestry 5.0 --></html>", d.toString());
     }
 
     @Test
-    public void text()
+    void text()
     {
         Document d = new Document();
 
@@ -224,11 +230,11 @@ public class DOMTest extends InternalBaseTestCase
 
         e.text("Tapestry does DOM.");
 
-        assertEquals(d.toString(), "<body>Tapestry does DOM.</body>");
+        assertEquals("<body>Tapestry does DOM.</body>", d.toString());
     }
 
     @Test
-    public void text_with_control_characters()
+    void text_with_control_characters()
     {
         Document d = new Document();
 
@@ -236,11 +242,11 @@ public class DOMTest extends InternalBaseTestCase
 
         e.text("<this> & <that>");
 
-        assertEquals(d.toString(), "<root>&lt;this&gt; &amp; &lt;that&gt;</root>");
+        assertEquals("<root>&lt;this&gt; &amp; &lt;that&gt;</root>", d.toString());
     }
 
     @Test
-    public void specify_attributes_with_new_element()
+    void specify_attributes_with_new_element()
     {
         Document d = new Document();
 
@@ -248,11 +254,11 @@ public class DOMTest extends InternalBaseTestCase
 
         e.element("foo", "alpha", "legion");
 
-        assertEquals(d.toString(), "<root><foo alpha=\"legion\"></foo></root>");
+        assertEquals("<root><foo alpha=\"legion\"></foo></root>", d.toString());
     }
 
     @Test
-    public void writef_with_text()
+    void writef_with_text()
     {
         Document d = new Document();
 
@@ -262,34 +268,34 @@ public class DOMTest extends InternalBaseTestCase
 
         t.writef("** %s: %d **", "foo", 5);
 
-        assertEquals(d.toString(), "<root>Start: ** foo: 5 **</root>");
+        assertEquals("<root>Start: ** foo: 5 **</root>", d.toString());
     }
 
     @Test
-    public void get_element_by_id()
+    void get_element_by_id()
     {
         Document d = new Document();
         Element e = d.newRootElement("root");
         Element e1 = e.element("e1", "id", "x");
         Element e2 = e.element("e2", "id", "y");
-        assertSame(e1.getElementById("x"), e1);
-        assertSame(e.getElementById("y"), e2);
+        assertSame(e1, e1.getElementById("x"));
+        assertSame(e2, e.getElementById("y"));
         assertNull(e.getElementById("z"));
     }
 
     @Test
-    public void get_child_markup()
+    void get_child_markup()
     {
         Document d = new Document();
         Element e0 = d.newRootElement("root");
         Element e1 = e0.element("e1");
         e1.text("123");
-        assertEquals(e1.getChildMarkup(), "123");
-        assertEquals(e0.getChildMarkup(), "<e1>123</e1>");
+        assertEquals("123", e1.getChildMarkup());
+        assertEquals("<e1>123</e1>", e0.getChildMarkup());
     }
 
     @Test
-    public void document_find_no_root_element()
+    void document_find_no_root_element()
     {
         Document d = new Document();
 
@@ -297,7 +303,7 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void document_find_not_a_match()
+    void document_find_not_a_match()
     {
         Document d = new Document();
 
@@ -308,17 +314,17 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void document_find_root_is_match()
+    void document_find_root_is_match()
     {
         Document d = new Document();
 
         Element root = d.newRootElement("fred");
 
-        assertSame(d.find("fred"), root);
+        assertSame(root, d.find("fred"));
     }
 
     @Test
-    public void document_find_match()
+    void document_find_match()
     {
         Document d = new Document();
 
@@ -328,12 +334,12 @@ public class DOMTest extends InternalBaseTestCase
         Element barney = root.element("barney");
         Element bambam = barney.element("bambam");
 
-        assertSame(d.find("fred/barney/bambam"), bambam);
-        assertSame(root.find("barney/bambam"), bambam);
+        assertSame(bambam, d.find("fred/barney/bambam"));
+        assertSame(bambam, root.find("barney/bambam"));
     }
 
     @Test
-    public void document_find_no_match()
+    void document_find_no_match()
     {
         Document d = new Document();
 
@@ -348,7 +354,7 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void insert_element_at()
+    void insert_element_at()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -360,12 +366,12 @@ public class DOMTest extends InternalBaseTestCase
         root.elementAt(1, "one").element("tiny");
         root.elementAt(2, "two").element("bubbles");
 
-        assertEquals(d.toString(),
-                "<?xml version=\"1.0\"?>\n<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
+        assertEquals(
+                "<?xml version=\"1.0\"?>\n<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>", d.toString());
     }
 
     @Test
-    public void force_attributes_overrides_existing()
+    void force_attributes_overrides_existing()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -373,18 +379,18 @@ public class DOMTest extends InternalBaseTestCase
 
         root.attributes("hi", "ho", "gnip", "gnop");
 
-        assertEquals(root.toString(), "<fred gnip=\"gnop\" hi=\"ho\"/>");
+        assertEquals("<fred gnip=\"gnop\" hi=\"ho\"/>", root.toString());
 
         root.forceAttributes("hi", "bit", "gnip", null);
 
-        assertEquals(root.toString(), "<fred hi=\"bit\"/>");
+        assertEquals("<fred hi=\"bit\"/>", root.toString());
     }
 
     /**
      * TAP5-708
      */
     @Test
-    public void namespace_element_force_attributes_overrides_existing()
+    void namespace_element_force_attributes_overrides_existing()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -392,16 +398,16 @@ public class DOMTest extends InternalBaseTestCase
 
         root.attributes("hi", "ho", "gnip", "gnop");
 
-        assertEquals(root.toString(), "<fred gnip=\"gnop\" hi=\"ho\" xmlns=\"fredns\"/>");
+        assertEquals("<fred gnip=\"gnop\" hi=\"ho\" xmlns=\"fredns\"/>", root.toString());
 
         root.forceAttributes("hi", "bit", "gnip", null);
 
-        assertEquals(root.toString(), "<fred hi=\"bit\" xmlns=\"fredns\"/>");
+        assertEquals("<fred hi=\"bit\" xmlns=\"fredns\"/>", root.toString());
     }
 
 
     @Test
-    public void raw_output()
+    void raw_output()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -416,36 +422,38 @@ public class DOMTest extends InternalBaseTestCase
         // The '<' and '>' are filtered into entities, but the '&' in &nbsp; is left alone (left
         // raw).
 
-        assertEquals(root.toString(), "<fred><em>&lt;&nbsp;&gt;</em></fred>");
+        assertEquals("<fred><em>&lt;&nbsp;&gt;</em></fred>", root.toString());
     }
 
     @Test
-    public void dtd_with_markup()
+    void dtd_with_markup()
     {
         Document d = new Document(new XMLMarkupModel());
         Element root = d.newRootElement("prime");
         root.element("slag");
         d.dtd("prime", "-//TF", "tf");
         String expected = "<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\" \"tf\"><prime><slag/></prime>";
-        assertEquals(d.toString(), expected);
+        assertEquals(expected, d.toString());
     }
 
     @Test
-    public void dtd_with_nullids()
+    void dtd_with_nullids()
     {
         Document d = new Document(new XMLMarkupModel());
         d.newRootElement("prime");
+
         d.dtd("prime", null, null);
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime><prime/>");
+        assertEquals("<?xml version=\"1.0\"?>\n<!DOCTYPE prime><prime/>", d.toString());
+
         d.dtd("prime", "-//TF", null);
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>");
+        assertEquals("<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>", d.toString());
 
         d.dtd("prime", null, "tf");
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime SYSTEM \"tf\"><prime/>");
+        assertEquals("<?xml version=\"1.0\"?>\n<!DOCTYPE prime SYSTEM \"tf\"><prime/>", d.toString());
     }
 
     @Test
-    public void markup_characters_inside_attributes_are_escaped()
+    void markup_characters_inside_attributes_are_escaped()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -454,11 +462,11 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute("alpha-only", "abcdef");
         root.attribute("entities", "\"<>&");
 
-        assertEquals(root.toString(), "<prime entities=\"&quot;&lt;&gt;&amp;\" alpha-only=\"abcdef\"/>");
+        assertEquals("<prime entities=\"&quot;&lt;&gt;&amp;\" alpha-only=\"abcdef\"/>", root.toString());
     }
 
     @Test
-    public void apostrophes_are_escaped()
+    void apostrophes_are_escaped()
     {
         Document d = new Document(new XMLMarkupModel(true));
 
@@ -466,40 +474,40 @@ public class DOMTest extends InternalBaseTestCase
 
         root.attribute("apostrophie", "some'thing");
 
-        assertEquals(root.toString(), "<prime apostrophie='some&#39;thing'/>");
+        assertEquals("<prime apostrophie='some&#39;thing'/>", root.toString());
     }
 
     @Test
-    public void add_class_names()
+    void add_class_names()
     {
         Document d = new Document(new XMLMarkupModel());
 
         Element root = d.newRootElement("div");
 
-        assertSame(root.addClassName("fred"), root);
+        assertSame(root, root.addClassName("fred"));
 
-        assertEquals(root.toString(), "<div class=\"fred\"/>");
+        assertEquals("<div class=\"fred\"/>", root.toString());
 
-        assertSame(root.addClassName("barney", "wilma"), root);
+        assertSame(root, root.addClassName("barney", "wilma"));
 
-        assertEquals(extract(root, "class"), stringSet("fred", "barney", "wilma"));
+        assertEquals(stringSet("fred", "barney", "wilma"), extract(root, "class"));
     }
 
     // TAP5-2660
     @Test
-    public void add_class_names_empty_namespace()
+    void add_class_names_empty_namespace()
     {
         Document d = new Document(new XMLMarkupModel());
 
         Element root = d.newRootElement("div");
 
-        assertSame(root.attribute("", "class", "fred"), root);
+        assertSame(root, root.attribute("", "class", "fred"));
 
-        assertEquals(root.toString(), "<div class=\"fred\"/>");
+        assertEquals("<div class=\"fred\"/>", root.toString());
 
-        assertSame(root.addClassName("barney", "wilma"), root);
+        assertSame(root, root.addClassName("barney", "wilma"));
 
-        assertEquals(extract(root, "class"), stringSet("fred", "barney", "wilma"));
+        assertEquals(stringSet("fred", "barney", "wilma"), extract(root, "class"));
     }
 
     private Set<String> extract(Element e, String attributeName)
@@ -517,7 +525,7 @@ public class DOMTest extends InternalBaseTestCase
      * TAP5-804
      */
     @Test
-    public void namespace_add_class_name()
+    void namespace_add_class_name()
     {
         Document document = new Document(new DefaultMarkupModel());
 
@@ -525,15 +533,15 @@ public class DOMTest extends InternalBaseTestCase
 
         element.attribute("class", "a");
 
-        assertEquals(element.toString(), "<e class=\"a\" xmlns=\"fredns\"></e>");
+        assertEquals("<e class=\"a\" xmlns=\"fredns\"></e>", element.toString());
 
         element.addClassName("b");
 
-        assertEquals(extract(element, "class"), stringSet("a", "b"));
+        assertEquals(stringSet("a", "b"), extract(element, "class"));
     }
 
     @Test
-    public void cdata_in_HTML_document()
+    void cdata_in_HTML_document()
     {
         Document d = new Document();
 
@@ -541,11 +549,11 @@ public class DOMTest extends InternalBaseTestCase
 
         // The '&' is expanded to an entity:
 
-        assertEquals(d.toString(), "<root>This &amp; That</root>");
+        assertEquals("<root>This &amp; That</root>", d.toString());
     }
 
     @Test
-    public void cdata_in_XML_document()
+    void cdata_in_XML_document()
     {
         Document d = new Document(new XMLMarkupModel());
 
@@ -553,20 +561,20 @@ public class DOMTest extends InternalBaseTestCase
 
         // The '&' is expanded to an entity:
 
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<root><![CDATA[This & That]]></root>");
+        assertEquals("<?xml version=\"1.0\"?>\n<root><![CDATA[This & That]]></root>", d.toString());
     }
 
     @Test
-    public void encoding_specified()
+    void encoding_specified()
     {
         Document d = new Document(new XMLMarkupModel(), "utf-8");
         d.newRootElement("root");
 
-        assertEquals(d.toString(), "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root/>");
+        assertEquals("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root/>", d.toString());
     }
 
     @Test
-    public void move_before()
+    void move_before()
     {
         Document d = new Document();
 
@@ -579,18 +587,18 @@ public class DOMTest extends InternalBaseTestCase
 
         mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+        assertEquals(
+                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>", d.toString());
 
 
         mobile.moveBefore(target);
 
-        assertEquals(d.toString(),
-                "<doc><placeholder></placeholder><mobile>On the move</mobile><target></target><source></source></doc>");
+        assertEquals(
+                "<doc><placeholder></placeholder><mobile>On the move</mobile><target></target><source></source></doc>", d.toString());
     }
 
     @Test
-    public void move_after()
+    void move_after()
     {
         Document d = new Document();
 
@@ -602,18 +610,18 @@ public class DOMTest extends InternalBaseTestCase
 
         mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+        assertEquals(
+                "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>", d.toString());
 
 
         mobile.moveAfter(target);
 
-        assertEquals(d.toString(),
-                "<doc><placeholder></placeholder><target></target><mobile>On the move</mobile><source></source></doc>");
+        assertEquals(
+                "<doc><placeholder></placeholder><target></target><mobile>On the move</mobile><source></source></doc>", d.toString());
     }
 
     @Test
-    public void move_to_top()
+    void move_to_top()
     {
         Document d = new Document();
 
@@ -625,17 +633,17 @@ public class DOMTest extends InternalBaseTestCase
 
         mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+        assertEquals(
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>", d.toString());
 
         mobile.moveToTop(target);
 
-        assertEquals(d.toString(),
-                "<doc><target><mobile>On the move</mobile><placeholder></placeholder></target><source></source></doc>");
+        assertEquals(
+                "<doc><target><mobile>On the move</mobile><placeholder></placeholder></target><source></source></doc>", d.toString());
     }
 
     @Test
-    public void move_to_bottom()
+    void move_to_bottom()
     {
         Document d = new Document();
 
@@ -647,17 +655,17 @@ public class DOMTest extends InternalBaseTestCase
 
         mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+        assertEquals(
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>", d.toString());
 
         mobile.moveToBottom(target);
 
-        assertEquals(d.toString(),
-                "<doc><target><placeholder></placeholder><mobile>On the move</mobile></target><source></source></doc>");
+        assertEquals(
+                "<doc><target><placeholder></placeholder><mobile>On the move</mobile></target><source></source></doc>", d.toString());
     }
 
     @Test
-    public void remove_children()
+    void remove_children()
     {
         Document d = new Document();
 
@@ -671,17 +679,17 @@ public class DOMTest extends InternalBaseTestCase
 
         mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><before></before><source><mobile>On the move</mobile><grok></grok></source><after></after></doc>");
+        assertEquals(
+                "<doc><before></before><source><mobile>On the move</mobile><grok></grok></source><after></after></doc>", d.toString());
 
         source.removeChildren();
 
-        assertEquals(d.toString(),
-                "<doc><before></before><source></source><after></after></doc>");
+        assertEquals(
+                "<doc><before></before><source></source><after></after></doc>", d.toString());
     }
 
     @Test
-    public void pop()
+    void pop()
     {
         Document d = new Document();
 
@@ -691,17 +699,17 @@ public class DOMTest extends InternalBaseTestCase
         source.element("mobile").text("On the move");
         source.element("grok");
 
-        assertEquals(d.toString(),
-                "<doc><source><mobile>On the move</mobile><grok></grok></source></doc>");
+        assertEquals(
+                "<doc><source><mobile>On the move</mobile><grok></grok></source></doc>", d.toString());
 
         source.pop();
 
-        assertEquals(d.toString(),
-                "<doc><mobile>On the move</mobile><grok></grok></doc>");
+        assertEquals(
+                "<doc><mobile>On the move</mobile><grok></grok></doc>", d.toString());
     }
 
     @Test
-    public void move_an_node_into_itself()
+    void move_an_node_into_itself()
     {
         Document d = new Document();
 
@@ -713,18 +721,12 @@ public class DOMTest extends InternalBaseTestCase
         mobile.text("On the move");
         Element inside = mobile.element("inside");
 
-        try
-        {
-            mobile.moveToTop(inside);
-            unreachable();
-        } catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(), "Unable to move a node relative to itself.");
-        }
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> mobile.moveToTop(inside));
+        assertEquals("Unable to move a node relative to itself.", ex.getMessage());
     }
 
     @Test
-    public void wrap()
+    void wrap()
     {
         Document d = new Document();
 
@@ -736,20 +738,20 @@ public class DOMTest extends InternalBaseTestCase
 
         Node text = mobile.text("On the move");
 
-        assertEquals(d.toString(),
-                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+        assertEquals(
+                "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>", d.toString());
 
         text.wrap("em", "class", "bold");
 
-        assertEquals(d.toString(),
-                "<doc><target><placeholder></placeholder></target><source><mobile><em class=\"bold\">On the move</em></mobile></source></doc>");
+        assertEquals(
+                "<doc><target><placeholder></placeholder></target><source><mobile><em class=\"bold\">On the move</em></mobile></source></doc>", d.toString());
     }
 
     /**
      * TAP5-385
      */
     @Test
-    public void empty_html_elements()
+    void empty_html_elements()
     {
         Document d = new Document();
 
@@ -759,14 +761,14 @@ public class DOMTest extends InternalBaseTestCase
         root.element("br");
         root.element("img");
 
-        assertEquals(d.toString(), "<doc><hr/><br/><img/></doc>");
+        assertEquals("<doc><hr/><br/><img/></doc>", d.toString());
     }
 
     /**
      * TAP5-402
      */
     @Test
-    public void is_empty()
+    void is_empty()
     {
         Document d = new Document();
 
@@ -797,7 +799,7 @@ public class DOMTest extends InternalBaseTestCase
      * TAP5-457
      */
     @Test
-    public void defaults_for_xml_defined_namespaces() throws Exception
+    void defaults_for_xml_defined_namespaces() throws Exception
     {
         Document d = new Document();
 
@@ -809,11 +811,11 @@ public class DOMTest extends InternalBaseTestCase
 
         // Before TAP5-457, it would be ns0: not xml:
 
-        assertEquals(d.toString(), readFile("defaults_for_xml_defined_namespaces.txt"));
+        assertEquals(readFile("defaults_for_xml_defined_namespaces.txt"), d.toString());
     }
 
     @Test
-    public void visit_order()
+    void visit_order()
     {
         Document d = new Document();
 
@@ -840,15 +842,80 @@ public class DOMTest extends InternalBaseTestCase
             }
         });
 
-        assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
-                "child2c");
+        assertIterableEquals(Arrays.asList("parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
+                "child2c"), elementNames);
+    }
+
+    // --- NodeVisitor ---
+
+    @Test
+    void nodeVisitor_visits_all_node_types_in_document_order()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        root.text("hello");
+        root.comment(" c ");
+        Element nested = root.element("nested");
+        nested.cdata("data");
+        nested.raw("<x/>");
+
+        List<String> visits = CollectionFactory.newList();
+
+        root.visit(new NodeVisitor()
+        {
+            @Override public void visit(Element e)  { visits.add("Element:" + e.getName()); }
+            @Override public void visit(Text t)     { visits.add("Text"); }
+            @Override public void visit(Comment c)  { visits.add("Comment"); }
+            @Override public void visit(CData c)    { visits.add("CData"); }
+            @Override public void visit(Raw r)      { visits.add("Raw"); }
+        });
+
+        assertIterableEquals(Arrays.asList("Element:root", "Text", "Comment", "Element:nested", "CData", "Raw"), visits);
+    }
+
+    @Test
+    void nodeVisitor_default_methods_allow_selective_override()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        root.text("first");
+        root.element("child").text("second");
+
+        List<String> textContents = CollectionFactory.newList();
+
+        // Only override visit(Text) — elements are silently skipped
+        root.visit(new NodeVisitor()
+        {
+            @Override
+            public void visit(Text t) { textContents.add(t.toString()); }
+        });
+
+        assertIterableEquals(Arrays.asList("first", "second"), textContents);
+    }
+
+    @Test
+    void nodeVisitor_on_document_delegates_to_root_element()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        root.element("child");
+
+        List<String> names = CollectionFactory.newList();
+
+        d.visit(new NodeVisitor()
+        {
+            @Override
+            public void visit(Element e) { names.add(e.getName()); }
+        });
+
+        assertIterableEquals(Arrays.asList("root", "child"), names);
     }
 
     /**
      * TAP5-559
      */
     @Test
-    public void later_updates_to_same_attribute_are_ignored()
+    void later_updates_to_same_attribute_are_ignored()
     {
         Document d = new Document();
 
@@ -861,11 +928,11 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute("baggins", "frodo");
 
 
-        assertEquals(d.toString(), "<parent baggins=\"bilbo\"></parent>");
+        assertEquals("<parent baggins=\"bilbo\"></parent>", d.toString());
     }
 
     @Test
-    public void force_attributes_changes_attribute_value()
+    void force_attributes_changes_attribute_value()
     {
         Document d = new Document();
 
@@ -879,11 +946,11 @@ public class DOMTest extends InternalBaseTestCase
         root.forceAttributes("baggins", "frodo");
 
 
-        assertEquals(d.toString(), "<parent baggins=\"frodo\"></parent>");
+        assertEquals("<parent baggins=\"frodo\"></parent>", d.toString());
     }
 
     @Test
-    public void force_attributes_to_null_removes_attribute()
+    void force_attributes_to_null_removes_attribute()
     {
         Document d = new Document();
 
@@ -895,16 +962,16 @@ public class DOMTest extends InternalBaseTestCase
 
         root.forceAttributes("friend", null);
 
-        assertEquals(root.toString(), "<parent baggins=\"frodo\"></parent>");
+        assertEquals("<parent baggins=\"frodo\"></parent>", root.toString());
 
         root.forceAttributes("baggins", null,
                 "enemy", "gollum");
 
-        assertEquals(root.toString(), "<parent enemy=\"gollum\"></parent>");
+        assertEquals("<parent enemy=\"gollum\"></parent>", root.toString());
     }
 
     @Test
-    public void get_attributes()
+    void get_attributes()
     {
         Document d = new Document();
 
@@ -916,19 +983,19 @@ public class DOMTest extends InternalBaseTestCase
 
         Collection<Attribute> attributes = root.getAttributes();
 
-        assertEquals(attributes.size(), 1);
+        assertEquals(1, attributes.size());
 
         Attribute attribute = attributes.iterator().next();
 
-        assertEquals(attribute.getName(), "fred");
-        assertEquals(attribute.getValue(), "flintstone");
+        assertEquals("fred", attribute.getName());
+        assertEquals("flintstone", attribute.getValue());
     }
 
     /**
      * TAP5-636
      */
     @Test
-    public void force_null_for_first_attribute_is_noop()
+    void force_null_for_first_attribute_is_noop()
     {
         Document d = new Document();
 
@@ -936,11 +1003,11 @@ public class DOMTest extends InternalBaseTestCase
 
         root.forceAttributes("null", null);
 
-        assertEquals(root.toString(), "<root></root>");
+        assertEquals("<root></root>", root.toString());
     }
 
     @Test
-    public void remove_while_rendering()
+    void remove_while_rendering()
     {
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -965,15 +1032,15 @@ public class DOMTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
-                "<ul><li>0</li><li>1</li><li>3</li></ul>");
+        assertEquals("<?xml version=\"1.0\"?>\n" +
+                "<ul><li>0</li><li>1</li><li>3</li></ul>", writer.toString());
     }
     
     /**
      * TAP5-2071
      */
     @Test
-    public void html5_void_elements()
+    void html5_void_elements()
     {
         final List<String> voidElements = CollectionFactory.newList("area", "base", "br", "col",
                 "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param",
@@ -991,7 +1058,764 @@ public class DOMTest extends InternalBaseTestCase
         
         writer.end();
         
-        assertEquals(writer.toString(),
-                "<html><area><base><br><col><command><embed><hr><img><input><keygen><link><meta><param><source><track><wbr></html>");
+        assertEquals(
+                "<html><area><base><br><col><command><embed><hr><img><input><keygen><link><meta><param><source><track><wbr></html>", writer.toString());
+    }
+
+    // --- Deep clone ---
+
+    @Test
+    void element_deep_clone_is_detached()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("section");
+
+        assertNull(src.deepClone().getContainer());
+    }
+
+    @Test
+    void element_deep_clone_preserves_name()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("section");
+
+        assertEquals("section", src.deepClone().getName());
+    }
+
+    @Test
+    void element_deep_clone_copies_attributes()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("div", "id", "foo", "class", "bar");
+
+        Element clone = src.deepClone();
+
+        assertEquals("foo", clone.getAttribute("id"));
+        assertEquals("bar", clone.getAttribute("class"));
+    }
+
+    @Test
+    void element_deep_clone_copies_children_recursively()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("parent");
+        src.element("child-a").element("grandchild");
+        src.element("child-b");
+
+        Element clone = src.deepClone();
+
+        List<Node> children = clone.getChildren();
+        assertEquals(2, children.size());
+        assertEquals("child-a",   ((Element) children.get(0)).getName());
+        assertEquals("child-b",   ((Element) children.get(1)).getName());
+        assertEquals(1, ((Element) children.get(0)).getChildren().size()); // grandchild present
+    }
+
+    @Test
+    void detached_node_toString_uses_default_markup_model()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("p", "class", "note");
+        src.text("Hello, ");
+        src.element("strong").text("world");
+        src.text("!");
+
+        // Both src (attached, DefaultMarkupModel) and clone (detached, fallback DefaultMarkupModel)
+        // must produce identical markup without any extra attachment step.
+        Element clone = src.deepClone();
+
+        assertEquals(src.toString(), clone.toString());
+    }
+
+    @Test
+    void detached_node_getChildMarkup_uses_default_markup_model()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("div");
+        src.element("span").text("content");
+
+        Element clone = src.deepClone();
+
+        assertEquals(src.getChildMarkup(), clone.getChildMarkup());
+    }
+
+    @Test
+    void detached_node_toMarkup_uses_provided_markup_model()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("br");
+
+        Element clone = src.deepClone();
+
+        // Html5MarkupModel treats <br> as a void element (no closing tag or slash).
+        // DefaultMarkupModel abbreviates it as a self-closing tag.
+        assertEquals("<br>",  clone.toMarkup(new Html5MarkupModel()));
+        assertEquals("<br/>", clone.toMarkup(new DefaultMarkupModel()));
+    }
+
+    @Test
+    void element_deep_clone_is_independent_of_original()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("div", "id", "original");
+
+        Element clone = src.deepClone();
+
+        // Mutate the original — clone must remain unchanged.
+        src.forceAttributes("id", "changed");
+        src.element("extra");
+
+        assertEquals("original", clone.getAttribute("id"));
+        assertEquals(0, clone.getChildren().size());
+    }
+
+    @Test
+    void element_deep_clone_changes_do_not_affect_original()
+    {
+        Document d = new Document();
+        Element src = d.newRootElement("root").element("div", "id", "original");
+
+        // Mutate the clone — original must remain unchanged.
+        Element clone = src.deepClone();
+        Document wrapper = new Document();
+        wrapper.newRootElement("wrapper").addChild(clone);
+        clone.forceAttributes("id", "modified");
+        clone.element("extra");
+
+        assertEquals("original", src.getAttribute("id"));
+        assertEquals(0, src.getChildren().size());
+    }
+
+    @Test
+    void document_deep_clone_produces_same_markup()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("html");
+        Element body = root.element("body");
+        body.element("h1", "class", "title").text("Hello");
+        body.element("p").text("World");
+
+        Document clone = d.deepClone();
+
+        assertEquals(d.toString(), clone.toString());
+    }
+
+    @Test
+    void document_deep_clone_is_independent()
+    {
+        Document d = new Document();
+        d.newRootElement("root").element("child").text("original");
+
+        Document clone = d.deepClone();
+
+        // Empty the clone's tree.
+        clone.getRootElement().removeChildren();
+
+        // Original is unaffected.
+        assertEquals(1, d.getRootElement().getChildren().size());
+        assertTrue(clone.getRootElement().getChildren().isEmpty());
+    }
+
+    // --- Detach ---
+
+    @Test
+    void detach_removes_node_from_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+
+        child.detach();
+
+        assertNull(child.getContainer());
+        assertTrue(root.getChildren().isEmpty());
+    }
+
+    @Test
+    void detach_returns_the_same_instance()
+    {
+        Document d = new Document();
+        Element child = d.newRootElement("root").element("child");
+
+        assertSame(child, child.detach());
+    }
+
+    @Test
+    void detach_is_noop_when_already_detached()
+    {
+        Document d = new Document();
+        Element child = d.newRootElement("root").element("child");
+        child.detach();
+
+        // Second call must not throw.
+        assertSame(child, child.detach());
+        assertNull(child.getContainer());
+    }
+
+    @Test
+    void detach_returns_element_without_cast()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child", "id", "c");
+
+        // detach() on Element has a covariant return type of Element, so Element-specific
+        // methods (like getAttribute) can be called directly without a cast.
+        String id = child.detach().getAttribute("id");
+
+        assertEquals("c", id);
+        assertTrue(root.getChildren().isEmpty());
+    }
+
+    // --- replaceWith ---
+
+    @Test
+    void replaceWith_swaps_node_in_place()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element a = root.element("a");
+        Element b = root.element("b");
+        Element c = root.element("c");
+
+        Element newB = new Element((Element) null, null, "x");
+        // Attach newB to a temp parent so we can verify detach
+        Document tmp = new Document();
+        Element tmpRoot = tmp.newRootElement("tmp");
+        tmpRoot.addChild(newB);
+
+        Node result = b.replaceWith(newB);
+
+        assertSame(newB, result);
+        // root now contains a, newB, c in order
+        List<Node> children = root.getChildren();
+        assertEquals(3, children.size());
+        assertSame(a,    children.get(0));
+        assertSame(newB, children.get(1));
+        assertSame(c,    children.get(2));
+        // b is now detached
+        assertNull(b.getContainer());
+        // newB was detached from tmpRoot
+        assertTrue(tmpRoot.getChildren().isEmpty());
+    }
+
+    @Test
+    void replaceWith_detaches_replacement_from_prior_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element target = root.element("target");
+
+        Document d2 = new Document();
+        Element root2 = d2.newRootElement("root2");
+        Element mover = root2.element("mover");
+
+        target.replaceWith(mover);
+
+        // After replaceWith, mover's container is root (not root2)
+        assertEquals("root", mover.getContainer().getName());
+        assertTrue(root2.getChildren().isEmpty());
+    }
+
+    @Test
+    void replaceWith_returns_replacement()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element old = root.element("old");
+        Element fresh = root.element("fresh");
+        // detach fresh so it's free to use as replacement
+        fresh.detach();
+
+        Node returned = old.replaceWith(fresh);
+        assertSame(fresh, returned);
+    }
+
+    @Test
+    void replaceWith_throws_for_null()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.replaceWith(null));
+    }
+
+    @Test
+    void replaceWith_throws_when_replacing_self()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.replaceWith(child));
+    }
+
+    @Test
+    void replaceWith_throws_when_node_is_detached()
+    {
+        Element detached = new Element((Element) null, null, "detached");
+        Element other = new Element((Element) null, null, "other");
+        assertThrows(IllegalStateException.class, () -> detached.replaceWith(other));
+    }
+
+    @Test
+    void replaceWith_throws_when_replacement_is_ancestor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element parent = root.element("parent");
+        Element child = parent.element("child");
+        // Replacing child with its ancestor (parent) would create a cycle
+        assertThrows(IllegalArgumentException.class, () -> child.replaceWith(parent));
+    }
+
+    // --- insertBefore / insertAfter ---
+
+    @Test
+    void insertBefore_places_node_before_anchor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element a = root.element("a");
+        Element b = root.element("b");
+        Element c = root.element("c");
+
+        Element x = new Element((Element) null, null, "x");
+        Document tmp = new Document();
+        tmp.newRootElement("tmp").appendChild(x);
+
+        b.insertBefore(x);
+
+        List<Node> children = root.getChildren();
+        assertEquals(4, children.size());
+        assertSame(a, children.get(0));
+        assertSame(x, children.get(1));
+        assertSame(b, children.get(2));
+        assertSame(c, children.get(3));
+    }
+
+    @Test
+    void insertBefore_detaches_from_prior_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element anchor = root.element("anchor");
+
+        Document d2 = new Document();
+        Element other = d2.newRootElement("other");
+        Element mover = other.element("mover");
+
+        anchor.insertBefore(mover);
+
+        assertTrue(other.getChildren().isEmpty());
+        assertEquals("root", mover.getContainer().getName());
+    }
+
+    @Test
+    void insertBefore_works_with_non_element_anchor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Text text = root.text("hello");
+        Element after = root.element("after");
+
+        Element inserted = new Element((Element) null, null, "span");
+        Node result = text.insertBefore(inserted);
+
+        assertSame(inserted, result);
+        List<Node> children = root.getChildren();
+        assertSame(inserted, children.get(0));
+        assertSame(text,     children.get(1));
+        assertSame(after,    children.get(2));
+    }
+
+    @Test
+    void insertBefore_returns_inserted_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element anchor = root.element("anchor");
+        Element fresh = new Element((Element) null, null, "fresh");
+
+        Node returned = anchor.insertBefore(fresh);
+        assertSame(fresh, returned);
+    }
+
+    @Test
+    void insertBefore_throws_for_null()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.insertBefore(null));
+    }
+
+    @Test
+    void insertBefore_throws_for_self()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.insertBefore(child));
+    }
+
+    @Test
+    void insertBefore_throws_when_anchor_is_detached()
+    {
+        Element detached = new Element((Element) null, null, "detached");
+        Element other = new Element((Element) null, null, "other");
+        assertThrows(IllegalStateException.class, () -> detached.insertBefore(other));
+    }
+
+    @Test
+    void insertBefore_throws_when_node_is_ancestor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element parent = root.element("parent");
+        Element child = parent.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.insertBefore(parent));
+    }
+
+    @Test
+    void insertAfter_places_node_after_anchor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element a = root.element("a");
+        Element b = root.element("b");
+        Element c = root.element("c");
+
+        Element x = new Element((Element) null, null, "x");
+
+        b.insertAfter(x);
+
+        List<Node> children = root.getChildren();
+        assertEquals(4, children.size());
+        assertSame(a, children.get(0));
+        assertSame(b, children.get(1));
+        assertSame(x, children.get(2));
+        assertSame(c, children.get(3));
+    }
+
+    @Test
+    void insertAfter_detaches_from_prior_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element anchor = root.element("anchor");
+
+        Document d2 = new Document();
+        Element other = d2.newRootElement("other");
+        Element mover = other.element("mover");
+
+        anchor.insertAfter(mover);
+
+        assertTrue(other.getChildren().isEmpty());
+        assertEquals("root", mover.getContainer().getName());
+    }
+
+    @Test
+    void insertAfter_works_with_non_element_anchor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element before = root.element("before");
+        Text text = root.text("hello");
+
+        Element inserted = new Element((Element) null, null, "span");
+        Node result = text.insertAfter(inserted);
+
+        assertSame(inserted, result);
+        List<Node> children = root.getChildren();
+        assertSame(before,   children.get(0));
+        assertSame(text,     children.get(1));
+        assertSame(inserted, children.get(2));
+    }
+
+    @Test
+    void insertAfter_returns_inserted_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element anchor = root.element("anchor");
+        Element fresh = new Element((Element) null, null, "fresh");
+
+        Node returned = anchor.insertAfter(fresh);
+        assertSame(fresh, returned);
+    }
+
+    @Test
+    void insertAfter_throws_when_anchor_is_detached()
+    {
+        Element detached = new Element((Element) null, null, "detached");
+        Element other = new Element((Element) null, null, "other");
+        assertThrows(IllegalStateException.class, () -> detached.insertAfter(other));
+    }
+
+    @Test
+    void insertAfter_throws_when_node_is_ancestor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element parent = root.element("parent");
+        Element child = parent.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.insertAfter(parent));
+    }
+
+    // --- prependChild / appendChild ---
+
+    @Test
+    void prependChild_inserts_as_first_child()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element a = root.element("a");
+        Element b = root.element("b");
+
+        Element x = new Element((Element) null, null, "x");
+        root.prependChild(x);
+
+        List<Node> children = root.getChildren();
+        assertSame(x, children.get(0));
+        assertSame(a, children.get(1));
+        assertSame(b, children.get(2));
+    }
+
+    @Test
+    void prependChild_detaches_from_prior_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        Document d2 = new Document();
+        Element other = d2.newRootElement("other");
+        Element mover = other.element("mover");
+
+        root.prependChild(mover);
+
+        assertTrue(other.getChildren().isEmpty());
+        assertSame(root, mover.getContainer());
+    }
+
+    @Test
+    void prependChild_returns_element_for_chaining()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element x = new Element((Element) null, null, "x");
+        Element y = new Element((Element) null, null, "y");
+
+        Element returned = root.prependChild(x);
+        assertSame(root, returned);
+
+        root.prependChild(y); // y is now first
+        assertSame(y, root.getChildren().get(0));
+        assertSame(x, root.getChildren().get(1));
+    }
+
+    @Test
+    void prependChild_throws_for_null()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        assertThrows(IllegalArgumentException.class, () -> root.prependChild(null));
+    }
+
+    @Test
+    void prependChild_throws_when_node_is_ancestor()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.prependChild(root));
+    }
+
+    @Test
+    void appendChild_appends_as_last_child()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element a = root.element("a");
+        Element b = root.element("b");
+
+        Element x = new Element((Element) null, null, "x");
+        root.appendChild(x);
+
+        List<Node> children = root.getChildren();
+        assertSame(a, children.get(0));
+        assertSame(b, children.get(1));
+        assertSame(x, children.get(2));
+    }
+
+    @Test
+    void appendChild_detaches_from_prior_parent()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        Document d2 = new Document();
+        Element other = d2.newRootElement("other");
+        Element mover = other.element("mover");
+
+        root.appendChild(mover);
+
+        assertTrue(other.getChildren().isEmpty());
+        assertSame(root, mover.getContainer());
+    }
+
+    @Test
+    void appendChild_returns_element_for_chaining()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element x = new Element((Element) null, null, "x");
+
+        Element returned = root.appendChild(x);
+        assertSame(root, returned);
+    }
+
+    @Test
+    void appendChild_throws_for_null()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        assertThrows(IllegalArgumentException.class, () -> root.appendChild(null));
+    }
+
+    @Test
+    void appendChild_throws_when_node_is_this()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        assertThrows(IllegalArgumentException.class, () -> child.appendChild(child));
+    }
+
+    // --- Sibling navigation ---
+
+    @Test
+    void next_sibling_returns_following_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element first = root.element("first");
+        Text text = root.text("between");
+        Element second = root.element("second");
+
+        assertSame(text,   first.getNextSibling());
+        assertSame(second, text.getNextSibling());
+        assertNull(second.getNextSibling());
+    }
+
+    @Test
+    void next_sibling_returns_null_for_root_element()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        assertNull(root.getNextSibling());
+    }
+
+    @Test
+    void next_sibling_returns_null_for_detached_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        child.remove();
+
+        assertNull(child.getNextSibling());
+    }
+
+    @Test
+    void previous_sibling_returns_preceding_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element first = root.element("first");
+        Text text = root.text("between");
+        Element second = root.element("second");
+
+        assertNull(first.getPreviousSibling());
+        assertSame(first, text.getPreviousSibling());
+        assertSame(text,  second.getPreviousSibling());
+    }
+
+    @Test
+    void previous_sibling_returns_null_for_root_element()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        assertNull(root.getPreviousSibling());
+    }
+
+    @Test
+    void previous_sibling_returns_null_for_detached_node()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element child = root.element("child");
+        child.remove();
+
+        assertNull(child.getPreviousSibling());
+    }
+
+    @Test
+    void next_sibling_element_skips_non_element_nodes()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element first = root.element("first");
+        root.text("between");
+        root.comment("also between");
+        Element second = root.element("second");
+
+        assertSame(second, first.getNextSiblingElement());
+        assertNull(second.getNextSiblingElement());
+    }
+
+    @Test
+    void next_sibling_element_returns_null_for_root_element()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        assertNull(root.getNextSiblingElement());
+    }
+
+    @Test
+    void previous_sibling_element_skips_non_element_nodes()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+        Element first = root.element("first");
+        root.text("between");
+        root.comment("also between");
+        Element second = root.element("second");
+
+        assertNull(first.getPreviousSiblingElement());
+        assertSame(first, second.getPreviousSiblingElement());
+    }
+
+    @Test
+    void previous_sibling_element_returns_null_for_root_element()
+    {
+        Document d = new Document();
+        Element root = d.newRootElement("root");
+
+        assertNull(root.getPreviousSiblingElement());
+    }
+
+    // --- Helper methods formerly from InternalBaseTestCase ---
+
+    private String readFile(String file) throws IOException
+    {
+        InputStream is = getClass().getResourceAsStream(file);
+        if (is == null) return "";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is)))
+        {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
     }
 }

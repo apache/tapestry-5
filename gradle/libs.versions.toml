@@ -58,6 +58,7 @@ clojure = "1.12.2"
 jaxb-runtime = "2.3.2"
 kaptcha = "0.0.8"
 spring-web = "3.2.9.RELEASE"
+jaxen = "2.0.6"
 
 # IOC JCACHE
 
@@ -160,6 +161,7 @@ clojure = { module = "org.clojure:clojure", version.ref = "clojure" }
 jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-runtime" }
 kaptcha = { module = "com.github.axet:kaptcha", version.ref = "kaptcha" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "spring-web" }
+jaxen = { module = "jaxen:jaxen", version.ref = "jaxen" }
 
 # IOC JCACHE
 
