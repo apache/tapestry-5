@@ -304,7 +304,7 @@ public abstract class Node
 
     /**
      * Returns the previous sibling node within the containing element, or {@code null}
-     * if {@this} is:
+     * if {@code this} is:
      * <ul>
      * <li>the first child</li>
      * <li>not part of a sibling list (root element, document-preamble node, or detached node).
@@ -370,10 +370,10 @@ public abstract class Node
      * <p>
      * If {@code replacement} is currently attached to another parent, it is detached first.
      *
-     * @param replacement the node to put in place of this node, must not be {@code null} or {@this}
+     * @param replacement the node to put in place of this node, must not be {@code null} or {@code this}
      * @return the replacement node, now in position
-     * @throws IllegalArgumentException if {@code replacement} is {@code null}, is {@this}, or is an ancestor of {@this}
-     * @throws IllegalStateException    if {@this} is detached (has no parent)
+     * @throws IllegalArgumentException if {@code replacement} is {@code null}, is {@code this}, or is an ancestor of {@code this}
+     * @throws IllegalStateException    if {@code this} is detached (has no parent)
      * @since 5.10
      */
     public Node replaceWith(Node replacement)
