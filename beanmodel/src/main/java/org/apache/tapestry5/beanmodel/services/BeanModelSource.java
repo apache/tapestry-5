@@ -46,6 +46,7 @@ public interface BeanModelSource
      * @deprecated use {@link #createDisplayModel(Class, org.apache.tapestry5.commons.Messages)} or {@link
      *             #createEditModel(Class, org.apache.tapestry5.commons.Messages)}
      */
+    @Deprecated
     <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages);
 
     /**

@@ -27,6 +27,7 @@ import org.apache.tapestry5.http.Link;
  * @deprecated Deprecated in 5.4 with no replacement. Use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} directly,
  *             instead.
  */
+@Deprecated
 public interface ClientBehaviorSupport
 {
     /**
@@ -71,6 +72,7 @@ public interface ClientBehaviorSupport
      *         name of the function used to make the SubForm invisible, or null for the default
      * @deprecated Use {@link #addFormFragment(String, boolean, String, String, String)} instead
      */
+    @Deprecated
     void addFormFragment(String clientId, String showFunctionName, String hideFunctionName);
 
     /**
@@ -88,6 +90,7 @@ public interface ClientBehaviorSupport
      *         name of the function used to make the SubForm invisible, or null for the default
      * @deprecated Use {@link #addFormFragment(String, boolean, String, String, String)} instead
      */
+    @Deprecated
     void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName);
 
     /**
@@ -110,6 +113,7 @@ public interface ClientBehaviorSupport
      * @since 5.3
      * @deprecated In 5.4; use the <code>core/form-fragment</code> module instead.
      */
+    @Deprecated
     void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName, String visibilityBoundFunctionName);
 
     /**

@@ -32,6 +32,7 @@ public interface MarkupWriterFactory
      *                    
      * @deprecated use {@link #newMarkupWriter(Page)} instead which doesn't rely on the content type alone.
      */
+    @Deprecated
     MarkupWriter newMarkupWriter(ContentType contentType);
 
     /**
@@ -44,6 +45,7 @@ public interface MarkupWriterFactory
      *
      * @deprecated use {@link #newPartialMarkupWriter(Page)} instead which doesn't rely on the content type alone.
      */
+    @Deprecated
     MarkupWriter newPartialMarkupWriter(ContentType contentType);
 
     /**

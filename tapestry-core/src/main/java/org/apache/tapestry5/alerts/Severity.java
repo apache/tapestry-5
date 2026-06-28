@@ -43,6 +43,7 @@ public enum Severity
      *
      * @deprecated Deprecated in Tapestry 5.4 with no replacement (beyond the name of the value itself).
      */
+    @Deprecated
     public final String cssClass;
 
     private Severity()

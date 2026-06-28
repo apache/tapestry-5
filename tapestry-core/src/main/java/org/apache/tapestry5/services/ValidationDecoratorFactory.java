@@ -25,10 +25,12 @@ import org.apache.tapestry5.ValidationDecorator;
  * @since 5.3
  * @deprecated Deprecated in 5.4 with no replacement, as {@link ValidationDecorator} is being phased out.
  */
+@Deprecated
 public interface ValidationDecoratorFactory
 {
     /**
      * Creates a new decorator for the indicated writer.
      */
+    @Deprecated
     ValidationDecorator newInstance(MarkupWriter writer);
 }

@@ -29,6 +29,7 @@ public class MarkupConstants
      *
      * @deprecated Deprecated in Tapestry 5.4 with no replacement. Do not use.
      */
+    @Deprecated
     public static final String WAIT_FOR_PAGE = "javascript:return Tapestry.waitForPage(event);";
 
     /**
@@ -37,5 +38,6 @@ public class MarkupConstants
      * @see #WAIT_FOR_PAGE
      * @deprecated Deprecated in Tapestry 5.4 with no replacement. Do not use.
      */
+    @Deprecated
     public static final String ONCLICK = "onclick";
 }

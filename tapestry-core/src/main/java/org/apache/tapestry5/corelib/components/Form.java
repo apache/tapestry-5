@@ -321,6 +321,7 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * @deprecated In 5.4; previously used only for testing
      */
+    @Deprecated
     public void setDefaultTracker(ValidationTracker defaultTracker)
     {
         this.defaultTracker = defaultTracker;

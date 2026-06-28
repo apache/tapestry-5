@@ -32,6 +32,7 @@ import java.util.Map;
  * @deprecated Deprecated in 5.3; use the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} service instead of
  *             returning an instance of MultiZoneUpdate
  */
+@Deprecated
 public class MultiZoneUpdate
 {
     private final MultiZoneUpdate parent;

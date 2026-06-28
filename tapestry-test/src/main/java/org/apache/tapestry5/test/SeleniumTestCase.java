@@ -1912,6 +1912,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * @since 5.3
      * @deprecated Deprecated in 5.4 with no replacement
      */
+    @Deprecated
     protected final void waitForElementToDisappear(String elementId)
     {
         String condition = String.format("selenium.browserbot.getCurrentWindow().testSupport.doesNotExist(\"%s\")", elementId);
@@ -1975,6 +1976,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * @since 5.3
      * @deprecated Deprecated in 5.4 in favor of the version without a timeout
      */
+    @Deprecated
     protected final void waitForAjaxRequestsToComplete(String timeout)
     {
         waitForAjaxRequestsToComplete();

@@ -44,6 +44,7 @@ public interface Request
      *
      * @deprecated in 5.4, inject the value for symbol {@link org.apache.tapestry5.SymbolConstants#CONTEXT_PATH} instead
      */
+    @Deprecated
     String getContextPath();
 
     /**

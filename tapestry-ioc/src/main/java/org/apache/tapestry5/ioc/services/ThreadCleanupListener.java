@@ -22,6 +22,7 @@ import java.util.EventListener;
  *
  * @deprecated Deprecated in 5.4, use {@link PerthreadManager#addThreadCleanupCallback(Runnable)} instead.
  */
+@Deprecated
 public interface ThreadCleanupListener extends EventListener
 {
     /**

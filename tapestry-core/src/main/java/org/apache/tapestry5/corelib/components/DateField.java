@@ -110,6 +110,7 @@ public class DateField extends AbstractField
      *
      * @deprecated Deprecated in 5.4 with no replacement. The component leverages the Twitter Bootstrap glyphicons support.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.ASSET)
     private Asset icon;
 
@@ -119,6 +120,7 @@ public class DateField extends AbstractField
      * @since 5.2.0.0
      * @deprecated Since 5.4; override the global message key "core-date-value-not-parsable" instead (see {@link org.apache.tapestry5.services.messages.ComponentMessagesSource})
      */
+    @Deprecated
     @Parameter("componentResources.messages")
     private Messages messages;
 

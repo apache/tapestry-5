@@ -73,6 +73,7 @@ public class ComponentParameterConstants
      * Defaults to "above".
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String FORMINJECTOR_INSERT_POSITION = "tapestry.components.forminjector_insert_position";
 
     /**
@@ -82,6 +83,7 @@ public class ComponentParameterConstants
      * Defaults to "highlight".
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String FORMINJECTOR_SHOW_FUNCTION = "tapestry.components.forminjector_show_function";
 
     /**
@@ -106,6 +108,7 @@ public class ComponentParameterConstants
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String ZONE_SHOW_METHOD = "tapestry.components.zone_show_method";
 
     /**
@@ -115,5 +118,6 @@ public class ComponentParameterConstants
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String ZONE_UPDATE_METHOD = "tapestry.components.zone_update_method";
 }

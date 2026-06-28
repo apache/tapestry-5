@@ -22,6 +22,7 @@ import org.apache.tapestry5.http.Link;
  * @see org.apache.tapestry5.services.LinkCreationHub
  * @deprecated Use {@link LinkCreationListener2} instead
  */
+@Deprecated
 public interface LinkCreationListener
 {
     /**

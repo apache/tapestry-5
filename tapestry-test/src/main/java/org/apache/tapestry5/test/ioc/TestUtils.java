@@ -25,17 +25,20 @@ import java.util.List;
  *
  * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
  * to ensure backwards compatibility.
- * 
+ *
  * @since 5.2.0
  * @deprecated In 5.4, with no replacement
  */
+@Deprecated
 public class TestUtils extends Assert
 {
 
     /**
      * Invoked from code that should not be reachable. For example, place a call to unreachable() after invoking a
      * method that is expected to throw an exception.
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static void unreachable()
     {
         fail("This code should not be reachable.");
@@ -43,12 +46,14 @@ public class TestUtils extends Assert
 
     /**
      * Asserts that the message property of the throwable contains each of the provided substrings.
-     * 
+     *
      * @param t
      *            throwable to check
      * @param substrings
      *            some number of expected substrings
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static void assertMessageContains(Throwable t, String... substrings)
     {
         String message = t.getMessage();
@@ -61,14 +66,16 @@ public class TestUtils extends Assert
      * Compares two lists for equality; first all the elements are individually compared for equality (if the lists are
      * of unequal length, only elements up to the shorter length are compared). Then the length of the lists are
      * compared. This generally gives
-     * 
+     *
      * @param <T>
      *            type of objects to compare
      * @param actual
      *            actual values to check
      * @param expected
      *            expected values
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static <T> void assertListsEquals(List<T> actual, List<T> expected)
     {
         int count = Math.min(actual.size(), expected.size());
@@ -90,6 +97,10 @@ public class TestUtils extends Assert
         }
     }
 
+    /**
+     * @deprecated In 5.4, with no replacement
+     */
+    @Deprecated
     protected static <T> void showLists(List<T> actual, List<T> expected)
     {
         List<String> actualStrings = toStrings(actual);
@@ -145,14 +156,17 @@ public class TestUtils extends Assert
 
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
-     * 
+     *
      * @param <T>
      *            type of objects to compare
      * @param actual
      *            actual values to check
      * @param expected
      *            expected values
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
+    @SafeVarargs
     public static <T> void assertListsEquals(List<T> actual, T... expected)
     {
         assertListsEquals(actual, Arrays.asList(expected));
@@ -160,14 +174,17 @@ public class TestUtils extends Assert
 
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
-     * 
+     *
      * @param <T>
      *            type of objects to compare
      * @param actual
      *            actual values to check
      * @param expected
      *            expected values
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
+    @SafeVarargs
     public static <T> void assertArraysEqual(T[] actual, T... expected)
     {
         assertListsEquals(Arrays.asList(actual), expected);
@@ -175,17 +192,19 @@ public class TestUtils extends Assert
 
     /**
      * Initializes private fields (via reflection).
-     * 
+     *
      * @param object
      *            object to be updated
      * @param fieldValues
      *            string field names and corresponding field values
      * @return the object
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static <T> T set(T object, Object... fieldValues)
     {
         assert object != null;
-        Class objectClass = object.getClass();
+        Class<?> objectClass = object.getClass();
 
         for (int i = 0; i < fieldValues.length; i += 2)
         {
@@ -212,14 +231,16 @@ public class TestUtils extends Assert
 
     /**
      * Reads the content of a private field.
-     * 
+     *
      * @param object
      *            to read the private field from
      * @param fieldName
      *            name of field to read
      * @return value stored in the field
      * @since 5.1.0.5
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static Object get(Object object, String fieldName)
     {
         assert object != null;
@@ -249,10 +270,10 @@ public class TestUtils extends Assert
         return exception.getClass().getName();
     }
 
-    private static Field findField(Class objectClass, String fieldName)
+    private static Field findField(Class<?> objectClass, String fieldName)
     {
 
-        Class cursor = objectClass;
+        Class<?> cursor = objectClass;
 
         while (cursor != null)
         {
@@ -275,13 +296,15 @@ public class TestUtils extends Assert
     /**
      * Creates a new instance of the object using its default constructor, and initializes it (via
      * {@link #set(Object, Object[])}).
-     * 
+     *
      * @param objectType
      *            typeof object to instantiate
      * @param fieldValues
      *            string field names and corresponding field values
      * @return the initialized instance
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     public static <T> T create(Class<T> objectType, Object... fieldValues)
     {
         T result = null;

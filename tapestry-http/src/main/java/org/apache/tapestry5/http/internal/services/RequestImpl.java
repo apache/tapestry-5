@@ -34,6 +34,7 @@ public class RequestImpl implements Request
     /**
      * @deprecated Use {@link Request#REQUESTED_WITH_HEADER} instead
      */
+    @Deprecated
     static final String REQUESTED_WITH_HEADER = Request.REQUESTED_WITH_HEADER;
 
     static final String XML_HTTP_REQUEST = "XMLHttpRequest";
@@ -41,6 +42,7 @@ public class RequestImpl implements Request
     /**
      * @deprecated Use {@link Request#X_FORWARDED_PROTO_HEADER} instead
      */
+    @Deprecated
     static final String X_FORWARDED_PROTO_HEADER = Request.X_FORWARDED_PROTO_HEADER;
     static final String X_FORWARDED_PROTO_HTTPS = "https";
 

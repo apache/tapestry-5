@@ -147,6 +147,7 @@ public interface Page extends PageLifecycleCallbackHub
      * @deprecated in 5.3.4; use {@link #addPageLoadedCallback(Runnable)}, {@link #addPageAttachedCallback(Runnable)}, or
      * {@link #addPageDetachedCallback(Runnable)}  instead
      */
+    @Deprecated
     void addLifecycleListener(PageLifecycleListener listener);
 
     /**
@@ -155,6 +156,7 @@ public interface Page extends PageLifecycleCallbackHub
      * @since 5.2.0
      * @deprecated in 5.3.4, due to introduction of {@link #addPageLoadedCallback(Runnable)}
      */
+    @Deprecated
     void removeLifecycleListener(PageLifecycleListener listener);
 
     /**
@@ -216,6 +218,7 @@ public interface Page extends PageLifecycleCallbackHub
      * @since 5.2.0
      * @deprecated in 5.3.4,
      */
+    @Deprecated
     void addResetListener(PageResetListener listener);
 
     /**

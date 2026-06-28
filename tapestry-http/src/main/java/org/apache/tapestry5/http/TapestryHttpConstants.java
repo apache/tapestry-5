@@ -32,6 +32,7 @@ final public class TapestryHttpConstants {
      * should only occur when developing Tapestry).
      * @deprecated use {@link TapestryHttpSymbolConstants#TAPESTRY_VERSION} instead.
      */
+    @Deprecated
     public static final String TAPESTRY_VERSION = TapestryHttpSymbolConstants.TAPESTRY_VERSION;
 
 }

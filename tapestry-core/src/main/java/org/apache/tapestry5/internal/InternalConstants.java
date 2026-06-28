@@ -38,12 +38,14 @@ public final class InternalConstants
      * pages, components and mixins sub-packages.
      * @deprecated Use {@link TapestryHttpInternalConstants#TAPESTRY_APP_PACKAGE_PARAM} instead
      */
+    @Deprecated
     public static final String TAPESTRY_APP_PACKAGE_PARAM = TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM;
 
     /**
      * Turns off loading of default modules (as driven by JAR file Manifest entries).
      * @deprecated Use {@link TapestryHttpInternalConstants#DISABLE_DEFAULT_MODULES_PARAM} instead
      */
+    @Deprecated
     public static final String DISABLE_DEFAULT_MODULES_PARAM = TapestryHttpInternalConstants.DISABLE_DEFAULT_MODULES_PARAM;
 
     /**
@@ -84,6 +86,7 @@ public final class InternalConstants
     /**
      * @deprecated Use {@link TapestryHttpInternalConstants#CHARSET_CONTENT_TYPE_PARAMETER} instead
      */
+    @Deprecated
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = TapestryHttpInternalConstants.CHARSET_CONTENT_TYPE_PARAMETER;
 
     /**
@@ -116,6 +119,7 @@ public final class InternalConstants
      * @since 5.1.0.0
      * @deprecated Use {@link TapestryHttpInternalConstants#CONTENT_ENCODING_HEADER} instead
      */
+    @Deprecated
     public static final String CONTENT_ENCODING_HEADER = TapestryHttpInternalConstants.CONTENT_ENCODING_HEADER;
 
     /**
@@ -124,6 +128,7 @@ public final class InternalConstants
      * @since 5.1.0.0
      * @deprecated Use {@link TapestryHttpInternalConstants#GZIP_CONTENT_ENCODING} instead
      */
+    @Deprecated
     public static final String GZIP_CONTENT_ENCODING = TapestryHttpInternalConstants.GZIP_CONTENT_ENCODING;
 
     /**
@@ -141,6 +146,7 @@ public final class InternalConstants
     /**
      * @deprecated Use {@link CommonsUtils#EMPTY_STRING_ARRAY} instead
      */
+    @Deprecated
     public static final String[] EMPTY_STRING_ARRAY = CommonsUtils.EMPTY_STRING_ARRAY;
 
     /**

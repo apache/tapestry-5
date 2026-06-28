@@ -186,6 +186,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      *
      * @deprecated In 5.3.4, use {@link #getPageLifecycleCallbackHub()} instead
      */
+    @Deprecated
     void addPageLifecycleListener(PageLifecycleListener listener);
 
     /**
@@ -202,6 +203,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @since 5.2.0
      * @deprecated in 5.3.4, not necessary with {@link PageLifecycleCallbackHub#addPageLoadedCallback(Runnable)}.
      */
+    @Deprecated
     void removePageLifecycleListener(PageLifecycleListener listener);
 
     /**

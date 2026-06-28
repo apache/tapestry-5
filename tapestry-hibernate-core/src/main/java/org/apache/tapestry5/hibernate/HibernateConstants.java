@@ -22,10 +22,12 @@ public class HibernateConstants
     /**
      * @deprecated Use {@link org.apache.tapestry5.hibernate.HibernateSymbols#PROVIDE_ENTITY_VALUE_ENCODERS} instead.
      */
+    @Deprecated
     public static final String PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL = HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS;
 
     /**
      * @deprecated Use {@link org.apache.tapestry5.hibernate.HibernateSymbols#DEFAULT_CONFIGURATION} instead
      */
+    @Deprecated
     public static final String DEFAULT_CONFIGURATION = HibernateSymbols.DEFAULT_CONFIGURATION;
 }

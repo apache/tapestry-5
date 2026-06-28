@@ -86,6 +86,7 @@ public class Zone implements ClientBodyElement
      *
      * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
@@ -96,6 +97,7 @@ public class Zone implements ClientBodyElement
      *
      * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String update;
 
@@ -125,6 +127,7 @@ public class Zone implements ClientBodyElement
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     @Parameter
     private boolean visible;
 

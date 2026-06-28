@@ -31,6 +31,7 @@ import java.util.Locale;
  * @since 5.2.0
  * @deprecated Deprecated in 5.3, override or decorate {@link ComponentResourceSelector} instead.
  */
+@Deprecated
 @UsesOrderedConfiguration(ComponentTemplateLocator.class)
 public interface ComponentTemplateLocator
 {

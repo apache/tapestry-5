@@ -74,6 +74,7 @@ public interface Environment
      * @deprecated Deprecated in 5.4 with no replacement; not longer used by Tapestry.
      * @see org.apache.tapestry5.TapestryConstants#RESPONSE_RENDERER
      */
+    @Deprecated
     void cloak();
 
     /**
@@ -83,5 +84,6 @@ public interface Environment
      * @deprecated Deprecated in 5.4 with no replacement; not longer used by Tapestry.
      * @see org.apache.tapestry5.TapestryConstants#RESPONSE_RENDERER
      */
+    @Deprecated
     void decloak();
 }

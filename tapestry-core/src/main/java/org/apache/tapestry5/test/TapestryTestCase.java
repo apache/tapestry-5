@@ -688,6 +688,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     /**
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     protected final void train_toClientURL(Asset asset, String URL)
     {
         expect(asset.toClientURL()).andReturn(URL).atLeastOnce();

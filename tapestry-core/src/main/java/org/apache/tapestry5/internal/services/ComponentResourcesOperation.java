@@ -23,6 +23,7 @@ import org.apache.tapestry5.ComponentResources;
  *
  * @deprecated In Tapestry 5.4; use {@link org.apache.tapestry5.plastic.MethodAdvice} and other parts of the new (in 5.3) plastic library.
  */
+@Deprecated
 public interface ComponentResourcesOperation
 {
     /**

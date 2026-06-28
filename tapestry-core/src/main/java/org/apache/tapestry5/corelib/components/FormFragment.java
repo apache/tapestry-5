@@ -84,6 +84,7 @@ public class FormFragment implements ClientElement
      *
      * @deprecated Deprecated in 5.4; clients that wish to animate should handle the <code>events.element.didShow</code> client-side event.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
@@ -93,6 +94,7 @@ public class FormFragment implements ClientElement
      *
      * @deprecated Deprecated in 5.4; clients that wish to animate should handle the <code>events.element.didHide</code> client-side event.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String hide;
 
@@ -120,6 +122,7 @@ public class FormFragment implements ClientElement
      * @since 5.3
      * @deprecated Deprecated in 5.4 with no current replacement.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL, allowNull = false)
     private String visibleBound;
 

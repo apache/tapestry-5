@@ -63,6 +63,7 @@ public class Html5DateField extends AbstractField
      * @since 5.2.0.0
      * @deprecated Since 5.4; override the global message key "core-date-value-not-parsable" instead (see {@link org.apache.tapestry5.services.messages.ComponentMessagesSource})
      */
+    @Deprecated
     @Parameter("componentResources.messages")
     private Messages messages;
     

@@ -643,6 +643,7 @@ public final class Element extends Node
      * @return the element for further configuration
      * @deprecated Deprecated in 5.4, as this is now special behavior for the "class" attribute.
      */
+    @Deprecated
     public Element addClassName(String... classNames)
     {
         for (String name : classNames)

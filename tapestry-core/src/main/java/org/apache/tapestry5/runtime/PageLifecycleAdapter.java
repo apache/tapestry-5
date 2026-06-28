@@ -19,6 +19,7 @@ package org.apache.tapestry5.runtime;
  *
  * @deprecated in 5.3.4, as {@link PageLifecycleListener} has been deprecated
  */
+@Deprecated
 public class PageLifecycleAdapter implements PageLifecycleListener
 {
     public void containingPageDidAttach()

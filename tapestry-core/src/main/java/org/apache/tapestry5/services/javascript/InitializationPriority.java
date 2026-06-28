@@ -31,6 +31,7 @@ public enum InitializationPriority
      *
      * @deprecated Deprecated in 5.4; this is now treated as "earlier than {@linkplain #EARLY early}".
      */
+    @Deprecated
     IMMEDIATE,
 
     /**

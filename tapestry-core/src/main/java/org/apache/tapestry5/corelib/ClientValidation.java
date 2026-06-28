@@ -26,6 +26,7 @@ public enum ClientValidation
      *
      * @deprecated Deprecated in 5.4, and no longer supported.
      */
+    @Deprecated
     BLUR,
 
     /**

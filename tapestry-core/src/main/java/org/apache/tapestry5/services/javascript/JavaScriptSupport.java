@@ -73,6 +73,7 @@ public interface JavaScriptSupport
      *         arguments referenced by format specifiers
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addScript(String format, Object... arguments);
 
     /**
@@ -86,6 +87,7 @@ public interface JavaScriptSupport
      *         arguments referenced by format specifiers
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addScript(InitializationPriority priority, String format, Object... arguments);
 
     /**
@@ -99,6 +101,7 @@ public interface JavaScriptSupport
      *         object to pass to the client-side function
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(String functionName, JSONObject parameter);
 
     /**
@@ -113,6 +116,7 @@ public interface JavaScriptSupport
      * @since 5.3
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(String functionName, JSONArray parameter);
 
     /**
@@ -129,6 +133,7 @@ public interface JavaScriptSupport
      * @since 5.3
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter);
 
     /**
@@ -144,6 +149,7 @@ public interface JavaScriptSupport
      *         object to pass to the client-side function
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter);
 
     /**
@@ -157,6 +163,7 @@ public interface JavaScriptSupport
      *         string to pass to function (typically, a client id)
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(String functionName, String parameter);
 
     /**
@@ -172,6 +179,7 @@ public interface JavaScriptSupport
      *         string to pass to function (typically, a client id)
      * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
+    @Deprecated
     void addInitializerCall(InitializationPriority priority, String functionName, String parameter);
 
     /**

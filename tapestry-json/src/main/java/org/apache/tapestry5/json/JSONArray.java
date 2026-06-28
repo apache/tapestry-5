@@ -127,6 +127,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      * @return Returns the number of values in this array.
      * @deprecated Use {@link #size()} instead.
      */
+    @Deprecated
     public int length() {
         return size();
     }
@@ -168,6 +169,7 @@ public final class JSONArray extends JSONCollection implements Collection<Object
      * @return this array.
      * @deprecated The use of {@link #add(Object)} is encouraged.
      */
+    @Deprecated
     public JSONArray put(Object value) {
         add(value);
         return this;

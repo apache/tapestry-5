@@ -86,6 +86,7 @@ public class ProgressiveDisplay
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String update;
 

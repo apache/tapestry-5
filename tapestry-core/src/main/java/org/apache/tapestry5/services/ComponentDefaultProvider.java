@@ -60,6 +60,7 @@ public interface ComponentDefaultProvider
      * @return the translator, or null
      * @deprecated Use {@link #defaultTranslatorBinding(String, org.apache.tapestry5.ComponentResources)} instead
      */
+    @Deprecated
     FieldTranslator defaultTranslator(String parameterName, ComponentResources resources);
 
     /**
@@ -80,6 +81,7 @@ public interface ComponentDefaultProvider
      * @return the validator, possibly a no-op validator
      * @deprecated Use {@link #defaultValidatorBinding(String, org.apache.tapestry5.ComponentResources)} instead
      */
+    @Deprecated
     FieldValidator defaultValidator(String parameterName, ComponentResources resources);
 
     /**

@@ -62,6 +62,7 @@ public final class StylesheetOptions
     /**
      * @deprecated In 5.3, may be removed in a later release. Use {@link #StylesheetOptions(String)} and {@link #withCondition(String)}} instead.
      */
+    @Deprecated
     public StylesheetOptions(String media, String condition)
     {
         this(media, condition, false);

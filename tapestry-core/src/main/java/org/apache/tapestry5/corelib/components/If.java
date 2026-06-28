@@ -37,6 +37,7 @@ public class If extends AbstractConditional
      * @see Unless
      * @deprecated Since 5.3 as property expressions support the '!' invert operator
      */
+    @Deprecated
     @Parameter
     private boolean negate;
 

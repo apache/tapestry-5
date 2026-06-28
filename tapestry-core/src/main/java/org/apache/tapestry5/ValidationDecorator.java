@@ -29,6 +29,7 @@ import org.apache.tapestry5.dom.Element;
  *
  * @deprecated Deprecated in 5.4 with no replacement.
  */
+@Deprecated
 public interface ValidationDecorator
 {
     /**

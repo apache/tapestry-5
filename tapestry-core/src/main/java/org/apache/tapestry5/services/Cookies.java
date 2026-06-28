@@ -38,7 +38,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
-
+    @Deprecated
     void writeCookieValue(String name, String value);
 
     /**
@@ -50,7 +50,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
-
+    @Deprecated
     void writeCookieValue(String name, String value, int maxAge);
 
     /**
@@ -58,6 +58,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
+    @Deprecated
     void writeCookieValue(String name, String value, String path);
 
     /**
@@ -65,6 +66,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
+    @Deprecated
     void writeDomainCookieValue(String name, String value, String domain);
 
     /**
@@ -72,6 +74,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
+    @Deprecated
     void writeDomainCookieValue(String name, String value, String domain, int maxAge);
 
     /**
@@ -79,6 +82,7 @@ public interface Cookies
      * 
      * @deprecated Use the {@link CookieBuilder} API, obtained with {@link #getBuilder(String, String)}, instead.
      */
+    @Deprecated
     void writeCookieValue(String name, String value, String path, String domain);
 
     /**

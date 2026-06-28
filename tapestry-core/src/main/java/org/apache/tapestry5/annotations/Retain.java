@@ -34,14 +34,14 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
  * This annotation should only be used with lazily-evaluated objects that contain no client-specific information.
  * 
  * @deprecated This rarely used annotation is likely to cause threading issues starting in Tapestry 5.2 (which no longer
- *             pools pages
- *             but uses shared instances with externalized mutable state)
+ *             pools pages but uses shared instances with externalized mutable state)
  */
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
 @UseWith(
 { COMPONENT, MIXIN, PAGE })
+@Deprecated
 public @interface Retain
 {
 

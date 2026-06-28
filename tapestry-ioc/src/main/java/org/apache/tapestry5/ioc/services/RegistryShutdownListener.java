@@ -22,6 +22,7 @@ import java.util.EventListener;
  * @see RegistryShutdownHub#addRegistryShutdownListener(Runnable)
  * @deprecated In Tapestry 5.3, to be removed in a later release.
  */
+@Deprecated
 public interface RegistryShutdownListener extends EventListener
 {
     /**

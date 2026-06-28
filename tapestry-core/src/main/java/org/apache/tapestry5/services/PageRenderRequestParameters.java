@@ -38,6 +38,7 @@ public class PageRenderRequestParameters
     /**
      * @deprecated Use {@link #PageRenderRequestParameters(String, EventContext, boolean)}.
      */
+    @Deprecated
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext)
     {
         this(logicalPageName, activationContext, false);

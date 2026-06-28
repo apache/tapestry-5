@@ -25,6 +25,7 @@ import org.easymock.IMocksControl;
  * to ensure backwards compatibility.
  * @deprecated In 5.4, with no replacement
  */
+@Deprecated
 public final class MockTester
 {
     private static class ThreadLocalControl extends ThreadLocal<IMocksControl>

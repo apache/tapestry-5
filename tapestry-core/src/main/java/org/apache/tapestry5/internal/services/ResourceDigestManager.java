@@ -32,6 +32,7 @@ import org.apache.tapestry5.services.ResourceDigestGenerator;
  * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving to /META-INF/assets/.
  *             To be removed in 5.5.
  */
+@Deprecated
 public interface ResourceDigestManager extends InvalidationEventHub
 {
     /**

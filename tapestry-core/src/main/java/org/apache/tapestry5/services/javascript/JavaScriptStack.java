@@ -105,5 +105,6 @@ public interface JavaScriptStack
      * may return null.
      * @return how the stack is aggregated
      */
+    @Deprecated
     String getInitialization();
 }

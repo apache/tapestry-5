@@ -24,6 +24,7 @@ package org.apache.tapestry5.commons.services;
  * @since 5.1.0.0
  * @deprecated In 5.4; use {@link InvalidationEventHub#addInvalidationCallback(Runnable)} instead
  */
+@Deprecated
 public interface InvalidationListener
 {
     /**

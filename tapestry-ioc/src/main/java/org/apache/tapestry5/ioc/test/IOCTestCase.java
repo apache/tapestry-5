@@ -48,6 +48,7 @@ import static org.easymock.EasyMock.isA;
  *
  * @deprecated In 5.4, with no replacement
  */
+@Deprecated
 public class IOCTestCase extends TestBase
 {
 

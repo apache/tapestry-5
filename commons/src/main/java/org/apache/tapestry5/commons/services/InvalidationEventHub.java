@@ -44,6 +44,7 @@ public interface InvalidationEventHub
      *
      * @deprecated in 5.4, use {@link #addInvalidationCallback(Runnable)} instead}
      */
+    @Deprecated
     void addInvalidationListener(InvalidationListener listener);
 
     /**

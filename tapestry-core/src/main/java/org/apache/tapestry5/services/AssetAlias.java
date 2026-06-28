@@ -20,6 +20,7 @@ package org.apache.tapestry5.services;
  * @since 5.4
  * @deprecated Deprecated in 5.4 (see notes in {@link ClasspathAssetAliasManager}).
  */
+@Deprecated
 public class AssetAlias
 {
     public final String virtualFolder, path;

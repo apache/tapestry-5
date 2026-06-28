@@ -19,6 +19,7 @@ package org.apache.tapestry5;
  *
  * @deprecated Deprecated in 5.4 with no replacement.
  */
+@Deprecated
 public class CSSClassConstants
 {
     /**
@@ -26,6 +27,7 @@ public class CSSClassConstants
      *
      * @deprecated Removed in Tapestry 5.4 with no replacement.
      */
+    @Deprecated
     public static final String INVISIBLE = "t-invisible";
 
     /**
@@ -34,6 +36,7 @@ public class CSSClassConstants
      * @deprecated Deprecated in 5.4 with no replacement; decoration of fields with validation errors
      *             has moved to the client.
      */
+    @Deprecated
     public static final String ERROR = "error";
 
     /**
@@ -43,5 +46,6 @@ public class CSSClassConstants
      * @deprecated Deprecated in 5.4 with no replacement; decoration of fields with validation errors
      *             has moved to the client.
      */
+    @Deprecated
     public static final String ERROR_SINGLE = "t-error-single";
 }

@@ -98,6 +98,7 @@ public interface FormSupport extends ClientElement
      * use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} to add necessary modules, and add
      * triggering and configuring attributes to the field's {@link org.apache.tapestry5.dom.Element}.
      */
+    @Deprecated
     void addValidation(Field field, String validationName, String message, Object constraint);
 
     /**

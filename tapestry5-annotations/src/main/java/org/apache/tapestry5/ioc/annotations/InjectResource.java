@@ -27,6 +27,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @UseWith(AnnotationUseContext.SERVICE)
+@Deprecated
 public @interface InjectResource
 {
 }

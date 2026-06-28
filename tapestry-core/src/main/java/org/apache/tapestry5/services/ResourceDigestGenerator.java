@@ -31,6 +31,7 @@ import java.net.URL;
  * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving
  *             to /META-INF/assets/, and content checksums inside asset URLs
  */
+@Deprecated
 @UsesConfiguration(String.class)
 public interface ResourceDigestGenerator
 {

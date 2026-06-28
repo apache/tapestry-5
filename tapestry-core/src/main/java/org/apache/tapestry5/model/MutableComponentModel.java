@@ -34,6 +34,7 @@ public interface MutableComponentModel extends ComponentModel
      * @see Parameter
      * @deprecated Use {@link #addParameter(String, boolean, boolean, String, boolean)} instead.
      */
+    @Deprecated
     void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix);
 
     /**

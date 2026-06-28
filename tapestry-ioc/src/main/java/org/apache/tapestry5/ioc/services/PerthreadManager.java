@@ -29,6 +29,7 @@ public interface PerthreadManager
      *         to add
      * @deprecated Deprecated in 5.4, use {@link #addThreadCleanupCallback(Runnable)} instead.
      */
+    @Deprecated
     void addThreadCleanupListener(ThreadCleanupListener listener);
 
     /**

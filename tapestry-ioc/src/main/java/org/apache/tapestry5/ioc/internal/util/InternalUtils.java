@@ -717,6 +717,7 @@ public class InternalUtils
      * @deprecated Deprecated in 5.4; use {@link ExceptionUtils#toMessage(Throwable)} instead.
      */
     // Cause it gets used a lot outside of Tapestry proper even though it is internal.
+    @Deprecated
     public static String toMessage(Throwable exception)
     {
         return ExceptionUtils.toMessage(exception);

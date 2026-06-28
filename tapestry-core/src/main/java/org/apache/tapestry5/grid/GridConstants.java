@@ -22,6 +22,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String FIRST_CLASS = "t-first";
 
     /**
@@ -30,6 +31,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String LAST_CLASS = "t-last";
 
     /**
@@ -38,6 +40,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String SORT_ASCENDING_CLASS = "t-sort-column-ascending";
 
     /**
@@ -46,7 +49,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
-
+    @Deprecated
     public static final String SORT_DESCENDING_CLASS = "t-sort-column-descending";
 
     /**
@@ -81,6 +84,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String COLUMNS_ASCENDING = "sort-asc.png";
 
     /**
@@ -88,6 +92,7 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String COLUMNS_DESCENDING = "sort-desc.png";
 
     /**
@@ -95,5 +100,6 @@ public class GridConstants
      * 
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     public static final String COLUMNS_SORTABLE = "sortable.png";
 }

@@ -92,5 +92,6 @@ public enum StackExtensionType
      * @see org.apache.tapestry5.services.javascript.JavaScriptStack#getInitialization()
      * @deprecated Deprecated in 5.4 with no replacement; initialization may be removed in the future.
      */
+    @Deprecated
     INITIALIZATION;
 }

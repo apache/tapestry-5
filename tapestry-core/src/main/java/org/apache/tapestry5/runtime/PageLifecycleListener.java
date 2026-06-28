@@ -19,6 +19,7 @@ package org.apache.tapestry5.runtime;
  *
  * @deprecated in 5.3.4, replaced with {@link PageLifecycleCallbackHub}
  */
+@Deprecated
 public interface PageLifecycleListener
 {
     /**
@@ -27,6 +28,7 @@ public interface PageLifecycleListener
      *
      * @deprecated in 5.3.4,  use {@link org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addPageLoadedCallback(Runnable)} instead
      */
+    @Deprecated
     void containingPageDidLoad();
 
     /**
@@ -35,6 +37,7 @@ public interface PageLifecycleListener
      *
      * @deprecated In Tapestry 5.3, use {@link PageLifecycleCallbackHub#addPageDetachedCallback(Runnable)} instead.
      */
+    @Deprecated
     void containingPageDidDetach();
 
     /**
@@ -43,6 +46,7 @@ public interface PageLifecycleListener
      *
      * @deprecated In Tapestry 5.3, use {@link org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addPageAttachedCallback(Runnable)} instead.
      */
+    @Deprecated
     void containingPageDidAttach();
 
     /**
@@ -52,5 +56,6 @@ public interface PageLifecycleListener
      * @since 5.1.0.1
      * @deprecated In Tapestry 5.3, with no replacement (persisted fields now lazily restore their state)
      */
+    @Deprecated
     void restoreStateBeforePageAttach();
 }

@@ -75,6 +75,7 @@ public final class LibraryMapping
      *
      * @deprecated In 5.4, use {@link #libraryName} instead.
      */
+    @Deprecated
     public String getPathPrefix()
     {
         return libraryName;

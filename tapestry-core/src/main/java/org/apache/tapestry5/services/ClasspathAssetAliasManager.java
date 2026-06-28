@@ -43,6 +43,7 @@ import java.util.Map;
  * @deprecated Deprecated in 5.4, with no replacement. This will no longer be used in Tapestry 5.5, as all classpath assets
  *             will need to be under the {@code META-INF/assets} folder (but may be maintained for compatibility reasons until 5.6).
  */
+@Deprecated
 @UsesMappedConfiguration(String.class)
 public interface ClasspathAssetAliasManager
 {

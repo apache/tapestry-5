@@ -45,6 +45,7 @@ public class Alerts extends BaseClientElement
      * @deprecated Deprecated in Tapestry 5.4; override the {@code core-dismiss-label} message key in
      * your application's message catalog. This parameter is now ignored.
      */
+    @Deprecated
     @Parameter(value = "message:core-dismiss-label", defaultPrefix = BindingConstants.LITERAL)
     private String dismissText;
 

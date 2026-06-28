@@ -37,6 +37,7 @@ import java.util.Map;
  * @since 5.1.0.1
  * @deprecated Deprecated in 5.3
  */
+@Deprecated
 public class MultiZoneUpdateEventResultProcessor implements ComponentEventResultProcessor<MultiZoneUpdate>
 {
     private final TypeCoercer typeCoercer;

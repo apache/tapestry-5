@@ -33,18 +33,21 @@ import org.testng.annotations.AfterMethod;
  *
  * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
  * to ensure backwards compatibility.
- * 
+ *
  * @see org.easymock.EasyMock#createControl()
  * @see org.apache.tapestry5.test.ioc.MockTester
  * @deprecated In 5.4, with no replacement
  */
+@Deprecated
 public class TestBase extends TestUtils
 {
     private final MockTester tester = new MockTester();
 
     /**
      * @return the {@link IMocksControl} for this thread.
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected final IMocksControl getMocksControl()
     {
         return tester.getMocksControl();
@@ -52,7 +55,9 @@ public class TestBase extends TestUtils
 
     /**
      * Discards any mock objects created during the test.
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     @AfterMethod(alwaysRun = true)
     public final void discardMockControl()
     {
@@ -62,13 +67,15 @@ public class TestBase extends TestUtils
     /**
      * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong> check order,
      * but does fail on any unexpected method invocations.
-     * 
+     *
      * @param <T>
      *            the type of the mock object
      * @param mockClass
      *            the class to mock
      * @return the mock object, ready for training
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected final <T> T newMock(Class<T> mockClass)
     {
         return tester.newMock(mockClass);
@@ -77,7 +84,9 @@ public class TestBase extends TestUtils
     /**
      * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the initial training
      * mode).
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected final void replay()
     {
         tester.replay();
@@ -86,7 +95,9 @@ public class TestBase extends TestUtils
     /**
      * Verifies that all trained methods have been invoked on all mock objects (created by {@link #newMock(Class)}, then
      * switches each mock object back to training mode.
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected final void verify()
     {
         tester.verify();
@@ -94,10 +105,12 @@ public class TestBase extends TestUtils
 
     /**
      * Convienience for {@link EasyMock#expectLastCall()} with {@link IExpectationSetters#andThrow(Throwable)}.
-     * 
+     *
      * @param throwable
      *            the exception to be thrown by the most recent method call on any mock
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected static void setThrowable(Throwable throwable)
     {
         EasyMock.expectLastCall().andThrow(throwable);
@@ -106,10 +119,12 @@ public class TestBase extends TestUtils
     /**
      * Convienience for {@link EasyMock#expectLastCall()} with
      * {@link IExpectationSetters#andAnswer(org.easymock.IAnswer)}.
-     * 
+     *
      * @param answer
      *            callback for the most recent method invocation
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     protected static void setAnswer(IAnswer<?> answer)
     {
         EasyMock.expectLastCall().andAnswer(answer);
@@ -117,11 +132,12 @@ public class TestBase extends TestUtils
 
     /**
      * Convenience for {@link EasyMock#expect(Object)}.
-     * 
+     *
      * @param value to expect
      * @return expectation setter, for setting return value, etc.
+     * @deprecated In 5.4, with no replacement
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     protected static <T> IExpectationSetters<T> expect(T value)
     {
         return EasyMock.expect(value);
@@ -130,7 +146,9 @@ public class TestBase extends TestUtils
     /**
      * A factory method to create EasyMock Capture objects.
      * @return new Capture
+     * @deprecated In 5.4, with no replacement
      */
+    @Deprecated
     @SuppressWarnings({"UnusedDeclaration"})
     protected static <T> Capture<T> newCapture()
     {

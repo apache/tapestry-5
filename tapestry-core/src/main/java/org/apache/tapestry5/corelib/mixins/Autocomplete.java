@@ -93,6 +93,7 @@ public class Autocomplete
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private double frequency;
 
@@ -102,6 +103,7 @@ public class Autocomplete
      *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
+    @Deprecated
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String tokens;
     

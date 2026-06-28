@@ -29,6 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @UseWith(AnnotationUseContext.MODULE)
+@Deprecated
 public @interface SubModule
 {
 
