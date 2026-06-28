@@ -12,6 +12,7 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.commons.OrderedConfiguration;
@@ -26,7 +27,10 @@ import org.apache.tapestry5.internal.services.CookieSource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.services.ApplicationDefaults;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.MarkupRendererFilter;
 import org.apache.tapestry5.test.PageTester;
 
@@ -85,5 +89,12 @@ public class PageTesterModule
     public static void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration)
     {
         configuration.addInstance("CaptureRenderedDocument", CaptureRenderedDocument.class, "before:DocumentLinker");
+    }
+
+    @Contribute(SymbolProvider.class)
+    @ApplicationDefaults
+    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "PageTester default passphrase for testing");
     }
 }
